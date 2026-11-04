@@ -1,0 +1,142 @@
+{
+ "locale": "de",
+ "area": "explore_veltrava",
+ "note": "Optionale Funde und Gespräche in Kapitel 3 (data/explore/veltrava_station.json, veltrava_hall.json). Fundtexte werden als Gedanke der Spielfigur gesprochen (höchstens 230 Zeichen). Bahnhof = Alexei: kurze Fragen, genaue Beobachtungen, trockener Humor, nie zynisch gegenüber Opfern. Palais = Konrad: längere, genaue Sätze, anfangs beschönigend, zunehmend direkt. Zitate in gesprochenen Zeilen mit ‚…‘.",
+ "strings": {
+  "explore.veltrava.station.footprints.title": "Spuren unter dem Bahnsteig",
+  "explore.veltrava.station.footprints.prompt": "Spuren im Schnee ansehen",
+  "explore.veltrava.station.footprints.text": "Unter der Bahnsteigkante frische Fußspuren im Schnee, mehrere Paare. Sie enden an einer Diensttür ohne Klinke. Hier verlassen Leute den Bahnhof, ohne an einem Schalter vorbeizukommen. Wer macht ihnen auf?",
+
+  "explore.veltrava.station.four_rails.title": "Vierschienengleis",
+  "explore.veltrava.station.four_rails.prompt": "Gleis ansehen",
+  "explore.veltrava.station.four_rails.text": "Vier Schienen in einem Gleis: Normalspur und unsere Breitspur. Für eine gemeinsame Schiene liegen die Spurweiten zu nah beieinander, also hat jede ihr eigenes Paar. Keine Seite muss nachgeben – nicht einmal um 89 Millimeter.",
+
+  "explore.veltrava.station.chat_voronova.title": "Gespräch mit Lidia Voronova",
+  "explore.veltrava.station.chat_voronova.prompt": "Mit Lidia Voronova sprechen",
+  "explore.veltrava.station.chat_voronova.text": "Die Ministerin zählt Getreidezüge und Kohlenwagen. Anlage C überlässt sie den Juristen. Bis vor Kurzem habe ich auch so gezählt.",
+  "explore.veltrava.station.chat_voronova.l1": "Morozov, gut, dass Sie da sind. Morgen erklären Sie der Reichsdelegation jede Weiche von Kordon-17. Haben Sie eine Meinung dazu, sagen Sie sie zuerst mir.",
+  "explore.veltrava.station.chat_voronova.l2": "Wenn die Korridore halten, kommen im Herbst Getreidezüge bis Karsk. Brot, Morozov. Mehr Politik brauche ich nicht.",
+  "explore.veltrava.station.chat_voronova.l3": "Und Anlage C, Genossin Ministerin?",
+  "explore.veltrava.station.chat_voronova.l4": "Anlage C? Logistik. Das machen die Juristen.",
+  "explore.veltrava.station.chat_voronova.l5": "Sagen Sie mir lieber, ob die Kohle in Karsk bis zum Frühjahr reicht. Auf meinem Tisch liegen Briefe von Müttern, nicht von Ministern.",
+  "explore.veltrava.station.chat_voronova.l6": "Bis März. Wenn keine Wagen mehr verschwinden.",
+  "explore.veltrava.station.chat_voronova.l7": "Dann sorgen Sie dafür, dass keine verschwinden. Dafür habe ich Sie mitgenommen.",
+
+  "explore.veltrava.station.luggage.title": "Koffer mit Holzpferd",
+  "explore.veltrava.station.luggage.prompt": "Koffer ansehen",
+  "explore.veltrava.station.luggage.text": "Ein Dienstkoffer der Delegation, verschnürt und nummeriert. Obendrauf ein Holzpferd, mit einem Hosengürtel festgeschnallt. Wer nimmt ein Spielzeug mit zu einer Konferenz? Jemand, der nicht allein reist.",
+
+  "explore.veltrava.station.pigeons.title": "Verhandlung unter Tauben",
+  "explore.veltrava.station.pigeons.prompt": "Tauben beobachten",
+  "explore.veltrava.station.pigeons.text": "Zwei Tauben zerren an einem Butterbrot aus dem Delegationsproviant. Eine dritte wartet am Rand, bis beide erschöpft sind, und frisst. Ich vermute, sie ist von der Kommission.",
+
+  "explore.veltrava.station.bogie.title": "Drehgestelle von Wagen 4",
+  "explore.veltrava.station.bogie.prompt": "Unter Wagen vier sehen",
+  "explore.veltrava.station.bogie.text": "Unter Wagen vier: umspurbare Drehgestelle, frisch abgeschmiert. Der Wagen läuft auf beiden Spuren, ohne dass man ihn umlädt. Jemand hat dafür gesorgt, dass er an jeden Zug passt – und dass niemand die Tür öffnen muss.",
+
+  "explore.veltrava.station.mitten.title": "Ein einzelner Fäustling",
+  "explore.veltrava.station.mitten.prompt": "Fäustling ansehen",
+  "explore.veltrava.station.mitten.text": "Ein einzelner Fäustling auf der Bank, ordentlich hingelegt, damit sein Besitzer ihn findet. In Karsk lag auch einer. Vielleicht reisen sie den Zügen nach.",
+
+  "explore.veltrava.station.clock.title": "Drei Uhren",
+  "explore.veltrava.station.clock.prompt": "Uhren vergleichen",
+  "explore.veltrava.station.clock.text": "Drei Uhren nebeneinander: Veltrava, Moskau, Berlin. Jede geht richtig, keine stimmt mit den anderen überein. Einig sind sie sich nur bei den Minuten.",
+
+  "explore.veltrava.station.kiosk.title": "Drei Titelseiten",
+  "explore.veltrava.station.kiosk.prompt": "Zeitungen ansehen",
+  "explore.veltrava.station.kiosk.text": "Dasselbe Foto auf drei Titelseiten: derselbe Händedruck, dieselbe Feder. Darüber ‚Sieg der Friedenspolitik‘, ‚Berlin gibt den Takt vor‘ und im Stadtblatt ‚Frost bis Donnerstag‘. Nachprüfen lässt sich nur das Stadtblatt.",
+
+  "explore.veltrava.station.poster.title": "Plakat der Kommission",
+  "explore.veltrava.station.poster.prompt": "Plakat ansehen",
+  "explore.veltrava.station.poster.text": "‚Drei Korridore – ein Frieden.‘ Das Plakat der Kommission ist kein Jahr alt und löst sich schon. Jemand hat eine Ecke mit einer Reißzwecke festgesteckt. Die anderen drei hängen.",
+
+  "explore.veltrava.station.chat_officer.title": "Gespräch mit dem Grenzbeamten",
+  "explore.veltrava.station.chat_officer.prompt": "Mit dem Grenzbeamten sprechen",
+  "explore.veltrava.station.chat_officer.text": "Der Grenzbeamte misstraut allen gleich und gibt sich Mühe dabei. In Veltrava ist das vielleicht die höflichste Form von Gerechtigkeit.",
+  "explore.veltrava.station.chat_officer.l1": "Sie sagten, hier sei jeder Ausländer. Sie auch?",
+  "explore.veltrava.station.chat_officer.l2": "Ich bin hier geboren. Mein Vater nicht, meine Frau nicht, mein Vorgesetzter auch nicht. In Veltrava ist das die Regel.",
+  "explore.veltrava.station.chat_officer.l3": "Also misstraue ich allen gleich. Deutschen, Russen, Neutralen. Am meisten Papieren, die zu gut aussehen.",
+  "explore.veltrava.station.chat_officer.l4": "Meine sahen nicht gut aus.",
+  "explore.veltrava.station.chat_officer.l5": "Nein. Sie sahen echt aus. In echte Papiere schreibt immer jemand etwas hinein, ohne zu fragen.",
+  "explore.veltrava.station.chat_officer.l6": "Meine Tochter lernt in der Schule drei Sprachen. Abends erklärt sie mir, was auf meinen Stempeln steht.",
+  "explore.veltrava.station.chat_officer.l7": "Passen Sie auf sich auf, Herr Morozov. Und wenn Ihnen jemand bessere Papiere anbietet: Kaufen Sie keine.",
+
+  "explore.veltrava.station.return_notice.title": "Büro für Rückführung",
+  "explore.veltrava.station.return_notice.prompt": "Aushang lesen",
+  "explore.veltrava.station.return_notice.text": "Ein Aushang in drei Sprachen, ‚Büro für Rückführung‘: Personen ohne gültige Korridorpapiere melden sich in Zimmer 4. Rückführung. Ein Wort, das nach Heimweg klingt.",
+
+  "explore.veltrava.station.stove.title": "Kachelofen im Wartesaal",
+  "explore.veltrava.station.stove.prompt": "Am Ofen wärmen",
+  "explore.veltrava.station.stove.text": "Im Wartesaal ein Kachelofen, die Gepäckträger wärmen sich die Hände. Im Kohleneimer liegt Kohle aus Karsk neben Briketts aus dem Reich. Der Ofen fragt nicht nach Papieren.",
+
+  "explore.veltrava.station.exchange.title": "Wechselstube",
+  "explore.veltrava.station.exchange.prompt": "Kurstafel lesen",
+  "explore.veltrava.station.exchange.text": "Die Wechselstube: Reichsmark, Rubel, Veltrava-Krone. Die Kurse stehen in Kreide auf der Tafel, dreimal verbessert. Nur die Krone weiß, was sie wert ist.",
+
+  "explore.veltrava.station.tram.title": "Dreisprachiges Linienschild",
+  "explore.veltrava.station.tram.prompt": "Straßenbahn ansehen",
+  "explore.veltrava.station.tram.text": "Vor dem Ausgang wartet die Straßenbahn. Das Linienschild ist von Hand beschrieben, dreisprachig: Bahnhof – Palais – Altstadt. Wenigstens hier sagen drei Sprachen dasselbe.",
+
+  "explore.veltrava.hall.flags.title": "Sechs Fahnen",
+  "explore.veltrava.hall.flags.prompt": "Fahnen ansehen",
+  "explore.veltrava.hall.flags.text": "Sechs Fahnen, gleich hoch und in gleichem Abstand; ich habe es aus Gewohnheit nachgemessen. Das Protokoll soll wochenlang um zwei Zentimeter gerungen haben. Im Maßstab 1:100 wäre das eine Bleistiftstärke.",
+
+  "explore.veltrava.hall.cloakroom.title": "Garderobe",
+  "explore.veltrava.hall.cloakroom.prompt": "Garderobe ansehen",
+  "explore.veltrava.hall.cloakroom.text": "Die Mäntel beider Delegationen hängen Haken an Haken, Loden neben Karakul, ganz ohne Sitzordnung. Dazwischen ein dunkelgrauer Damenmantel mit weinrotem Schal. Bei diesem Wetter geht niemand ohne Mantel.",
+
+  "explore.veltrava.hall.photos.title": "Fotowand 1953",
+  "explore.veltrava.hall.photos.prompt": "Fotowand betrachten",
+  "explore.veltrava.hall.photos.text": "Die Fotowand: März 1953, die Unterzeichnung des Waffenstillstands, hier in diesem Haus. Die Herren am Tisch wirken erleichtert oder erschöpft. Nach vierzehn Kriegswintern zeigt das Bild vor allem Füllfederhalter.",
+
+  "explore.veltrava.hall.chat_journalist.title": "Gespräch mit Nils Ekdahl",
+  "explore.veltrava.hall.chat_journalist.prompt": "Mit Nils Ekdahl sprechen",
+  "explore.veltrava.hall.chat_journalist.text": "Ekdahl hat mir seine Karte gegeben. Ich habe sie nicht in die Mappe gelegt, sondern in die Manteltasche. Warum, könnte ich nicht genau begründen.",
+  "explore.veltrava.hall.chat_journalist.l1": "Nils Ekdahl, ich schreibe für eine Stockholmer Zeitung. Sie sind der Zeichner der Reichsdelegation? Einen Satz für meine Leser?",
+  "explore.veltrava.hall.chat_journalist.l2": "Die Delegation äußert sich über ihren Sprecher. Ich bin lediglich für die technischen Unterlagen zuständig.",
+  "explore.veltrava.hall.chat_journalist.l3": "Dann einen technischen Satz. Was wird in Kordon-17 gebaut?",
+  "explore.veltrava.hall.chat_journalist.l4": "Eine Umschlaganlage mit den erforderlichen Nebenräumen, im Rahmen der vereinbarten Logistikintegration.",
+  "explore.veltrava.hall.chat_journalist.l5": "Wörtlich wie im Kommuniqué. – Hier ist meine Karte. Wenn Sie einmal etwas zeichnen, das nicht stimmt, rufen Sie mich an.",
+  "explore.veltrava.hall.chat_journalist.l6": "Angenommen, ich täte es. Was würde das ändern?",
+  "explore.veltrava.hall.chat_journalist.l7": "Vielleicht nichts. Eine Zeitung hält keinen Zug an. Aber sie schreibt auf, dass er gefahren ist.",
+
+  "explore.veltrava.hall.chandelier.title": "Kronleuchter",
+  "explore.veltrava.hall.chandelier.prompt": "Kronleuchter betrachten",
+  "explore.veltrava.hall.chandelier.text": "Die Kristalle des Kronleuchters hat die Kommission, so heißt es, zu gleichen Teilen in drei Ländern gekauft. Einer ist, wenn ich mich nicht täusche, der polierte Boden einer Bierflasche. Er funkelt am schönsten.",
+
+  "explore.veltrava.hall.buffet.title": "Unberührtes Büfett",
+  "explore.veltrava.hall.buffet.prompt": "Büfett ansehen",
+  "explore.veltrava.hall.buffet.text": "Sekt aus dem Reich, Kaviar aus der Sowjetunion, Käse aus der Schweiz – alles unberührt. Wer zuerst zugreift, hätte wohl als Erster nachgegeben. Zu Hause steht man für Margarine an.",
+
+  "explore.veltrava.hall.window.title": "Blick auf die Linie",
+  "explore.veltrava.hall.window.prompt": "Aus dem Fenster sehen",
+  "explore.veltrava.hall.window.text": "Hinter dem Fenster der zugefrorene Fluss, und am anderen Ufer, in gleichmäßigen Abständen, die Wachtürme der Linie. Von hier aus sehen sie aus wie Vermessungspunkte. Das sind sie nicht.",
+
+  "explore.veltrava.hall.evac_plan.title": "Fluchtwegplan",
+  "explore.veltrava.hall.evac_plan.prompt": "Fluchtwegplan lesen",
+  "explore.veltrava.hall.evac_plan.text": "Andere lesen Briefe, ich lese Fluchtwegpläne. Dieser zeigt einen Personalgang, der in keinem Besucherplan steht und hinunter in ein Kellerarchiv führt. Im Brandfall darf eben kein Raum fehlen.",
+
+  "explore.veltrava.hall.treaty_shelf.title": "Grenzverträge 1919–1953",
+  "explore.veltrava.hall.treaty_shelf.prompt": "Vertragsbände ansehen",
+  "explore.veltrava.hall.treaty_shelf.text": "Gebundene Grenzverträge von 1919 bis 1953, ein Band pro Jahr, Goldprägung auf dem Rücken. 1939 steht zwischen 1938 und 1940, als wäre es ein Jahr wie jedes andere.",
+
+  "explore.veltrava.hall.chat_typist.title": "Gespräch mit Frau Brunner",
+  "explore.veltrava.hall.chat_typist.prompt": "Mit Frau Brunner sprechen",
+  "explore.veltrava.hall.chat_typist.text": "Frau Brunner tippt jede Sitzung dreimal. Frau Weiss schreibt jede Notiz zweimal, von Hand, und traut keinem Durchschlag. Heute hängt ihr Mantel unten in der Garderobe.",
+  "explore.veltrava.hall.chat_typist.l1": "Protokollbüro, Brunner. Deutsch, Russisch, Französisch – ich tippe jede Sitzung dreimal, mit je zwei Durchschlägen.",
+  "explore.veltrava.hall.chat_typist.l2": "Dann stimmen die drei Fassungen vermutlich bis aufs Komma überein.",
+  "explore.veltrava.hall.chat_typist.l3": "Bis aufs Komma stimmen sie, wenn ich fertig bin. Vorher selten.",
+  "explore.veltrava.hall.chat_typist.l4": "Nur Fräulein Weiss gibt mir nie etwas zum Tippen. Sie schreibt ihre Notizen von Hand, und zwar alles zweimal.",
+  "explore.veltrava.hall.chat_typist.l5": "Zweimal von Hand? Ein Durchschlag wäre genauer; er kann sich nicht verschreiben.",
+  "explore.veltrava.hall.chat_typist.l6": "Das habe ich ihr auch gesagt. Sie meint, einen Durchschlag kann jeder lesen.",
+  "explore.veltrava.hall.chat_typist.l7": "Und heute hat sie ihren Mantel unten gelassen – bei diesem Wetter. Sonst behält sie ihn sogar in der Kabine an.",
+
+  "explore.veltrava.hall.mimeograph.title": "Vervielfältiger",
+  "explore.veltrava.hall.mimeograph.prompt": "Vervielfältiger ansehen",
+  "explore.veltrava.hall.mimeograph.text": "Am Vervielfältiger hängen Wachsmatrizen in drei Sprachen, daneben ein Korb mit Kohlepapier, schwarz wie Tinte. Gegen das Licht gehalten, ließe sich jedes Blatt lesen. Gewöhnlich verbrennt man so etwas.",
+
+  "explore.veltrava.hall.headsets.title": "Dolmetscherkopfhörer",
+  "explore.veltrava.hall.headsets.prompt": "Kopfhörer ansehen",
+  "explore.veltrava.hall.headsets.text": "Vor den Kabinen liegen Kopfhörer mit einem Wahlschalter von 1 bis 4. Ein Dreh, und jeder Delegierte hört die Sitzung in seiner Sprache. Ob er versteht, was gemeint war, regelt kein Schalter."
+ }
+}

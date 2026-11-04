@@ -1,0 +1,145 @@
+{
+ "area": "veltrava",
+ "doc": "documentation/C3_DESIGN.md §4.1/§6, TECHNICAL_ARCHITECTURE §12.1 — optional finds and chats at Bahnhof Veltrava (Alexei). Texts: data/locale/de_explore_veltrava.json. Hotspots exp_<name> in assets/environments/veltrava_station/scene.json. Order = position along the platform (x).",
+ "entries": [
+  {
+   "id": "veltrava.station.footprints",
+   "kind": "secret",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.footprints.title",
+   "text_key": "explore.veltrava.station.footprints.text",
+   "prompt_key": "explore.veltrava.station.footprints.prompt"
+  },
+  {
+   "id": "veltrava.station.four_rails",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.four_rails.title",
+   "text_key": "explore.veltrava.station.four_rails.text",
+   "prompt_key": "explore.veltrava.station.four_rails.prompt"
+  },
+  {
+   "id": "veltrava.station.chat_voronova",
+   "kind": "chat",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.chat_voronova.title",
+   "text_key": "explore.veltrava.station.chat_voronova.text",
+   "prompt_key": "explore.veltrava.station.chat_voronova.prompt",
+   "lines": [
+    {"speaker": "voronova", "key": "explore.veltrava.station.chat_voronova.l1", "expr": "neutral"},
+    {"speaker": "voronova", "key": "explore.veltrava.station.chat_voronova.l2", "expr": "determined"},
+    {"speaker": "alexei", "key": "explore.veltrava.station.chat_voronova.l3", "expr": "concerned"},
+    {"speaker": "voronova", "key": "explore.veltrava.station.chat_voronova.l4", "expr": "neutral"},
+    {"speaker": "voronova", "key": "explore.veltrava.station.chat_voronova.l5", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.station.chat_voronova.l6", "expr": "neutral"},
+    {"speaker": "voronova", "key": "explore.veltrava.station.chat_voronova.l7", "expr": "determined"}
+   ]
+  },
+  {
+   "id": "veltrava.station.luggage",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.luggage.title",
+   "text_key": "explore.veltrava.station.luggage.text",
+   "prompt_key": "explore.veltrava.station.luggage.prompt"
+  },
+  {
+   "id": "veltrava.station.pigeons",
+   "kind": "easter_egg",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.pigeons.title",
+   "text_key": "explore.veltrava.station.pigeons.text",
+   "prompt_key": "explore.veltrava.station.pigeons.prompt"
+  },
+  {
+   "id": "veltrava.station.bogie",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.bogie.title",
+   "text_key": "explore.veltrava.station.bogie.text",
+   "prompt_key": "explore.veltrava.station.bogie.prompt"
+  },
+  {
+   "id": "veltrava.station.mitten",
+   "kind": "easter_egg",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.mitten.title",
+   "text_key": "explore.veltrava.station.mitten.text",
+   "prompt_key": "explore.veltrava.station.mitten.prompt"
+  },
+  {
+   "id": "veltrava.station.clock",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.clock.title",
+   "text_key": "explore.veltrava.station.clock.text",
+   "prompt_key": "explore.veltrava.station.clock.prompt"
+  },
+  {
+   "id": "veltrava.station.kiosk",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.kiosk.title",
+   "text_key": "explore.veltrava.station.kiosk.text",
+   "prompt_key": "explore.veltrava.station.kiosk.prompt"
+  },
+  {
+   "id": "veltrava.station.poster",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.poster.title",
+   "text_key": "explore.veltrava.station.poster.text",
+   "prompt_key": "explore.veltrava.station.poster.prompt"
+  },
+  {
+   "id": "veltrava.station.chat_officer",
+   "kind": "chat",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.chat_officer.title",
+   "text_key": "explore.veltrava.station.chat_officer.text",
+   "prompt_key": "explore.veltrava.station.chat_officer.prompt",
+   "lines": [
+    {"speaker": "alexei", "key": "explore.veltrava.station.chat_officer.l1", "expr": "neutral"},
+    {"speaker": "border_officer", "key": "explore.veltrava.station.chat_officer.l2", "expr": "neutral"},
+    {"speaker": "border_officer", "key": "explore.veltrava.station.chat_officer.l3", "expr": "determined"},
+    {"speaker": "alexei", "key": "explore.veltrava.station.chat_officer.l4", "expr": "neutral"},
+    {"speaker": "border_officer", "key": "explore.veltrava.station.chat_officer.l5", "expr": "neutral"},
+    {"speaker": "border_officer", "key": "explore.veltrava.station.chat_officer.l6", "expr": "neutral"},
+    {"speaker": "border_officer", "key": "explore.veltrava.station.chat_officer.l7", "expr": "concerned"}
+   ]
+  },
+  {
+   "id": "veltrava.station.return_notice",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.return_notice.title",
+   "text_key": "explore.veltrava.station.return_notice.text",
+   "prompt_key": "explore.veltrava.station.return_notice.prompt",
+   "history": ["hist.soviet.repatriation"]
+  },
+  {
+   "id": "veltrava.station.stove",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.stove.title",
+   "text_key": "explore.veltrava.station.stove.text",
+   "prompt_key": "explore.veltrava.station.stove.prompt"
+  },
+  {
+   "id": "veltrava.station.exchange",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.exchange.title",
+   "text_key": "explore.veltrava.station.exchange.text",
+   "prompt_key": "explore.veltrava.station.exchange.prompt"
+  },
+  {
+   "id": "veltrava.station.tram",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.tram.title",
+   "text_key": "explore.veltrava.station.tram.text",
+   "prompt_key": "explore.veltrava.station.tram.prompt"
+  }
+ ]
+}
