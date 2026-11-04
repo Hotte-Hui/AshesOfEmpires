@@ -1,0 +1,16 @@
+﻿shot_id,act,t_start,t_end,camera,on_screen_beat,asset_ids,gameplay_requirements
+S001,A1,00:00,00:35,wide,Depot skyline; introduce civilian-scale rebuilding,A001,none
+S002,A1,00:35,01:10,tracking,Alexei arrives; steam and railcar silhouettes,A001 A009,skip to spawn
+S003,A1,01:10,03:10,medium,Irina handoff and relationship setup,A004 A010,complete dialogue 5 nodes
+S004,A1,03:10,05:50,insert,Siegel and timetable closeups,A005 A006,arbitrary order
+S005,A1,05:50,08:50,fixed,Fictional disconnected symbol board,A008,repeat/hint
+S006,A1,08:50,10:40,insert,Frachtbuch discrepancy,A007,C-17 clue
+S007,A1,10:40,12:10,face-to-face,Two choices with Irina,A010 A024,once-only effects
+S008,transition,12:10,12:20,match cut,C-17 stamp to Berlin handwritten note,A027,skip-safe
+S009,M1,12:20,13:40,side-on,Establish Matthias/office,A013 A018,scene spawn
+S010,M1,13:40,16:50,close,Plan overlay challenge,A015 A016 A017,repeat/hint
+S011,M1,16:50,17:05,exterior reveal,Fictional Great Hall + ordinary displaced people,A014 A020 A028,critical framing
+S012,M1,17:05,19:50,medium,Emil dialogue,A019 A024,complete dialogue 5 nodes
+S013,M1,19:50,21:20,close,Archive choice,A021 A024,once-only effects
+S014,finale,21:20,22:00,intercut,Two matched contract clues,A029,no premature meeting
+S015,finale,22:00,24:00,static,Journal epilogue and demo-complete,A023,safe resume and restart

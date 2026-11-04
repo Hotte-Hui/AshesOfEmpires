@@ -1,0 +1,86 @@
+{
+  "schema_version": 3,
+  "sequences": [
+    {
+      "id": "LS_A1_ToM1",
+      "trigger_event": "a1_completed",
+      "skip_policy": "dispatch_next_scene_only_once",
+      "shots": [
+        {
+          "id": "s1",
+          "duration_s": 4,
+          "shot": "Close-up on C-17 cargo stamp; ambient yard fades",
+          "camera": "macro_locked"
+        },
+        {
+          "id": "s2",
+          "duration_s": 2,
+          "shot": "Match cut to C-17 hand annotation on Berlin blueprint",
+          "camera": "macro_locked"
+        },
+        {
+          "id": "s3",
+          "duration_s": 3,
+          "shot": "Wide of archive; hand control to Matthias",
+          "camera": "side_on"
+        }
+      ]
+    },
+    {
+      "id": "LS_M1_Hall",
+      "trigger_objective": "m1_align_plans",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "h1",
+          "duration_s": 3,
+          "shot": "Camera leaves the drawing through an archival window",
+          "camera": "crane"
+        },
+        {
+          "id": "h2",
+          "duration_s": 5,
+          "shot": "Great Hall distant monumental silhouette, ordinary people foreground",
+          "camera": "establishing"
+        },
+        {
+          "id": "h3",
+          "duration_s": 3,
+          "shot": "Return to office workbench",
+          "camera": "fixed"
+        }
+      ]
+    },
+    {
+      "id": "LS_X1_Final",
+      "trigger_event": "m1_completed",
+      "skip_policy": "mark_finale_complete_once",
+      "shots": [
+        {
+          "id": "x1",
+          "duration_s": 4,
+          "shot": "Alexei files document; fade to Berlin tram bell",
+          "camera": "close"
+        },
+        {
+          "id": "x2",
+          "duration_s": 4,
+          "shot": "Matthias folds matching memorandum",
+          "camera": "close"
+        },
+        {
+          "id": "x3",
+          "duration_s": 4,
+          "shot": "Neutral-border schematic; no character control",
+          "camera": "top_down"
+        },
+        {
+          "id": "x4",
+          "duration_s": 3,
+          "shot": "Demo end and future-chapter promise",
+          "camera": "ui"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "schema_version": 3,
+  "slice_end_requires": [
+    "a1_completed",
+    "m1_completed"
+  ],
+  "quests": [
+    {
+      "id": "q_a1_last_signal",
+      "title_key": "ui.chapter_a1",
+      "character": "alexei",
+      "scene": "L_A1_Railyard",
+      "requires_events": [],
+      "completion_event": "a1_completed",
+      "objectives": [
+        {
+          "id": "a1_talk_irina",
+          "type": "dialogue",
+          "text_key": "obj.a1_talk",
+          "requires": [],
+          "dialogue_id": "dlg_a1_irina"
+        },
+        {
+          "id": "a1_inspect_seal",
+          "type": "inspect",
+          "text_key": "obj.a1_seal",
+          "requires": [
+            "a1_talk_irina"
+          ],
+          "grant_item": "ev_damaged_seal"
+        },
+        {
+          "id": "a1_inspect_timetable",
+          "type": "inspect",
+          "text_key": "obj.a1_timetable",
+          "requires": [
+            "a1_talk_irina"
+          ],
+          "grant_item": "ev_timetable"
+        },
+        {
+          "id": "a1_solve_signal",
+          "type": "puzzle",
+          "text_key": "obj.a1_signal",
+          "requires": [
+            "a1_inspect_seal",
+            "a1_inspect_timetable"
+          ],
+          "puzzle_id": "pz_signal",
+          "effects": {
+            "signal_restored": {
+              "set": true
+            }
+          }
+        },
+        {
+          "id": "a1_inspect_ledger",
+          "type": "inspect",
+          "text_key": "obj.a1_ledger",
+          "requires": [
+            "a1_solve_signal"
+          ],
+          "grant_item": "ev_ledger",
+          "effects": {
+            "c17_confirmed": {
+              "set": true
+            }
+          }
+        },
+        {
+          "id": "a1_choose",
+          "type": "choice",
+          "text_key": "obj.a1_choice",
+          "requires": [
+            "a1_inspect_ledger"
+          ],
+          "choices": [
+            {
+              "id": "share_with_irina",
+              "text_key": "choice.share_irina",
+              "effects": {
+                "irina_trust": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "keep_private",
+              "text_key": "choice.keep_private",
+              "effects": {
+                "alexei_secrecy": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_m1_wrong_blueprint",
+      "title_key": "ui.chapter_m1",
+      "character": "konrad",
+      "scene": "L_M1_Archive",
+      "requires_events": [
+        "a1_completed"
+      ],
+      "completion_event": "m1_completed",
+      "objectives": [
+        {
+          "id": "m1_inspect_plan_a",
+          "type": "inspect",
+          "text_key": "obj.m1_plan_a",
+          "requires": [],
+          "grant_item": "ev_plan_a"
+        },
+        {
+          "id": "m1_inspect_plan_b",
+          "type": "inspect",
+          "text_key": "obj.m1_plan_b",
+          "requires": [],
+          "grant_item": "ev_plan_b"
+        },
+        {
+          "id": "m1_align_plans",
+          "type": "puzzle",
+          "text_key": "obj.m1_overlay",
+          "requires": [
+            "m1_inspect_plan_a",
+            "m1_inspect_plan_b"
+          ],
+          "puzzle_id": "pz_blueprint",
+          "effects": {
+            "blueprint_match_confirmed": {
+              "set": true
+            }
+          }
+        },
+        {
+          "id": "m1_talk_emil",
+          "type": "dialogue",
+          "text_key": "obj.m1_emil",
+          "requires": [
+            "m1_align_plans"
+          ],
+          "dialogue_id": "dlg_m1_emil",
+          "grant_item": "ev_emil_note"
+        },
+        {
+          "id": "m1_choose",
+          "type": "choice",
+          "text_key": "obj.m1_choice",
+          "requires": [
+            "m1_talk_emil"
+          ],
+          "choices": [
+            {
+              "id": "preserve_evidence",
+              "text_key": "choice.keep_copy",
+              "effects": {
+                "konrad_evidence": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "request_explanation",
+              "text_key": "choice.ask_official",
+              "effects": {
+                "office_suspicion": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

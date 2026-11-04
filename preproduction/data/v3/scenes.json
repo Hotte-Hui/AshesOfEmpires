@@ -1,0 +1,39 @@
+{
+  "schema_version": 3,
+  "start_scene": "L_A1_Railyard",
+  "scenes": [
+    {
+      "id": "L_A1_Railyard",
+      "title_key": "world.a1.title",
+      "protagonist": "alexei",
+      "camera_mode": "oblique_2_5d",
+      "entry_spawn": "SP_A1_Platform",
+      "associated_quest": "q_a1_last_signal",
+      "exit_on_event": "a1_completed",
+      "next_scene": "L_M1_Archive",
+      "render_profile": "rp_soviet_dusk"
+    },
+    {
+      "id": "L_M1_Archive",
+      "title_key": "world.m1.title",
+      "protagonist": "matthias",
+      "camera_mode": "side_on_2d_plus_3d_reveal",
+      "entry_spawn": "SP_M1_Office",
+      "associated_quest": "q_m1_wrong_blueprint",
+      "exit_on_event": "m1_completed",
+      "next_scene": "L_X1_Montage",
+      "render_profile": "rp_berlin_copper"
+    },
+    {
+      "id": "L_X1_Montage",
+      "title_key": "world.x1.title",
+      "protagonist": "none",
+      "camera_mode": "cinematic",
+      "entry_spawn": "none",
+      "associated_quest": null,
+      "exit_on_event": "slice_completed",
+      "next_scene": null,
+      "render_profile": "rp_transition"
+    }
+  ]
+}

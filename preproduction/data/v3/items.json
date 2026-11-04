@@ -1,0 +1,47 @@
+{
+  "schema_version": 3,
+  "items": [
+    {
+      "id": "ev_damaged_seal",
+      "name_key": "item.seal.name",
+      "description_key": "item.seal.description",
+      "scene": "L_A1_Railyard",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_timetable",
+      "name_key": "item.timetable.name",
+      "description_key": "item.timetable.description",
+      "scene": "L_A1_Railyard",
+      "category": "document"
+    },
+    {
+      "id": "ev_ledger",
+      "name_key": "item.ledger.name",
+      "description_key": "item.ledger.description",
+      "scene": "L_A1_Railyard",
+      "category": "document"
+    },
+    {
+      "id": "ev_plan_a",
+      "name_key": "item.plan_a.name",
+      "description_key": "item.plan_a.description",
+      "scene": "L_M1_Archive",
+      "category": "document"
+    },
+    {
+      "id": "ev_plan_b",
+      "name_key": "item.plan_b.name",
+      "description_key": "item.plan_b.description",
+      "scene": "L_M1_Archive",
+      "category": "document"
+    },
+    {
+      "id": "ev_emil_note",
+      "name_key": "item.emil_note.name",
+      "description_key": "item.emil_note.description",
+      "scene": "L_M1_Archive",
+      "category": "document"
+    }
+  ]
+}

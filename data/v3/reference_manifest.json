@@ -1,0 +1,31 @@
+{
+  "schema_version": 3,
+  "reference_usage": "local style study only; do not redistribute in a game release without permission",
+  "source": "user-uploaded references",
+  "assets": [
+    {
+      "id": "ref_dark_hall",
+      "path": "references/reference_01.jpeg",
+      "usage": "interior_silhouette_palette",
+      "license_status": "reference_only"
+    },
+    {
+      "id": "ref_industrial",
+      "path": "references/reference_02.jpeg",
+      "usage": "soviet_industrial_city",
+      "license_status": "reference_only"
+    },
+    {
+      "id": "ref_street",
+      "path": "references/reference_03.jpeg",
+      "usage": "desaturated_street",
+      "license_status": "reference_only"
+    },
+    {
+      "id": "ref_facade",
+      "path": "references/reference_04.jpeg",
+      "usage": "architectural_depth",
+      "license_status": "reference_only"
+    }
+  ]
+}

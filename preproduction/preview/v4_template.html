@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASHES OF EMPIRES · Offline Story Lab v0.4</title>
+<style>
+:root{color-scheme:dark;--ink:#e8e5d9;--muted:#a5aca9;--bg:#0a1119;--panel:#15202a;--border:#3c4b50;--accent:#f4ab73;--accent2:#adc7b5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1e2c32,#080e16 80%);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{max-width:1400px;margin:auto;padding:20px 22px 12px;display:flex;gap:14px;align-items:end;justify-content:space-between;flex-wrap:wrap}
+h1{font-size:clamp(22px,3vw,36px);letter-spacing:.12em;margin:0;font-weight:650;color:#f5d0a0}
+.kicker{font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+.sub{font-size:12px;color:var(--muted)}button{cursor:pointer;font:inherit;border-radius:6px;background:#21303a;color:var(--ink);border:1px solid var(--border);padding:9px 12px;transition:border-color .12s,background .12s}
+button:hover,button:focus-visible{border-color:var(--accent);background:#31434b;outline:2px solid transparent}button:focus-visible{outline:3px solid #e5b179;outline-offset:2px}
+button.primary{background:#be784f;border-color:#efb38b;color:#14171c;font-weight:750}button.primary:hover{background:#e3a073}
+button:disabled{opacity:.45;cursor:default}.shell{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(330px,1fr);gap:16px;max-width:1400px;padding:0 20px 30px;margin:auto}
+.main,.side{border:1px solid var(--border);border-radius:9px;background:rgba(14,24,32,.94);overflow:hidden}
+.stage{padding:15px;background:#090e17;position:relative}.stage canvas{display:block;width:100%;height:auto;image-rendering:pixelated;border:2px solid #526064;aspect-ratio:16/9;background:#15202a}
+.scene-label{color:#c7c7bc;font-size:12px;text-transform:uppercase;letter-spacing:.1em;display:flex;justify-content:space-between;gap:10px;margin-top:9px}
+.body{padding:16px 20px 20px}h2{font-size:18px;margin:0 0 10px;color:#d9bea0}h3{margin:17px 0 7px;color:#d6e4d2;font-size:14px}
+p{margin:8px 0 12px}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+.progress{height:7px;background:#28353a;border-radius:20px;overflow:hidden;margin:13px 0}.progress div{height:100%;background:linear-gradient(90deg,#668d80,#e8ab74)}
+.actions{display:grid;gap:8px}.actions button{width:100%;text-align:left}.tag{display:inline-block;font-size:11px;padding:2px 6px;border:1px solid #68736c;border-radius:4px;color:#cbd8bd;margin-right:7px}
+.dialogue{border-left:4px solid #d49b6d;background:#202b32;padding:11px 15px;margin:10px 0}.speaker{font-size:12px;color:#ffc991;text-transform:uppercase;letter-spacing:.1em}
+.item{border-bottom:1px solid #31414b;padding:6px 0}.item:last-child{border:0}.event{padding:6px 8px;background:#263944;color:#cee2d2;border-left:2px solid #8eb8ab;margin:8px 0}
+.choices{display:grid;gap:8px}.controls{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}.code{font:12px/1.4 ui-monospace,Consolas,monospace;background:#0d151e;padding:8px;border-radius:5px;color:#b6dacc}
+footer{max-width:1400px;padding:0 22px 28px;margin:auto;color:#94a7a6;font-size:12px}
+hr{border:0;border-top:1px solid #354248;margin:18px 0}.toptools{display:flex;flex-wrap:wrap;gap:8px}.toptools button{font-size:12px;padding:7px 9px}
+@media(max-width:920px){.shell{grid-template-columns:1fr}.side{order:2}}@media(prefers-reduced-motion:reduce){button{transition:none}}
+</style></head><body>
+<header><div><div class="kicker">Cinematic investigation · playable state prototype</div><h1>ASHES OF EMPIRES</h1><div class="sub">THE LAST WINTER · V0.4 · Eigenständige pixelige Platzhalter-Szenen · Keine UE5-Version</div></div>
+<div class="toptools"><button id="exportBtn">Spielstand exportieren</button><button id="importBtn">Spielstand importieren</button><input id="importFile" type="file" accept=".json,application/json" hidden><button id="restartBtn">Neu beginnen</button></div></header>
+<div class="shell"><main class="main"><div class="stage"><canvas id="scene" width="480" height="270" role="img" aria-label="Pixelige Illustration des aktuellen Schauplatzes"></canvas><div class="scene-label"><span id="sceneName"></span><span id="heroName"></span></div></div><div class="body"><h2 id="taskTitle"></h2><p id="status" role="status" aria-live="polite" class="muted"></p><div id="interactive"></div></div></main>
+<aside class="side"><div class="body"><div class="kicker">Untersuchungsprotokoll</div><h2>Aufgaben & Belege</h2><div class="progress"><div id="progressBar" style="width:0"></div></div><div id="progressText" class="small"></div><h3>Aktuelle Ermittlungen</h3><div id="taskList" class="actions"></div><h3>Inventar</h3><div id="inventory" class="small"></div><h3>Entscheidungen</h3><div id="branches" class="small"></div><h3>Sequenzen</h3><div id="sequences" class="small"></div></div></aside></div>
+<footer>Offline-Story-Labor. Die generierten Pixelbilder sind nur ein eigenständiger UI-Platzhalter und keine Kopien der hochgeladenen Referenzbilder. Rechte an den Referenzen ungeklärt. Story-Daten werden aus <code>data/v3/</code> beim Erstellen der Vorschau eingebettet. Keine Netzwerkverbindung erforderlich.</footer>
+<script>
+'use strict';
+const DB=/*__GAME_DATA__*/;
+const FF='ashes_of_empires_story_reference_v4';
+const scenes=Object.fromEntries(DB.scenes.scenes.map(s=>[s.id,s]));
+const quests=DB.quests.quests;
+const objectives=Object.fromEntries(quests.flatMap(q=>q.objectives.map(o=>[o.id,{q,o}])));
+const conversations=Object.fromEntries(DB.dialogue.conversations.map(d=>[d.id,d]));
+const puzzles=Object.fromEntries(DB.puzzles.puzzles.map(p=>[p.id,p]));
+const itemDefs=Object.fromEntries(DB.items.items.map(i=>[i.id,i]));
+const T=k=>DB.locale_de.strings[k]||k;
+const $=id=>document.getElementById(id);
+let mode=null, temp={}, notice='';
+function fresh(){return {format:FF,save_version:3,flags:Object.fromEntries(Object.entries(DB.flags.flags).map(([k,v])=>[k,v.default])),completed_objectives:[],completed_events:[],inventory:[],choice_history:{},current_scene:DB.scenes.start_scene,active_character:'alexei',dialogue_progress:{},puzzle_attempts:{},cinematics_seen:[],finale_viewed:false};}
+let state=fresh();
+const available=()=>quests.filter(q=>q.scene===state.current_scene && (q.requires_events||[]).every(e=>state.completed_events.includes(e))).flatMap(q=>q.objectives).filter(o=>!state.completed_objectives.includes(o.id) && (o.requires||[]).every(x=>state.completed_objectives.includes(x)));
+function applyEffects(e){for(const [k,s] of Object.entries(e||{})){const d=DB.flags.flags[k];state.flags[k]=d.type==='boolean'?s.set:Math.max(d.min,Math.min(d.max,state.flags[k]+s.delta));}}
+function complete(id,choice){const {q,o}=objectives[id];if(!available().some(x=>x.id===id))throw Error('Dieses Ziel ist gesperrt.');if(o.type==='choice'&& !o.choices.some(c=>c.id===choice))throw Error('Ungültige Entscheidung');applyEffects(o.type==='choice'?o.choices.find(c=>c.id===choice).effects:o.effects);state.completed_objectives.push(id);if(o.grant_item&&!state.inventory.includes(o.grant_item))state.inventory.push(o.grant_item);if(choice)state.choice_history[id]=choice;delete state.dialogue_progress[id];
+ if(q.objectives.every(x=>state.completed_objectives.includes(x.id))){state.completed_events.push(q.completion_event);const s=scenes[q.scene];state.current_scene=s.next_scene;state.active_character=scenes[s.next_scene].protagonist;notice='Kapitel abgeschlossen. Die Perspektive wechselt.';}
+ mode=null;persist();render();}
+function interact(id){const o=objectives[id].o;if(!available().some(x=>x.id===id))return;
+ if(o.type==='inspect'){complete(id);notice='Beweis gesichert: '+T(itemDefs[o.grant_item].name_key);render();return;}
+ if(o.type==='dialogue'){mode={type:'dialogue',id};if(!state.dialogue_progress[id])state.dialogue_progress[id]=conversations[o.dialogue_id].entry_node;}
+ if(o.type==='puzzle'){mode={type:'puzzle',id};temp={seq:[],rotation_steps:0,offset_x:0,offset_y:0};}
+ if(o.type==='choice')mode={type:'choice',id};notice='';persist();render();}
+function advance(){const id=mode.id, o=objectives[id].o,d=conversations[o.dialogue_id];const node=d.nodes.find(n=>n.id===state.dialogue_progress[id]);if(node.end){complete(id);return;}state.dialogue_progress[id]=node.next;persist();render();}
+function submitSignal(sym){const id=mode.id, p=puzzles[objectives[id].o.puzzle_id];temp.seq.push(sym);if(temp.seq.length===p.solution.length){const ok=temp.seq.every((v,i)=>v===p.solution[i]);if(ok){notice='Rätsel gelöst.';complete(id);return;}state.puzzle_attempts[id]=(state.puzzle_attempts[id]||0)+1;temp.seq=[];notice='Die Reihenfolge stimmt noch nicht. Versuche es erneut.';persist();}render();}
+function submitOverlay(){const id=mode.id, p=puzzles[objectives[id].o.puzzle_id];const ok=Object.entries(p.solution).every(([k,v])=>temp[k]===v);if(ok){notice='Die beiden Baupläne stimmen überein.';complete(id);return;}state.puzzle_attempts[id]=(state.puzzle_attempts[id]||0)+1;notice='Die Markierungen liegen noch nicht übereinander.';persist();render();}
+function finalize(){if(state.current_scene!=='L_X1_Montage'||!DB.quests.slice_end_requires.every(x=>state.completed_events.includes(x)))return;if(!state.completed_events.includes('slice_completed')){state.completed_events.push('slice_completed');state.flags.slice_finished=true;}state.finale_viewed=true;mode=null;notice='Demo abgeschlossen – beide Perspektiven sind verbunden.';persist();render();}
+function persist(){try{localStorage.setItem('ashes_v4_reference',JSON.stringify(state));}catch(_){/* manual export remains available */}}
+function importState(o){if(!o||o.format!==FF||o.save_version!==3||!Array.isArray(o.completed_objectives)||!Array.isArray(o.completed_events)||!Array.isArray(o.inventory)||!o.choice_history||!scenes[o.current_scene])throw Error('Kein gültiges Story-Labor-v0.4-Dateiformat');if(o.completed_objectives.some(x=>!(x in objectives)))throw Error('Ungültiger Zielbezeichner');if(o.active_character!==scenes[o.current_scene].protagonist)throw Error('Szene und Figur stimmen nicht überein');
+ // Browser view is not an authoritative validator: use tools/story_engine_v4.py to verify exported saves.
+ state=structuredClone(o);mode=null;temp={};persist();notice='Spielstand geladen. Für vollständige Gültigkeitsprüfung die Python-Tests verwenden.';render();}
+function escapeHTML(x){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function btn(label,action,alt=''){return `<button data-action="${action}" ${alt}>${escapeHTML(label)}</button>`;}
+function render(){const isEnd=state.current_scene==='L_X1_Montage';const s=scenes[state.current_scene];$('sceneName').textContent=T(s.title_key);$('heroName').textContent=state.active_character==='none'?'Montage':state.active_character==='alexei'?'Alexei Morozov':'Matthias Adler';
+ $('taskTitle').textContent=isEnd?'Zwei Städte · Eine Vertragsserie':mode?T(objectives[mode.id].o.text_key):'Finde den Widerspruch';
+ $('status').textContent=notice||(!isEnd?'Untersuche die Hinweise in der vorgesehenen Reihenfolge. Rätsel und Gespräche sind echte Fortschrittsbedingungen.':'Die Untersuchungen sind abgeschlossen. Sichere deinen Spielstand oder beende die Demo.');
+ let out='';if(isEnd){out=`<div class="dialogue"><div class="speaker">Abschluss</div><p>${escapeHTML(T('cinematic.final'))}</p><p>Alexei und Matthias haben sich noch nicht getroffen. Der nächste Abschnitt verbindet ihre Ermittlungen.</p></div>${state.finale_viewed?'<p class="event">Demo erfolgreich abgeschlossen.</p>':btn('Abschluss ansehen / überspringen','finale','class="primary"')}`;}
+ else if(mode){const {o}=objectives[mode.id];if(mode.type==='dialogue'){const d=conversations[o.dialogue_id];const node=d.nodes.find(x=>x.id===state.dialogue_progress[mode.id]);out=`<div class="dialogue"><div class="speaker">${escapeHTML(node.speaker)}</div><p>${escapeHTML(T(node.text_key))}</p></div>${btn(node.end?'Gespräch beenden':'Weiter','advance','class="primary"')}`;}
+ else if(mode.type==='choice'){out='<p>Beide Entscheidungen haben spätere Folgen. Sie werden nicht als Gut/Böse-Punkte bewertet.</p><div class="choices">'+o.choices.map(c=>btn(T(c.text_key),'choice:'+c.id)).join('')+'</div>';}
+ else if(mode.type==='puzzle'){const p=puzzles[o.puzzle_id];const tries=state.puzzle_attempts[mode.id]||0;out=`<p class="small">Fehlversuche: ${tries} · Unbegrenzte Wiederholungen · Kein Zeitlimit</p>`;
+ if(p.type==='symbol_order'){const names={square:'Quadrat',circle:'Kreis',triangle:'Dreieck'};out+=`<p>Finde anhand der Hinweise die richtige Reihenfolge für das stromlose, fiktive Übungsmodell.</p><div class="code">Gewählt: ${temp.seq.map(x=>names[x]).join(' → ')||'noch nichts'}</div><div class="controls">${p.display_symbols.map(x=>btn(names[x],'symbol:'+x)).join('')}</div>${btn('Auswahl zurücksetzen','resetseq')}`;}
+ else{out+='<p>Justiere die zwei Zeichnungen so, dass die markierten Punkte deckungsgleich sind.</p><div class="code">Drehung: '+temp.rotation_steps+' · X: '+temp.offset_x+' · Y: '+temp.offset_y+'</div><div class="controls">'+['rotation_steps','offset_x','offset_y'].map(k=>btn(k+' −','adjust:'+k+':-1')+btn(k+' +','adjust:'+k+':1')).join('')+'</div>'+btn('Pläne vergleichen','checkoverlay','class="primary"');}
+ if(tries>=p.hint_after_attempts)out+='<p class="event">Tipp: '+(p.type==='symbol_order'?'Beginne mit der eckigen Form. Der Kreis steht in der Mitte.':'Der Vorentwurf muss nicht gedreht werden. Vergleiche die waagerechte Verschiebung vor der senkrechten.')+'</p>';}
+ }else{out='<p class="muted">Wähle rechts eine verfügbare Ermittlung aus, um ein Gespräch, einen Fund oder ein Rätsel zu beginnen.</p>';}
+ $('interactive').innerHTML=out;
+ const open=available();const done=state.completed_objectives.length;
+ $('taskList').innerHTML=isEnd?'<p class="event">Alle aktuellen Ermittlungen abgeschlossen.</p>':quests.filter(q=>q.scene===state.current_scene).flatMap(q=>q.objectives).map(o=>{const finished=state.completed_objectives.includes(o.id);const active=open.some(x=>x.id===o.id);return `<button data-action="objective:${o.id}" ${!active||mode?'disabled':''}><span class="tag">${finished?'✓':active?'Jetzt':'Gesperrt'}</span>${escapeHTML(T(o.text_key))}</button>`;}).join('');
+ $('progressBar').style.width=Math.round(done/11*100)+'%';$('progressText').textContent=`${done}/11 Ziele abgeschlossen · ${state.completed_events.length}/3 Ereignisse`;
+ $('inventory').innerHTML=state.inventory.length?state.inventory.map(id=>`<div class="item"><strong>${escapeHTML(T(itemDefs[id].name_key))}</strong><div>${escapeHTML(T(itemDefs[id].description_key))}</div></div>`).join(''):'Noch keine Beweise.';
+ $('branches').innerHTML=Object.entries(state.choice_history).length?Object.entries(state.choice_history).map(([k,v])=>`<div class="item">${escapeHTML(k)}: ${escapeHTML(v)}</div>`).join(''):'Noch keine Entscheidung getroffen.';
+ $('sequences').innerHTML=DB.cinematics.sequences.filter(c=>state.completed_events.includes(c.trigger_event)||state.completed_objectives.includes(c.trigger_objective)).map(c=>`<div class="item">${escapeHTML(c.id)} ${btn(state.cinematics_seen.includes(c.id)?'Angesehen':'Sequenz markieren / überspringen','cinematic:'+c.id,state.cinematics_seen.includes(c.id)?'disabled':'')}</div>`).join('')||'Noch keine Sequenz verfügbar.';
+ drawScene();}
+$('interactive').addEventListener('click',e=>{const b=e.target.closest('button[data-action]');if(b)dispatch(b.dataset.action);});
+$('taskList').addEventListener('click',e=>{const b=e.target.closest('button[data-action]');if(b)dispatch(b.dataset.action);});
+$('sequences').addEventListener('click',e=>{const b=e.target.closest('button[data-action]');if(b)dispatch(b.dataset.action);});
+function dispatch(a){try{if(a.startsWith('objective:'))interact(a.slice(10));else if(a==='advance')advance();else if(a.startsWith('choice:'))complete(mode.id,a.slice(7));else if(a.startsWith('symbol:'))submitSignal(a.slice(7));else if(a==='resetseq'){temp.seq=[];render();}else if(a.startsWith('adjust:')){const [_,key,delta]=a.split(':');temp[key]+=Number(delta);if(key==='rotation_steps')temp[key]=(temp[key]+4)%4;temp.offset_x=Math.max(-4,Math.min(4,temp.offset_x));temp.offset_y=Math.max(-4,Math.min(4,temp.offset_y));render();}else if(a==='checkoverlay')submitOverlay();else if(a==='finale')finalize();else if(a.startsWith('cinematic:')){const seq=a.slice(10);if(state.cinematics_seen.includes(seq))return;state.cinematics_seen.push(seq);notice='Filmsequenz als angesehen markiert (nur Präsentation).';persist();render();}}catch(ex){notice=ex.message;render();}}
+$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='AOE_v04_save.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);};
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>131072)throw Error('Spielstand zu groß');importState(JSON.parse(await file.text()));}catch(err){notice='Import fehlgeschlagen: '+err.message;render();}e.target.value='';};
+$('restartBtn').onclick=()=>{if(!confirm('Wirklich neu beginnen? Vorher einen Spielstand exportieren.'))return;state=fresh();mode=null;temp={};notice='Neues Spiel gestartet.';persist();render();};
+// All geometry below is original algorithmic placeholder art, not a reproduction of source images.
+const canvas=$('scene'),ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
+const R=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x|0,y|0,w|0,h|0);};
+let rndSeed=711;function rand(){rndSeed=(rndSeed*1664525+1013904223)>>>0;return rndSeed/4294967296;}
+function windowGrid(x,y,cols,rows,dx,dy,lit){for(let j=0;j<rows;j++)for(let i=0;i<cols;i++)if(rand()>.12)R(x+i*dx,y+j*dy,3,5,rand()>.84?lit:'#35494f');}
+function drawKarsk(){rndSeed=772;R(0,0,480,270,'#16252f');for(let y=0;y<170;y+=5)R(0,y,480,5,y<100?'#18313c':y<145?'#344750':'#785d5a');R(0,80,480,38,'#303d47');
+ // Smog-laden sky and controlled orange horizon; no extremist symbols.
+ for(let i=0;i<27;i++){let x=rand()*490,y=70+rand()*95,w=17+rand()*67;R(x,y,w,5+rand()*13,rand()>.67?'#73534c':'#45525a');}
+ R(60,65,40,136,'#26363c');R(100,85,85,122,'#2a3840');R(187,46,65,168,'#35464a');R(258,92,90,126,'#293c43');R(359,59,60,155,'#304047');
+ R(74,7,14,166,'#34474b');R(79,10,4,160,'#516568');R(303,10,21,202,'#29363d');R(314,0,3,182,'#536162');
+ windowGrid(111,100,10,7,7,14,'#df9c62');windowGrid(195,77,8,9,7,14,'#cd875e');
+ R(0,183,480,87,'#171e27');R(0,205,480,3,'#6d7470');for(let i=0;i<14;i++){R(i*39,215,29,1,'#b07d62');R(i*39+10,228,29,1,'#647477');}
+ R(0,202,480,3,'#8f8172');R(0,222,480,2,'#4b6269');R(0,242,480,2,'#4b6269');
+ // Box cars, rail couplers, silhouetted human figure.
+ R(15,160,133,37,'#344c52');R(19,166,126,26,'#48585a');for(let i=0;i<8;i++)R(26+i*15,170,2,15,'#28353b');R(28,199,10,8,'#202a33');R(109,199,10,8,'#202a33');
+ R(423,175,42,23,'#2b464e');R(430,182,25,7,'#cb916c');
+ R(240,191,7,18,'#17232d');R(238,182,11,12,'#141d27');R(240,174,6,8,'#b18b70');R(240,210,3,10,'#0c151e');R(246,210,3,10,'#0c151e');
+ for(let i=0;i<38;i++){let x=rand()*480,y=225+rand()*45;R(x,y,2+rand()*9,1,rand()>.4?'#5b5050':'#334b50');}}
+function drawBerlin(){rndSeed=964;R(0,0,480,270,'#151e2b');R(0,0,480,180,'#2b3f48');for(let y=13;y<137;y+=14)R(0,y,480,9,y%3===0?'#455257':'#30434b');
+ // Architectural megastructure seen as disturbing background power, not celebration.
+ R(262,44,145,134,'#4f5553');R(275,30,120,18,'#59615a');R(282,15,105,19,'#687064');R(322,4,21,23,'#788276');
+ for(let x=279;x<393;x+=14)R(x,65,6,107,'#343f43');for(let y=79;y<163;y+=17)R(279,y,114,4,'#434f51');
+ R(0,0,33,270,'#141f29');R(36,0,11,270,'#273941');R(438,0,42,270,'#162732');R(0,180,480,90,'#1b2c35');R(0,219,480,51,'#203039');
+ // Archive's interior foreground and window frames.
+ R(56,18,342,6,'#25333a');R(54,15,8,191,'#1a2b31');R(391,15,8,191,'#1c2d32');R(224,20,10,184,'#22323a');R(54,197,344,9,'#1a2a31');
+ R(79,120,83,64,'#31464a');windowGrid(85,131,10,3,7,14,'#b7aa7f');
+ R(115,213,245,13,'#35464b');R(127,224,10,46,'#26363b');R(336,224,10,46,'#26363b');R(135,200,103,15,'#a89972');R(137,196,85,5,'#c4b98f');R(155,203,2,12,'#776c55');
+ R(260,191,10,22,'#15232a');R(260,180,13,11,'#bba78b');R(258,213,5,13,'#172229');R(269,213,5,13,'#172229');
+ for(let i=0;i<35;i++){const x=rand()*480,y=227+rand()*43;R(x,y,rand()*10+1,1,'#455759');}}
+function drawFinal(){drawKarsk();R(235,0,10,270,'#d9a06c');ctx.save();ctx.beginPath();ctx.rect(245,0,235,270);ctx.clip();drawBerlin();ctx.restore();R(223,112,34,25,'#d5bd96');R(227,116,26,17,'#9f8a70');R(229,118,22,13,'#2d4045');R(232,122,16,3,'#efc492');}
+function drawScene(){if(state.current_scene==='L_A1_Railyard')drawKarsk();else if(state.current_scene==='L_M1_Archive')drawBerlin();else drawFinal();ctx.imageSmoothingEnabled=false;}
+try{const prev=localStorage.getItem('ashes_v4_reference');if(prev)importState(JSON.parse(prev));else render();}catch(_){state=fresh();notice='Lokaler Speicher nicht verfügbar. Exportiere Spielstände bei Bedarf manuell.';render();}
+</script></body></html>

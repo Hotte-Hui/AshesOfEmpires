@@ -1,0 +1,66 @@
+﻿Key,SourceString
+choice.ask_official,Eine offizielle Stellungnahme verlangen
+choice.keep_copy,Eine eigene Kopie des Vermerks sichern
+choice.keep_private,Den Hinweis vorerst für dich behalten
+choice.share_irina,Irina die vollständige Abweichung zeigen
+cinematic.a1_to_m1,Die rote Kennung C-17 wird zur Bleistiftnotiz auf einem Berliner Bauplan.
+cinematic.final,"Zwei fremde Orte. Dieselbe Kennung. Ein Frieden, dessen Akten nicht übereinstimmen."
+cinematic.hall_reveal,Die Große Halle füllt den Horizont; unten wartet eine Familie vor einer verschlossenen Wohnung.
+dlg.alexei.01,Was fehlt genau?
+dlg.alexei.02,Gib mir den Fahrplan und das Siegel. Ich prüfe es selbst.
+dlg.emil.01,"Es gibt die Pläne, nach denen gebaut wird. Und die, die man abheftet."
+dlg.emil.02,"Unmöglich ist im Archiv nur, was niemand eintragen darf."
+dlg.emil.03,Die Kennung C-17 ist kein Raum. Sie ist eine Serie von Verträgen.
+dlg.irina.01,Der Zug kam pünktlich. Die Wagen in den Papieren kamen nicht mit.
+dlg.irina.02,"Drei Nummern. Und ein Ziel, das auf keiner öffentlichen Karte steht."
+dlg.irina.03,"Dann schau zweimal hin. Einmal für die Akte, einmal für die Menschen."
+dlg.irina.branch_a,"Ich sage dir Bescheid, bevor ich etwas melde."
+dlg.irina.branch_b,"Je weniger du weißt, desto sicherer bist du vielleicht."
+dlg.matthias.01,Beide tragen dieselbe Genehmigung. Das ist unmöglich.
+dlg.matthias.02,Hier ist eine zweite Wand. Dahinter führt ein Korridor weiter.
+dlg.matthias.branch_a,Ich behalte eine Kopie. Das Original bleibt hier.
+dlg.matthias.branch_b,Ich stelle eine offizielle Anfrage. Es muss einen Vermerk geben.
+game.title,ASHES OF EMPIRES: THE LAST WINTER
+item.emil_note.description,Die Archivnummer verweist auf eine grenzübergreifende Bauserie: C-17.
+item.emil_note.name,Emils Notiz
+item.ledger.description,Eine neue Zeile trägt dieselbe Kennung C-17. Der Empfänger ist geschwärzt.
+item.ledger.name,Frachtbuch
+item.plan_a.description,Der öffentliche Grundriss zeigt einen abgeschlossenen Versorgungstrakt.
+item.plan_a.name,Genehmigter Plan
+item.plan_b.description,Im früheren Entwurf verläuft hinter der Wand ein Korridor.
+item.plan_b.name,Archivierter Vorentwurf
+item.seal.description,Die Nummer wurde doppelt gestempelt. Unter dem Abrieb steht C-17.
+item.seal.name,Beschädigtes Siegel
+item.timetable.description,"Drei Wagen wurden umgebucht, ohne dass ein Zielbahnhof genannt wird."
+item.timetable.name,Dienstfahrplan
+obj.a1_choice,"Entscheide, was du Irina erzählst."
+obj.a1_ledger,Prüfe das geänderte Frachtbuch.
+obj.a1_seal,Untersuche das beschädigte Siegel.
+obj.a1_signal,Löse das fiktive Signal-Rätsel am stillgelegten Übungskasten.
+obj.a1_talk,Sprich mit Irina über die fehlenden Waggons.
+obj.a1_timetable,Vergleiche den Fahrplan.
+obj.m1_choice,"Entscheide, was mit dem Hinweis geschieht."
+obj.m1_emil,Sprich mit Emil über die Abweichung.
+obj.m1_overlay,Lege beide Zeichnungen übereinander.
+obj.m1_plan_a,Untersuche den genehmigten Bauplan.
+obj.m1_plan_b,Untersuche den älteren Bauplan.
+ui.accessible,Lesemodus
+ui.back,Zurück
+ui.chapter_a1,Das letzte Signal
+ui.chapter_m1,Die falsche Zeichnung
+ui.chapter_x1,"Zwei Züge, ein Eintrag"
+ui.confirm,Bestätigen
+ui.continue,Fortsetzen
+ui.evidence,Beweise
+ui.interact,Untersuchen
+ui.invalid_action,Diese Handlung ist noch nicht verfügbar.
+ui.journal,Tagebuch
+ui.load,Laden
+ui.new_game,Neues Spiel
+ui.restart,Neu beginnen
+ui.save,Speichern
+ui.skip,Überspringen
+ui.slice_end,Ende der Demo – Fortsetzung in Entwicklung
+world.a1.title,Verladebahnhof Karsk (fiktiv)
+world.m1.title,Berliner Bauarchiv (alternative Geschichte)
+world.x1.title,Zwei Städte – ein Dokument

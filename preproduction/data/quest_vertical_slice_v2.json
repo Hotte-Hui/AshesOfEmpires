@@ -1,0 +1,123 @@
+{
+  "schema_version": 2,
+  "project": "ashes_of_empires",
+  "quests": [
+    {
+      "id": "q_a1_last_signal",
+      "character": "alexei",
+      "level": "L_A1_Railyard",
+      "objectives": [
+        {
+          "id": "a1_talk_irina",
+          "type": "dialogue",
+          "requires": []
+        },
+        {
+          "id": "a1_inspect_signal",
+          "type": "inspect",
+          "requires": [
+            "a1_talk_irina"
+          ]
+        },
+        {
+          "id": "a1_solve_signal",
+          "type": "puzzle",
+          "requires": [
+            "a1_inspect_signal"
+          ]
+        },
+        {
+          "id": "a1_inspect_ledger",
+          "type": "inspect",
+          "requires": [
+            "a1_solve_signal"
+          ]
+        },
+        {
+          "id": "a1_choose",
+          "type": "choice",
+          "requires": [
+            "a1_inspect_ledger"
+          ],
+          "choices": [
+            {
+              "id": "share_with_irina",
+              "effects": {
+                "irina_trust": 1
+              }
+            },
+            {
+              "id": "keep_private",
+              "effects": {
+                "alexei_secrecy": 1
+              }
+            }
+          ]
+        }
+      ],
+      "completion_event": "a1_completed"
+    },
+    {
+      "id": "q_m1_wrong_blueprint",
+      "character": "matthias",
+      "level": "L_M1_Archive",
+      "requires_events": [
+        "a1_completed"
+      ],
+      "objectives": [
+        {
+          "id": "m1_inspect_a",
+          "type": "inspect",
+          "requires": []
+        },
+        {
+          "id": "m1_inspect_b",
+          "type": "inspect",
+          "requires": []
+        },
+        {
+          "id": "m1_align_plans",
+          "type": "puzzle",
+          "requires": [
+            "m1_inspect_a",
+            "m1_inspect_b"
+          ]
+        },
+        {
+          "id": "m1_talk_emil",
+          "type": "dialogue",
+          "requires": [
+            "m1_align_plans"
+          ]
+        },
+        {
+          "id": "m1_choose",
+          "type": "choice",
+          "requires": [
+            "m1_talk_emil"
+          ],
+          "choices": [
+            {
+              "id": "preserve_evidence",
+              "effects": {
+                "matthias_evidence": 1
+              }
+            },
+            {
+              "id": "request_explanation",
+              "effects": {
+                "office_suspicion": 1
+              }
+            }
+          ]
+        }
+      ],
+      "completion_event": "m1_completed"
+    }
+  ],
+  "slice_end_requires": [
+    "a1_completed",
+    "m1_completed"
+  ],
+  "note": "Design-only JSON; not a functioning UE5 runtime."
+}

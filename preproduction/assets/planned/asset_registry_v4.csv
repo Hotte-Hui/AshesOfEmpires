@@ -1,0 +1,31 @@
+﻿id,scene,category,description,implementation,priority,visual_reference,acceptance_criteria
+A001,L_A1_Railyard,ENV,Rail depot panorama,3d+pixelpaint,P0,reference_02.jpeg,"geometry, lighting, camera framing"
+A002,L_A1_Railyard,ENV,Freight siding facade,modular3d,P0,reference_04.jpeg,large shadow grouping and haze
+A003,L_A1_Railyard,ENV,Freight wagon exterior,modular3d,P0,reference_03.jpeg,"aged surface, readable silhouette"
+A004,L_A1_Railyard,ENV,Depot office booth,2.5d,P0,reference_01.jpeg,windows and practical lamp
+A005,L_A1_Railyard,PROP,Damaged seal,sprite+inspectUI,P0,reference_03.jpeg,C-17 clue; no reference art reuse
+A006,L_A1_Railyard,PROP,Freight timetable,ui_document,P0,reference_03.jpeg,readable at 4K UI layer
+A007,L_A1_Railyard,PROP,Freight ledger,ui_document,P0,reference_01.jpeg,clear discrepancy in text
+A008,L_A1_Railyard,PUZZLE,Disconnected symbol board,sprite+ui,P0,reference_01.jpeg,"fictional shapes, no rail signaling instructions"
+A009,L_A1_Railyard,CHAR,Alexei hero,sprite_or_stylized3d,P0,reference_03.jpeg,"5-direction idle/walk, inspect poses"
+A010,L_A1_Railyard,CHAR,Irina dispatcher,sprite_or_stylized3d,P0,reference_01.jpeg,dialogue expressions and idle
+A011,L_A1_Railyard,FX,Factory exhaust haze,volumetric_or_sprites,P1,reference_02.jpeg,temporal stability benchmark
+A012,L_A1_Railyard,AUDIO,Depot environmental bed,original_audio,P1,reference_03.jpeg,no licensed recordings without provenance
+A013,L_M1_Archive,ENV,Berlin drafting archive,2.5d,P0,reference_01.jpeg,desk and soft overhead light
+A014,L_M1_Archive,ENV,Window onto fictional Great Hall,3d_silhouette,P0,reference_02.jpeg,institutional critical framing
+A015,L_M1_Archive,PROP,Plan A approved,ui_document,P0,reference_01.jpeg,distinct registration mark
+A016,L_M1_Archive,PROP,Plan B archived,ui_document,P0,reference_01.jpeg,alignment puzzle register
+A017,L_M1_Archive,PUZZLE,Architectural overlay tool,ui_canvas,P0,reference_01.jpeg,snap grid and free retry
+A018,L_M1_Archive,CHAR,Matthias hero,sprite_or_stylized3d,P0,reference_01.jpeg,"humble technical dress, not uniform"
+A019,L_M1_Archive,CHAR,Emil archivist,sprite_or_stylized3d,P0,reference_01.jpeg,dialogue poses and idle
+A020,L_M1_Archive,CHAR,Civilian silhouette group,silhouette,P1,reference_04.jpeg,foreground human-scale contrast
+A021,L_M1_Archive,PROP,Emil note,ui_document,P0,reference_03.jpeg,C-17 contract clarification
+A022,L_M1_Archive,FX,Sun shaft and haze,material_lighting,P1,reference_04.jpeg,no lighting flicker
+A023,GLOBAL,UI,Journal and inventory,umg,P0,reference_01.jpeg,display resolution; keyboard support
+A024,GLOBAL,UI,Dialogue text and choices,umg,P0,reference_01.jpeg,"line-by-line, screenreader review"
+A025,GLOBAL,TECH,Typed story state and saves,c++dataassets,P0,none,transactional validation and migration
+A026,GLOBAL,TECH,Quest trigger interaction,c++blueprints,P0,none,no public bypass
+A027,GLOBAL,CINEMATIC,C-17 match cut,sequencer,P0,reference_04.jpeg,skip-safe transition and protagonist swap
+A028,GLOBAL,CINEMATIC,Great Hall critical reveal,sequencer,P1,reference_02.jpeg,ordinary people foreground
+A029,GLOBAL,CINEMATIC,Final evidence montage,sequencer,P0,reference_03.jpeg,no repeat progress events
+A030,GLOBAL,QA,Two-scene render benchmark,test_assets,P0,none,screenshots and frame-time reports

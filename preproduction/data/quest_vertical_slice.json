@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "quests": [
+    {
+      "id": "q_a1_last_signal",
+      "protagonist": "alexei",
+      "steps": [
+        "talk_irina",
+        "repair_signal",
+        "inspect_ledger",
+        "make_choice"
+      ],
+      "outcomes": [
+        "irina_trust",
+        "alexei_secrecy"
+      ]
+    },
+    {
+      "id": "q_m1_wrong_blueprint",
+      "protagonist": "matthias",
+      "steps": [
+        "inspect_plan_a",
+        "inspect_plan_b",
+        "align_overlays",
+        "talk_emil",
+        "make_choice"
+      ],
+      "outcomes": [
+        "matthias_evidence",
+        "office_suspicion"
+      ]
+    }
+  ],
+  "note": "Content specification; not executable quest code"
+}

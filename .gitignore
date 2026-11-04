@@ -1,0 +1,8 @@
+.godot/
+*.import.tmp
+builds/*
+!builds/.gdignore
+documentation/references/
+__pycache__/
+*.pyc
+/tmp/

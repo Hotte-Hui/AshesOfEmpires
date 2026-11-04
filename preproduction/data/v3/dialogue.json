@@ -1,0 +1,77 @@
+{
+  "schema_version": 3,
+  "conversations": [
+    {
+      "id": "dlg_a1_irina",
+      "entry_node": "irina_01",
+      "nodes": [
+        {
+          "id": "irina_01",
+          "speaker": "irina",
+          "text_key": "dlg.irina.01",
+          "next": "alexei_01"
+        },
+        {
+          "id": "alexei_01",
+          "speaker": "alexei",
+          "text_key": "dlg.alexei.01",
+          "next": "irina_02"
+        },
+        {
+          "id": "irina_02",
+          "speaker": "irina",
+          "text_key": "dlg.irina.02",
+          "next": "alexei_02"
+        },
+        {
+          "id": "alexei_02",
+          "speaker": "alexei",
+          "text_key": "dlg.alexei.02",
+          "next": "irina_03"
+        },
+        {
+          "id": "irina_03",
+          "speaker": "irina",
+          "text_key": "dlg.irina.03",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_m1_emil",
+      "entry_node": "emil_01",
+      "nodes": [
+        {
+          "id": "emil_01",
+          "speaker": "emil",
+          "text_key": "dlg.emil.01",
+          "next": "matthias_01"
+        },
+        {
+          "id": "matthias_01",
+          "speaker": "matthias",
+          "text_key": "dlg.matthias.01",
+          "next": "emil_02"
+        },
+        {
+          "id": "emil_02",
+          "speaker": "emil",
+          "text_key": "dlg.emil.02",
+          "next": "matthias_02"
+        },
+        {
+          "id": "matthias_02",
+          "speaker": "matthias",
+          "text_key": "dlg.matthias.02",
+          "next": "emil_03"
+        },
+        {
+          "id": "emil_03",
+          "speaker": "emil",
+          "text_key": "dlg.emil.03",
+          "end": true
+        }
+      ]
+    }
+  ]
+}

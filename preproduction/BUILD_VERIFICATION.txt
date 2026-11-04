@@ -1,0 +1,20 @@
+ASHES OF EMPIRES: THE LAST WINTER | Preproduction 0.4 | 2026-11-04
+
+OFFLINE VERIFICATION EXECUTED IN THE DEVELOPMENT CONTAINER:
+- python tools/validate_v3.py                         PASS (2 quests, 11 goals, 3 scenes, 2 puzzles)
+- python tools/validate_integrity_v4.py                PASS (30 asset rows, 15 shot rows, three cinematic triggers)
+- python tools/story_engine_v4.py                      PASS (complete verified route)
+- python -m unittest discover -s tests -v              PASS (34/34 tests)
+- python tools/build_preview_v4.py                     PASS (HTML regenerated from canonical JSON)
+- node --check generated browser preview JavaScript    PASS (syntax)
+- python automation/browser_smoke_optional.py          PASS (4/4 branch combinations, headless Chromium)
+- Browser-exported end states cross-validated through StoryEngine.load_json: PASS (4/4)
+
+NOT EXECUTED/NOT VERIFIED:
+- Unreal Engine 5 installed/compiled/launched: NO
+- 2D/3D production assets exported to Unreal: NO
+- UE5 PIE and packaged Windows test: NO
+- GPU 4K/60 FPS frame-times: NO
+- Published game artwork licensing: UNKNOWN, source images reference-only
+
+This record is a declaration of tests actually performed; a Python or Chromium test does not imply Unreal Engine execution.

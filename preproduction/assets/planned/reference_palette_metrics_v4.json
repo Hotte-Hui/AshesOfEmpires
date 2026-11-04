@@ -1,0 +1,201 @@
+{
+  "note": "Measured palette samples are diagnostic only; not a style license or final production palette.",
+  "references": [
+    {
+      "id": "reference_01",
+      "path": "references/reference_01.jpeg",
+      "width": 682,
+      "height": 940,
+      "palette_sampling_method": "200x200 median cut quantization (approximate, no human curation)",
+      "dominant_colors": [
+        {
+          "hex": "#010F1A",
+          "sampled_pixel_count": 11801
+        },
+        {
+          "hex": "#11252B",
+          "sampled_pixel_count": 7734
+        },
+        {
+          "hex": "#05151E",
+          "sampled_pixel_count": 5955
+        },
+        {
+          "hex": "#323C37",
+          "sampled_pixel_count": 5928
+        },
+        {
+          "hex": "#6F5249",
+          "sampled_pixel_count": 4863
+        },
+        {
+          "hex": "#01111A",
+          "sampled_pixel_count": 913
+        },
+        {
+          "hex": "#010F1B",
+          "sampled_pixel_count": 897
+        },
+        {
+          "hex": "#010F19",
+          "sampled_pixel_count": 775
+        },
+        {
+          "hex": "#020E1A",
+          "sampled_pixel_count": 769
+        },
+        {
+          "hex": "#00101A",
+          "sampled_pixel_count": 365
+        }
+      ]
+    },
+    {
+      "id": "reference_02",
+      "path": "references/reference_02.jpeg",
+      "width": 1200,
+      "height": 2589,
+      "palette_sampling_method": "200x200 median cut quantization (approximate, no human curation)",
+      "dominant_colors": [
+        {
+          "hex": "#764F46",
+          "sampled_pixel_count": 7708
+        },
+        {
+          "hex": "#221624",
+          "sampled_pixel_count": 5254
+        },
+        {
+          "hex": "#604530",
+          "sampled_pixel_count": 4784
+        },
+        {
+          "hex": "#26212C",
+          "sampled_pixel_count": 4551
+        },
+        {
+          "hex": "#D87B43",
+          "sampled_pixel_count": 4437
+        },
+        {
+          "hex": "#363136",
+          "sampled_pixel_count": 4418
+        },
+        {
+          "hex": "#CE7443",
+          "sampled_pixel_count": 3862
+        },
+        {
+          "hex": "#9A593F",
+          "sampled_pixel_count": 2356
+        },
+        {
+          "hex": "#F2AD72",
+          "sampled_pixel_count": 2060
+        },
+        {
+          "hex": "#996548",
+          "sampled_pixel_count": 570
+        }
+      ]
+    },
+    {
+      "id": "reference_03",
+      "path": "references/reference_03.jpeg",
+      "width": 682,
+      "height": 420,
+      "palette_sampling_method": "200x200 median cut quantization (approximate, no human curation)",
+      "dominant_colors": [
+        {
+          "hex": "#2B3D31",
+          "sampled_pixel_count": 6942
+        },
+        {
+          "hex": "#3E4F3F",
+          "sampled_pixel_count": 5478
+        },
+        {
+          "hex": "#7FA285",
+          "sampled_pixel_count": 5391
+        },
+        {
+          "hex": "#52584D",
+          "sampled_pixel_count": 4695
+        },
+        {
+          "hex": "#A7C095",
+          "sampled_pixel_count": 3877
+        },
+        {
+          "hex": "#69735C",
+          "sampled_pixel_count": 3281
+        },
+        {
+          "hex": "#1C2921",
+          "sampled_pixel_count": 3207
+        },
+        {
+          "hex": "#95B590",
+          "sampled_pixel_count": 2860
+        },
+        {
+          "hex": "#7F9473",
+          "sampled_pixel_count": 2749
+        },
+        {
+          "hex": "#82A387",
+          "sampled_pixel_count": 1520
+        }
+      ]
+    },
+    {
+      "id": "reference_04",
+      "path": "references/reference_04.jpeg",
+      "width": 808,
+      "height": 634,
+      "palette_sampling_method": "200x200 median cut quantization (approximate, no human curation)",
+      "dominant_colors": [
+        {
+          "hex": "#2F2F37",
+          "sampled_pixel_count": 6067
+        },
+        {
+          "hex": "#AC5C3B",
+          "sampled_pixel_count": 5541
+        },
+        {
+          "hex": "#CF7643",
+          "sampled_pixel_count": 5443
+        },
+        {
+          "hex": "#211724",
+          "sampled_pixel_count": 4422
+        },
+        {
+          "hex": "#483A34",
+          "sampled_pixel_count": 4279
+        },
+        {
+          "hex": "#724C37",
+          "sampled_pixel_count": 4263
+        },
+        {
+          "hex": "#FDD398",
+          "sampled_pixel_count": 3111
+        },
+        {
+          "hex": "#292630",
+          "sampled_pixel_count": 2939
+        },
+        {
+          "hex": "#231D29",
+          "sampled_pixel_count": 2703
+        },
+        {
+          "hex": "#E8965E",
+          "sampled_pixel_count": 1232
+        }
+      ]
+    }
+  ]
+}

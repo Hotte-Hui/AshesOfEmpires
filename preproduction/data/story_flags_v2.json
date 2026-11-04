@@ -1,0 +1,49 @@
+{
+  "schema_version": 2,
+  "save_version": 1,
+  "flags": {
+    "irina_trust": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 10
+    },
+    "alexei_secrecy": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 10
+    },
+    "matthias_evidence": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 10
+    },
+    "office_suspicion": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 10
+    },
+    "shared_trust": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 10
+    },
+    "witness_protected": {
+      "type": "boolean",
+      "default": false
+    },
+    "corridor_records_verified": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "events": [
+    "a1_completed",
+    "m1_completed"
+  ],
+  "note": "Schema proposal only. Runtime implementation and migration remain pending."
+}

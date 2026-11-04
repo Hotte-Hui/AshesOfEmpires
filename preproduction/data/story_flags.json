@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "flags": {
+    "irina_trust": 0,
+    "alexei_secrecy": 0,
+    "matthias_evidence": 0,
+    "office_suspicion": 0,
+    "shared_trust": 0,
+    "witness_protected": false,
+    "corridor_records_verified": false
+  },
+  "chapters": [
+    {
+      "id": "chapter_1",
+      "unlocked": true,
+      "completed": false
+    },
+    {
+      "id": "chapter_2",
+      "unlocked": false,
+      "completed": false
+    },
+    {
+      "id": "chapter_3",
+      "unlocked": false,
+      "completed": false
+    },
+    {
+      "id": "chapter_4",
+      "unlocked": false,
+      "completed": false
+    },
+    {
+      "id": "chapter_5",
+      "unlocked": false,
+      "completed": false
+    },
+    {
+      "id": "chapter_6",
+      "unlocked": false,
+      "completed": false
+    }
+  ],
+  "note": "Design schema, not engine-integrated save data"
+}

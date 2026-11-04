@@ -1,0 +1,66 @@
+{
+  "schema_version": 3,
+  "save_version": 2,
+  "protagonists": [
+    "alexei",
+    "matthias"
+  ],
+  "events": [
+    "a1_completed",
+    "m1_completed",
+    "slice_completed"
+  ],
+  "flags": {
+    "irina_trust": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "alexei_secrecy": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "matthias_evidence": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "office_suspicion": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "civilian_welfare": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "c17_confirmed": {
+      "type": "boolean",
+      "default": false
+    },
+    "signal_restored": {
+      "type": "boolean",
+      "default": false
+    },
+    "blueprint_match_confirmed": {
+      "type": "boolean",
+      "default": false
+    },
+    "slice_finished": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "notes": [
+    "Defaults and bounds are canonical. Runtime state is per save slot.",
+    "Integer effects are deltas, boolean effects are explicit set operations.",
+    "Save versions 1 -> 2 migration must retain known flags and populate new defaults."
+  ]
+}
