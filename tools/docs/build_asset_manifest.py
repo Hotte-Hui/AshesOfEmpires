@@ -10,7 +10,8 @@ import glob
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PARTS = os.path.join(ROOT, "documentation", "asset_manifest_parts")
 OUT = os.path.join(ROOT, "documentation", "ASSET_MANIFEST.md")
-ORDER = ["env_karsk", "env_berlin", "characters", "great_hall", "ui", "audio", "story"]
+ORDER = ["render-camera", "env_karsk", "karsk_skyline", "explore_karsk", "env_berlin", "explore_berlin", "characters",
+         "portraits", "great_hall", "trans_a1m1", "trans_finale", "ui", "explore_system", "audio", "story"]
 
 HEADER = """# ASSET MANIFEST — Ashes of Empires: The Last Winter
 
@@ -27,7 +28,11 @@ edit the part of the owning area and re-run the script.
 - **No sample, texture, sound or image from the internet or from the reference images was copied, traced or
   embedded.** `documentation/references/` is an internal style study only, excluded from git and from the build.
 - No purchased assets, no subscriptions, no AI-generated media from external services.
-- The Great Hall, the "Reichssiegel" banner and all insignia in the game are fictional; no real party symbols.
+- The Great Hall and the "Reichssiegel" are fictional. Real regime insignia (swastika, state eagle, hammer & sickle,
+  red star) exist only as `*_hist` variants of in-world assets, shown while the setting "Historische Hoheitszeichen"
+  is on (TECHNICAL_ARCHITECTURE §12.4, StGB §86 Abs. 4 social-adequacy context); every one has a neutral twin.
+- Real-history cards (`data/explore/history_*.json`, `data/locale/de_history_*.json`) are original German texts
+  written from the sources listed on each card; they were researched and then independently fact-checked.
 
 ## Lead / integration entries
 | Path | What | How it was made |

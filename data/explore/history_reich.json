@@ -1,0 +1,226 @@
+{
+ "side": "reich",
+ "note": "Reale Geschichte (Seite Reich), Karten außerhalb der Fiktion (TECHNICAL_ARCHITECTURE §12.3). Faktengeprüft am 04.11.2026 gegen unabhängige Quellen (Archive, Gedenkstätten, bpb, USHMM, Fachliteratur). Texte: data/locale/de_history_reich.json.",
+ "cards": [
+  {
+   "id": "hist.reich.germania",
+   "side": "reich",
+   "title_key": "hist.reich.germania.title",
+   "text_key": "hist.reich.germania.text",
+   "year": "1937–1942",
+   "sources": [
+    {
+     "label": "Deutsches Historisches Museum: Der „Generalbauinspektor für die Reichshauptstadt“ 1937",
+     "url": "https://www.dhm.de/archiv/magazine/berlin-mitte/Docu/in01_gener.htm"
+    },
+    {
+     "label": "Deutsches Historisches Museum: Wohin mit der Mitte? – Abrisse ab 1938",
+     "url": "https://www.dhm.de/archiv/magazine/berlin-mitte/Docu/in02_gener.htm"
+    },
+    {
+     "label": "DHM LeMO, Lutz Walther: NS-Architektur",
+     "url": "https://www.dhm.de/lemo/kapitel/ns-regime/kunst-und-kultur/ns-architektur"
+    },
+    {
+     "label": "ingenieur.de (VDI Verlag), D. Hochwarth: Schwerbelastungskörper (2025)",
+     "url": "https://www.ingenieur.de/technik/fachbereiche/bau/schwerbelastungskoerper-wo-hitlers-groessenwahn-im-boden-versank/"
+    },
+    {
+     "label": "Berliner Mieterverein, J. Sethmann: Für „Germania“ entrechtet, deportiert und umgebracht (MieterMagazin 7+8/2022)",
+     "url": "https://www.berliner-mieterverein.de/?p=78077"
+    },
+    {
+     "label": "GHI, German History in Documents and Images: Modell der „Welthauptstadt Germania“ (1939)",
+     "url": "https://germanhistorydocs.org/de/deutschland-nationalsozialismus-1933-1945/modell-der-welthauptstadt-germania-nach-plaenen-von-albert-speer-1939"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.evictions",
+   "side": "reich",
+   "title_key": "hist.reich.evictions.title",
+   "text_key": "hist.reich.evictions.text",
+   "year": "1982",
+   "sources": [
+    {
+     "label": "Zwangsräume. Antisemitische Wohnungspolitik in Berlin 1939–1945 (Online-Ausstellung): Kontext",
+     "url": "https://zwangsraeume.berlin/de/context"
+    },
+    {
+     "label": "Berliner Mieterverein, J. Sethmann: Für „Germania“ entrechtet, deportiert und umgebracht (MieterMagazin 7+8/2022)",
+     "url": "https://www.berliner-mieterverein.de/?p=78077"
+    },
+    {
+     "label": "Susanne Willems: Albert Speer und die Deportation der Berliner Juden",
+     "url": "https://www.susannewillems.de/de/article/18.albert-speer-und-die-deportation-der-berliner-juden.html"
+    },
+    {
+     "label": "Dokumentationszentrum Reichsparteitagsgelände Nürnberg: M. Schmidt und die Chronik",
+     "url": "https://museen.nuernberg.de/index.php?id=3017"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.schwerbelastungskoerper",
+   "side": "reich",
+   "title_key": "hist.reich.schwerbelastungskoerper.title",
+   "text_key": "hist.reich.schwerbelastungskoerper.text",
+   "year": "1948",
+   "sources": [
+    {
+     "label": "Informationsort Schwerbelastungskörper (Bezirk Tempelhof-Schöneberg): Der Schwerbelastungskörper",
+     "url": "https://schwerbelastungskoerper.de/der-schwerbelastungskoerper/"
+    },
+    {
+     "label": "Informationsort Schwerbelastungskörper: Vom Versuchsobjekt zum Denkmal",
+     "url": "https://schwerbelastungskoerper.de/vom-versuchsobjekt-zum-denkmal/"
+    },
+    {
+     "label": "Berlin.de, Stadtumbau West: Schwerbelastungskörper",
+     "url": "https://nachhaltige-erneuerung.berlin.de/index.php?id=3490&no_cache=1&type=0"
+    },
+    {
+     "label": "visitBerlin: Schwerbelastungskörper",
+     "url": "https://www.visitberlin.de/de/schwerbelastungskoerper"
+    },
+    {
+     "label": "ingenieur.de (VDI Verlag), D. Hochwarth: Schwerbelastungskörper – Wo Hitlers Größenwahn im Boden versank (2025)",
+     "url": "https://www.ingenieur.de/technik/fachbereiche/bau/schwerbelastungskoerper-wo-hitlers-groessenwahn-im-boden-versank/"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.wannsee",
+   "side": "reich",
+   "title_key": "hist.reich.wannsee.title",
+   "text_key": "hist.reich.wannsee.text",
+   "year": "1947",
+   "sources": [
+    {
+     "label": "Gedenkstätte Haus der Wannsee-Konferenz, Peter Klein: Die Wannsee-Konferenz vom 20. Januar 1942",
+     "url": "https://www.ghwk.de/fileadmin/Redaktion/PDF/Konferenz/klein_wannsee-konferenz.pdf"
+    },
+    {
+     "label": "Gedenkstätte Haus der Wannsee-Konferenz: Die Konferenz",
+     "url": "https://www.ghwk.de/de/konferenz"
+    },
+    {
+     "label": "USHMM Holocaust Encyclopedia: Wannsee Protocol",
+     "url": "https://encyclopedia.ushmm.org/content/en/article/wannsee-protocol"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.reichsbahn",
+   "side": "reich",
+   "title_key": "hist.reich.reichsbahn.title",
+   "text_key": "hist.reich.reichsbahn.text",
+   "year": "1973/1981",
+   "sources": [
+    {
+     "label": "Alfred Gottwaldt: Der deutsche „Viehwaggon“ als symbolisches Objekt in KZ-Gedenkstätten, Teil 1 (GedenkstättenRundbrief 139)",
+     "url": "https://www.gedenkstaettenforum.de/uploads/media/GedRund139_18-31.pdf"
+    },
+    {
+     "label": "Deutsche Bahn AG / Erinnerungsort Topf & Söhne: Faltblatt „Sonderzüge in den Tod“ (2014)",
+     "url": "https://www.topfundsoehne.de/mam/ts/ausstellungen/sonder/faltblatt_sonderzuege.pdf"
+    },
+    {
+     "label": "USHMM / EHRI: Claude Lanzmann Shoah Collection, Interview Raul Hilberg",
+     "url": "https://portal.ehri-project.eu/units/us-005578-irn1004662"
+    },
+    {
+     "label": "USHMM / EHRI: Güterwagen der Deutschen Reichsbahn (Objektbeschreibung)",
+     "url": "https://portal.ehri-project.eu/units/us-005578-irn631123-irn512989"
+    },
+    {
+     "label": "ULB Tirol, Katalog: Raul Hilberg, Sonderzüge nach Auschwitz (Dumjahn, Mainz 1981)",
+     "url": "https://ulb-cardcatalogues.uibk.ac.at/Record/card_0000000847692"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.generalplan_ost",
+   "side": "reich",
+   "title_key": "hist.reich.generalplan_ost.title",
+   "text_key": "hist.reich.generalplan_ost.text",
+   "year": "1958",
+   "sources": [
+    {
+     "label": "Helmut Heiber: Der Generalplan Ost (Dokumentation), Vierteljahrshefte für Zeitgeschichte 6 (1958)",
+     "url": "https://www.ifz-muenchen.de/heftarchiv/1958_3_5_heiber.pdf"
+    },
+    {
+     "label": "100(0) Schlüsseldokumente (BSB), Ariane Leendertz: Einführung Generalplan Ost",
+     "url": "https://www.1000dokumente.de/Dokumente/Einf%C3%BChrung:Generalplan_Ost"
+    },
+    {
+     "label": "Isabel Heinemann: Raumordnung im Nationalsozialismus – der „Generalplan Ost“ (Nachrichten der ARL 1/2021)",
+     "url": "https://www.arl-net.de/system/files/media-shop/pdf/nachrichten/2021-1/nr_1-21_heinemann.pdf"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.t4",
+   "side": "reich",
+   "title_key": "hist.reich.t4.title",
+   "text_key": "hist.reich.t4.text",
+   "year": "1945/1990",
+   "sources": [
+    {
+     "label": "Bundesarchiv: „Euthanasie“ im Dritten Reich",
+     "url": "https://www.bundesarchiv.de/im-archiv-recherchieren/archivgut-recherchieren/nach-themen/euthanasie-im-dritten-reich/"
+    },
+    {
+     "label": "USHMM Holocaust Encyclopedia: Euthanasia Program",
+     "url": "https://encyclopedia.ushmm.org/content/en/article/euthanasia-program"
+    },
+    {
+     "label": "USHMM Holocaust Encyclopedia: Hartheim Register",
+     "url": "https://encyclopedia.ushmm.org/content/en/artifact/hartheim-register"
+    },
+    {
+     "label": "Gedenkstätte Steinhof (DÖW): A. Kammerhofer, „Bis zum 1. September 1941 wurden desinfiziert: Personen: 70.273“",
+     "url": "https://www.gedenkstaettesteinhof.at/de/node/7373"
+    },
+    {
+     "label": "Stiftung Denkmal für die ermordeten Juden Europas: Gedenkort für die Opfer der NS-„Euthanasie“-Morde",
+     "url": "https://www.stiftung-denkmal.de/en/memorials/place-of-remembrance-and-information-for-the-victims-of-the-national-socialist-euthanasia-murders/"
+    },
+    {
+     "label": "USHMM Holocaust Encyclopedia: The Doctors Trial",
+     "url": "https://encyclopedia.ushmm.org/content/en/article/the-doctors-trial-the-medical-case-of-the-subsequent-nuremberg-proceedings"
+    },
+    {
+     "label": "Deutscher Bundestag: Aufarbeitung von NS-„Euthanasie“ und Zwangssterilisationen (29.01.2025)",
+     "url": "https://bundestag.de/dokumente/textarchiv/2025/kw05-de-zwangssterilisation-1035046"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.forced_labor",
+   "side": "reich",
+   "title_key": "hist.reich.forced_labor.title",
+   "text_key": "hist.reich.forced_labor.text",
+   "year": "2000",
+   "sources": [
+    {
+     "label": "bpb, Cord Pagenstecher: Überblick – Die nationalsozialistische Zwangsarbeit",
+     "url": "https://www.bpb.de/themen/nationalsozialismus-zweiter-weltkrieg/ns-zwangsarbeit/222627/ueberblick-die-nationalsozialistische-zwangsarbeit/"
+    },
+    {
+     "label": "bpb, Cord Pagenstecher: Der lange Weg zur Entschädigung",
+     "url": "https://www.bpb.de/themen/nationalsozialismus-zweiter-weltkrieg/ns-zwangsarbeit/227273/der-lange-weg-zur-entschaedigung/"
+    },
+    {
+     "label": "DHM LeMO: Zwangsarbeit",
+     "url": "https://www.dhm.de/lemo/kapitel/der-zweite-weltkrieg/industrie-und-wirtschaft/zwangsarbeit.html"
+    },
+    {
+     "label": "Stiftung Erinnerung, Verantwortung und Zukunft (EVZ): Founding history",
+     "url": "https://www.stiftung-evz.de/en/who-we-are/history/founding-history/"
+    }
+   ]
+  }
+ ]
+}

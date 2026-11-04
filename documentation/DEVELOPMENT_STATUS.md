@@ -5,6 +5,23 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 2 (2026-11-04 evening) — expansion after the user's first playtest
+User feedback: better characters and faces, more detail and life, fuller streets, smoother camera, much more to
+explore (incl. real post-war findings in a library), softer protagonist switches, real regime symbolism, ~10 min
+of quality content first. Delivered by 16 parallel specialists + integration (evidence: TEST_REPORT.md §7):
+| Area | Now |
+|---|---|
+| Camera / rendering | world renders at screen resolution (k = 3/4/6 for 1080p/1440p/4K), camera and actors move in single screen pixels with a critically damped follow; post effects stay on the 640×360 texel grid; the 3D hall keeps its low-res path with a sub-pixel lens shift |
+| Characters | 12 sprite sheets redesigned (heads, faces, costumes, walk/idle/talk) + librarian, porter, vendor, worker_b; 9 speakers with sculpted portraits, 4 expressions × talking mouth + blink, animated in the DialogueBox |
+| Karsk | far richer art and 10 kinds of ambient life (crows that flee, the cat, a passing train, lamp, laundry, sparks…); a realistic Soviet skyline (grain elevator with "СЛАВА ТРУДУ!", church used as a warehouse, Khrushchyovka, Stalinist administration, log houses) |
+| Berlin | archive extended to 2924 px: arrival through the stairwell (porter's lodge), a library / reading room with five shelf sections, pigeons, a mouse, clock, radio, passing tram |
+| Exploration | 43 optional finds and chats (20 Karsk, 23 Berlin) with close-up images, a DiscoveryView, journal tabs "Entdeckungen" and "Geschichte" |
+| Real history | 16 sourced "REALE GESCHICHTE" cards (8 Nazi state, 8 Soviet Union) — researched, then independently fact-checked; shown outside the fiction, without fanfare |
+| Great Hall | inhabited street and plaza (walkers in five depth bands, queue, patrol, sweeper, moving tram and cars, pigeons), more architecture; swastika banners and the lantern eagle above the globe (Speer's final 1939 design) |
+| Transitions | Ch1→2: 40 s animated sequence (train departure → stamp → match dissolve → Berlin morning, branch-dependent); finale: 47 s two-desk montage at the same minute, branch-dependent |
+| Symbols | real insignia as `_hist` variants with the setting "Historische Hoheitszeichen" (default on), neutral twins when off |
+| UX | the porter greets Konrad on arrival; history cards also after chats; prompt marks found/new finds |
+
 ## What exists and is verified
 | Area | Content | Verified by |
 |---|---|---|

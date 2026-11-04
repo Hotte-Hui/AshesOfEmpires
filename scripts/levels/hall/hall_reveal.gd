@@ -14,6 +14,11 @@ extends Node3D
 ## Extras (optional): signal cue(key) — subtitle/audio cue keys from data/locale/de_hall.json;
 ##   seek(t), set_paused(p), get_time(), get_shot_id() for tooling and the visual test harness.
 ## Shots: h1 0–3 s crane out of the archive window, h2 3–8 s establishing, h3 8–11 s slow push and hold.
+## Street life (hall_life.gd): walkers in five distance bands, a queue at the tram stop, a marching patrol, a
+## street sweeper, pigeons startled by the loudspeaker, crows, a wheeling flock over the square, chimney smoke,
+## manhole steam, the departing tram, cars and a lorry with moving head lights, lamp halos (post process).
+## Story beat h3: a neighbour comes to the window above the family, draws the curtains, the light goes out.
+## Insignia: resolved through Symbols.pick() at build time (setting "historical_symbols", CLI --symbols=0|1).
 
 signal finished
 signal cue(key: String)
@@ -21,6 +26,7 @@ signal cue(key: String)
 const Builder := preload("res://scripts/levels/hall/hall_builder.gd")
 const Rig := preload("res://scripts/levels/hall/hall_camera_rig.gd")
 const People := preload("res://scripts/levels/hall/hall_people.gd")
+const Life := preload("res://scripts/levels/hall/hall_life.gd")
 const POST_SHADER := preload("res://assets/shaders/pixel3d_post.gdshader")
 const TEX := "res://assets/architecture/great_hall/"
 
@@ -50,6 +56,8 @@ const CUES := [
 	[0.15, "hall.cue.archive_room"],
 	[1.6, "hall.cue.tram_bell"],
 	[3.6, "hall.cue.loudspeaker_1"],
+	[3.75, "hall.cue.pigeons"],
+	[5.2, "hall.cue.patrol"],
 	[8.4, "hall.cue.loudspeaker_2"],
 	[9.55, "hall.cue.window_closes"],
 ]
@@ -59,6 +67,7 @@ var post: MeshInstance3D
 var post_mat: ShaderMaterial
 var rig := Rig.new()
 var people: Node3D
+var life: Node3D
 var builder := Builder.new()
 var env: Environment
 
@@ -70,6 +79,8 @@ var _cue_i := 0
 var _saved_vp := {}
 var _vp_size := Vector2(640, 360)
 var _pending_people: Dictionary = {}
+## Script cost of the per-frame update (camera, sprites, life, halos) in microseconds: {last, max, sum, n}
+var perf := {"last": 0, "max": 0, "sum": 0, "n": 0}
 
 
 func _ready() -> void:
@@ -86,6 +97,10 @@ func _ready() -> void:
 	var final_pose := rig.sample(rig.duration())
 	builder.build(self, {"cam": final_pose["pos"], "shift": (final_pose["shift"] as Vector2).round(),
 		"vp": _vp_size, "f": Rig.focal_px(_vp_size.y)})
+	life = Life.new()
+	life.name = "Life"
+	add_child(life)
+	life.setup(builder, rig)          # adds the street-life sprite specs before the sprites are built
 	builder.stats["build_ms"] = snappedf((Time.get_ticks_usec() - t0) / 1000.0, 0.1)
 	people = People.new()
 	people.name = "People"
@@ -98,7 +113,9 @@ func _ready() -> void:
 	# reference pose for the sprite world sizes = first frame of h2
 	rig.apply(camera, lock_from, _vp_size)
 	people.calibrate(rig)
+	builder.stats["sprites"] = people.actors.size()
 	_make_post()
+	life.post_mat = post_mat
 	camera.current = true
 	_apply(0.0)
 	if autoplay:
@@ -214,12 +231,24 @@ func _viewport_size() -> Vector2:
 
 
 func _apply(t: float) -> void:
+	var t_us := Time.get_ticks_usec()
+	_apply_inner(t)
+	var dt_us := Time.get_ticks_usec() - t_us
+	perf["last"] = dt_us
+	perf["max"] = maxi(int(perf["max"]), dt_us)
+	perf["sum"] = int(perf["sum"]) + dt_us
+	perf["n"] = int(perf["n"]) + 1
+
+
+func _apply_inner(t: float) -> void:
 	var vs := _viewport_size()
 	if vs != _vp_size:
 		_vp_size = vs
 	var st := rig.apply(camera, t, _vp_size)
+	if life:
+		life.update(t)
 	if people:
-		people.update_sprites(rig, t >= lock_from - 0.0001)
+		people.update_sprites(rig, t >= lock_from - 0.0001, t)
 	if post_mat:
 		post_mat.set_shader_parameter("lens_shift_px", st["shift"])
 		post_mat.set_shader_parameter("cam_pos", st["pos"])
@@ -234,16 +263,27 @@ func _update_story_window(t: float) -> void:
 	var m: ShaderMaterial = builder.story_window_mat
 	if m == null:
 		return
-	# the curtain is drawn in two beats: half, then dark
+	# beat: the neighbour steps to the window (1 s before), draws both curtains (0.6 s), the lamp inside goes
+	# out in two steps (half, dark) -- the family below is left alone with the lamp over the sealed door
+	var close_k := smoothstep(window_close_at, window_close_at + 0.6, t)
+	for c in builder.story_curtains:
+		(c as Node3D).scale = Vector3(lerpf(0.28, 1.0, close_k), 1.0, 1.0)
+	if builder.story_sil:
+		builder.story_sil.visible = t >= window_close_at - 1.0 and close_k < 0.85
 	var e := 1.0
-	if t >= window_close_at + 0.35:
+	if t >= window_close_at + 1.0:
 		e = 0.0
-	elif t >= window_close_at:
-		e = 0.45
+	elif t >= window_close_at + 0.6:
+		e = 0.5
 	m.set_shader_parameter("emission_energy", e)
 	m.set_shader_parameter("albedo", Color(1, 1, 1) if e > 0.5 else (Color(0.55, 0.45, 0.42) if e > 0.0
 		else Color(0.18, 0.15, 0.2)))
 	m.set_shader_parameter("flag", 0.75 if e > 0.0 else 0.0)
+	var cm: ShaderMaterial = builder.story_curtain_mat
+	if cm:
+		cm.set_shader_parameter("emission_energy", 0.85 * e)
+		cm.set_shader_parameter("albedo", Color(1, 1, 1) if e > 0.0 else Color(0.32, 0.26, 0.3))
+		cm.set_shader_parameter("flag", 0.75 if e > 0.0 else 0.0)
 
 
 func _make_environment() -> void:

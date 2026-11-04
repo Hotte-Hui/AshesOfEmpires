@@ -374,8 +374,8 @@ def make_far_city():
     L.px(450, B - 34, C['body'])
     # power station: cooling towers in front of the sun glow + chimneys
     CT = dict(C, sh=SK[0], body=SK[1], lit=SK[2], rim=SK[4])
+    hyperboloid(L, 590, B, 50, 38, 23, 27, CT)   # second tower just behind/right of the first
     hyperboloid(L, 546, B, 58, 44, 27, 31, CT)
-    hyperboloid(L, 662, B, 50, 38, 23, 27, CT)
     CC = dict(C, sh=SK[0], body=SK[1], rim=SK[3], band=SK[3])
     chimney(L, 688, B, 84, 5, 4, CC, bands=2)
     chimney(L, 700, B, 70, 5, 3, CC, bands=1)
@@ -455,6 +455,31 @@ def make_far_industry():
     base_fill(L, B, (C['body'], C['sh'], C['lit']), seed=2, amp=(6, 3))
     fog_base(L, [TE[4], SK[0], SK[1], SK[2], SK[3]], B - 30, B + 1, 1.7)
     return L, TOP
+
+
+RAIL_Y_MID = 210   # world y of the far railway on the mid-plane embankment (KarskTrain rail)
+
+
+def embankment(L, ey, B):
+    """Railway embankment across the mid plane (the goods train of the KarskTrain actor runs on it): rail glints
+    on a dark track line, a pale snowy shoulder, then the shadowed slope down to the plane's base (the layer's
+    fog_base pass hazes its lower part).  ey = local row of the rail top."""
+    rng = np.random.default_rng(210)
+    for x in range(L.w):
+        L.px(x, ey - 1, SA[3] if (x * 7) % 11 < 3 else TE[2], 0.55)       # rail heads catching the sky
+        L.px(x, ey, TE[1], 0.5)                                           # sleepers / rail web
+        L.px(x, ey + 1, SA[2] if rng.random() < 0.3 else TE[3], 0.5)      # ballast top
+        L.px(x, ey + 2, SA[4] if rng.random() < 0.55 else SA[3], 0.52)    # snowy shoulder
+        L.px(x, ey + 3, SA[3] if rng.random() < 0.4 else SA[1], 0.5)
+    thr = bayer(L.w, B - ey - 4, 0, ey + 4)
+    for yy in range(ey + 4, B):
+        t = (yy - ey - 4) / max(1, B - ey - 5)
+        for x in range(L.w):
+            c = TE[3] if t * 1.4 < thr[yy - ey - 4, x] + 0.2 else TE[2]
+            if (x + yy * 3) % 37 == 0:
+                c = SA[2]                                                  # snow streaks on the slope
+            L.px(x, yy, c, 0.45)
+    flat_normal(L, 0, ey - 1, L.w, 4, (0.0, 0.8, 0.6))
 
 
 # =========================================================================== MID (0.45)
@@ -629,6 +654,7 @@ def make_mid():
         L.rect(k + 3, B - 18, 6, 8, C['win'])
     for tx in (306, 806, 860):
         bare_tree(L, tx, B, 42, TE[3], seed=tx, trunk_w=1)
+    embankment(L, RAIL_Y_MID - TOP, B)
     base_fill(L, B, (C['body'], C['sh'], C['lit']), seed=3, amp=(8, 3), period=(17.0, 5.0))
     fog_base(L, [TE[2], TE[3], SA[1], SA[2], SA[3], SA[4]], B - 44, B + 1, 2.4)
     return L, TOP
@@ -641,6 +667,26 @@ def hazy_brick(L, x, y, w, h, BR):
         for xx in range(x, x + w):
             if (xx + (yy // 3) * 2) % 4 != 0:
                 L.px(xx, yy, BR['sh'], 0.46)
+
+
+LAUNDRY_PEGS = []   # filled by make_near_bg: [x, y] where each laundry item hangs (cam 0)
+NEAR_LIT_WINDOWS = []   # filled by make_near_bg: [x, y, w, h, mullion x, transom y] (cam 0) of the lit windows
+
+
+def dim_lit_window(L, x, y, w, h, mull_x, transom_y, frame):
+    """A window lit by a weak bulb behind a thin curtain: deep copper glass, a brighter patch around the lamp,
+    emissive (but dim: near_bg emission strength), mullion/transom kept dark."""
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            c = CO[0]
+            if abs(xx - (x + w * 0.62)) < 1.2 and y + 1 <= yy <= y + 2:
+                c = CO[1]                                   # the bulb behind the curtain
+            L.px(xx, yy, c, 0.25, em=c)
+    L.vline(x + mull_x, y, h, frame)
+    L.em[y:y + h, x + mull_x] = 0
+    if transom_y >= 0:
+        L.hline(x, y + transom_y, w, frame)
+        L.em[y + transom_y, x:x + w] = 0
 
 
 # =========================================================================== NEAR BG (0.72)
@@ -685,6 +731,12 @@ def make_near_bg():
             L.hline(wx, wy + 4, 7, C['lit'])
             L.px(wx + 6, wy, C['rim'])
             L.hline(wx - 1, wy + 12, 9, SN[1])
+    # two windows already lit at dawn (dim lamplight; silhouettes = KarskWindowLife 'small' actors)
+    NEAR_LIT_WINDOWS.clear()
+    for (i, row) in ((3, 0), (6, 1)):
+        wx, wy = x0 + 8 + i * 21, (y0 + 8, y0 + 40)[row]
+        dim_lit_window(L, wx, wy, 7, 11, mull_x=3, transom_y=4, frame=C['lit'])
+        NEAR_LIT_WINDOWS.append([wx, wy + TOP, 7, 11, 3, 4])
     for (sx, sy) in [(x0 + 32, y0 + 12), (x0 + 116, y0 + 44)]:
         L.hline(sx, sy, 10, NI[2])
         L.vline(sx + 9, sy - 16, 17, NI[2])
@@ -695,11 +747,12 @@ def make_near_bg():
     L.vline(pole_x + 1, B - 56, 56, C['rim'])
     pts = pg.catenary(x0 + w0 - 1, y0 + 26, pole_x, B - 54, 6)
     L.polyline([(round(a), round(b)) for a, b in pts], NI[3])
+    # the laundry itself is the KarskLaundry actor (swaying in the wind); record the peg points in
+    # layer-at-cam-0 coordinates (layer local y + TOP) for scene.json
+    LAUNDRY_PEGS.clear()
     for i, t in enumerate([0.12, 0.26, 0.4, 0.55, 0.7, 0.84]):
         lx, ly = pts[int(t * (len(pts) - 1))]
-        cols = [SN[2], TE[3], RU[2], SN[1], SA[2], SN[2]]
-        L.rect(int(lx), int(ly) + 1, 5 + (i % 2) * 2, 7 - (i % 3), cols[i], hgt=0.6)
-        L.vline(int(lx) + 4 + (i % 2) * 2, int(ly) + 1, 7 - (i % 3), C['rim'])
+        LAUNDRY_PEGS.append([int(lx), int(ly) + TOP])
     fig = figure(31, [TE[1], TE[2], TE[3]], hat='scarf', hat_col=SN[1], rim=C['rim'], seed=5,
                  trousers=TE[1], boots=NI[2], skin=RU[3])
     L.blit(fig, x0 + w0 + 18 - fig.w // 2, B - fig.h + 1)
@@ -826,6 +879,10 @@ def make_near_bg():
             if r.random() < 0.1:
                 L.rect(wx - 2, wy + 7, 13, 5, C['lit'], hgt=0.6)
                 L.hline(wx - 2, wy + 7, 13, SN[1])
+    for (fl, i) in ((1, 2), (3, 5)):                   # two early risers in the slab block
+        wx, wy = ax + 7 + i * 24, ay + 6 + fl * 21
+        dim_lit_window(L, wx, wy, 9, 11, mull_x=4, transom_y=-1, frame=C['sh'])
+        NEAR_LIT_WINDOWS.append([wx, wy + TOP, 9, 11, 4, -1])
     for (hx_, hw_, hh_) in [(1458, 44, 26), (1508, 56, 30)]:
         L.rect(hx_, B - hh_, hw_, hh_, C['body'], hgt=0.5)
         for yy in range(B - hh_ + 2, B, 3):

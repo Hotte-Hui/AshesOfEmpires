@@ -1,0 +1,370 @@
+{
+ "area": "berlin",
+ "note": "Exploration content of the Berlin archive (Konrad, chapter 2), owner: berlin-explore. Optional finds never touch Story. Entry order = Konrad's walk through berlin-env's 2924 px layout: from the stairwell door (SP_M1_Arrival, west) past the porter's lodge and the department chronicle, through the reading room (shelves I-V), past Brandt's covered desk to his own desk, and on through the plan stacks to Emil's counter. The voice starts precise and euphemistic and cracks further the deeper he goes; every text also works on its own. Hotspots: scene.json (berlin-env) / explore_hotspots.json; nodes in scenes/levels/L_M1_Archive.tscn. Strings: data/locale/de_explore_berlin.json. History cards are referenced by id only (TECHNICAL_ARCHITECTURE 12.3).",
+ "entries": [
+  {
+   "id": "berlin.porter",
+   "kind": "chat",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.porter.title",
+   "text_key": "explore.berlin.porter.text",
+   "prompt_key": "explore.berlin.porter.prompt",
+   "lines": [
+    {
+     "speaker": "porter",
+     "key": "explore.berlin.porter.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.porter.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "porter",
+     "key": "explore.berlin.porter.l3",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.porter.l4",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "porter",
+     "key": "explore.berlin.porter.l5",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.porter.l6",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "porter",
+     "key": "explore.berlin.porter.l7",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.porter.l8",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "porter",
+     "key": "explore.berlin.porter.l9",
+     "expr": "neutral"
+    }
+   ]
+  },
+  {
+   "id": "berlin.radio",
+   "kind": "easter_egg",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.radio.title",
+   "text_key": "explore.berlin.radio.text",
+   "prompt_key": "explore.berlin.radio.prompt",
+   "image": "res://assets/explore/berlin/radio.png"
+  },
+  {
+   "id": "berlin.clock",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.clock.title",
+   "text_key": "explore.berlin.clock.text",
+   "prompt_key": "explore.berlin.clock.prompt",
+   "image": "res://assets/explore/berlin/clock.png"
+  },
+  {
+   "id": "berlin.pigeons",
+   "kind": "easter_egg",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.pigeons.title",
+   "text_key": "explore.berlin.pigeons.text",
+   "prompt_key": "explore.berlin.pigeons.prompt",
+   "image": "res://assets/explore/berlin/pigeons.png"
+  },
+  {
+   "id": "berlin.photo",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.photo.title",
+   "text_key": "explore.berlin.photo.text",
+   "prompt_key": "explore.berlin.photo.prompt",
+   "image": "res://assets/explore/berlin/photo.png",
+   "history": [
+    "hist.reich.evictions"
+   ]
+  },
+  {
+   "id": "berlin.lib_shelf_1",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.lib_shelf_1.title",
+   "text_key": "explore.berlin.lib_shelf_1.text",
+   "prompt_key": "explore.berlin.lib_shelf_1.prompt",
+   "image": "res://assets/explore/berlin/lib_shelf_1.png",
+   "history": [
+    "hist.reich.wannsee"
+   ]
+  },
+  {
+   "id": "berlin.lib_shelf_2",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.lib_shelf_2.title",
+   "text_key": "explore.berlin.lib_shelf_2.text",
+   "prompt_key": "explore.berlin.lib_shelf_2.prompt",
+   "image": "res://assets/explore/berlin/lib_shelf_2.png",
+   "history": [
+    "hist.reich.reichsbahn"
+   ]
+  },
+  {
+   "id": "berlin.heater",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.heater.title",
+   "text_key": "explore.berlin.heater.text",
+   "prompt_key": "explore.berlin.heater.prompt",
+   "image": "res://assets/explore/berlin/heater.png"
+  },
+  {
+   "id": "berlin.card_catalogue",
+   "kind": "secret",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.card_catalogue.title",
+   "text_key": "explore.berlin.card_catalogue.text",
+   "prompt_key": "explore.berlin.card_catalogue.prompt",
+   "image": "res://assets/explore/berlin/card_catalogue.png"
+  },
+  {
+   "id": "berlin.librarian",
+   "kind": "chat",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.librarian.title",
+   "text_key": "explore.berlin.librarian.text",
+   "prompt_key": "explore.berlin.librarian.prompt",
+   "lines": [
+    {
+     "speaker": "librarian",
+     "key": "explore.berlin.librarian.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.librarian.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "librarian",
+     "key": "explore.berlin.librarian.l3",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.librarian.l4",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "librarian",
+     "key": "explore.berlin.librarian.l5",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.librarian.l6",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "librarian",
+     "key": "explore.berlin.librarian.l7",
+     "expr": "determined"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.librarian.l8",
+     "expr": "surprised"
+    },
+    {
+     "speaker": "librarian",
+     "key": "explore.berlin.librarian.l9",
+     "expr": "neutral"
+    }
+   ]
+  },
+  {
+   "id": "berlin.globe",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.globe.title",
+   "text_key": "explore.berlin.globe.text",
+   "prompt_key": "explore.berlin.globe.prompt",
+   "image": "res://assets/explore/berlin/globe.png"
+  },
+  {
+   "id": "berlin.lib_shelf_3",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.lib_shelf_3.title",
+   "text_key": "explore.berlin.lib_shelf_3.text",
+   "prompt_key": "explore.berlin.lib_shelf_3.prompt",
+   "image": "res://assets/explore/berlin/lib_shelf_3.png",
+   "history": [
+    "hist.reich.generalplan_ost"
+   ]
+  },
+  {
+   "id": "berlin.reading_table",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.reading_table.title",
+   "text_key": "explore.berlin.reading_table.text",
+   "prompt_key": "explore.berlin.reading_table.prompt",
+   "image": "res://assets/explore/berlin/reading_table.png"
+  },
+  {
+   "id": "berlin.lib_shelf_4",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.lib_shelf_4.title",
+   "text_key": "explore.berlin.lib_shelf_4.text",
+   "prompt_key": "explore.berlin.lib_shelf_4.prompt",
+   "image": "res://assets/explore/berlin/lib_shelf_4.png",
+   "history": [
+    "hist.reich.t4"
+   ]
+  },
+  {
+   "id": "berlin.lib_shelf_5",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.lib_shelf_5.title",
+   "text_key": "explore.berlin.lib_shelf_5.text",
+   "prompt_key": "explore.berlin.lib_shelf_5.prompt",
+   "image": "res://assets/explore/berlin/lib_shelf_5.png",
+   "history": [
+    "hist.reich.forced_labor"
+   ]
+  },
+  {
+   "id": "berlin.lib_hidden",
+   "kind": "secret",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.lib_hidden.title",
+   "text_key": "explore.berlin.lib_hidden.text",
+   "prompt_key": "explore.berlin.lib_hidden.prompt",
+   "image": "res://assets/explore/berlin/lib_hidden.png"
+  },
+  {
+   "id": "berlin.coat_stand",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.coat_stand.title",
+   "text_key": "explore.berlin.coat_stand.text",
+   "prompt_key": "explore.berlin.coat_stand.prompt",
+   "image": "res://assets/explore/berlin/coat_stand.png"
+  },
+  {
+   "id": "berlin.poster_aufbau",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.poster_aufbau.title",
+   "text_key": "explore.berlin.poster_aufbau.text",
+   "prompt_key": "explore.berlin.poster_aufbau.prompt",
+   "image": "res://assets/explore/berlin/poster_aufbau.png",
+   "history": [
+    "hist.reich.germania"
+   ]
+  },
+  {
+   "id": "berlin.mouse",
+   "kind": "easter_egg",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.mouse.title",
+   "text_key": "explore.berlin.mouse.text",
+   "prompt_key": "explore.berlin.mouse.prompt",
+   "image": "res://assets/explore/berlin/mouse.png"
+  },
+  {
+   "id": "berlin.pneumatic_tube",
+   "kind": "secret",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.pneumatic_tube.title",
+   "text_key": "explore.berlin.pneumatic_tube.text",
+   "prompt_key": "explore.berlin.pneumatic_tube.prompt",
+   "image": "res://assets/explore/berlin/pneumatic_tube.png"
+  },
+  {
+   "id": "berlin.notice",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.notice.title",
+   "text_key": "explore.berlin.notice.text",
+   "prompt_key": "explore.berlin.notice.prompt",
+   "image": "res://assets/explore/berlin/notice.png"
+  },
+  {
+   "id": "berlin.emil_tea",
+   "kind": "chat",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.emil_tea.title",
+   "text_key": "explore.berlin.emil_tea.text",
+   "prompt_key": "explore.berlin.emil_tea.prompt",
+   "lines": [
+    {
+     "speaker": "emil",
+     "key": "explore.berlin.emil_tea.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.emil_tea.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "emil",
+     "key": "explore.berlin.emil_tea.l3",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.emil_tea.l4",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "emil",
+     "key": "explore.berlin.emil_tea.l5",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.berlin.emil_tea.l6",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "emil",
+     "key": "explore.berlin.emil_tea.l7",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "emil",
+     "key": "explore.berlin.emil_tea.l8",
+     "expr": "neutral"
+    }
+   ]
+  },
+  {
+   "id": "berlin.master_plan",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.master_plan.title",
+   "text_key": "explore.berlin.master_plan.text",
+   "prompt_key": "explore.berlin.master_plan.prompt",
+   "image": "res://assets/explore/berlin/master_plan.png",
+   "history": [
+    "hist.reich.schwerbelastungskoerper"
+   ]
+  }
+ ]
+}

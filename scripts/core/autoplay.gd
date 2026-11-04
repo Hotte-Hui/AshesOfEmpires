@@ -44,6 +44,8 @@ func run() -> void:
 		if not ok:
 			_fail("objective never became available: " + oid + " scene=" + Game._story_scene())
 			break
+		if (oid == "a1_talk_irina" or oid == "m1_inspect_plan_a") and Game.args.has("autoplay-explore"):
+			await _explore_pass()
 		var it := _find_interactable(oid)
 		if it == null:
 			_fail("no interactable in level for " + oid)
@@ -93,6 +95,31 @@ func run() -> void:
 		for f in failures:
 			print("AUTOPLAY_FAIL ", f)
 		get_tree().quit(1)
+
+
+## §12: trigger every optional find / chat of the current level through the normal Game.interact path and
+## check Explore recorded it (gates of the canonical route are untouched: these never change Story state).
+func _explore_pass() -> void:
+	var snapshot := Story.save_json()
+	var n := 0
+	for it in get_tree().get_nodes_in_group("interactables"):
+		if not it.is_inside_tree() or not (str(it.kind) == "discover" or str(it.kind) == "chat"):
+			continue
+		var id := str(it.explore_id)
+		if id == "" or not Explore.has_entry(id):
+			_fail("explore: interactable %s has unknown explore_id '%s'" % [it.name, id])
+			continue
+		_place_player_near(it)
+		await get_tree().create_timer(0.05).timeout
+		await Game.interact(it)
+		if not Explore.is_found(id):
+			_fail("explore: %s not recorded" % id)
+		n += 1
+	if Story.save_json() != snapshot:
+		_fail("explore: optional content changed the canonical Story state")
+	var c: Dictionary = Explore.counts(str(Game.level.level_id))
+	print("AUTOPLAY explored %d finds in %s (%s/%s), history %s" % [n, Game.level.level_id, c.get("found", 0),
+		c.get("total", 0), Explore.history_counts()])
 
 
 func _fail(msg: String) -> void:

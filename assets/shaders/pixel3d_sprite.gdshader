@@ -17,6 +17,8 @@ uniform float toon_seam = 0.16;
 uniform float billboard = 1.0;           // 1 = Y-billboard, 0 = use node rotation
 uniform float self_light = 0.0;          // flat lift (keeps silhouettes readable against dark ground)
 uniform float flag = 0.55;
+uniform float unshaded = 0.0;            // 1 = shows its own palette colours (smoke, steam, birds far away)
+uniform float dissolve = 0.0;            // 0..1 ordered-dither fade (appear / disappear without alpha blending)
 
 const float BAYER[16] = float[16](0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0,
 								  3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0);
@@ -44,6 +46,9 @@ void fragment() {
 	vec4 t = texture(sprite_tex, UV);
 	ALBEDO = t.rgb * tint.rgb;
 	ALPHA = t.a;
+	if (dissolve > 0.0 && bayer4(FRAGCOORD.xy) < dissolve) {
+		ALPHA = 0.0;
+	}
 	ALPHA_SCISSOR_THRESHOLD = 0.5;
 	ROUGHNESS = flag;
 	METALLIC = 0.0;
@@ -56,8 +61,8 @@ void fragment() {
 		NORMAL_MAP = n;
 		NORMAL_MAP_DEPTH = 1.0;
 	}
-	if (self_light > 0.0) {
-		EMISSION = ALBEDO * self_light;
+	if (self_light > 0.0 || unshaded > 0.0) {
+		EMISSION = ALBEDO * (self_light + unshaded);
 	}
 }
 
@@ -69,5 +74,5 @@ void light() {
 	float f = fract(x);
 	float up = step(bayer4(FRAGCOORD.xy), clamp((f - 0.5) / toon_seam + 0.5, 0.0, 1.0));
 	float lv = min(floor(x) + up, toon_steps) / toon_steps;
-	DIFFUSE_LIGHT += lc * (lv * lv * toon_max / lum);
+	DIFFUSE_LIGHT += lc * (lv * lv * toon_max / lum) * (1.0 - clamp(unshaded, 0.0, 1.0));
 }

@@ -1,8 +1,11 @@
 extends Control
 ## HUD: objective tracker (from Story.available()), interaction prompt with the bound key,
-## toast notifications (evidence / journal / system) and the subtle chapter title card.
+## toast notifications (evidence / journal / discovery / history / system) and the subtle chapter title card.
 ## API used by Game: show_prompt(ui_pos, text), hide_prompt(), refresh(), toast(text), show_chapter(title, sub),
-## show_hud(), hide_hud().
+## show_hud(), hide_hud(). Exploration (§12): set_prompt_target(node) (UIRoot wires Game.focus_changed) lets the
+## prompt mark optional finds — amber spark = not yet discovered, dimmed text + tick = already discovered
+## (Interactable.prompt_state()); toasts of kind "discovery" (detected from ui.toast.discovery) show the find
+## with its area counter, kind "history" a quiet real-history notice (paper sound, no flourish).
 
 const Kit := preload("res://scripts/ui/ui_kit.gd")
 
@@ -23,6 +26,9 @@ var _prompt_key: Label
 var _prompt_keycap: PanelContainer
 var _prompt_text: Label
 var _prompt_tail: TextureRect
+var _prompt_mark: TextureRect
+var _prompt_target: Node = null
+var _prompt_state := ""
 var _prompt_pos := Vector2.ZERO
 var _prompt_action := "interact"
 var _prompt_wanted := false
@@ -137,16 +143,23 @@ func _build_prompt() -> void:
 	_prompt_text = Kit.label("", "BodyLabel", 28)
 	_prompt_text.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(_prompt_text)
+	_prompt_mark = Kit.ex_sprite("icons/mark_new.png")
+	_prompt_mark.custom_minimum_size = Vector2(27, 27)
+	_prompt_mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_prompt_mark.visible = false
+	h.add_child(_prompt_mark)
 	_prompt_tail = Kit.sprite("icons/prompt_tail.png")
 	_prompt.add_child(_prompt_tail)
 
 
 ## ui_pos: anchor point in UI canvas pixels (the tail tip points at it). text: verb ("Untersuchen").
-func show_prompt(ui_pos: Vector2, text: String, action := "interact") -> void:
+## state: "new" / "found" for exploration hotspots ("" = ask the focused target, see set_prompt_target).
+func show_prompt(ui_pos: Vector2, text: String, action := "interact", state := "") -> void:
 	_prompt_wanted = true
 	_prompt_action = action
 	var was_hidden := not _prompt.visible
 	_prompt_text.text = text
+	_apply_prompt_state(state if state != "" else _target_state())
 	refresh_prompt_key()
 	_prompt_pos = ui_pos
 	_layout_prompt()
@@ -158,6 +171,34 @@ func show_prompt(ui_pos: Vector2, text: String, action := "interact") -> void:
 func hide_prompt() -> void:
 	_prompt_wanted = false
 	_prompt.visible = false
+
+
+## The interactable the prompt belongs to (UIRoot connects Game.focus_changed here).
+func set_prompt_target(target: Node) -> void:
+	_prompt_target = target if target != null and is_instance_valid(target) else null
+
+
+func _target_state() -> String:
+	if _prompt_target == null or not is_instance_valid(_prompt_target) or not _prompt_target.has_method("prompt_state"):
+		return ""
+	return str(_prompt_target.prompt_state())
+
+
+## "new": amber spark after the verb; "found": dimmed verb + tick; "": plain story prompt.
+func _apply_prompt_state(state: String) -> void:
+	_prompt_state = state
+	match state:
+		"new":
+			_prompt_mark.texture = Kit.ex_tex("icons/mark_new.png")
+			_prompt_mark.visible = _prompt_mark.texture != null
+			_prompt_text.remove_theme_color_override("font_color")
+		"found":
+			_prompt_mark.texture = Kit.ex_tex("icons/mark_seen.png")
+			_prompt_mark.visible = _prompt_mark.texture != null
+			_prompt_text.add_theme_color_override("font_color", Kit.C_TEXT if Kit.high_contrast() else Kit.C_TEXT_DIM)
+		_:
+			_prompt_mark.visible = false
+			_prompt_text.remove_theme_color_override("font_color")
 
 
 func refresh_prompt_key() -> void:
@@ -272,7 +313,8 @@ func set_toast_layer(layer: Control) -> void:
 	layer.add_child(_toast_box)
 
 
-## kind: evidence | journal | person | decision | save | info ("" = detect evidence from the text)
+## kind: evidence | journal | person | decision | save | discovery | history | info
+## ("" = detect evidence / discovery / history from the text)
 func toast(text: String, kind := "") -> void:
 	if text == "":
 		return
@@ -283,11 +325,21 @@ func toast(text: String, kind := "") -> void:
 
 
 func _guess_kind(text: String) -> String:
-	var fmt := Kit.t("ui.toast.evidence")
-	var prefix := fmt.split("{")[0]
-	if prefix.strip_edges() != "" and text.begins_with(prefix):
-		return "evidence"
+	for pair in [["ui.toast.evidence", "evidence"], ["ui.toast.discovery", "discovery"], ["ui.toast.history", "history"]]:
+		if not Kit.has_key(pair[0]):
+			continue
+		var prefix := Kit.t(pair[0]).split("{")[0]
+		if prefix.strip_edges() != "" and text.begins_with(prefix):
+			return pair[1]
 	return "info"
+
+
+## Strips the "Entdeckt: " / "Historischer Hintergrund: " prefix of a formatted toast.
+func _strip_prefix(text: String, key: String) -> String:
+	if not Kit.has_key(key):
+		return text
+	var prefix := Kit.t(key).split("{")[0]
+	return text.substr(prefix.length()) if prefix != "" and text.begins_with(prefix) else text
 
 
 func _pump_toasts() -> void:
@@ -317,18 +369,46 @@ func _spawn_toast(text: String, kind: String) -> void:
 		if text.begins_with(prefix):
 			body = text.substr(prefix.length())
 		kicker = ""
+	var counter := ""
+	if kind == "discovery":
+		body = _strip_prefix(text, "ui.toast.discovery")
+		var m := RegEx.create_from_string("\\s*\\((\\d+)\\s*/\\s*(\\d+)\\)\\s*$").search(body)
+		if m != null:
+			counter = "%s / %s" % [m.get_string(1), m.get_string(2)]
+			body = body.substr(0, m.get_start())
+	elif kind == "history":
+		body = _strip_prefix(text, "ui.toast.history")
 	var p := Kit.panel("PlatePanel")
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var h := Kit.hbox(16)
 	p.add_child(h)
-	var ic := Kit.sprite("icons/%s.png" % icon)
+	var ic: TextureRect
+	if kind == "discovery" or kind == "history":
+		ic = Kit.ex_sprite("icons/icon_%s.png" % kind)
+	else:
+		ic = Kit.sprite("icons/%s.png" % icon)
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.add_child(ic)
 	var v := Kit.vbox(2)
 	h.add_child(v)
 	var kick_text := Kit.t("ui.toast.evidence").split("{")[0].strip_edges().trim_suffix(":") if kind == "evidence" else (Kit.t(kicker) if kicker != "" else "")
+	if kind == "discovery":
+		kick_text = Kit.t("ui.explore.toast.discovery_kicker")
+	elif kind == "history":
+		kick_text = Kit.t("ui.history.kicker")
 	if kick_text != "":
-		v.add_child(Kit.label(kick_text.to_upper(), "KickerLabel"))
+		var kl := Kit.label(kick_text.to_upper(), "KickerLabel")
+		if kind == "history":
+			kl.add_theme_color_override("font_color", Kit.C_TEXT_DIM)
+		if counter != "":
+			var kr := Kit.hbox(18)
+			kr.add_child(kl)
+			var cl := Kit.label(counter, "HintLabel")
+			cl.size_flags_vertical = Control.SIZE_SHRINK_END
+			kr.add_child(cl)
+			v.add_child(kr)
+		else:
+			v.add_child(kl)
 	var l := Kit.label(body, "BodyLabel", 27)
 	v.add_child(l)
 	var holder := Control.new()
@@ -341,7 +421,7 @@ func _spawn_toast(text: String, kind: String) -> void:
 	holder.custom_minimum_size = sz
 	p.size = sz
 	Kit.appear(p, 0.24, Vector2(48, 0))
-	Kit.ui_sound("toast")
+	Kit.ui_sound("history" if kind == "history" else "toast")
 	var tw := holder.create_tween()
 	tw.tween_interval(TOAST_TIME)
 	tw.tween_property(holder, "modulate:a", 0.0, 0.5)

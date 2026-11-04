@@ -25,10 +25,18 @@
   "char.clerk.name": "Büroangestellter",
   "char.clerk.role": "Sachbearbeiter im Bauarchiv",
   "char.guard.name": "Wachposten",
-  "char.guard.role": "Wachmann ohne Abzeichen",
+  "char.guard.role": "Wachmann am Amtsgebäude",
   "char.expression.neutral": "neutral",
   "char.expression.concerned": "besorgt",
   "char.expression.determined": "entschlossen",
-  "char.expression.surprised": "überrascht"
+  "char.expression.surprised": "überrascht",
+  "char.librarian.name": "Bibliothekarin",
+  "char.librarian.role": "Leiterin des Lesesaals im Bauarchiv",
+  "char.porter.name": "Pförtner",
+  "char.porter.role": "Pförtner am Treppenhaus des Bauarchivs",
+  "char.vendor.name": "Teeverkäuferin",
+  "char.vendor.role": "Betreibt den Teestand am Verladebahnhof",
+  "char.worker_b.name": "Gleisarbeiter",
+  "char.worker_b.role": "Streckenarbeiter am Verladebahnhof Karsk"
  }
 }

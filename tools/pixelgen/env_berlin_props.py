@@ -14,6 +14,8 @@ import env_berlin_kit as kit
 import env_berlin_layout as L
 import pg
 
+X = L.X
+
 R = kit.archive_ramps()
 
 
@@ -75,7 +77,7 @@ def tape(lay, x, y):
 
 # --------------------------------------------------------------------------- props
 def coat_stand():
-    p = Prop('coat_stand', 96, 291, 22, 66, 'bentwood coat stand with a grey coat, hat and umbrella')
+    p = Prop('coat_stand', X(96), 291, 22, 66, 'bentwood coat stand with a grey coat, hat and umbrella')
     lay = p.lay
     cx = 10
     # pole + finial
@@ -118,7 +120,7 @@ def coat_stand():
 
 
 def drafting_konrad():
-    p = Prop('drafting_konrad', 284, 294, 78, 76, "Konrad's drafting board with the approved plan (plan_a)")
+    p = Prop('drafting_konrad', X(284), 294, 78, 76, "Konrad's drafting board with the approved plan (plan_a)")
     lay = p.lay
     by0, by1 = 27, 50                      # board top / bottom edge (local y)
     # stand: splayed iron legs + central tilting column with its knob
@@ -193,13 +195,13 @@ def drafting_konrad():
     lay.line(45, 18, 60, 16, 'A', 6.0, emis=True)                               # glowing rim
     lay.line(46, 19, 59, 17, 'A', 5.0, emis=True)
     lay.rect(51, 18, 4, 2, 'A', 6.0, emis=True, flat=True)                      # bulb
-    p.lights.append({'name': 'lamp_konrad', 'pos': (284 + 53, p.y + 20), 'kind': 'warm', 'energy': 1.45,
+    p.lights.append({'name': 'lamp_konrad', 'pos': (X(284) + 53, p.y + 20), 'kind': 'warm', 'energy': 1.45,
                      'radius': 118, 'height': 22, 'cone': (-0.25, 1.0, -0.05)})
     return p
 
 
 def stool_konrad():
-    p = Prop('stool_konrad', 362, 295, 16, 30, 'tall drafting stool pushed aside')
+    p = Prop('stool_konrad', X(362), 295, 16, 30, 'tall drafting stool pushed aside')
     lay = p.lay
     lay.ellipse(8, 2.5, 7.0, 2.4, 'D', 4.4, hgt=0.6, flat=True)
     lay.rect(2, 3, 13, 2, 'D', 2.6, hgt=0.5, flat=True)
@@ -212,7 +214,7 @@ def stool_konrad():
 
 
 def drafting_covered():
-    p = Prop('drafting_covered', 172, 293, 66, 74, "absent colleague's board under a dust sheet (obs_photo)")
+    p = Prop('drafting_covered', X(172), 293, 66, 74, "absent colleague's board under a dust sheet (obs_photo)")
     lay = p.lay
     iron_trestle(lay, 12, 50, 50, 73)
     # dust sheet draped over the board: hem waves, vertical folds
@@ -256,7 +258,7 @@ def drafting_covered():
 
 def typist_desk():
     T = 36                     # desk top (local y)
-    p = Prop('typist_desk', 446, 293, 60, T + 30, 'typist desk: typewriter, telephone, gooseneck lamp, chair')
+    p = Prop('typist_desk', X(446), 293, 60, T + 30, 'typist desk: typewriter, telephone, gooseneck lamp, chair')
     lay = p.lay
     # desk body: two pedestals + kneehole
     lay.rect(2, T, 56, 3, 'D', 5.0, hgt=0.6, flat=True)
@@ -297,7 +299,7 @@ def typist_desk():
     lay.line(11, T - 31, 18, T - 30, 'G', 4.4)
     lay.line(12, T - 25, 19, T - 25, 'A', 6.0, emis=True)
     lay.rect(14, T - 24, 3, 1, 'A', 5.0, emis=True, flat=True)
-    p.lights.append({'name': 'lamp_typist', 'pos': (446 + 15, p.y + T - 23), 'kind': 'warm', 'energy': 0.8,
+    p.lights.append({'name': 'lamp_typist', 'pos': (X(446) + 15, p.y + T - 23), 'kind': 'warm', 'energy': 0.8,
                      'radius': 88, 'height': 18, 'cone': (0.3, 1.0, -0.1)})
     # chair seen from behind (pushed in)
     lay.rect(24, T + 4, 12, 9, 'D', 3.0, hgt=0.7, flat=True)             # backrest
@@ -310,7 +312,7 @@ def typist_desk():
 
 
 def plan_basket():
-    p = Prop('plan_basket', 612, 309, 20, 38, 'wicker stand with rolled plans (in front of the walk line)')
+    p = Prop('plan_basket', X(612), 309, 20, 38, 'wicker stand with rolled plans (in front of the walk line)')
     lay = p.lay
     # wicker body
     for y in range(16, 37):
@@ -333,7 +335,7 @@ def plan_basket():
 
 
 def ladder():
-    p = Prop('ladder', 652, 291, 26, 142, 'rolling library ladder hooked on the shelf rail')
+    p = Prop('ladder', X(652), 291, 26, 142, 'rolling library ladder hooked on the shelf rail')
     lay = p.lay
     h = p.h
     for k in range(h):
@@ -362,7 +364,7 @@ def ladder():
 
 
 def flat_file():
-    p = Prop('flat_file', 790, 293, 108, 50, 'plan chest; the drawer with the archived draft is pulled out (plan_b)')
+    p = Prop('flat_file', X(790), 293, 108, 50, 'plan chest; the drawer with the archived draft is pulled out (plan_b)')
     lay = p.lay
     top = 8
     # carcass
@@ -407,7 +409,7 @@ def flat_file():
 
 
 def card_catalogue():
-    p = Prop('card_catalogue', 990, 292, 46, 62, 'card catalogue cabinet with a drawer pulled out')
+    p = Prop('card_catalogue', X(990), 292, 46, 62, 'card catalogue cabinet with a drawer pulled out')
     lay = p.lay
     top = 8
     lay.rect(1, top, 44, 38, 'D', 2.4, hgt=0.4, flat=True)
@@ -447,7 +449,7 @@ def card_catalogue():
 
 
 def light_table():
-    p = Prop('light_table', 1136, 294, 84, 50, 'light table for overlaying drawings (overlay_table)')
+    p = Prop('light_table', X(1136), 294, 84, 50, 'light table for overlaying drawings (overlay_table)')
     lay = p.lay
     gy0, gy1 = 10, 21
     # frame + glowing frosted glass top (seen from above, tilted toward the viewer)
@@ -484,7 +486,7 @@ def light_table():
         lay.rect(x, gy1 + 22, 3, 50 - gy1 - 22, 'W', 3.0, hgt=0.5, flat=True)
         lay.rect(x, gy1 + 22, 1, 50 - gy1 - 22, 'W', 5.0, hgt=0.55, flat=True)
     lay.rect(8, 44, 68, 2, 'W', 2.6, hgt=0.4, flat=True)
-    p.lights.append({'name': 'light_table', 'pos': (1136 + 42, p.y + gy0 + 3), 'kind': 'white', 'energy': 1.0,
+    p.lights.append({'name': 'light_table', 'pos': (X(1136) + 42, p.y + gy0 + 3), 'kind': 'white', 'energy': 1.0,
                      'radius': 96, 'height': 6})
     return p
 
@@ -492,7 +494,7 @@ def light_table():
 def counter():
     ct = 26                    # counter top front edge (local y); lamp and props rise above it
     H = ct + 27                # front 26 px ~ 1.05 m
-    p = Prop('counter', 1334, 292, 160, H, "Emil's issue counter: banker's lamp, stamps, card files")
+    p = Prop('counter', X(1334), 292, 160, H, "Emil's issue counter: banker's lamp, stamps, card files")
     lay = p.lay
     # counter top surface seen from above + brass edge
     lay.rect(0, ct - 4, 160, 4, 'D', 4.4, hgt=0.6, flat=True)
@@ -553,13 +555,13 @@ def counter():
     lay.rect(bx - 9, shade_y + 5, 20, 1, 'G', 5.0, flat=True, emis=True)
     lay.rect(bx - 6, shade_y + 6, 14, 1, 'A', 6.0, flat=True, emis=True)       # bulb glow under the shade
     lay.rect(bx - 2, shade_y + 6, 1, 2, 'A', 5.0, flat=True)                   # pull chain
-    p.lights.append({'name': 'lamp_emil', 'pos': (1334 + bx + 1, p.y + shade_y + 7), 'kind': 'green',
+    p.lights.append({'name': 'lamp_emil', 'pos': (X(1334) + bx + 1, p.y + shade_y + 7), 'kind': 'green',
                      'energy': 1.7, 'radius': 96, 'height': -3, 'wrap_add': 0.06})
     return p
 
 
 def bench():
-    p = Prop('bench', 1296, 291, 46, 24, 'waiting bench; a forgotten hat and a newspaper')
+    p = Prop('bench', X(1296), 291, 46, 24, 'waiting bench; a forgotten hat and a newspaper')
     lay = p.lay
     for k in range(3):
         lay.rect(2, 1 + k * 3, 42, 2, 'D', 3.4, hgt=0.5, flat=True)
@@ -582,8 +584,11 @@ def bench():
 
 
 def build_all():
-    return [coat_stand(), drafting_covered(), drafting_konrad(), stool_konrad(), typist_desk(), plan_basket(),
-            ladder(), flat_file(), card_catalogue(), light_table(), counter(), bench()]
+    import env_berlin_hall as EH
+    import env_berlin_library as ELB
+    return (EH.props_hall(Prop) + ELB.props_library(Prop) +
+            [coat_stand(), drafting_covered(), drafting_konrad(), stool_konrad(), typist_desk(), plan_basket(),
+             ladder(), flat_file(), card_catalogue(), light_table(), counter(), bench()])
 
 
 def bake_prop(p: Prop, lights, room_fields=None, shaft_air=None):

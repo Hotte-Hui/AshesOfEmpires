@@ -3,14 +3,18 @@ extends RefCounted
 ## archive window room (shot h1), a short Berlin tenement street that opens onto the plaza, the family's
 ## chamfered corner with the sealed door, tram wires, loudspeakers, the floodlit plaza and the fictional
 ## completed "Grosse Halle" (cubic podium with a relentless rhythm of colossal square pilasters, portico of
-## square piers, heavy cornice, ribbed green-black patina dome with a plain lantern, endless colonnaded
-## wings).  NO real insignia: the only emblem is the fictional Reichssiegel (white pillar in a black disc),
-## small, on grey-black banners.
+## square piers, heavy cornice, ribbed green-black patina dome, lantern crowned by the eagle on the globe of
+## Speer's 1939 design, endless colonnaded wings with cranes still at work).
+## Insignia (TECHNICAL_ARCHITECTURE section 12.4): every texture with a regime emblem is resolved through
+## Symbols.pick(): historical setting on -> red banners with the swastika (portico, masts, street outriggers,
+## the flag over the family's sealed door) and the state eagle holding the swastika wreath on the portico;
+## off -> the fictional Reichssiegel on grey-black cloth and the eagle holding the Reichssiegel.
 ## Units: metres, +Y up, the camera looks along -Z and never rotates.  Hall axis x = HX, podium front z = HZ.
 ## Geometry is grouped by material into a few ArrayMeshes (one MeshInstance3D per material bucket).
 
 const Kit := preload("res://scripts/levels/hall/hall_mesh_kit.gd")
 const TOON := preload("res://assets/shaders/pixel3d_toon.gdshader")
+const SymbolsLib := preload("res://scripts/core/symbols.gd")
 const TEX := "res://assets/architecture/great_hall/"
 
 const HX := 45.0
@@ -49,11 +53,23 @@ var rng := RandomNumberGenerator.new()
 var people_spec: Array = []
 var story_window: MeshInstance3D
 var story_window_mat: ShaderMaterial
+var story_sil: MeshInstance3D
+var story_curtain_mat: ShaderMaterial
+var story_curtains: Array = []
 var stats: Dictionary = {}
 var _xf := Transform3D.IDENTITY
 var wash_x_portico: Array = []
 var wash_x_podium: Array = []
 var wash_x_wings: Array = []
+## Animated / special objects handed to hall_life.gd
+var tram_node: Node3D
+var tram_len := 12.0
+var halos: Array = []                ## {pos: Vector3, col: Color (sRGB), r: float (m), k: float, blink: float}
+var steam_spots: Array = []          ## manhole positions (steam actors)
+var smoke_spots: Array = []          ## chimney tops (smoke actors): {pos, far: bool}
+var symbols_hist := true
+var eagle_portico_pos := Vector3.ZERO
+var _ornament := true
 ## Calibration (final camera pose) so the pilaster rhythm of the facade lands on whole pixels.
 var cal_cam := Vector3(-6.85, 1.9, -20.0)
 var cal_shift := Vector2(0, 56)
@@ -72,6 +88,7 @@ func build(p_root: Node3D, calib: Dictionary) -> void:
 	cal_shift = calib.get("shift", cal_shift)
 	cal_vp = calib.get("vp", cal_vp)
 	cal_f = calib.get("f", cal_f)
+	symbols_hist = SymbolsLib.enabled()
 	_make_materials()
 	_build_ground()
 	_build_archive_room()
@@ -83,6 +100,14 @@ func build(p_root: Node3D, calib: Dictionary) -> void:
 	_build_plaza()
 	_build_hall()
 	_build_far_city()
+	_build_street_flags()
+	_build_tram_stop()
+	_build_kiosk()
+	_build_manholes()
+	_build_swept_snow()
+	_build_cranes()
+	_build_parked_car()
+	_build_far_lights()
 	_flush()
 	_build_lights()
 
@@ -135,6 +160,29 @@ func _make_materials() -> void:
 		kit_layer[k] = LAYER_IN
 	mats["lamp_in"] = mats["lamp"]
 	mats["glass_in"] = _toon({"flag": 0.0, "toon_steps": 3.0})
+	# regime iconography (neutral file or its _hist variant, Symbols.pick)
+	for k in ["banner_portico", "flag_street", "flag_pole"]:
+		var t := _sym_tex(k)
+		mats[k] = _toon({"use_tex": t != null, "albedo_tex": t, "use_vertex_color": false, "alpha_scissor": 0.5,
+			"toon_steps": 4.0, "light_wrap": 0.35, "snow": 0.0})
+	var sil := _tex("life/window_people.png")
+	mats["silhouette"] = _toon({"use_tex": sil != null, "albedo_tex": sil, "use_vertex_color": false,
+		"alpha_scissor": 0.5, "toon_steps": 2.0, "flag": 0.75})
+	var kio := _tex("life/kiosk_front.png")
+	mats["kiosk"] = _toon({"use_tex": kio != null, "albedo_tex": kio, "use_vertex_color": false,
+		"toon_steps": 3.0, "flag": 0.75})
+	var sign := _tex("life/tram_stop.png")
+	mats["sign"] = _toon({"use_tex": sign != null, "albedo_tex": sign, "use_vertex_color": false,
+		"alpha_scissor": 0.5, "toon_steps": 3.0, "light_wrap": 0.5})
+
+
+func _sym_path(name: String) -> String:
+	return SymbolsLib.pick(TEX + "symbols/" + name + ".png")
+
+
+func _sym_tex(name: String) -> Texture2D:
+	var p := _sym_path(name)
+	return load(p) if ResourceLoader.exists(p) else null
 
 
 func K(name: String, primitive: int = Mesh.PRIMITIVE_TRIANGLES) -> Kit:
@@ -248,6 +296,19 @@ func _build_ground() -> void:
 		if fp == 16:
 			p = Vector3(-10.6, 0.17, -46.0)     # a second, older trail
 		fp += 1
+	# trails across the road: people heading for the tram stop and the square
+	for trail in [[Vector3(-8.0, 0.02, -37.0), Vector3(-5.6, 0.02, -61.0)], [Vector3(1.5, 0.02, -34.0),
+			Vector3(-2.0, 0.02, -58.0)]]:
+		var a0: Vector3 = trail[0]
+		var a1: Vector3 = trail[1]
+		var steps := int(a0.distance_to(a1) / 0.62)
+		for k in steps:
+			var u := float(k) / float(steps)
+			var q := a0.lerp(a1, u) + Vector3((0.15 if k % 2 == 0 else -0.15) + rng.randf_range(-0.05, 0.05), 0, 0)
+			var hl := rng.randf_range(0.11, 0.15)
+			g.quad(Vector3(q.x - 0.09, 0.013, q.z + hl), Vector3(q.x - 0.09, 0.013, q.z - hl),
+				Vector3(q.x + 0.09, 0.013, q.z - hl), Vector3(q.x + 0.09, 0.013, q.z + hl),
+				c(SNOW[1]) if rng.randf() < 0.6 else c(VIOLET[3]))
 	# Cleared walking paths across the plaza converging on the portico (leading lines).
 	for side: float in [-1.0, 1.0]:
 		var a := Vector3(side * 8.0 + 2.0, 0.01, PLAZA_EDGE - 6.0)
@@ -414,19 +475,30 @@ func _tenement(length: float, seed_: int, base_col: String, lit_prob: float, opt
 			"top": c(SNOW[4])})
 	st.box(Vector3(-0.3, height - 0.9, 0.0), Vector3(length + 0.6, 0.9, 0.75), {"front": c(STONE[2]),
 		"side": c(STONE[1]), "top": c(SNOW[4]), "bottom": c(VIOLET[1])}, Kit.FACES_ALL)
+	# consoles under the main cornice (rhythm of small brackets)
+	var kx := 0.6
+	while kx < length - 0.4:
+		st.box(Vector3(kx - 0.12, height - 1.35, 0.0), Vector3(0.24, 0.45, 0.55), {"front": c(STONE[3]),
+			"side": c(STONE[1]), "top": c(SNOW[4]), "bottom": c(VIOLET[1])}, Kit.FACES_ALL)
+		kx += 1.25
 	var roof := K("roof")
 	roof.quad(Vector3(0.0, height, 0.75), Vector3(0.0, height + 4.2, -3.2), Vector3(length, height + 4.2, -3.2),
 		Vector3(length, height, 0.75), c(STEEL[1]))
 	roof.box(Vector3(0.0, height + 4.19, -depth), Vector3(length, 0.02, depth - 3.2), c(SNOW[3]))
 	var cz := 3.0
 	while cz < length - 2.0:
-		st.box(Vector3(cz, height + 3.7, -rng.randf_range(5.0, 9.0)), Vector3(1.6, rng.randf_range(1.6, 2.6), 1.0),
+		var ch_z := -rng.randf_range(5.0, 9.0)
+		var ch_h := rng.randf_range(1.6, 2.6)
+		st.box(Vector3(cz, height + 3.7, ch_z), Vector3(1.6, ch_h, 1.0),
 			{"front": c(STONE[1]), "side": c(STONE[0]), "top": c(SNOW[3])})
+		if rng.randf() < 0.55:
+			smoke_spots.append({"pos": _xf * Vector3(cz + 0.8, height + 3.7 + ch_h, ch_z + 0.5), "far": false})
 		cz += rng.randf_range(7.0, 12.0)
 	var bay := 3.7
 	var nb := int(floor(length / bay))
 	var margin := (length - nb * bay) * 0.5
 	var skip_ground: Array = opts.get("skip_ground", [])
+	_ornament = not bool(opts.get("no_ornament", false))
 	for f in range(FLOORS + 1):
 		for i in nb:
 			var xc := margin + (i + 0.5) * bay
@@ -479,6 +551,20 @@ func _window_body(xc: float, y0: float, ww: float, wh: float, floor_i: int, lit_
 		{"front": c(STONE[3]), "top": c(SNOW[4]), "side": c(STONE[2])})
 	st.box(Vector3(xc - ww * 0.5 - 0.35, y0 + wh + 0.1, 0.0), Vector3(ww + 0.7, 0.32, 0.3),
 		{"front": c(STONE[3]), "top": c(SNOW[4]), "side": c(STONE[2]), "bottom": c(VIOLET[1])}, Kit.FACES_ALL)
+	if floor_i == 1 and _ornament:
+		# triangular pediment over the first-floor windows (piano nobile)
+		var py := y0 + wh + 0.42
+		var pw := ww * 0.5 + 0.42
+		var front := c(STONE[3])
+		st.tri(Vector3(xc - pw, py, 0.22), Vector3(xc, py + 0.5, 0.22), Vector3(xc + pw, py, 0.22), front)
+		st.quad(Vector3(xc - pw, py, 0.22), Vector3(xc - pw, py, 0.0), Vector3(xc, py + 0.5, 0.0),
+			Vector3(xc, py + 0.5, 0.22), c(STONE[3]))
+		st.quad(Vector3(xc, py + 0.5, 0.22), Vector3(xc, py + 0.5, 0.0), Vector3(xc + pw, py, 0.0),
+			Vector3(xc + pw, py, 0.22), c(STONE[3]))
+	elif floor_i >= 2 and _ornament:
+		# keystone in the lintel
+		st.box(Vector3(xc - 0.14, y0 + wh + 0.06, 0.0), Vector3(0.28, 0.42, 0.34), {"front": c(STONE[4]),
+			"top": c(SNOW[4]), "side": c(STONE[2])})
 	var ctr := Vector3(xc, y0 + wh * 0.5, 0.01)
 	var n := Vector3.BACK
 	if lit:
@@ -488,6 +574,16 @@ func _window_body(xc: float, y0: float, ww: float, wh: float, floor_i: int, lit_
 		var cur := c(OCHRE[3])
 		gll.face(ctr + Vector3(-ww * 0.36, 0, 0.003), n, Vector3.UP, ww * 0.14, wh * 0.5, cur, 0.8)
 		gll.face(ctr + Vector3(ww * 0.36, 0, 0.003), n, Vector3.UP, ww * 0.14, wh * 0.5, cur, 0.8)
+		# somebody at home: a silhouette behind the glass (head and shoulders, a figure, two heads ...)
+		if rng.randf() < 0.42:
+			var cell: int = [0, 1, 3][rng.randi_range(0, 2)]     # cell 2 is reserved for the neighbour (h3)
+			var sw := ww * 0.62
+			var sh := sw * 24.0 / 14.0
+			var sx0 := xc - sw * 0.5 + rng.randf_range(-0.15, 0.15)
+			var sy0 := y0 + 0.02
+			K("silhouette").quad_uv(Vector3(sx0, sy0, 0.0115), Vector3(sx0, sy0 + sh, 0.0115),
+				Vector3(sx0 + sw, sy0 + sh, 0.0115), Vector3(sx0 + sw, sy0, 0.0115), Color.WHITE,
+				Vector2(cell * 0.25, 0.0), Vector2(cell * 0.25 + 0.25, 1.0), 0.35)
 	else:
 		var gl := K("glass")
 		var dark := c(VIOLET[0]) if rng.randf() < 0.6 else c(NIGHT[3])
@@ -502,10 +598,11 @@ func _window_body(xc: float, y0: float, ww: float, wh: float, floor_i: int, lit_
 func _build_street() -> void:
 	# near-left block (archive side): facade x = -12 facing +x, running from z = 0 to NEAR_LEFT_END
 	_frame(Vector3(-STREET_HALF, 0, 0), Vector3(0, 0, -1))
-	_tenement(-NEAR_LEFT_END, 11, STONE[1], 0.22, {"no_balconies": true})
+	_tenement(-NEAR_LEFT_END, 11, STONE[1], 0.22, {"no_balconies": true, "no_ornament": true})
 	# right block: facade x = +12 facing -x (local x runs towards +z)
 	_frame(Vector3(STREET_HALF, 0, RIGHT_BLOCK_END), Vector3(0, 0, 1))
 	_tenement(-RIGHT_BLOCK_END, 23, STONE[2], 0.3)
+	_ornament = true
 	# family block, street side (beyond the chamfer)
 	_frame(Vector3(-STREET_HALF, 0, CHAMFER_B.z), Vector3(0, 0, -1))
 	_tenement(CHAMFER_B.z - FAMILY_BLOCK_END, 37, STONE[2], 0.28)
@@ -583,11 +680,11 @@ func _build_family_corner() -> void:
 	var fam := func(x: float, z: float) -> Vector3: return xf * Vector3(x, 0.16, z)
 	people_spec.append({"role": "suitcase_b", "pos": fam.call(dx + 0.75, 1.0), "flip": true,
 		"file": "res://assets/architecture/great_hall/props/suitcase_b.png"})
-	people_spec.append({"role": "berlin_father", "pos": fam.call(dx + 1.35, 1.6), "flip": false})
+	people_spec.append({"role": "berlin_father", "pos": fam.call(dx + 1.35, 1.6), "flip": false, "phase": 0.0})
 	people_spec.append({"role": "suitcase_a", "pos": fam.call(dx + 2.05, 2.2), "flip": false,
 		"file": "res://assets/architecture/great_hall/props/suitcase_a.png"})
-	people_spec.append({"role": "berlin_mother", "pos": fam.call(dx + 2.75, 1.75), "flip": true})
-	people_spec.append({"role": "berlin_child", "pos": fam.call(dx + 3.15, 2.6), "flip": false})
+	people_spec.append({"role": "berlin_mother", "pos": fam.call(dx + 2.75, 1.75), "flip": true, "phase": 0.55})
+	people_spec.append({"role": "berlin_child", "pos": fam.call(dx + 3.15, 2.6), "flip": false, "phase": 0.3})
 	people_spec.append({"role": "bundle", "pos": fam.call(dx + 3.7, 1.5), "flip": false,
 		"file": "res://assets/architecture/great_hall/props/bundle.png"})
 	stats["door_world"] = xf * Vector3(dx, 1.3, 0.2)
@@ -595,7 +692,8 @@ func _build_family_corner() -> void:
 
 
 func _story_window(xc: float, y0: float) -> void:
-	# the window that closes in h3 (own mesh + material so it can be switched off)
+	# The window above the family (shot h3): a neighbour comes to the window, draws the curtains, the light
+	# goes out.  Own nodes + materials so hall_reveal.gd can animate them.
 	var ww := 1.05
 	var wh := 2.1
 	var st := K("stone")
@@ -603,8 +701,18 @@ func _story_window(xc: float, y0: float) -> void:
 		{"front": c(STONE[3]), "top": c(SNOW[4])})
 	st.box(Vector3(xc - ww * 0.5 - 0.35, y0 + wh + 0.1, 0.0), Vector3(ww + 0.7, 0.32, 0.3),
 		{"front": c(STONE[3]), "top": c(SNOW[4]), "bottom": c(VIOLET[1])}, Kit.FACES_ALL)
+	var py := y0 + wh + 0.42
+	var pw := ww * 0.5 + 0.42
+	st.tri(Vector3(xc - pw, py, 0.31), Vector3(xc, py + 0.55, 0.31), Vector3(xc + pw, py, 0.31), c(STONE[3]))
+	st.quad(Vector3(xc - pw, py, 0.31), Vector3(xc - pw, py, 0.0), Vector3(xc, py + 0.55, 0.0),
+		Vector3(xc, py + 0.55, 0.31), c(SNOW[4]))
+	st.quad(Vector3(xc, py + 0.55, 0.31), Vector3(xc, py + 0.55, 0.0), Vector3(xc + pw, py, 0.0),
+		Vector3(xc + pw, py, 0.31), c(SNOW[4]))
+	var rig := Node3D.new()
+	rig.name = "StoryWindow"
+	root.add_child(rig)
+	rig.global_transform = _xf
 	var kit := Kit.new()
-	kit.xf = _xf
 	var ctr := Vector3(xc, y0 + wh * 0.5, 0.01)
 	var n := Vector3.BACK
 	kit.face(ctr, n, Vector3.UP, ww * 0.5, wh * 0.5, c(GLOW[2]), 1.0)
@@ -613,11 +721,47 @@ func _story_window(xc: float, y0: float) -> void:
 	kit.face(ctr + Vector3(0, wh * 0.18, 0.008), n, Vector3.UP, ww * 0.5, 0.045, c(NIGHT[2]))
 	kit.face(ctr + Vector3(0, 0, 0.008), n, Vector3.UP, 0.04, wh * 0.5, c(NIGHT[2]))
 	story_window = MeshInstance3D.new()
-	story_window.name = "StoryWindow"
+	story_window.name = "Glass"
 	story_window.mesh = kit.commit()
 	story_window_mat = _toon({"flag": 0.75, "emission_energy": 1.0, "toon_steps": 3.0})
 	story_window.material_override = story_window_mat
-	root.add_child(story_window)
+	rig.add_child(story_window)
+	# the neighbour: woman with a hair bun, one arm raised to the curtain (silhouette atlas cell 2)
+	var sk := Kit.new()
+	var sw := ww * 0.66
+	var sh := sw * 24.0 / 14.0
+	var sx0 := xc - sw * 0.5 + 0.08
+	sk.quad_uv(Vector3(sx0, y0, 0.0115), Vector3(sx0, y0 + sh, 0.0115), Vector3(sx0 + sw, y0 + sh, 0.0115),
+		Vector3(sx0 + sw, y0, 0.0115), Color.WHITE, Vector2(0.5, 0.0), Vector2(0.75, 1.0), 0.35)
+	story_sil = MeshInstance3D.new()
+	story_sil.name = "Neighbour"
+	story_sil.mesh = sk.commit()
+	story_sil.material_override = mats["silhouette"]
+	story_sil.visible = false
+	rig.add_child(story_sil)
+	# two curtain panels hinged at the window jambs; scale.x 0.28 (open) -> 1.0 (drawn)
+	story_curtain_mat = _toon({"flag": 0.75, "emission_energy": 0.75, "toon_steps": 3.0})
+	for side: float in [-1.0, 1.0]:
+		var ck := Kit.new()
+		var half := ww * 0.5
+		# panel in pivot space: from the jamb (x = 0) towards the window centre
+		var x_in: float = -side * half
+		var xa := minf(0.0, x_in)
+		var xb := maxf(0.0, x_in)
+		ck.quad(Vector3(xa, -wh * 0.5, 0.0), Vector3(xa, wh * 0.5, 0.0), Vector3(xb, wh * 0.5, 0.0),
+			Vector3(xb, -wh * 0.5, 0.0), c(OCHRE[3]), 1.0)
+		# two soft folds (backlit fabric, not bars)
+		for fx in [0.35, 0.75]:
+			var xf2: float = x_in * fx
+			ck.face(Vector3(xf2, 0.0, 0.002), Vector3.BACK, Vector3.UP, 0.04, wh * 0.5, c(OCHRE[2]), 0.8)
+		var mi := MeshInstance3D.new()
+		mi.name = "Curtain_%s" % ("L" if side < 0.0 else "R")
+		mi.mesh = ck.commit()
+		mi.material_override = story_curtain_mat
+		mi.position = Vector3(xc + side * half, y0 + wh * 0.5, 0.016)
+		mi.scale = Vector3(0.28, 1.0, 1.0)
+		rig.add_child(mi)
+		story_curtains.append(mi)
 
 
 # ============================================================================== furniture
@@ -640,13 +784,18 @@ func _loudspeaker_pole(base: Vector3, tall: float = 8.5) -> void:
 				{"front": c(STEEL[2] if k == 3 else STEEL[1]), "side": c(STEEL[0]), "top": c(SNOW[3])})
 
 
-func _street_lamp(base: Vector3, lit: bool) -> void:
+func _street_lamp(base: Vector3, lit: bool, cold := false) -> void:
 	_world()
 	var m := K("metal")
 	m.pillar(base.x, base.z, 0.0, 0.16, 0.16, 4.4, {"front": c(NIGHT[3]), "side": c(NIGHT[2])})
 	m.pillar(base.x, base.z, 0.0, 0.34, 0.34, 0.7, c(NIGHT[2]))
 	m.pillar(base.x, base.z, 4.4, 0.62, 0.62, 0.08, {"front": c(NIGHT[2]), "top": c(SNOW[4])})
-	if lit:
+	if lit and cold:
+		# mercury lamp: a small cold lens under a dark hood
+		K("lamp").box(Vector3(base.x - 0.14, 4.52, base.z - 0.14), Vector3(0.28, 0.3, 0.28), c(STEEL[3]),
+			Kit.FACES_ALL, 0.8)
+		m.box(Vector3(base.x - 0.24, 4.82, base.z - 0.24), Vector3(0.48, 0.2, 0.48), c(NIGHT[2]), Kit.FACES_ALL)
+	elif lit:
 		K("lamp").box(Vector3(base.x - 0.24, 4.48, base.z - 0.24), Vector3(0.48, 0.55, 0.48), c(GLOW[2]),
 			Kit.FACES_ALL, 1.0)
 	else:
@@ -671,24 +820,7 @@ func _build_street_furniture() -> void:
 	colm.lathe(cc, [Vector2(0.8, 3.2), Vector2(0.8, 3.45), Vector2(0.45, 3.85), Vector2(0.0, 3.95)], 12,
 		func(_i, j): return c(SNOW[4]) if j >= 1 else c(STEEL[1]))
 	# the guard at the plaza edge under the loudspeaker, facing the family
-	people_spec.append({"role": "guard", "pos": Vector3(1.2, 0.0, PLAZA_EDGE - 2.6), "flip": true})
-	# passers-by on the plaza (medium ~110 m, small ~200-260 m): the ordinary city keeps moving
-	var crowd := [
-		[Vector3(-14.0, 0.0, -128.0), "m", 0, false], [Vector3(30.0, 0.0, -134.0), "m", 1, true],
-		[Vector3(32.0, 0.0, -134.5), "m", 3, true],
-		[Vector3(-30.0, 0.0, -215.0), "s", 2, false], [Vector3(-27.5, 0.0, -216.0), "s", 3, false],
-		[Vector3(-25.0, 0.0, -214.0), "s", 4, true], [Vector3(64.0, 0.0, -236.0), "s", 5, true],
-		[Vector3(66.5, 0.0, -237.0), "s", 6, false], [Vector3(69.0, 0.0, -235.5), "s", 2, true],
-		[Vector3(10.0, 0.0, -250.0), "s", 7, false], [Vector3(12.5, 0.0, -251.0), "s", 3, true],
-		[Vector3(15.0, 0.0, -250.5), "s", 4, false], [Vector3(17.5, 0.0, -251.5), "s", 0, true],
-		[Vector3(20.0, 0.0, -250.2), "s", 1, false], [Vector3(-8.0, 0.0, -262.0), "s", 5, false],
-	]
-	for e in crowd:
-		var pos: Vector3 = e[0]
-		var sz: String = e[1]
-		var idx: int = e[2]
-		people_spec.append({"role": "crowd_%s%d" % [sz, idx], "pos": pos, "flip": e[3],
-			"file": "res://assets/architecture/great_hall/people/crowd_%s%d.png" % [sz, idx]})
+	people_spec.append({"role": "guard", "pos": Vector3(1.2, 0.0, PLAZA_EDGE - 2.6), "flip": true, "phase": 0.8})
 
 
 # ============================================================================== wires
@@ -736,36 +868,67 @@ func _build_wires() -> void:
 
 
 func _build_tram() -> void:
-	# a waiting tram on the curve at the right edge of the frame: ordinary life, warm windows
-	var z0 := PLAZA_EDGE - 19.0
-	var k := (PLAZA_EDGE - z0) / 40.0
-	var x0 := 3.4 + 34.0 * k * k
-	var dirv := Vector3(34.0 * 2.0 * k / 40.0, 0, -1.0).normalized()
-	_frame(Vector3(x0, 0.0, z0) - dirv * 6.0, dirv)
-	var b := K("metal")
-	var L := 12.0
+	# the tram waiting on the curve; it departs during the shot (hall_life.gd moves tram_node along the right
+	# track).  Built in its own local frame: x along the car (front = +x), y up, z across.
+	tram_node = Node3D.new()
+	tram_node.name = "Tram"
+	var kb := Kit.new()
+	var kg := Kit.new()
+	var kl := Kit.new()
+	var kw := Kit.new(Mesh.PRIMITIVE_LINES)
+	var L := tram_len
 	var W := 2.2
-	b.box(Vector3(0.0, 0.45, -W * 0.5), Vector3(L, 2.75, W), {"front": c(OCHRE[1]), "side": c(OCHRE[0]),
+	var x0 := -L * 0.5
+	kb.box(Vector3(x0, 0.45, -W * 0.5), Vector3(L, 2.75, W), {"front": c(OCHRE[1]), "side": c(OCHRE[0]),
 		"top": c(SNOW[4])}, Kit.FACES_ALL)
-	b.box(Vector3(0.0, 0.25, -W * 0.5 + 0.1), Vector3(L, 0.25, W - 0.2), c(NIGHT[1]))
-	b.box(Vector3(-0.15, 1.2, -W * 0.5 - 0.02), Vector3(L + 0.3, 0.12, W + 0.04), c(SNOW[3]), Kit.FACES_ALL)
-	b.box(Vector3(0.3, 3.2, -0.6), Vector3(L - 0.6, 0.18, 1.2), {"front": c(STEEL[1]), "top": c(SNOW[4])})
-	var x := 0.8
+	kb.box(Vector3(x0, 0.25, -W * 0.5 + 0.1), Vector3(L, 0.25, W - 0.2), c(NIGHT[1]))
+	kb.box(Vector3(x0 - 0.15, 1.2, -W * 0.5 - 0.02), Vector3(L + 0.3, 0.12, W + 0.04), c(SNOW[3]), Kit.FACES_ALL)
+	kb.box(Vector3(x0 + 0.3, 3.2, -0.6), Vector3(L - 0.6, 0.18, 1.2), {"front": c(STEEL[1]), "top": c(SNOW[4])})
+	# route board above the front window
+	kb.box(Vector3(L * 0.5 - 0.02, 2.75, -0.5), Vector3(0.06, 0.32, 1.0), c(NIGHT[1]), Kit.FACES_ALL)
+	var x := x0 + 0.8
 	var i := 0
-	while x < L - 1.2:
+	while x < L * 0.5 - 1.2:
 		var lit := i != 3
-		var col := c(GLOW[2]) if lit else c(VIOLET[0])
 		for side: float in [-1.0, 1.0]:
 			var zz: float = side * (W * 0.5 + 0.005)
 			var n := Vector3(0, 0, side)
 			if lit:
-				K("glass_lit").face(Vector3(x + 0.55, 2.15, zz), n, Vector3.UP, 0.5, 0.55, col, 1.0)
+				kl.face(Vector3(x + 0.55, 2.15, zz), n, Vector3.UP, 0.5, 0.55, c(GLOW[2]), 1.0)
+				# passengers: dark heads against the lit windows
+				if (i + int(side)) % 2 == 0:
+					kb.face(Vector3(x + 0.45, 1.95, zz + side * 0.004), n, Vector3.UP, 0.13, 0.17, c(NIGHT[2]))
 			else:
-				K("glass").face(Vector3(x + 0.55, 2.15, zz), n, Vector3.UP, 0.5, 0.55, col)
+				kg.face(Vector3(x + 0.55, 2.15, zz), n, Vector3.UP, 0.5, 0.55, c(VIOLET[0]))
 		x += 1.45
 		i += 1
-	K("wires", Mesh.PRIMITIVE_LINES).seg(Vector3(3.0, 3.4, 0.0), Vector3(7.8, 6.3, 0.0), c(NIGHT[1]))
-	_world()
+	# front and rear windows, head lamp, tail lamp
+	kl.face(Vector3(L * 0.5 + 0.005, 2.15, 0.0), Vector3.RIGHT, Vector3.UP, 0.8, 0.5, c(GLOW[3]), 1.0)
+	kg.face(Vector3(x0 - 0.005, 2.15, 0.0), Vector3.LEFT, Vector3.UP, 0.8, 0.5, c(VIOLET[1]))
+	kl.face(Vector3(L * 0.5 + 0.01, 0.9, 0.0), Vector3.RIGHT, Vector3.UP, 0.16, 0.12, c(GLOW[4]), 1.0)
+	kl.face(Vector3(x0 - 0.01, 0.9, 0.55), Vector3.LEFT, Vector3.UP, 0.1, 0.1, c(OCHRE[4]), 1.0)
+	kw.seg(Vector3(-1.0, 3.4, 0.0), Vector3(1.6, 6.3, 0.0), c(NIGHT[1]))
+	kw.seg(Vector3(1.6, 6.3, 0.0), Vector3(1.0, 6.3, 0.0), c(NIGHT[1]))
+	for pair in [[kb, "metal"], [kg, "glass"], [kl, "glass_lit"], [kw, "wires"]]:
+		var kit: Kit = pair[0]
+		if kit.count == 0:
+			continue
+		var mi := MeshInstance3D.new()
+		mi.mesh = kit.commit()
+		mi.material_override = mats[pair[1]]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		tram_node.add_child(mi)
+	root.add_child(tram_node)
+	tram_node.global_transform = Transform3D(Basis.IDENTITY, Vector3(track_x(3.4, PLAZA_EDGE - 19.0), 0.0,
+		PLAZA_EDGE - 19.0))
+
+
+## x of a tram track (straight in the street, curving right onto the plaza ring after the plaza edge)
+static func track_x(tx: float, z: float) -> float:
+	if z >= PLAZA_EDGE:
+		return tx
+	var k := (PLAZA_EDGE - z) / 40.0
+	return tx + 34.0 * k * k
 
 
 # ============================================================================== plaza
@@ -781,16 +944,25 @@ func _build_plaza() -> void:
 			m.box(Vector3(x - 3.0, 26.0, z - 0.8), Vector3(6.0, 0.7, 1.6), c(STEEL[1]))
 			lamp.box(Vector3(x - 2.6, 26.7, z + 0.1), Vector3(5.2, 1.6, 0.9), c(STEEL[5]), Kit.FACES_ALL, 1.0)
 			z -= 150.0
-	var bn := K("banner")
+	var bn := K("flag_pole")
 	for side: float in [-1.0, 1.0]:
 		var z := -520.0
 		while z > -930.0:
 			var x: float = HX + side * 96.0
 			m.pillar(x, z, 0.0, 0.6, 0.6, 34.0, {"front": c(NIGHT[3]), "side": c(NIGHT[2])})
 			m.box(Vector3(x - 3.2, 33.0, z - 0.2), Vector3(6.4, 0.4, 0.4), c(NIGHT[2]))
-			bn.quad(Vector3(x - 2.8, 9.0, z + 0.4), Vector3(x - 2.8, 33.0, z + 0.4), Vector3(x + 2.8, 33.0, z + 0.4),
-				Vector3(x + 2.8, 9.0, z + 0.4), Color.WHITE)
+			bn.quad(Vector3(x - 2.8, 16.0, z + 0.4), Vector3(x - 2.8, 33.0, z + 0.4), Vector3(x + 2.8, 33.0, z + 0.4),
+				Vector3(x + 2.8, 16.0, z + 0.4), Color.WHITE, 0.5)
 			z -= 102.0
+	# two groups of three masts flanking the portico steps (staging of the regime's ceremonies)
+	for side: float in [-1.0, 1.0]:
+		for k in 3:
+			var x: float = HX + side * (60.0 + k * 13.0)
+			var z := HZ + 58.0 - k * 4.0
+			m.pillar(x, z, 0.0, 0.7, 0.7, 42.0, {"front": c(NIGHT[3]), "side": c(NIGHT[2]), "top": c(SNOW[4])})
+			m.box(Vector3(x - 3.6, 41.0, z - 0.25), Vector3(7.2, 0.5, 0.5), c(NIGHT[2]))
+			bn.quad(Vector3(x - 3.2, 19.0, z + 0.5), Vector3(x - 3.2, 41.0, z + 0.5), Vector3(x + 3.2, 41.0, z + 0.5),
+				Vector3(x + 3.2, 19.0, z + 0.5), Color.WHITE, 0.5)
 	for side: float in [-1.0, 1.0]:
 		var z := -150.0
 		while z > -960.0:
@@ -892,13 +1064,26 @@ func _build_portico(hs: Kit) -> void:
 		{"front": c(STONE[4]), "side": c(STONE[2]), "top": c(SNOW[4]), "bottom": c(VIOLET[0])}, Kit.FACES_ALL)
 	hs.box(Vector3(x_left + 2.0, pier_top + 11.2, zf), Vector3(x_right - x_left - 4.0, 8.0, 30.0),
 		{"front": c(STONE[1]), "side": c(STONE[0]), "top": c(SNOW[3])})
-	var bn := K("banner")
+	# three giant banners hung in front of the portico (10 x 36 texels, 1 texel = 1 px in the final frame)
+	var bn := K("banner_portico")
+	var bz := pz + 0.8
+	var ppm_b := _px_per_m(bz)
 	for i in range(1, n - 1, 2):
 		var gap_px := axis_px - period_px * (n - 1) * 0.5 + i * period_px + period_px * 0.5
-		var gx := _world_x_for_px(gap_px, pz)
-		var hw := 3.4
-		bn.quad(Vector3(gx - hw, 24.0, pz - 2.0), Vector3(gx - hw, pier_top - 1.0, pz - 2.0),
-			Vector3(gx + hw, pier_top - 1.0, pz - 2.0), Vector3(gx + hw, 24.0, pz - 2.0), Color.WHITE)
+		var xa := _world_x_for_px(gap_px - 5.0, bz)
+		var xb := _world_x_for_px(gap_px + 5.0, bz)
+		var top_y := pier_top - 0.6
+		var bot_y := top_y - 36.0 / ppm_b
+		bn.quad(Vector3(xa, bot_y, bz), Vector3(xa, top_y, bz), Vector3(xb, top_y, bz), Vector3(xb, bot_y, bz),
+			Color.WHITE, 0.55)
+		K("metal").box(Vector3(xa - 0.6, top_y, bz - 0.3), Vector3(xb - xa + 1.2, 0.5, 0.5), c(NIGHT[2]))
+	# the state eagle on the portico attic, on the axis (sprite: texel-locked like the people)
+	var ex := _world_x_for_px(axis_px, zf + 28.0)
+	people_spec.append({"role": "eagle_portico", "pos": Vector3(ex, pier_top + 19.2, zf + 28.0),
+		"file": _sym_path("eagle_portico"), "flag": 0.1, "always_lock": true, "face_motion": false,
+		"self_light": 0.12})
+	eagle_portico_pos = Vector3(ex, pier_top + 19.2, zf + 28.0)
+	halos.append({"pos": Vector3(ex, pier_top + 30.0, zf + 31.5), "col": c(STEEL[4]), "r": 24.0, "k": 0.07})
 
 
 func _build_wings(hs: Kit) -> void:
@@ -1003,6 +1188,10 @@ func _build_dome() -> void:
 	st.lathe(ctr, [Vector2(1.6, ly + 32.0), Vector2(1.6, ly + 39.0), Vector2(0.0, ly + 40.0)], 8,
 		func(_i, _j): return c(STONE[2]))
 	stats["dome_top_y"] = ly + 40.0
+	# the crowning bronze eagle above the globe (Speer's 1939 design) -- sprite, texel-locked, outlined and
+	# rim-lit by the post process like architecture (flag 0.1); no swastika, so no _hist variant is needed
+	people_spec.append({"role": "eagle_lantern", "pos": Vector3(HX, ly + 39.3, cz + 2.0),
+		"file": _sym_path("eagle_lantern"), "flag": 0.1, "always_lock": true, "face_motion": false})
 
 
 # ============================================================================== far city
@@ -1024,6 +1213,319 @@ func _build_far_city() -> void:
 		var z := rng.randf_range(-1500.0, -2600.0)
 		p.box(Vector3(x - 60.0, 0.0, z - 30.0), Vector3(rng.randf_range(60.0, 160.0), rng.randf_range(20.0, 45.0), 60.0),
 			{"front": c(VIOLET[1]), "top": c(SNOW[2])})
+
+
+# ============================================================================== life sheets (life.json)
+var _life_meta: Dictionary = {}
+
+
+func life_meta(name: String) -> Dictionary:
+	if _life_meta.is_empty():
+		var p := TEX + "life/life.json"
+		if FileAccess.file_exists(p):
+			var d = JSON.parse_string(FileAccess.get_file_as_string(p))
+			if typeof(d) == TYPE_DICTIONARY:
+				_life_meta = d
+	return _life_meta.get(name, {})
+
+
+## Sprite spec for one row of a generated life sheet (cell/origin/frames/fps/ground speed from life.json).
+func life_spec(name: String, row: int, extra: Dictionary = {}) -> Dictionary:
+	var m := life_meta(name)
+	var cell: Array = m.get("cell", [16, 16])
+	var org: Array = m.get("origin", [8, 15])
+	var d := {"file": TEX + "life/" + str(m.get("file", name + ".png")),
+		"cell": Vector2i(int(cell[0]), int(cell[1])), "origin": Vector2i(int(org[0]), int(org[1])), "row": row,
+		"frames": int(m.get("frames", 1)), "fps": float(m.get("fps", 0.0)),
+		"walk_gs": float(m.get("ground_speed", 0.0))}
+	d.merge(extra, true)
+	return d
+
+
+# ============================================================================== street flags
+## A banner facing the camera (+z): 30x90 texels on 1.2 x 3.6 m, hanging from a rod along its top edge; a
+## bracket ties the rod to the wall point `wall`.
+func _banner_at(x_from: float, x_to: float, top: float, z: float, wall: Vector3) -> void:
+	var bh := 3.6
+	# em 0.6: the cloth is lit by the street (lamps, windows, snow light) -- keeps the regime's red readable
+	K("flag_street").quad(Vector3(x_from, top - bh, z), Vector3(x_from, top, z), Vector3(x_to, top, z),
+		Vector3(x_to, top - bh, z), Color.WHITE, 0.6)
+	var m := K("metal")
+	m.box(Vector3(x_from - 0.08, top - 0.03, z - 0.04), Vector3(x_to - x_from + 0.16, 0.07, 0.08),
+		{"front": c(NIGHT[2]), "top": c(SNOW[4])}, Kit.FACES_ALL)
+	m.box(Vector3(x_to + 0.02, top - 0.06, z - 0.06), Vector3(0.12, 0.13, 0.12), c(STEEL[2]))
+	var near := Vector3(clampf(wall.x, x_from, x_to), top, z)
+	var dv := near - wall
+	if dv.length() > 0.05:
+		var dir := dv.normalized()
+		var side := dir.cross(Vector3.UP).normalized()
+		m.obox((near + wall) * 0.5, Basis(side, Vector3.UP, dir), Vector3(0.035, 0.035, dv.length() * 0.5),
+			c(NIGHT[2]))
+
+
+func _build_street_flags() -> void:
+	_world()
+	var top := GROUND_H + FLOOR_H + 0.55
+	# right block (facade x = +12): outriggers perpendicular to the facade every second pier
+	var bay := 3.7
+	var nb := int(floor(-RIGHT_BLOCK_END / bay))
+	var margin := (-RIGHT_BLOCK_END - nb * bay) * 0.5
+	for i in range(1, nb, 2):
+		var z := RIGHT_BLOCK_END + margin + i * bay
+		if z > -3.0:
+			continue
+		_banner_at(STREET_HALF - 1.42, STREET_HALF - 0.22, top, z, Vector3(STREET_HALF, top, z))
+	# family block, cross-street facade (faces +z): banners on the piers between the windows
+	for xx: float in [-25.6, -33.0]:
+		_banner_at(xx - 0.6, xx + 0.6, top, CHAMFER_A.z + 0.34, Vector3(xx, top, CHAMFER_A.z))
+	# the chamfered corner: the regime's banner hangs over the family's sealed door, between the first-floor
+	# windows (the left one, and the "story window" that is closed at the end of the shot)
+	var along := (CHAMFER_B - CHAMFER_A).normalized()
+	var nrm := along.cross(Vector3.UP).normalized()
+	var dxm := (CHAMFER_B - CHAMFER_A).length() * 0.5 - 0.5
+	var wall := CHAMFER_A + along * dxm + Vector3(0, top, 0)
+	var p := wall + nrm * 0.8
+	_banner_at(p.x - 0.6, p.x + 0.6, top, p.z, wall)
+	stats["door_flag"] = p
+
+
+# ============================================================================== tram stop + queue
+func _build_tram_stop() -> void:
+	_world()
+	# stop island at the plaza edge, left of the inbound track
+	var st := K("stone")
+	st.box(Vector3(-8.4, 0.0, -64.0), Vector3(4.3, 0.14, 1.6), {"top": c(SNOW[3]), "front": c(STONE[1]),
+		"side": c(STONE[1])})
+	var m := K("metal")
+	var px := -7.95
+	var pz := -63.15
+	m.pillar(px, pz, 0.0, 0.09, 0.09, 2.7, {"front": c(NIGHT[3]), "side": c(NIGHT[2])})
+	m.box(Vector3(px - 0.22, 1.9, pz - 0.03), Vector3(0.44, 0.3, 0.06), c(NIGHT[1]))      # timetable box
+	K("sign").quad(Vector3(px - 0.25, 2.6, pz + 0.05), Vector3(px - 0.25, 3.1, pz + 0.05),
+		Vector3(px + 0.25, 3.1, pz + 0.05), Vector3(px + 0.25, 2.6, pz + 0.05), Color.WHITE)
+	# the queue: five people waiting for the inbound tram, looking up the line (to the right)
+	var q := [[-7.3, 1, 0.0], [-6.5, 3, 0.4], [-5.85, 0, 1.1], [-5.1, 5, 0.7], [-4.4, 2, 1.6]]
+	for e in q:
+		var row: int = e[1]
+		people_spec.append(life_spec("stand_36", row, {"role": "queue_%d" % row,
+			"pos": Vector3(float(e[0]), 0.14, -63.3 - 0.12 * float(row % 2)), "phase": float(e[2]),
+			"flip": row == 0, "face_motion": false}))
+	# mercury lamps at the plaza edge: cold light that rims the waiting people (the only warm light in the
+	# frame stays the lamp over the family's door)
+	for lx: float in [-6.3, 7.4]:
+		_street_lamp(Vector3(lx, 0, -65.2), true, true)
+		halos.append({"pos": Vector3(lx, 4.67, -65.2), "col": c(STEEL[4]), "r": 2.2, "k": 0.16})
+
+
+# ============================================================================== kiosk (crane shot)
+func _build_kiosk() -> void:
+	# newspaper kiosk on the right sidewalk: lit display towards the street and a customer
+	_frame(Vector3(10.3, 0.0, -55.5), Vector3(0, 0, 1))     # local x along +z, local +z = -x (street side)
+	var b := K("plaster")
+	var w := 2.6
+	var d := 1.8
+	b.box(Vector3(-w * 0.5, 0.16, -d), Vector3(w, 2.5, d), {"front": c(STEEL[1]), "side": c(STEEL[0]),
+		"top": c(SNOW[3])})
+	K("roof").box(Vector3(-w * 0.5 - 0.35, 2.66, -d - 0.2), Vector3(w + 0.7, 0.16, d + 0.75), {"front": c(NIGHT[2]),
+		"top": c(SNOW[4]), "side": c(NIGHT[2]), "bottom": c(NIGHT[1])}, Kit.FACES_ALL)
+	K("kiosk").quad_uv(Vector3(-w * 0.5 + 0.1, 1.05, 0.01), Vector3(-w * 0.5 + 0.1, 1.75, 0.01),
+		Vector3(w * 0.5 - 0.1, 1.75, 0.01), Vector3(w * 0.5 - 0.1, 1.05, 0.01), Color.WHITE, Vector2(0, 0),
+		Vector2(1, 1), 0.85)
+	K("glass_lit").face(Vector3(0.0, 2.05, 0.012), Vector3.BACK, Vector3.UP, w * 0.5 - 0.15, 0.25, c(GLOW[2]), 1.0)
+	b.box(Vector3(-w * 0.5 - 0.05, 0.85, 0.0), Vector3(w + 0.1, 0.12, 0.35), {"front": c(STEEL[2]), "top": c(SNOW[4])})
+	var customer := _xf * Vector3(-0.3, 0.16, 0.75)
+	_world()
+	people_spec.append(life_spec("stand_36", 4, {"role": "kiosk_customer", "pos": customer, "fps": 1.4,
+		"flip": false, "face_motion": false, "show": Vector2(0.0, 3.4)}))
+	halos.append({"pos": Vector3(10.2, 2.05, -55.5), "col": c(GLOW[1]), "r": 2.4, "k": 0.16, "until": 3.4})
+
+
+# ============================================================================== manholes + steam
+func _build_manholes() -> void:
+	_world()
+	var g := K("ground")
+	for mp: Vector3 in [Vector3(-1.2, 0.0, -44.5), Vector3(1.8, 0.0, -57.0), Vector3(4.6, 0.0, -28.0)]:
+		# dark wet ring melted into the snow + the iron lid
+		g.quad(Vector3(mp.x - 0.75, 0.014, mp.z + 0.55), Vector3(mp.x - 0.75, 0.014, mp.z - 0.55),
+			Vector3(mp.x + 0.75, 0.014, mp.z - 0.55), Vector3(mp.x + 0.75, 0.014, mp.z + 0.55), c(VIOLET[2]))
+		g.quad(Vector3(mp.x - 0.38, 0.018, mp.z + 0.3), Vector3(mp.x - 0.38, 0.018, mp.z - 0.3),
+			Vector3(mp.x + 0.38, 0.018, mp.z - 0.3), Vector3(mp.x + 0.38, 0.018, mp.z + 0.3), c(NIGHT[2]))
+		steam_spots.append(mp)
+
+
+# ============================================================================== the sweeper's work
+func _build_swept_snow() -> void:
+	# a cleared strip along the inbound track (wet, darker) from the sweeper towards the camera, with the
+	# swept snow heaped up on its right edge -- a leading line in the empty foreground
+	_world()
+	var g := K("ground")
+	var rs := RandomNumberGenerator.new()
+	rs.seed = 5150
+	var z := -50.6
+	var wob := 0.0
+	while z < -33.0:
+		var seg := rs.randf_range(1.2, 2.4)
+		var wob2 := clampf(wob + rs.randf_range(-0.12, 0.12), -0.3, 0.3)
+		var tone: String = VIOLET[3] if rs.randf() < 0.6 else SNOW[0]
+		g.quad(Vector3(-4.1 + wob, 0.016, z), Vector3(-4.1 + wob2, 0.016, z + seg), Vector3(-2.7 + wob2, 0.016, z + seg),
+			Vector3(-2.7 + wob, 0.016, z), c(tone))
+		wob = wob2
+		z += seg
+	var hz := -49.0
+	while hz < -34.0:
+		var hx := -2.35 + rs.randf_range(-0.1, 0.25)
+		var hw := rs.randf_range(0.35, 0.6)
+		var hl := rs.randf_range(0.45, 0.9)
+		var hh := rs.randf_range(0.18, 0.38)
+		var apex := Vector3(hx + rs.randf_range(-0.05, 0.05), hh, hz)
+		var a := Vector3(hx - hw, 0.0, hz + hl)
+		var b := Vector3(hx + hw, 0.0, hz + hl)
+		var cc := Vector3(hx + hw, 0.0, hz - hl)
+		var d := Vector3(hx - hw, 0.0, hz - hl)
+		g.tri(a, apex, b, c(SNOW[3]))
+		g.tri(b, apex, cc, c(SNOW[2]))
+		g.tri(cc, apex, d, c(SNOW[4]))
+		g.tri(d, apex, a, c(SNOW[3]))
+		hz += hl * 2.0 + rs.randf_range(0.3, 1.4)
+
+
+# ============================================================================== cranes at the wings
+func _build_cranes() -> void:
+	_world()
+	var k := K("hall_far")
+	var lines := K("wires", Mesh.PRIMITIVE_LINES)
+	var dark := {"front": c(NIGHT[3]), "side": c(NIGHT[2]), "top": c(SNOW[3])}
+	var cranes := [[HX + 236.0, HZ - 70.0, 78.0, -1.0, 58.0], [HX + 352.0, HZ - 95.0, 66.0, 1.0, 46.0],
+		[HX - 300.0, HZ - 80.0, 72.0, 1.0, 50.0]]
+	for cr in cranes:
+		var x: float = cr[0]
+		var z: float = cr[1]
+		var hgt: float = cr[2]
+		var dirx: float = cr[3]
+		var jib: float = cr[4]
+		k.pillar(x, z, 0.0, 2.6, 2.6, hgt, dark)
+		# lattice hint: lighter bands on the mast front
+		var yy := 4.0
+		while yy < hgt - 4.0:
+			k.box(Vector3(x - 1.3, yy, z + 1.31), Vector3(2.6, 0.9, 0.05), c(STEEL[1]), Kit.FACE_PZ)
+			yy += 7.0
+		k.box(Vector3(x - 1.8, hgt, z - 1.8), Vector3(3.6, 3.0, 3.6), dark)                       # slewing unit
+		var x_tip: float = x + dirx * jib
+		k.box(Vector3(minf(x, x_tip), hgt + 3.0, z - 0.9), Vector3(jib, 1.6, 1.8), dark)        # jib
+		var x_cj: float = x - dirx * 17.0
+		k.box(Vector3(minf(x, x_cj), hgt + 3.0, z - 0.9), Vector3(17.0, 1.6, 1.8), dark)        # counter jib
+		k.box(Vector3(x_cj - 2.5, hgt - 1.5, z - 1.5), Vector3(5.0, 4.5, 3.0), dark)            # ballast
+		k.pillar(x, z, hgt + 3.0, 1.2, 1.2, 11.0, dark)                                        # tower top
+		lines.seg(Vector3(x, hgt + 14.0, z), Vector3(x_tip, hgt + 4.6, z), c(NIGHT[1]))
+		lines.seg(Vector3(x, hgt + 14.0, z), Vector3(x_cj, hgt + 4.6, z), c(NIGHT[1]))
+		# hook cable with a load (a stone block) hanging from the trolley
+		var x_tr: float = x + dirx * jib * 0.62
+		lines.seg(Vector3(x_tr, hgt + 3.0, z), Vector3(x_tr, hgt * 0.42, z), c(NIGHT[1]))
+		k.box(Vector3(x_tr - 3.0, hgt * 0.42 - 3.0, z - 1.5), Vector3(6.0, 3.0, 3.0), {"front": c(STONE[2]),
+			"side": c(STONE[1]), "top": c(SNOW[4])})
+		K("lamp").box(Vector3(x_tip - 0.8, hgt + 4.6, z - 0.8), Vector3(1.6, 1.6, 1.6), c(OCHRE[4]), Kit.FACES_ALL, 1.0)
+		halos.append({"pos": Vector3(x_tip, hgt + 5.4, z), "col": c(OCHRE[4]), "r": 9.0, "k": 0.35, "blink": 1.3})
+	# scaffolding on the end of the right wing (still being clad)
+	var sx0 := HX + 190.0
+	var sx1 := HX + 262.0
+	var sz := HZ - 30.0 + 4.6
+	var x2 := sx0
+	while x2 <= sx1:
+		k.box(Vector3(x2 - 0.6, 0.0, sz), Vector3(1.2, 44.0, 1.2), {"front": c(NIGHT[3]), "side": c(NIGHT[2])})
+		x2 += 6.0
+	var y2 := 6.0
+	while y2 <= 44.0:
+		k.box(Vector3(sx0, y2, sz - 0.2), Vector3(sx1 - sx0, 0.9, 1.6), {"front": c(STEEL[0]), "top": c(SNOW[4])})
+		y2 += 6.0
+
+
+# ============================================================================== parked car (crane shot)
+func _build_parked_car() -> void:
+	# the black official car at the right kerb, engine running (exhaust steam), seen from above in h1
+	_frame(Vector3(8.7, 0.0, -48.5), Vector3(0, 0, -1))
+	car_into(K("metal"), K("glass"), K("glass_lit"), K("lamp"), c(NIGHT[1]), 4.6)
+	steam_spots.append(_xf * Vector3(-2.45, 0.25, 0.45))
+	_world()
+
+
+## A 1960s saloon (original design) into the given kits, in the kits' current frame: x along the car
+## (front = +x), y up, z across; length L (~4.6 m).
+func car_into(kb: Kit, kg: Kit, kl: Kit, kt: Kit, body: Color, L: float = 4.6, lights := true) -> void:
+	var W := 1.72
+	var x0 := -L * 0.5
+	var dark := body.darkened(0.25)
+	kb.box(Vector3(x0, 0.28, -W * 0.5), Vector3(L, 0.6, W), {"front": body, "side": dark, "top": body},
+		Kit.FACES_ALL)
+	kb.box(Vector3(x0 + 0.25, 0.88, -W * 0.5 + 0.06), Vector3(L - 0.5, 0.16, W - 0.12), {"front": body,
+		"side": dark, "top": body})
+	# cabin with sloped screens
+	var cb := x0 + L * 0.3
+	var cf := x0 + L * 0.68
+	var y0 := 1.04
+	var y1 := 1.52
+	var zz := W * 0.5 - 0.1
+	kg.quad(Vector3(cb, y0, zz), Vector3(cb + 0.35, y1, zz), Vector3(cf - 0.4, y1, zz), Vector3(cf, y0, zz),
+		c(STEEL[1]))
+	kg.quad(Vector3(cf, y0, -zz), Vector3(cf - 0.4, y1, -zz), Vector3(cb + 0.35, y1, -zz), Vector3(cb, y0, -zz),
+		c(STEEL[1]))
+	kb.quad(Vector3(cb + 0.35, y1, zz), Vector3(cb + 0.35, y1, -zz), Vector3(cf - 0.4, y1, -zz),
+		Vector3(cf - 0.4, y1, zz), c(SNOW[3]))
+	kg.quad(Vector3(cf, y0, zz), Vector3(cf - 0.4, y1, zz), Vector3(cf - 0.4, y1, -zz), Vector3(cf, y0, -zz),
+		c(STEEL[2]))
+	kg.quad(Vector3(cb, y0, -zz), Vector3(cb + 0.35, y1, -zz), Vector3(cb + 0.35, y1, zz), Vector3(cb, y0, zz),
+		c(STEEL[1]))
+	# wheels, bumpers
+	for wx: float in [x0 + 0.85, x0 + L - 0.85]:
+		for sd: float in [-1.0, 1.0]:
+			kb.box(Vector3(wx - 0.32, 0.0, sd * (W * 0.5) - 0.13), Vector3(0.64, 0.6, 0.26), c(NIGHT[0]))
+	kb.box(Vector3(x0 - 0.08, 0.36, -W * 0.5 + 0.08), Vector3(0.1, 0.12, W - 0.16), c(STEEL[4]), Kit.FACES_ALL)
+	kb.box(Vector3(x0 + L - 0.02, 0.36, -W * 0.5 + 0.08), Vector3(0.1, 0.12, W - 0.16), c(STEEL[4]), Kit.FACES_ALL)
+	if lights:
+		for sd: float in [-1.0, 1.0]:
+			kl.box(Vector3(x0 + L - 0.04, 0.62, sd * 0.6 - 0.1), Vector3(0.08, 0.18, 0.2), c(GLOW[4]), Kit.FACES_ALL, 1.0)
+			kt.box(Vector3(x0 - 0.04, 0.66, sd * 0.66 - 0.07), Vector3(0.08, 0.12, 0.14), c(OCHRE[3]), Kit.FACES_ALL, 1.0)
+
+
+## A covered lorry (original design): cab + tarpaulin box.  Same frame conventions as car_into().
+func truck_into(kb: Kit, kg: Kit, kl: Kit, body: Color, tarp: Color) -> void:
+	var L := 7.2
+	var W := 2.3
+	var x0 := -L * 0.5
+	kb.box(Vector3(x0, 0.5, -W * 0.5), Vector3(L, 0.35, W), c(NIGHT[1]), Kit.FACES_ALL)
+	kb.box(Vector3(x0 + L - 2.1, 0.85, -W * 0.5), Vector3(2.1, 1.75, W), {"front": body, "side": body.darkened(0.2),
+		"top": c(SNOW[4])}, Kit.FACES_ALL)
+	kg.face(Vector3(x0 + L + 0.005, 2.05, 0.0), Vector3.RIGHT, Vector3.UP, 0.95, 0.35, c(STEEL[2]))
+	kb.box(Vector3(x0, 0.85, -W * 0.5), Vector3(L - 2.25, 2.3, W), {"front": tarp, "side": tarp.darkened(0.2),
+		"top": c(SNOW[4])}, Kit.FACES_ALL)
+	for wx: float in [x0 + 1.0, x0 + 2.4, x0 + L - 1.2]:
+		for sd: float in [-1.0, 1.0]:
+			kb.box(Vector3(wx - 0.45, 0.0, sd * (W * 0.5) - 0.15), Vector3(0.9, 0.9, 0.3), c(NIGHT[0]))
+	for sd: float in [-1.0, 1.0]:
+		kl.box(Vector3(x0 + L - 0.02, 0.95, sd * 0.8 - 0.12), Vector3(0.08, 0.22, 0.24), c(GLOW[4]), Kit.FACES_ALL, 1.0)
+
+
+# ============================================================================== far city lights + stacks
+func _build_far_lights() -> void:
+	_world()
+	var rngl := RandomNumberGenerator.new()
+	rngl.seed = 4242
+	var gl := K("glass_lit")
+	var hf := K("hall_far")
+	# lit windows on the far blocks to the right of the hall (rows of 2 x 2 m lights)
+	for i in 70:
+		var x := HX + rngl.randf_range(230.0, 900.0)
+		var z := rngl.randf_range(-320.0, -1400.0)
+		var y := rngl.randf_range(4.0, 26.0)
+		var col := c(GLOW[rngl.randi_range(0, 3)])
+		gl.face(Vector3(x, y, z + 60.0), Vector3.BACK, Vector3.UP, 1.2, 1.0, col, 0.9)
+	# factory stacks far behind the right wing, smoking
+	for sx: float in [HX + 430.0, HX + 505.0, HX + 640.0]:
+		var sz := -1750.0 - (sx - HX) * 0.3
+		var sh := 70.0 + fmod(sx, 17.0)
+		hf.lathe(Vector3(sx, 0.0, sz), [Vector2(5.5, 0.0), Vector2(3.8, sh)], 10, func(_i, _j): return c(VIOLET[1]))
+		K("lamp").box(Vector3(sx - 1.0, sh - 2.0, sz + 3.9), Vector3(2.0, 2.0, 0.5), c(OCHRE[4]), Kit.FACES_ALL, 1.0)
+		halos.append({"pos": Vector3(sx, sh - 1.0, sz + 4.5), "col": c(OCHRE[4]), "r": 14.0, "k": 0.3, "blink": 0.9})
+		smoke_spots.append({"pos": Vector3(sx, sh, sz), "far": true})
 
 
 # ============================================================================== lights
@@ -1090,6 +1592,23 @@ func _build_lights() -> void:
 	# a cold work light on the guard's corner of the plaza
 	_spot(lights, Vector3(5.4, 8.0, PLAZA_EDGE - 4.2), Vector3(3.0, 0.0, PLAZA_EDGE - 1.0), fl_col, 1.6, 14.0, 30.0,
 		0.5)
+	# the state eagle on the portico: two cold floodlights from the attic edge below it (staged like the
+	# regime staged its emblems), only on the eagle's height band
+	if eagle_portico_pos != Vector3.ZERO:
+		for sx: float in [-9.0, 9.0]:
+			var e_from := eagle_portico_pos + Vector3(sx, -1.0, 9.0)
+			_spot(lights, e_from, eagle_portico_pos + Vector3(0.0, 13.0, 0.0), fl_col, 2.6, 40.0, 22.0, 0.0)
+	# cold fill for the people at the plaza edge (queue, walkers, sweeper): sprites only (people layer)
+	var fill_p := OmniLight3D.new()
+	fill_p.name = "PlazaPeopleFill"
+	fill_p.light_color = Color(0.62, 0.74, 0.95)
+	fill_p.light_energy = 3.0
+	fill_p.omni_range = 15.0
+	fill_p.omni_attenuation = 0.8
+	fill_p.light_specular = 0.0
+	fill_p.light_cull_mask = LAYER_PEOPLE
+	lights.add_child(fill_p)
+	fill_p.global_position = Vector3(-1.0, 4.5, -55.0)
 	# the warm door lamp: the one warm focal light (family, sealed door)
 	var door_lamp := OmniLight3D.new()
 	door_lamp.name = "DoorLamp"

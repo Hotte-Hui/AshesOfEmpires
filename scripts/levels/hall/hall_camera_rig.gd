@@ -4,6 +4,10 @@ extends RefCounted
 ## the image plane (1-point perspective -> crisp pixel columns for the pilaster rhythm).  "Tilts" are done
 ## with a lens shift (Camera3D frustum offset), "crane" and "push" with translation only.
 ## Position: cubic Hermite through keys with explicit velocities.  Lens shift: smoothstep between keys.
+## Smoothness (render-camera): the lens shift is applied in whole low-res pixels (the painted sky matte stays
+## on the pixel grid) and the sub-pixel remainder is presented as a display offset of the world view
+## (PixelView.set_fraction in the 642x362 path) -> tilts glide at screen resolution instead of stepping by
+## 3/6 screen pixels. `cur_fraction` holds the offset that was presented (world px, PixelView convention).
 
 const FOV_Y := 24.0          ## vertical field of view in degrees (art direction: <= 30)
 const NEAR := 0.05
@@ -64,6 +68,7 @@ static func focal_px(vh: float) -> float:
 var cur_pos := Vector3.ZERO
 var cur_shift := Vector2.ZERO
 var cur_vp := Vector2(640, 360)
+var cur_fraction := Vector2.ZERO
 
 
 func apply(cam: Camera3D, t: float, vp_size: Vector2) -> Dictionary:
@@ -79,14 +84,37 @@ func apply_pose(cam: Camera3D, pos: Vector3, shift: Vector2, vp_size: Vector2) -
 	cam.far = FAR
 	cam.size = size
 	var px := size / maxf(vp_size.y, 1.0)          # world units per pixel on the near plane
-	# Whole-pixel lens shift: the painted sky matte then moves in whole pixels only.
-	shift = shift.round()
-	cam.frustum_offset = Vector2(shift.x, shift.y) * px
+	# Whole-pixel lens shift: the painted sky matte then moves in whole pixels only; the remainder goes to the
+	# display. Content displacement of a shift s is (-s.x, +s.y) px; PixelView.set_fraction(f) moves the
+	# picture by -f, so f = (r.x, -r.y) for the remainder r.
+	var whole := shift.round()
+	var rem := shift - whole
+	cam.frustum_offset = Vector2(whole.x, whole.y) * px
 	cam.global_transform = Transform3D(Basis.IDENTITY, pos)
 	cur_pos = pos
-	cur_shift = shift
+	cur_shift = whole
 	cur_vp = vp_size
-	return {"pos": pos, "shift": shift}
+	cur_fraction = Vector2(rem.x, -rem.y)
+	_present_fraction(cam, cur_fraction)
+	return {"pos": pos, "shift": whole, "fraction": cur_fraction}
+
+
+## Hands the sub-pixel remainder to the game's world view when this camera renders the low-res world viewport
+## (no-op in test harnesses with their own SubViewport).
+static func _present_fraction(cam: Camera3D, f: Vector2) -> void:
+	if cam == null or not cam.is_inside_tree():
+		return
+	var game := cam.get_node_or_null("/root/Game")
+	if game == null:
+		return
+	var view = game.get("view")
+	var world = game.get("world")
+	if view == null or world == null or cam.get_viewport() != world:
+		return
+	if view.has_method("is_hires") and view.is_hires():
+		return
+	if view.has_method("set_fraction"):
+		view.set_fraction(f)
 
 
 ## Analytic projection for the un-rotated off-axis camera (Camera3D.project_position ignores the

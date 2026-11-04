@@ -1,0 +1,1881 @@
+{
+ "id": "karsk_railyard",
+ "palette": "karsk",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "canvas_modulate": "#CBD5D3",
+ "layers": [
+  {
+   "name": "sky",
+   "file": "../../../assets/environments/karsk_railyard/sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.0,
+    0.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "clouds",
+   "file": "../../../assets/environments/karsk_railyard/clouds.png",
+   "pos": [
+    0,
+    23
+   ],
+   "parallax": [
+    0.03,
+    0.0
+   ],
+   "z": -96,
+   "normal": true,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "far_city",
+   "file": "../../../assets/environments/karsk_skyline/far_city.png",
+   "pos": [
+    0,
+    118
+   ],
+   "parallax": [
+    0.12,
+    0.0
+   ],
+   "z": -90,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.35
+  },
+  {
+   "name": "far_industry",
+   "file": "../../../assets/environments/karsk_skyline/far_industry.png",
+   "pos": [
+    0,
+    83
+   ],
+   "parallax": [
+    0.25,
+    0.0
+   ],
+   "z": -84,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.35
+  },
+  {
+   "name": "mid",
+   "file": "../../../assets/environments/karsk_skyline/mid.png",
+   "pos": [
+    0,
+    49
+   ],
+   "parallax": [
+    0.45,
+    0.0
+   ],
+   "z": -74,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.45
+  },
+  {
+   "name": "near_bg",
+   "file": "../../../assets/environments/karsk_skyline/near_bg.png",
+   "pos": [
+    0,
+    137
+   ],
+   "parallax": [
+    0.72,
+    0.0
+   ],
+   "z": -60,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.45
+  },
+  {
+   "name": "poles",
+   "file": "../../../assets/environments/karsk_railyard/poles.png",
+   "pos": [
+    0,
+    112
+   ],
+   "parallax": [
+    0.86,
+    0.0
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.7
+  },
+  {
+   "name": "ground",
+   "file": "../../../assets/environments/karsk_railyard/ground.png",
+   "pos": [
+    0,
+    246
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -16,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.25
+  },
+  {
+   "name": "yard_back",
+   "file": "../../../assets/environments/karsk_railyard/yard_back.png",
+   "pos": [
+    0,
+    114
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -14,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.16
+  },
+  {
+   "name": "fg_frame",
+   "file": "../../../assets/environments/karsk_railyard/fg_frame.png",
+   "pos": [
+    0,
+    49
+   ],
+   "parallax": [
+    1.3,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "props": [
+  {
+   "name": "lamp_post_1",
+   "file": "../../../assets/environments/karsk_railyard/props/lamp_post_1.png",
+   "pos": [
+    201,
+    224
+   ],
+   "base_y": 304,
+   "collision": [
+    [
+     201,
+     301
+    ],
+    [
+     210,
+     301
+    ],
+    [
+     210,
+     305
+    ],
+    [
+     201,
+     305
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "lamp_post_2",
+   "file": "../../../assets/environments/karsk_railyard/props/lamp_post_2.png",
+   "pos": [
+    696,
+    223
+   ],
+   "base_y": 303,
+   "collision": [
+    [
+     696,
+     300
+    ],
+    [
+     705,
+     300
+    ],
+    [
+     705,
+     304
+    ],
+    [
+     696,
+     304
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "lamp_post_3",
+   "file": "../../../assets/environments/karsk_railyard/props/lamp_post_3.png",
+   "pos": [
+    1181,
+    224
+   ],
+   "base_y": 304,
+   "collision": [
+    [
+     1181,
+     301
+    ],
+    [
+     1190,
+     301
+    ],
+    [
+     1190,
+     305
+    ],
+    [
+     1181,
+     305
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "wagon_c17",
+   "file": "../../../assets/environments/karsk_railyard/props/wagon_c17.png",
+   "pos": [
+    730,
+    203
+   ],
+   "base_y": 297,
+   "collision": [
+    [
+     744,
+     283
+    ],
+    [
+     918,
+     283
+    ],
+    [
+     918,
+     297
+    ],
+    [
+     744,
+     297
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "flatcar_panels",
+   "file": "../../../assets/environments/karsk_railyard/props/flatcar_panels.png",
+   "pos": [
+    1707,
+    218
+   ],
+   "base_y": 276,
+   "collision": [
+    [
+     1716,
+     261
+    ],
+    [
+     1890,
+     261
+    ],
+    [
+     1890,
+     276
+    ],
+    [
+     1716,
+     276
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "fire_barrel",
+   "file": "../../../assets/environments/karsk_railyard/props/fire_barrel.png",
+   "pos": [
+    951,
+    259
+   ],
+   "base_y": 304,
+   "collision": [
+    [
+     955,
+     298
+    ],
+    [
+     997,
+     298
+    ],
+    [
+     997,
+     305
+    ],
+    [
+     955,
+     305
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "timetable_board",
+   "file": "../../../assets/environments/karsk_railyard/props/timetable_board.png",
+   "pos": [
+    1048,
+    251
+   ],
+   "base_y": 306,
+   "collision": [
+    [
+     1050,
+     302
+    ],
+    [
+     1087,
+     302
+    ],
+    [
+     1087,
+     307
+    ],
+    [
+     1050,
+     307
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "teaching_board",
+   "file": "../../../assets/environments/karsk_railyard/props/teaching_board.png",
+   "pos": [
+    1269,
+    242
+   ],
+   "base_y": 305,
+   "collision": [
+    [
+     1283,
+     300
+    ],
+    [
+     1299,
+     300
+    ],
+    [
+     1299,
+     306
+    ],
+    [
+     1283,
+     306
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "family_bundles",
+   "file": "../../../assets/environments/karsk_railyard/props/family_bundles.png",
+   "pos": [
+    244,
+    279
+   ],
+   "base_y": 322,
+   "collision": [
+    [
+     242,
+     314
+    ],
+    [
+     312,
+     314
+    ],
+    [
+     312,
+     323
+    ],
+    [
+     242,
+     323
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "crates_a",
+   "file": "../../../assets/environments/karsk_railyard/props/crates_a.png",
+   "pos": [
+    1413,
+    282
+   ],
+   "base_y": 306,
+   "collision": [
+    [
+     1414,
+     299
+    ],
+    [
+     1452,
+     299
+    ],
+    [
+     1452,
+     307
+    ],
+    [
+     1414,
+     307
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "crates_b",
+   "file": "../../../assets/environments/karsk_railyard/props/crates_b.png",
+   "pos": [
+    622,
+    277
+   ],
+   "base_y": 302,
+   "collision": [
+    [
+     622,
+     296
+    ],
+    [
+     658,
+     296
+    ],
+    [
+     658,
+     303
+    ],
+    [
+     622,
+     303
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "bench",
+   "file": "../../../assets/environments/karsk_railyard/props/bench.png",
+   "pos": [
+    549,
+    304
+   ],
+   "base_y": 320,
+   "collision": [
+    [
+     549,
+     315
+    ],
+    [
+     584,
+     315
+    ],
+    [
+     584,
+     321
+    ],
+    [
+     549,
+     321
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "loudspeaker_pole",
+   "file": "../../../assets/environments/karsk_railyard/props/loudspeaker_pole.png",
+   "pos": [
+    710,
+    148
+   ],
+   "base_y": 255,
+   "collision": [
+    [
+     718,
+     252
+    ],
+    [
+     727,
+     252
+    ],
+    [
+     727,
+     256
+    ],
+    [
+     718,
+     256
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "snowman",
+   "file": "../../../assets/environments/karsk_railyard/props/snowman.png",
+   "pos": [
+    340,
+    315
+   ],
+   "base_y": 339,
+   "collision": [
+    [
+     343,
+     336
+    ],
+    [
+     358,
+     336
+    ],
+    [
+     358,
+     340
+    ],
+    [
+     343,
+     340
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "sled",
+   "file": "../../../assets/environments/karsk_railyard/props/sled.png",
+   "pos": [
+    311,
+    326
+   ],
+   "base_y": 334,
+   "collision": [
+    [
+     310,
+     331
+    ],
+    [
+     327,
+     331
+    ],
+    [
+     327,
+     335
+    ],
+    [
+     310,
+     335
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "dwarf_signal",
+   "file": "../../../assets/environments/karsk_railyard/props/dwarf_signal.png",
+   "pos": [
+    1096,
+    244
+   ],
+   "base_y": 262,
+   "collision": [
+    [
+     1097,
+     259
+    ],
+    [
+     1104,
+     259
+    ],
+    [
+     1104,
+     263
+    ],
+    [
+     1097,
+     263
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  }
+ ],
+ "walkable": [
+  [
+   0,
+   252
+  ],
+  [
+   1920,
+   252
+  ],
+  [
+   1920,
+   352
+  ],
+  [
+   0,
+   352
+  ]
+ ],
+ "spawns": {
+  "SP_A1_Platform": [
+   120,
+   312
+  ],
+  "NPC_irina": [
+   506,
+   256
+  ]
+ },
+ "hotspots": {
+  "irina": [
+   506,
+   258
+  ],
+  "seal": [
+   853,
+   304
+  ],
+  "timetable": [
+   1068,
+   314
+  ],
+  "signal_board": [
+   1290,
+   314
+  ],
+  "ledger": [
+   1573,
+   258
+  ],
+  "obs_family": [
+   282,
+   332
+  ],
+  "obs_stove": [
+   975,
+   314
+  ],
+  "obs_poster": [
+   1399,
+   257
+  ],
+  "exp_barrack": [
+   100,
+   258
+  ],
+  "exp_mitten": [
+   1466,
+   258
+  ],
+  "exp_grain": [
+   196,
+   318
+  ],
+  "exp_stall": [
+   292,
+   258
+  ],
+  "exp_snowman": [
+   372,
+   340
+  ],
+  "exp_stairs_under": [
+   404,
+   256
+  ],
+  "exp_newspaper": [
+   596,
+   322
+  ],
+  "exp_crows": [
+   652,
+   318
+  ],
+  "exp_loudspeaker": [
+   732,
+   256
+  ],
+  "exp_wagon_chalk": [
+   906,
+   304
+  ],
+  "exp_workers": [
+   944,
+   316
+  ],
+  "exp_cat": [
+   1026,
+   312
+  ],
+  "exp_banner": [
+   1220,
+   258
+  ],
+  "exp_stash": [
+   1458,
+   312
+  ],
+  "exp_kontora_shelf": [
+   1624,
+   258
+  ],
+  "exp_cooling_towers": [
+   1120,
+   330
+  ],
+  "exp_distant_train": [
+   470,
+   330
+  ]
+ },
+ "hotspot_info": {
+  "irina": {
+   "kind": "dialogue",
+   "mark": [
+    506,
+    212
+   ],
+   "radius": 34,
+   "npc": "irina",
+   "facing": "left"
+  },
+  "seal": {
+   "kind": "inspect",
+   "mark": [
+    857,
+    253
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_seal.png"
+  },
+  "timetable": {
+   "kind": "inspect",
+   "mark": [
+    1068,
+    266
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_timetable.png"
+  },
+  "signal_board": {
+   "kind": "puzzle",
+   "mark": [
+    1291,
+    258
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_signal_board.png"
+  },
+  "ledger": {
+   "kind": "inspect",
+   "mark": [
+    1572,
+    232
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_ledger.png"
+  },
+  "obs_family": {
+   "kind": "observe",
+   "mark": [
+    276,
+    282
+   ],
+   "radius": 34,
+   "prompt_key": "obs.karsk.family.prompt",
+   "observe_text_key": "obs.karsk.family.text"
+  },
+  "obs_stove": {
+   "kind": "observe",
+   "mark": [
+    975,
+    266
+   ],
+   "radius": 34,
+   "prompt_key": "obs.karsk.stove.prompt",
+   "observe_text_key": "obs.karsk.stove.text"
+  },
+  "obs_poster": {
+   "kind": "observe",
+   "mark": [
+    1390,
+    226
+   ],
+   "radius": 30,
+   "prompt_key": "obs.karsk.poster.prompt",
+   "observe_text_key": "obs.karsk.poster.text"
+  },
+  "exp_barrack": {
+   "mark": [
+    82,
+    191
+   ],
+   "layer": "near_bg",
+   "radius": 30,
+   "what": "two-storey residential barrack: stovepipes through the windows, laundry line (KarskLaundry)"
+  },
+  "exp_mitten": {
+   "mark": [
+    1464,
+    212
+   ],
+   "radius": 26,
+   "what": "a child's red mitten pushed onto the fence post between hoarding and office (KarskGlint mode gust)"
+  },
+  "exp_grain": {
+   "mark": [
+    136,
+    173
+   ],
+   "layer": "mid",
+   "radius": 30,
+   "what": "grain elevator: five silos, shell hole and repair patch"
+  },
+  "exp_stall": {
+   "mark": [
+    290,
+    226
+   ],
+   "radius": 30,
+   "what": "tea stall ЧАЙ: vendor, steaming samovar"
+  },
+  "exp_snowman": {
+   "mark": [
+    350,
+    318
+   ],
+   "radius": 26,
+   "what": "snowman with a tin-can ushanka, child footprints around it, sled beside"
+  },
+  "exp_stairs_under": {
+   "mark": [
+    406,
+    244
+   ],
+   "radius": 22,
+   "hidden": true,
+   "what": "cache under the stairs: loose bricks, oilcloth bundle, red cloth corner that flutters in gusts"
+  },
+  "exp_newspaper": {
+   "mark": [
+    570,
+    304
+   ],
+   "radius": 26,
+   "what": "newspaper left on the bench, masthead emblem, official stamp"
+  },
+  "exp_crows": {
+   "mark": [
+    660,
+    152
+   ],
+   "radius": 34,
+   "what": "hooded crows on the PA cable (KarskCrows: nervous at 80 px, fly off at 34 px or when running)"
+  },
+  "exp_loudspeaker": {
+   "mark": [
+    722,
+    160
+   ],
+   "radius": 28,
+   "what": "PA pole with two horn loudspeakers"
+  },
+  "exp_wagon_chalk": {
+   "mark": [
+    903,
+    248
+   ],
+   "radius": 28,
+   "what": "chalk tallies, an arrow and a crossed-out mark at the far end of wagon 24-311"
+  },
+  "exp_workers": {
+   "mark": [
+    960,
+    258
+   ],
+   "radius": 28,
+   "what": "the two workers at the fire barrel (baked in fire_barrel)"
+  },
+  "exp_cat": {
+   "mark": [
+    1007,
+    300
+   ],
+   "radius": 26,
+   "what": "ginger cat curled by the barrel (KarskCat lifts its head)"
+  },
+  "exp_banner": {
+   "mark": [
+    1220,
+    220
+   ],
+   "radius": 34,
+   "what": "banner ВОССТАНОВИМ ВМЕСТЕ with the state emblem at both ends"
+  },
+  "exp_stash": {
+   "mark": [
+    1432,
+    302
+   ],
+   "radius": 22,
+   "hidden": true,
+   "what": "tin box in the gap between the crate stacks (occasional glint)"
+  },
+  "exp_kontora_shelf": {
+   "mark": [
+    1624,
+    214
+   ],
+   "radius": 26,
+   "what": "bookshelf behind the freight-office window"
+  },
+  "exp_cooling_towers": {
+   "mark": [
+    1250,
+    175
+   ],
+   "layer": "far_city",
+   "radius": 30,
+   "what": "two cooling towers of the power plant on the horizon, steaming (seen between the depot and the house under repair from here, camera ~800-840)"
+  },
+  "exp_distant_train": {
+   "mark": [
+    400,
+    200
+   ],
+   "layer": "mid",
+   "radius": 30,
+   "what": "goods train on the far embankment (KarskTrain, every ~40-50 s, alternating direction)"
+  }
+ },
+ "lights": [
+  {
+   "id": "cabin_amber_window",
+   "pos": [
+    534,
+    215
+   ],
+   "color": "#F0C487",
+   "energy": 1.0,
+   "radius": 118,
+   "flicker": 0.03,
+   "height": 34,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "fire_barrel",
+   "pos": [
+    975,
+    284
+   ],
+   "color": "#DCA16E",
+   "energy": 1.35,
+   "radius": 104,
+   "flicker": 0.22,
+   "height": 22,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "office_lamp",
+   "pos": [
+    1573,
+    197
+   ],
+   "color": "#F0C487",
+   "energy": 1.25,
+   "radius": 104,
+   "flicker": 0.02,
+   "height": 22,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "platform_lamp_1",
+   "pos": [
+    221,
+    234
+   ],
+   "color": "#DEE5DC",
+   "energy": 0.45,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "platform_lamp_3",
+   "pos": [
+    1201,
+    234
+   ],
+   "color": "#DEE5DC",
+   "energy": 0.45,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "distant_red_signal",
+   "pos": [
+    1663,
+    139
+   ],
+   "color": "#C8503C",
+   "energy": 0.55,
+   "radius": 22,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "poles"
+  }
+ ],
+ "fx": [
+  {
+   "type": "snow",
+   "density": 0.55,
+   "wind": 5.0,
+   "color_far": "#A3B1AD",
+   "color_near": "#DEE5DC"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    557,
+    55
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    313,
+    126
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    1646,
+    99
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/samovar_steam.png",
+   "frames": 6,
+   "fps": 6,
+   "pos": [
+    271,
+    196
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    14,
+    26
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "fog_band",
+   "y": 204,
+   "height": 26,
+   "color": "#C7D3BA",
+   "alpha": 0.32,
+   "parallax": 0.18,
+   "z": -87
+  },
+  {
+   "type": "fog_band",
+   "y": 216,
+   "height": 30,
+   "color": "#AFC1AA",
+   "alpha": 0.3,
+   "parallax": 0.35,
+   "z": -80
+  },
+  {
+   "type": "fog_band",
+   "y": 234,
+   "height": 28,
+   "color": "#98AD9A",
+   "alpha": 0.26,
+   "parallax": 0.6,
+   "z": -65
+  },
+  {
+   "type": "fog_band",
+   "y": 276,
+   "height": 44,
+   "color": "#AFC1AA",
+   "alpha": 0.14,
+   "parallax": 1.0,
+   "z": -12
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/smoke_ribbon_a.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    26,
+    -41
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/smoke_ribbon_b.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    40,
+    -31
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    862,
+    13
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    678,
+    29
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/tower_plume.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    526,
+    87
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    84,
+    64
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/tower_plume.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    642,
+    95
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    84,
+    64
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    1140,
+    13
+   ],
+   "parallax": 0.45,
+   "z": -73,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "mid"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    39,
+    139
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    234,
+    146
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    440,
+    146
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    1176,
+    123
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "../../../assets/environments/karsk_railyard/fx/steam_puffs.png",
+   "frames": 6,
+   "fps": 5,
+   "pos": [
+    966,
+    126
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    26,
+    44
+   ],
+   "layer": "near_bg"
+  }
+ ],
+ "actors": [
+  {
+   "scene": "res://scenes/levels/karsk/KarskWind.tscn",
+   "pos": [
+    0,
+    0
+   ],
+   "props": {
+    "roofs": [
+     [
+      466,
+      596,
+      134
+     ],
+     [
+      252,
+      330,
+      200
+     ],
+     [
+      738,
+      1100,
+      203
+     ],
+     [
+      1100,
+      1462,
+      204
+     ],
+     [
+      1478,
+      1688,
+      171
+     ],
+     [
+      -2,
+      252,
+      214
+     ],
+     [
+      1690,
+      1920,
+      212
+     ]
+    ]
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskCrows.tscn",
+   "pos": [
+    660,
+    258
+   ],
+   "props": {
+    "perches": [
+     [
+      636,
+      164
+     ],
+     [
+      651,
+      164
+     ],
+     [
+      667,
+      163
+     ],
+     [
+      684,
+      160
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/crows.png",
+    "scare_radius": 34.0,
+    "nervous_radius": 80.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskCat.tscn",
+   "pos": [
+    1007,
+    307
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/cat.png",
+    "wake_radius": 46.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBarrel.tscn",
+   "pos": [
+    975,
+    304
+   ],
+   "props": {
+    "flames": "res://assets/environments/karsk_railyard/fx/barrel_flames.png",
+    "flame_pos": [
+     975,
+     282
+    ],
+    "flame_frames": 8.0,
+    "mouths": [
+     [
+      959,
+      265
+     ],
+     [
+      990,
+      266
+     ]
+    ],
+    "breath": "res://assets/environments/karsk_railyard/actors/breath_puff.png"
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    276,
+    322
+   ],
+   "props": {
+    "points": [
+     [
+      281,
+      284
+     ],
+     [
+      255,
+      296
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/breath_puff.png",
+    "interval": 4.6
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    296,
+    249
+   ],
+   "props": {
+    "points": [
+     [
+      295,
+      223
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/breath_puff.png",
+    "interval": 5.2,
+    "z": -13.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskLamp.tscn",
+   "pos": [
+    700,
+    303
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/lamp_bulb.png",
+    "bulb_pos": [
+     714,
+     230
+    ],
+    "light_pos": [
+     716,
+     233
+    ],
+    "light_color": "#DEE5DC",
+    "energy": 0.45,
+    "radius": 84.0,
+    "height": 40.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskTrain.tscn",
+   "pos": [
+    0,
+    210
+   ],
+   "props": {
+    "loco": "res://assets/environments/karsk_railyard/actors/train_loco.png",
+    "wagons": [
+     "res://assets/environments/karsk_railyard/actors/train_wag_box.png",
+     "res://assets/environments/karsk_railyard/actors/train_wag_tank.png",
+     "res://assets/environments/karsk_railyard/actors/train_wag_flat.png",
+     "res://assets/environments/karsk_railyard/actors/train_wag_gond.png"
+    ],
+    "puff": "res://assets/environments/karsk_railyard/actors/train_puff.png",
+    "parallax": 0.45,
+    "z": -73.0,
+    "span": [
+     -40.0,
+     1250.0
+    ],
+    "speed": 44.0,
+    "interval": [
+     38.0,
+     50.0
+    ],
+    "first_delay": 4.0,
+    "chimney": [
+     5.0,
+     -14.0
+    ],
+    "wagons_min": 6.0,
+    "wagons_max": 9.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskLaundry.tscn",
+   "pos": [
+    0,
+    0
+   ],
+   "props": {
+    "items": [
+     {
+      "file": "res://assets/environments/karsk_railyard/actors/laundry_sheet.png",
+      "cell": [
+       12,
+       10
+      ]
+     },
+     {
+      "file": "res://assets/environments/karsk_railyard/actors/laundry_shirt.png",
+      "cell": [
+       11,
+       8
+      ]
+     },
+     {
+      "file": "res://assets/environments/karsk_railyard/actors/laundry_towel.png",
+      "cell": [
+       9,
+       9
+      ]
+     },
+     {
+      "file": "res://assets/environments/karsk_railyard/actors/laundry_johns.png",
+      "cell": [
+       9,
+       10
+      ]
+     },
+     {
+      "file": "res://assets/environments/karsk_railyard/actors/laundry_apron.png",
+      "cell": [
+       10,
+       8
+      ]
+     },
+     {
+      "file": "res://assets/environments/karsk_railyard/actors/laundry_cloth.png",
+      "cell": [
+       10,
+       9
+      ]
+     }
+    ],
+    "pegs": [
+     [
+      163,
+      210
+     ],
+     [
+      169,
+      210
+     ],
+     [
+      175,
+      209
+     ],
+     [
+      182,
+      207
+     ],
+     [
+      188,
+      204
+     ],
+     [
+      193,
+      201
+     ]
+    ],
+    "parallax": 0.72,
+    "z": -59.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    522,
+    157
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/window_signalman.png",
+    "cell": [
+     24,
+     24
+    ],
+    "z": -13.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    75,
+    191
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/window_near_0.png",
+    "cell": [
+     7,
+     11
+    ],
+    "z": -59.0,
+    "parallax": 0.72,
+    "mode": "small"
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    138,
+    223
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/window_near_1.png",
+    "cell": [
+     7,
+     11
+    ],
+    "z": -59.0,
+    "parallax": 0.72,
+    "mode": "small"
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    1311,
+    164
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/window_near_2.png",
+    "cell": [
+     9,
+     11
+    ],
+    "z": -59.0,
+    "parallax": 0.72,
+    "mode": "small"
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    1383,
+    206
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/window_near_3.png",
+    "cell": [
+     9,
+     11
+    ],
+    "z": -59.0,
+    "parallax": 0.72,
+    "mode": "small"
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskGlint.tscn",
+   "pos": [
+    1432,
+    306
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/glint.png",
+    "frames": 5,
+    "offset": [
+     -2,
+     -6
+    ],
+    "period": [
+     4.0,
+     7.5
+    ],
+    "mode": "glint"
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskGlint.tscn",
+   "pos": [
+    401,
+    241
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/cache_cloth.png",
+    "frames": 4,
+    "offset": [
+     0,
+     0
+    ],
+    "period": [
+     0.0,
+     0.0
+    ],
+    "mode": "gust",
+    "z": -13.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskGlint.tscn",
+   "pos": [
+    1464,
+    219
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/mitten.png",
+    "frames": 4,
+    "offset": [
+     -4,
+     -9
+    ],
+    "period": [
+     0.0,
+     0.0
+    ],
+    "mode": "gust",
+    "z": -13.0,
+    "lit": true
+   }
+  }
+ ],
+ "notes": {
+  "generator": "tools/pixelgen/env_karsk.py (py -3 -P tools/pixelgen/env_karsk.py)",
+  "ground_rows": {
+   "back_strip": [
+    250,
+    262
+   ],
+   "track_2_rails": [
+    264,
+    272
+   ],
+   "track_1_rails": [
+    286,
+    294
+   ],
+   "platform_edge": 297,
+   "platform": [
+    300,
+    352
+   ]
+  },
+  "light_on_layer": "pos of a light with on_layer != playfield is given like a layer pos: where it appears when the camera top-left is (0,0); it scrolls with that layer's parallax.",
+  "anim_sprite": "horizontal frame strips (frame_size); entries with base_y belong to the y-sorted Playfield, the others sit at z between layers and scroll with \"parallax\".",
+  "z_order": "yard_back (-14) is drawn over ground (-16) so building bases overlap the back strip.",
+  "insignia": "TECHNICAL_ARCHITECTURE 12.4: yard_back.png, props/wagon_c17.png and props/bench.png show the fictional gear-and-wheat emblem; their *_hist.png twins (+ _hist_n / _hist_e; identical except the emblem pixels) show the hammer & sickle and are picked by LayerStack through Symbols.pick (applied at scene load).",
+  "actors": "scenes/levels/karsk/*.tscn (scripts/levels/karsk/*.gd): self-contained ambient life, never touches Story/Explore state.",
+  "skyline": "TEST COPY (tests/visual/skyline): karsk_railyard manifest with the far_city / far_industry / mid / near_bg planes of assets/environments/karsk_skyline swapped in."
+ }
+}

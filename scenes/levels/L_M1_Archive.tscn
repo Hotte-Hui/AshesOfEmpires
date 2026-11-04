@@ -32,6 +32,20 @@ hotspot_offset = Vector2(150, 0)
 look_at_player = false
 wander = 60.0
 
+[node name="Porter" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "porter"
+hotspot_id = "exp_porter"
+hotspot_offset = Vector2(4, -13)
+face_left = true
+
+[node name="Librarian" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "librarian"
+hotspot_id = "exp_librarian_desk"
+hotspot_offset = Vector2(6, -16)
+face_left = true
+
 [node name="PlanA" type="Node2D" parent="Playfield"]
 script = ExtResource("2")
 objective_id = "m1_inspect_plan_a"
@@ -72,14 +86,163 @@ kind = "observe"
 hotspot_id = "obs_window"
 observe_key = "obs.berlin.window"
 
-[node name="ObsNotice" type="Node2D" parent="Playfield"]
+[node name="TalkPorter" type="Node2D" parent="Playfield"]
 script = ExtResource("2")
-kind = "observe"
-hotspot_id = "obs_notice"
-observe_key = "obs.berlin.notice"
+kind = "chat"
+hotspot_id = "exp_porter"
+explore_id = "berlin.porter"
+npc_id = "porter"
+radius = 34.0
 
-[node name="ObsPhoto" type="Node2D" parent="Playfield"]
+[node name="TalkEmilTea" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "emil"
+hotspot_offset = Vector2(-46, 16)
+explore_id = "berlin.emil_tea"
+npc_id = "emil"
+radius = 22.0
+
+[node name="ObsBrandtDesk" type="Node2D" parent="Playfield"]
 script = ExtResource("2")
 kind = "observe"
 hotspot_id = "obs_photo"
-observe_key = "obs.berlin.photo"
+observe_key = "explore.berlin.obs_brandt_desk"
+
+[node name="ExpMasterPlan" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_master_plan"
+explore_id = "berlin.master_plan"
+prompt_height = 70.0
+
+[node name="ExpNotice" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "obs_notice"
+explore_id = "berlin.notice"
+
+[node name="ExpPneumaticTube" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pneumatic_tube"
+explore_id = "berlin.pneumatic_tube"
+
+[node name="ExpClock" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_clock"
+explore_id = "berlin.clock"
+prompt_height = 70.0
+
+[node name="ExpCardCatalogue" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_card_catalogue"
+explore_id = "berlin.card_catalogue"
+
+[node name="TalkLibrarian" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "exp_librarian_desk"
+explore_id = "berlin.librarian"
+npc_id = "librarian"
+radius = 30.0
+
+[node name="ExpReadingTable" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_reading_table"
+explore_id = "berlin.reading_table"
+prompt_height = 48.0
+
+[node name="ExpGlobe" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_globe"
+explore_id = "berlin.globe"
+prompt_height = 50.0
+
+[node name="ExpLibShelf1" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lib_shelf_1"
+explore_id = "berlin.lib_shelf_1"
+
+[node name="ExpLibShelf2" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lib_shelf_2"
+explore_id = "berlin.lib_shelf_2"
+
+[node name="ExpLibShelf3" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lib_shelf_3"
+explore_id = "berlin.lib_shelf_3"
+
+[node name="ExpLibShelf4" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lib_shelf_4"
+explore_id = "berlin.lib_shelf_4"
+
+[node name="ExpLibShelf5" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lib_shelf_5"
+explore_id = "berlin.lib_shelf_5"
+
+[node name="ExpLibHidden" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lib_hidden"
+explore_id = "berlin.lib_hidden"
+radius = 16.0
+prompt_height = 40.0
+
+[node name="ExpMouse" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_mouse"
+explore_id = "berlin.mouse"
+radius = 16.0
+prompt_height = 34.0
+
+[node name="ExpRadio" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_radio"
+explore_id = "berlin.radio"
+
+[node name="ExpPosterAufbau" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_poster_aufbau"
+explore_id = "berlin.poster_aufbau"
+prompt_height = 70.0
+
+[node name="ExpHeater" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_heater"
+explore_id = "berlin.heater"
+prompt_height = 46.0
+
+[node name="ExpPigeons" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pigeons"
+explore_id = "berlin.pigeons"
+
+[node name="ExpPhoto" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_photo"
+explore_id = "berlin.photo"
+
+[node name="ExpCoatStand" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_coat_stand"
+explore_id = "berlin.coat_stand"

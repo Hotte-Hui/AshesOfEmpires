@@ -1,11 +1,14 @@
 extends "res://scripts/ui/ui_modal.gd"
-## Journal / dossier with four paper index tabs: Ziele, Beweise, Personen, Entscheidungen.
-## Data comes from Story.journal() (objectives with state, evidence items, people met, decisions); the parser
-## accepts arrays or dictionaries for every section and falls back to Story.objective_state/inventory/
+## Journal / dossier with six paper index tabs: Ziele, Beweise, Personen, Entscheidungen, Entdeckungen,
+## Geschichte. Data comes from Story.journal() (objectives with state, evidence items, people met, decisions); the
+## parser accepts arrays or dictionaries for every section and falls back to Story.objective_state/inventory/
 ## choice_history + data/v3 when journal() is missing. Locked objectives are never listed (no false promises).
+## Exploration (§12, Explore autoload): "Entdeckungen" lists found entries per area with found/total and opens a
+## find again in the DiscoveryView; "Geschichte" lists the real-history cards found so far (re-readable, archive
+## style) and shows the unknown ones only as a count. The header shows the overall exploration progress.
 ## Q / E (LB / RB) switch tabs, J / Tab / Esc close. "Ansehen" opens the InspectView on top.
 
-const TABS := ["objectives", "evidence", "people", "decisions"]
+const TABS := ["objectives", "evidence", "people", "decisions", "discoveries", "history"]
 
 var suppress_toasts := true
 var current_tab := "objectives"
@@ -13,6 +16,7 @@ var _tab_buttons: Dictionary = {}
 var _sheet: PanelContainer
 var _body: Control
 var _subtitle: Label
+var _progress: Label
 var _data: Dictionary = {}
 var _group := ButtonGroup.new()
 
@@ -31,11 +35,16 @@ func _ready() -> void:
 	root.add_child(head)
 	var title := Kit.label(Kit.t("ui.journal.title"), "HeadingLabel")
 	head.add_child(title)
+	var right := Kit.vbox(4)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right.size_flags_vertical = Control.SIZE_SHRINK_END
+	head.add_child(right)
 	_subtitle = Kit.label("", "DimLabel", 26)
-	_subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_subtitle.size_flags_vertical = Control.SIZE_SHRINK_END
-	head.add_child(_subtitle)
+	right.add_child(_subtitle)
+	_progress = Kit.label("", "HintLabel")
+	_progress.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	right.add_child(_progress)
 	root.add_child(Kit.rule(Color(0, 0, 0, 0), 18))
 	var tabs := Kit.hbox(6)
 	tabs.add_theme_constant_override("separation", 6)
@@ -73,18 +82,27 @@ func open(tab := "") -> void:
 	if q.has("title_key"):
 		parts.append(Kit.t(str(q["title_key"])))
 	_subtitle.text = "  ·  ".join(parts)
+	var pr := Kit.explore_progress()
+	_progress.text = Kit.t("ui.journal.progress", {"n": pr["found"], "total": pr["total"], "h": pr["cards_found"],
+		"ht": pr["cards_total"]}).to_upper() if int(pr["total"]) > 0 else ""
+	_progress.visible = _progress.text != ""
 	open_modal()
 	show_tab(current_tab)
 
 
 func _update_tab_titles() -> void:
+	var pr := Kit.explore_progress()
 	for id in TABS:
-		var n: int = (_data.get(id, []) as Array).size()
+		var n: int = (_data.get(id, []) as Array).size() if _data.get(id, []) is Array else 0
 		if id == "objectives":
 			n = 0
 			for o in _data.get("objectives", []):
 				if str(o.get("state", "")) == "available":
 					n += 1
+		elif id == "discoveries":
+			n = int(pr["found"])
+		elif id == "history":
+			n = int(pr["cards_found"])
 		var t := Kit.t("ui.journal.tab." + id).to_upper()
 		(_tab_buttons[id] as Button).text = t + ("   %d" % n if n > 0 else "")
 
@@ -101,6 +119,10 @@ func show_tab(id: String) -> void:
 			_body = _build_list_detail("evidence")
 		"people":
 			_body = _build_list_detail("people")
+		"discoveries":
+			_body = _build_discoveries()
+		"history":
+			_body = _build_history()
 		_:
 			_body = _build_decisions()
 	_sheet.add_child(_body)
@@ -474,6 +496,366 @@ func _stamp(text: String) -> Control:
 func _inspect(item_id: String) -> void:
 	if ui_root != null and ui_root.get("inspect") != null:
 		ui_root.inspect.open(item_id)
+
+
+# ================================================================ exploration tabs (§12)
+func _ex_call(method: String, args: Array, fallback):
+	var ex := Kit.explore()
+	if ex == null or not ex.has_method(method):
+		return fallback
+	return ex.callv(method, args)
+
+
+## Story chronology of a level (quest order in data/v3; unknown levels last).
+func _level_rank(level: String) -> int:
+	var qs := Kit.quests()
+	for i in qs.size():
+		if str(qs[i].get("scene", "")) == level:
+			return i
+	return 999
+
+
+## Areas in story order (Karsk before Berlin), not file-name order.
+func _areas_in_story_order() -> Array:
+	var areas: Array = _ex_call("areas", [], [])
+	var rank := {}
+	for a in areas:
+		var r := 999
+		for e in _ex_call("entries_for", [str(a)], []):
+			r = mini(r, _level_rank(str(e.get("level", ""))))
+		rank[a] = r
+	var out := areas.duplicate()
+	out.sort_custom(func(x, y): return rank[x] < rank[y] if rank[x] != rank[y] else areas.find(x) < areas.find(y))
+	return out
+
+
+## History sides in the story order of the finds that lead to them.
+func _sides_in_story_order() -> Array:
+	var rank := {}
+	var order: Array = []
+	for c in _ex_call("cards_list", [], []):
+		var sd := str(c.get("side", ""))
+		if not rank.has(sd):
+			rank[sd] = 999
+			order.append(sd)
+	for e in _ex_call("entries_for", [""], []):
+		var hist = e.get("history", [])
+		if not (hist is Array):
+			continue
+		for cid in hist:
+			var sd := str((_ex_call("card", [str(cid)], {}) as Dictionary).get("side", ""))
+			if rank.has(sd):
+				rank[sd] = mini(rank[sd], _level_rank(str(e.get("level", ""))))
+	var out := order.duplicate()
+	out.sort_custom(func(x, y): return rank[x] < rank[y] if rank[x] != rank[y] else order.find(x) < order.find(y))
+	return out
+
+
+func _list_split() -> Array:
+	var h := Kit.hbox(40)
+	var left_scroll := _scroll()
+	left_scroll.custom_minimum_size.x = 560
+	h.add_child(left_scroll)
+	var list := Kit.vbox(4)
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.add_child(list)
+	var vsep := ColorRect.new()
+	vsep.color = Color("b0aa93")
+	vsep.custom_minimum_size.x = 3
+	vsep.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(vsep)
+	# right column: scrolling detail + an action row pinned below it (always visible, also at 150 % text)
+	var right := Kit.vbox(14)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(right)
+	var right_scroll := _scroll()
+	right_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right.add_child(right_scroll)
+	var detail := Kit.vbox(14)
+	detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_scroll.add_child(detail)
+	var actions := Kit.hbox(18)
+	actions.name = "Actions"
+	right.add_child(actions)
+	detail.set_meta("actions", actions)
+	return [h, list, detail]
+
+
+## The pinned action row of a detail column (see _list_split), emptied.
+func _actions_of(detail: VBoxContainer) -> HBoxContainer:
+	var a: HBoxContainer = detail.get_meta("actions") if detail.has_meta("actions") else null
+	if a != null:
+		for c in a.get_children():
+			c.queue_free()
+	return a
+
+
+func _group_head(text: String, count: String) -> Control:
+	var head := Kit.hbox(12)
+	var al := Kit.wrap_label(text.to_upper(), "PaperKicker")
+	al.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(al)
+	var cl := Kit.label(count, "TypeDim")
+	Kit.scalable(cl, 23)
+	cl.size_flags_vertical = Control.SIZE_SHRINK_END
+	head.add_child(cl)
+	return head
+
+
+func _dim_line(text: String) -> Label:
+	var l := Kit.wrap_label(text, "TypeDim")
+	Kit.scalable(l, 22)
+	return l
+
+
+## "Entdeckungen": per area found/total + progress bar, the found titles (focus shows the detail, Enter /
+## click opens the find again in the DiscoveryView), and how many are still undiscovered.
+func _build_discoveries() -> Control:
+	var areas: Array = _areas_in_story_order()
+	var pr := Kit.explore_progress()
+	if areas.is_empty() or int(pr["found"]) == 0:
+		var v := Kit.vbox(18)
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		var e := _empty("ui.journal.empty.discoveries")
+		(e as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		v.add_child(e)
+		if int(pr["total"]) > 0:
+			var c := _dim_line(Kit.t("ui.explore.count", {"n": 0, "total": pr["total"]}))
+			c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			v.add_child(c)
+		return v
+	var parts := _list_split()
+	var list: VBoxContainer = parts[1]
+	var detail: VBoxContainer = parts[2]
+	var first: Button = null
+	var first_e: Dictionary = {}
+	for a in areas:
+		var c: Dictionary = _ex_call("counts", [str(a)], {"found": 0, "total": 0})
+		if list.get_child_count() > 0:
+			list.add_child(Kit.rule(Color(0, 0, 0, 0), 16))
+		list.add_child(_group_head(Kit.explore_area_label(str(a)), Kit.t("ui.explore.count", {"n": c["found"], "total": c["total"]})))
+		list.add_child(Kit.ex_bar(float(c["found"]) / maxf(1.0, float(c["total"])), 480))
+		list.add_child(Kit.rule(Color(0, 0, 0, 0), 6))
+		for e in _ex_call("found_entries", [str(a)], []):
+			var b := Kit.button(Kit.explore_title(e), "PaperListButton")
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.icon = Kit.ex_tex(Kit.explore_kind_icon(str(e.get("kind", ""))))
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			b.focus_entered.connect(_show_find_detail.bind(detail, e))
+			b.mouse_entered.connect(b.grab_focus)
+			b.pressed.connect(_reopen_find.bind(str(e["id"])))
+			list.add_child(b)
+			if first == null:
+				first = b
+				first_e = e
+		var left := int(c["total"]) - int(c["found"])
+		var txt := Kit.t("ui.explore.all_found") if left <= 0 else (Kit.t("ui.explore.remaining_one") if left == 1 else Kit.t("ui.explore.remaining", {"n": left}))
+		var rl := _dim_line(txt)
+		rl.add_theme_font_override("font", Kit.font("fv_serif_italic"))
+		list.add_child(rl)
+	if not first_e.is_empty():
+		_show_find_detail(detail, first_e)
+	if first != null and is_open:
+		first.grab_focus.call_deferred()
+	return parts[0]
+
+
+func _show_find_detail(detail: VBoxContainer, e: Dictionary) -> void:
+	for c in detail.get_children():
+		c.queue_free()
+	var id := str(e.get("id", ""))
+	var img := str(_ex_call("entry_image", [id], ""))
+	var t2 := Kit.optional_tex(img) if img != "" else null
+	if t2 != null:
+		var s := 2 if Kit.text_scale() < 1.2 else 1
+		while s > 1 and (t2.get_width() * s > 720 or t2.get_height() * s > 300):
+			s -= 1
+		var pic := Kit.pixel_image(t2, s)
+		pic.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		if t2.get_width() * s > 720 or t2.get_height() * s > 300:
+			var k := minf(720.0 / t2.get_width(), 300.0 / t2.get_height())
+			pic.custom_minimum_size = (t2.get_size() * k).floor()
+		detail.add_child(pic)
+	var kind := str(e.get("kind", "detail"))
+	var kick := Kit.wrap_label((Kit.explore_kind_label(kind) + "  ·  " + Kit.explore_place(e)).to_upper(), "PaperKicker")
+	detail.add_child(kick)
+	var n := Kit.wrap_label(Kit.explore_title(e), "TypeHeading")
+	Kit.scalable(n, 34)
+	detail.add_child(n)
+	var sep := HSeparator.new()
+	sep.theme_type_variation = "PaperSeparator"
+	detail.add_child(sep)
+	var body := ""
+	if str(e.get("text_key", "")) != "":
+		body = Kit.t(str(e["text_key"]))
+	else:
+		var lines: PackedStringArray = []
+		for l in e.get("lines", []):
+			if l is Dictionary:
+				lines.append("%s: %s" % [Kit.char_name(str(l.get("speaker", ""))), Kit.t(str(l.get("key", "")))])
+		body = "\n".join(lines)
+	var d := Kit.wrap_label(body, "TypeLabel")
+	Kit.scalable(d, 27)
+	d.max_lines_visible = 7 if Kit.text_scale() < 1.2 else 5
+	d.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD_ELLIPSIS
+	detail.add_child(d)
+	var cards: Array = _ex_call("cards_of", [id], [])
+	if not cards.is_empty():
+		var row := Kit.hbox(12)
+		var ic := Kit.ex_sprite("icons/kind_history.png")
+		ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(ic)
+		var ll := _dim_line(Kit.t("ui.explore.linked_one") if cards.size() == 1 else Kit.t("ui.explore.linked_n", {"n": cards.size()}))
+		ll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		ll.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(ll)
+		detail.add_child(row)
+	var b := Kit.button(Kit.t("ui.explore.reopen"), "", 260)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	b.pressed.connect(_reopen_find.bind(id))
+	var act := _actions_of(detail)
+	if act != null:
+		act.add_child(b)
+	else:
+		detail.add_child(b)
+
+
+func _reopen_find(id: String) -> void:
+	if ui_root != null and ui_root.get("discovery") != null:
+		ui_root.discovery.open(id)
+
+
+## "Geschichte": the real-history cards found so far (re-readable), unknown ones only as a count.
+func _build_history() -> Control:
+	var hc_all: Dictionary = _ex_call("history_counts", [], {"found": 0, "total": 0})
+	var count_line := Kit.t("ui.history.count", {"n": hc_all["found"], "total": hc_all["total"]})
+	if int(hc_all["found"]) == 0:
+		var v := Kit.vbox(18)
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		var e := _empty("ui.journal.empty.history")
+		(e as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		v.add_child(e)
+		if int(hc_all["total"]) > 0:
+			var c := _dim_line(count_line)
+			c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			v.add_child(c)
+		return v
+	var outer := Kit.vbox(14)
+	var top := Kit.hbox(24)
+	var cl := Kit.label(count_line, "TypeLabel")
+	Kit.scalable(cl, 25)
+	top.add_child(cl)
+	outer.add_child(top)
+	var intro := _dim_line(Kit.t("ui.history.intro"))
+	intro.add_theme_font_override("font", Kit.font("fv_serif_italic"))
+	outer.add_child(intro)
+	outer.add_child(Kit.rule(Color(0, 0, 0, 0), 4))
+	var parts := _list_split()
+	(parts[0] as Control).size_flags_vertical = Control.SIZE_EXPAND_FILL
+	outer.add_child(parts[0])
+	var list: VBoxContainer = parts[1]
+	var detail: VBoxContainer = parts[2]
+	var sides: Array = _sides_in_story_order()
+	var first: Button = null
+	var first_c: Dictionary = {}
+	for sd in sides:
+		var cnt: Dictionary = _ex_call("history_counts", [sd], {"found": 0, "total": 0})
+		if list.get_child_count() > 0:
+			list.add_child(Kit.rule(Color(0, 0, 0, 0), 16))
+		list.add_child(_group_head(Kit.history_side_label(sd), Kit.t("ui.history.side_count", {"n": cnt["found"], "total": cnt["total"]})))
+		list.add_child(Kit.ex_bar(float(cnt["found"]) / maxf(1.0, float(cnt["total"])), 480, true))
+		list.add_child(Kit.rule(Color(0, 0, 0, 0), 6))
+		for c in _ex_call("found_cards", [sd], []):
+			var b := Kit.button("%s  %s" % [str(c.get("year", "")), Kit.t(str(c.get("title_key", "")))], "PaperListButton")
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.icon = Kit.ex_tex("icons/kind_history.png")
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			b.focus_entered.connect(_show_card_detail.bind(detail, c))
+			b.mouse_entered.connect(b.grab_focus)
+			b.pressed.connect(_read_card.bind(str(c["id"])))
+			list.add_child(b)
+			if first == null:
+				first = b
+				first_c = c
+		var unknown := int(cnt["total"]) - int(cnt["found"])
+		if unknown > 0:
+			var ul := _dim_line(Kit.t("ui.history.unknown_one") if unknown == 1 else Kit.t("ui.history.unknown", {"n": unknown}))
+			ul.add_theme_font_override("font", Kit.font("fv_serif_italic"))
+			list.add_child(ul)
+	if not first_c.is_empty():
+		_show_card_detail(detail, first_c)
+	if first != null and is_open:
+		first.grab_focus.call_deferred()
+	return outer
+
+
+## Archive-style preview card (cool paper, slate band, no regime symbols) inside the warm dossier sheet:
+## year, title and the beginning of the text; "Karte lesen" / Enter on the list row opens the full card
+## (text, sources, note) in the DiscoveryView.
+func _show_card_detail(detail: VBoxContainer, c: Dictionary) -> void:
+	for x in detail.get_children():
+		x.queue_free()
+	var hc := Kit.high_contrast()
+	var ink := Color.BLACK if hc else Color("1a1c2a")
+	var dim := Color("24373a") if hc else Color("4a5a5b")
+	var card := PanelContainer.new()
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_theme_stylebox_override("panel", Kit.ex_style("frames/archive_card_hc.png" if hc else "frames/archive_card.png",
+		[24, 48, 24, 24], [42, 3, 42, 30]))
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail.add_child(card)
+	var v := Kit.vbox(0)
+	card.add_child(v)
+	var band := Kit.hbox(14)
+	band.custom_minimum_size.y = 36
+	v.add_child(band)
+	var bl := Kit.label(Kit.t("ui.history.kicker").to_upper(), "KickerLabel", 20, Color("dee5dc"))
+	bl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	band.add_child(bl)
+	v.add_child(Kit.rule(Color(0, 0, 0, 0), 22))
+	var hrow := Kit.hbox(22)
+	v.add_child(hrow)
+	var year := Kit.label(str(c.get("year", "")), "", 0, dim)
+	year.add_theme_font_override("font", Kit.font("fv_heading"))
+	Kit.scalable(year, 38)
+	year.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	hrow.add_child(year)
+	var title := Kit.wrap_label(Kit.t(str(c.get("title_key", ""))), "", 0, ink)
+	title.add_theme_font_override("font", Kit.font("fv_serif_bold"))
+	Kit.scalable(title, 31)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hrow.add_child(title)
+	v.add_child(Kit.rule(Color(0, 0, 0, 0), 12))
+	v.add_child(Kit.rule(Color("a3b1ad") if not hc else Color.BLACK, 3))
+	v.add_child(Kit.rule(Color(0, 0, 0, 0), 14))
+	var text := Kit.wrap_label(Kit.t(str(c.get("text_key", ""))), "", 0, ink)
+	text.add_theme_font_override("font", Kit.font("fv_serif"))
+	text.add_theme_constant_override("line_spacing", 6)
+	Kit.scalable(text, 25)
+	text.max_lines_visible = 6 if Kit.text_scale() < 1.2 else 4
+	text.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD_ELLIPSIS
+	v.add_child(text)
+	var srcs = c.get("sources", [])
+	if srcs is Array and not srcs.is_empty():
+		v.add_child(Kit.rule(Color(0, 0, 0, 0), 10))
+		var sk := Kit.label("%s: %d" % [Kit.t("ui.history.sources").to_upper(), srcs.size()], "HintLabel", 0, dim)
+		Kit.scalable(sk, 18)
+		v.add_child(sk)
+	var b := Kit.button(Kit.t("ui.history.read"), "", 240)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	b.pressed.connect(_read_card.bind(str(c.get("id", ""))))
+	var act := _actions_of(detail)
+	if act != null:
+		act.add_child(b)
+	else:
+		detail.add_child(b)
+
+
+func _read_card(card_id: String) -> void:
+	if ui_root != null and ui_root.get("discovery") != null:
+		ui_root.discovery.open_cards([card_id])
 
 
 # ================================================================ input

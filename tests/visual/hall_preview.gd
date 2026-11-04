@@ -1,13 +1,14 @@
 extends Node
 ## Visual test harness for the Great Hall reveal (owner: great_hall_3d).
 ## Instances scenes/levels/L_M1_HallReveal.tscn inside a 640x360 SubViewport (shown at 3x, nearest), plays
-## the cinematic in real time and saves exact frames of the viewport at t = 1, 4, 7, 10 s to
+## the cinematic in real time and saves exact frames of the viewport at t = 1, 4, 7, 10, 12 s to
 ## assets/architecture/great_hall/_preview/ (1:1 PNG + 3x nearest PNG), prints frame-time statistics
 ## (Performance monitors + measured viewport CPU/GPU render time) and quits.
 ## Run windowed (headless has no renderer):
 ##   "$LOCALAPPDATA/Programs/Godot/Godot_v4.7.2-stable_win64.exe" --path C:/Spiele/AshesOfEmpires \
 ##       res://tests/visual/HallPreview.tscn
 ## Optional user args after "--":  --times=0.5,2.2  --prefix=iter2  --debug=1 (post debug view)
+##   --symbols=0|1 (historical insignia off/on for this run, handled by the Settings autoload)
 ##   --size=642x362 (match the in-game world viewport)  --nosnow  --still=2.5,10 (seek, no playback)
 ##   --placeholders  (force the generated placeholder people instead of assets/characters sheets)
 ##   --selftest  (logic checks, also works with --headless: finished-once, skip, cues, sprite overrides,
@@ -16,7 +17,7 @@ extends Node
 const LEVEL_PATH := "res://scenes/levels/L_M1_HallReveal.tscn"
 const OUT_DIR := "res://assets/architecture/great_hall/_preview/"
 
-var capture_times: Array = [1.0, 4.0, 7.0, 10.0]
+var capture_times: Array = [1.0, 4.0, 7.0, 10.0, 12.0]
 var prefix := "hall"
 var debug_view := 0
 var no_snow := false
@@ -242,6 +243,12 @@ func _report() -> void:
 	_say("draw calls     : " + _stat(_samples["draws"]))
 	_say("primitives     : " + _stat(_samples["prims"]))
 	_say("FPS (engine)   : %.1f" % Performance.get_monitor(Performance.TIME_FPS))
+	var pf: Dictionary = level.get("perf") if level.get("perf") != null else {}
+	if not pf.is_empty() and int(pf.get("n", 0)) > 0:
+		_say("level update us: avg %.0f  max %d  (%d updates; camera + sprites + life + halos)" % [
+			float(pf["sum"]) / float(pf["n"]), int(pf["max"]), int(pf["n"])])
+	if level.get("people") != null:
+		_say("sprites        : %d (visible at the end: %d)" % [level.people.actors.size(), level.people.count_visible()])
 	_say("video mem MB   : %.1f" % (Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED) / 1048576.0))
 
 

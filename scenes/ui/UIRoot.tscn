@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/ui_root.gd" id="1_root"]
 [ext_resource type="Theme" path="res://assets/ui/theme.tres" id="16_theme"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/ConfirmDialog.tscn" id="13_confirmdialog"]
 [ext_resource type="PackedScene" path="res://scenes/ui/Subtitles.tscn" id="14_subtitles"]
 [ext_resource type="PackedScene" path="res://scenes/ui/Fade.tscn" id="15_fade"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DiscoveryView.tscn" id="17_discovery"]
 
 [node name="UIRoot" type="Control"]
 process_mode = 3
@@ -45,6 +46,9 @@ layout_mode = 1
 layout_mode = 1
 
 [node name="Journal" parent="." instance=ExtResource("7_journal")]
+layout_mode = 1
+
+[node name="DiscoveryView" parent="." instance=ExtResource("17_discovery")]
 layout_mode = 1
 
 [node name="SaveLoadMenu" parent="." instance=ExtResource("8_saveloadmenu")]

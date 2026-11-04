@@ -10,9 +10,12 @@ import zlib
 
 import numpy as np
 
+import env_berlin_insignia as INS
 import env_berlin_kit as kit
 import env_berlin_layout as L
 import pg
+
+X = L.X
 
 R = kit.archive_ramps()
 
@@ -62,13 +65,64 @@ def pseudo_text(lay, x, y, w, rows, ramp, tone, seed=0, gap=3, indent=True, rag=
             xx += wl + 1
 
 
+def poster_field(lay, hist: bool):
+    """'AUFBAU 1964' poster, upper field: grey-black ground, pale technical rendering of the hall dome and the
+    state emblem in front of it.  neutral: the fictional Reichssiegel disc; hist: the Reichsadler holding the
+    wreathed swastika (pale print on the dark field)."""
+    x, y, w, h = L.POSTER
+    lay.rect(x + 1, y + 1, w - 2, 36, 'W', 2.0, hgt=0.12, flat=True)
+    lay.vgrad(x + 1, y + 1, w - 2, 36, 'W', 2.4, 1.2, hgt=0.12)
+    cx = x + w // 2
+    for a in range(0, 181, 4):
+        r = math.radians(a)
+        lay.px(cx + int(round(math.cos(r) * 13)), y + 30 - int(round(math.sin(r) * 11)), 'P', 2.6)
+    lay.hline(cx - 15, y + 30, 31, 'P', 2.6, flat=True)
+    lay.hline(cx - 15, y + 34, 31, 'P', 2.2, flat=True)
+    for k in range(-14, 15, 3):
+        lay.vline(cx + k, y + 31, 3, 'P', 2.2, flat=True)
+    lay.vline(cx, y + 15, 4, 'P', 2.6, flat=True)
+    if hist:
+        e = INS.eagle_masks(w - 4)
+        eh, ew = e['size']
+        ex, ey = x + 2, y + 2
+        inner = np.zeros((eh, ew), bool)
+        ys, xs = np.nonzero(e['wreath'] | e['swastika'])
+        if len(ys):
+            cyy, cxx = (ys.min() + ys.max()) / 2.0, (xs.min() + xs.max()) / 2.0
+            rr = (xs.max() - xs.min()) / 2.0
+            yy, xx = np.mgrid[0:eh, 0:ew]
+            inner = ((yy - cyy) ** 2 + (xx - cxx) ** 2 <= rr * rr)
+        lay.put(inner, ex, ey, 'P', 5.6, flat=True)                     # white disc inside the wreath
+        lay.put(e['body'], ex, ey, 'P', 5.2, flat=True)
+        lay.put(e['lines'], ex, ey, 'P', 3.4, flat=True)
+        lay.put(e['eye'], ex, ey, 'I', 1.0, flat=True)
+        lay.put(e['wreath'], ex, ey, 'P', 4.0, flat=True)
+        lay.put(e['swastika'], ex, ey, 'I', 0.0, flat=True)
+    else:
+        disc, pillar = kit.reichssiegel_mask(15)
+        lay.put(disc, cx - 7, y + 6, 'N', 0.0, flat=True)
+        lay.put(pillar, cx - 7, y + 6, 'P', 6.0, flat=True)
+    # torn top-right corner + pins (part of the site so both variants match)
+    lay.rect(x + w - 4, y, 4, 2, 'W', 4.4, hgt=0.0, flat=True)
+    lay.rect(x + w - 2, y + 2, 2, 1, 'W', 4.4, hgt=0.0, flat=True)
+    for (px_, py_) in ((x + 1, y + 1), (x + w - 5, y + 2)):
+        lay.px(px_, py_, 'A', 4.0, hgt=0.4)
+
+
 # =========================================================================== room layer
 class Room:
-    def __init__(self):
+    def __init__(self, hist: bool = False):
+        self.hist = hist           # paint the historical insignia variant (used to cut the _hist decals)
         self.lay = kit.MLayer(L.WORLD_W, L.WORLD_H, R, 'room')
         self.windows = []          # dicts with glass rect + glass mask
         self.lights = []           # baked lights (world coords)
         self.extra_floor = []
+        self.decal_sites = {}      # insignia sites: name -> (x, y, w, h, painter(lay, hist))
+        self.radio_pos = None
+        self.regulator_pendulum = None
+        self.hidden_floor_arc = None
+        self.fanlight = None
+        self.tube_station = None
 
     # ------------------------------------------------------------------ base
     def base(self):
@@ -82,7 +136,7 @@ class Room:
         lay.put(np.ones((H, W), bool), 0, 0, 'W', t, hgt=0.0)
         # ceiling underside (seen from below): dark band with converging beams per room
         lay.vgrad(0, 0, W, L.CEIL, 'W', 1.6, 2.6, hgt=0.0)
-        for (rx0, rx1) in (L.OFFICE, L.ARCHIVE, L.LIGHTROOM, L.EMIL):
+        for (rx0, rx1) in (L.HALL, L.LIBRARY, L.OFFICE, L.ARCHIVE, L.LIGHTROOM, L.EMIL):
             vp = (rx0 + rx1) / 2
             step = 40
             for bx in range(rx0 + 20, rx1, step):
@@ -158,9 +212,9 @@ class Room:
         lay.rect(x1 + 2, bot - 10, 1, 10, ramp, 2.2, hgt=0.0, flat=True)
 
     # ------------------------------------------------------------------ window
-    def window(self, x0, x1, idx, blind=0, sill_item=None):
+    def window(self, x0, x1, idx, blind=0, sill_item=None, wy=None, fanlight_open=False):
         lay = self.lay
-        y0, y1 = L.WIN_Y
+        y0, y1 = wy if wy is not None else L.WIN_Y
         w = x1 - x0
         # architrave (raised stone surround)
         ax0, ax1, ay0, ay1 = x0 - 9, x1 + 9, y0 - 12, y1 + 6
@@ -203,7 +257,8 @@ class Room:
         bars[tr:tr + 3, :] = True                  # transom
         bars[:, :1] = True; bars[:, -1:] = True
         bars[:1, :] = True; bars[-1:, :] = True
-        for gy in (tr + 3 + 37, tr + 3 + 37 + 38):  # glazing bars in lower sashes
+        ph3 = (y1 - y0 - tr - 3) / 3.0
+        for gy in (int(round(tr + 3 + ph3)), int(round(tr + 3 + 2 * ph3))):  # glazing bars in lower sashes
             bars[gy:gy + 1, :] = True
         bars[0:tr, mid - 1:mid + 1] = True
         # sash frames thicker around each sash
@@ -222,6 +277,25 @@ class Room:
         frost = np.zeros_like(glass)
         core = np.zeros_like(glass)
         panes = self._panes(w, y1 - y0, mid, tr)
+        if fanlight_open:
+            # the fanlight sash is tilted into the room for air: its frame leans toward the viewer (a
+            # trapezoid); the gap at the top is open air -- the papers below stir in the draught
+            ox = 3
+            pane = np.zeros((tr, w), bool)
+            for yy in range(4, tr):
+                f = (yy - 4) / max(1, tr - 5)
+                a = int(round(ox * (1 - f))) + 1
+                pane[yy, a:w - a] = True
+            lay.put(pane, x0, y0, 'W', 3.4, hgt=0.4, flat=True)
+            inner = kit.erode(pane, 2)
+            glass[0:tr, :] = False
+            glass[0:tr, :] |= inner
+            lay.erase_mask(inner, x0, y0)
+            lay.erase(x0 + 2, y0 + 1, w - 4, 3)                                     # the open gap at the top
+            glass[1:4, 2:w - 2] = True
+            lay.rect(x0 + w // 2, y0 + tr, 1, 22, 'K', 3.6, flat=True)                 # tilt rod
+            lay.rect(x0 + w // 2 - 1, y0 + tr + 22, 3, 2, 'A', 3.6, hgt=0.6, flat=True)
+            self.fanlight = (x0, y0, w, tr)
         for pi, (fx, fy0, fx1, fy1) in enumerate(panes):
             lowest = fy1 >= (y1 - y0) - 2
             if not lowest:             # frost only creeps up the lowest panes (cold sill)
@@ -284,7 +358,8 @@ class Room:
 
     def _panes(self, w, h, mid, tr):
         out = []
-        ys = [tr + 3, tr + 3 + 37, tr + 3 + 37 + 38, h]
+        ph3 = (h - tr - 3) / 3.0
+        ys = [tr + 3, int(round(tr + 3 + ph3)), int(round(tr + 3 + 2 * ph3)), h]
         for i in range(3):
             out.append((3, ys[i] + 1, mid - 3, ys[i + 1] - 1))
             out.append((mid + 3, ys[i] + 1, w - 3, ys[i + 1] - 1))
@@ -386,23 +461,8 @@ class Room:
         lay = self.lay
         x, y, w, h = L.POSTER
         lay.rect(x, y, w, h, 'P', 2.0, hgt=0.12, flat=True)
-        # top: grey-black field with the Reichssiegel and a pale drawing of the Great Hall
-        lay.rect(x + 1, y + 1, w - 2, 36, 'W', 2.0, hgt=0.12, flat=True)
-        lay.vgrad(x + 1, y + 1, w - 2, 36, 'W', 2.4, 1.2, hgt=0.12)
-        # dome drawing (thin pale lines, a technical rendering)
-        cx = x + w // 2
-        for a in range(0, 181, 4):
-            r = math.radians(a)
-            lay.px(cx + int(round(math.cos(r) * 13)), y + 30 - int(round(math.sin(r) * 11)), 'P', 2.6)
-        lay.hline(cx - 15, y + 30, 31, 'P', 2.6, flat=True)
-        lay.hline(cx - 15, y + 34, 31, 'P', 2.2, flat=True)
-        for k in range(-14, 15, 3):
-            lay.vline(cx + k, y + 31, 3, 'P', 2.2, flat=True)
-        lay.vline(cx, y + 15, 4, 'P', 2.6, flat=True)
-        # emblem disc in front of the dome
-        disc, pillar = kit.reichssiegel_mask(15)
-        lay.put(disc, cx - 7, y + 6, 'N', 0.0, flat=True)
-        lay.put(pillar, cx - 7, y + 6, 'P', 6.0, flat=True)
+        poster_field(lay, hist=self.hist)
+        self.decal_sites['poster'] = (x - 1, y - 1, w + 2, 40, poster_field)
         # bottom: paper band with lettering
         lay.rect(x + 1, y + 37, w - 2, h - 38, 'P', 4.0, hgt=0.12, flat=True)
         m = kit.text_mask('AUFBAU', '35')
@@ -415,11 +475,8 @@ class Room:
         lay.rect(nx + 14, ny + 1, 1, 17, 'P', 4.0, hgt=0.16, flat=True)
         lay.rect(nx, ny + 17, 14, 1, 'P', 4.4, hgt=0.16, flat=True)
         pseudo_text(lay, nx + 2, ny + 3, 11, 5, 'I', 2.0, seed=31)
-        # torn top-right corner + pins
-        lay.rect(x + w - 4, y, 4, 2, 'W', 4.4, hgt=0.0, flat=True)
-        lay.rect(x + w - 2, y + 2, 2, 1, 'W', 4.4, hgt=0.0, flat=True)
-        for (px_, py_) in ((x + 1, y + 1), (x + w - 5, y + 2), (x + w - 2, y + h - 2), (nx + 1, ny + 1)):
-            lay.px(px_, py_, 'A', 4.0, hgt=0.4)
+        lay.px(nx + 1, ny + 1, 'A', 4.0, hgt=0.4)
+        lay.px(x + w - 2, y + h - 2, 'A', 4.0, hgt=0.4)
         # drop shadow right/bottom
         lay.rect(x + w, y + 2, 1, h - 1, 'W', 2.6, flat=True)
         lay.rect(x + 1, y + h, w, 1, 'W', 2.6, flat=True)
@@ -446,11 +503,7 @@ class Room:
         for a in range(0, 360, 30):
             r = math.radians(a)
             lay.px(cx + round(math.cos(r) * 5), cy + round(math.sin(r) * 5), 'I', 2.0)
-        # 15:40 -> minute hand to 8 (240 deg from 12), hour hand between 3 and 4
-        for (ang, ln, t) in ((240, 5, 1.0), (110, 3.5, 1.0)):
-            r = math.radians(ang - 90)
-            lay.line(cx, cy, cx + math.cos(r) * ln, cy + math.sin(r) * ln, 'I', t)
-        lay.px(cx, cy, 'R', 1.0)
+        # (the hands are drawn at runtime by the BerlinClock actor: the clock runs)
         # rim highlight/shadow + hanger
         for a in range(200, 300, 8):
             r = math.radians(a)
@@ -963,7 +1016,7 @@ class Room:
         pseudo_text(lay, nx + 5, ny + 32, 12, 3, 'I', 2.0, seed=93, gap=2)
         lay.rect(nx + nw + 2, ny - 1, 1, nh + 4, 'W', 1.6, flat=True)
         # framed perspective rendering of the Great Hall (image of power over the waiting bench)
-        fx, fy, fw, fh = 1490, 176, 30, 22
+        fx, fy, fw, fh = X(1490), 176, 30, 22
         lay.rect(fx - 2, fy - 2, fw + 4, fh + 4, 'D', 3.0, hgt=0.5, flat=True)
         lay.rect(fx - 2, fy - 2, fw + 4, 1, 'D', 4.6, hgt=0.55, flat=True)
         lay.rect(fx, fy, fw, fh, 'P', 3.6, hgt=0.2, flat=True)
@@ -974,15 +1027,18 @@ class Room:
         lay.rect(fx, fy + fh - 3, fw, 3, 'W', 4.4, flat=True)
         lay.rect(fx + fw // 2, fy + fh - 17, 1, 3, 'W', 3.0, flat=True)
         lay.rect(fx + fw + 2, fy - 1, 1, fh + 4, 'W', 1.6, flat=True)
-        self.master_plan(1362, 50, 104, 66)
-        self.loudspeaker(1522, 104)
-        # exit double door
+        self.master_plan(X(1362), 50, 104, 66)
+        self.loudspeaker(X(1522), 104)
+        # door to the stacks behind the issue counter (the stairwell is now at the far left of the floor)
         self.double_door(L.EXIT_DOOR[0], L.EXIT_DOOR[1], 186, lit=False)
-        m = kit.text_mask('TREPPENHAUS', '35')
+        m = kit.text_mask('MAGAZIN', '35')
         tw = m.shape[1]
         cx = (L.EXIT_DOOR[0] + L.EXIT_DOOR[1]) // 2
         lay.rect(cx - tw // 2 - 2, 158, tw + 4, 8, 'W', 1.6, hgt=0.5, flat=True)
         lay.put(m, cx - tw // 2, 159, 'P', 4.4, flat=True)
+        m2 = kit.text_mask('KEIN ZUTRITT', '35')
+        lay.rect(cx - m2.shape[1] // 2 - 2, 228, m2.shape[1] + 4, 8, 'P', 5.4, hgt=0.5, flat=True)
+        lay.put(m2, cx - m2.shape[1] // 2, 229, 'R', 1.0, flat=True)
         # end wall (poche)
         lay.rect(x1 - 10, 0, 10, L.FLOOR, 'W', 1.2, hgt=0.9, flat=True)
         lay.rect(x1 - 10, 0, 1, L.FLOOR, 'W', 3.0, hgt=0.8, flat=True)
@@ -1036,10 +1092,7 @@ class Room:
     def office(self):
         lay = self.lay
         x0, x1 = L.OFFICE
-        self.dado(x0 + 10, x1, top=248)
-        # end wall (poche) at the far left
-        lay.rect(0, 0, 10, L.FLOOR, 'W', 1.2, hgt=0.9, flat=True)
-        lay.rect(9, 0, 1, L.FLOOR, 'W', 3.0, hgt=0.8, flat=True)
+        self.dado(x0 + 8, x1, top=248)
         for (px0, px1) in L.PILASTERS:
             self.pilaster(px0, px1, self.frieze_bottom + 8)
         items = ['plant', None, 'rolls']
@@ -1048,8 +1101,8 @@ class Room:
             self.window(wx0, wx1, i, blind=blinds[i], sill_item=items[i])
         self.double_door(L.DOOR0[0], L.DOOR0[1], L.DOOR0_TOP, glass_text='ZEICHENBÜRO', lit=True, seed=4)
         self.poster()
-        self.framed_notice(512, 192, 14, 18, seed=7)
-        self.framed_notice(498, 222, 10, 12, seed=8, emblem=False)
+        self.framed_notice(X(512), 192, 14, 18, seed=7)
+        self.framed_notice(X(498), 222, 10, 12, seed=8, emblem=False)
         self.clock()
         self.filing_cabinets(*L.CABINETS)
         # light switch + cable conduit by the door
@@ -1060,7 +1113,7 @@ class Room:
         self.lights.append({'pos': ((L.DOOR0[0] + L.DOOR0[1]) / 2, 214), 'kind': 'warm', 'energy': 0.35,
                             'radius': 60, 'height': 6, 'name': 'corridor_glass'})
         # ghost of a removed portrait: a cleaner rectangle of plaster with a dust edge and its nail
-        gx, gy, gw, gh = 462, 96, 28, 36
+        gx, gy, gw, gh = X(462), 96, 28, 36
         lay.shade_rect(gx, gy, gw, gh, 0.75)
         lay.rect(gx, gy, gw, 1, 'W', 3.2, flat=True)
         lay.rect(gx - 1, gy, 1, gh, 'W', 3.4, flat=True)
@@ -1076,7 +1129,8 @@ class Room:
                 ln = int(rng.integers(6, 14))
                 for yy in range(L.WIN_Y[1] + 10, L.WIN_Y[1] + 10 + ln):
                     lay.shade_rect(sx + int(rng.integers(-1, 2)), yy, 2, 1, -0.6)
-        crack = [(300, self.frieze_bottom), (302, 58), (299, 66), (303, 79), (301, 92), (305, 101)]
+        crack = [(X(300), self.frieze_bottom), (X(302), 58), (X(299), 66), (X(303), 79), (X(301), 92),
+                 (X(305), 101)]
         for a, b in zip(crack[:-1], crack[1:]):
             for (x, y) in kit.bres(a[0], a[1], b[0], b[1]):
                 lay.shade_rect(x, y, 1, 1, -1.4)
@@ -1089,41 +1143,96 @@ class Room:
         rows = [0, 3, 7, 12, 18, 25, 33, 42, 52, 63, 75]
         rng = np.random.default_rng(17)
         nrm = (0.0, 0.86, 0.5)
-        # --- office parquet (warm wood)
-        ox1 = L.PART1[1]
-        for i in range(len(rows) - 1):
-            ra, rb = y0 + rows[i], y0 + rows[i + 1]
-            t = 2.6 + (0.5 if i % 2 else 0.0)
-            lay.rect(0, ra, ox1, rb - ra, 'D', t, hgt=0.0, flat=True)
-            lay.rect(0, ra, ox1, 1, 'D', 1.2, hgt=0.0, flat=True)
-            # board ends: staggered joints, converging slightly to the room centre
-            vp = 284
-            span = int(46 * (1 + i * 0.35))
-            off = int(rng.integers(0, span))
-            for bx in range(-span + off, ox1 + span, span):
-                f = (ra + 1 - L.HORIZON) / (L.FLOOR - L.HORIZON)
-                xx = int(round(vp + (bx - vp) * f))
-                if 0 <= xx < ox1:
-                    lay.rect(xx, ra + 1, 1, rb - ra - 1, 'D', 1.4, flat=True)
-                    lay.rect(xx + 1, ra + 1, 1, rb - ra - 1, 'D', t + 0.6, flat=True)
-        # --- archive / light room / emil: polished stone tiles (cold), per-room perspective
-        sx0 = ox1
         ys = np.arange(H, dtype=np.float32)[:, None]
         xs = np.arange(W, dtype=np.float32)[None, :]
         f = np.maximum((ys - L.HORIZON) / (L.FLOOR - L.HORIZON), 1e-3)
         rowidx = np.searchsorted(np.array(rows) + y0, np.arange(H), side='right') - 1
+        # --- office parquet (warm wood), from the library partition to the archive partition
+        ox0, ox1 = L.PARTL[0], L.PART1[1]
+        vp = L.X(284)
+        for i in range(len(rows) - 1):
+            ra, rb = y0 + rows[i], y0 + rows[i + 1]
+            t = 2.6 + (0.5 if i % 2 else 0.0)
+            lay.rect(ox0, ra, ox1 - ox0, rb - ra, 'D', t, hgt=0.0, flat=True)
+            lay.rect(ox0, ra, ox1 - ox0, 1, 'D', 1.2, hgt=0.0, flat=True)
+            span = int(46 * (1 + i * 0.35))
+            off = int(rng.integers(0, span))
+            ff = (ra + 1 - L.HORIZON) / (L.FLOOR - L.HORIZON)
+            for bx in range(ox0 - span + off - 400, ox1 + span + 400, span):
+                xx = int(round(vp + (bx - vp) * ff))
+                if ox0 <= xx < ox1:
+                    lay.rect(xx, ra + 1, 1, rb - ra - 1, 'D', 1.4, flat=True)
+                    lay.rect(xx + 1, ra + 1, 1, rb - ra - 1, 'D', t + 0.6, flat=True)
+        # --- library: herringbone oak parquet in perspective (courses alternate their slant)
+        lx0, lx1 = L.PART0[0], L.PARTL[0]
+        vpl = (L.LIBRARY[0] + L.LIBRARY[1]) / 2
+        u = vpl + (xs - vpl) / f
+        rr = np.array(rows, np.float32) + y0
+        cidx = np.clip(rowidx, 0, len(rows) - 2)
+        top = rr[cidx][:, None]
+        hgt_c = (rr[np.clip(cidx + 1, 0, len(rows) - 1)] - rr[cidx])[:, None]
+        tloc = np.clip((ys - top) / np.maximum(hgt_c, 1), 0, 1)
+        Pl = 14.0
+        sgn = np.where((cidx % 2)[:, None] == 0, 1.0, -1.0)
+        uu = u + sgn * tloc * Pl * 0.9
+        k = np.floor(uu / Pl).astype(np.int64)
+        joint = np.zeros(k.shape, bool)
+        joint[:, 1:] = k[:, 1:] != k[:, :-1]
+        hsh = ((k * 73856093) ^ (cidx[:, None].astype(np.int64) * 19349663)) % 5
+        tone = 2.7 + hsh.astype(np.float32) * 0.18
+        tone = np.where(joint, 1.3, tone)
+        m = np.zeros((H, W), bool)
+        m[y0:, lx0:lx1] = True
+        lay.put(m, 0, 0, 'D', tone, hgt=0.0, flat=True)
+        for i in range(len(rows) - 1):
+            lay.rect(lx0, y0 + rows[i], lx1 - lx0, 1, 'D', 1.4, hgt=0.0, flat=True)
+        # the hidden cupboard door of section V has swept a clean quarter arc into the dust
+        if self.hidden_floor_arc:
+            hx, hy, rad = self.hidden_floor_arc
+            for a in np.linspace(0.0, math.pi / 2, 60):
+                px_ = hx - rad * math.cos(a)
+                dz = rad * math.sin(a) / 24.0                                       # floor rows are ~24 px deep
+                py_ = y0 + float(np.interp(dz, np.arange(len(rows)), rows)) + 1
+                lay.shade_rect(int(round(px_)), int(round(py_)), 2, 1, 0.9)
+            for k2 in range(3):                                                     # fine scratches
+                lay.shade_rect(hx - rad + 4 + k2 * 7, y0 + 2 + (k2 % 2), 5, 1, -0.7)
+        # --- hall: stone floor, large slabs with a dark border band along the wall
+        hx0, hx1 = 0, L.PART0[0]
+        vph = (L.HALL[0] + L.HALL[1]) / 2
+        uh = vph + (xs - vph) / f
+        colh = np.floor(uh / 32).astype(np.int32)
+        jh = np.zeros_like(colh, bool)
+        jh[:, 1:] = colh[:, 1:] != colh[:, :-1]
+        chk = ((colh + (rowidx[:, None] // 2)) % 2).astype(np.float32)
+        th = 4.2 + 0.5 * chk
+        th = np.where(jh, 2.6, th)
+        band = (rowidx[:, None] <= 0) + np.zeros_like(th, bool)
+        th = np.where(band, 3.0, th)
+        m = np.zeros((H, W), bool)
+        m[y0:, hx0:hx1] = True
+        lay.put(m, 0, 0, 'W', th, hgt=0.0, flat=True)
+        for i in range(0, len(rows) - 1, 2):
+            lay.rect(hx0, y0 + rows[i], hx1 - hx0, 1, 'W', 2.6, hgt=0.0, flat=True)
+        # a wet trail of melt water from the stairwell door (Konrad came in from the snow)
+        for k2 in range(14):
+            sx = L.STAIR_DOOR[0] + 18 + k2 * 9 + int(rng.integers(-2, 3))
+            sy = y0 + 6 + int(rng.integers(0, 6))
+            lay.shade_rect(sx, sy, 3, 1, -0.9)
+            lay.shade_rect(sx + 1, sy - 1, 1, 1, 1.2)
+        # --- archive / light room / emil: polished stone tiles (cold), per-room perspective
+        sx0 = ox1
         for (rx0, rx1) in (L.ARCHIVE, L.LIGHTROOM, L.EMIL):
-            vp = (rx0 + rx1) / 2
-            u = vp + (xs - vp) / f                       # back-projected x on the wall line
-            col = np.floor(u / 24).astype(np.int32)
-            joint = np.zeros_like(col, bool)
-            joint[:, 1:] = col[:, 1:] != col[:, :-1]
-            chk = ((col + rowidx[:, None]) % 2).astype(np.float32)
-            tone = 4.4 + 0.45 * chk
-            tone = np.where(joint, 2.8, tone)
+            vp2 = (rx0 + rx1) / 2
+            u2 = vp2 + (xs - vp2) / f
+            col = np.floor(u2 / 24).astype(np.int32)
+            joint2 = np.zeros_like(col, bool)
+            joint2[:, 1:] = col[:, 1:] != col[:, :-1]
+            chk2 = ((col + rowidx[:, None]) % 2).astype(np.float32)
+            tone2 = 4.4 + 0.45 * chk2
+            tone2 = np.where(joint2, 2.8, tone2)
             m = np.zeros((H, W), bool)
             m[y0:, max(rx0, sx0):rx1] = True
-            lay.put(m, 0, 0, 'W', tone, hgt=0.0, flat=True)
+            lay.put(m, 0, 0, 'W', tone2, hgt=0.0, flat=True)
         for i in range(len(rows) - 1):
             ra = y0 + rows[i]
             lay.rect(sx0, ra, W - sx0, 1, 'W', 2.6, hgt=0.0, flat=True)
@@ -1137,8 +1246,8 @@ class Room:
         # depth falloff toward the bottom edge
         fall = np.zeros((H, W), np.float32)
         yy = np.arange(H, dtype=np.float32)
-        f = np.clip((yy - 318) / 42, 0, 1) * -1.3
-        fall[:] = f[:, None]
+        fz = np.clip((yy - 318) / 42, 0, 1) * -1.3
+        fall[:] = fz[:, None]
         lay.amb_field(fall)
 
     # ------------------------------------------------------------------ ambient darkness
@@ -1150,6 +1259,8 @@ class Room:
         f = np.zeros((H, W), np.float32)
         xs = np.arange(W, dtype=np.float32)
         reg = np.zeros(W, np.float32)
+        reg[:L.PART0[1]] = -0.45             # arrival hall: one window, lodge lamp, pendant
+        reg[L.PART0[1]:L.PARTL[0]] = -0.35   # reading room: lamps + two windows
         reg[L.PART1[0]:] = -1.0
         reg[L.LIGHTROOM[0]:] = -0.8
         reg[L.EMIL[0]:] = -0.9
@@ -1165,15 +1276,79 @@ class Room:
         f[lay.emis] = 0
         lay.amb_field(f)
 
+    # ------------------------------------------------------------------ mouse hole (exp_mouse)
+    def mouse_hole(self):
+        """A gnawed hole in the oak plinth of the box shelving; the mouse actor lives here."""
+        lay = self.lay
+        hx, hy = L.MOUSE_HOLE
+        x0 = hx - 2
+        lay.rect(x0, L.FLOOR - 4, 5, 4, 'D', 3.0, hgt=0.3, flat=True)            # gnawed, lighter rim
+        lay.rect(x0 + 1, L.FLOOR - 3, 3, 3, 'N', 0.0, hgt=-0.4, flat=True)        # the dark hole
+        lay.px(x0 + 2, L.FLOOR - 4, 'N', 0.3, hgt=-0.4)
+        lay.px(x0, L.FLOOR - 4, 'D', 1.2)
+        lay.px(x0 + 4, L.FLOOR - 4, 'D', 1.2)
+        for k in (-4, 7, 9):                                                    # crumbs / droppings
+            lay.px(x0 + k, L.FLOOR, 'D', 1.0)
+
+    # ------------------------------------------------------------------ pneumatic tube network
+    def tube_network(self):
+        """Brass Rohrpost tube along the frieze from the librarian's desk to the archive station and Emil's
+        counter (skipping the cut partition walls), with the receiving station on the last archive pier."""
+        lay = self.lay
+        y = self.frieze_bottom + 1
+        x0, x1 = L.LIB_DESK[1] - 7, L.EMIL[0] + 64
+        cuts = [L.PARTL, L.PART1, L.PART2]
+        x = x0
+        for (c0, c1) in cuts + [(x1, x1)]:
+            if c0 - 4 > x:
+                lay.rect(x, y, c0 - x - 4, 2, 'A', 2.2, hgt=0.6, flat=True)
+                lay.rect(x, y, c0 - x - 4, 1, 'A', 3.4, hgt=0.62, flat=True)
+                for k in range(x + 30, c0 - 6, 40):
+                    lay.rect(k, y - 1, 2, 4, 'A', 3.0, hgt=0.7, flat=True)               # clamps
+            x = c1 + 4
+        # drop to the archive receiving station on the last pier
+        sx, sy = L.TUBE_STATION
+        tx = sx + 4
+        lay.rect(tx, y, 3, sy - y, 'A', 2.6, hgt=0.75, flat=True)
+        lay.rect(tx, y, 1, sy - y, 'A', 4.2, hgt=0.78, flat=True)
+        for yy in range(y + 16, sy - 4, 24):
+            lay.rect(tx - 1, yy, 5, 2, 'A', 3.4, hgt=0.8, flat=True)
+        # station: brass body with a hinged flap (the flap is animated by an actor) and a wire basket
+        lay.rect(sx + 1, sy, 10, 14, 'A', 2.8, hgt=0.85, flat=True)
+        lay.rect(sx + 1, sy, 10, 1, 'A', 4.4, hgt=0.88, flat=True)
+        lay.rect(sx + 1, sy, 1, 14, 'A', 4.0, hgt=0.86, flat=True)
+        lay.rect(sx + 10, sy, 1, 14, 'A', 1.6, hgt=0.8, flat=True)
+        lay.rect(sx + 3, sy + 3, 6, 6, 'N', 0.6, hgt=0.5, flat=True)                   # the tube mouth
+        lay.rect(sx, sy + 16, 12, 6, 'K', 2.0, hgt=0.6, flat=True)                      # basket
+        for k in range(sx + 1, sx + 12, 2):
+            lay.rect(k, sy + 16, 1, 6, 'K', 4.0, hgt=0.65, flat=True)
+        lay.rect(sx, sy + 21, 12, 1, 'K', 4.6, hgt=0.65, flat=True)
+        m = kit.text_mask('ROHRPOST', '35')
+        lay.rect(sx - 10, sy - 9, m.shape[1] + 4, 7, 'P', 5.2, hgt=0.6, flat=True)
+        lay.put(m, sx - 8, sy - 8, 'I', 1.0, flat=True)
+        self.tube_station = (sx, sy)
+        # drop to Emil's counter (beside the pigeonhole wall)
+        ex = L.PIGEON[0] - 10
+        lay.rect(ex, y, 3, 238 - y, 'A', 2.4, hgt=0.7, flat=True)
+        lay.rect(ex, y, 1, 238 - y, 'A', 4.0, hgt=0.72, flat=True)
+
     # ------------------------------------------------------------------ build
     def build(self):
+        import env_berlin_hall as EH
+        import env_berlin_library as ELB
         self.base()
+        EH.paint_hall(self)
+        self.partition(L.PART0[0], L.PART0[1], 176)
+        ELB.paint_library(self)
+        self.partition(L.PARTL[0], L.PARTL[1], 176)
         self.office()
         self.partition(L.PART1[0], L.PART1[1], 176)
         self.archive()
+        self.mouse_hole()
         self.partition(L.PART2[0], L.PART2[1], 180)
         self.lightroom()
         self.emil_area()
+        self.tube_network()
         self.floor()
         self.ambient()
         return self.lay
@@ -1229,33 +1404,46 @@ def scene_lights():
     return [
         {'name': 'window_%d' % (i + 1), 'pos': ((a + b) / 2, 200), 'kind': 'cold', 'energy': 0.9, 'radius': 110,
          'height': -14} for i, (a, b) in enumerate(L.WINDOWS)
+    ] + [
+        {'name': 'window_h%d' % (i + 1), 'pos': ((a + b) / 2, 200), 'kind': 'cold', 'energy': 0.8, 'radius': 104,
+         'height': -14} for i, (a, b) in enumerate(L.HALL_WINDOWS)
+    ] + [
+        {'name': 'window_l%d' % (i + 1), 'pos': ((a + b) / 2, 206), 'kind': 'cold', 'energy': 0.85, 'radius': 110,
+         'height': -14} for i, (a, b) in enumerate(L.LIB_WINDOWS)
     ]
+
+
+def compute_fields(room: Room, lay, lights):
+    """Light fields for a room-sized MLayer: normal-mapped lamps + window shafts + floor reflections."""
+    F = kit.light_fields(lay, lights)
+    air, land = room.shaft_air, room.shaft_land
+    floor = np.zeros_like(air)
+    floor[L.FLOOR:, :] = 1.0
+    F['cold'] += (air ** 0.85) * 0.55 + land * floor * 0.75
+    # reflections of the bright windows in the polished floors (vertical, dithered streaks)
+    refl = np.zeros_like(air)
+    for (a, b) in L.ALL_WINDOWS:
+        for yy in range(L.FLOOR + 1, L.FLOOR + 30):
+            k = (1 - (yy - L.FLOOR) / 30) ** 1.4
+            refl[yy, a + 2:b - 2] += 0.55 * k
+    # warm lamp reflections on the stone floors (hall, archive, light room, Emil)
+    for lt in lights:
+        x = lt['pos'][0]
+        if lt['kind'] in ('warm', 'white') and (x > L.PART1[1] or x < L.PART0[0]):
+            xi = int(x)
+            for yy in range(L.FLOOR + 1, L.FLOOR + 40):
+                k = (1 - (yy - L.FLOOR) / 40) ** 1.6
+                F[lt['kind']][yy, max(0, xi - 3):xi + 4] += 0.35 * k * lt['energy']
+    F['cold'] += refl
+    return F
 
 
 def bake(room: Room, extra_lights=None):
     lay = room.lay
     lights = scene_lights() + room.lights + (extra_lights or [])
-    F = kit.light_fields(lay, lights)
     air, land = window_shafts(room.windows)
     room.shaft_air, room.shaft_land = air, land
-    # volumetric shafts brighten whatever is behind them (cold), floor patches are surface light
-    floor = np.zeros_like(air)
-    floor[L.FLOOR:, :] = 1.0
-    F['cold'] += (air ** 0.85) * 0.55 + land * floor * 0.75
-    # reflections of the bright windows in the polished parquet (vertical, dithered streaks)
-    refl = np.zeros_like(air)
-    for (a, b) in L.WINDOWS:
-        for yy in range(L.FLOOR + 1, L.FLOOR + 30):
-            k = (1 - (yy - L.FLOOR) / 30) ** 1.4
-            refl[yy, a + 2:b - 2] += 0.55 * k
-    # warm lamp reflections on the stone floor
-    for lt in lights:
-        if lt['kind'] in ('warm', 'white') and lt['pos'][0] > L.PART1[1]:
-            x = int(lt['pos'][0])
-            for yy in range(L.FLOOR + 1, L.FLOOR + 40):
-                k = (1 - (yy - L.FLOOR) / 40) ** 1.6
-                F[lt['kind']][yy, x - 3:x + 4] += 0.35 * k * lt['energy']
-    F['cold'] += refl
+    F = compute_fields(room, lay, lights)
     room.fields = F
     room.all_lights = lights
     lay.resolve(F)

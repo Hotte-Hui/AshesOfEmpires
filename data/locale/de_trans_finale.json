@@ -1,0 +1,10 @@
+{
+  "locale": "de-DE",
+  "area": "trans_finale",
+  "strings": {
+    "cine.finale.caption_berlin": "Berlin, 23:47 Uhr",
+    "cine.finale.caption_karsk": "Karsk, 1:47 Uhr Moskauer Zeit – dieselbe Minute",
+    "cine.finale.line1": "Zwei fremde Orte. Dieselbe Kennung.",
+    "cine.finale.final": "Ein Frieden, dessen Akten nicht übereinstimmen."
+  }
+}

@@ -132,6 +132,10 @@ class Material:
     outline: bool = True  # participates in selective outline
     glossy: bool = False  # allows the highlight slot (5) for auto tones
     max_tone: int = 4     # brightest slot reachable by auto shading (before rim)
+    texture: str | None = None   # 'fur' | 'knit' | 'felt' | 'tweed': deterministic tone pattern on auto pixels
+    min_tone: int = 1     # darkest slot reachable by auto shading (outline stays 0)
+    rim_ok: bool = True   # receives the cool rim light on back edges
+    rim_k: float = 1.0    # rim blend strength multiplier
 
 
 RIM_TONE = 9.0   # explicit tone marker: paint with the material's rim colour
@@ -155,12 +159,13 @@ class Frame:
         self.ao = np.zeros((h, w), bool)      # part darkens neighbours behind it in every direction
         self.norim = np.zeros((h, w), bool)   # pixels that never receive rim light
         self.inline = np.zeros((h, w), bool)  # part draws a dark inner line where it overlaps parts behind
+        self.edgelit = np.zeros((h, w), bool) # part draws a light line on its key-facing border over parts behind
         self.nparts = 0
         self.names: list[str] = []
 
     def put(self, mask, x0, y0, mat: int | np.ndarray, normals=None, tone=None, bias: float = 0.0,
             cast: bool = True, recv: bool = True, fixed=None, name: str = '', ao: bool = False,
-            norim: bool = False, inline: bool = False):
+            norim: bool = False, inline: bool = False, edge_light: bool = False):
         """Write a part.  mask: bool (h,w) at (x0,y0).  mat: int or per-pixel int array.
         normals: (h,w,3) or None (flat).  tone: None (auto) / float / per-pixel array (nan=auto)."""
         mh, mw = mask.shape
@@ -200,6 +205,7 @@ class Frame:
         self.ao[dst][m] = ao
         self.norim[dst][m] = norim
         self.inline[dst][m] = inline
+        self.edgelit[dst][m] = edge_light
         if fixed is None:
             self.fixed[dst][m] = False
         elif np.isscalar(fixed) or np.ndim(fixed) == 0:
@@ -224,7 +230,7 @@ class Frame:
             self.fixed[y, x] = fixed
 
     def shift(self, dx: int, dy: int):
-        for a in ('mat', 'tone', 'bias', 'n', 'part', 'cast', 'recv', 'fixed', 'ao', 'norim', 'inline'):
+        for a in ('mat', 'tone', 'bias', 'n', 'part', 'cast', 'recv', 'fixed', 'ao', 'norim', 'inline', 'edgelit'):
             arr = getattr(self, a)
             fill = {'mat': -1, 'tone': np.nan, 'part': -1}.get(a, 0)
             out = np.empty_like(arr)
@@ -399,6 +405,34 @@ class Bitmap:
         b = Bitmap([''.join(r) for r in rows], self.legend, self.anchor, self.dome, self.nz_min, self.normals)
         return b
 
+    def paint(self, layer_rows: list[str] | str, at=(0, 0)) -> 'Bitmap':
+        """Copy with another ASCII layer painted on top (non-'.' chars win), `at` = layer's top-left in this
+        bitmap's pixel frame (may be negative: the canvas grows and the anchor is kept on the same pixel)."""
+        if isinstance(layer_rows, str):
+            layer_rows = [r for r in (ln.strip() for ln in layer_rows.strip('\n').split('\n')) if r]
+        layer_rows = [r.replace(' ', '') for r in layer_rows]
+        lw = max(len(r) for r in layer_rows)
+        lh = len(layer_rows)
+        ax, ay = at
+        x0, y0 = min(0, ax), min(0, ay)
+        x1, y1 = max(self.w, ax + lw), max(self.h, ay + lh)
+        W, H = x1 - x0, y1 - y0
+        grid = [['.'] * W for _ in range(H)]
+        for y, r in enumerate(self.rows):
+            for x, ch in enumerate(r):
+                grid[y - y0][x - x0] = ch
+        for y, r in enumerate(layer_rows):
+            for x, ch in enumerate(r):
+                if ch not in '. ':
+                    grid[ay + y - y0][ax + x - x0] = ch
+        return Bitmap([''.join(r) for r in grid], self.legend, (self.anchor[0] - x0, self.anchor[1] - y0),
+                      self.dome, self.nz_min, self.normals)
+
+    def with_legend(self, extra: dict) -> 'Bitmap':
+        lg = dict(self.legend)
+        lg.update(extra)
+        return Bitmap(list(self.rows), lg, self.anchor, self.dome, self.nz_min, self.normals)
+
     def flipped(self) -> 'Bitmap':
         rows = [r.ljust(self.w, '.')[::-1] for r in self.rows]
         flipn = {k: (-v[0], v[1], v[2]) for k, v in self.normals.items()}
@@ -481,9 +515,46 @@ def _norm(v):
     return v / (np.linalg.norm(v) + 1e-9)
 
 
+# deterministic 4x4 texture patterns (tone offsets) for cloth / fur on auto-shaded pixels
+_TEX = {
+    'fur': np.array([[0, -1, 0, 0], [0, 0, 0, 1], [-1, 0, 0, 0], [0, 0, 1, -1]], np.float32),
+    'knit': np.array([[0, -1, 0, -1], [0, 0, 0, 0], [-1, 0, -1, 0], [0, 0, 0, 0]], np.float32) * 0.6,
+    'felt': np.array([[0, 0, 0, 0], [0, -1, 0, 0], [0, 0, 0, 0], [0, 0, 0, -1]], np.float32) * 0.7,
+    'tweed': np.array([[0, -1, 0, 0], [0, 0, 0, -1], [0, 0, -1, 0], [-1, 0, 0, 0]], np.float32) * 0.6,
+}
+
+
+def _clean_orphans(tone, mat, editable, passes=2):
+    """A pixel whose 4 neighbours (same material, at least 3 present) all share one tone that differs
+    from its own is a noise orphan -> take the neighbours' tone.  Only `editable` pixels change."""
+    h, w = tone.shape
+    for _ in range(passes):
+        pt = np.pad(tone, 1, constant_values=-99)
+        pm = np.pad(mat, 1, constant_values=-1)
+        nbs_t = [pt[1 + dy:1 + dy + h, 1 + dx:1 + dx + w] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+        nbs_m = [pm[1 + dy:1 + dy + h, 1 + dx:1 + dx + w] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+        same = [m == mat for m in nbs_m]
+        cnt = sum(s.astype(np.int16) for s in same)
+        # candidate tone: the first same-material neighbour's tone
+        cand = np.full((h, w), -99.0, np.float32)
+        for t, s in zip(nbs_t[::-1], same[::-1]):
+            cand = np.where(s, t, cand)
+        agree = np.ones((h, w), bool)
+        for t, s in zip(nbs_t, same):
+            agree &= ~s | (t == cand)
+        fix = editable & (cnt >= 3) & agree & (cand != tone) & (cand > -99)
+        if not fix.any():
+            break
+        tone = np.where(fix, cand, tone)
+    return tone
+
+
 def shade(fr: Frame, mats: list[Material], light: Light, rim_color=None, rim_strength: float = 1.0,
-          rim_ymax: float = 1e9, lit_edge_drop: int = 0):
-    """Resolve the G-buffer into RGBA colours + OpenGL normal map.  Returns (rgba, nmap, tone_idx)."""
+          rim_ymax: float = 1e9, lit_edge_drop: int = 0, aa: bool = True, tex_phase=(0, 0),
+          lit_boost: float = 1.0, norim_mats=()):
+    """Resolve the G-buffer into RGBA colours + OpenGL normal map.  Returns (rgba, nmap, tone_idx).
+    Extra passes (v2): deterministic material textures (fur / knit / felt / tweed), orphan-pixel cleanup
+    of auto tones, and hand-style anti-aliasing of the dark outline at convex stair corners."""
     h, w = fr.h, fr.w
     occ = fr.mat >= 0
     Lk = _norm(light.key); Lr = _norm(light.rim)
@@ -491,16 +562,24 @@ def shade(fr: Frame, mats: list[Material], light: Light, rim_color=None, rim_str
     val = light.ambient + (1 - light.ambient) * ndl
     mbias = np.zeros((h, w), np.float32)
     maxt = np.full((h, w), 4, np.int16)
+    mint = np.ones((h, w), np.int16)
+    texo = np.zeros((h, w), np.float32)
+    yy, xx = np.mgrid[0:h, 0:w]
     for i, m in enumerate(mats):
         sel = fr.mat == i
         mbias[sel] = m.bias
         maxt[sel] = 5 if m.glossy else m.max_tone
+        mint[sel] = m.min_tone
+        if m.texture in _TEX and sel.any():
+            pat = _TEX[m.texture]
+            texo[sel] = pat[(yy[sel] + tex_phase[1]) % 4, (xx[sel] + tex_phase[0]) % 4]
     val = val + mbias
     auto = np.ones((h, w), np.float32)
     for t in light.thresholds:
         auto += (val >= t)
     auto_px = np.isnan(fr.tone)
     rim_mark = fr.tone == RIM_TONE
+    auto = np.clip(auto + texo, mint, maxt)
     tone = np.where(auto_px, np.minimum(auto, maxt), np.where(rim_mark, 3.0, fr.tone))
     tone = tone + fr.bias
 
@@ -526,6 +605,16 @@ def shade(fr: Frame, mats: list[Material], light: Light, rim_color=None, rim_str
         nb_part = pad_part[1 + dy:1 + dy + h, 1 + dx:1 + dx + w]
         inl |= occ & fr.inline & (nb_part >= 0) & (nb_part < fr.part)
     tone = np.where(inl & ~fr.fixed, np.minimum(tone, 1), tone)
+    # key-side edge light: separates sleeves / scarves / straps from the torso they overlap
+    elit = np.zeros((h, w), bool)
+    for dx, dy in light.lit_dirs[:2]:
+        nb_part = pad_part[1 + dy:1 + dy + h, 1 + dx:1 + dx + w]
+        elit |= occ & fr.edgelit & (nb_part >= 0) & (nb_part < fr.part)
+    elit &= ~inl & ~fr.fixed
+    # a crisp 1-px seam on the key side (tone 1) frames the part like a selective inner outline
+    tone = np.where(elit, np.minimum(tone, 1), tone)
+    tone = np.round(tone)
+    tone = _clean_orphans(tone, fr.mat, auto_px & occ & ~fr.fixed & ~shadowed & ~inl & ~elit)
 
     # silhouette edges
     pad_occ = np.pad(occ, 1)
@@ -547,12 +636,30 @@ def shade(fr: Frame, mats: list[Material], light: Light, rim_color=None, rim_str
             outl |= fr.mat == i
     outl &= edge & ~fr.fixed
     rows = np.arange(h)[:, None] * np.ones((1, w))
-    rim_px = (outl & rim_edge & (ndr > 0.2) & ~down_edge & ~fr.norim & (rows < rim_ymax)) | rim_mark
+    norim_m = np.zeros((h, w), bool)
+    for i, m in enumerate(mats):
+        if not m.rim_ok:
+            norim_m |= fr.mat == i
+    rim_px = (outl & rim_edge & (ndr > 0.2) & ~down_edge & ~fr.norim & ~norim_m & (rows < rim_ymax)) | rim_mark
     lit_px = outl & lit_edge & ~rim_px & ~down_edge & (ndl > 0.42)
     dark_px = outl & ~rim_px & ~lit_px
     tone = np.where(dark_px, 0, tone)
+    if aa:
+        # hand AA: a dark outline pixel at a convex stair corner (two perpendicular empty neighbours and the
+        # diagonal between them empty, but continuing edge on both other sides) is softened to tone 1 so
+        # diagonal silhouettes read as smooth steps instead of jaggies.  Bottom (ground) corners stay dark.
+        corner = np.zeros((h, w), bool)
+        for (ax, ay), (bx, by) in (((1, 0), (0, -1)), ((-1, 0), (0, -1)), ((1, 0), (0, 1)), ((-1, 0), (0, 1))):
+            c = nb_empty(ax, ay) & nb_empty(bx, by) & nb_empty(ax + bx, ay + by)
+            c &= ~nb_empty(-ax, -ay) & ~nb_empty(-bx, -by)
+            corner |= c
+        soft = dark_px & corner & ~down_edge
+        tone = np.where(soft, 1, tone)
     if lit_edge_drop:
         tone = np.where(lit_px, tone - lit_edge_drop, tone)
+    if lit_boost:
+        # crisp key-light edge: silhouette pixels facing the key get one tone brighter (capped per material)
+        tone = np.where(lit_px & auto_px, np.minimum(tone + lit_boost, maxt + 0.0), tone)
     tone = np.clip(np.round(tone), 0, 5).astype(np.int16)
 
     rgba = np.zeros((h, w, 4), np.uint8)
@@ -567,7 +674,7 @@ def shade(fr: Frame, mats: list[Material], light: Light, rim_color=None, rim_str
             rs = sel & rim_px
             if rs.any():
                 base = R[3].astype(np.float32)
-                k = 0.5 * rim_strength
+                k = 0.5 * rim_strength * m.rim_k
                 rgba[rs] = np.clip(base * (1 - k) + np.asarray(rc, np.float32) * k, 0, 255).astype(np.uint8)
     n = fr.n.copy()
     n /= np.linalg.norm(n, axis=-1, keepdims=True) + 1e-9

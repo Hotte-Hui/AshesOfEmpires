@@ -1,0 +1,251 @@
+[
+ {
+  "path": "assets/ui/explore/frames/notebook.png",
+  "size_1x": [
+   31,
+   26
+  ],
+  "scale": 3,
+  "note": "9-patch L10 T6 R7 B8 (x3: 30/18/21/24); vertical axis TILE (period 6)",
+  "margins_1x": [
+   10,
+   6,
+   7,
+   8
+  ]
+ },
+ {
+  "path": "assets/ui/explore/frames/archive_card.png",
+  "size_1x": [
+   24,
+   32
+  ],
+  "scale": 3,
+  "note": "9-patch L8 T16 R8 B8 (x3: 24/48/24/24); band rows 1..12 (x3: y 3..39)",
+  "margins_1x": [
+   8,
+   16,
+   8,
+   8
+  ]
+ },
+ {
+  "path": "assets/ui/explore/frames/archive_card_hc.png",
+  "size_1x": [
+   24,
+   32
+  ],
+  "scale": 3,
+  "note": "high-contrast variant of archive_card",
+  "margins_1x": [
+   8,
+   16,
+   8,
+   8
+  ]
+ },
+ {
+  "path": "assets/ui/explore/frames/photo_mount.png",
+  "size_1x": [
+   22,
+   23
+  ],
+  "scale": 3,
+  "note": "9-patch L7 T7 R7 B8 (x3: 21/21/21/24); both axes TILE (period 4 px)",
+  "margins_1x": [
+   7,
+   7,
+   7,
+   8
+  ]
+ },
+ {
+  "path": "assets/ui/explore/frames/bar_track.png",
+  "size_1x": [
+   7,
+   5
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2",
+  "margins_1x": [
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "path": "assets/ui/explore/frames/bar_fill.png",
+  "size_1x": [
+   7,
+   5
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2",
+  "margins_1x": [
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "path": "assets/ui/explore/frames/bar_fill_neutral.png",
+  "size_1x": [
+   7,
+   5
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2",
+  "margins_1x": [
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ {
+  "path": "assets/ui/explore/icons/tape_l.png",
+  "size_1x": [
+   22,
+   12
+  ],
+  "scale": 3,
+  "note": "tape strip, -16 deg, translucent"
+ },
+ {
+  "path": "assets/ui/explore/icons/tape_r.png",
+  "size_1x": [
+   22,
+   12
+  ],
+  "scale": 3,
+  "note": "tape strip, 14 deg, translucent"
+ },
+ {
+  "path": "assets/ui/explore/icons/icon_discovery.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/icon_history.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/kind_detail.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/kind_secret.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/kind_easter_egg.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/kind_chat.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/kind_history.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/mark_new.png",
+  "size_1x": [
+   9,
+   9
+  ],
+  "scale": 3,
+  "note": "prompt marker: not yet discovered (9x9 twinkle)"
+ },
+ {
+  "path": "assets/ui/explore/icons/mark_seen.png",
+  "size_1x": [
+   7,
+   7
+  ],
+  "scale": 3,
+  "note": "prompt marker: already discovered"
+ },
+ {
+  "path": "assets/ui/explore/icons/page_on.png",
+  "size_1x": [
+   5,
+   5
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/page_off.png",
+  "size_1x": [
+   5,
+   5
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/page_on_neutral.png",
+  "size_1x": [
+   5,
+   5
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/explore/icons/more_down.png",
+  "size_1x": [
+   7,
+   4
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "tests/visual/explore_ui_mock_closeup.png",
+  "size_1x": [
+   240,
+   150
+  ],
+  "scale": 1,
+  "note": "harness mock close-up (shown x3 by the DiscoveryView preview)"
+ }
+]

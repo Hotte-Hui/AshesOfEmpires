@@ -53,3 +53,17 @@ func prompt_text() -> String:
 		return Loc.t(prompt_key)
 	var k := "ui.prompt." + kind
 	return Loc.t(k) if Loc.has(k) else Loc.t("ui.interact")
+
+
+## Presentation hint for the HUD prompt (§12): "new" = an exploration find not discovered yet (small amber
+## spark), "found" = already discovered / already looked at (dimmed verb + tick), "" = story hotspot (plain).
+## Read-only: never changes Story or Explore state.
+func prompt_state() -> String:
+	if (kind == "discover" or kind == "chat") and explore_id != "":
+		var ex = get_node_or_null("/root/Explore")
+		if ex != null and ex.has_method("is_found"):
+			return "found" if ex.is_found(explore_id) else "new"
+		return ""
+	if kind == "observe":
+		return "found" if used else ""
+	return ""

@@ -1,0 +1,147 @@
+{
+ "karsk": {
+  "yard": [
+   0,
+   140
+  ],
+  "rail_y": 272,
+  "platform_y": 279,
+  "loco_size": [
+   284,
+   112
+  ],
+  "wheel_r": 16,
+  "drivers": [
+   84,
+   120,
+   156,
+   192,
+   228
+  ],
+  "chimney": [
+   40,
+   11
+  ],
+  "whistle": [
+   198,
+   20
+  ],
+  "cyl_steam": [
+   26,
+   98
+  ],
+  "cab_window": [
+   232,
+   44,
+   16,
+   14
+  ],
+  "headlamp": [
+   16,
+   22
+  ]
+ },
+ "close": {
+  "glyph": [
+   320,
+   176
+  ],
+  "imprint": [
+   229,
+   125
+  ],
+  "pencil": [
+   109,
+   83
+  ],
+  "stamp_anchor": [
+   130,
+   250
+  ],
+  "initials": [
+   46,
+   152
+  ]
+ },
+ "berlin": {
+  "set_w": 1000,
+  "y0": -260,
+  "pave_y": 262,
+  "street_y": 276,
+  "rail_far": [
+   288,
+   292
+  ],
+  "rail_near": [
+   302,
+   306
+  ],
+  "arch": [
+   210,
+   500
+  ],
+  "portal_cx": 355,
+  "door": [
+   338,
+   206,
+   34,
+   50
+  ],
+  "chimneys": [
+   [
+    17,
+    17
+   ],
+   [
+    82,
+    17
+   ],
+   [
+    167,
+    17
+   ],
+   [
+    516,
+    9
+   ],
+   [
+    627,
+    9
+   ],
+   [
+    666,
+    9
+   ],
+   [
+    982,
+    5
+   ],
+   [
+    760,
+    5
+   ],
+   [
+    893,
+    5
+   ]
+  ],
+  "wire_y": 148
+ },
+ "frames": {
+  "loco_wheels": 8,
+  "fx_puff": 12,
+  "fx_steam": 8,
+  "fx_whistle": 8,
+  "fx_snowdrop": 8,
+  "imprint": 4,
+  "stamp": 3,
+  "stamp_shadow": 3,
+  "banner": 3,
+  "banner_hist": 3,
+  "door": 3,
+  "tram_pole": 3,
+  "smoke": 8,
+  "pigeons": 2,
+  "queue": 2
+ }
+}

@@ -1,0 +1,315 @@
+{
+ "walk_36": {
+  "file": "walk_36.png",
+  "cell": [
+   27,
+   38
+  ],
+  "origin": [
+   13,
+   37
+  ],
+  "frames": 8,
+  "fps": 10.0,
+  "rows": [
+   "man_fedora",
+   "woman_scarf",
+   "man_cap",
+   "woman_hat",
+   "man_coat_dark",
+   "old_man"
+  ],
+  "ground_speed": 30.6,
+  "height": 36
+ },
+ "walk_24": {
+  "file": "walk_24.png",
+  "cell": [
+   19,
+   26
+  ],
+  "origin": [
+   9,
+   25
+  ],
+  "frames": 8,
+  "fps": 10.0,
+  "rows": [
+   "man_fedora",
+   "woman_scarf",
+   "man_cap",
+   "woman_hat",
+   "man_coat_dark",
+   "old_man"
+  ],
+  "ground_speed": 20.4,
+  "height": 24
+ },
+ "walk_14": {
+  "file": "walk_14.png",
+  "cell": [
+   13,
+   16
+  ],
+  "origin": [
+   6,
+   15
+  ],
+  "frames": 4,
+  "fps": 6.0,
+  "rows": [
+   "man_fedora",
+   "woman_scarf",
+   "man_cap",
+   "woman_hat"
+  ],
+  "ground_speed": 14.28,
+  "height": 14
+ },
+ "stand_36": {
+  "file": "stand_36.png",
+  "cell": [
+   27,
+   38
+  ],
+  "origin": [
+   13,
+   37
+  ],
+  "frames": 4,
+  "fps": 2.0,
+  "rows": [
+   "man_fedora",
+   "woman_scarf",
+   "man_cap",
+   "woman_hat",
+   "man_coat_dark",
+   "old_man"
+  ],
+  "ground_speed": 0.0,
+  "height": 36
+ },
+ "stand_24": {
+  "file": "stand_24.png",
+  "cell": [
+   19,
+   26
+  ],
+  "origin": [
+   9,
+   25
+  ],
+  "frames": 4,
+  "fps": 2.0,
+  "rows": [
+   "man_fedora",
+   "woman_scarf",
+   "man_cap",
+   "woman_hat",
+   "man_coat_dark",
+   "old_man"
+  ],
+  "ground_speed": 0.0,
+  "height": 24
+ },
+ "march_14": {
+  "file": "march_14.png",
+  "cell": [
+   13,
+   16
+  ],
+  "origin": [
+   6,
+   15
+  ],
+  "frames": 4,
+  "fps": 6.0,
+  "rows": [
+   "soldier"
+  ],
+  "ground_speed": 15.96,
+  "height": 14
+ },
+ "march_24": {
+  "file": "march_24.png",
+  "cell": [
+   19,
+   26
+  ],
+  "origin": [
+   9,
+   25
+  ],
+  "frames": 8,
+  "fps": 10.0,
+  "rows": [
+   "soldier"
+  ],
+  "ground_speed": 22.8,
+  "height": 24
+ },
+ "walk_8": {
+  "file": "walk_8.png",
+  "cell": [
+   5,
+   8
+  ],
+  "origin": [
+   2,
+   7
+  ],
+  "frames": 4,
+  "fps": 6.0,
+  "rows": [
+   "dark",
+   "grey",
+   "brown",
+   "violet"
+  ],
+  "ground_speed": 6.0,
+  "height": 8
+ },
+ "sweeper": {
+  "file": "sweeper.png",
+  "cell": [
+   40,
+   48
+  ],
+  "origin": [
+   16,
+   47
+  ],
+  "frames": 6,
+  "fps": 5.0,
+  "rows": [
+   "sweep"
+  ],
+  "ground_speed": 0.0,
+  "height": 45
+ },
+ "handcart": {
+  "file": "handcart.png",
+  "cell": [
+   30,
+   22
+  ],
+  "origin": [
+   19,
+   21
+  ],
+  "frames": 1
+ },
+ "birds": {
+  "file": "birds.png",
+  "cell": [
+   7,
+   5
+  ],
+  "origin": [
+   3,
+   4
+  ],
+  "frames": 4,
+  "rows": [
+   "pigeon",
+   "fly",
+   "crow"
+  ]
+ },
+ "smoke": {
+  "file": "smoke.png",
+  "cell": [
+   24,
+   56
+  ],
+  "origin": [
+   6,
+   54
+  ],
+  "frames": 8,
+  "fps": 7.0
+ },
+ "steam": {
+  "file": "steam.png",
+  "cell": [
+   30,
+   32
+  ],
+  "origin": [
+   8,
+   30
+  ],
+  "frames": 8,
+  "fps": 7.0
+ },
+ "window_people": {
+  "file": "window_people.png",
+  "cell": [
+   14,
+   24
+  ],
+  "frames": 4
+ },
+ "belong_chair": {
+  "file": "belong_chair.png",
+  "cell": [
+   16,
+   25
+  ],
+  "origin": [
+   8,
+   24
+  ],
+  "frames": 1
+ },
+ "belong_crate": {
+  "file": "belong_crate.png",
+  "cell": [
+   17,
+   14
+  ],
+  "origin": [
+   8,
+   13
+  ],
+  "frames": 1
+ },
+ "belong_bedding": {
+  "file": "belong_bedding.png",
+  "cell": [
+   22,
+   11
+  ],
+  "origin": [
+   11,
+   10
+  ],
+  "frames": 1
+ },
+ "belong_cage": {
+  "file": "belong_cage.png",
+  "cell": [
+   11,
+   14
+  ],
+  "origin": [
+   5,
+   13
+  ],
+  "frames": 2,
+  "fps": 0.7
+ },
+ "paper": {
+  "file": "paper.png",
+  "cell": [
+   9,
+   7
+  ],
+  "origin": [
+   4,
+   6
+  ],
+  "frames": 4,
+  "fps": 9.0
+ }
+}

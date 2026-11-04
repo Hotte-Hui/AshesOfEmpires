@@ -13,11 +13,13 @@ const LEVELS := {
 	"L_M1_HallReveal": "res://scenes/levels/L_M1_HallReveal.tscn",
 	"L_Test": "res://scenes/levels/L_Test.tscn",
 }
-const ENTRY_SPAWN := {"L_A1_Railyard": "SP_A1_Platform", "L_M1_Archive": "SP_M1_Office"}
+const ENTRY_SPAWN := {"L_A1_Railyard": "SP_A1_Platform", "L_M1_Archive": "SP_M1_Arrival"}
 const CHAPTER := {"L_A1_Railyard": ["ui.chapter_a1", "world.a1.title"], "L_M1_Archive": ["ui.chapter_m1", "world.m1.title"]}
 const PLAYER := preload("res://scripts/actors/player.gd")
 const LayerStack := preload("res://scripts/levels/layer_stack.gd")
 const STILLS := "res://assets/ui/documents/"
+const CIN_A1_M1 := "res://scenes/cinematics/a1m1/CinA1ToM1.tscn"
+const FINALE_SCENE := "res://scenes/cinematics/finale/Finale.tscn"
 ## Reaction line after each choice: [speaker, text key, expression]
 const REACTIONS := {
 	"a1_choose": {"share_with_irina": ["irina", "dlg.irina.branch_a", "determined"],
@@ -285,6 +287,8 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 		_fade.color.a = 0.0
 	_unload_level()
 	var path: String = LEVELS.get(id, "")
+	if path == "" and id.begins_with("res://"):   # dev/test: --scene=res://path/Level.tscn (art previews)
+		path = id
 	if path == "" or not ResourceLoader.exists(path):
 		push_error("Game: unknown level " + id)
 		return
@@ -305,6 +309,25 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 	if CHAPTER.has(id) and not args.has("capture"):
 		_show_title(Loc.t(CHAPTER[id][0]), Loc.t(CHAPTER[id][1]))
 	autosave("level_" + id)
+	await _porter_greeting(id)
+
+
+## Soft start of Konrad's chapter: the porter greets him once, right after he comes in through the stairwell
+## door (optional chat — Explore only, never Story). Not in tests/captures; not if Konrad already walked off.
+func _porter_greeting(id: String) -> void:
+	if id != "L_M1_Archive" or args.has("capture") or args.has("capture-world") or auto or args.has("inputplay"):
+		return
+	if not Explore.has_method("is_found") or Explore.is_found("berlin.porter"):
+		return
+	var porter_chat: Node = level.playfield.get_node_or_null("TalkPorter") if level and level.get("playfield") else null
+	if porter_chat == null or player == null:
+		return
+	await get_tree().create_timer(4.2).timeout   # let the chapter card play out first
+	if not is_instance_valid(porter_chat) or not is_instance_valid(player) or busy or in_cinematic or get_tree().paused:
+		return
+	if absf(porter_chat.global_position.x - player.global_position.x) < 200.0:
+		player.face(porter_chat.global_position.x - player.global_position.x)
+		await interact(porter_chat)
 
 
 func _first_visit() -> bool:
@@ -425,7 +448,8 @@ func update_prompt(target: Node) -> void:
 	if hud == null or target == null:
 		return
 	var p: Vector2 = world_to_ui(target.global_position - Vector2(0, target.get("prompt_height") if target.get("prompt_height") else 56.0))
-	_call(hud, "show_prompt", [p, target.prompt_text()])
+	_call(hud, "show_prompt", [p, target.prompt_text(), "interact",
+		target.prompt_state() if target.has_method("prompt_state") else ""])
 
 
 func world_to_ui(world_pos: Vector2) -> Vector2:
@@ -678,7 +702,22 @@ func _do_chat(it: Node) -> void:
 		if l is Dictionary:
 			await _speak(str(l.get("speaker", "")), Loc.t(str(l.get("key", ""))), str(l.get("expr", "neutral")))
 	_end_speech()
-	Explore.find(id)
+	var r: Dictionary = Explore.find(id)
+	# a chat can unlock real-history cards (e.g. the barrel workers → Novocherkassk 1962): show them like a find
+	var cards: Array = r.get("cards_new", [])
+	var view := _ui("discovery")
+	if not cards.is_empty() and view and view.has_method("open_cards"):
+		_call(view, "open_cards", [cards, true])
+		if auto:
+			await get_tree().create_timer(0.3).timeout
+			_call(view, "close")
+		else:
+			await _await_closed(view)
+	if r.get("new", false):
+		var e: Dictionary = r.get("entry", {})
+		var c: Dictionary = Explore.counts(str(e.get("level", "")))
+		toast(Loc.t("ui.toast.discovery").format({"name": Loc.t(str(e.get("title_key", ""))),
+			"n": c.get("found", 0), "total": c.get("total", 0)}))
 
 
 func _await_closed(node: Node) -> void:
@@ -763,8 +802,38 @@ func _end_cinematic() -> bool:
 	return s
 
 
+## Ch1 → Ch2 protagonist switch (§12.5): the animated train departure → stamp → match dissolve → Berlin morning
+## sequence (scenes/cinematics/a1m1). Leaves the screen black; goto_level() then fades M1 in at SP_M1_Arrival.
 func _cin_a1_to_m1() -> bool:
 	_begin_cinematic()
+	if not ResourceLoader.exists(CIN_A1_M1):
+		return await _cin_a1_to_m1_stills()
+	Audio.stop_music(1.5)
+	await fade_out(0.8)
+	var prev_level := level
+	if prev_level:
+		prev_level.visible = false
+		prev_level.process_mode = Node.PROCESS_MODE_DISABLED
+	var cin: Node = load(CIN_A1_M1).instantiate()
+	main.level_root.add_child(cin)
+	cin.configure({"choices": Story.choice_history(), "flags": Story.flags() if Story.has_method("flags") else {},
+		"symbols": Symbols.enabled()})
+	var done := [false]
+	cin.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	cin.play()
+	_fade.color.a = 0.0          # the cinematic fades in from its own black frame
+	while not done[0]:
+		if _skip and cin.has_method("skip"):
+			cin.skip()
+		await get_tree().process_frame
+	_fade.color.a = 1.0          # stay black: goto_level() fades M1 in and shows the chapter card
+	cin.queue_free()
+	camera.release()
+	return _end_cinematic()
+
+
+## Fallback (round-1 version): two stills with a match cut.
+func _cin_a1_to_m1_stills() -> bool:
 	Audio.stop_music(1.5)
 	await fade_out(0.8)
 	_show_still(STILLS + "x1_stamp_closeup.png")
@@ -807,7 +876,9 @@ func _cin_hall() -> bool:
 	if has_cues:
 		hall.cue.connect(func(key: String):
 			if key.begins_with("hall.cue.loudspeaker") and Loc.has(key):
-				subtitle(Loc.t(key), 3.6))
+				subtitle(Loc.t(key), 3.6)
+			elif key == "hall.cue.tram_bell":
+				Audio.sfx("tram_bell", -6.0))
 	var t := 0.0
 	var said := false
 	while not done[0] and t < 16.0:
@@ -834,7 +905,48 @@ func _cin_hall() -> bool:
 	return skipped
 
 
+## X1 finale (§12.5): animated two-desk montage driven by both decisions (scenes/cinematics/finale).
+## Leaves the screen black; _finale_flow() then fades in the end card.
 func _cin_final() -> bool:
+	if not ResourceLoader.exists(FINALE_SCENE):
+		return await _cin_final_stills()
+	_begin_cinematic()
+	Audio.stop_music(1.2)
+	Audio.stop_ambience(1.2)
+	await fade_out(0.9)
+	var prev_level := level
+	if prev_level:
+		prev_level.visible = false
+		prev_level.process_mode = Node.PROCESS_MODE_DISABLED
+	var fin: Node = load(FINALE_SCENE).instantiate()
+	main.level_root.add_child(fin)
+	fin.configure({
+		"choices": Story.choice_history() if Story.has_method("choice_history") else {},
+		"flags": Story.flags() if Story.has_method("flags") else {},
+		"symbols": Symbols.enabled(),
+		"reduced_motion": bool(Settings.get_value("reduced_motion")),
+	})
+	_apply_grade(fin)
+	var done := [false]
+	fin.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	fin.play()
+	await fade_in(0.8)
+	while not done[0]:
+		if _skip:
+			fin.skip()
+			break
+		await get_tree().process_frame
+	await fade_out(1.0)
+	fin.queue_free()
+	camera.release()
+	if prev_level and is_instance_valid(prev_level):
+		prev_level.visible = true
+		prev_level.process_mode = Node.PROCESS_MODE_INHERIT
+	return _end_cinematic()
+
+
+## Fallback (round-1 version): three stills.
+func _cin_final_stills() -> bool:
 	_begin_cinematic()
 	Audio.play_music("mus_finale_x1", 0.8)
 	await fade_out(0.9)
@@ -860,6 +972,7 @@ func _finale_flow() -> void:
 	_unload_level()
 	in_cinematic = true      # end card is skippable like any cinematic
 	_skip = false
+	Audio.play_ambience("amb_transition", 2.0)   # the finale's own score ends with the lamps going out
 	_show_end_card()
 	await fade_in(1.0)
 	var t := 0.0 if not auto else 11.0
@@ -1062,8 +1175,9 @@ func _capture_flow() -> void:
 		img.save_png(str(args["capture"]))
 		print("CAPTURED ", args["capture"], " ", img.get_size())
 	if args.has("capture-world"):
-		var wi := world.get_texture().get_image()
-		wi.get_region(Rect2i(1, 1, 640, 360)).save_png(str(args["capture-world"]))
+		var wi: Image = view.capture_world_image() if view and view.has_method("capture_world_image") \
+			else world.get_texture().get_image().get_region(Rect2i(1, 1, 640, 360))
+		wi.save_png(str(args["capture-world"]))
 		print("CAPTURED_WORLD ", args["capture-world"])
 	print("FPS ", Engine.get_frames_per_second(), " frame_ms ", Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
 	get_tree().quit()

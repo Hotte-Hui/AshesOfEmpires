@@ -21,6 +21,8 @@ import math
 import numpy as np
 
 import pg
+import env_karsk_emblems as EMB
+import env_karsk_life as LF
 from env_karsk_lib import (Layer, NI, TE, SA, SK, ST, RU, CO, SN, WO, RED, bayer, value_noise, dmask,
                            ladder_shift, text, text_width, cyl_normal, flat_normal, figure, snow_top,
                            stains, bricks, crop_box)
@@ -503,7 +505,7 @@ def warehouse(L, E):
     text(L, x + 150, eave + 4, 'СКЛАД 2', SN[0], font='s')
 
 
-def hoarding(L, E):
+def hoarding(L, E, hist=False):
     """Timber construction hoarding x 1100-1462 with the civic banner ВОССТАНОВИМ ВМЕСТЕ and the
     reconstruction / housing notices (obs_poster)."""
     x0, x1 = 1100, 1462
@@ -520,34 +522,56 @@ def hoarding(L, E):
         L.vline(xx + 3, y_top - 6, GROUND_Y - y_top + 6, WO[4])
         snowline(L, xx, y_top - 6, 4, depth=2)
     snowline(L, x0, y_top, x1 - x0, depth=2, seed=4)
-    # civic banner (cloth, nailed): fictional slogan 'we rebuild together'
+    # civic banner (cloth, nailed): fictional slogan 'we rebuild together', state emblem at both ends
+    # (§12.4: neutral = fictional gear-and-wheat, hist = hammer & sickle; same 11x11 footprint)
     msg = 'ВОССТАНОВИМ ВМЕСТЕ'
     tw = text_width(msg, 'l')
-    bx0, by0 = 1150, 214
-    bw = tw + 14
-    L.rect(bx0, by0, bw, 13, RU[2], hgt=0.62)
+    bx0, by0 = 1146, 213
+    ek = EMB.kind_for('gw11', hist)
+    ew, eh = EMB.size(ek)
+    bw = tw + 2 * (ew + 9) + 4
+    bh = 15
+    L.rect(bx0, by0, bw, bh, RU[2], hgt=0.62)
     L.hline(bx0, by0, bw, RU[3])
-    L.hline(bx0, by0 + 12, bw, RU[1])
-    for xx in range(bx0, bx0 + bw):                         # sagging cloth folds
-        if (xx - bx0) % 23 == 11:
-            L.vline(xx, by0 + 1, 11, RU[1])
-    L.vline(bx0 + bw - 1, by0, 13, RU[4])
-    text(L, bx0 + 7, by0 + 3, msg, SN[3], font='l', shadow=RU[1])
+    L.hline(bx0, by0 + bh - 1, bw, RU[1])
+    for xx in range(bx0, bx0 + bw):                         # sagging cloth folds (not across the emblems)
+        rel = xx - bx0
+        if rel % 23 == 11 and ew + 6 < rel < bw - ew - 6:
+            L.vline(xx, by0 + 1, bh - 2, RU[1])
+    L.vline(bx0 + bw - 1, by0, bh, RU[4])
+    text(L, bx0 + ew + 9 + 2, by0 + 4, msg, SN[3], font='l', shadow=RU[1])
+    emb = []
+    for ex in (bx0 + 4, bx0 + bw - 4 - ew):
+        EMB.paint(L, ex, by0 + 2, ek, CO[3], shade=CO[1], hgt=0.64)
+        emb.append(('banner_l' if ex < bx0 + bw // 2 else 'banner_r', ex, by0 + 2, ew, eh))
     for nx in (bx0 + 1, bx0 + bw - 2):
         L.px(nx, by0 + 1, ST[4])
-    E['banner'] = (bx0, by0, bw, 13)
-    # posters near the right end (obs_poster): reconstruction poster + typed housing notice
+        L.px(nx, by0 + bh - 2, ST[3])
+    # water stains under the nails + frayed bottom edge
+    for nx in (bx0 + 1, bx0 + bw - 2):
+        L.px(nx, by0 + bh, RU[1])
+    for xx in range(bx0 + 3, bx0 + bw - 3, 7):
+        L.px(xx, by0 + bh, RU[1])
+    E['banner'] = (bx0, by0, bw, bh)
+    E.setdefault('emblems', []).extend(emb)
+    # posters near the right end (obs_poster): reconstruction poster (state emblem in a red header band,
+    # new housing block + crane) and the typed housing notice
     px0, py0 = 1380, 214
     L.rect(px0, py0, 20, 28, SN[2], hgt=0.6)                 # poster paper
     L.rect(px0 + 1, py0 + 1, 18, 26, CO[4], hgt=0.58)
-    L.rect(px0 + 2, py0 + 2, 16, 13, RU[3])                   # printed image: new block + crane
-    L.rect(px0 + 4, py0 + 7, 7, 8, SN[3])
-    for wy in range(py0 + 8, py0 + 15, 2):
+    L.rect(px0 + 2, py0 + 2, 16, 9, RED[2], hgt=0.59)        # red header band with the emblem
+    pk = EMB.kind_for('gw7', hist)
+    EMB.paint(L, px0 + 3, py0 + 3, pk, CO[4])
+    E['emblems'].append(('poster', px0 + 3, py0 + 3) + EMB.size(pk))
+    for k, wy in enumerate((py0 + 4, py0 + 6, py0 + 8)):   # slogan lines in the header
+        L.hline(px0 + 11, wy, 6 - k, CO[4])
+    L.rect(px0 + 2, py0 + 11, 16, 7, RU[3])                  # printed image: new block + crane
+    L.rect(px0 + 4, py0 + 12, 7, 6, SN[3])
+    for wy in range(py0 + 13, py0 + 18, 2):
         L.hline(px0 + 5, wy, 5, RU[2])
-    L.vline(px0 + 14, py0 + 3, 12, NI[2])
-    L.hline(px0 + 10, py0 + 3, 7, NI[2])
-    L.hline(px0 + 3, py0 + 2, 14, RU[4])
-    for wy in range(py0 + 17, py0 + 26, 2):                  # printed lines (scribble)
+    L.vline(px0 + 14, py0 + 11, 7, NI[2])
+    L.hline(px0 + 11, py0 + 12, 6, NI[2])
+    for wy in range(py0 + 19, py0 + 26, 2):                  # printed lines (scribble)
         L.hline(px0 + 3, wy, 13 - (wy % 3) * 2, RU[2])
     L.rect(px0 + 13, py0 + 21, 6, 7, CLEAR)                  # torn corner
     L.px(px0 + 13, py0 + 21, SN[2])
@@ -565,7 +589,7 @@ def hoarding(L, E):
     E['poster'] = (px0, py0, 38, 28)
 
 
-def freight_office(L, E):
+def freight_office(L, E, hist=False):
     """Freight office (Товарная контора) x 1478-1684 with the counter window where the ledger lies,
     warm enamel wall lamp above it, door, notice board, chimney."""
     x, w, h = 1478, 206, 62
@@ -597,11 +621,19 @@ def freight_office(L, E):
     L.vline(cx + 16, cy + ch - 4, 2, ST[2])
     L.px(cx + 19, cy + ch - 1, RED[2])
     L.px(cx + 19, cy + ch, RED[1])
-    # sign above
-    L.rect(cx - 6, cy - 13, cw + 12, 9, SN[2], hgt=0.68)
-    L.rect(cx - 5, cy - 12, cw + 10, 7, TE[0], hgt=0.66)
+    # sign above: enamel plate with the state emblem medallion at the left (§12.4) + КОНТОРА
+    sx0, sw = cx - 6, cw + 12 + 10
+    L.rect(sx0, cy - 14, sw, 11, SN[2], hgt=0.68)
+    L.rect(sx0 + 1, cy - 13, sw - 2, 9, TE[0], hgt=0.66)
+    L.rect(sx0 + 2, cy - 13, 9, 9, RED[1], hgt=0.67)         # red medallion field
+    L.vline(sx0 + 10, cy - 13, 9, SN[1])
+    mk = EMB.kind_for('gw7', hist)
+    EMB.paint(L, sx0 + 3, cy - 12, mk, CO[3])
+    E.setdefault('emblems', []).append(('kontora_sign', sx0 + 3, cy - 12) + EMB.size(mk))
     tw = text_width('КОНТОРА', 's')
-    text(L, cx - 5 + (cw + 10 - tw) // 2, cy - 11, 'КОНТОРА', SN[3])
+    text(L, sx0 + 11 + (sw - 12 - tw) // 2, cy - 11, 'КОНТОРА', SN[3])
+    L.px(sx0, cy - 4, RU[1])                                 # rust bleeding from the fixing screws
+    L.px(sx0 + sw - 1, cy - 4, RU[1])
     # warm enamel wall lamp above the sign
     lx, ly = cx + cw // 2, cy - 22
     L.hline(lx - 6, ly - 3, 7, NI[2])
@@ -619,8 +651,10 @@ def freight_office(L, E):
                 L.px(xx, yy, RU[4])
     E['office_lamp'] = (lx, ly + 3)
     # other windows (dark)
-    for wx in (1530, 1616, 1650):
+    for wx in (1530, 1650):
         window_dark(L, wx, 204, 16, 22, frame=SN[1], frame_sh=TE[1], refl=TE[3])
+    LF.office_shelf_window(L, 1616, 204, 16, 22)            # exp_kontora_shelf: the bookshelf behind glass
+    E['shelf_window'] = (1616, 204, 16, 22)
     # notice board next to the door
     L.rect(1518, 208, 10, 14, WO[2], hgt=0.62)
     L.rect(1519, 209, 8, 12, SN[2])
@@ -655,8 +689,16 @@ def right_end(L, E):
     snowline(L, bx, 231, 26, depth=1)
 
 
-def make_yard_back(E):
+PA_POLE_FOOT = (722, 255)        # loudspeaker pole prop (exp_loudspeaker); its cable runs to the cabin horn
+PA_POLE_ANCHOR = (713, 153)      # world position of the pole's cable insulator (see LF.loudspeaker_pole)
+PA_CABIN_ANCHOR = (597, 159)
+
+
+def make_yard_back(E, hist=False):
+    """Playfield back line.  hist=True paints the real Soviet emblems instead of the fictional gear-and-wheat
+    (only the emblem pixels differ; used for the *_hist variant, TECHNICAL_ARCHITECTURE §12.4)."""
     L = Layer(W, 360, 'yard_back')
+    E['emblems'] = []
     concrete_fence(L, -2, 252, y_top=218, seed=1, broken=(4,))
     tea_stall(L, E)
     concrete_fence(L, 330, 470, y_top=220, seed=2, gaps=(2,))
@@ -665,11 +707,46 @@ def make_yard_back(E):
     relay_hut(L)
     concrete_fence(L, 650, 744, y_top=220, seed=4)
     warehouse(L, E)
-    hoarding(L, E)
+    hoarding(L, E, hist)
     concrete_fence(L, 1462, 1478, y_top=220, seed=5)
-    freight_office(L, E)
+    freight_office(L, E, hist)
     right_end(L, E)
+    yard_life(L, E)
     return L
+
+
+def yard_life(L, E):
+    """Round-2 detail pass over the back line: icicles on every eave, rust run-off, drifts against walls,
+    the cabin's coal heap, the PA cable (crows' perch) and the cache under the stairs."""
+    # icicles (eave underside rows)
+    LF.icicles(L, 466, 595, 151, seed=1, density=0.34, maxlen=6)          # signal box roof
+    LF.icicles(L, 470, 590, 190, seed=2, density=0.16, maxlen=3)          # operator-room floor beam
+    LF.icicles(L, 480, 501, 196, seed=3, density=0.4, maxlen=3)           # cabin door canopy
+    LF.icicles(L, 253, 329, 206, seed=4, density=0.3, maxlen=4)           # tea stall roof
+    LF.icicles(L, 264, 314, 214, seed=5, density=0.36, maxlen=4)          # tea stall hatch flap
+    LF.icicles(L, 603, 649, 226, seed=6, density=0.3, maxlen=4)           # relay hut
+    LF.icicles(L, 1476, 1686, 188, seed=7, density=0.24, maxlen=5)        # freight office eave
+    LF.icicles(L, 1491, 1515, 195, seed=8, density=0.4, maxlen=3)         # office door canopy
+    # rust run-off
+    LF.rust_streak(L, 596, 164, 9, seed=11, strong=True)                  # cabin horn bracket
+    for k, vx in enumerate((631, 635, 639)):
+        LF.rust_streak(L, vx, 235, 7 + k, seed=12 + k)                     # relay hut vents
+    LF.rust_streak(L, 619, 242, 6, seed=15)                               # relay hut door hinge
+    for px_ in range(746, 1094, 58):
+        LF.rust_streak(L, px_ + 1, 222, 8, seed=px_)                       # canopy post bolts
+    LF.rust_streak(L, 1655, 174, 10, seed=21, strong=True)                # office chimney flashing
+    for k in range(1876, 1896, 6):
+        LF.rust_streak(L, k, 237, 6, seed=k)                               # buffer stop
+    # drifts against walls
+    LF.drift_wedge(L, 238, 256, GROUND_Y, 7, rise_left=False, seed=1)     # tea stall, left wall
+    LF.drift_wedge(L, 648, 662, GROUND_Y, 5, rise_left=True, seed=2)      # relay hut, right wall
+    LF.drift_wedge(L, 1464, 1478, GROUND_Y, 6, rise_left=False, seed=3)   # office, left wall
+    LF.drift_wedge(L, 1684, 1700, GROUND_Y, 7, rise_left=True, seed=4)    # office, right wall
+    # coal for the cabin stove between the signal box and the relay hut
+    LF.coal_heap(L, 587, 17, GROUND_Y, 8, seed=5)
+    # PA cable: cabin horn -> loudspeaker pole (the hooded crows perch on it)
+    E['pa_wire'] = LF.pa_wire(L, PA_CABIN_ANCHOR, PA_POLE_ANCHOR, 8)
+    LF.stairs_cache(L, E)
 
 
 # =========================================================================== ground band
@@ -910,7 +987,7 @@ def prop_layer(w, h, name):
     return Layer(w, h, name)
 
 
-def lamp_post(variant=0):
+def lamp_post(variant=0, emissive=True):
     """Platform lamp: concrete post, curved steel arm, enamel reflector shade, cold mercury bulb."""
     P = Layer(30, 84, 'lamp_post')
     bx = 8                         # post x (base centre ~ bx+2)
@@ -934,8 +1011,9 @@ def lamp_post(variant=0):
     P.rect(sx - 4, sy, 9, 2, TE[1], hgt=0.8)
     P.hline(sx - 3, sy - 1, 7, TE[3])
     P.hline(sx - 5, sy + 2, 11, SN[2], 0.8)
-    P.rect(sx - 1, sy + 3, 3, 2, SN[4], hgt=0.9, em=SN[4])
-    P.px(sx, sy + 5, SK[5], em=SK[5])
+    # bulb (lamp 2 leaves it non-emissive: the KarskLamp actor draws its flickering glow)
+    P.rect(sx - 1, sy + 3, 3, 2, SN[4], hgt=0.9, em=SN[4] if emissive else None)
+    P.px(sx, sy + 5, SK[5], em=SK[5] if emissive else None)
     snowline(P, sx - 3, sy - 2, 7, depth=1, cols=[SN[2], SN[3]])
     # enamel number plate + notice on the post
     P.rect(bx, 40, 5, 4, SN[2])
@@ -948,7 +1026,7 @@ def lamp_post(variant=0):
     return P, (bx + 2, by), (sx, sy + 4)
 
 
-def wagon_c17():
+def wagon_c17(hist=False):
     """Two-axle covered goods wagon (Soviet type, wartime-worn) with a sliding door and the damaged
     lead seal.  Body rust-brown planking, steel frame, arched snowy roof, spoked wheels."""
     Wd, Hd = 200, 100
@@ -1044,6 +1122,28 @@ def wagon_c17():
     P.line(x1 - 40, body_top + 10, x1 - 28, body_top + 18, SN[2])    # chalk tick
     P.line(x1 - 28, body_top + 18, x1 - 22, body_top + 8, SN[2])
     text(P, x1 - 42, body_top + 24, '20T', SN[1], font='s')
+    # old state stencil on the sliding door (weathered paint; §12.4 neutral gear-and-wheat / hist hammer & sickle)
+    sk = EMB.kind_for('gw11', hist)
+    EMB.paint(P, dx0 + 6, body_top + 9, sk, SN[1], wear=0.2, seed=24311)
+    P.hline(dx0 + 4, body_top + 22, 15, SN[0])                       # faded stencil line under it
+    P.rect(dx0 + 5, body_top + 22, 2, 1, RU[2])
+    stencil_xy = (dx0 + 6, body_top + 9)
+    # chalk marks at the FAR (right) end (exp_wagon_chalk): tally groups, an arrow, a crossed-out mark
+    cx_, cy_ = x1 - 19, body_top + 30
+    for g in range(3):
+        n = 5 if g < 2 else 3
+        gx = cx_ + (g % 2) * 9
+        gy = cy_ + (g // 2) * 8
+        for k in range(min(n, 4)):                     # strokes 2 px apart (readable at 1:1)
+            P.vline(gx + 2 * k, gy, 5, SN[2] if g == 0 else SN[1])
+        if n == 5:
+            P.line(gx - 1, gy + 4, gx + 7, gy, SN[2])   # the fifth stroke across
+    P.vline(cx_ + 3, cy_ + 18, 7, SN[1])                              # arrow pointing down (to the floor)
+    P.px(cx_ + 2, cy_ + 23, SN[1])
+    P.px(cx_ + 4, cy_ + 23, SN[1])
+    P.line(cx_ + 7, cy_ + 18, cx_ + 11, cy_ + 22, SN[0])              # crossed-out mark
+    P.line(cx_ + 11, cy_ + 18, cx_ + 7, cy_ + 22, SN[0])
+    chalk_xy = (cx_ + 4, cy_ + 8)
     # small vent hatches
     for vx in (x0 + 22, x1 - 30):
         P.rect(vx, body_top + 6, 10, 6, NI[2], hgt=0.4)
@@ -1073,7 +1173,7 @@ def wagon_c17():
         for yy in range(body_bot - 10, body_bot - 4):
             if (xx + yy) % 3 == 0 and rng.random() < 0.5:
                 P.px(xx, yy, RU[0])
-    return P, seal, by
+    return P, seal, by, {'stencil': stencil_xy, 'stencil_kind': sk, 'chalk': chalk_xy}
 
 
 def flatcar_panels():

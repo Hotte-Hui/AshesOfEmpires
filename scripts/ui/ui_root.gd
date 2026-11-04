@@ -2,11 +2,14 @@ extends Control
 ## UIRoot (scenes/ui/UIRoot.tscn) — aggregates every HD UI scene (TECHNICAL_ARCHITECTURE §6) and is
 ## instanced by Main under the `UI` CanvasLayer. Responsibilities:
 ## * exposes the panels as properties: hud, dialogue, inspect, signal_puzzle, blueprint_puzzle, journal,
-##   pause_menu, main_menu, settings_menu, saveload_menu, credits, confirm, subtitles, fade
+##   discovery (DiscoveryView, §12 exploration finds + real-history cards), pause_menu, main_menu,
+##   settings_menu, saveload_menu, credits, confirm, subtitles, fade
 ## * modal stack: push_modal()/pop_modal(); the top modal gets input first (in _input, before the GUI);
 ##   pausing modals set get_tree().paused (all UI runs with PROCESS_MODE_ALWAYS)
 ## * applies theme.tres / theme_hc.tres and live text scaling from Settings
-## * keeps the HUD in sync with Story signals (objective tracker, journal toasts)
+## * keeps the HUD in sync with Story signals (objective tracker, journal toasts), tells the HUD which
+##   interactable is focused (Game.focus_changed -> found / not-yet-found prompt marker) and toasts real-history
+##   cards that were unlocked without being shown (e.g. by a chat; never celebratory, kind "history")
 ## World-level shortcuts (pause, journal) are opened by Game via open_pause()/open_journal(); UIRoot only
 ## routes input while a modal is open, so it never fights the scene director.
 
@@ -20,6 +23,7 @@ signal modal_changed(top: Control)
 @onready var signal_puzzle: Control = $SignalPuzzle
 @onready var blueprint_puzzle: Control = $BlueprintPuzzle
 @onready var journal: Control = $Journal
+@onready var discovery: Control = $DiscoveryView
 @onready var pause_menu: Control = $PauseMenu
 @onready var main_menu: Control = $MainMenu
 @onready var settings_menu: Control = $SettingsMenu
@@ -34,6 +38,7 @@ signal modal_changed(top: Control)
 var cinematic_mode := false
 var _stack: Array[Control] = []
 var _paused_by_ui := false
+var _pending_cards: Array = []
 
 
 func _ready() -> void:
@@ -50,6 +55,8 @@ func _ready() -> void:
 	if s != null and s.has_signal("changed"):
 		s.changed.connect(_on_setting_changed)
 	connect_story()
+	connect_explore()
+	_connect_game.call_deferred()
 	modal_changed.connect(hud.on_modal_changed)
 
 
@@ -66,6 +73,50 @@ func connect_story() -> void:
 
 func _on_scene_changed(_id) -> void:
 	hud.refresh()
+
+
+## (Re)connects to the Explore service (§12): cards unlocked without a DiscoveryView page get a quiet toast.
+func connect_explore() -> void:
+	var ex := Kit.svc("Explore")
+	if ex == null:
+		return
+	if ex.has_signal("history_unlocked") and not ex.history_unlocked.is_connected(_on_history_unlocked):
+		ex.history_unlocked.connect(_on_history_unlocked)
+
+
+## The HUD marks prompts of found / not-yet-found exploration hotspots; it learns the focused target here.
+func _connect_game() -> void:
+	var g := Kit.svc("Game")
+	if g == null or not g.has_signal("focus_changed") or not hud.has_method("set_prompt_target"):
+		return
+	if not g.focus_changed.is_connected(hud.set_prompt_target):
+		g.focus_changed.connect(hud.set_prompt_target)
+
+
+func _on_history_unlocked(card_id: String) -> void:
+	if _pending_cards.is_empty():
+		_flush_history.call_deferred()
+	if not (card_id in _pending_cards):
+		_pending_cards.append(card_id)
+
+
+## Runs at the end of the frame: Game opens the DiscoveryView synchronously right after Explore.find(), so a
+## card shown there is skipped; anything else (a chat, a script) is announced as a neutral toast.
+func _flush_history() -> void:
+	var shown: Array = []
+	if discovery != null and discovery.get("is_open") == true:
+		for p in discovery.get("pages"):
+			if str(p.get("type", "")) == "card":
+				shown.append(str(p.get("id", "")))
+	var ex := Kit.svc("Explore")
+	for cid in _pending_cards:
+		if cid in shown:
+			continue
+		var c: Dictionary = ex.card(cid) if ex != null and ex.has_method("card") else {}
+		var name := Kit.t(str(c["title_key"])) if c.has("title_key") else str(cid)
+		var fmt := "ui.toast.history" if Kit.has_key("ui.toast.history") else "ui.explore.toast.history"
+		hud.toast(Kit.t(fmt, {"name": name}), "history")
+	_pending_cards.clear()
 
 
 # ================================================================ modal stack
@@ -211,6 +262,11 @@ func open_journal(tab := "") -> void:
 		journal.close()
 		return
 	journal.open(tab)
+
+
+## Re-opens an exploration find (and its real-history pages) — e.g. from the journal.
+func open_discovery(explore_id: String) -> void:
+	discovery.open(explore_id)
 
 
 func open_settings() -> void:

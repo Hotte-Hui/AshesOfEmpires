@@ -1,0 +1,10 @@
+{
+ "locale": "de-DE",
+ "area": "trans_a1m1",
+ "strings": {
+  "cin.a1m1.alexei.share": "Ein Waggon nach Westen. Ein Stempel im Buch. Aber diesmal wissen es zwei.",
+  "cin.a1m1.alexei.keep": "Ein Waggon nach Westen. Ein Stempel im Buch. Und einer, der es weiß – und schweigt.",
+  "cin.a1m1.konrad": "Ein Plan ist nur eine Ordnung aus Linien. Was zwischen den Linien geschieht, entscheiden andere.",
+  "cin.a1m1.caption": "Der rote Stempel C-17 im Karsker Frachtbuch wird zur Bleistiftnotiz auf einem Berliner Bauplan."
+ }
+}

@@ -3,6 +3,11 @@ extends CharacterBody2D
 ## Mode "oblique" (2.5D): walk on x and y inside the level's walkable polygon, y-sorted, depth at 0.62x.
 ## Mode "side" (2D): walk on x along the floor line.  Walk 45 px/s (~1.6 m/s at the 3.7 cm/px figure
 ## scale), run 90 px/s. Walk-cycle playback is scaled by speed / sheet ground_speed so feet stay planted.
+## Rendering (owner render-camera): movement stays in _physics_process (60 Hz); the sprite rig is drawn at the
+## position interpolated between the last two physics states, so motion is smooth at any display rate
+## (60-360 Hz), on the pixel grid chosen by the world camera (WorldCamera.draw_pos_for: keeps its screen pixel
+## while camera and player move together -> no 1-px vibration; keeps its world pixel while standing). The sprite
+## material is assigned by scripts/render/pixel_view.gd, as for every world sprite.
 
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 
@@ -18,6 +23,8 @@ var focus: Node = null          # nearest usable interactable
 var _facing := 1.0
 var _dir := "side"
 var _step_frames := [1, 5]
+var _phys_prev := Vector2.ZERO     # position before / after the last physics step (render interpolation)
+var _phys_cur := Vector2.ZERO
 
 
 func setup(id: String, level_mode: String, spawn: Vector2, step_surface: String) -> void:
@@ -50,6 +57,8 @@ func _ready() -> void:
 	rig.load_character(char_id)
 	rig.frame_changed.connect(_on_frame)
 	add_to_group("player")
+	_phys_prev = position
+	_phys_cur = position
 
 
 func get_facing() -> float:
@@ -62,7 +71,34 @@ func face(dir_x: float) -> void:
 		rig.set_flip(_facing < 0.0)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	_phys_prev = position
+	_physics_step(delta)
+	_phys_cur = position
+
+
+## Interpolated body position for rendering (between the last two physics states). A position set outside
+## the physics step (spawn, teleport, save restore) is taken over immediately.
+func get_visual_position() -> Vector2:
+	if position != _phys_cur:
+		_phys_prev = position
+		_phys_cur = position
+		return position
+	return _phys_prev.lerp(_phys_cur, clampf(Engine.get_physics_interpolation_fraction(), 0.0, 1.0))
+
+
+func _process(_delta: float) -> void:
+	if rig == null:
+		return
+	var vis := get_visual_position()
+	var cam = Game.camera
+	var draw_at := vis
+	if cam and cam.has_method("draw_pos_for"):
+		draw_at = cam.draw_pos_for(self, vis)
+	rig.position = draw_at - position
+
+
+func _physics_step(_delta: float) -> void:
 	if Game.input_locked or get_tree().paused:
 		velocity = Vector2.ZERO
 		if not rig.anim.begins_with("inspect") and not rig.anim.begins_with("interact") and not rig.anim.begins_with("talk"):

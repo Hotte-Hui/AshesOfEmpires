@@ -121,17 +121,24 @@ def wastebasket(lay, cx, base):
 
 
 def build():
+    """Silhouettes are placed in the free zones between hotspot windows (see check_clearance): floor-standing
+    shapes only between rooms, hanging shapes (lamps) anywhere above the playfield band."""
     w = L.layer_width(P)
     lay = kit.MLayer(w, L.WORLD_H, R, 'fg_frame')
     H = L.WORLD_H
-    column(lay, -10, 30, rim_right=True)
-    rubber_plant(lay, 574, H)
-    wastebasket(lay, 430, H)
-    desk_corner(lay, 708, 836, 322)
-    pendant_silhouette(lay, 960, 22)
-    chair_back(lay, 1090, 318)
-    column(lay, 1272, 1312, rim_left=True, rim_right=False)
-    boxes(lay, 1488, H)
+    column(lay, -10, 30, rim_right=True)                 # far left: the building's end
+    rubber_plant(lay, 560, H)                            # hall -> reading room arch
+    pendant_silhouette(lay, 700, 18)                     # reading room, hanging
+    pendant_silhouette(lay, 1180, 26)
+    pendant_silhouette(lay, 1460, 14)
+    column(lay, 1592, 1632, rim_left=True, rim_right=True)   # reading room | office partition
+    wastebasket(lay, 2085, H)
+    rubber_plant(lay, 2270, H)
+    desk_corner(lay, 2363, 2491, 322)
+    pendant_silhouette(lay, 2615, 22)
+    chair_back(lay, 2800, 318)
+    column(lay, 3110, 3150, rim_left=True, rim_right=False)
+    boxes(lay, 3472, H)
     column(lay, w - 46, w + 10, rim_left=True, rim_right=False)
     lay.unlit[:] = True
     lay.resolve()
@@ -143,7 +150,7 @@ def check_clearance(lay, margin: int = 60):
     alpha = lay.rid >= 0
     issues = []
     for name, (hx, hy) in L.HOTSPOTS.items():
-        cx = int(min(max(hx - L.VIEW_W // 2, 0), L.WORLD_W - L.VIEW_W))
+        cx = int(L.cam_for(hx))
         sx = hx - cx
         X0 = int(round(sx - margin + P * cx))
         X1 = int(round(sx + margin + P * cx))

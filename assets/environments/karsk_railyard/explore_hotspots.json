@@ -1,0 +1,8 @@
+{
+ "_doc": "Content-owned exploration hotspots of L_A1_Railyard, owner: karsk-explore (TECHNICAL_ARCHITECTURE 12.2). Merged by scripts/levels/level.gd; scene.json (karsk-env) wins on name clashes and provides all exp_* names of the 12.2 contract itself, so only the three content-owned places live here: the truck wreck at the left frame edge, the spot in front of the waiting grandmother (chat) and the panel flatcar. Position = where Alexei stands to look (world px, inside the walk band y 252-352, outside prop collisions, >= 26 px from the story hotspots in the player's oblique metric dy x 1.6). Checked by tests/test_explore_karsk.gd.",
+ "hotspots": {
+  "exp_wreck": [84, 296],
+  "exp_family": [306, 338],
+  "exp_flatcar": [1800, 284]
+ }
+}

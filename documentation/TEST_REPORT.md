@@ -96,3 +96,27 @@ covering the speakers (now docks at the top when speakers stand low).
 - Motion quality (shimmer during pans, animation feel at speed) was judged from stills and frame strips only.
 - Subjective quality: pacing, puzzle difficulty, readability, emotional impact.
 - Only an RTX 4090 was used; no low-end GPU, no 1440p display.
+
+## 7. Round 2 (expansion, 2026-11-04 evening) — all results from runs on this machine
+| Layer | Result |
+|---|---|
+| Unit tests (`tests/run_all.gd`) | **18 files, 143 cases, 10,406 checks — all passed** (new: exploration API/persistence, exploration data validation, Karsk/Berlin find consistency incl. spacing to story hotspots) |
+| Exploration data | 43 entries (Karsk 20, Berlin 23) + 16 history cards load with **0 validation warnings** |
+| Autoplay, 4 routes × cinematics skipped **+ exploration pass** | **4 × AUTOPLAY_PASS**; every run triggers all 43 finds/chats, unlocks all 16 history cards and verifies the canonical Story state is unchanged by optional content |
+| Autoplay, 4 routes × cinematics watched (new 40.6 s transition + hall + 47.5 s finale) | **4 × AUTOPLAY_PASS** |
+| Real-input, windowed 4K, skip + exploration (keep_private / request_explanation) | **INPUTPLAY_PASS** in 285 s — all 43 finds reached by walking and opened with E/Space (20/20, 23/23, 16/16 cards) |
+| Real-input, windowed 4K, all cinematics watched (share_with_irina / preserve_evidence) | **INPUTPLAY_PASS** in 226 s |
+| **Exported .exe**, real-input, skip + exploration (share_with_irina / request_explanation) | **INPUTPLAY_PASS** in 284 s, 43/43 finds, 16/16 cards |
+| Export | exit 0; exe 109.1 MB, pack 135.5 MB; pack directory parsed: 1,841 files, data/explore/*.json present, **0 files** from tests/, tools/, preproduction/, documentation/ or `_preview/` |
+| Camera smoothness (render-camera specialist, 144 Hz, 1080p, A1 walking) | frames where the camera moved but the image did not: 380 of 575 → 36 of 545; player 1-px vibration on screen: 174 → 1; FPS 596–1,324 (vsync off) |
+
+**Found and fixed during round-2 integration:** the test walker could not reach two finds behind props (the tea stall
+behind the family's luggage, the chalk marks behind the C-17 wagon) → grid path-finding over the walkable area;
+a deferred render call received already-freed sprites (`pixel_view._style_world_sprite`) → untyped, validity-checked;
+the rename guard flagged the real historian "Matthias Schmidt" in a source → "M. Schmidt"; a second vendor sprite
+next to the stall contradicted the painted vendor and her portrait → removed; faces were dithered by the palette snap
+→ skin tones added to the runtime palettes; plans/stamps in the UI and the hall crowd ignored the insignia switch →
+resolved through `Symbols.pick`.
+
+**Still not covered:** human playtest and listening pass (≈70 synthesized sounds, two new scores), physical
+controller, motion quality judged by a person, other GPUs/1440p displays.

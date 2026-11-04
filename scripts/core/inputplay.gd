@@ -130,6 +130,10 @@ func _menus_in_game() -> bool:
 func _play_route(route: Array, level_id: String) -> bool:
 	if not await _until(func(): return _gameplay_ready() and str(Game.level.level_id) == level_id, 90.0):
 		return _fail("never got control in " + level_id)
+	if Game.args.has("inputplay-explore"):
+		await _explore_level(level_id)
+		if not failures.is_empty():
+			return false
 	for oid in route:
 		if not await _until(func(): return Story.is_available(oid) and _gameplay_ready(), 30.0):
 			return _fail("objective never available: " + oid)
@@ -329,48 +333,183 @@ func _settle(tag: String) -> void:
 	_fail("game did not settle after " + tag)
 
 
+# ------------------------------------------------------------------ exploration pass (§12, --inputplay-explore)
+## Walks to EVERY optional find / chat of the level (nearest first), opens it with E and pages through it with
+## Space exactly like a player, then checks that Explore recorded it.
+func _explore_level(level_id: String) -> void:
+	var todo: Array = []
+	for it in get_tree().get_nodes_in_group("interactables"):
+		if it.is_inside_tree() and (str(it.kind) == "discover" or str(it.kind) == "chat") and str(it.explore_id) != "":
+			todo.append(it)
+	var done := 0
+	var shots := 0
+	while not todo.is_empty():
+		var from: Vector2 = Game.player.global_position
+		todo.sort_custom(func(a, b): return a.global_position.distance_to(from) < b.global_position.distance_to(from))
+		var it: Node = todo.pop_front()
+		var id := str(it.explore_id)
+		if not await _walk_to_focus(it, 60.0):
+			_fail("explore: could not get the prompt of %s in %s (player %s, target %s)" % [id, level_id,
+				Game.player.global_position, it.global_position])
+			continue
+		await _tap(KEY_E)
+		if not await _until(func(): return Game.busy, 3.0):
+			_fail("explore: E did not open " + id)
+			continue
+		if shots < 3:
+			shots += 1
+			await _wait(0.8)
+			await _shoot("explore_" + id.replace(".", "_"))
+		await _drain_interaction(id)
+		if not Explore.is_found(id):
+			_fail("explore: %s was not recorded as found" % id)
+		done += 1
+		await _wait(0.45)
+	var c: Dictionary = Explore.counts(level_id)
+	print("INPUTPLAY explored %d finds in %s (Explore counts %s/%s, history %s)" % [done, level_id,
+		c.get("found", 0), c.get("total", 0), Explore.history_counts()])
+
+
+## Space through whatever the interaction opened (find pages, history cards, chat lines) until it is over.
+func _drain_interaction(id: String) -> void:
+	var t := 0.0
+	while Game.busy and t < 90.0:
+		await _tap(KEY_SPACE)
+		await _wait(0.35)
+		t += 0.45
+	if Game.busy:
+		_fail("explore: interaction %s never finished" % id)
+
+
 # ------------------------------------------------------------------ walking (held keys, like a player)
 func _walk_to_focus(it: Node, timeout := 45.0) -> bool:
 	var t := 0.0
 	var stuck := 0.0
-	var detour := 0.0
-	var detour_key := KEY_W
 	var last := Vector2.INF
+	var replans := 0
+	var p: Node2D = Game.player
+	if p == null:
+		return false
+	# oblique levels: route around props like a player would (grid BFS over the walkable area)
+	var path: Array = [] if str(p.mode) == "side" else _plan_path(p.global_position, it.global_position + Vector2(0, 3))
 	while t < timeout:
 		_hold(KEY_SHIFT, true)                # run
 		if Game._focus == it:
 			break
-		var p: Node2D = Game.player
+		p = Game.player
 		if p == null:
 			break
-		var side := -1.0 if p.global_position.x < it.global_position.x else 1.0
-		var goal: Vector2 = it.global_position + Vector2(10.0 * side, 3.0)
+		while not path.is_empty() and p.global_position.distance_to(path[0]) < 3.0:
+			path.pop_front()
+		var goal: Vector2
+		if not path.is_empty():
+			goal = path[0]
+		else:
+			var side := -1.0 if p.global_position.x < it.global_position.x else 1.0
+			goal = it.global_position + Vector2(10.0 * side, 3.0)
+			if p.global_position.distance_to(goal) < 5.0 and Game._focus != it:
+				goal = it.global_position + Vector2(0, 2)   # a neighbouring find is nearer: stand right on this one
 		var d := goal - p.global_position
 		var want := {}
-		if absf(d.x) > 2.0:
+		if absf(d.x) > 1.5:
 			want[KEY_D if d.x > 0.0 else KEY_A] = true
-		if str(p.mode) != "side":
-			if detour > 0.0:
-				want[detour_key] = true
-				detour -= get_physics_process_delta_time()
-			elif absf(d.y) > 2.0:
-				want[KEY_S if d.y > 0.0 else KEY_W] = true
+		if str(p.mode) != "side" and absf(d.y) > 1.5:
+			want[KEY_S if d.y > 0.0 else KEY_W] = true
 		for k in [KEY_A, KEY_D, KEY_W, KEY_S]:
 			_hold(k, want.has(k))
 		await get_tree().physics_frame
 		t += get_physics_process_delta_time()
 		if not want.is_empty() and p.global_position.distance_to(last) < 0.02:
 			stuck += get_physics_process_delta_time()
-			if stuck > 0.35:                  # blocked by a prop: step around it
-				detour = 0.7
-				detour_key = KEY_S if detour_key == KEY_W else KEY_W
+			if stuck > 0.5 and replans < 6 and str(p.mode) != "side":
+				replans += 1
 				stuck = 0.0
+				path = _plan_path(p.global_position, it.global_position + Vector2(0, 3))
 		else:
 			stuck = 0.0
 		last = p.global_position
 	_release_all()
 	await _frames(4)
 	return Game._focus == it
+
+
+## Waypoints (world px) from `from` to the free cell nearest `to`: 4-px grid over the level's walkable polygon minus
+## every prop collision polygon inflated by the player's radius, 8-neighbour BFS. Falls back to [to].
+func _plan_path(from: Vector2, to: Vector2) -> Array:
+	var lvl = Game.level
+	var m = lvl.get("manifest") if lvl else null
+	if not (m is Dictionary):
+		return [to]
+	var walk: Array = m.get("walkable", [])
+	if walk.size() < 3:
+		return [to]
+	var poly := PackedVector2Array()
+	for q in walk:
+		poly.append(Vector2(float(q[0]), float(q[1])))
+	var blocks: Array = []
+	for pr in m.get("props", []):
+		var c = pr.get("collision", []) if pr is Dictionary else []
+		if c is Array and c.size() >= 3:
+			var pp := PackedVector2Array()
+			for q in c:
+				pp.append(Vector2(float(q[0]), float(q[1])))
+			for inflated in Geometry2D.offset_polygon(pp, 5.0):
+				blocks.append(inflated)
+	var r := Rect2(poly[0], Vector2.ZERO)
+	for q in poly:
+		r = r.expand(q)
+	var cs := 4.0
+	var w := int(r.size.x / cs) + 1
+	var h := int(r.size.y / cs) + 1
+	var free := PackedByteArray()
+	free.resize(w * h)
+	for gy in h:
+		for gx in w:
+			var pt := r.position + (Vector2(gx, gy) + Vector2(0.5, 0.5)) * cs
+			var ok := Geometry2D.is_point_in_polygon(pt, poly)
+			if ok:
+				for b in blocks:
+					if Geometry2D.is_point_in_polygon(pt, b):
+						ok = false
+						break
+			free[gy * w + gx] = 1 if ok else 0
+	var start := Vector2i(clampi(int((from.x - r.position.x) / cs), 0, w - 1), clampi(int((from.y - r.position.y) / cs), 0, h - 1))
+	var goal := Vector2i(clampi(int((to.x - r.position.x) / cs), 0, w - 1), clampi(int((to.y - r.position.y) / cs), 0, h - 1))
+	if free[goal.y * w + goal.x] == 0:
+		var best := goal
+		var bd := 1e9
+		for gy in h:
+			for gx in w:
+				if free[gy * w + gx] == 1:
+					var dd := Vector2(gx - goal.x, (gy - goal.y) * 1.6).length()
+					if dd < bd:
+						bd = dd
+						best = Vector2i(gx, gy)
+		goal = best
+	var prev := {start: start}
+	var queue: Array = [start]
+	var head := 0
+	var dirs := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+		Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]
+	while head < queue.size():
+		var cur: Vector2i = queue[head]
+		head += 1
+		if cur == goal:
+			break
+		for dv in dirs:
+			var n: Vector2i = cur + dv
+			if n.x < 0 or n.y < 0 or n.x >= w or n.y >= h or prev.has(n) or free[n.y * w + n.x] == 0:
+				continue
+			prev[n] = cur
+			queue.append(n)
+	if not prev.has(goal):
+		return [to]
+	var path: Array = []
+	var c2: Vector2i = goal
+	while c2 != start:
+		path.push_front(r.position + (Vector2(c2) + Vector2(0.5, 0.5)) * cs)
+		c2 = prev[c2]
+	return path
 
 
 func _gameplay_ready() -> bool:

@@ -16,23 +16,55 @@ py -3 -P tools/pixelgen/<generator>.py                                         #
 Never run two `--import` passes at the same time on purpose; if an import fails because another process is
 writing files, just run it again. Never delete `.godot/`.
 
-## 2. Rendering architecture (LOCKED)
+## 2. Rendering architecture (round 2: smooth hi-res world path)
 ```
-Main (Node, scripts/core/main.gd)            scenes/main/Main.tscn — the only main scene
- ├─ WorldView (Control, full rect, clip)     scripts/render/pixel_view.gd
- │   └─ Display (TextureRect)                shows the world viewport texture, nearest, scale ×3, sub-pixel offset
- ├─ World (SubViewport 642×362)              world renders at 640×360 + 1 px margin; 2D and 3D both live here
- │   ├─ LevelRoot (Node)                     current level PackedScene is instanced here
- │   ├─ Camera (Camera2D, scripts/render/world_camera.gd)   integer position; fraction → Display offset
- │   └─ Post (CanvasLayer 100) / Grade (ColorRect, assets/shaders/post_grade.gdshader)  grading, palette snap, grain
- ├─ UI (CanvasLayer 10)                      1920×1080 canvas (stretch canvas_items/keep) — HD UI scenes
- └─ Overlay (CanvasLayer 50)                 fades, letterbox bars, subtitles
+Main (Node, main.gd)
+ ├─ World (SubViewport)        hi-res: (640+2)k x (360+2)k, transparent, snap_2d_transforms OFF, vertices ON
+ │   ├─ LevelRoot              levels / 2D cinematics / the 3D hall
+ │   ├─ Camera (world_camera)  zoom = k, position = drawn - (1,1)   (1 world px overscan margin)
+ │   └─ Post/Grade (ColorRect) in-viewport post: low-res path only (hidden in hi-res)
+ ├─ Graded (SubViewport)       hi-res only: GradeStage (TextureRect = World texture, grade material, from_texture)
+ ├─ WorldView/Display          shows Graded (hi-res) or World (low-res) at canvas -3,-3, size 1926x1086
+ ├─ UI (CanvasLayer 10), Overlay (CanvasLayer 5)   unchanged
 ```
-* `project.godot`: window 1920×1080, `stretch/mode=canvas_items`, `aspect=keep`, default texture filter Nearest.
-* Logical world pixel → screen: `screen = (world - camera_topleft) * 3` in UI canvas coordinates
-  (`Game.world_to_ui(pos)` does this, including the sub-pixel offset).
-* 3D levels (Mode C) are Node3D scenes instanced into the same `LevelRoot`; they own a `Camera3D` (current) and
-  their own 3D post-process (full-screen quad, depth/normal outline + palette snap). Their 2D Camera is disabled.
+* **k = `Game.view.world_scale`** = round(3 × window content scale) when that is an integer and the stretch offset
+  is whole (1080p → 3, 1440p → 4, 2160p → 6, 720p → 2): the world maps **1:1 onto physical pixels**. Other sizes:
+  k = floor(3 × scale), stretched by the canvas (old behaviour). Re-evaluated on every window resize.
+* **Camera**: `pos` continuous top-left (world px); `drawn` = `pos` rounded to 1/k world px; everything that is
+  positioned by the render code lands on whole viewport pixels → camera, parallax and actors move in **single
+  screen pixels**, texels stay crisp k×k blocks. `Game.world_to_ui()` unchanged (uses `drawn`).
+* **Snapping**: Godot's `snap_2d_transforms_to_pixel` snaps in *world units* (verified by
+  `camera_snap_probe`), so it is **off** in the hi-res path; `snap_2d_vertices_to_pixel` stays on. Free-moving
+  nodes are rasterised on the nearest viewport pixel.
+* **Low-res path** (any Node3D in LevelRoot, e.g. the Great Hall; also legacy `--capture-world` runs, see below):
+  642×362, zoom 1, pixel-locked gameplay camera, sub-pixel remainder of cinematic moves and of the hall's lens
+  shift via `PixelView.set_fraction` — identical to the round-1 pipeline.
+* **Post** (`post_grade.gdshader`): palette snap + 4×4 Bayer, grade, vignette dither and grain are evaluated per
+  world texel (`px_scale` = k, `dither_origin` = camera in viewport px). The dither threshold comes from the
+  **texel code** that opaque sprites write into the framebuffer alpha (`pixel_sprite.gdshader`, 16 levels in
+  0.03..0.87): the dither sticks to each layer's/actor's own texels → no dither crawl on parallax layers during
+  pans, no 1-px slivers on actors between world pixels. Pixels without a code (alpha ≤ 0.02 or ≥ 0.97: other
+  materials, translucent overlays over nothing, empty background) fall back to a playfield-anchored Bayer.
+  `hint_screen_texture` copies force alpha = 1 (verified by `camera_alpha_probe`), hence the second stage.
+* **World sprite materials** (assigned by PixelView to every Sprite2D/AnimatedSprite2D entering the World without
+  a material of its own; layer_stack assigns them with plane-consistent `dither_anchor`): opaque binary-alpha
+  textures → coded material (`TexelLight.coded_material()`); translucent lit sprites → per-texel lighting only.
+  Coded sprites are watched every frame and fall back to normal blending while their effective modulate alpha
+  < 1, so fades keep working. A node that brings its own material is never touched.
+* **Followed actor**: `player.gd` interpolates its drawn position between the last two physics states
+  (`get_visual_position()`), the camera chooses its pixel (`draw_pos_for`): it keeps its screen pixel while
+  camera and player move together (TARGET_TOL 1 screen px), keeps its world pixel while standing and never steps
+  back against its walking direction.
+* **Follow model**: dead zone (6×4 px), look-ahead 40 px after 10 px of committed walking direction (own
+  critically damped spring ω = 2.1/s, held when stopping), exact critically damped spring ω = 5.2/s (no
+  overshoot, frame-rate independent). `reduced_motion`: ω ×2, look-ahead ×0.6 (ω ×2.2), dead zone ×0.6.
+  `tween_to` keeps its API (Tween on `pos`, sub-pixel smooth); `release()` / `set_top_left()` stop a running
+  `tween_to` tween.
+* **Screen-space content inside the World** (a CanvasLayer under a level or cinematic laid out for 642×362) is
+  scaled by k automatically (meta `pv_no_autoscale` opts out). `get_viewport().get_visible_rect()` inside the
+  World returns the hi-res size — use `Game.view.world_scale` if a script needs it.
+* Full detail (public APIs, scene.json `decals` / `blend` / `alpha` schema, measurements):
+  `documentation/asset_manifest_parts/render-camera.md`.
 
 ## 3. Level contract
 Level scene = `scenes/levels/<LevelId>.tscn`, root script `scripts/levels/level.gd` (class `Level`):

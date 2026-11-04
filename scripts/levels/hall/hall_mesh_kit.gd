@@ -44,6 +44,24 @@ func quad(bl: Vector3, tl: Vector3, tr: Vector3, br: Vector3, col: Color, em: fl
 	_v(br, n, c, uvs[3], em)
 
 
+## Quad with an explicit UV rectangle (uv0 = top-left, uv1 = bottom-right in texture space); corners clockwise
+## as seen from the front (bl, tl, tr, br).  Used for atlas regions (silhouettes, kiosk display, signs).
+func quad_uv(bl: Vector3, tl: Vector3, tr: Vector3, br: Vector3, col: Color, uv0: Vector2, uv1: Vector2,
+		em: float = 0.0) -> void:
+	var n := -((tl - bl).cross(br - bl)).normalized()
+	var c := col.srgb_to_linear()
+	var a := Vector2(uv0.x, uv1.y)
+	var b := uv0
+	var d := Vector2(uv1.x, uv0.y)
+	var e := uv1
+	_v(bl, n, c, a, em)
+	_v(tl, n, c, b, em)
+	_v(tr, n, c, d, em)
+	_v(bl, n, c, a, em)
+	_v(tr, n, c, d, em)
+	_v(br, n, c, e, em)
+
+
 ## Rectangle face: centre, outward normal, up vector, half width, half height.
 func face(c: Vector3, n: Vector3, up: Vector3, hw: float, hh: float, col: Color, em: float = 0.0,
 		uv_scale: Vector2 = Vector2.ONE) -> void:

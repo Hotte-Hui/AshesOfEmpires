@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/visual/cine_a1m1_harness.gd" id="1_h"]
+
+[node name="CineA1M1Harness" type="Node"]
+process_mode = 3
+script = ExtResource("1_h")
