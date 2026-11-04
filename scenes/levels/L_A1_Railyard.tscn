@@ -1,0 +1,108 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/npc.gd" id="3"]
+
+[node name="L_A1_Railyard" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_A1_Railyard"
+protagonist = "alexei"
+mode = "oblique"
+art_manifest = "res://assets/environments/karsk_railyard/scene.json"
+ambience = "amb_karsk_yard"
+music = "mus_karsk"
+footstep_surface = "gravel"
+grade_preset = "karsk"
+intro_pan = true
+intro_from = Vector2(1100, 0)
+intro_duration = 7.0
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Irina" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "irina"
+hotspot_id = "irina"
+hotspot_offset = Vector2(10, 0)
+face_left = true
+
+[node name="TalkIrina" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "a1_talk_irina"
+kind = "dialogue"
+hotspot_id = "irina"
+npc_id = "irina"
+radius = 34.0
+
+[node name="ChoiceIrina" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "a1_choose"
+kind = "choice"
+hotspot_id = "irina"
+npc_id = "irina"
+radius = 34.0
+
+[node name="Seal" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "a1_inspect_seal"
+kind = "inspect"
+hotspot_id = "seal"
+
+[node name="Timetable" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "a1_inspect_timetable"
+kind = "inspect"
+hotspot_id = "timetable"
+
+[node name="SignalBoard" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "a1_solve_signal"
+kind = "puzzle"
+hotspot_id = "signal_board"
+
+[node name="Ledger" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "a1_inspect_ledger"
+kind = "inspect"
+hotspot_id = "ledger"
+
+[node name="ObsStove" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "observe"
+hotspot_id = "obs_stove"
+observe_key = "obs.karsk.stove"
+
+[node name="ObsPoster" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "observe"
+hotspot_id = "obs_poster"
+observe_key = "obs.karsk.poster"
+
+[node name="ObsFamily" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "observe"
+hotspot_id = "obs_family"
+observe_key = "obs.karsk.family"
+
+[node name="WorkerStove" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "worker_a"
+hotspot_id = "obs_stove"
+hotspot_offset = Vector2(-16, -2)
+look_at_player = false
+
+[node name="Babushka" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "babushka"
+hotspot_id = "obs_family"
+hotspot_offset = Vector2(-12, 0)
+look_at_player = false
+
+[node name="Child" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "child_a"
+hotspot_id = "obs_family"
+hotspot_offset = Vector2(4, 2)
+look_at_player = false

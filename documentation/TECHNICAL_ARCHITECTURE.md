@@ -70,6 +70,7 @@ Level scene = `scenes/levels/<LevelId>.tscn`, root script `scripts/levels/level.
           "alpha": 0.35, "parallax": 0.6} ]
 }
 ```
+* `camera.bounds` is `[x, y, width, height]` (Rect2 convention).
 * All coordinates are **world pixels** of the playfield (parallax 1). `pos` = top-left where the layer sits when
   the camera's top-left is at (0,0). Parallax layer screen x = `pos.x - cam_x * parallax.x`.
   **Required layer width** = `640 + parallax.x * (world_w - 640)` (+ margin); same for height/y.

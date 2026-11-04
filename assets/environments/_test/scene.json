@@ -1,0 +1,175 @@
+{
+ "id": "_test",
+ "palette": "karsk",
+ "world_size": [
+  1280,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1280,
+   360
+  ]
+ },
+ "layers": [
+  {
+   "name": "sky",
+   "file": "sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0,
+    0
+   ],
+   "z": -100,
+   "lit": false
+  },
+  {
+   "name": "far",
+   "file": "far.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.2,
+    0
+   ],
+   "z": -90,
+   "normal": true
+  },
+  {
+   "name": "mid",
+   "file": "mid.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.5,
+    0
+   ],
+   "z": -80,
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "ground",
+   "file": "ground.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -10,
+   "normal": true
+  },
+  {
+   "name": "fg",
+   "file": "fg.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.3,
+    1
+   ],
+   "z": 60,
+   "lit": false
+  }
+ ],
+ "props": [
+  {
+   "name": "crate",
+   "file": "props/crate.png",
+   "pos": [
+    400,
+    290
+   ],
+   "base_y": 314,
+   "collision": [
+    [
+     402,
+     306
+    ],
+    [
+     426,
+     306
+    ],
+    [
+     426,
+     314
+    ],
+    [
+     402,
+     314
+    ]
+   ]
+  }
+ ],
+ "walkable": [
+  [
+   0,
+   250
+  ],
+  [
+   1280,
+   250
+  ],
+  [
+   1280,
+   352
+  ],
+  [
+   0,
+   352
+  ]
+ ],
+ "spawns": {
+  "SP_Test": [
+   200,
+   320
+  ]
+ },
+ "hotspots": {
+  "crate": [
+   414,
+   316
+  ]
+ },
+ "lights": [
+  {
+   "pos": [
+    430,
+    290
+   ],
+   "color": "#F0C487",
+   "energy": 1.3,
+   "radius": 110,
+   "flicker": 0.15,
+   "height": 30
+  }
+ ],
+ "fx": [
+  {
+   "type": "snow",
+   "density": 0.7
+  },
+  {
+   "type": "fog_band",
+   "y": 236,
+   "height": 36,
+   "color": "#AFC1AA",
+   "alpha": 0.4,
+   "parallax": 0.7
+  }
+ ]
+}

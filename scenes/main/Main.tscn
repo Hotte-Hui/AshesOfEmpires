@@ -1,3 +1,69 @@
-[gd_scene format=3]
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/main.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/render/pixel_view.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/render/world_camera.gd" id="3"]
+[ext_resource type="Shader" path="res://assets/shaders/post_grade.gdshader" id="4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_grade"]
+shader = ExtResource("4")
 
 [node name="Main" type="Node"]
+process_mode = 3
+script = ExtResource("1")
+
+[node name="World" type="SubViewport" parent="."]
+process_mode = 1
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+audio_listener_enable_3d = true
+size = Vector2i(642, 362)
+render_target_update_mode = 4
+
+[node name="LevelRoot" type="Node" parent="World"]
+
+[node name="Camera" type="Camera2D" parent="World"]
+process_priority = -10
+anchor_mode = 0
+script = ExtResource("3")
+
+[node name="Post" type="CanvasLayer" parent="World"]
+layer = 100
+
+[node name="Grade" type="ColorRect" parent="World/Post"]
+material = SubResource("ShaderMaterial_grade")
+offset_right = 642.0
+offset_bottom = 362.0
+mouse_filter = 2
+
+[node name="WorldView" type="Control" parent="."]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2")
+
+[node name="Display" type="TextureRect" parent="WorldView"]
+texture_filter = 1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 1923.0
+offset_bottom = 1083.0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 10
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 5

@@ -1,0 +1,85 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/npc.gd" id="3"]
+
+[node name="L_M1_Archive" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_M1_Archive"
+protagonist = "konrad"
+mode = "side"
+art_manifest = "res://assets/environments/berlin_archive/scene.json"
+ambience = "amb_berlin_archive"
+music = "mus_berlin"
+footstep_surface = "wood"
+grade_preset = "archive"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Emil" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "emil"
+hotspot_id = "emil"
+face_left = true
+
+[node name="Clerk" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "clerk"
+hotspot_id = "plan_a"
+hotspot_offset = Vector2(150, 0)
+look_at_player = false
+wander = 60.0
+
+[node name="PlanA" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "m1_inspect_plan_a"
+kind = "inspect"
+hotspot_id = "plan_a"
+
+[node name="PlanB" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "m1_inspect_plan_b"
+kind = "inspect"
+hotspot_id = "plan_b"
+
+[node name="Overlay" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "m1_align_plans"
+kind = "puzzle"
+hotspot_id = "overlay_table"
+
+[node name="TalkEmil" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "m1_talk_emil"
+kind = "dialogue"
+hotspot_id = "emil"
+npc_id = "emil"
+radius = 40.0
+
+[node name="ChoiceEmil" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "m1_choose"
+kind = "choice"
+hotspot_id = "emil"
+npc_id = "emil"
+radius = 40.0
+
+[node name="ObsWindow" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "observe"
+hotspot_id = "obs_window"
+observe_key = "obs.berlin.window"
+
+[node name="ObsNotice" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "observe"
+hotspot_id = "obs_notice"
+observe_key = "obs.berlin.notice"
+
+[node name="ObsPhoto" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "observe"
+hotspot_id = "obs_photo"
+observe_key = "obs.berlin.photo"
