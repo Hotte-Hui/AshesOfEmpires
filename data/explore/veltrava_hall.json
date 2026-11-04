@@ -1,0 +1,122 @@
+{
+ "area": "veltrava",
+ "doc": "documentation/C3_DESIGN.md §4.2/§6, TECHNICAL_ARCHITECTURE §12.1 — optional finds and chats in the Palais der Kommission (Konrad). Texts: data/locale/de_explore_veltrava.json. Hotspots exp_<name> in assets/environments/veltrava_hall/scene.json. Order = position along the floor (x).",
+ "entries": [
+  {
+   "id": "veltrava.hall.flags",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.flags.title",
+   "text_key": "explore.veltrava.hall.flags.text",
+   "prompt_key": "explore.veltrava.hall.flags.prompt"
+  },
+  {
+   "id": "veltrava.hall.cloakroom",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.cloakroom.title",
+   "text_key": "explore.veltrava.hall.cloakroom.text",
+   "prompt_key": "explore.veltrava.hall.cloakroom.prompt"
+  },
+  {
+   "id": "veltrava.hall.photos",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.photos.title",
+   "text_key": "explore.veltrava.hall.photos.text",
+   "prompt_key": "explore.veltrava.hall.photos.prompt"
+  },
+  {
+   "id": "veltrava.hall.chat_journalist",
+   "kind": "chat",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.chat_journalist.title",
+   "text_key": "explore.veltrava.hall.chat_journalist.text",
+   "prompt_key": "explore.veltrava.hall.chat_journalist.prompt",
+   "lines": [
+    {"speaker": "journalist", "key": "explore.veltrava.hall.chat_journalist.l1", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.veltrava.hall.chat_journalist.l2", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.hall.chat_journalist.l3", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.veltrava.hall.chat_journalist.l4", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.hall.chat_journalist.l5", "expr": "determined"},
+    {"speaker": "konrad", "key": "explore.veltrava.hall.chat_journalist.l6", "expr": "concerned"},
+    {"speaker": "journalist", "key": "explore.veltrava.hall.chat_journalist.l7", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "veltrava.hall.chandelier",
+   "kind": "easter_egg",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.chandelier.title",
+   "text_key": "explore.veltrava.hall.chandelier.text",
+   "prompt_key": "explore.veltrava.hall.chandelier.prompt"
+  },
+  {
+   "id": "veltrava.hall.buffet",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.buffet.title",
+   "text_key": "explore.veltrava.hall.buffet.text",
+   "prompt_key": "explore.veltrava.hall.buffet.prompt"
+  },
+  {
+   "id": "veltrava.hall.window",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.window.title",
+   "text_key": "explore.veltrava.hall.window.text",
+   "prompt_key": "explore.veltrava.hall.window.prompt"
+  },
+  {
+   "id": "veltrava.hall.evac_plan",
+   "kind": "secret",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.evac_plan.title",
+   "text_key": "explore.veltrava.hall.evac_plan.text",
+   "prompt_key": "explore.veltrava.hall.evac_plan.prompt"
+  },
+  {
+   "id": "veltrava.hall.treaty_shelf",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.treaty_shelf.title",
+   "text_key": "explore.veltrava.hall.treaty_shelf.text",
+   "prompt_key": "explore.veltrava.hall.treaty_shelf.prompt",
+   "history": ["hist.soviet.handover_1940"]
+  },
+  {
+   "id": "veltrava.hall.chat_typist",
+   "kind": "chat",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.chat_typist.title",
+   "text_key": "explore.veltrava.hall.chat_typist.text",
+   "prompt_key": "explore.veltrava.hall.chat_typist.prompt",
+   "lines": [
+    {"speaker": "typist", "key": "explore.veltrava.hall.chat_typist.l1", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.veltrava.hall.chat_typist.l2", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.hall.chat_typist.l3", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.hall.chat_typist.l4", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.veltrava.hall.chat_typist.l5", "expr": "surprised"},
+    {"speaker": "typist", "key": "explore.veltrava.hall.chat_typist.l6", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.hall.chat_typist.l7", "expr": "concerned"}
+   ]
+  },
+  {
+   "id": "veltrava.hall.mimeograph",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.mimeograph.title",
+   "text_key": "explore.veltrava.hall.mimeograph.text",
+   "prompt_key": "explore.veltrava.hall.mimeograph.prompt"
+  },
+  {
+   "id": "veltrava.hall.headsets",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.headsets.title",
+   "text_key": "explore.veltrava.hall.headsets.text",
+   "prompt_key": "explore.veltrava.hall.headsets.prompt",
+   "history": ["hist.reich.nuremberg_interpreters"]
+  }
+ ]
+}
