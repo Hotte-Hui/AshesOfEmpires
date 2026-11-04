@@ -1,15 +1,19 @@
 {
- "strings": {
-  "ui.prompt.inspect": "Untersuchen",
-  "ui.prompt.dialogue": "Sprechen",
-  "ui.prompt.puzzle": "Benutzen",
-  "ui.prompt.choice": "Entscheiden",
-  "ui.prompt.observe": "Ansehen",
-  "ui.toast.evidence": "Neuer Beweis: {name}",
-  "ui.load_failed": "Der Spielstand konnte nicht geladen werden.",
-  "obs.test.crate.prompt": "Kiste ansehen",
-  "obs.test.crate.text": "Eine leere Kiste. Testobjekt.",
-  "intro.disclaimer.title": "Ein Wort vorab",
-  "intro.disclaimer.text": "Dieses Spiel erzählt eine fiktive alternative Geschichte. Es behauptet nicht, wie Europa 1964 tatsächlich war. Es verurteilt die Verbrechen der nationalsozialistischen Diktatur und die Unterdrückung im sowjetischen System – ohne sie gleichzusetzen – und erzählt von Menschen, die unter ihnen leben."
- }
+  "strings": {
+    "ui.prompt.inspect": "Untersuchen",
+    "ui.prompt.dialogue": "Sprechen",
+    "ui.prompt.puzzle": "Benutzen",
+    "ui.prompt.choice": "Entscheiden",
+    "ui.prompt.observe": "Ansehen",
+    "ui.toast.evidence": "Neuer Beweis: {name}",
+    "ui.load_failed": "Der Spielstand konnte nicht geladen werden.",
+    "obs.test.crate.prompt": "Kiste ansehen",
+    "obs.test.crate.text": "Eine leere Kiste. Testobjekt.",
+    "intro.disclaimer.title": "Ein Wort vorab",
+    "intro.disclaimer.text": "Dieses Spiel erzählt eine fiktive alternative Geschichte. Es behauptet nicht, wie Europa 1964 tatsächlich war. Es verurteilt die Verbrechen der nationalsozialistischen Diktatur und die Unterdrückung im sowjetischen System – ohne sie gleichzusetzen – und erzählt von Menschen, die unter ihnen leben.",
+    "ui.prompt.discover": "Erkunden",
+    "ui.prompt.chat": "Sprechen",
+    "ui.toast.discovery": "Entdeckt: {name} ({n}/{total})",
+    "ui.toast.history": "Historischer Hintergrund: {name}"
+  }
 }

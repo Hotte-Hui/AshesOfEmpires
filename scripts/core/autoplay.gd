@@ -34,6 +34,8 @@ func run() -> void:
 	Game.auto_choices = choices
 	Game.auto_skip = skip
 	Story.new_game()
+	if Explore.has_method("reset"):
+		Explore.reset()
 	await Game.goto_level(Game._story_scene(), "", false)
 	await _shoot("start")
 	var saved_snapshot := ""

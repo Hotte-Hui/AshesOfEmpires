@@ -189,3 +189,94 @@ These rules were found by the real-input playthrough (`--inputplay`) and are bin
 |---|---|---|
 | `scripts/core/autoplay.gd` | the whole slice through the Story API, all gates honoured, save/load mid-run, all 4 branch combinations, cinematics watched or skipped | `godot --headless --path . -- --autoplay=<a1>,<m1> [--autoplay-skip] [--autoplay-shots=DIR]` |
 | `scripts/core/inputplay.gd` | the whole slice through **synthetic key presses only**: menu, disclaimer, intro skip, journal, pause, walking, every interaction, both puzzle UIs (one wrong attempt each), choices by arrow keys and number keys, cinematics, end card, "Fortsetzen" | `godot --path . -- --inputplay=<a1>,<m1> [--inputplay-skip] [--inputplay-shots=DIR]` |
+
+## 12. Exploration layer, symbols & expansion round 2 (contract, 2026-11-04 evening)
+Goal of this round (user request): ~10 minutes of high-quality content; better characters and faces; more
+detail and life (busier streets); a smoother camera; much more to explore (details, animations, effects,
+hiding places, easter eggs, real post-war historical findings about the Nazi state and the Soviet Union,
+e.g. in a library); softer protagonist transitions in story and animation; real regime insignia where the
+symbolism matters (with a switch).
+
+### 12.1 Exploration data (`Explore` autoload, `scripts/core/explore.gd`)
+Optional content NEVER touches the canonical `Story` state. Files in `data/explore/` (one owner per file):
+```json
+{ "area": "karsk",
+  "entries": [
+    { "id": "karsk.cat",                 "kind": "detail|secret|easter_egg|chat",
+      "level": "L_A1_Railyard",          "title_key": "explore.karsk.cat.title",
+      "text_key": "explore.karsk.cat.text",          "prompt_key": "explore.karsk.cat.prompt",
+      "image": "res://assets/explore/karsk/cat.png", "history": ["hist.soviet.gulag"],
+      "lines": [ {"speaker": "vendor", "key": "explore.karsk.vendor.l1", "expr": "neutral"} ] } ] }
+```
+`image` (optional) = pixel-art close-up ≤ 320×200, shown ×3. `history` (optional) = real-history cards unlocked
+by this find. `lines` only for kind `chat` (speaker = character id; `alexei`/`konrad` = player).
+History files `data/explore/history_reich.json` / `history_soviet.json`:
+`{"side": "reich", "cards": [{"id", "side", "title_key", "text_key", "year": "1947", "sources": [{"label", "url"}]}]}`.
+Strings: `data/locale/de_explore_<area>.json`, `de_history_<side>.json` (format `{"locale","area","strings":{}}`).
+API (keep): `find(id) -> {ok,new,entry,cards_new}`, `is_found`, `entry`, `card`, `counts(area_or_level)`,
+`history_counts()`, `chat_lines(id)`, `prompt_for(id)`, `state()/restore()/reset()`, signals `found`,
+`history_unlocked`, `state_changed`. Saved in the save file's `extra.explore`.
+Interactables: `kind = "discover"` or `"chat"` with `explore_id`; Game presents them (`_do_discover` opens
+`ui.discovery.open(id, cards_new)` and awaits `closed`; `_do_chat` speaks `lines` via the DialogueBox).
+
+### 12.2 Hotspot names (art ↔ content contract)
+Exploration hotspots come from `<env>/scene.json` (art owner) or `<env>/explore_hotspots.json` (content owner,
+merged by `Level`, scene.json wins on name clashes). Interactive ambient life is declared in scene.json
+`"actors": [{"scene": "res://…tscn", "pos": [x,y], "props": {}}]` (self-contained scenes, instanced into the
+y-sorted Playfield). The art owners MUST provide these named hotspots (position = where the player stands to
+look at the thing, inside the walkable area); content owners rely on exactly these names:
+- **Karsk** (`karsk_railyard/scene.json`): `exp_cat`, `exp_crows`, `exp_snowman`, `exp_stash` (hidden),
+  `exp_loudspeaker`, `exp_newspaper`, `exp_mitten`, `exp_kontora_shelf`, `exp_grain`, `exp_cooling_towers`,
+  `exp_barrack`, `exp_wagon_chalk`, `exp_banner`, `exp_workers`, `exp_stall`, `exp_stairs_under` (hidden),
+  `exp_distant_train`.
+- **Berlin** (`berlin_archive/scene.json`, incl. the new library/reading room): `exp_lib_shelf_1` … `exp_lib_shelf_5`,
+  `exp_lib_hidden` (hidden), `exp_card_catalogue`, `exp_librarian_desk`, `exp_reading_table`, `exp_globe`,
+  `exp_poster_aufbau`, `exp_photo`, `exp_master_plan`, `exp_pneumatic_tube`, `exp_radio`, `exp_mouse`,
+  `exp_pigeons`, `exp_coat_stand`, `exp_porter`, `exp_clock`, `exp_heater`; spawn **`SP_M1_Arrival`** just inside
+  the stairwell door (Konrad's new entrance; `SP_M1_Office` stays).
+
+### 12.3 Real-history cards (fixed ids → placement)
+| id | topic (post-war findings / disclosures) | found at |
+|---|---|---|
+| `hist.reich.germania` | Speer's "Welthauptstadt Germania" plans and the real Große Halle design | Berlin `exp_poster_aufbau` |
+| `hist.reich.evictions` | GBI evictions of Jewish Berliners for Germania; the sanitised office chronicle | Berlin `exp_photo` |
+| `hist.reich.schwerbelastungskoerper` | 1941 load-test body in Tempelhof and what it proved | Berlin `exp_master_plan` |
+| `hist.reich.wannsee` | Wannsee protocol, the copy found in 1947 | Berlin `exp_lib_shelf_1` |
+| `hist.reich.reichsbahn` | Deportation trains, Reichsbahn timetable orders as evidence | Berlin `exp_lib_shelf_2` |
+| `hist.reich.generalplan_ost` | Generalplan Ost planning documents | Berlin `exp_lib_shelf_3` |
+| `hist.reich.t4` | "Aktion T4" murders of patients | Berlin `exp_lib_shelf_4` |
+| `hist.reich.forced_labor` | Forced labour; compensation only from 2000 | Berlin `exp_lib_shelf_5` |
+| `hist.soviet.secret_protocol` | Secret protocol of Aug 1939, denied until 1989 | Karsk `exp_kontora_shelf` |
+| `hist.soviet.katyn` | Katyn massacre, Soviet cover-up, admission 1990 | Karsk `exp_newspaper` |
+| `hist.soviet.deportations` | Deportations of whole peoples in freight trains | Karsk `exp_wagon_chalk` |
+| `hist.soviet.novocherkassk` | Novocherkassk 1962: strike, shootings, cover-up | Karsk `exp_workers` (chat) |
+| `hist.soviet.kyshtym` | Kyshtym/Mayak 1957 disaster and closed cities | Karsk `exp_cooling_towers` |
+| `hist.soviet.gulag` | Gulag figures from the opened archives | Karsk `exp_barrack` |
+| `hist.soviet.great_terror` | Great Terror 1937–38 (Order No. 00447) | Karsk `exp_banner` |
+| `hist.soviet.holodomor` | Famine 1932–33 and its concealment | Karsk `exp_grain` |
+Cards are real-world history, presented OUTSIDE the fiction ("REALE GESCHICHTE"), sober, sourced, 450–800
+characters, never celebrated (no fanfare, no "achievement" language; neutral paper sound).
+
+### 12.4 Historical insignia switch
+Setting `historical_symbols` (default **on**). Assets showing real insignia exist as a neutral/fictional file
+`name.png` plus `name_hist.png`; every loader resolves paths through `Symbols.pick(path)`
+(`scripts/core/symbols.gd`). Insignia appear only as in-world iconography of the regimes (Great Hall banners,
+eagle, official stamps, posters, Soviet banner/locomotive/stamps) inside the critical narrative (StGB §86 Abs. 4
+social-adequacy clause) — never in menus, the UI chrome, rewards or as decoration of the player's side.
+Neutral variants: Berlin → the fictional "Reichssiegel" / a plain eagle without swastika; Karsk → a fictional
+gear-and-wheat emblem.
+
+### 12.5 Cinematic scenes (transitions)
+`scenes/cinematics/<name>/<Name>.tscn`, root `Node2D` script with `signal finished`, `configure(ctx)` (ctx =
+`{"choices": Story.choice_history(), "flags": {…}, "symbols": bool}`), `play()`, `skip()` (idempotent; `finished`
+exactly once). Rendered in the world viewport under `Game.level_root`; camera via `Game.camera`
+(`set_top_left`, `tween_to`, `release`); subtitles via `Game.subtitle(text, dur)`; audio via `Audio`.
+
+### 12.6 New characters (ids)
+`librarian` (Berlin), `porter` (Berlin doorman), `vendor` (Karsk tea stall), `worker_b` (Karsk). Chat speakers
+with portraits: `alexei`, `konrad`, `irina`, `emil`, `vendor`, `worker_a`, `babushka`, `librarian`, `porter`.
+
+### 12.7 Content rules for this round
+No glorification; no false equivalence (each card stands on its own facts); easter eggs and jokes never sit
+on atrocity topics; in-world finds speak in the protagonist's voice (Alexei dry and tired, Konrad precise and
+euphemistic at first), history cards in a neutral documentary voice. German first. All generators deterministic.

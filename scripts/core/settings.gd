@@ -11,6 +11,8 @@ const DEFAULTS := {
 	"high_contrast": false, "reduced_motion": false,
 	"pixel_post": 1.0,            # 0..1 strength of palette snap / grain
 	"puzzle_hints": 1,            # 0 off, 1 after 2 fails (default), 2 immediate
+	"historical_symbols": true,   # real regime insignia (swastika, hammer & sickle) in a critical, historical-
+	                              # artistic context (StGB §86 Abs. 4); off = fictional emblems (see Symbols.pick)
 }
 ## action -> default keys (physical keycodes) + joypad buttons
 const ACTIONS := {
@@ -27,10 +29,20 @@ const PAD := {
 }
 
 var values: Dictionary = DEFAULTS.duplicate(true)
+var _runtime_overrides: Dictionary = {}   # forced for this run only (CLI), never written to disk
+var _persisted: Dictionary = {}           # on-disk values of overridden keys
 
 func _ready() -> void:
 	_build_input_map()
 	load_settings()
+	# Test/capture override, never persisted: `-- --symbols=0|1` forces the historical-insignia setting for this
+	# run only (lets several tools capture both variants without touching the player's settings file).
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--symbols="):
+			_runtime_overrides["historical_symbols"] = a.get_slice("=", 1) != "0"
+	for k in _runtime_overrides:
+		_persisted[k] = values.get(k, DEFAULTS.get(k))
+		values[k] = _runtime_overrides[k]
 	apply_all()
 
 func _build_input_map() -> void:
@@ -98,7 +110,8 @@ func apply(key: String) -> void:
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	for k in values:
-		cfg.set_value("settings", k, values[k])
+		# a CLI-forced value (e.g. --symbols=0) is never persisted; the player's own value stays on disk
+		cfg.set_value("settings", k, _persisted[k] if _runtime_overrides.has(k) and _persisted.has(k) else values[k])
 	cfg.save(PATH)
 
 func load_settings() -> void:

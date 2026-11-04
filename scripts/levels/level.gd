@@ -37,8 +37,10 @@ func _ready() -> void:
 		var data = JSON.parse_string(FileAccess.get_file_as_string(art_manifest))
 		if typeof(data) == TYPE_DICTIONARY:
 			manifest = data
+	_merge_explore_hotspots()
 	backdrop.build(manifest, art_manifest.get_base_dir(), playfield, lights, fx)
 	_build_walk_limits()
+	_spawn_actors()
 	_place_hotspot_children()
 	var cm: String = str(manifest.get("canvas_modulate", ""))
 	if cm != "":
@@ -76,6 +78,46 @@ func _build_walk_limits() -> void:
 	cp.polygon = pts
 	body.add_child(cp)
 	add_child(body)
+
+
+## §12: exploration hotspots live in a sibling file owned by the content author, so art (scene.json) and
+## exploration content can change independently: <manifest dir>/explore_hotspots.json =
+## {"hotspots": {"name": [x, y]}, "spawns": {...}}. Names must not collide with scene.json (scene.json wins).
+func _merge_explore_hotspots() -> void:
+	if art_manifest == "":
+		return
+	var path := art_manifest.get_base_dir() + "/explore_hotspots.json"
+	if not FileAccess.file_exists(path):
+		return
+	var extra = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(extra) != TYPE_DICTIONARY:
+		push_warning("Level: cannot parse " + path)
+		return
+	for section in ["hotspots", "spawns"]:
+		var dst: Dictionary = manifest.get(section, {})
+		var src = extra.get(section, {})
+		if src is Dictionary:
+			for k in src:
+				if not dst.has(k):
+					dst[k] = src[k]
+		manifest[section] = dst
+
+
+## §12: interactive ambient actors declared by the art manifest (crows that fly off, a cat, a passing tram…):
+## "actors": [{"scene": "res://…tscn", "pos": [x, y], "props": {property: value}}] → instanced into the
+## y-sorted Playfield. Each actor scene is self-contained (its own script/animation).
+func _spawn_actors() -> void:
+	for a in manifest.get("actors", []):
+		if not (a is Dictionary) or not ResourceLoader.exists(str(a.get("scene", ""))):
+			continue
+		var node: Node = load(str(a["scene"])).instantiate()
+		if node is Node2D:
+			(node as Node2D).position = LayerStack._v2(a.get("pos", [0, 0]))
+		var props = a.get("props", {})
+		if props is Dictionary:
+			for k in props:
+				node.set(k, props[k])
+		playfield.add_child(node)
 
 
 ## Interactables / NPCs with a `hotspot_id` snap to the manifest's hotspot coordinates.

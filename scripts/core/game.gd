@@ -193,6 +193,8 @@ func show_main_menu() -> void:
 func _on_new_game() -> void:
 	if Story.has_method("new_game"):
 		Story.new_game()
+	if Explore.has_method("reset"):
+		Explore.reset()
 	playtime = 0.0
 	_call(ui, "close_all")
 	await _show_disclaimer()
@@ -236,6 +238,8 @@ func _on_loaded_slot(_slot = "") -> void:
 		_pending_spawn_pos = LayerStack._v2(extra["player_pos"])
 	if extra is Dictionary and extra.has("playtime"):
 		playtime = float(extra["playtime"])
+	if Explore.has_method("restore"):
+		Explore.restore(extra.get("explore", {}) if extra is Dictionary else {})
 	await goto_level(_story_scene(), "", true)
 	# A save taken while a transition was still queued: present it now instead of after the next action.
 	if Story.has_method("pending_cinematics") and not Story.pending_cinematics().is_empty():
@@ -259,6 +263,8 @@ func save_extra() -> Dictionary:
 	var d := {"scene": level.level_id if level and level.get("level_id") else _story_scene(), "playtime": playtime}
 	if player and is_instance_valid(player):
 		d["player_pos"] = [player.position.x, player.position.y]
+	if Explore.has_method("state"):
+		d["explore"] = Explore.state()
 	return d
 
 
@@ -443,6 +449,10 @@ func interact(it: Node) -> void:
 			await _do_choice(it)
 		"observe":
 			await _do_observe(it)
+		"discover":
+			await _do_discover(it)
+		"chat":
+			await _do_chat(it)
 	busy = false
 	input_locked = false
 	# The key press that closed the last line/panel must not immediately trigger the next interaction.
@@ -627,6 +637,48 @@ func _do_observe(it: Node) -> void:
 	var speaker: String = player.char_id if player else "alexei"
 	await _speak(speaker, Loc.t(str(it.observe_key) + ".text"), "neutral")
 	_end_speech()
+
+
+## §12 exploration find: Explore records it (never Story); the DiscoveryView presents the find and any
+## real-history cards it unlocks. Falls back to a spoken line when the view is missing.
+func _do_discover(it: Node) -> void:
+	var id := str(it.get("explore_id"))
+	if id == "" or not Explore.has_method("find"):
+		return
+	it.used = true
+	if player:
+		player.play_action("inspect_side")
+	var r: Dictionary = Explore.find(id)
+	var e: Dictionary = r.get("entry", {})
+	var view := _ui("discovery")
+	if view and view.has_method("open"):
+		_call(view, "open", [id, r.get("cards_new", [])])
+		if auto:
+			await get_tree().create_timer(0.3).timeout
+			_call(view, "close")
+		else:
+			await _await_closed(view)
+	else:
+		var speaker: String = player.char_id if player else "alexei"
+		await _speak(speaker, Loc.t(str(e.get("text_key", ""))), "neutral")
+		_end_speech()
+	if r.get("new", false):
+		var c: Dictionary = Explore.counts(str(e.get("level", "")))
+		var fmt := Loc.t("ui.toast.discovery")
+		toast(fmt.format({"name": Loc.t(str(e.get("title_key", ""))), "n": c.get("found", 0), "total": c.get("total", 0)}))
+
+
+## §12 optional conversation: lines come from the Explore entry (speaker, key, expr); NPCs face the player.
+func _do_chat(it: Node) -> void:
+	var id := str(it.get("explore_id"))
+	if id == "" or not Explore.has_method("chat_lines"):
+		return
+	it.used = true
+	for l in Explore.chat_lines(id):
+		if l is Dictionary:
+			await _speak(str(l.get("speaker", "")), Loc.t(str(l.get("key", ""))), str(l.get("expr", "neutral")))
+	_end_speech()
+	Explore.find(id)
 
 
 func _await_closed(node: Node) -> void:

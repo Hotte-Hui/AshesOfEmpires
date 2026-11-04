@@ -22,6 +22,7 @@ Loc="*res://scripts/story/loc.gd"
 Story="*res://scripts/story/story_engine.gd"
 Saves="*res://scripts/core/save_system.gd"
 Audio="*res://scripts/core/audio.gd"
+Explore="*res://scripts/core/explore.gd"
 Game="*res://scripts/core/game.gd"
 
 [display]
