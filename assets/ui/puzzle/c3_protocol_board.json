@@ -1,0 +1,487 @@
+{
+ "puzzle_id": "pz_c3_protocol",
+ "objective": "c3b_solve_protocol",
+ "display_scale": 3,
+ "coords": "art pixels from the top-left of each image ([x, y, w, h]); the UI multiplies by 3",
+ "generator": "tools/pixelgen/gen_ui_c3.py",
+ "date": "2026-11-04",
+ "plan": {
+  "file": "c3_plan.png",
+  "size": [
+   232,
+   160
+  ],
+  "labels": {
+   "title": [
+    10,
+    8,
+    150,
+    10
+   ],
+   "subtitle": [
+    100,
+    9,
+    106,
+    8
+   ],
+   "chair": [
+    129,
+    31,
+    44,
+    8
+   ],
+   "soviet": [
+    178,
+    58,
+    42,
+    20
+   ],
+   "reich": [
+    13,
+    63,
+    63,
+    9
+   ],
+   "observer_se": [
+    160,
+    100,
+    60,
+    15
+   ],
+   "observer_ch": [
+    13,
+    100,
+    70,
+    15
+   ],
+   "secretariat": [
+    98,
+    124,
+    49,
+    8
+   ],
+   "booths": [
+    180,
+    33,
+    40,
+    7
+   ],
+   "legend": [
+    14,
+    148,
+    186,
+    9
+   ]
+  },
+  "tags": {
+   "1": [
+    108,
+    30,
+    9,
+    9
+   ],
+   "2": [
+    167,
+    46,
+    9,
+    9
+   ],
+   "12": [
+    106,
+    114,
+    11,
+    9
+   ]
+  },
+  "seats": [
+   {
+    "mic": 1,
+    "block": "chair",
+    "rect": [
+     119,
+     32,
+     6,
+     6
+    ],
+    "back": "top",
+    "mic_px": [
+     121,
+     41
+    ]
+   },
+   {
+    "mic": 2,
+    "block": "soviet",
+    "rect": [
+     159,
+     48,
+     6,
+     6
+    ],
+    "back": "right",
+    "mic_px": [
+     154,
+     50
+    ]
+   },
+   {
+    "mic": 3,
+    "block": "soviet",
+    "rect": [
+     159,
+     61,
+     6,
+     6
+    ],
+    "back": "right",
+    "mic_px": [
+     154,
+     63
+    ]
+   },
+   {
+    "mic": 4,
+    "block": "soviet",
+    "rect": [
+     159,
+     74,
+     6,
+     6
+    ],
+    "back": "right",
+    "mic_px": [
+     154,
+     76
+    ]
+   },
+   {
+    "mic": 5,
+    "block": "soviet",
+    "rect": [
+     159,
+     87,
+     6,
+     6
+    ],
+    "back": "right",
+    "mic_px": [
+     154,
+     89
+    ]
+   },
+   {
+    "mic": 6,
+    "block": "observer_se",
+    "rect": [
+     151,
+     104,
+     6,
+     6
+    ],
+    "back": "bottom",
+    "mic_px": [
+     153,
+     99
+    ]
+   },
+   {
+    "mic": 7,
+    "block": "observer_ch",
+    "rect": [
+     87,
+     104,
+     6,
+     6
+    ],
+    "back": "bottom",
+    "mic_px": [
+     89,
+     99
+    ]
+   },
+   {
+    "mic": 8,
+    "block": "reich",
+    "rect": [
+     79,
+     87,
+     6,
+     6
+    ],
+    "back": "left",
+    "mic_px": [
+     88,
+     89
+    ]
+   },
+   {
+    "mic": 9,
+    "block": "reich",
+    "rect": [
+     79,
+     74,
+     6,
+     6
+    ],
+    "back": "left",
+    "mic_px": [
+     88,
+     76
+    ]
+   },
+   {
+    "mic": 10,
+    "block": "reich",
+    "rect": [
+     79,
+     61,
+     6,
+     6
+    ],
+    "back": "left",
+    "mic_px": [
+     88,
+     63
+    ]
+   },
+   {
+    "mic": 11,
+    "block": "reich",
+    "rect": [
+     79,
+     48,
+     6,
+     6
+    ],
+    "back": "left",
+    "mic_px": [
+     88,
+     50
+    ]
+   },
+   {
+    "mic": 12,
+    "block": "secretariat",
+    "rect": [
+     119,
+     116,
+     6,
+     6
+    ],
+    "back": "bottom",
+    "mic_px": [
+     121,
+     111
+    ]
+   }
+  ],
+  "tables": {
+   "top": [
+    87,
+    40,
+    70,
+    6
+   ],
+   "left": [
+    87,
+    40,
+    6,
+    62
+   ],
+   "right": [
+    151,
+    40,
+    6,
+    62
+   ],
+   "secretariat": [
+    110,
+    108,
+    25,
+    6
+   ]
+  },
+  "hall": [
+   8,
+   23,
+   216,
+   123
+  ],
+  "numbering": "clockwise from the presidium (1): right arm 2-5 going down, corners 6 (right) and 7 (left), left arm 8-11 going up, secretariat table 12; printed: 1, 2, 12"
+ },
+ "log": {
+  "file": "c3_log.png",
+  "size": [
+   168,
+   160
+  ],
+  "row0": 40,
+  "pitch": 8,
+  "rows": [
+   {
+    "entry": 1,
+    "kind": "a",
+    "y": 40,
+    "h": 8
+   },
+   {
+    "entry": 1,
+    "kind": "b",
+    "y": 48,
+    "h": 8
+   },
+   {
+    "entry": 2,
+    "kind": "a",
+    "y": 56,
+    "h": 8
+   },
+   {
+    "entry": 2,
+    "kind": "b",
+    "y": 64,
+    "h": 8
+   },
+   {
+    "entry": 2,
+    "kind": "b",
+    "y": 72,
+    "h": 8
+   },
+   {
+    "entry": 3,
+    "kind": "a",
+    "y": 80,
+    "h": 8
+   },
+   {
+    "entry": 3,
+    "kind": "b",
+    "y": 88,
+    "h": 8
+   },
+   {
+    "entry": 3,
+    "kind": "n",
+    "y": 96,
+    "h": 8
+   },
+   {
+    "entry": 4,
+    "kind": "a",
+    "y": 104,
+    "h": 8
+   },
+   {
+    "entry": 4,
+    "kind": "b",
+    "y": 112,
+    "h": 8
+   }
+  ],
+  "cols": {
+   "time": 22,
+   "mic": 46,
+   "channel": 60,
+   "remark": 30,
+   "note": 30,
+   "right": 160
+  },
+  "title": [
+   38,
+   4,
+   112,
+   11
+  ],
+  "agenda": [
+   22,
+   17,
+   138,
+   9
+  ],
+  "head": [
+   22,
+   29,
+   138,
+   8
+  ],
+  "para_underline": [
+   66,
+   94,
+   11,
+   1
+  ],
+  "type_advance": 4,
+  "entries": [
+   {
+    "time": "10:02",
+    "mic": 1
+   },
+   {
+    "time": "10:06",
+    "mic": 9
+   },
+   {
+    "time": "10:09",
+    "mic": 12
+   },
+   {
+    "time": "10:11",
+    "mic": 3
+   }
+  ]
+ },
+ "card": {
+  "size": [
+   98,
+   28
+  ],
+  "glyph_box": [
+   5,
+   8,
+   15,
+   15
+  ],
+  "text": [
+   27,
+   5,
+   67,
+   20
+  ],
+  "glyphs": {
+   "chair": "circle",
+   "reich": "square",
+   "soviet": "triangle",
+   "secretariat": "diamond"
+  },
+  "files": {
+   "chair": "c3_card_chair.png",
+   "reich": "c3_card_reich.png",
+   "soviet": "c3_card_soviet.png",
+   "secretariat": "c3_card_secretariat.png"
+  }
+ },
+ "slot": {
+  "file": "c3_slot.png",
+  "size": [
+   98,
+   28
+  ]
+ },
+ "seq_arrow": {
+  "file": "c3_seq_arrow.png",
+  "size": [
+   5,
+   7
+  ]
+ },
+ "solution_check": {
+  "log_order": [
+   "chair",
+   "reich",
+   "secretariat",
+   "soviet"
+  ]
+ },
+ "world_note": "Fictional seating plan and interpreters' booth log of a fictional conference; not a real protocol."
+}

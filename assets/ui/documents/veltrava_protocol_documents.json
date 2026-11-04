@@ -1,0 +1,340 @@
+{
+ "scene": "L_C3_Hall",
+ "palette": "UI archive paper/blue/ink ramps + veltrava slate (commission)",
+ "generator": "tools/pixelgen/gen_ui_c3.py",
+ "date": "2026-11-04",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). In-world lettering in 3x5 / 5x7 pixel capitals; the plan prints only the microphone numbers 1, 2 and 12. All rects are [x, y, w, h] in document pixels. The puzzle board (assets/ui/puzzle/c3_*) uses the same drawing without lettering and sets the words in HD.",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/veltrava_protocol_seating.png",
+   "size": [
+    232,
+    160
+   ],
+   "display_scale": 3,
+   "id": "veltrava_protocol_seating",
+   "alt_key": "doc.c3.seating.alt",
+   "item_id": "ev_c3_seating",
+   "objective": "c3b_inspect_seating",
+   "hotspot": "seating",
+   "title_key": "item.c3_seating.name",
+   "description_key": "item.c3_seating.description",
+   "describes": "Seating plan of the opening session: horseshoe table in the Großer Saal, presidium on top (mic 1), right arm Soviet delegation (first mic printed 2), corner seats observers Sweden (right) and Switzerland (left), left arm Reich delegation, secretariat table at the open end (mic 12). Legend: microphones clockwise from the chair (1).",
+   "marks": {
+    "mic_1": {
+     "rect": [
+      108,
+      30,
+      9,
+      9
+     ],
+     "seat": [
+      119,
+      32,
+      6,
+      6
+     ]
+    },
+    "mic_2": {
+     "rect": [
+      167,
+      46,
+      9,
+      9
+     ],
+     "seat": [
+      159,
+      48,
+      6,
+      6
+     ]
+    },
+    "mic_12": {
+     "rect": [
+      106,
+      114,
+      11,
+      9
+     ],
+     "seat": [
+      119,
+      116,
+      6,
+      6
+     ]
+    },
+    "legend": {
+     "rect": [
+      14,
+      148,
+      186,
+      9
+     ],
+     "text": "MIKROFONE IM UHRZEIGERSINN AB VORSITZ (1)"
+    },
+    "blocks": {
+     "chair": [
+      129,
+      31,
+      44,
+      8
+     ],
+     "soviet": [
+      178,
+      58,
+      42,
+      20
+     ],
+     "reich": [
+      13,
+      63,
+      63,
+      9
+     ],
+     "observer_se": [
+      160,
+      100,
+      60,
+      15
+     ],
+     "observer_ch": [
+      13,
+      100,
+      70,
+      15
+     ],
+     "secretariat": [
+      98,
+      124,
+      49,
+      8
+     ]
+    },
+    "seats": [
+     {
+      "mic": 1,
+      "block": "chair",
+      "rect": [
+       119,
+       32,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 2,
+      "block": "soviet",
+      "rect": [
+       159,
+       48,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 3,
+      "block": "soviet",
+      "rect": [
+       159,
+       61,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 4,
+      "block": "soviet",
+      "rect": [
+       159,
+       74,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 5,
+      "block": "soviet",
+      "rect": [
+       159,
+       87,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 6,
+      "block": "observer_se",
+      "rect": [
+       151,
+       104,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 7,
+      "block": "observer_ch",
+      "rect": [
+       87,
+       104,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 8,
+      "block": "reich",
+      "rect": [
+       79,
+       87,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 9,
+      "block": "reich",
+      "rect": [
+       79,
+       74,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 10,
+      "block": "reich",
+      "rect": [
+       79,
+       61,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 11,
+      "block": "reich",
+      "rect": [
+       79,
+       48,
+       6,
+       6
+      ]
+     },
+     {
+      "mic": 12,
+      "block": "secretariat",
+      "rect": [
+       119,
+       116,
+       6,
+       6
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/veltrava_protocol_booth_log.png",
+   "size": [
+    168,
+    160
+   ],
+   "display_scale": 3,
+   "id": "veltrava_protocol_booth_log",
+   "alt_key": "doc.c3.booth_log.alt",
+   "item_id": "ev_c3_booth_log",
+   "objective": "c3b_inspect_log",
+   "hotspot": "booth_log",
+   "title_key": "item.c3_booth_log.name",
+   "description_key": "item.c3_booth_log.description",
+   "describes": "Elena Weiss' booth log, Kabine 2 (RU-DE), agenda item 4 'Anlage C': 10:02 mic 1 FR, 10:06 mic 9 DE, 10:09 mic 12 FR reads out § 4 (prepared text) with her handwritten margin note 'RU: begleitete Personen - DE: Begleitgut!', 10:11 mic 3 RU.",
+   "marks": {
+    "rows": [
+     {
+      "entry": 1,
+      "kind": "a",
+      "y": 56
+     },
+     {
+      "entry": 1,
+      "kind": "b",
+      "y": 64
+     },
+     {
+      "entry": 2,
+      "kind": "a",
+      "y": 72
+     },
+     {
+      "entry": 2,
+      "kind": "b",
+      "y": 80
+     },
+     {
+      "entry": 2,
+      "kind": "b",
+      "y": 88
+     },
+     {
+      "entry": 3,
+      "kind": "a",
+      "y": 96
+     },
+     {
+      "entry": 3,
+      "kind": "b",
+      "y": 104
+     },
+     {
+      "entry": 3,
+      "kind": "n",
+      "y": 112
+     },
+     {
+      "entry": 3,
+      "kind": "n",
+      "y": 120
+     },
+     {
+      "entry": 4,
+      "kind": "a",
+      "y": 128
+     },
+     {
+      "entry": 4,
+      "kind": "b",
+      "y": 136
+     }
+    ],
+    "entries": [
+     {
+      "time": "10:02",
+      "mic": 1,
+      "channel": "FR → DE/RU"
+     },
+     {
+      "time": "10:06",
+      "mic": 9,
+      "channel": "DE → RU"
+     },
+     {
+      "time": "10:09",
+      "mic": 12,
+      "channel": "FR → DE/RU"
+     },
+     {
+      "time": "10:11",
+      "mic": 3,
+      "channel": "RU → DE"
+     }
+    ],
+    "margin_note": {
+     "entry": 3,
+     "text": "RU: begleitete Personen – DE: Begleitgut!",
+     "medium": "fountain pen"
+    }
+   }
+  }
+ ]
+}
