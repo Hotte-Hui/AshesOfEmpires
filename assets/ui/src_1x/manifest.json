@@ -1,0 +1,632 @@
+[
+ {
+  "path": "assets/ui/frames/panel.png",
+  "size_1x": [
+   18,
+   18
+  ],
+  "scale": 3,
+  "note": "9-patch margin 6 (18 px at x3)"
+ },
+ {
+  "path": "assets/ui/frames/panel_hc.png",
+  "size_1x": [
+   18,
+   18
+  ],
+  "scale": 3,
+  "note": "9-patch margin 6 (18 px at x3)"
+ },
+ {
+  "path": "assets/ui/frames/panel_solid.png",
+  "size_1x": [
+   18,
+   18
+  ],
+  "scale": 3,
+  "note": "9-patch margin 6, opaque"
+ },
+ {
+  "path": "assets/ui/frames/band.png",
+  "size_1x": [
+   72,
+   22
+  ],
+  "scale": 3,
+  "note": "9-patch margins L24 R24 T6 B6 (x3: 72/18)"
+ },
+ {
+  "path": "assets/ui/frames/paper_row.png",
+  "size_1x": [
+   12,
+   8
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T1 R1 B1"
+ },
+ {
+  "path": "assets/ui/frames/plate.png",
+  "size_1x": [
+   14,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margins L5 T3 R3 B3"
+ },
+ {
+  "path": "assets/ui/frames/prompt.png",
+  "size_1x": [
+   10,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/icons/prompt_tail.png",
+  "size_1x": [
+   7,
+   4
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/frames/keycap.png",
+  "size_1x": [
+   12,
+   13
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B5"
+ },
+ {
+  "path": "assets/ui/frames/paper.png",
+  "size_1x": [
+   22,
+   22
+  ],
+  "scale": 3,
+  "note": "9-patch margin 7, content on PAPER #E6DEC2"
+ },
+ {
+  "path": "assets/ui/frames/paper_card.png",
+  "size_1x": [
+   12,
+   12
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/slot.png",
+  "size_1x": [
+   12,
+   12
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/portrait_frame.png",
+  "size_1x": [
+   16,
+   16
+  ],
+  "scale": 3,
+  "note": "9-patch margin 4; centre transparent"
+ },
+ {
+  "path": "assets/ui/frames/button_normal.png",
+  "size_1x": [
+   10,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/button_hover.png",
+  "size_1x": [
+   10,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/button_pressed.png",
+  "size_1x": [
+   10,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/button_disabled.png",
+  "size_1x": [
+   10,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/button_focus.png",
+  "size_1x": [
+   10,
+   10
+  ],
+  "scale": 3,
+  "note": "9-patch margin 3"
+ },
+ {
+  "path": "assets/ui/frames/menu_focus.png",
+  "size_1x": [
+   12,
+   8
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T1 R1 B1"
+ },
+ {
+  "path": "assets/ui/frames/menu_pressed.png",
+  "size_1x": [
+   12,
+   8
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T1 R1 B1"
+ },
+ {
+  "path": "assets/ui/frames/tab_normal.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/ptab_normal.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/tab_hover.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/ptab_hover.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/tab_pressed.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/ptab_pressed.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/tab_focus.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/ptab_focus.png",
+  "size_1x": [
+   16,
+   11
+  ],
+  "scale": 3,
+  "note": "9-patch margins L4 T4 R4 B2"
+ },
+ {
+  "path": "assets/ui/frames/scroll_track.png",
+  "size_1x": [
+   5,
+   8
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2"
+ },
+ {
+  "path": "assets/ui/frames/scroll_grabber.png",
+  "size_1x": [
+   5,
+   8
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2"
+ },
+ {
+  "path": "assets/ui/frames/scroll_grabber_hl.png",
+  "size_1x": [
+   5,
+   8
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2"
+ },
+ {
+  "path": "assets/ui/frames/slider_track.png",
+  "size_1x": [
+   8,
+   5
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2"
+ },
+ {
+  "path": "assets/ui/frames/slider_fill.png",
+  "size_1x": [
+   8,
+   5
+  ],
+  "scale": 3,
+  "note": "9-patch margin 2"
+ },
+ {
+  "path": "assets/ui/icons/slider_grabber.png",
+  "size_1x": [
+   7,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/slider_grabber_hl.png",
+  "size_1x": [
+   7,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/slider_grabber_off.png",
+  "size_1x": [
+   7,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/check_off.png",
+  "size_1x": [
+   11,
+   11
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/check_on.png",
+  "size_1x": [
+   11,
+   11
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/check_off_disabled.png",
+  "size_1x": [
+   11,
+   11
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/check_on_disabled.png",
+  "size_1x": [
+   11,
+   11
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/ornament_diamond.png",
+  "size_1x": [
+   7,
+   7
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/marker_arrow.png",
+  "size_1x": [
+   5,
+   9
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/advance_arrow.png",
+  "size_1x": [
+   9,
+   6
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/arrow_right.png",
+  "size_1x": [
+   6,
+   9
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/arrow_left.png",
+  "size_1x": [
+   6,
+   9
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_person_ink.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_evidence.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_journal.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_objective.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_person.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_decision.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_save.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/icon_hint.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/mark_done.png",
+  "size_1x": [
+   9,
+   9
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/mark_open.png",
+  "size_1x": [
+   9,
+   9
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/icons/stamp_evidence.png",
+  "size_1x": [
+   84,
+   26
+  ],
+  "scale": 3,
+  "note": "rotated -3.0 deg at 1:1"
+ },
+ {
+  "path": "assets/ui/icons/stamp_record.png",
+  "size_1x": [
+   70,
+   24
+  ],
+  "scale": 3,
+  "note": "rotated 2.5 deg at 1:1"
+ },
+ {
+  "path": "assets/ui/puzzle/card_triangle.png",
+  "size_1x": [
+   34,
+   46
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/card_square.png",
+  "size_1x": [
+   34,
+   46
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/card_circle.png",
+  "size_1x": [
+   34,
+   46
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/card_slot.png",
+  "size_1x": [
+   34,
+   46
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/signal_board.png",
+  "size_1x": [
+   176,
+   92
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/lamp_off.png",
+  "size_1x": [
+   15,
+   15
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/lamp_on.png",
+  "size_1x": [
+   15,
+   15
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/mark_a.png",
+  "size_1x": [
+   13,
+   13
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/mark_b.png",
+  "size_1x": [
+   17,
+   17
+  ],
+  "scale": 3,
+  "note": ""
+ },
+ {
+  "path": "assets/ui/puzzle/plan_placeholder_a.png",
+  "size_1x": [
+   224,
+   144
+  ],
+  "scale": 1,
+  "note": "fallback plan A, cell 16"
+ },
+ {
+  "path": "assets/ui/puzzle/plan_placeholder_b.png",
+  "size_1x": [
+   224,
+   144
+  ],
+  "scale": 1,
+  "note": "fallback plan B (overlay), cell 16"
+ },
+ {
+  "path": "assets/ui/./portrait_placeholder.png",
+  "size_1x": [
+   112,
+   112
+  ],
+  "scale": 1,
+  "note": "112x112 placeholder, shown x3"
+ },
+ {
+  "path": "assets/ui/menu/menu_bg.png",
+  "size_1x": [
+   640,
+   360
+  ],
+  "scale": 1,
+  "note": "640x360 backdrop, shown x3"
+ }
+]

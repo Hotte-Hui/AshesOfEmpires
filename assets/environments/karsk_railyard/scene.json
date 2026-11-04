@@ -1,0 +1,1182 @@
+{
+ "id": "karsk_railyard",
+ "palette": "karsk",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "canvas_modulate": "#CBD5D3",
+ "layers": [
+  {
+   "name": "sky",
+   "file": "sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.0,
+    0.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "clouds",
+   "file": "clouds.png",
+   "pos": [
+    0,
+    23
+   ],
+   "parallax": [
+    0.03,
+    0.0
+   ],
+   "z": -96,
+   "normal": true,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "far_city",
+   "file": "far_city.png",
+   "pos": [
+    0,
+    118
+   ],
+   "parallax": [
+    0.12,
+    0.0
+   ],
+   "z": -90,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.35
+  },
+  {
+   "name": "far_industry",
+   "file": "far_industry.png",
+   "pos": [
+    0,
+    83
+   ],
+   "parallax": [
+    0.25,
+    0.0
+   ],
+   "z": -84,
+   "normal": true,
+   "emission": false,
+   "lit": true
+  },
+  {
+   "name": "mid",
+   "file": "mid.png",
+   "pos": [
+    0,
+    49
+   ],
+   "parallax": [
+    0.45,
+    0.0
+   ],
+   "z": -74,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.45
+  },
+  {
+   "name": "near_bg",
+   "file": "near_bg.png",
+   "pos": [
+    0,
+    137
+   ],
+   "parallax": [
+    0.72,
+    0.0
+   ],
+   "z": -60,
+   "normal": true,
+   "emission": false,
+   "lit": true
+  },
+  {
+   "name": "poles",
+   "file": "poles.png",
+   "pos": [
+    0,
+    112
+   ],
+   "parallax": [
+    0.86,
+    0.0
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.7
+  },
+  {
+   "name": "ground",
+   "file": "ground.png",
+   "pos": [
+    0,
+    246
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -16,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.25
+  },
+  {
+   "name": "yard_back",
+   "file": "yard_back.png",
+   "pos": [
+    0,
+    114
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -14,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.16
+  },
+  {
+   "name": "fg_frame",
+   "file": "fg_frame.png",
+   "pos": [
+    0,
+    49
+   ],
+   "parallax": [
+    1.3,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "props": [
+  {
+   "name": "lamp_post_1",
+   "file": "props/lamp_post_1.png",
+   "pos": [
+    201,
+    224
+   ],
+   "base_y": 304,
+   "collision": [
+    [
+     201,
+     301
+    ],
+    [
+     210,
+     301
+    ],
+    [
+     210,
+     305
+    ],
+    [
+     201,
+     305
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "lamp_post_2",
+   "file": "props/lamp_post_2.png",
+   "pos": [
+    696,
+    223
+   ],
+   "base_y": 303,
+   "collision": [
+    [
+     696,
+     300
+    ],
+    [
+     705,
+     300
+    ],
+    [
+     705,
+     304
+    ],
+    [
+     696,
+     304
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "lamp_post_3",
+   "file": "props/lamp_post_3.png",
+   "pos": [
+    1181,
+    224
+   ],
+   "base_y": 304,
+   "collision": [
+    [
+     1181,
+     301
+    ],
+    [
+     1190,
+     301
+    ],
+    [
+     1190,
+     305
+    ],
+    [
+     1181,
+     305
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "wagon_c17",
+   "file": "props/wagon_c17.png",
+   "pos": [
+    730,
+    203
+   ],
+   "base_y": 297,
+   "collision": [
+    [
+     744,
+     283
+    ],
+    [
+     918,
+     283
+    ],
+    [
+     918,
+     297
+    ],
+    [
+     744,
+     297
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "flatcar_panels",
+   "file": "props/flatcar_panels.png",
+   "pos": [
+    1707,
+    218
+   ],
+   "base_y": 276,
+   "collision": [
+    [
+     1716,
+     261
+    ],
+    [
+     1890,
+     261
+    ],
+    [
+     1890,
+     276
+    ],
+    [
+     1716,
+     276
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "fire_barrel",
+   "file": "props/fire_barrel.png",
+   "pos": [
+    951,
+    259
+   ],
+   "base_y": 304,
+   "collision": [
+    [
+     955,
+     298
+    ],
+    [
+     997,
+     298
+    ],
+    [
+     997,
+     305
+    ],
+    [
+     955,
+     305
+    ]
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "timetable_board",
+   "file": "props/timetable_board.png",
+   "pos": [
+    1048,
+    251
+   ],
+   "base_y": 306,
+   "collision": [
+    [
+     1050,
+     302
+    ],
+    [
+     1087,
+     302
+    ],
+    [
+     1087,
+     307
+    ],
+    [
+     1050,
+     307
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "teaching_board",
+   "file": "props/teaching_board.png",
+   "pos": [
+    1269,
+    242
+   ],
+   "base_y": 305,
+   "collision": [
+    [
+     1283,
+     300
+    ],
+    [
+     1299,
+     300
+    ],
+    [
+     1299,
+     306
+    ],
+    [
+     1283,
+     306
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "family_bundles",
+   "file": "props/family_bundles.png",
+   "pos": [
+    244,
+    279
+   ],
+   "base_y": 322,
+   "collision": [
+    [
+     242,
+     314
+    ],
+    [
+     312,
+     314
+    ],
+    [
+     312,
+     323
+    ],
+    [
+     242,
+     323
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "crates_a",
+   "file": "props/crates_a.png",
+   "pos": [
+    1414,
+    281
+   ],
+   "base_y": 306,
+   "collision": [
+    [
+     1414,
+     299
+    ],
+    [
+     1450,
+     299
+    ],
+    [
+     1450,
+     307
+    ],
+    [
+     1414,
+     307
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "crates_b",
+   "file": "props/crates_b.png",
+   "pos": [
+    622,
+    277
+   ],
+   "base_y": 302,
+   "collision": [
+    [
+     622,
+     296
+    ],
+    [
+     658,
+     296
+    ],
+    [
+     658,
+     303
+    ],
+    [
+     622,
+     303
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "bench",
+   "file": "props/bench.png",
+   "pos": [
+    549,
+    306
+   ],
+   "base_y": 320,
+   "collision": [
+    [
+     549,
+     315
+    ],
+    [
+     584,
+     315
+    ],
+    [
+     584,
+     321
+    ],
+    [
+     549,
+     321
+    ]
+   ],
+   "normal": true,
+   "emission": false
+  }
+ ],
+ "walkable": [
+  [
+   0,
+   252
+  ],
+  [
+   1920,
+   252
+  ],
+  [
+   1920,
+   352
+  ],
+  [
+   0,
+   352
+  ]
+ ],
+ "spawns": {
+  "SP_A1_Platform": [
+   120,
+   312
+  ],
+  "NPC_irina": [
+   506,
+   256
+  ]
+ },
+ "hotspots": {
+  "irina": [
+   506,
+   258
+  ],
+  "seal": [
+   853,
+   304
+  ],
+  "timetable": [
+   1068,
+   314
+  ],
+  "signal_board": [
+   1290,
+   314
+  ],
+  "ledger": [
+   1573,
+   258
+  ],
+  "obs_family": [
+   282,
+   332
+  ],
+  "obs_stove": [
+   975,
+   314
+  ],
+  "obs_poster": [
+   1399,
+   257
+  ]
+ },
+ "hotspot_info": {
+  "irina": {
+   "kind": "dialogue",
+   "mark": [
+    506,
+    212
+   ],
+   "radius": 34,
+   "npc": "irina",
+   "facing": "left"
+  },
+  "seal": {
+   "kind": "inspect",
+   "mark": [
+    857,
+    253
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_seal.png"
+  },
+  "timetable": {
+   "kind": "inspect",
+   "mark": [
+    1068,
+    266
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_timetable.png"
+  },
+  "signal_board": {
+   "kind": "puzzle",
+   "mark": [
+    1291,
+    258
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_signal_board.png"
+  },
+  "ledger": {
+   "kind": "inspect",
+   "mark": [
+    1572,
+    232
+   ],
+   "radius": 30,
+   "document": "res://assets/ui/documents/karsk_ledger.png"
+  },
+  "obs_family": {
+   "kind": "observe",
+   "mark": [
+    276,
+    282
+   ],
+   "radius": 34,
+   "prompt_key": "obs.karsk.family.prompt",
+   "observe_text_key": "obs.karsk.family.text"
+  },
+  "obs_stove": {
+   "kind": "observe",
+   "mark": [
+    975,
+    266
+   ],
+   "radius": 34,
+   "prompt_key": "obs.karsk.stove.prompt",
+   "observe_text_key": "obs.karsk.stove.text"
+  },
+  "obs_poster": {
+   "kind": "observe",
+   "mark": [
+    1390,
+    226
+   ],
+   "radius": 30,
+   "prompt_key": "obs.karsk.poster.prompt",
+   "observe_text_key": "obs.karsk.poster.text"
+  }
+ },
+ "lights": [
+  {
+   "id": "cabin_amber_window",
+   "pos": [
+    534,
+    215
+   ],
+   "color": "#F0C487",
+   "energy": 1.0,
+   "radius": 118,
+   "flicker": 0.03,
+   "height": 34,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "fire_barrel",
+   "pos": [
+    975,
+    284
+   ],
+   "color": "#DCA16E",
+   "energy": 1.35,
+   "radius": 104,
+   "flicker": 0.22,
+   "height": 22,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "office_lamp",
+   "pos": [
+    1573,
+    197
+   ],
+   "color": "#F0C487",
+   "energy": 1.25,
+   "radius": 104,
+   "flicker": 0.02,
+   "height": 22,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "platform_lamp_1",
+   "pos": [
+    221,
+    234
+   ],
+   "color": "#DEE5DC",
+   "energy": 0.45,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "platform_lamp_2",
+   "pos": [
+    716,
+    233
+   ],
+   "color": "#DEE5DC",
+   "energy": 0.45,
+   "radius": 84,
+   "flicker": 0.04,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "platform_lamp_3",
+   "pos": [
+    1201,
+    234
+   ],
+   "color": "#DEE5DC",
+   "energy": 0.45,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "distant_red_signal",
+   "pos": [
+    1663,
+    139
+   ],
+   "color": "#C8503C",
+   "energy": 0.55,
+   "radius": 22,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "poles"
+  }
+ ],
+ "fx": [
+  {
+   "type": "snow",
+   "density": 0.55,
+   "wind": 5.0,
+   "color_far": "#A3B1AD",
+   "color_near": "#DEE5DC"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_a.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    102,
+    -31
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_b.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    120,
+    -11
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_a.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    448,
+    -47
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_b.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    422,
+    -35
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_a.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    836,
+    -31
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    678,
+    29
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/tower_plume.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    526,
+    87
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    84,
+    64
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/tower_plume.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    642,
+    95
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    84,
+    64
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    874,
+    11
+   ],
+   "parallax": 0.45,
+   "z": -73,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "mid"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    48,
+    23
+   ],
+   "parallax": 0.45,
+   "z": -73,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "mid"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    35,
+    120
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    119,
+    152
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    410,
+    145
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/steam_puffs.png",
+   "frames": 6,
+   "fps": 5,
+   "pos": [
+    834,
+    107
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    26,
+    44
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    557,
+    55
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    313,
+    126
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    1646,
+    99
+   ],
+   "parallax": 1.0,
+   "z": -13,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "yard_back"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/barrel_flames.png",
+   "frames": 6,
+   "fps": 10,
+   "pos": [
+    966,
+    263
+   ],
+   "parallax": 1.0,
+   "z": 0,
+   "emission": true,
+   "frame_size": [
+    18,
+    20
+   ],
+   "layer": "playfield",
+   "base_y": 304
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/steam_puffs.png",
+   "frames": 6,
+   "fps": 6,
+   "pos": [
+    971,
+    228
+   ],
+   "parallax": 1.0,
+   "z": 0,
+   "emission": false,
+   "frame_size": [
+    26,
+    44
+   ],
+   "layer": "playfield",
+   "base_y": 304,
+   "alpha": 0.85
+  },
+  {
+   "type": "fog_band",
+   "y": 204,
+   "height": 26,
+   "color": "#C7D3BA",
+   "alpha": 0.32,
+   "parallax": 0.18,
+   "z": -87
+  },
+  {
+   "type": "fog_band",
+   "y": 216,
+   "height": 30,
+   "color": "#AFC1AA",
+   "alpha": 0.3,
+   "parallax": 0.35,
+   "z": -80
+  },
+  {
+   "type": "fog_band",
+   "y": 234,
+   "height": 28,
+   "color": "#98AD9A",
+   "alpha": 0.26,
+   "parallax": 0.6,
+   "z": -65
+  },
+  {
+   "type": "fog_band",
+   "y": 276,
+   "height": 44,
+   "color": "#AFC1AA",
+   "alpha": 0.14,
+   "parallax": 1.0,
+   "z": -12
+  }
+ ],
+ "notes": {
+  "generator": "tools/pixelgen/env_karsk.py (py -3 -P tools/pixelgen/env_karsk.py)",
+  "ground_rows": {
+   "back_strip": [
+    250,
+    262
+   ],
+   "track_2_rails": [
+    264,
+    272
+   ],
+   "track_1_rails": [
+    286,
+    294
+   ],
+   "platform_edge": 297,
+   "platform": [
+    300,
+    352
+   ]
+  },
+  "light_on_layer": "pos of a light with on_layer != playfield is given like a layer pos: where it appears when the camera top-left is (0,0); it scrolls with that layer's parallax.",
+  "anim_sprite": "horizontal frame strips (frame_size); entries with base_y belong to the y-sorted Playfield, the others sit at z between layers and scroll with \"parallax\".",
+  "z_order": "yard_back (-14) is drawn over ground (-16) so building bases overlap the back strip."
+ }
+}

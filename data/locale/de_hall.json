@@ -1,0 +1,15 @@
+{
+ "locale": "de-DE",
+ "area": "great_hall",
+ "note": "Filmsequenz LS_M1_Hall (Shot S011, Level L_M1_HallReveal). Schlüssel hall.cue.* werden vom Level über das Signal cue(key) zeitgenau gemeldet (Untertitel / Geräuschbeschreibung, Lead entscheidet über die Darstellung). hall.ad.* = Audiodeskription pro Einstellung (Barrierefreiheit). Die Große Halle ist fiktiv; keine realen Hoheitszeichen.",
+ "strings": {
+  "hall.cue.archive_room": "[Leises Papierrascheln. Draußen fällt Schnee.]",
+  "hall.cue.tram_bell": "[Eine Straßenbahnglocke, weit entfernt]",
+  "hall.cue.loudspeaker_1": "LAUTSPRECHER: „Achtung. Die Umsiedlung der Bewohner aus den Planquadraten Süd sieben bis zwölf erfolgt planmäßig.“",
+  "hall.cue.loudspeaker_2": "LAUTSPRECHER: „Die Hauptstadt dankt ihren Bürgern für ihr Verständnis.“",
+  "hall.cue.window_closes": "[Über der Familie wird ein Fenster zugezogen. Die Lautsprecher sprechen weiter.]",
+  "hall.ad.h1": "Vom Zeichentisch im Bauarchiv gleitet der Blick durch das offene Fenster hinaus und sinkt über die verschneite Straße hinab.",
+  "hall.ad.h2": "Am Ende der Straße beherrscht die Große Halle den Horizont, eine schwarze Kuppel vor glühendem Abendhimmel. Im Vordergrund wartet eine Familie mit Koffern vor einer versiegelten Wohnungstür. Ein Posten steht unter einem Lautsprechermast.",
+  "hall.ad.h3": "Die Kamera rückt langsam näher. Über der Familie erlischt ein Fenster. Abblende."
+ }
+}

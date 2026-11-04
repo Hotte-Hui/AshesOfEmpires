@@ -1,0 +1,485 @@
+{
+ "amb_berlin_archive": {
+  "path": "res://assets/audio/amb/amb_berlin_archive.wav",
+  "kind": "amb",
+  "seconds": 60.0,
+  "channels": 2,
+  "loop": [
+   0,
+   2646000
+  ],
+  "rms_dbfs": -25.0,
+  "peak_dbfs": -3.4
+ },
+ "amb_berlin_street": {
+  "path": "res://assets/audio/amb/amb_berlin_street.wav",
+  "kind": "amb",
+  "seconds": 60.0,
+  "channels": 2,
+  "loop": [
+   0,
+   2646000
+  ],
+  "rms_dbfs": -24.0,
+  "peak_dbfs": -5.34
+ },
+ "amb_karsk_yard": {
+  "path": "res://assets/audio/amb/amb_karsk_yard.wav",
+  "kind": "amb",
+  "seconds": 60.0,
+  "channels": 2,
+  "loop": [
+   0,
+   2646000
+  ],
+  "rms_dbfs": -24.0,
+  "peak_dbfs": -4.37
+ },
+ "amb_transition": {
+  "path": "res://assets/audio/amb/amb_transition.wav",
+  "kind": "amb",
+  "seconds": 60.0,
+  "channels": 2,
+  "loop": [
+   0,
+   2646000
+  ],
+  "rms_dbfs": -24.0,
+  "peak_dbfs": -8.64
+ },
+ "card_place_1": {
+  "path": "res://assets/audio/sfx/card_place_1.wav",
+  "kind": "sfx",
+  "seconds": 0.17,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -37.9,
+  "peak_dbfs": -14.0
+ },
+ "card_place_2": {
+  "path": "res://assets/audio/sfx/card_place_2.wav",
+  "kind": "sfx",
+  "seconds": 0.17,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -37.35,
+  "peak_dbfs": -14.0
+ },
+ "door_open": {
+  "path": "res://assets/audio/sfx/door_open.wav",
+  "kind": "sfx",
+  "seconds": 1.433,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -33.24,
+  "peak_dbfs": -10.0
+ },
+ "drawer_slide": {
+  "path": "res://assets/audio/sfx/drawer_slide.wav",
+  "kind": "sfx",
+  "seconds": 1.0,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -32.39,
+  "peak_dbfs": -11.0
+ },
+ "fire_crackle_loop": {
+  "path": "res://assets/audio/sfx/fire_crackle_loop.wav",
+  "kind": "sfx",
+  "seconds": 10.0,
+  "channels": 2,
+  "loop": [
+   0,
+   441000
+  ],
+  "rms_dbfs": -25.0,
+  "peak_dbfs": -8.0
+ },
+ "metal_clank_1": {
+  "path": "res://assets/audio/sfx/metal_clank_1.wav",
+  "kind": "sfx",
+  "seconds": 0.343,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -28.63,
+  "peak_dbfs": -8.0
+ },
+ "metal_clank_2": {
+  "path": "res://assets/audio/sfx/metal_clank_2.wav",
+  "kind": "sfx",
+  "seconds": 2.2,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -30.44,
+  "peak_dbfs": -8.0
+ },
+ "metal_clank_3": {
+  "path": "res://assets/audio/sfx/metal_clank_3.wav",
+  "kind": "sfx",
+  "seconds": 2.414,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -33.32,
+  "peak_dbfs": -8.0
+ },
+ "mus_berlin": {
+  "path": "res://assets/audio/music/mus_berlin.wav",
+  "kind": "music",
+  "seconds": 96.0,
+  "channels": 2,
+  "loop": [
+   0,
+   4233600
+  ],
+  "rms_dbfs": -20.0,
+  "peak_dbfs": -2.23
+ },
+ "mus_choice": {
+  "path": "res://assets/audio/music/mus_choice.wav",
+  "kind": "music",
+  "seconds": 5.0,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -22.51,
+  "peak_dbfs": -4.71
+ },
+ "mus_finale_x1": {
+  "path": "res://assets/audio/music/mus_finale_x1.wav",
+  "kind": "music",
+  "seconds": 20.0,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -20.0,
+  "peak_dbfs": -5.3
+ },
+ "mus_hall_reveal": {
+  "path": "res://assets/audio/music/mus_hall_reveal.wav",
+  "kind": "music",
+  "seconds": 12.4,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -19.13,
+  "peak_dbfs": -1.0
+ },
+ "mus_karsk": {
+  "path": "res://assets/audio/music/mus_karsk.wav",
+  "kind": "music",
+  "seconds": 96.0,
+  "channels": 2,
+  "loop": [
+   0,
+   4233600
+  ],
+  "rms_dbfs": -20.0,
+  "peak_dbfs": -2.62
+ },
+ "mus_menu": {
+  "path": "res://assets/audio/music/mus_menu.wav",
+  "kind": "music",
+  "seconds": 106.667,
+  "channels": 2,
+  "loop": [
+   0,
+   4704000
+  ],
+  "rms_dbfs": -20.0,
+  "peak_dbfs": -1.59
+ },
+ "page_turn_1": {
+  "path": "res://assets/audio/sfx/page_turn_1.wav",
+  "kind": "sfx",
+  "seconds": 0.64,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -31.37,
+  "peak_dbfs": -14.0
+ },
+ "page_turn_2": {
+  "path": "res://assets/audio/sfx/page_turn_2.wav",
+  "kind": "sfx",
+  "seconds": 0.64,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -31.15,
+  "peak_dbfs": -14.0
+ },
+ "paper_rustle_1": {
+  "path": "res://assets/audio/sfx/paper_rustle_1.wav",
+  "kind": "sfx",
+  "seconds": 0.818,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -39.08,
+  "peak_dbfs": -14.0
+ },
+ "paper_rustle_2": {
+  "path": "res://assets/audio/sfx/paper_rustle_2.wav",
+  "kind": "sfx",
+  "seconds": 1.193,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -34.78,
+  "peak_dbfs": -14.0
+ },
+ "paper_rustle_3": {
+  "path": "res://assets/audio/sfx/paper_rustle_3.wav",
+  "kind": "sfx",
+  "seconds": 0.7,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -33.49,
+  "peak_dbfs": -14.0
+ },
+ "puzzle_fail": {
+  "path": "res://assets/audio/sfx/puzzle_fail.wav",
+  "kind": "sfx",
+  "seconds": 1.332,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -31.7,
+  "peak_dbfs": -14.0
+ },
+ "puzzle_success": {
+  "path": "res://assets/audio/sfx/puzzle_success.wav",
+  "kind": "sfx",
+  "seconds": 3.393,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -24.9,
+  "peak_dbfs": -10.0
+ },
+ "stamp_thud": {
+  "path": "res://assets/audio/sfx/stamp_thud.wav",
+  "kind": "sfx",
+  "seconds": 2.306,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -35.76,
+  "peak_dbfs": -6.0
+ },
+ "step_concrete_1": {
+  "path": "res://assets/audio/sfx/step_concrete_1.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -38.78,
+  "peak_dbfs": -12.0
+ },
+ "step_concrete_2": {
+  "path": "res://assets/audio/sfx/step_concrete_2.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -39.78,
+  "peak_dbfs": -12.0
+ },
+ "step_concrete_3": {
+  "path": "res://assets/audio/sfx/step_concrete_3.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -39.87,
+  "peak_dbfs": -12.0
+ },
+ "step_concrete_4": {
+  "path": "res://assets/audio/sfx/step_concrete_4.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -38.35,
+  "peak_dbfs": -12.0
+ },
+ "step_gravel_1": {
+  "path": "res://assets/audio/sfx/step_gravel_1.wav",
+  "kind": "sfx",
+  "seconds": 0.312,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -31.8,
+  "peak_dbfs": -12.0
+ },
+ "step_gravel_2": {
+  "path": "res://assets/audio/sfx/step_gravel_2.wav",
+  "kind": "sfx",
+  "seconds": 0.336,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -33.77,
+  "peak_dbfs": -12.0
+ },
+ "step_gravel_3": {
+  "path": "res://assets/audio/sfx/step_gravel_3.wav",
+  "kind": "sfx",
+  "seconds": 0.28,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -32.12,
+  "peak_dbfs": -12.0
+ },
+ "step_gravel_4": {
+  "path": "res://assets/audio/sfx/step_gravel_4.wav",
+  "kind": "sfx",
+  "seconds": 0.333,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -33.87,
+  "peak_dbfs": -12.0
+ },
+ "step_snow_1": {
+  "path": "res://assets/audio/sfx/step_snow_1.wav",
+  "kind": "sfx",
+  "seconds": 0.415,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -32.31,
+  "peak_dbfs": -13.0
+ },
+ "step_snow_2": {
+  "path": "res://assets/audio/sfx/step_snow_2.wav",
+  "kind": "sfx",
+  "seconds": 0.398,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -32.37,
+  "peak_dbfs": -13.0
+ },
+ "step_snow_3": {
+  "path": "res://assets/audio/sfx/step_snow_3.wav",
+  "kind": "sfx",
+  "seconds": 0.446,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -32.64,
+  "peak_dbfs": -13.0
+ },
+ "step_snow_4": {
+  "path": "res://assets/audio/sfx/step_snow_4.wav",
+  "kind": "sfx",
+  "seconds": 0.376,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -32.92,
+  "peak_dbfs": -13.0
+ },
+ "step_wood_1": {
+  "path": "res://assets/audio/sfx/step_wood_1.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -34.92,
+  "peak_dbfs": -12.0
+ },
+ "step_wood_2": {
+  "path": "res://assets/audio/sfx/step_wood_2.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -34.19,
+  "peak_dbfs": -12.0
+ },
+ "step_wood_3": {
+  "path": "res://assets/audio/sfx/step_wood_3.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -34.17,
+  "peak_dbfs": -12.0
+ },
+ "step_wood_4": {
+  "path": "res://assets/audio/sfx/step_wood_4.wav",
+  "kind": "sfx",
+  "seconds": 0.5,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -34.34,
+  "peak_dbfs": -12.0
+ },
+ "train_horn_far": {
+  "path": "res://assets/audio/sfx/train_horn_far.wav",
+  "kind": "sfx",
+  "seconds": 4.917,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -28.55,
+  "peak_dbfs": -12.0
+ },
+ "tram_bell": {
+  "path": "res://assets/audio/sfx/tram_bell.wav",
+  "kind": "sfx",
+  "seconds": 3.07,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -27.75,
+  "peak_dbfs": -9.0
+ },
+ "type_tick_1": {
+  "path": "res://assets/audio/sfx/type_tick_1.wav",
+  "kind": "sfx",
+  "seconds": 0.056,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -46.48,
+  "peak_dbfs": -22.0
+ },
+ "type_tick_2": {
+  "path": "res://assets/audio/sfx/type_tick_2.wav",
+  "kind": "sfx",
+  "seconds": 0.06,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -45.55,
+  "peak_dbfs": -22.0
+ },
+ "type_tick_3": {
+  "path": "res://assets/audio/sfx/type_tick_3.wav",
+  "kind": "sfx",
+  "seconds": 0.06,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -45.41,
+  "peak_dbfs": -22.0
+ },
+ "ui_back": {
+  "path": "res://assets/audio/sfx/ui_back.wav",
+  "kind": "sfx",
+  "seconds": 0.421,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -36.65,
+  "peak_dbfs": -17.0
+ },
+ "ui_move": {
+  "path": "res://assets/audio/sfx/ui_move.wav",
+  "kind": "sfx",
+  "seconds": 0.07,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -34.57,
+  "peak_dbfs": -20.0
+ },
+ "ui_select": {
+  "path": "res://assets/audio/sfx/ui_select.wav",
+  "kind": "sfx",
+  "seconds": 0.437,
+  "channels": 1,
+  "loop": null,
+  "rms_dbfs": -33.62,
+  "peak_dbfs": -15.0
+ },
+ "wind_gust": {
+  "path": "res://assets/audio/sfx/wind_gust.wav",
+  "kind": "sfx",
+  "seconds": 4.41,
+  "channels": 2,
+  "loop": null,
+  "rms_dbfs": -32.74,
+  "peak_dbfs": -12.0
+ }
+}

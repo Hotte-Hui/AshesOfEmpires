@@ -90,6 +90,6 @@ verifiable documents), `witnesses_exposed`, `people_protected` (count), `line_re
 Every ending gets epilogues for Alexei, Konrad, Irina, Emil, Elena, Marta, Pyotr and the two towns.
 
 ## 9. Vertical slice (Chapter 1 opening + Chapter 2 opening, 20–30 min)
-Exactly the canonical screenplay `preproduction/narrative/VERTICAL_SLICE_SCRIPT_V3.md` with Konrad instead of
-Matthias: A1 *Das letzte Signal* → match cut → M1 *Die falsche Zeichnung* → Great Hall reveal → X1 *Zwei Züge,
+Exactly the canonical screenplay `preproduction/narrative/VERTICAL_SLICE_SCRIPT_V3.md`, with Konrad Adler as the
+German protagonist (renamed from the preproduction package): A1 *Das letzte Signal* → match cut → M1 *Die falsche Zeichnung* → Great Hall reveal → X1 *Zwei Züge,
 ein Eintrag* → demo end. Both protagonists have not met yet (they meet in Chapter 3).

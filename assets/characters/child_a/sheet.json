@@ -1,0 +1,29 @@
+{
+ "id": "child_a",
+ "cell": [
+  32,
+  56
+ ],
+ "origin": [
+  16,
+  54
+ ],
+ "facing": "right",
+ "anims": {
+  "idle_side": {
+   "row": 0,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "walk_side": {
+   "row": 1,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  }
+ },
+ "ground_speed": {
+  "walk_side": 14.6
+ }
+}

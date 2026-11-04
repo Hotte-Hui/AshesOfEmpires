@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/pt_mono/PTM55FT.ttf" id="1_b1kqr"]
+
+[resource]
+base_font = ExtResource("1_b1kqr")

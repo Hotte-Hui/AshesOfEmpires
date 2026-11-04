@@ -72,5 +72,11 @@
   "grain": 0.02,
   "palette_strength": 0.6,
   "palette": "sepia"
+ },
+ "hall_3d": {
+  "saturation": 1.0,
+  "vignette": 0.0,
+  "grain": 0.0,
+  "palette_strength": 0.0
  }
 }

@@ -251,7 +251,7 @@ func _build_fog(fx: Dictionary) -> void:
 
 
 func _process(delta: float) -> void:
-	var cam: Vector2 = Game.camera.pos if Game.camera else Vector2.ZERO
+	var cam: Vector2 = Game.camera.drawn if Game.camera else Vector2.ZERO
 	for e in _parallax:
 		var p: Vector2 = e["parallax"]
 		if p == Vector2.ONE:

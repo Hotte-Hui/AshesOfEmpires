@@ -1,0 +1,307 @@
+{
+ "scene": "L_A1_Railyard",
+ "palette": "karsk (+ shared C-17 red accent)",
+ "generator": "tools/pixelgen/env_karsk_docs.py (via env_karsk.py)",
+ "date": "2026-11-04",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Text is scribble; the UI overlays HD text. All rects are [x, y, w, h] in document pixels.",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/karsk_seal.png",
+   "size": [
+    200,
+    140
+   ],
+   "display_scale": 3,
+   "id": "karsk_seal",
+   "alt_key": "doc.karsk.seal.alt",
+   "item_id": "ev_damaged_seal",
+   "objective": "a1_inspect_seal",
+   "hotspot": "seal",
+   "title_key": "item.seal.name",
+   "description_key": "item.seal.description",
+   "describes": "Close-up of the dented lead seal on the C-17 wagon door: a station stamp struck twice, an abraded band revealing C-17, three small shapes scratched beside it (square, circle, triangle).",
+   "marks": {
+    "double_stamp": {
+     "rect": [
+      78,
+      68,
+      38,
+      12
+     ],
+     "note": "station code + number struck twice (offset strike)"
+    },
+    "c17": {
+     "rect": [
+      84,
+      87,
+      44,
+      18
+     ],
+     "note": "'C-17' visible under the abrasion"
+    },
+    "shapes": {
+     "rect": [
+      145,
+      103,
+      37,
+      11
+     ],
+     "order": [
+      "square",
+      "circle",
+      "triangle"
+     ],
+     "note": "scratched beside the seal, left to right"
+    },
+    "shape_square": {
+     "rect": [
+      146,
+      104,
+      8,
+      8
+     ]
+    },
+    "shape_circle": {
+     "rect": [
+      159,
+      103,
+      11,
+      11
+     ]
+    },
+    "shape_triangle": {
+     "rect": [
+      172,
+      104,
+      9,
+      8
+     ]
+    },
+    "seal": {
+     "rect": [
+      68,
+      63,
+      72,
+      58
+     ],
+     "note": "lead seal disc, dented"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_timetable.png",
+   "size": [
+    300,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_timetable",
+   "alt_key": "doc.karsk.timetable.alt",
+   "item_id": "ev_timetable",
+   "objective": "a1_inspect_timetable",
+   "hotspot": "timetable",
+   "title_key": "item.timetable.name",
+   "description_key": "item.timetable.description",
+   "describes": "Worn enamel timetable board. Three re-booked wagon lines are pasted over with paper strips; their destination fields are empty. In the margin they are marked, top to bottom, with a square, a circle and a triangle (puzzle order).",
+   "marks": {
+    "line_1_square": {
+     "rect": [
+      15,
+      83,
+      203,
+      10
+     ],
+     "symbol": "square",
+     "symbol_rect": [
+      17,
+      84,
+      8,
+      8
+     ],
+     "order": 1,
+     "destination_rect": [
+      132,
+      83,
+      86,
+      10
+     ]
+    },
+    "line_2_circle": {
+     "rect": [
+      15,
+      107,
+      203,
+      10
+     ],
+     "symbol": "circle",
+     "symbol_rect": [
+      17,
+      108,
+      9,
+      9
+     ],
+     "order": 2,
+     "destination_rect": [
+      132,
+      107,
+      86,
+      10
+     ]
+    },
+    "line_3_triangle": {
+     "rect": [
+      15,
+      131,
+      203,
+      10
+     ],
+     "symbol": "triangle",
+     "symbol_rect": [
+      17,
+      132,
+      9,
+      8
+     ],
+     "order": 3,
+     "destination_rect": [
+      132,
+      131,
+      86,
+      10
+     ]
+    },
+    "symbols_order": [
+     "square",
+     "circle",
+     "triangle"
+    ]
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_ledger.png",
+   "size": [
+    320,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_ledger",
+   "alt_key": "doc.karsk.ledger.alt",
+   "item_id": "ev_ledger",
+   "objective": "a1_inspect_ledger",
+   "hotspot": "ledger",
+   "title_key": "item.ledger.name",
+   "description_key": "item.ledger.description",
+   "describes": "Freight ledger page, Cyrillic handwriting. One new line (wagon 24-311) carries a red C-17 stamp; the recipient field is blacked out.",
+   "marks": {
+    "recipient_blacked_out": {
+     "rect": [
+      223,
+      173,
+      49,
+      9
+     ]
+    },
+    "new_line": {
+     "rect": [
+      26,
+      173,
+      280,
+      10
+     ],
+     "wagon": "24-311"
+    },
+    "c17_stamp": {
+     "rect": [
+      102,
+      163,
+      64,
+      24
+     ],
+     "text_rect": [
+      109,
+      168,
+      43,
+      14
+     ],
+     "color": "red"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_signal_board.png",
+   "size": [
+    260,
+    180
+   ],
+   "display_scale": 3,
+   "id": "karsk_signal_board",
+   "alt_key": "doc.karsk.signal_board.alt",
+   "puzzle_id": "pz_signal",
+   "objective": "a1_solve_signal",
+   "hotspot": "signal_board",
+   "title_key": "doc.karsk.signal_board.title",
+   "describes": "Inside of the disconnected, unpowered TEACHING board ('Übungskasten', plate УЧЕБНЫЙ): three empty card slots, a dead indicator lamp, a cut cable and a small fictional demonstration diagram (example uses cross/diamond/asterisk, never the solution).",
+   "marks": {
+    "training_plate": {
+     "rect": [
+      196,
+      18,
+      44,
+      9
+     ],
+     "text": "УЧЕБНЫЙ (training)"
+    },
+    "demo_diagram": {
+     "rect": [
+      32,
+      36,
+      96,
+      40
+     ],
+     "note": "fictional example: order of three cards -> lamp; uses cross/diamond/asterisk so it never shows the solution"
+    },
+    "dead_lamp": {
+     "rect": [
+      218,
+      52,
+      17,
+      17
+     ],
+     "note": "unlit indicator: board has no power"
+    },
+    "slot_1": {
+     "rect": [
+      44,
+      86,
+      40,
+      56
+     ]
+    },
+    "slot_2": {
+     "rect": [
+      108,
+      86,
+      40,
+      56
+     ]
+    },
+    "slot_3": {
+     "rect": [
+      172,
+      86,
+      40,
+      56
+     ]
+    },
+    "cut_cable": {
+     "rect": [
+      219,
+      150,
+      8,
+      20
+     ]
+    }
+   }
+  }
+ ]
+}

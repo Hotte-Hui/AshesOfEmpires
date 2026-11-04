@@ -1,16 +1,16 @@
 extends CharacterBody2D
 ## Player controller for both protagonists.
 ## Mode "oblique" (2.5D): walk on x and y inside the level's walkable polygon, y-sorted, depth at 0.62x.
-## Mode "side" (2D): walk on x along the floor line.  60 px/s walk = exactly 1 px per physics tick
-## (clean pixel cadence), run 120 px/s.
+## Mode "side" (2D): walk on x along the floor line.  Walk 45 px/s (~1.6 m/s at the 3.7 cm/px figure
+## scale), run 90 px/s. Walk-cycle playback is scaled by speed / sheet ground_speed so feet stay planted.
 
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 
 var char_id := "alexei"
 var mode := "oblique"
 var surface := "gravel"
-var walk_speed := 60.0
-var run_speed := 120.0
+var walk_speed := 45.0
+var run_speed := 90.0
 var depth_factor := 0.62
 var floor_y := 300.0
 var rig: Node2D
@@ -33,10 +33,17 @@ func _ready() -> void:
 	collision_layer = 2
 	collision_mask = 1
 	var shape := CollisionShape2D.new()
-	var c := CircleShape2D.new()
-	c.radius = 4.0
-	shape.shape = c
-	shape.position = Vector2(0, -2)
+	if mode == "side":
+		# Side levels have a thin walk band around the feet line (e.g. y 296-306): a flat collider keeps
+		# the y-walls from pinning the player while still stopping it at the left/right ends.
+		var r := RectangleShape2D.new()
+		r.size = Vector2(8, 2)
+		shape.shape = r
+	else:
+		var c := CircleShape2D.new()
+		c.radius = 4.0
+		shape.shape = c
+		shape.position = Vector2(0, -2)
 	add_child(shape)
 	rig = SpriteRig.new()
 	add_child(rig)
@@ -77,8 +84,12 @@ func _physics_process(_delta: float) -> void:
 		else:
 			_dir = "side"
 			face(inp.x)
-		rig.speed_scale = 1.55 if running else 1.0
 		rig.play("walk_" + _dir)
+		var gs: float = rig.ground_speed(rig.anim)
+		if gs > 0.0:
+			rig.speed_scale = clampf(velocity.length() / gs, 0.6, 2.2)
+		else:
+			rig.speed_scale = 1.55 if running else 1.0
 	else:
 		rig.speed_scale = 1.0
 		rig.play("idle_" + _dir)
@@ -111,14 +122,17 @@ func _update_focus(hide_only: bool) -> void:
 		Game.update_prompt(focus)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if Game.input_locked or get_tree().paused:
-		return
-	if event.is_action_pressed("interact") and focus:
-		get_viewport().set_input_as_handled()
-		if focus.global_position.x != global_position.x:
-			face(focus.global_position.x - global_position.x)
-		Game.interact(focus)
+## Called by Game._unhandled_input (root viewport): nodes inside the world SubViewport receive no input
+## events, only the global Input state. Returns true when the press was used.
+func try_interact() -> bool:
+	if Game.input_locked or get_tree().paused or focus == null or not is_instance_valid(focus):
+		return false
+	if Time.get_ticks_msec() < Game.interact_ready_at:
+		return true     # swallow: same press that just closed the previous interaction
+	if focus.global_position.x != global_position.x:
+		face(focus.global_position.x - global_position.x)
+	Game.interact(focus)
+	return true
 
 
 func _on_frame(a: String, f: int) -> void:

@@ -1,0 +1,32 @@
+{
+ "cell": 16,
+ "grid": [
+  14,
+  9
+ ],
+ "landmarks": [
+  {
+   "name": "chimney",
+   "a": [
+    9,
+    3
+   ],
+   "b": [
+    7,
+    4
+   ]
+  },
+  {
+   "name": "stair",
+   "a": [
+    4,
+    5
+   ],
+   "b": [
+    2,
+    6
+   ]
+  }
+ ],
+ "note": "Placeholder geometry only; solution offset (2,-1) rotation 0 aligns b onto a."
+}

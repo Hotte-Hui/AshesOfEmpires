@@ -157,3 +157,35 @@ of failure strings), prints a report and quits with exit code 0/1. Tests instant
 GDScript with static types where practical, tabs, no third-party addons. No hard-coded user-facing text.
 Pixel layers: texture filter Nearest, positions rounded to integers. Document every generated/downloaded asset in
 `documentation/ASSET_MANIFEST.md` (generator script, licence, date).
+
+## 11. Integration addenda (2026-11-04, after the first full integration)
+These rules were found by the real-input playthrough (`--inputplay`) and are binding for all new code.
+- **Input routing.** Nodes inside the World `SubViewport` receive **no input events** (the viewport is shown via a
+  TextureRect, not a SubViewportContainer); they may only *poll* the global `Input` state. Event-driven world input
+  goes through `Game._unhandled_input` (root viewport) — e.g. interact → `player.try_interact()`.
+- **Interaction cooldown.** After any interaction ends, `Game.interact_ready_at` blocks player interact presses for
+  350 ms, so the key that closed a dialogue/panel never re-triggers the next hotspot.
+- **Choices.** `DialogueBox` ignores confirm/advance/interact for 450 ms after a choice list appears
+  (`CHOICE_GUARD_MS`): a decision can never be taken by a key still being mashed for the previous line.
+- **Dialogue placement.** `Game._dock_dialogue()` docks the box at the top (`dialogue.dock_top = true`) whenever the
+  speakers' feet are below 60 % of the screen, so the box never covers the people who are talking.
+- **Autosave policy.** `Game.autosave()` never writes the finished-demo state (`L_X1_Montage`): "Fortsetzen" resumes
+  the last playable moment. After any load, still-queued cinematics are presented (`_after_story_change()`).
+- **Saves.** File `user://saves/<slot>.json` = `{meta, story, extra}`; `extra` comes from `Game.save_extra()`
+  (scene, player_pos, playtime). `Saves.loaded` is emitted synchronously inside `Saves.load()` and is deliberately
+  **not** connected in Game (the caller continues the flow; connecting it would load levels twice).
+- **Story API additions** (see `documentation/QUEST_DATABASE.md`): every action returns `{ok, error, error_key}`
+  and on success `changes = {flags, objectives, items, events, cinematics, scene}`; accessors `flags()`,
+  `relationship()`, `completed_objectives()`, `item_def()`, `puzzle_for()` (no solution), `choices_for()`,
+  `snapshot()`, `validate_save_json()`; signal `state_replaced(reason)` on new game / load.
+- **Movement.** Walk 45 px/s, run 90 px/s; walk-cycle playback = speed / `sheet.json` `ground_speed` (feet stay
+  planted). Side levels use a flat 8×2 collider (their walk band is only ~10 px high).
+- **Window focus.** Losing window focus during free play opens the pause menu (disabled in test modes).
+- **Grades.** `data/grades.json` `hall_3d` is an identity preset: the 3D hall post shader already outputs final
+  palette colours.
+
+### 11.1 End-to-end test drivers
+| Driver | What it proves | Command |
+|---|---|---|
+| `scripts/core/autoplay.gd` | the whole slice through the Story API, all gates honoured, save/load mid-run, all 4 branch combinations, cinematics watched or skipped | `godot --headless --path . -- --autoplay=<a1>,<m1> [--autoplay-skip] [--autoplay-shots=DIR]` |
+| `scripts/core/inputplay.gd` | the whole slice through **synthetic key presses only**: menu, disclaimer, intro skip, journal, pause, walking, every interaction, both puzzle UIs (one wrong attempt each), choices by arrow keys and number keys, cinematics, end card, "Fortsetzen" | `godot --path . -- --inputplay=<a1>,<m1> [--inputplay-skip] [--inputplay-shots=DIR]` |

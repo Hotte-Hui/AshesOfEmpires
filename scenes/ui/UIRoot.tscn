@@ -1,0 +1,82 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/ui_root.gd" id="1_root"]
+[ext_resource type="Theme" path="res://assets/ui/theme.tres" id="16_theme"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="2_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="3_dialoguebox"]
+[ext_resource type="PackedScene" path="res://scenes/ui/InspectView.tscn" id="4_inspectview"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SignalPuzzle.tscn" id="5_signalpuzzle"]
+[ext_resource type="PackedScene" path="res://scenes/ui/BlueprintPuzzle.tscn" id="6_blueprintpuzzle"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Journal.tscn" id="7_journal"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SaveLoadMenu.tscn" id="8_saveloadmenu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="9_settingsmenu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="10_pausemenu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MainMenu.tscn" id="11_mainmenu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Credits.tscn" id="12_credits"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ConfirmDialog.tscn" id="13_confirmdialog"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Subtitles.tscn" id="14_subtitles"]
+[ext_resource type="PackedScene" path="res://scenes/ui/Fade.tscn" id="15_fade"]
+
+[node name="UIRoot" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("16_theme")
+script = ExtResource("1_root")
+
+[node name="HUD" parent="." instance=ExtResource("2_hud")]
+layout_mode = 1
+
+[node name="DialogueBox" parent="." instance=ExtResource("3_dialoguebox")]
+layout_mode = 1
+
+[node name="InspectView" parent="." instance=ExtResource("4_inspectview")]
+layout_mode = 1
+
+[node name="SignalPuzzle" parent="." instance=ExtResource("5_signalpuzzle")]
+layout_mode = 1
+
+[node name="BlueprintPuzzle" parent="." instance=ExtResource("6_blueprintpuzzle")]
+layout_mode = 1
+
+[node name="Journal" parent="." instance=ExtResource("7_journal")]
+layout_mode = 1
+
+[node name="SaveLoadMenu" parent="." instance=ExtResource("8_saveloadmenu")]
+layout_mode = 1
+
+[node name="SettingsMenu" parent="." instance=ExtResource("9_settingsmenu")]
+layout_mode = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("10_pausemenu")]
+layout_mode = 1
+
+[node name="MainMenu" parent="." instance=ExtResource("11_mainmenu")]
+layout_mode = 1
+
+[node name="Credits" parent="." instance=ExtResource("12_credits")]
+layout_mode = 1
+
+[node name="ConfirmDialog" parent="." instance=ExtResource("13_confirmdialog")]
+layout_mode = 1
+
+[node name="ToastLayer" type="Control" parent="."]
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fade" parent="." instance=ExtResource("15_fade")]
+layout_mode = 1
+
+[node name="Subtitles" parent="." instance=ExtResource("14_subtitles")]
+layout_mode = 1

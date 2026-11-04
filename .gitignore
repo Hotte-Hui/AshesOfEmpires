@@ -6,3 +6,6 @@ documentation/references/
 __pycache__/
 *.pyc
 /tmp/
+
+# regenerable review renders of the asset generators (kept locally, not versioned)
+_preview/

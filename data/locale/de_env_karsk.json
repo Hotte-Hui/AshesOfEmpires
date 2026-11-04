@@ -1,0 +1,17 @@
+{
+ "locale": "de-DE",
+ "area": "env_karsk",
+ "strings": {
+  "obs.karsk.stove.prompt": "Feuertonne ansehen",
+  "obs.karsk.stove.text": "Alte Schwellen in einer Teertonne. Brennt schlecht, wärmt trotzdem – die Männer reden über die Nachtschicht, nicht über die Wagen.",
+  "obs.karsk.poster.prompt": "Aushänge lesen",
+  "obs.karsk.poster.text": "Neue Wohnblocks bis zum Herbst, verspricht das Plakat. Die Warteliste daneben ist mit Bleistift verlängert worden.",
+  "obs.karsk.family.prompt": "Wartende Familie ansehen",
+  "obs.karsk.family.text": "Drei Generationen, vier Bündel, eine Holzkiste. Sie warten, wie man hier wartet: ohne zu fragen.",
+  "doc.karsk.signal_board.title": "Übungskasten – stromloses Lehrmodell",
+  "doc.karsk.seal.alt": "Bleiplombe an der Wagentür: Stationsstempel doppelt eingeschlagen, darunter abgeschabt „C-17“. Daneben eingeritzt: Quadrat, Kreis, Dreieck.",
+  "doc.karsk.timetable.alt": "Dienstfahrplan: drei umgebuchte Wagenzeilen ohne Zielbahnhof, am Rand markiert mit Quadrat, Kreis und Dreieck – von oben nach unten.",
+  "doc.karsk.ledger.alt": "Frachtbuch: eine neue Zeile für Wagen 24-311 mit rotem Stempel „C-17“. Der Empfänger ist geschwärzt.",
+  "doc.karsk.signal_board.alt": "Stromloser Übungskasten mit drei leeren Kartenschächten, toter Kontrolllampe und Beispielschema. Kein Teil einer echten Signalanlage."
+ }
+}

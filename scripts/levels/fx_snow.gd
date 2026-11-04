@@ -26,7 +26,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	var cam: Vector2 = Game.camera.pos if Game.camera else Vector2.ZERO
+	var cam: Vector2 = Game.camera.drawn if Game.camera else Vector2.ZERO
 	global_position = cam.floor() - Vector2.ONE
 	for f in _flakes:
 		f["ph"] += delta * 1.3

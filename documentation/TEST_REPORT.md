@@ -1,0 +1,98 @@
+# TEST REPORT — Ashes of Empires: The Last Winter (vertical slice)
+
+Date: 2026-11-04 · Godot 4.7.2.stable.official (ed1daf0bf) · Windows 11 Pro · NVIDIA RTX 4090 (Vulkan 1.4, Forward+)
+All results below were produced by actually running the commands on this machine. Nothing here was played or
+listened to by a human (see "Not covered").
+
+## 1. Test layers
+| Layer | Command | Result |
+|---|---|---|
+| Import | `godot --headless --path . --import` | exit 0 |
+| Unit tests | `godot --headless --path . --script res://tests/run_all.gd` | **14 files, 104 cases, 6000 checks — all passed** (2.4 s) |
+| Story parity with the Python reference | part of the unit tests (`test_reference_parity.gd`) | 3121 mutated/corrupted saves: 550 accepted with identical state, 2571 rejected (2473 with identical error message), **0 mismatches**; 4 branch routes × play/skip byte-identical |
+| UI test | `godot --headless --path . res://tests/visual/UIPreview.tscn` | **29 steps, 0 failures** (modal stack, pausing, typewriter, choices, inspect, both puzzles incl. hints, journal, save overwrite confirm, 150 % text) |
+| Audio test | `godot --headless --path . --script res://tools/audiogen/test_audio_headless.gd` | **passed, 51 streams** (bus layout, limiter, volumes, crossfades, stings, loops, variants) |
+| Autoplay E2E (Story API) | `-- --autoplay=<a1>,<m1> [--autoplay-skip]` | see §2 |
+| Real-input E2E (key presses only) | `-- --inputplay=<a1>,<m1> [--inputplay-skip] [--inputplay-shots=DIR]` | see §3 |
+| Exported build | see §4 | see §4 |
+
+## 2. Autoplay — every branch combination, cinematics watched and skipped
+Each run plays the real Main scene: waits until each objective is genuinely available (no gate bypass),
+triggers the normal interaction, answers each puzzle wrong once and then correctly, saves to slot 1 after the
+ledger, plays through all cinematics and the finale, checks choice history and consequence flags, then loads
+slot 1 and verifies the restored state is byte-identical.
+
+| A1 choice | M1 choice | Cinematics | Result |
+|---|---|---|---|
+| share_with_irina | preserve_evidence | watched | **AUTOPLAY_PASS** |
+| share_with_irina | preserve_evidence | skipped | **AUTOPLAY_PASS** |
+| share_with_irina | request_explanation | watched | **AUTOPLAY_PASS** |
+| share_with_irina | request_explanation | skipped | **AUTOPLAY_PASS** |
+| keep_private | preserve_evidence | watched | **AUTOPLAY_PASS** |
+| keep_private | preserve_evidence | skipped | **AUTOPLAY_PASS** |
+| keep_private | request_explanation | watched | **AUTOPLAY_PASS** |
+| keep_private | request_explanation | skipped | **AUTOPLAY_PASS** |
+
+All eight runs exit 0 (headless, final regression after all fixes). Each run also verified the consequence flags
+(`irina_trust` / `alexei_secrecy`, `konrad_evidence` / `office_suspicion`) and the mid-run save/load round trip.
+The first integration run failed at `m1_align_plans` (puzzle answer sent as floats) — fixed before these runs.
+
+## 3. Real-input playthrough
+`scripts/core/inputplay.gd` drives the game exclusively with synthetic keyboard events through Godot's input
+pipeline: main menu via arrow keys + Enter → disclaimer → intro pan skipped with Esc → journal (J) and pause
+menu (Esc) opened and closed → walking (WASD + Shift) into every hotspot's prompt range → E → dialogue advanced
+with Space → inspect views closed with E and Esc → signal puzzle with number keys (wrong order, Backspace,
+right order, Enter) → blueprint puzzle (Enter on the wrong pose, then R, R, →, →, ↑, Enter) → first choice with
+↓ + Enter, second choice with the number key → cinematics → end card → main menu → "Fortsetzen".
+
+| Run | Mode | A1 / M1 choice | Cinematics | Result |
+|---|---|---|---|---|
+| 1 | headless | share_with_irina / request_explanation | skipped (Esc) | **INPUTPLAY_PASS** (101 s) |
+| 2 | windowed, 4K fullscreen, screenshots | keep_private / preserve_evidence | watched in full | **INPUTPLAY_PASS** (143 s) |
+| 3 | windowed, 4K fullscreen, screenshots | share_with_irina / request_explanation | skipped | **INPUTPLAY_PASS** (106 s) |
+| 4 | headless, final regression | keep_private / request_explanation | skipped | **INPUTPLAY_PASS** (101 s) |
+| 5 | **exported .exe**, 4K fullscreen | keep_private / preserve_evidence | watched in full | **INPUTPLAY_PASS** (143 s) |
+| 6 | **final exported .exe**, 4K fullscreen | share_with_irina / preserve_evidence | skipped | **INPUTPLAY_PASS** (105 s) |
+
+All four branch combinations have been played by real key presses (runs 1/3, 2/5, 4 and 6).
+
+Two test-environment failures happened before the passes above, both caused by someone using the computer while
+the fullscreen test ran: (a) the window lost focus mid-walk and Godot released the held keys (as it would for a
+player) — the driver now re-asserts held keys, and the game now opens the pause menu on focus loss during free
+play; (b) the real mouse hovering a menu button moved the menu focus — the driver now makes the window
+mouse-transparent while it runs. Neither was a game defect.
+
+**Blockers this test found (all fixed):** the interact key did nothing (the world SubViewport receives no input
+events); the player could not move in the Berlin archive (collider wider than the 10 px walk band); the end card
+was not skippable; "Fortsetzen" after the demo replayed the end card. None of these was visible to the
+Story-API autoplay, which is why both layers are kept.
+
+## 4. Exported Windows build
+Command: `godot --headless --path . --export-release "Windows Desktop" builds/windows/AshesOfEmpires.exe` → exit 0.
+
+| File | Size | SHA-256 (first 16) |
+|---|---|---|
+| `AshesOfEmpires.exe` | 109.1 MB | `c446ee9d6b2defae` |
+| `AshesOfEmpires.pck` | 110.6 MB | `f29c06013df74b26` |
+| `AshesOfEmpires.console.exe` | 68 KB | `089ee9a9c4a0c94d` |
+
+- **Pack contents checked** (parsed the PCK directory): 826 files, 41 JSON data files present, **0 files** from
+  `tests/`, `tools/`, `preproduction/`, `documentation/`, `_preview/` or the test environment.
+- **Icon:** all six sizes of `assets/icon/icon.ico` (16–256 px) found byte-identical inside the .exe.
+- **Runs of the exported build:** windowed capture of the Berlin archive (renders like the editor build);
+  full real-input playthroughs, runs 5 and 6 in §3, including the 3D hall, both puzzles, the finale and "Fortsetzen".
+
+## 5. Visual verification (screenshots inspected)
+Windowed captures at 1920×1080 (capture mode) and at 3840×2160 (real fullscreen runs on a 4K display, ×6 pixel
+scale) were opened and checked: Karsk at camera x 0 / 640 / 1280, the Berlin archive at 0 / 960, every
+interaction UI, both puzzles, the stamp → plan match cut, the Great Hall, the finale tableau, the journal and
+menus. Curated copies: `documentation/screenshots/`.
+Issues found visually and fixed: duplicate NPCs standing over figures baked into Karsk props; dialogue box
+covering the speakers (now docks at the top when speakers stand low).
+
+## 6. Not covered (needs a human)
+- Nobody has listened to the music, ambience and SFX on real speakers; the mix is unverified by ear.
+- No physical controller was used; no real mouse play in the world (UI mouse paths are covered by the UI test).
+- Motion quality (shimmer during pans, animation feel at speed) was judged from stills and frame strips only.
+- Subjective quality: pacing, puzzle difficulty, readability, emotional impact.
+- Only an RTX 4090 was used; no low-end GPU, no 1440p display.

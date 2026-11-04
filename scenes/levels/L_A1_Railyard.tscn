@@ -86,23 +86,18 @@ kind = "observe"
 hotspot_id = "obs_family"
 observe_key = "obs.karsk.family"
 
-[node name="WorkerStove" type="Node2D" parent="Playfield"]
-script = ExtResource("3")
-char_id = "worker_a"
-hotspot_id = "obs_stove"
-hotspot_offset = Vector2(-16, -2)
-look_at_player = false
-
 [node name="Babushka" type="Node2D" parent="Playfield"]
 script = ExtResource("3")
 char_id = "babushka"
 hotspot_id = "obs_family"
-hotspot_offset = Vector2(-12, 0)
+hotspot_offset = Vector2(42, -12)
+face_left = true
 look_at_player = false
 
 [node name="Child" type="Node2D" parent="Playfield"]
 script = ExtResource("3")
 char_id = "child_a"
 hotspot_id = "obs_family"
-hotspot_offset = Vector2(4, 2)
+hotspot_offset = Vector2(55, -9)
+face_left = true
 look_at_player = false

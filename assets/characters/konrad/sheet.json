@@ -1,0 +1,73 @@
+{
+ "id": "konrad",
+ "cell": [
+  32,
+  56
+ ],
+ "origin": [
+  16,
+  54
+ ],
+ "facing": "right",
+ "anims": {
+  "idle_side": {
+   "row": 0,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "walk_side": {
+   "row": 1,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "idle_front": {
+   "row": 2,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "walk_front": {
+   "row": 3,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "idle_back": {
+   "row": 4,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "walk_back": {
+   "row": 5,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "inspect_side": {
+   "row": 6,
+   "frames": 6,
+   "fps": 8,
+   "loop": false
+  },
+  "interact_side": {
+   "row": 7,
+   "frames": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "talk_side": {
+   "row": 8,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  }
+ },
+ "ground_speed": {
+  "walk_side": 35.1,
+  "walk_front": 21.1,
+  "walk_back": 21.1
+ }
+}

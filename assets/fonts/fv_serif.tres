@@ -1,0 +1,8 @@
+[gd_resource type="FontVariation" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/pt_serif/PT_Serif-Web-Regular.ttf" id="1_my1oa"]
+[ext_resource type="FontFile" path="res://assets/fonts/pt_mono/PTM55FT.ttf" id="2_vym5d"]
+
+[resource]
+fallbacks = Array[Font]([ExtResource("2_vym5d")])
+base_font = ExtResource("1_my1oa")

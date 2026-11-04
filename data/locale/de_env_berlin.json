@@ -1,0 +1,17 @@
+{
+ "locale": "de-DE",
+ "area": "env_berlin",
+ "note": "Optionale Beobachtungen in M1 (Berliner Bauarchiv). Konrads Stimme: genau, längere Sätze, anfangs beschönigend. Hotspot-Ids siehe assets/environments/berlin_archive/scene.json.",
+ "strings": {
+  "obs.berlin.window.prompt": "Aus dem Fenster sehen",
+  "obs.berlin.window.text": "Über den verschneiten Dächern der Mietshäuser steht die Kuppel der Großen Halle im Dunst, so weit entfernt, dass sie eher wie ein Wetterumschwung wirkt als wie ein Gebäude. In der Abteilung heißt es, jeder unserer Striche trage zu ihr bei. Gegenüber brennt nur noch in wenigen Fenstern Licht; die übrigen Wohnungen gelten, wie es in den Bescheiden heißt, als freigezogen.",
+  "obs.berlin.notice.prompt": "Aushang lesen",
+  "obs.berlin.notice.text": "Eine maschinengeschriebene Liste mit Namen, Hausnummern und Stockwerken, hinter jeder Zeile das Wort ‚umgesetzt‘ und ein Datum aus diesem Herbst. Die Spalte für die neue Anschrift ist überall leer geblieben – vermutlich wird sie nachgetragen, sobald die zuständige Stelle ihre Unterlagen vervollständigt hat. Zwei der Adressen kenne ich; sie liegen genau dort, wo auf unseren Plänen die neue Achse verläuft.",
+  "obs.berlin.photo.prompt": "Foto betrachten",
+  "obs.berlin.photo.text": "Das Abteilungsfoto vom Sommer 1961, aufgenommen vor dem Modell der Halle, alle in Hemdsärmeln. Bei Herrn Brandt hat jemand das Gesicht mit einer Nadel zerkratzt, sorgfältig, bis nur noch weißes Papier übrig war. Sein Zeichentisch ist seit dem Frühjahr abgedeckt. Es hieß, er sei versetzt worden, und ich habe, wie alle anderen, nicht gefragt, wohin.",
+  "hs.berlin.plan_a.prompt": "Zeichenbrett ansehen",
+  "hs.berlin.plan_b.prompt": "Planschrank durchsehen",
+  "hs.berlin.overlay_table.prompt": "Pläne am Leuchttisch übereinanderlegen",
+  "hs.berlin.emil.prompt": "Mit Emil sprechen"
+ }
+}

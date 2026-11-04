@@ -63,6 +63,15 @@ func has_anim(a: String) -> bool:
 	return sheet.get("anims", {}).has(a)
 
 
+## Movement speed (px/s) at which the planted foot of a walk animation does not slide (sheet.json
+## "ground_speed"); 0 if unknown. Callers scale playback by actual_speed / ground_speed.
+func ground_speed(a: String) -> float:
+	var gs = sheet.get("ground_speed", {})
+	if gs is Dictionary and gs.has(a):
+		return float(gs[a])
+	return 0.0
+
+
 func resolve(a: String) -> String:
 	var guard := 0
 	while not has_anim(a) and FALLBACK.has(a) and guard < 6:

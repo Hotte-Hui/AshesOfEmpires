@@ -1,0 +1,112 @@
+{
+ "puzzle_id": "pz_blueprint",
+ "cell_px": 16,
+ "grid": [
+  18,
+  12
+ ],
+ "size_px": [
+  288,
+  192
+ ],
+ "display_scale": 3,
+ "coords": "pixels/cells from the top-left of each sheet; +x right, +y down",
+ "plan_a": {
+  "file": "berlin_plan_a.png",
+  "lines": "berlin_plan_a_lines.png",
+  "item": "ev_plan_a",
+  "landmarks": {
+   "staircase": {
+    "cell": [
+     4,
+     2
+    ],
+    "size": [
+     2,
+     2
+    ]
+   },
+   "chimney": {
+    "cell": [
+     9,
+     7
+    ],
+    "size": [
+     1,
+     1
+    ]
+   }
+  },
+  "building_cells": [
+   3,
+   1,
+   16,
+   9
+  ],
+  "closed_wing_x_cell": 12
+ },
+ "plan_b": {
+  "file": "berlin_plan_b.png",
+  "lines": "berlin_plan_b_lines.png",
+  "item": "ev_plan_b",
+  "landmarks": {
+   "staircase": {
+    "cell": [
+     2,
+     3
+    ],
+    "size": [
+     2,
+     2
+    ]
+   },
+   "chimney": {
+    "cell": [
+     7,
+     8
+    ],
+    "size": [
+     1,
+     1
+    ]
+   }
+  },
+  "annotation": {
+   "text": "C-17",
+   "medium": "pencil",
+   "rect_px": [
+    234,
+    116,
+    36,
+    18
+   ]
+  }
+ },
+ "solution": {
+  "rotation_steps": 0,
+  "offset_x": 2,
+  "offset_y": -1,
+  "applies_to": "plan_b",
+  "units": "cells",
+  "check": "landmark_b + offset == landmark_a for both landmarks"
+ },
+ "hidden_corridor": {
+  "rect_in_plan_b_px": [
+   160,
+   96,
+   128,
+   16
+  ],
+  "rect_in_plan_a_px": [
+   192,
+   80,
+   96,
+   16
+  ],
+  "note": "corridor that exists only in the draft; after alignment it runs through the closed supply wing of plan A and out of the east wall"
+ },
+ "accessibility": "landmarks differ by shape (stair treads + arrow vs. solid square with cross), readable in greyscale; no colour coding needed",
+ "world_note": "Simplified fictional overlay, not an authentic architectural document.",
+ "generator": "tools/pixelgen/env_berlin_docs.py",
+ "date": "2026-11-04"
+}

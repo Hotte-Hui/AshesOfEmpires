@@ -1,0 +1,12 @@
+[gd_resource type="FontVariation" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/oswald/Oswald-VariableFont_wght.ttf" id="1_md84o"]
+[ext_resource type="FontFile" path="res://assets/fonts/pt_mono/PTM55FT.ttf" id="2_4bkdl"]
+
+[resource]
+fallbacks = Array[Font]([ExtResource("2_4bkdl")])
+base_font = ExtResource("1_md84o")
+variation_opentype = {
+2003265652: 400
+}
+spacing_glyph = 2

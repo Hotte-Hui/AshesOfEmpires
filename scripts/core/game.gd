@@ -40,6 +40,7 @@ var ui: Node = null
 var level: Node = null
 var player: Node = null
 var input_locked := false
+var interact_ready_at := 0      # ticks (ms); player interact presses before this are ignored
 var busy := false
 var in_cinematic := false
 var args: Dictionary = {}
@@ -106,6 +107,11 @@ func register_main(m: Node) -> void:
 		ap.configure(str(args["autoplay"]), args.has("autoplay-skip"), str(args.get("autoplay-shots", "")))
 		ap.run()
 		return
+	if args.has("inputplay"):   # real-input E2E: normal boot, then synthetic key presses only
+		var ip: Node = load("res://scripts/core/inputplay.gd").new()
+		add_child(ip)
+		ip.configure(str(args["inputplay"]), args.has("inputplay-skip"), str(args.get("inputplay-shots", "")))
+		ip.run.call_deferred()
 	if args.has("scene"):
 		if Story.has_method("new_game"):
 			Story.new_game()
@@ -149,8 +155,8 @@ func _load_ui() -> void:
 			_connect(node, "quit_requested", func(): get_tree().quit())
 			_connect(node, "load_requested", _on_load_slot)
 			_connect(node, "loaded", _on_loaded_slot)
-	if Saves.has_signal("loaded"):
-		Saves.loaded.connect(_on_loaded_slot)
+	# NOTE: Saves.loaded is deliberately NOT connected here: Saves.load() emits it synchronously and
+	# _on_load_slot() already continues with _on_loaded_slot() -> connecting it would load the level twice.
 
 
 func _connect(obj: Object, sig: String, c: Callable) -> void:
@@ -231,6 +237,9 @@ func _on_loaded_slot(_slot = "") -> void:
 	if extra is Dictionary and extra.has("playtime"):
 		playtime = float(extra["playtime"])
 	await goto_level(_story_scene(), "", true)
+	# A save taken while a transition was still queued: present it now instead of after the next action.
+	if Story.has_method("pending_cinematics") and not Story.pending_cinematics().is_empty():
+		await _after_story_change()
 
 
 func _story_scene() -> String:
@@ -254,7 +263,8 @@ func save_extra() -> Dictionary:
 
 
 func autosave(reason: String) -> void:
-	if Saves.has_method("autosave") and not args.has("capture"):
+	# Never autosave the finished-demo state (montage scene): "Fortsetzen" must resume a playable moment.
+	if Saves.has_method("autosave") and not args.has("capture") and _story_scene() != "L_X1_Montage":
 		Saves.autosave(reason)
 
 
@@ -413,7 +423,7 @@ func update_prompt(target: Node) -> void:
 
 
 func world_to_ui(world_pos: Vector2) -> Vector2:
-	return view.world_to_ui(world_pos, camera.pos) if view and camera else world_pos
+	return view.world_to_ui(world_pos, camera.drawn) if view and camera else world_pos
 
 
 func interact(it: Node) -> void:
@@ -435,6 +445,8 @@ func interact(it: Node) -> void:
 			await _do_observe(it)
 	busy = false
 	input_locked = false
+	# The key press that closed the last line/panel must not immediately trigger the next interaction.
+	interact_ready_at = Time.get_ticks_msec() + 350
 	await _after_story_change()
 
 
@@ -473,6 +485,7 @@ func _speak(speaker: String, text: String, expr := "neutral") -> void:
 		print("[%s] %s" % [speaker, text])
 		await _wait(1.2)
 		return
+	_dock_dialogue(dlg, speaker)
 	_call(dlg, "show_line", [speaker, text, expr])
 	if auto:
 		await get_tree().create_timer(0.25).timeout
@@ -480,6 +493,23 @@ func _speak(speaker: String, text: String, expr := "neutral") -> void:
 		await dlg.advanced
 	else:
 		await _wait(2.0)
+
+
+## Dock the dialogue box at the top when the people involved stand in the lower part of the frame
+## (feet below ~60 % of the screen), otherwise at the bottom: the box must never hide who is talking.
+func _dock_dialogue(dlg: Node, speaker: String) -> void:
+	if dlg == null or not ("dock_top" in dlg):
+		return
+	var lowest := 0.0
+	var who: Array = []
+	if player and is_instance_valid(player):
+		who.append(player)
+	for n in get_tree().get_nodes_in_group("npcs"):
+		if str(n.get("char_id")) == speaker:
+			who.append(n)
+	for n in who:
+		lowest = maxf(lowest, world_to_ui((n as Node2D).global_position).y)
+	dlg.dock_top = lowest > 640.0
 
 
 func _end_speech() -> void:
@@ -547,6 +577,11 @@ func _auto_solve(oid: String) -> void:
 				sol = x["solution"]
 	if sol == null:
 		return
+	if sol is Dictionary:   # JSON numbers arrive as floats; the Story engine requires typed ints
+		var typed := {}
+		for k in sol:
+			typed[k] = int(sol[k])
+		sol = typed
 	var wrong = ["triangle", "square", "circle"] if sol is Array else {"rotation_steps": 1, "offset_x": 0, "offset_y": 0}
 	var r1 = Story.solve_puzzle(oid, wrong)
 	if r1 is Dictionary and r1.get("solved", false):
@@ -565,6 +600,7 @@ func _do_choice(it: Node) -> void:
 	if (dlg == null and not auto) or opts.is_empty():
 		return
 	var speaker: String = player.char_id if player else "alexei"
+	_dock_dialogue(dlg, speaker)
 	_call(dlg, "show_line", [speaker, Loc.t(str(obj.get("text_key", ""))), "concerned"])
 	var cid = null
 	if auto:
@@ -714,6 +750,12 @@ func _cin_hall() -> bool:
 	var done := [false]
 	if hall.has_signal("finished"):
 		hall.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	# The hall reports its own timed cues; the loudspeaker lines are spoken text -> subtitles.
+	var has_cues := hall.has_signal("cue")
+	if has_cues:
+		hall.cue.connect(func(key: String):
+			if key.begins_with("hall.cue.loudspeaker") and Loc.has(key):
+				subtitle(Loc.t(key), 3.6))
 	var t := 0.0
 	var said := false
 	while not done[0] and t < 16.0:
@@ -721,7 +763,7 @@ func _cin_hall() -> bool:
 			if hall.has_method("skip"):
 				hall.skip()
 			break
-		if t > 3.2 and not said:
+		if not has_cues and t > 3.2 and not said:
 			said = true
 			subtitle(Loc.t("cinematic.hall_reveal"), 5.0)
 		await get_tree().process_frame
@@ -761,18 +803,22 @@ func _cin_final() -> bool:
 func _finale_flow() -> void:
 	if Story.has_method("finale"):
 		Story.finale(false)
-	autosave("slice_complete")
+	# No autosave here on purpose: "Fortsetzen" should resume the last *playable* moment (before the final
+	# decision), not replay the end card.
 	_unload_level()
+	in_cinematic = true      # end card is skippable like any cinematic
+	_skip = false
 	_show_end_card()
 	await fade_in(1.0)
-	var t := 0.0 if not auto else 8.0
-	while t < 9.0 and not _skip:
+	var t := 0.0 if not auto else 11.0
+	while t < 12.0 and not _skip:
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	_skip = false
 	await fade_out(1.0)
 	_title.visible = false
 	_caption.visible = false
+	in_cinematic = false
 	if not auto:
 		show_main_menu()
 
@@ -920,6 +966,14 @@ func _wait(t: float) -> void:
 
 
 # ------------------------------------------------------------------ input
+func _notification(what: int) -> void:
+	# Standard PC behaviour: alt-tabbing away during free play opens the pause menu (never in test modes).
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and level and is_instance_valid(level) and player \
+			and not busy and not in_cinematic and not get_tree().paused and not auto \
+			and not args.has("inputplay") and not args.has("capture") and not args.has("capture-world"):
+		_call(ui, "open_pause")
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if in_cinematic:
 		if event.is_action_pressed("skip") or event.is_action_pressed("advance"):
@@ -928,6 +982,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if level == null or busy:
 		return
+	if event.is_action_pressed("interact") and player and is_instance_valid(player) and player.has_method("try_interact"):
+		if player.try_interact():
+			get_viewport().set_input_as_handled()
+			return
 	if event.is_action_pressed("pause") and not get_tree().paused:
 		if _call(ui, "open_pause") == null and ui and not ui.has_method("open_pause"):
 			_call(_ui("pause_menu"), "open")

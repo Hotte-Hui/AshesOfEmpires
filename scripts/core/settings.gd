@@ -87,7 +87,8 @@ func apply(key: String) -> void:
 			DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if values[key] else DisplayServer.VSYNC_DISABLED)
 		_:
 			if key.ends_with("_volume"):
-				var bus := key.trim_suffix("_volume").capitalize()
+				var short := key.trim_suffix("_volume")
+				var bus: String = {"master": "Master", "music": "Music", "ambience": "Ambience", "sfx": "SFX", "ui": "UI"}.get(short, short.capitalize())
 				var idx := AudioServer.get_bus_index(bus)
 				if idx >= 0:
 					AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(0.0001, float(values[key]))))

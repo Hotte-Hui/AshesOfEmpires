@@ -1,0 +1,659 @@
+{
+ "id": "berlin_archive",
+ "palette": "archive",
+ "palette_exterior": "berlin",
+ "world_size": [
+  1600,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1600,
+   360
+  ]
+ },
+ "canvas_modulate": "#C4CCD2",
+ "layers": [
+  {
+   "name": "ext_sky",
+   "file": "ext_sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.05,
+    0.05
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "ext_far",
+   "file": "ext_far.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.1,
+    0.1
+   ],
+   "z": -95,
+   "normal": false,
+   "emission": true,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "ext_near",
+   "file": "ext_near.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.18,
+    0.18
+   ],
+   "z": -90,
+   "normal": false,
+   "emission": true,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "room",
+   "file": "room.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "lit": true
+  },
+  {
+   "name": "shafts",
+   "file": "shafts.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 10,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "blend": "add",
+   "note": "soft alpha veil (max ~18%); additive preferred, plain alpha acceptable"
+  },
+  {
+   "name": "fg_frame",
+   "file": "fg_frame.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "props": [
+  {
+   "name": "coat_stand",
+   "file": "props/coat_stand.png",
+   "pos": [
+    96,
+    226
+   ],
+   "base_y": 291,
+   "size": [
+    22,
+    66
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "drafting_covered",
+   "file": "props/drafting_covered.png",
+   "pos": [
+    172,
+    220
+   ],
+   "base_y": 293,
+   "size": [
+    66,
+    74
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "drafting_konrad",
+   "file": "props/drafting_konrad.png",
+   "pos": [
+    284,
+    219
+   ],
+   "base_y": 294,
+   "size": [
+    78,
+    76
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "stool_konrad",
+   "file": "props/stool_konrad.png",
+   "pos": [
+    362,
+    266
+   ],
+   "base_y": 295,
+   "size": [
+    16,
+    30
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "typist_desk",
+   "file": "props/typist_desk.png",
+   "pos": [
+    446,
+    228
+   ],
+   "base_y": 293,
+   "size": [
+    60,
+    66
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "plan_basket",
+   "file": "props/plan_basket.png",
+   "pos": [
+    612,
+    272
+   ],
+   "base_y": 309,
+   "size": [
+    20,
+    38
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "ladder",
+   "file": "props/ladder.png",
+   "pos": [
+    652,
+    150
+   ],
+   "base_y": 291,
+   "size": [
+    26,
+    142
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "flat_file",
+   "file": "props/flat_file.png",
+   "pos": [
+    790,
+    244
+   ],
+   "base_y": 293,
+   "size": [
+    108,
+    50
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "card_catalogue",
+   "file": "props/card_catalogue.png",
+   "pos": [
+    990,
+    231
+   ],
+   "base_y": 292,
+   "size": [
+    46,
+    62
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "light_table",
+   "file": "props/light_table.png",
+   "pos": [
+    1136,
+    245
+   ],
+   "base_y": 294,
+   "size": [
+    84,
+    50
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "counter",
+   "file": "props/counter.png",
+   "pos": [
+    1334,
+    240
+   ],
+   "base_y": 292,
+   "size": [
+    160,
+    53
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "bench",
+   "file": "props/bench.png",
+   "pos": [
+    1296,
+    268
+   ],
+   "base_y": 291,
+   "size": [
+    46,
+    24
+   ],
+   "normal": true,
+   "emission": false
+  }
+ ],
+ "walkable": [
+  [
+   18,
+   296
+  ],
+  [
+   1582,
+   296
+  ],
+  [
+   1582,
+   306
+  ],
+  [
+   18,
+   306
+  ]
+ ],
+ "spawns": {
+  "SP_M1_Office": [
+   140,
+   300
+  ]
+ },
+ "hotspots": {
+  "plan_a": [
+   322,
+   300
+  ],
+  "plan_b": [
+   842,
+   300
+  ],
+  "overlay_table": [
+   1178,
+   300
+  ],
+  "emil": [
+   1412,
+   284
+  ],
+  "obs_window": [
+   262,
+   300
+  ],
+  "obs_photo": [
+   204,
+   300
+  ],
+  "obs_notice": [
+   1318,
+   300
+  ]
+ },
+ "lights": [
+  {
+   "name": "window_1",
+   "pos": [
+    142,
+    200
+   ],
+   "color": "#A7BCCB",
+   "energy": 0.55,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "window_2",
+   "pos": [
+    262,
+    200
+   ],
+   "color": "#A7BCCB",
+   "energy": 0.55,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "window_3",
+   "pos": [
+    382,
+    200
+   ],
+   "color": "#A7BCCB",
+   "energy": 0.55,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "corridor_glass",
+   "pos": [
+    46,
+    214
+   ],
+   "color": "#F0C487",
+   "energy": 0.25,
+   "radius": 56,
+   "flicker": 0.03,
+   "height": 8,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "archive_pendant",
+   "pos": [
+    842,
+    201
+   ],
+   "color": "#F0C487",
+   "energy": 0.85,
+   "radius": 118,
+   "flicker": 0.02,
+   "height": 28,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "archive_sconce",
+   "pos": [
+    954,
+    194
+   ],
+   "color": "#F0C487",
+   "energy": 0.5,
+   "radius": 76,
+   "flicker": 0.05,
+   "height": 16,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lamp_konrad",
+   "pos": [
+    337,
+    239
+   ],
+   "color": "#F0C487",
+   "energy": 0.95,
+   "radius": 112,
+   "flicker": 0.02,
+   "height": 24,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lamp_typist",
+   "pos": [
+    461,
+    241
+   ],
+   "color": "#F0C487",
+   "energy": 0.55,
+   "radius": 84,
+   "flicker": 0.03,
+   "height": 18,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "light_table",
+   "pos": [
+    1178,
+    258
+   ],
+   "color": "#E3ECEA",
+   "energy": 0.7,
+   "radius": 92,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lamp_emil",
+   "pos": [
+    1463,
+    254
+   ],
+   "color": "#8FC79A",
+   "energy": 0.8,
+   "radius": 90,
+   "flicker": 0.02,
+   "height": 10,
+   "on_layer": "playfield"
+  }
+ ],
+ "fx": [
+  {
+   "type": "anim_sprite",
+   "file": "fx_window_snow.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    -171,
+    80
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_near (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_office.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    104,
+    84
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_archive.png",
+   "frames": 16,
+   "fps": 4,
+   "pos": [
+    800,
+    196
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  }
+ ],
+ "npcs": {
+  "emil": {
+   "pos": [
+    1412,
+    284
+   ],
+   "facing": "left",
+   "note": "stands behind the counter prop (counter base_y 292 > feet y 284)"
+  }
+ },
+ "interaction": {
+  "plan_a": {
+   "approach": [
+    310,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    322,
+    246
+   ]
+  },
+  "plan_b": {
+   "approach": [
+    826,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    842,
+    262
+   ]
+  },
+  "overlay_table": {
+   "approach": [
+    1160,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    1178,
+    262
+   ]
+  },
+  "emil": {
+   "approach": [
+    1376,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    1412,
+    250
+   ]
+  },
+  "obs_window": {
+   "approach": [
+    262,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    262,
+    150
+   ]
+  },
+  "obs_photo": {
+   "approach": [
+    190,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    206,
+    250
+   ]
+  },
+  "obs_notice": {
+   "approach": [
+    1318,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    1318,
+    214
+   ]
+  }
+ },
+ "windows": {
+  "glass_rects": [
+   [
+    120,
+    84,
+    44,
+    152
+   ],
+   [
+    240,
+    84,
+    44,
+    152
+   ],
+   [
+    360,
+    84,
+    44,
+    152
+   ]
+  ],
+  "note": "room.png is transparent here; ext_* layers show through"
+ },
+ "meta": {
+  "mode": "side",
+  "feet_y": 300,
+  "generator": "tools/pixelgen/env_berlin.py",
+  "date": "2026-11-04",
+  "shafts_blend": "shafts.png is meant for additive/screen blending; with plain alpha it reads as dithered motes"
+ }
+}

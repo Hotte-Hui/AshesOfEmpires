@@ -9,6 +9,7 @@ const VIEW := Vector2(640, 360)
 var target: Node2D = null
 var bounds := Rect2(0, 0, 640, 360)
 var pos := Vector2.ZERO
+var drawn := Vector2.ZERO        # what is actually on screen (pixel-locked in gameplay)
 var follow_offset := Vector2(0, -70)
 var look_ahead := 34.0
 var smoothing := 3.2
@@ -81,12 +82,16 @@ func _process(delta: float) -> void:
 
 
 func _apply() -> void:
-	var fl := pos.floor()
+	# Gameplay: camera locked to whole pixels (player and world share one pixel grid -> no relative jitter).
+	# Cinematic pans: sub-pixel remainder applied at display scale for silky slow moves.
+	var draw := pos if cinematic else pos.round()
+	drawn = draw
+	var fl := draw.floor()
 	position = fl - Vector2.ONE
 	if Game.view:
-		Game.view.set_fraction(pos - fl)
-	moved.emit(pos)
+		Game.view.set_fraction(draw - fl)
+	moved.emit(draw)
 
 
 func top_left() -> Vector2:
-	return pos
+	return drawn
