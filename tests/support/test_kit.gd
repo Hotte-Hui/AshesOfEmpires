@@ -9,6 +9,12 @@ const ENGINE_PATH := "res://scripts/story/story_engine.gd"
 const SAVES_PATH := "res://scripts/core/save_system.gd"
 const A1_SYMBOLS := ["square", "circle", "triangle"]
 const M1_OVERLAY := {"rotation_steps": 0, "offset_x": 2, "offset_y": -1}
+## pz_c3_protocol (documentation/C3_DESIGN.md §2.7): who spoke on Anlage C, in order.
+const C3_PROTOCOL := ["chair", "reich", "secretariat", "soviet"]
+## The scene chain and the stages of the canonical route (each stage ends with its quest's choice).
+const CHAIN := ["L_A1_Railyard", "L_M1_Archive", "L_C3_Station", "L_C3_Hall", "L_X1_Montage"]
+const STAGES := ["a1", "m1", "c3a", "c3b"]
+const DEFAULT_CHOICES := {"a1": "share_with_irina", "m1": "preserve_evidence", "c3a": "ask_elena", "c3b": "share_protocol"}
 
 var failures: Array = []
 var context := ""
@@ -111,6 +117,13 @@ static func strict_eq(a, b) -> bool:
 	return a == b
 
 
+## Sorted copy of an Array (or of a Dictionary's keys).
+static func sorted(v) -> Array:
+	var a: Array = (v as Dictionary).keys() if v is Dictionary else Array(v).duplicate()
+	a.sort()
+	return a
+
+
 static func fmt(v) -> String:
 	var s := ("\"%s\"" % v) if typeof(v) == TYPE_STRING else var_to_str(v)
 	s = s.replace("\n", " ")
@@ -133,6 +146,25 @@ func saves() -> Node:
 func track(n: Node) -> Node:
 	_nodes.append(n)
 	return n
+
+
+# ------------------------------------------------------------------ scene tree (run_all.gd extends SceneTree)
+## The running SceneTree (tests run inside its first _process frame, so the autoloads exist).
+static func tree() -> SceneTree:
+	return Engine.get_main_loop() as SceneTree
+
+
+static func root() -> Window:
+	var t := tree()
+	return t.root if t != null else null
+
+
+## Adds a node under /root (its _ready() runs now) and frees it in cleanup().
+func mount(n: Node) -> Node:
+	var r := root()
+	if r != null:
+		r.add_child(n)
+	return track(n)
 
 
 func cleanup() -> void:
@@ -168,36 +200,97 @@ func get_to_signal(g: Node) -> void:
 	step(g.inspect("a1_inspect_timetable"), "inspect timetable")
 
 
-## Port of story_engine_v4.play_verified_route: authentic dialogue and puzzle flows, no bypass.
-func play_verified_route(a1 := "share_with_irina", m1 := "preserve_evidence", skip := false) -> Node:
+## The canonical route through the whole chain A1 → M1 → C3a → C3b → finale (the Python counterpart is
+## play_full_route() in tests/reference/make_python_reference.py; story_engine_v4.play_verified_route()
+## itself ends after M1, where the finale is locked since Chapter 3 was inserted). Authentic dialogue and
+## puzzle flows, no bypass; every cinematic is consumed at the end, then the finale.
+func play_verified_route(a1 := "share_with_irina", m1 := "preserve_evidence", skip := false,
+		c3a := "ask_elena", c3b := "share_protocol") -> Node:
 	var g := story()
-	play_route_on(g, a1, m1, skip, false)
+	play_route_on(g, a1, m1, skip, false, c3a, c3b)
 	return g
 
 
 ## Same route on an existing instance. consume_now = consume each cinematic as soon as it is queued
 ## (what the Game director does) instead of all at the end (what the Python helper does).
-func play_route_on(g: Node, a1: String, m1: String, skip: bool, consume_now: bool) -> void:
+func play_route_on(g: Node, a1: String, m1: String, skip: bool, consume_now: bool,
+		c3a := "ask_elena", c3b := "share_protocol") -> void:
 	var drain := func() -> void:
 		if consume_now:
 			for seq in g.pending_cinematics():
 				step(g.consume_cinematic(seq, skip), "cinematic " + seq)
+	play_a1(g, a1, drain)
+	play_m1(g, m1, drain)
+	drain.call()
+	play_c3a(g, c3a)
+	drain.call()
+	play_c3b(g, c3b)
+	for seq in g.pending_cinematics():
+		step(g.consume_cinematic(seq, skip), "cinematic " + seq)
+	step(g.finale(skip), "finale")
+
+
+## Stage helpers (public API only). `after_choice` / `after_puzzle` run right after the step that queues a
+## cinematic (play_route_on drains the queue there in consume_now mode).
+func play_a1(g: Node, a1 := "share_with_irina", after_choice := Callable()) -> void:
 	play_dialogue(g, "a1_talk_irina")
 	step(g.inspect("a1_inspect_seal"), "inspect seal")
 	step(g.inspect("a1_inspect_timetable"), "inspect timetable")
 	step(g.solve_puzzle("a1_solve_signal", A1_SYMBOLS.duplicate()), "solve signal")
 	step(g.inspect("a1_inspect_ledger"), "inspect ledger")
 	step(g.choose("a1_choose", a1), "a1 choice")
-	drain.call()
+	if after_choice.is_valid():
+		after_choice.call()
+
+
+func play_m1(g: Node, m1 := "preserve_evidence", after_puzzle := Callable()) -> void:
 	step(g.inspect("m1_inspect_plan_a"), "plan a")
 	step(g.inspect("m1_inspect_plan_b"), "plan b")
 	step(g.solve_puzzle("m1_align_plans", M1_OVERLAY.duplicate()), "overlay")
-	drain.call()
+	if after_puzzle.is_valid():
+		after_puzzle.call()
 	play_dialogue(g, "m1_talk_emil")
 	step(g.choose("m1_choose", m1), "m1 choice")
-	for seq in g.pending_cinematics():
-		step(g.consume_cinematic(seq, skip), "cinematic " + seq)
-	step(g.finale(skip), "finale")
+
+
+func play_c3a(g: Node, c3a := "ask_elena") -> void:
+	play_dialogue(g, "c3a_talk_conductor")
+	step(g.inspect("c3a_inspect_weighbill"), "inspect weighbill")
+	step(g.inspect("c3a_inspect_departures"), "inspect departures")
+	play_dialogue(g, "c3a_pass_control")
+	play_dialogue(g, "c3a_talk_elena")
+	step(g.choose("c3a_choose", c3a), "c3a choice")
+
+
+func play_c3b(g: Node, c3b := "share_protocol") -> void:
+	play_dialogue(g, "c3b_arrival")
+	step(g.inspect("c3b_inspect_seating"), "inspect seating")
+	step(g.inspect("c3b_inspect_log"), "inspect booth log")
+	step(g.solve_puzzle("c3b_solve_protocol", C3_PROTOCOL.duplicate()), "solve protocol")
+	step(g.inspect("c3b_inspect_booth"), "inspect booth 2")
+	play_dialogue(g, "c3b_talk_alexei")
+	step(g.choose("c3b_choose", c3b), "c3b choice")
+
+
+## Plays the canonical route up to and including the choice of `stage` ("a1" … "c3b"); no cinematic is
+## consumed and the finale is not called. choices: {stage: option} overrides DEFAULT_CHOICES.
+func play_until(g: Node, stage: String, choices := {}) -> void:
+	var c := DEFAULT_CHOICES.duplicate()
+	c.merge(choices, true)
+	var last := STAGES.find(stage)
+	if last < 0:
+		fail("play_until: unknown stage " + stage)
+		return
+	for i in last + 1:
+		match STAGES[i]:
+			"a1":
+				play_a1(g, c["a1"])
+			"m1":
+				play_m1(g, c["m1"])
+			"c3a":
+				play_c3a(g, c["c3a"])
+			"c3b":
+				play_c3b(g, c["c3b"])
 
 
 static func parse(text: String) -> Variant:

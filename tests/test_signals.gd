@@ -51,9 +51,25 @@ func _full_stream() -> bool:
 		["cinematic_queued", "LS_M1_Hall"],
 		["item_granted", "ev_emil_note"], ["objective_completed", "m1_talk_emil"],
 		["flag_changed", "konrad_evidence", 1], ["objective_completed", "m1_choose"], ["event_fired", "m1_completed"],
-		["cinematic_queued", "LS_X1_Final"], ["scene_changed", "L_X1_Montage"],
+		# m1_completed now queues the Chapter-2 closer AND the Chapter-3 trains and moves on to the station
+		["cinematic_queued", "LS_X1_Final"], ["cinematic_queued", "LS_C3_Trains"], ["scene_changed", "L_C3_Station"],
+		["objective_completed", "c3a_talk_conductor"],
+		["flag_changed", "courier_files_seen", true], ["item_granted", "ev_c3_weighbill"], ["objective_completed", "c3a_inspect_weighbill"],
+		["item_granted", "ev_c3_departures"], ["objective_completed", "c3a_inspect_departures"],
+		["item_granted", "ev_c3_travel_order"], ["objective_completed", "c3a_pass_control"],
+		["objective_completed", "c3a_talk_elena"],
+		["flag_changed", "elena_trust", 1], ["objective_completed", "c3a_choose"], ["event_fired", "c3a_completed"],
+		["cinematic_queued", "LS_C3_ToHall"], ["scene_changed", "L_C3_Hall"],
+		["objective_completed", "c3b_arrival"],
+		["item_granted", "ev_c3_seating"], ["objective_completed", "c3b_inspect_seating"],
+		["item_granted", "ev_c3_booth_log"], ["objective_completed", "c3b_inspect_log"],
+		["flag_changed", "protocol_matched", true], ["objective_completed", "c3b_solve_protocol"],
+		["flag_changed", "elena_missing", true], ["item_granted", "ev_c3_carbon"], ["objective_completed", "c3b_inspect_booth"],
+		["objective_completed", "c3b_talk_alexei"],
+		["flag_changed", "alexei_konrad_trust", 1], ["objective_completed", "c3b_choose"], ["event_fired", "c3b_completed"],
+		["cinematic_queued", "LS_C3_Close"], ["scene_changed", "L_X1_Montage"],
 		["flag_changed", "slice_finished", true], ["event_fired", "slice_completed"],
-	], "exact signal stream of the share/preserve route")
+	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol)")
 	return true
 
 

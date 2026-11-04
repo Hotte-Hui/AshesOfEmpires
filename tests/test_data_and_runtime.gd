@@ -47,8 +47,11 @@ func _test_schema() -> bool:
 		print("      note: documentation/references missing — reference file existence check skipped")
 	var report: Dictionary = ENGINE.validate_data(fresh_data(), root)
 	kit.is_ok(report, "canonical data validates")
-	kit.eq(report.get("report", {}).get("quests"), 2, "quests")
-	kit.eq(report.get("report", {}).get("scenes"), 3, "scenes")
+	# The Python test expects the slice (2 quests, 3 scenes); Chapter 3 adds q_c3a_arrival / q_c3b_palais and
+	# the scenes L_C3_Station / L_C3_Hall (documentation/C3_DESIGN.md §2).
+	kit.eq(report.get("report", {}).get("quests"), 4, "quests")
+	kit.eq(report.get("report", {}).get("scenes"), 5, "scenes")
+	kit.eq(report.get("report", {}).get("objectives"), 24, "objectives (11 slice + 13 Chapter 3)")
 	return true
 
 

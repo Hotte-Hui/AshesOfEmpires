@@ -166,10 +166,31 @@ func _accessors() -> bool:
 	kit.eq(g.cinematic_def("LS_M1_Hall").get("trigger_objective"), "m1_align_plans", "cinematic_def")
 	kit.eq(g.chapter_key(), "ui.chapter_a1", "chapter a1")
 	var rel: Dictionary = g.relationships()
-	kit.eq(rel.keys(), ["irina_trust", "alexei_secrecy", "konrad_evidence", "office_suspicion", "civilian_welfare"], "integer flags")
+	# data order: the slice meters, then the Chapter-3 meters appended to flags.json (C3_DESIGN §2.6)
+	kit.eq(rel.keys(), ["irina_trust", "alexei_secrecy", "konrad_evidence", "office_suspicion", "civilian_welfare",
+		"alexei_konrad_trust", "elena_trust", "evidence_chain", "kessler_alerted"], "integer flags")
 	kit.eq(rel["irina_trust"], {"value": 0, "min": 0, "max": 3, "default": 0}, "meter shape")
+	kit.eq(rel["alexei_konrad_trust"], {"value": 0, "min": 0, "max": 5, "default": 0}, "Chapter-3 meter shape")
 	kit.eq(g.relationship("c17_confirmed"), 0, "boolean flag is not a meter")
+	kit.eq(g.relationship("protocol_matched"), 0, "Chapter-3 boolean flag is not a meter")
 	kit.eq(g.relationship("nope"), 0, "unknown meter")
+	# Chapter-3 definitions
+	kit.eq(g.choices_for("c3b_choose"), [{"id": "share_protocol", "text_key": "choice.c3b.share_protocol"},
+		{"id": "search_elena", "text_key": "choice.c3b.search_elena"},
+		{"id": "report_delegation", "text_key": "choice.c3b.report_delegation"}], "choices_for c3b")
+	var pc: Dictionary = g.puzzle_for("c3b_solve_protocol")
+	kit.ok(not pc.has("solution"), "puzzle_for hides the protocol solution")
+	kit.eq(pc.get("display_symbols"), ["soviet", "secretariat", "chair", "reich"], "protocol display symbols")
+	kit.eq(pc.get("clue_item_ids"), ["ev_c3_seating", "ev_c3_booth_log"], "protocol clues")
+	kit.eq(g.quest_for("c3a_choose").get("id"), "q_c3a_arrival", "quest_for c3a")
+	kit.eq(g.quest_for("c3b_choose").get("requires_events"), ["c3a_completed"], "c3b gated by c3a")
+	kit.eq(g.scene_def("L_C3_Hall").get("protagonist"), "konrad", "scene_def palais")
+	kit.eq(g.scene_def("L_M1_Archive").get("next_scene"), "L_C3_Station", "archive hands over to the station")
+	kit.eq(g.cinematic_def("LS_C3_Trains").get("trigger_event"), "m1_completed", "cinematic_def C3 trains")
+	var c := kit.story()
+	kit.play_until(c, "m1")
+	kit.eq(c.current_quest().get("id"), "q_c3a_arrival", "current quest after M1")
+	kit.eq(c.chapter_key(), "ui.chapter_c3", "chapter c3")
 	var m := kit.play_verified_route()
 	kit.eq(m.current_quest(), {}, "no quest in the montage")
 	kit.eq(m.chapter_key(), "world.x1.title", "montage chapter key")
@@ -229,7 +250,9 @@ func _invalid_data_guard() -> bool:
 	return true
 
 
-## Seeded random walk over the public API (valid and invalid calls) with invariant checks.
+## Seeded random walks over the public API (valid and invalid calls) with invariant checks: the original slice
+## walk (unchanged seed and action mix) plus a Chapter-3 walk that starts at the station or the palais and
+## picks an available objective two times in three, so the chapter's gates and transitions are really crossed.
 func _fuzz() -> bool:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1964
@@ -249,37 +272,75 @@ func _fuzz() -> bool:
 		var g := kit.story()
 		for step_index in 400:
 			var id = ids[rng.randi_range(0, ids.size() - 1)]
-			match rng.randi_range(0, 9):
-				0, 1:
-					g.inspect(id)
-				2:
-					g.start_dialogue(id)
-				3, 4:
-					g.advance_dialogue(id)
-				5:
-					g.solve_puzzle(id, answers[rng.randi_range(0, answers.size() - 1)])
-				6:
-					g.choose(id, choices[rng.randi_range(0, choices.size() - 1)])
-				7:
-					g.consume_cinematic(cinematics[rng.randi_range(0, cinematics.size() - 1)], rng.randf() < 0.5)
-				8:
-					g.finale(rng.randf() < 0.5)
-				9:
-					var h := kit.story()
-					if not kit.is_ok(h.load_json(g.save_json()), "fuzz reload"):
-						return true
-					kit.eq(h.snapshot(), g.snapshot(), "fuzz reload identical")
-					h.free()
-			if not _invariants(g, objective_defs, "run %d step %d" % [run_index, step_index]):
+			if not _random_action(g, rng, id, answers, choices, cinematics):
+				return true
+			if not _invariants(g, data, objective_defs, "run %d step %d" % [run_index, step_index]):
 				return true
 		if g.is_finished():
 			finished_runs += 1
 		g.free()
 	kit.ok(true, "fuzz finished (%d of 12 random walks reached the finale)" % finished_runs)
+	# Chapter 3
+	rng.seed = 1953
+	var c3_ids: Array = ["c3a_talk_conductor", "c3a_inspect_weighbill", "c3a_inspect_departures", "c3a_pass_control",
+		"c3a_talk_elena", "c3a_choose", "c3b_arrival", "c3b_inspect_seating", "c3b_inspect_log", "c3b_solve_protocol",
+		"c3b_inspect_booth", "c3b_talk_alexei", "c3b_choose", "m1_choose", "a1_inspect_seal", "bogus", 7]
+	var c3_answers: Array = [Kit.C3_PROTOCOL.duplicate(), ["soviet", "secretariat", "chair", "reich"], ["chair", "reich"],
+		["chair", 1, "secretariat", "soviet"], [], "chair", null, Kit.M1_OVERLAY.duplicate()]
+	var c3_choices: Array = ["ask_elena", "note_alone", "share_protocol", "search_elena", "report_delegation",
+		"keep_private", "x"]
+	var c3_cinematics: Array = ["LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close", "LS_A1_ToM1", "LS_nope"]
+	var reached := {"c3a_completed": 0, "c3b_completed": 0, "slice_completed": 0}
+	for run_index in 12:
+		var g := kit.story()
+		var combo := {"a1": ["share_with_irina", "keep_private"][run_index % 2],
+			"m1": ["preserve_evidence", "request_explanation"][(run_index / 2) % 2], "c3a": ["ask_elena", "note_alone"][run_index % 2]}
+		kit.play_until(g, "m1" if run_index < 6 else "c3a", combo)
+		for step_index in 400:
+			var avail: Array = g.available()
+			var id = avail[rng.randi_range(0, avail.size() - 1)] if not avail.is_empty() and rng.randf() < 0.65 \
+				else c3_ids[rng.randi_range(0, c3_ids.size() - 1)]
+			if not _random_action(g, rng, id, c3_answers, c3_choices, c3_cinematics):
+				return true
+			if not _invariants(g, data, objective_defs, "c3 run %d step %d" % [run_index, step_index]):
+				return true
+		for e in reached:
+			if g.has_event(e):
+				reached[e] += 1
+		g.free()
+	kit.ok(reached["c3b_completed"] > 0, "a Chapter-3 walk crossed into the montage (%s)" % reached)
+	print("      fuzz: %d of 12 slice walks finished; Chapter-3 walks reached %s" % [finished_runs, reached])
 	return true
 
 
-func _invariants(g: Node, defs: Dictionary, where: String) -> bool:
+## One random API call (valid or not). false = a reload failed (the case aborts).
+func _random_action(g: Node, rng: RandomNumberGenerator, id, answers: Array, choices: Array, cinematics: Array) -> bool:
+	match rng.randi_range(0, 9):
+		0, 1:
+			g.inspect(id)
+		2:
+			g.start_dialogue(id)
+		3, 4:
+			g.advance_dialogue(id)
+		5:
+			g.solve_puzzle(id, answers[rng.randi_range(0, answers.size() - 1)])
+		6:
+			g.choose(id, choices[rng.randi_range(0, choices.size() - 1)])
+		7:
+			g.consume_cinematic(cinematics[rng.randi_range(0, cinematics.size() - 1)], rng.randf() < 0.5)
+		8:
+			g.finale(rng.randf() < 0.5)
+		9:
+			var h := kit.story()
+			if not kit.is_ok(h.load_json(g.save_json()), "fuzz reload"):
+				return false
+			kit.eq(h.snapshot(), g.snapshot(), "fuzz reload identical")
+			h.free()
+	return true
+
+
+## Story invariants after any sequence of calls, derived from the data (so they hold for the whole chain).
+func _invariants(g: Node, data: Dictionary, defs: Dictionary, where: String) -> bool:
 	var s: Dictionary = g.snapshot()
 	var done: Array = s["completed_objectives"]
 	var seen := {}
@@ -301,24 +362,47 @@ func _invariants(g: Node, defs: Dictionary, where: String) -> bool:
 	if inventory.size() != granted.size() or not all_granted:
 		return kit.ok(false, "%s: inventory %s does not match granted items" % [where, inventory])
 	var events: Array = s["completed_events"]
-	var expect_scene := "L_A1_Railyard"
-	var expect_char := "alexei"
-	if events.has("a1_completed"):
-		expect_scene = "L_M1_Archive"
-		expect_char = "konrad"
-	if events.has("m1_completed"):
-		expect_scene = "L_X1_Montage"
-		expect_char = "none"
-	if s["current_scene"] != expect_scene or s["active_character"] != expect_char:
-		return kit.ok(false, "%s: scene/character %s/%s inconsistent with events %s" % [where, s["current_scene"], s["active_character"], events])
 	for e in events:
 		if events.count(e) != 1:
 			return kit.ok(false, "%s: event %s twice" % [where, e])
-	if events.has("a1_completed") != (done.has("a1_choose") and done.size() >= 6):
-		return kit.ok(false, "%s: a1_completed without all A1 objectives" % where)
-	for k in ["irina_trust", "alexei_secrecy", "konrad_evidence", "office_suspicion", "civilian_welfare"]:
-		if s["flags"][k] < 0 or s["flags"][k] > 3:
-			return kit.ok(false, "%s: flag %s out of bounds" % [where, k])
-	if s["flags"]["irina_trust"] + s["flags"]["alexei_secrecy"] > 1:
-		return kit.ok(false, "%s: both A1 branches applied" % where)
+	# Every quest event fires exactly when all of its objectives are complete, and only in chain order; the
+	# scene/protagonist follow the chain (A1 → M1 → C3a → C3b → montage).
+	var stage := 0
+	for q in data["quests"]["quests"]:
+		var all_done: bool = (q["objectives"] as Array).all(func(o) -> bool: return seen.has(o["id"]))
+		if events.has(q["completion_event"]) != all_done:
+			return kit.ok(false, "%s: %s inconsistent with the objectives of %s" % [where, q["completion_event"], q["id"]])
+		if events.has(q["completion_event"]):
+			if stage != Kit.CHAIN.find(q["scene"]):
+				return kit.ok(false, "%s: %s fired out of chain order %s" % [where, q["completion_event"], events])
+			stage += 1
+	var expect_scene: String = Kit.CHAIN[stage]
+	var expect_char: String = g.scene_def(expect_scene).get("protagonist", "?")
+	if s["current_scene"] != expect_scene or s["active_character"] != expect_char:
+		return kit.ok(false, "%s: scene/character %s/%s inconsistent with events %s" % [where, s["current_scene"], s["active_character"], events])
+	# Flags = defaults + the effects of exactly the completed objectives / chosen options (once each), in
+	# bounds; slice_finished only with slice_completed.
+	var expected := {}
+	var fdefs: Dictionary = data["flags"]["flags"]
+	for f in fdefs:
+		expected[f] = fdefs[f]["default"]
+	for oid in done:
+		var o: Dictionary = defs[oid][1]
+		var effects: Dictionary = o.get("effects", {})
+		if o["type"] == "choice":
+			for c in o["choices"]:
+				if c["id"] == s["choice_history"].get(oid):
+					effects = c.get("effects", {})
+		for f in effects:
+			if fdefs[f]["type"] == "boolean":
+				expected[f] = effects[f]["set"]
+			else:
+				expected[f] = clampi(expected[f] + effects[f]["delta"], fdefs[f]["min"], fdefs[f]["max"])
+	if events.has("slice_completed"):
+		expected["slice_finished"] = true
+	if not Kit.strict_eq(s["flags"], expected):
+		return kit.ok(false, "%s: flags %s differ from the effects of the completed objectives %s" % [where, s["flags"], expected])
+	var choice_objectives := done.filter(func(oid) -> bool: return defs[oid][1]["type"] == "choice")
+	if not Kit.strict_eq(Kit.sorted(s["choice_history"].keys()), Kit.sorted(choice_objectives)):
+		return kit.ok(false, "%s: choice history %s does not match the completed choices" % [where, s["choice_history"]])
 	return true

@@ -280,18 +280,39 @@ func _backup_fallback() -> bool:
 	return true
 
 
+## v0.3 payloads (save_version 2) inside a Saves container. Chapter 3 now follows M1, so a v0.3 save that claims
+## the old demo end (montage + slice_completed right after M1) no longer replays — exactly like the Python
+## reference ("Finale locked", tests/test_reference_parity.gd). Every v0.3 save taken before that end still
+## migrates; the latest one (M1 decision pending) is used here and continues into Chapter 3.
 func _legacy_payload() -> bool:
-	var legacy_text: String = Legacy.play_route("keep_private", "request_explanation").save_json()
-	var payload = Kit.parse(legacy_text)
-	var doc := {"meta": {"version": 1, "timestamp": 1.0, "chapter_key": "world.x1.title", "character": "none",
-		"scene": "L_X1_Montage", "playtime_s": 0, "label": "v0.3"}, "story": payload, "extra": {}}
+	var rt := Legacy.new()
+	for o in ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal", "a1_inspect_ledger",
+			"a1_choose", "m1_inspect_plan_a", "m1_inspect_plan_b", "m1_align_plans", "m1_talk_emil"]:
+		kit.step(rt.perform(o, "keep_private" if o == "a1_choose" else null), "legacy " + o)
+	var doc := {"meta": {"version": 1, "timestamp": 1.0, "chapter_key": "ui.chapter_m1", "character": "konrad",
+		"scene": "L_M1_Archive", "playtime_s": 0, "label": "v0.3"}, "story": Kit.parse(rt.save_json()), "extra": {}}
 	var s := _new_saves("legacy")
 	_write(s.slot_path("1"), Kit.dumps(doc))
 	var r: Dictionary = s.load("1")
 	kit.is_ok(r, "legacy story payload migrates through Saves")
 	kit.eq(s.story.snapshot().get("save_version"), 3, "migrated to v3")
-	kit.eq(s.story.choice_history(), {"a1_choose": "keep_private", "m1_choose": "request_explanation"}, "choices kept")
+	kit.eq(s.story.choice_history(), {"a1_choose": "keep_private"}, "choices kept")
 	kit.ok((r.get("warnings", []) as Array).size() >= 1, "migration reported as warning")
+	kit.is_ok(s.story.choose("m1_choose", "request_explanation"), "the migrated game continues")
+	kit.eq([s.story.current_scene, s.story.active_character], ["L_C3_Station", "alexei"], "… into Chapter 3")
+	# the old demo end (simulate_slice.play_route + finale) is refused; the live state stays untouched
+	var live := kit.story()
+	kit.play_dialogue(live, "a1_talk_irina")
+	var before: Dictionary = live.snapshot()
+	var s2 := _new_saves("legacy_end", live)
+	doc["story"] = Kit.parse(Legacy.play_route("keep_private", "request_explanation").save_json())
+	doc["meta"].merge({"chapter_key": "world.x1.title", "character": "none", "scene": "L_X1_Montage"}, true)
+	_write(s2.slot_path("2"), Kit.dumps(doc))
+	var e: Dictionary = s2.load("2")
+	kit.is_err(e, "v0.3 save at the old demo end rejected")
+	kit.eq([e.get("error"), e.get("error_key")], ["Finale locked", "sys.save.err.inconsistent"], "reference message and key")
+	kit.eq(live.snapshot(), before, "live state untouched")
+	kit.eq(s2.slot_info("2").get("valid"), false, "listed as invalid")
 	return true
 
 
