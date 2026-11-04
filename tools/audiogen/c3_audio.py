@@ -99,6 +99,14 @@ def mono(x: np.ndarray) -> np.ndarray:
     return x.mean(axis=1) if x.ndim == 2 else x
 
 
+def overlay(*parts) -> np.ndarray:
+    """Sum stereo one-shots of different lengths (all start at 0)."""
+    out = np.zeros((max(len(p) for p in parts), 2))
+    for p in parts:
+        out[:len(p)] += p
+    return out
+
+
 # 'Languages' = prosody profiles only: syllable length, stress, fricative onsets, declination, how
 # often a phrase ends rising, accent size and vowel colour.  The vowel sequence is random, so no
 # profile can ever form a word -- unintelligible by construction, and none imitates a real language.
@@ -392,15 +400,15 @@ def amb_veltrava_station():
     air = shaped_noise(N, rng, lambda f: mag_tilt(f, -3.0, 150.0) * mag_bp(f, 40.0, 1400.0, 2)
                        + 0.02 * mag_bp(f, 2500.0, 8000.0, 2), ch=2, corr=0.4)
     air *= (1.0 + 0.12 * smooth_periodic(N, 9, rng))[:, None]
-    M.bed(air, 0.0)
+    M.bed(air, -4.0)
     gust = gust_curve(N, rng, [(4.0, 0.45, 2.2, 3.0), (17.0, 0.6, 1.8, 2.8), (29.5, 0.35, 2.6, 3.4),
                                (41.0, 0.55, 2.0, 3.0), (52.5, 0.4, 2.4, 3.2)], base=0.28, turb=0.07, turb_rate=0.6)
     w = wind(N, rng, gust, lp_base=260.0, lp_gust=900.0, whistle=0.07, whistle_f=(390.0, 620.0), corr=0.35,
              hp=60.0, tilt=-0.35, pan_sweep=0.3)
-    M.bed(w, -1.0)
+    M.bed(w, -3.0)
     city = shaped_noise(N, rng, lambda f: mag_bp(f, 28.0, 220.0, 2), ch=2, corr=0.8)
     city *= (1.0 + 0.3 * smooth_periodic(N, 7, rng))[:, None]
-    M.bed(city, -9.0)
+    M.bed(city, -10.0)
     # crowd: twelve distant talkers, four prosody profiles, mostly towards the concourse (right)
     profs = ['even', 'lilt', 'clipped', 'slow']
     specs = []
@@ -411,50 +419,50 @@ def amb_veltrava_station():
                       (0.5, 2.8), (1.0, 3.6)))
     crowd = talkers(rng, N, specs)
     crowd = 0.4 * crowd + fftconv(crowd, hall, circular=True)
-    M.bed(crowd, -2.5)
+    M.bed(crowd, -5.5)
     # the standing locomotive, off-screen left: steam hiss and firebox roar
     hiss = shaped_noise(N, rng, lambda f: mag_bp(f, 1800.0, 8500.0, 2) * mag_tilt(f, -1.5, 4000.0), ch=1)
     hiss *= (1.0 + 0.18 * smooth_periodic(N, int(N / SR * 7), rng)) * (1.0 + 0.25 * smooth_periodic(N, 10, rng))
     hiss = pan2(hiss, -0.7)
-    M.bed(0.6 * hiss + 0.5 * fftconv(hiss, hall, circular=True), -15.0)
+    M.bed(0.6 * hiss + 0.5 * fftconv(hiss, hall, circular=True), -14.0)
     roar = shaped_noise(N, rng, lambda f: mag_bp(f, 35.0, 180.0, 2), ch=1)
     roar *= 1.0 + 0.2 * smooth_periodic(N, 25, rng)
-    M.bed(pan2(roar, -0.55), -12.0)
+    M.bed(pan2(roar, -0.55), -14.0)
     # --- events (all on the circular timeline) ----------------------------------------------------
     period = 60.0 / 18.0
     for k in range(18):                      # the air pump 'breathing' (about every 3.3 s)
         b = loco_breath(rng, rng.uniform(0.8, 1.0))
         M.event(far(b, hall, lp=4200.0, wet=0.6, dry=0.7, pan=-0.68), 0.7 + k * period + rng.normal(0.0, 0.18),
-                -9.0 + rng.uniform(-1.0, 0.5))
-    M.event(far(steam_release(rng), hall, lp=7000.0, wet=0.7, dry=0.6, pan=-0.75), 44.8, -9.0)
+                -4.5 + rng.uniform(-1.0, 0.5))
+    M.event(far(steam_release(rng), hall, lp=7000.0, wet=0.7, dry=0.6, pan=-0.75), 44.8, -7.0)
     # far wagon couplings (out in the yard)
-    M.event(far(shunting_chain(rng, 3, 0.55), yard, lp=2400.0, wet=1.0, dry=0.35, pan=-0.35), 6.8, -6.0)
+    M.event(far(shunting_chain(rng, 3, 0.55), yard, lp=2400.0, wet=1.0, dry=0.35, pan=-0.35), 6.8, 1.5)
     clank = metal_clank(rng, 'heavy')
     place(clank, 0.3 * metal_clank(rng, 'light'), secs(0.12), circular=False)
-    M.event(far(clank, yard, lp=2000.0, wet=1.0, dry=0.3, pan=0.28), 48.2, -8.0)
+    M.event(far(clank, yard, lp=2000.0, wet=1.0, dry=0.3, pan=0.28), 48.2, 0.0)
     # pigeons under the glass roof
-    M.event(far(pigeons(rng, [(0.0, 7, -0.25, True)]), hall, lp=6000.0, wet=0.9, dry=0.6), 10.4, -10.0)
+    M.event(far(pigeons(rng, [(0.0, 7, -0.25, True)]), hall, lp=6000.0, wet=0.9, dry=0.6), 10.4, -6.0)
     M.event(far(pigeons(rng, [(0.0, 14, 0.1, False), (0.12, 12, 0.35, False), (0.31, 15, -0.15, False),
-                              (0.47, 11, 0.5, False)]), hall, lp=6500.0, wet=0.9, dry=0.6), 26.5, -7.5)
-    M.event(far(pigeons(rng, [(0.0, 9, 0.6, False)]), hall, lp=6000.0, wet=0.9, dry=0.6), 55.3, -11.0)
+                              (0.47, 11, 0.5, False)]), hall, lp=6500.0, wet=0.9, dry=0.6), 26.5, -3.5)
+    M.event(far(pigeons(rng, [(0.0, 9, 0.6, False)]), hall, lp=6000.0, wet=0.9, dry=0.6), 55.3, -7.0)
     # people crossing the platform (stone)
-    M.event(far(walker(rng, 16, 0.56, -0.6, 0.2), hall, lp=4500.0, wet=0.8, dry=0.6), 2.5, -11.0)
-    M.event(far(walker(rng, 17, 0.58, 0.75, -0.05) + 0.8 * walker(rng, 17, 0.6, 0.65, -0.15), hall, lp=3500.0,
-                wet=0.9, dry=0.45), 19.0, -12.0)
-    M.event(far(walker(rng, 14, 0.43, -0.2, 0.6, heels=True), hall, lp=5000.0, wet=0.8, dry=0.6), 41.5, -11.5)
-    M.event(far(walker(rng, 11, 0.64, 0.3, 0.8), hall, lp=3000.0, wet=1.0, dry=0.35), 52.0, -14.0)
+    M.event(far(walker(rng, 16, 0.56, -0.6, 0.2), hall, lp=4500.0, wet=1.0, dry=0.35), 2.5, 4.0)
+    M.event(far(overlay(walker(rng, 17, 0.58, 0.75, -0.05), 0.8 * walker(rng, 17, 0.6, 0.65, -0.15)), hall,
+                lp=3500.0, wet=1.0, dry=0.3), 19.0, 1.0)
+    M.event(far(walker(rng, 14, 0.43, -0.2, 0.6, heels=True), hall, lp=5000.0, wet=1.0, dry=0.4), 41.5, 1.0)
+    M.event(far(walker(rng, 11, 0.64, 0.3, 0.8), hall, lp=3000.0, wet=1.0, dry=0.25), 52.0, 0.5)
     # a porter's luggage cart, right to left
-    M.event(far(luggage_cart(rng), hall, lp=5000.0, wet=0.7, dry=0.7), 31.0, -9.0)
+    M.event(far(luggage_cart(rng), hall, lp=5000.0, wet=0.7, dry=0.7), 31.0, -5.0)
     # outside the exit arch: a tram passes the square and rings
     tp = mono(tram_pass(rng, 12.0, 6.0, dist=2.5))
-    M.event(far(tp, square, lp=420.0, wet=0.5, dry=0.8, pan=0.72), 34.0, -11.0)
+    M.event(far(tp, square, lp=420.0, wet=0.5, dry=0.8, pan=0.72), 34.0, -8.5)
     bell = tram_bell(rng, 2, 698.5)
-    M.event(far(bell, square, lp=2200.0, hp=260.0, wet=0.8, dry=0.6, pan=0.78), 39.6, 7.0, mode='peak')
+    M.event(far(bell, square, lp=2200.0, hp=260.0, wet=0.8, dry=0.6, pan=0.78), 39.6, 11.0, mode='peak')
     # the muffled two-tone station chime (no voice announcement)
-    M.event(far(station_chime(rng), hall, lp=2600.0, wet=1.3, dry=0.3), 21.5, -2.0)
+    M.event(far(station_chime(rng), hall, lp=2600.0, wet=1.3, dry=0.3), 21.5, 1.0)
     # the cold iron canopy working in the wind
-    M.event(far(canopy_creak(rng, 1.1, 40.0, 70.0), hall, lp=3500.0, wet=0.9, dry=0.4, pan=0.15), 15.6, -15.0)
-    M.event(far(canopy_creak(rng, 0.9, 65.0, 38.0), hall, lp=3200.0, wet=0.9, dry=0.4, pan=-0.3), 50.5, -16.0)
+    M.event(far(canopy_creak(rng, 1.1, 40.0, 70.0), hall, lp=3500.0, wet=0.9, dry=0.4, pan=0.15), 15.6, -7.0)
+    M.event(far(canopy_creak(rng, 0.9, 65.0, 38.0), hall, lp=3200.0, wet=0.9, dry=0.4, pan=-0.3), 50.5, -7.0)
     out = M.master(-24.0, lp=12000.0)
     return out, (0, N)
 
@@ -496,6 +504,7 @@ def door_close(rng: np.random.Generator) -> np.ndarray:
     air = noise_burst(0.35, rng, 50.0, 400.0, 0.25, attack=0.12)
     place(y, 0.25 * norm_peak(air), 0, circular=False)
     place(y, 1.0 * norm_peak(wood_knock(rng, 78.0, 0.9, hard=0.55)), secs(0.3), circular=False)
+    place(y, 0.5 * norm_peak(wood_knock(rng, 150.0, 0.5, hard=0.6)), secs(0.302), circular=False)   # the panel
     latch = impact(rng, random_modes(rng, 1600.0, 6500.0, 8, 0.015, 0.05), 0.15, hard=0.8, noise_amt=0.5,
                    noise_decay=0.002)
     place(y, 0.35 * latch, secs(0.312), circular=False)
@@ -535,7 +544,7 @@ def typewriter(rng: np.random.Generator, chars: int, bell_at: int | None = None,
         if bell_at is not None and i == bell_at:
             bell = modal([(2480.0, 1.0, 0.9), (3790.0, 0.35, 0.5), (5650.0, 0.25, 0.3), (1240.0, 0.08, 0.6)], 1.0,
                          seed=int(rng.integers(1 << 30)), attack=0.0005)
-            place(y, 0.4 * bell, secs(t - 0.06), circular=False)
+            place(y, 0.22 * bell, secs(t - 0.06), circular=False)
     if ret:
         t += rng.uniform(0.35, 0.55)
         for j in range(9):
@@ -565,15 +574,15 @@ def mimeograph(rng: np.random.Generator, cycles: int, period: float = 0.86) -> n
         tt = np.arange(L) / SR
         purr = norm_peak(noise_burst(per, rng, 80.0, 900.0, 1e6, attack=0.0))
         purr *= (0.5 + 0.5 * np.sin(np.pi * tt / per) ** 2) * (1.0 + 0.4 * np.sin(TAU * 31.0 * tt))
-        place(y, 0.10 * purr, secs(t), circular=False)
-        place(y, 0.22 * paper_rustle(rng, 0.14, 0.35, 1), secs(t + 0.18 * per), circular=False)
+        place(y, 0.05 * purr, secs(t), circular=False)
+        place(y, 0.30 * paper_rustle(rng, 0.14, 0.35, 1), secs(t + 0.18 * per), circular=False)
         th = modal([(rng.uniform(95.0, 115.0), 1.0, 0.09), (rng.uniform(210.0, 250.0), 0.5, 0.06),
                     (rng.uniform(520.0, 600.0), 0.25, 0.03)], 0.3, seed=int(rng.integers(1 << 30)), attack=0.004)
-        place(y, 0.55 * norm_peak(th), secs(t + 0.45 * per), circular=False)
+        place(y, 0.28 * norm_peak(th), secs(t + 0.45 * per), circular=False)
         ck = impact(rng, random_modes(rng, 700.0, 3600.0, 6, 0.01, 0.05), 0.1, hard=0.5, noise_amt=0.3)
-        place(y, 0.16 * ck, secs(t + 0.47 * per), circular=False)
+        place(y, 0.22 * ck, secs(t + 0.47 * per), circular=False)
         sl = noise_burst(0.05, rng, 400.0, 4000.0, 0.025, attack=0.004)
-        place(y, 0.12 * norm_peak(sl), secs(t + 0.8 * per), circular=False)
+        place(y, 0.16 * norm_peak(sl), secs(t + 0.8 * per), circular=False)
         t += per
     return y[:secs(t + 0.6)]
 
@@ -611,20 +620,20 @@ def amb_veltrava_palais():
     room = shaped_noise(N, rng, lambda f: mag_tilt(f, -4.0, 90.0) * mag_bp(f, 28.0, 900.0, 2)
                         + 0.008 * mag_bp(f, 2500.0, 7000.0, 2), ch=2, corr=0.6)
     room *= (1.0 + 0.08 * smooth_periodic(N, 6, rng))[:, None]
-    M.bed(room, 0.0)
+    M.bed(room, -1.5)
     city = shaped_noise(N, rng, lambda f: mag_bp(f, 25.0, 170.0, 2), ch=2, corr=0.85)
     city *= (1.0 + 0.3 * smooth_periodic(N, 6, rng))[:, None]
-    M.bed(city, -7.0)
+    M.bed(city, -8.5)
     gust = gust_curve(N, rng, [(9.0, 0.4, 2.5, 3.5), (27.0, 0.5, 2.0, 3.0), (47.0, 0.35, 3.0, 4.0)], base=0.22,
                       turb=0.05, turb_rate=0.4)
     M.bed(wind(N, rng, gust, lp_base=160.0, lp_gust=420.0, whistle=0.05, whistle_f=(520.0, 760.0), corr=0.5,
-               hp=50.0, tilt=-0.6), -13.0)
+               hp=50.0, tilt=-0.6), -14.0)
     # the delegations behind the double doors; the door stands open from T_OPEN to T_CLOSE
     t_open, t_close = 30.6, 36.9
     mur = door_filter(delegations(rng, N, saal), t_open, t_close)
     M.bed(0.75 * mur + 0.45 * fftconv(mur, hall, circular=True), -3.0)
-    M.event(far(door_open(rng), hall, lp=7000.0, wet=0.6, dry=0.8, pan=0.12), t_open - 0.3, -3.0)
-    M.event(far(door_close(rng), hall, lp=7000.0, wet=0.7, dry=0.8, pan=0.12), t_close - 0.3, 11.0, mode='peak')
+    M.event(far(door_open(rng), hall, lp=7000.0, wet=0.6, dry=0.8, pan=0.12), t_open - 0.3, -1.0)
+    M.event(far(door_close(rng), hall, lp=7000.0, wet=0.7, dry=0.8, pan=0.12), t_close + 0.15, 18.0, mode='peak')
     for (dt, f) in [(1.2, 4100.0), (1.55, 5300.0), (2.3, 4700.0), (2.6, 6100.0)]:     # chandelier in the draught
         g = modal([(f, 1.0, 0.3), (f * 2.71, 0.35, 0.15), (f * 1.49, 0.2, 0.2)], 0.4, seed=int(rng.integers(1 << 30)),
                   attack=0.0004)
@@ -641,18 +650,18 @@ def amb_veltrava_palais():
     tw = typewriter(rng, 26, bell_at=21, ret=True)
     tw = eq(tw, ('lp', 5500.0, 2), circular=False)
     tw = far(tw, office, wet=0.5, dry=1.0, pan=0.45)
-    M.event(far(tw, hall, lp=4500.0, wet=0.55, dry=0.6), 5.2, 10.0, mode='peak')
+    M.event(far(tw, hall, lp=4500.0, wet=0.55, dry=0.6), 5.2, 19.0, mode='peak')
     tw2 = far(eq(typewriter(rng, 13, ret=False), ('lp', 5500.0, 2), circular=False), office, wet=0.5, dry=1.0, pan=0.5)
-    M.event(far(tw2, hall, lp=4500.0, wet=0.55, dry=0.6), 43.5, 8.0, mode='peak')
+    M.event(far(tw2, hall, lp=4500.0, wet=0.55, dry=0.6), 43.5, 15.0, mode='peak')
     # a mimeograph somewhere further down the corridor (runs across the loop point)
-    mg = far(mimeograph(rng, 19), office, lp=1600.0, wet=0.6, dry=1.0, pan=0.6)
-    M.event(far(mg, hall, wet=1.0, dry=0.35), 47.5, -12.0)
+    mg = far(mimeograph(rng, 19), office, lp=2200.0, wet=0.6, dry=1.0, pan=0.6)
+    M.event(far(mg, hall, wet=1.0, dry=0.35), 47.5, 1.0)
     # radiators under the tall windows + one gurgle
     for (t, pk, pan) in [(2.2, 9.0, -0.5), (2.48, 7.0, -0.5), (11.3, 8.5, 0.55), (19.9, 10.0, -0.2), (20.14, 8.0, -0.2),
                          (20.31, 6.5, -0.2), (38.6, 9.0, 0.5), (49.7, 9.5, -0.45), (56.4, 8.0, 0.4)]:
         tink = impact(rng, random_modes(rng, 1500.0, 5200.0, 6, 0.015, 0.06), 0.15, hard=0.7, noise_amt=0.3)
-        M.event(far(tink, hall, wet=0.45, dry=1.0, pan=pan), t, pk, mode='peak')
-    M.event(far(radiator_gurgle(rng), hall, wet=0.5, dry=1.0, pan=0.5), 25.8, -9.0)
+        M.event(far(tink, hall, wet=0.45, dry=1.0, pan=pan), t, pk + 2.0, mode='peak')
+    M.event(far(radiator_gurgle(rng), hall, wet=0.5, dry=1.0, pan=0.5), 25.8, -6.0)
     out = M.master(-25.0, lp=11000.0)
     return out, (0, N)
 
@@ -690,7 +699,7 @@ def mus_veltrava():
     T = Track(name, bpm=64, beats=96, loop=True, seed=seed_of(name))
     # bowed open-fifth drone on A in overlapping 16-beat breaths (never stops: the city waits)
     for b in range(0, 96, 16):
-        T.strings(b, 16.7, [33, 40], vel=0.40, stem='drone', attack=2.6, release=3.2, bright=0.22, vib=4.0, voices=4)
+        T.strings(b, 18.0, [33, 40], vel=0.40, stem='drone', attack=2.6, release=3.2, bright=0.22, vib=4.0, voices=4)
     for (b, ch, v) in V_PLAN:
         T.strings(b, 8.7, ch, vel=v, attack=2.0, release=2.8, bright=0.33, voices=3, vib=6.0,
                   swell=0.25 if b == 56 else 0.0, bass_boost=1.15)
@@ -727,6 +736,9 @@ def mus_veltrava():
            'solo': (-3.0, 0.28, SOLO_EQ), 'piano': (-1.5, 0.30, FELT_EQ), 'muted': (-5.0, 0.22, MUTED_EQ),
            'celesta': (-11.0, 0.40, CEL_EQ), 'brass': (-11.0, 0.25, BRASS_EQ)}
     out = T.mixdown(mix, ir, target_rms=-20.0, master_lp=10000.0)
+    # a loop has no intrinsic start: open the file half a beat before the downbeat (inside the pulse rest
+    # on beat 96), so the loop point never sits on a note onset.  Exact, because everything is circular.
+    out = np.roll(out, int(round(0.5 * T.spb * SR)), axis=0)
     return out, (0, out.shape[0])
 
 
