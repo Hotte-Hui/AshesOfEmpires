@@ -1,0 +1,26 @@
+{
+ "id": "voronova",
+ "cell": [
+  32,
+  56
+ ],
+ "origin": [
+  16,
+  54
+ ],
+ "facing": "right",
+ "anims": {
+  "idle_side": {
+   "row": 0,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "talk_side": {
+   "row": 1,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  }
+ }
+}
