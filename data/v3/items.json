@@ -42,6 +42,48 @@
       "description_key": "item.emil_note.description",
       "scene": "L_M1_Archive",
       "category": "document"
+    },
+    {
+      "id": "ev_c3_weighbill",
+      "name_key": "item.c3_weighbill.name",
+      "description_key": "item.c3_weighbill.description",
+      "scene": "L_C3_Station",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_departures",
+      "name_key": "item.c3_departures.name",
+      "description_key": "item.c3_departures.description",
+      "scene": "L_C3_Station",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_travel_order",
+      "name_key": "item.c3_travel_order.name",
+      "description_key": "item.c3_travel_order.description",
+      "scene": "L_C3_Station",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_seating",
+      "name_key": "item.c3_seating.name",
+      "description_key": "item.c3_seating.description",
+      "scene": "L_C3_Hall",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_booth_log",
+      "name_key": "item.c3_booth_log.name",
+      "description_key": "item.c3_booth_log.description",
+      "scene": "L_C3_Hall",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_carbon",
+      "name_key": "item.c3_carbon.name",
+      "description_key": "item.c3_carbon.description",
+      "scene": "L_C3_Hall",
+      "category": "physical_clue"
     }
   ]
 }

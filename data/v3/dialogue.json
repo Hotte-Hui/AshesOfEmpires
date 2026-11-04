@@ -72,6 +72,306 @@
           "end": true
         }
       ]
+    },
+    {
+      "id": "dlg_c3a_conductor",
+      "entry_node": "c3a_cond_01",
+      "nodes": [
+        {
+          "id": "c3a_cond_01",
+          "speaker": "conductor",
+          "text_key": "dlg.c3.cond_01",
+          "next": "c3a_cond_02"
+        },
+        {
+          "id": "c3a_cond_02",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.cond_02",
+          "next": "c3a_cond_03"
+        },
+        {
+          "id": "c3a_cond_03",
+          "speaker": "conductor",
+          "text_key": "dlg.c3.cond_03",
+          "next": "c3a_cond_04"
+        },
+        {
+          "id": "c3a_cond_04",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.cond_04",
+          "next": "c3a_cond_05"
+        },
+        {
+          "id": "c3a_cond_05",
+          "speaker": "conductor",
+          "text_key": "dlg.c3.cond_05",
+          "next": "c3a_cond_06"
+        },
+        {
+          "id": "c3a_cond_06",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.cond_06",
+          "next": "c3a_cond_07"
+        },
+        {
+          "id": "c3a_cond_07",
+          "speaker": "conductor",
+          "text_key": "dlg.c3.cond_07",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c3a_control",
+      "entry_node": "c3a_ctrl_01",
+      "nodes": [
+        {
+          "id": "c3a_ctrl_01",
+          "speaker": "border_officer",
+          "text_key": "dlg.c3.ctrl_01",
+          "next": "c3a_ctrl_02"
+        },
+        {
+          "id": "c3a_ctrl_02",
+          "speaker": "elena",
+          "text_key": "dlg.c3.ctrl_02",
+          "next": "c3a_ctrl_03"
+        },
+        {
+          "id": "c3a_ctrl_03",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.ctrl_03",
+          "next": "c3a_ctrl_04"
+        },
+        {
+          "id": "c3a_ctrl_04",
+          "speaker": "border_officer",
+          "text_key": "dlg.c3.ctrl_04",
+          "next": "c3a_ctrl_05"
+        },
+        {
+          "id": "c3a_ctrl_05",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.ctrl_05",
+          "next": "c3a_ctrl_06"
+        },
+        {
+          "id": "c3a_ctrl_06",
+          "speaker": "elena",
+          "text_key": "dlg.c3.ctrl_06",
+          "next": "c3a_ctrl_07"
+        },
+        {
+          "id": "c3a_ctrl_07",
+          "speaker": "border_officer",
+          "text_key": "dlg.c3.ctrl_07",
+          "next": "c3a_ctrl_08"
+        },
+        {
+          "id": "c3a_ctrl_08",
+          "speaker": "border_officer",
+          "text_key": "dlg.c3.ctrl_08",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c3a_elena",
+      "entry_node": "c3a_el_01",
+      "nodes": [
+        {
+          "id": "c3a_el_01",
+          "speaker": "elena",
+          "text_key": "dlg.c3.el_01",
+          "next": "c3a_el_02"
+        },
+        {
+          "id": "c3a_el_02",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.el_02",
+          "next": "c3a_el_03"
+        },
+        {
+          "id": "c3a_el_03",
+          "speaker": "elena",
+          "text_key": "dlg.c3.el_03",
+          "next": "c3a_el_04"
+        },
+        {
+          "id": "c3a_el_04",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.el_04",
+          "next": "c3a_el_05"
+        },
+        {
+          "id": "c3a_el_05",
+          "speaker": "elena",
+          "text_key": "dlg.c3.el_05",
+          "next": "c3a_el_06"
+        },
+        {
+          "id": "c3a_el_06",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.el_06",
+          "next": "c3a_el_07"
+        },
+        {
+          "id": "c3a_el_07",
+          "speaker": "elena",
+          "text_key": "dlg.c3.el_07",
+          "next": "c3a_el_08"
+        },
+        {
+          "id": "c3a_el_08",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.el_08",
+          "next": "c3a_el_09"
+        },
+        {
+          "id": "c3a_el_09",
+          "speaker": "elena",
+          "text_key": "dlg.c3.el_09",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c3b_arrival",
+      "entry_node": "c3b_arr_01",
+      "nodes": [
+        {
+          "id": "c3b_arr_01",
+          "speaker": "kessler",
+          "text_key": "dlg.c3.arr_01",
+          "next": "c3b_arr_02"
+        },
+        {
+          "id": "c3b_arr_02",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.arr_02",
+          "next": "c3b_arr_03"
+        },
+        {
+          "id": "c3b_arr_03",
+          "speaker": "kessler",
+          "text_key": "dlg.c3.arr_03",
+          "next": "c3b_arr_04"
+        },
+        {
+          "id": "c3b_arr_04",
+          "speaker": "kessler",
+          "text_key": "dlg.c3.arr_04",
+          "next": "c3b_arr_05"
+        },
+        {
+          "id": "c3b_arr_05",
+          "speaker": "elena",
+          "text_key": "dlg.c3.arr_05",
+          "next": "c3b_arr_06"
+        },
+        {
+          "id": "c3b_arr_06",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.arr_06",
+          "next": "c3b_arr_07"
+        },
+        {
+          "id": "c3b_arr_07",
+          "speaker": "elena",
+          "text_key": "dlg.c3.arr_07",
+          "next": "c3b_arr_08"
+        },
+        {
+          "id": "c3b_arr_08",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.arr_08",
+          "next": "c3b_arr_09"
+        },
+        {
+          "id": "c3b_arr_09",
+          "speaker": "elena",
+          "text_key": "dlg.c3.arr_09",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c3b_meeting",
+      "entry_node": "c3b_meet_01",
+      "nodes": [
+        {
+          "id": "c3b_meet_01",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.meet_01",
+          "next": "c3b_meet_02"
+        },
+        {
+          "id": "c3b_meet_02",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.meet_02",
+          "next": "c3b_meet_03"
+        },
+        {
+          "id": "c3b_meet_03",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.meet_03",
+          "next": "c3b_meet_04"
+        },
+        {
+          "id": "c3b_meet_04",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.meet_04",
+          "next": "c3b_meet_05"
+        },
+        {
+          "id": "c3b_meet_05",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.meet_05",
+          "next": "c3b_meet_06"
+        },
+        {
+          "id": "c3b_meet_06",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.meet_06",
+          "next": "c3b_meet_07"
+        },
+        {
+          "id": "c3b_meet_07",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.meet_07",
+          "next": "c3b_meet_08"
+        },
+        {
+          "id": "c3b_meet_08",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.meet_08",
+          "next": "c3b_meet_09"
+        },
+        {
+          "id": "c3b_meet_09",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.meet_09",
+          "next": "c3b_meet_10"
+        },
+        {
+          "id": "c3b_meet_10",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.meet_10",
+          "next": "c3b_meet_11"
+        },
+        {
+          "id": "c3b_meet_11",
+          "speaker": "alexei",
+          "text_key": "dlg.c3.meet_11",
+          "next": "c3b_meet_12"
+        },
+        {
+          "id": "c3b_meet_12",
+          "speaker": "konrad",
+          "text_key": "dlg.c3.meet_12",
+          "end": true
+        }
+      ]
     }
   ]
 }

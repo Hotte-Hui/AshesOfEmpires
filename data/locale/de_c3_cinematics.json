@@ -1,0 +1,16 @@
+{
+ "locale": "de",
+ "area": "c3_cinematics",
+ "strings": {
+  "cin.c3.trains.konrad.base": "Die Pläne für Kordon-17 liegen im Zeichenrohr. Mehr, sagt man mir, muss ich nicht wissen.",
+  "cin.c3.trains.konrad.evidence": "Die Abschrift liegt im Zeichenrohr, zwischen zwei Lichtpausen, die niemand ausrollt.",
+  "cin.c3.trains.konrad.suspicion": "Auf meine Anfrage kam keine Antwort. Nur diese Dienstreise.",
+  "cin.c3.trains.alexei.base": "In Karsk fehlen drei Wagen. Ich fahre ihnen nach, mit einem Auftrag, den ich nicht ganz verstehe.",
+  "cin.c3.trains.alexei.irina": "Irina hat meinen Reiseauftrag gegengezeichnet. Ihr Name fährt jetzt mit.",
+  "cin.c3.trains.alexei.secrecy": "Irina hat nicht gefragt, warum ich mich für diese Reise gemeldet habe. Das war schlimmer als jede Frage.",
+  "cin.c3.trains.place": "Veltrava, Freie Stadt an der Linie. Februar 1964.",
+  "cin.c3.tohall.time": "Palais der Kommission, 9:40 Uhr.",
+  "cin.c3.close.train": "23:40, Gleis 5. Ein Sonderzug ohne Halt nach Kordon-17.",
+  "cin.c3.close.after": "Zwei Hotels. Derselbe Pfiff."
+ }
+}

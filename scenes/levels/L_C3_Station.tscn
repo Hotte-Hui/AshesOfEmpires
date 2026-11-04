@@ -1,0 +1,222 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/actors/gated_interactable.gd" id="4"]
+
+[node name="L_C3_Station" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C3_Station"
+protagonist = "alexei"
+mode = "oblique"
+art_manifest = "res://assets/environments/veltrava_station/scene.json"
+ambience = "amb_karsk_yard"
+music = "mus_karsk"
+footstep_surface = "concrete"
+grade_preset = "veltrava"
+intro_pan = true
+intro_from = Vector2(900, 0)
+intro_duration = 6.0
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Conductor" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "conductor"
+hotspot_id = "conductor"
+hotspot_offset = Vector2(16, -2)
+face_left = true
+
+[node name="ElenaControl" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "elena"
+hotspot_id = "elena_control"
+face_left = true
+look_at_player = false
+hide_after = "c3a_pass_control"
+
+[node name="ElenaCafe" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "elena"
+hotspot_id = "elena_cafe"
+hotspot_offset = Vector2(16, 0)
+face_left = true
+show_after = "c3a_pass_control"
+
+[node name="BorderOfficer" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "border_officer"
+hotspot_id = "control"
+hotspot_offset = Vector2(18, -6)
+face_left = true
+
+[node name="Voronova" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "voronova"
+hotspot_id = "voronova"
+hotspot_offset = Vector2(16, 0)
+face_left = true
+
+[node name="KonradQueue" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "konrad"
+hotspot_id = "konrad_queue"
+face_left = true
+look_at_player = false
+
+[node name="TalkConductor" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3a_talk_conductor"
+kind = "dialogue"
+hotspot_id = "conductor"
+npc_id = "conductor"
+radius = 34.0
+
+[node name="Weighbill" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3a_inspect_weighbill"
+kind = "inspect"
+hotspot_id = "weighbill"
+
+[node name="Departures" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3a_inspect_departures"
+kind = "inspect"
+hotspot_id = "departures"
+
+[node name="PassControl" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3a_pass_control"
+kind = "dialogue"
+hotspot_id = "control"
+npc_id = "border_officer"
+radius = 36.0
+
+[node name="TalkElena" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3a_talk_elena"
+kind = "dialogue"
+hotspot_id = "elena_cafe"
+npc_id = "elena"
+radius = 34.0
+
+[node name="ChoiceElena" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3a_choose"
+kind = "choice"
+hotspot_id = "elena_cafe"
+npc_id = "elena"
+radius = 34.0
+
+[node name="ChatVoronova" type="Node2D" parent="Playfield"]
+script = ExtResource("4")
+kind = "chat"
+hotspot_id = "voronova"
+explore_id = "veltrava.station.chat_voronova"
+npc_id = "voronova"
+once = true
+radius = 34.0
+
+[node name="ChatOfficer" type="Node2D" parent="Playfield"]
+script = ExtResource("4")
+kind = "chat"
+hotspot_id = "control"
+explore_id = "veltrava.station.chat_officer"
+npc_id = "border_officer"
+once = true
+radius = 34.0
+after_objective = "c3a_pass_control"
+
+[node name="Find_FourRails" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_four_rails"
+explore_id = "veltrava.station.four_rails"
+once = true
+
+[node name="Find_Luggage" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_luggage"
+explore_id = "veltrava.station.luggage"
+once = true
+
+[node name="Find_Pigeons" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pigeons"
+explore_id = "veltrava.station.pigeons"
+once = true
+
+[node name="Find_Bogie" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_bogie"
+explore_id = "veltrava.station.bogie"
+once = true
+
+[node name="Find_Mitten" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_mitten"
+explore_id = "veltrava.station.mitten"
+once = true
+
+[node name="Find_Clock" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_clock"
+explore_id = "veltrava.station.clock"
+once = true
+
+[node name="Find_Kiosk" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_kiosk"
+explore_id = "veltrava.station.kiosk"
+once = true
+
+[node name="Find_Poster" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_poster"
+explore_id = "veltrava.station.poster"
+once = true
+
+[node name="Find_ReturnNotice" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_return_notice"
+explore_id = "veltrava.station.return_notice"
+once = true
+
+[node name="Find_Stove" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_stove"
+explore_id = "veltrava.station.stove"
+once = true
+
+[node name="Find_Exchange" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_exchange"
+explore_id = "veltrava.station.exchange"
+once = true
+
+[node name="Find_Tram" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_tram"
+explore_id = "veltrava.station.tram"
+once = true
+
+[node name="Find_Footprints" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_footprints"
+explore_id = "veltrava.station.footprints"
+once = true
+radius = 18.0

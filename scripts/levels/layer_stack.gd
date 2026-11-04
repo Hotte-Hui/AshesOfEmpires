@@ -21,6 +21,7 @@ func _init() -> void:
 static func tex(path: String) -> Texture2D:
 	if path == "":
 		return null
+	path = Symbols.pick(path)   # §12.4: <name>_hist.png when the historical-insignia setting is on
 	if ResourceLoader.exists(path):
 		return load(path) as Texture2D
 	if FileAccess.file_exists(path):   # not yet imported (dev run) -> load raw

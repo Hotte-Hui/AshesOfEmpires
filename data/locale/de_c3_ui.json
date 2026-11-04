@@ -1,0 +1,25 @@
+{
+ "locale": "de",
+ "area": "c3_ui",
+ "strings": {
+  "ui.c3.protocol.title": "Sitzordnung und Dolmetscherprotokoll",
+  "ui.c3.protocol.subtitle": "Eröffnungssitzung · Tagesordnungspunkt 4 „Anlage C – Logistikintegration“",
+  "ui.c3.protocol.instruction": "Lege die Namenskarten in der Reihenfolge, in der zu Anlage C gesprochen wurde. Das Protokoll nennt nur Uhrzeit und Mikrofon – die Sitzordnung verrät, wer an welchem Mikrofon saß.",
+  "ui.c3.protocol.slot": "{n}. Wortmeldung",
+  "ui.c3.protocol.card.chair": "Vorsitz – Kommissar Aalto",
+  "ui.c3.protocol.card.reich": "Reichsdelegation",
+  "ui.c3.protocol.card.soviet": "Sowjetische Delegation",
+  "ui.c3.protocol.card.secretariat": "Sekretariat der Kommission",
+  "ui.c3.protocol.check": "Prüfen",
+  "ui.c3.protocol.undo": "Zurück",
+  "ui.c3.protocol.reset": "Neu ordnen",
+  "ui.c3.protocol.close": "Schließen",
+  "ui.c3.protocol.wrong": "Die Reihenfolge passt nicht zum Protokoll. Vergleiche Uhrzeit und Mikrofon noch einmal.",
+  "ui.c3.protocol.incomplete": "Lege zuerst alle vier Karten.",
+  "ui.c3.protocol.hint": "Die Mikrofone sind im Uhrzeigersinn nummeriert, beginnend beim Vorsitz. Zähle die Plätze am Hufeisen ab – das Sekretariat hat einen eigenen Tisch.",
+  "ui.c3.protocol.success": "Paragraph vier kam vom Sekretariat der Kommission – nicht von einer Delegation. Beide Seiten haben zugestimmt, ohne nachzufragen.",
+  "ui.c3.protocol.legend": "Mikrofone im Uhrzeigersinn ab Vorsitz (1)",
+  "ui.c3.protocol.log_title": "Kabine 2 · RU ⇄ DE · E. Weiss",
+  "ui.c3.protocol.controls": "1–4 Karte legen · Rücktaste zurück · Enter prüfen · Esc schließen"
+ }
+}

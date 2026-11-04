@@ -8,6 +8,8 @@
   "events": [
     "a1_completed",
     "m1_completed",
+    "c3a_completed",
+    "c3b_completed",
     "slice_completed"
   ],
   "flags": {
@@ -54,6 +56,42 @@
       "default": false
     },
     "slice_finished": {
+      "type": "boolean",
+      "default": false
+    },
+    "alexei_konrad_trust": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 5
+    },
+    "elena_trust": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "evidence_chain": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 6
+    },
+    "kessler_alerted": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 3
+    },
+    "courier_files_seen": {
+      "type": "boolean",
+      "default": false
+    },
+    "protocol_matched": {
+      "type": "boolean",
+      "default": false
+    },
+    "elena_missing": {
       "type": "boolean",
       "default": false
     }

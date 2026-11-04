@@ -41,6 +41,31 @@
       "retry_unlimited": true,
       "hint_after_attempts": 2,
       "world_note": "Simplified fictional overlay, not an authentic architectural document."
+    },
+    {
+      "id": "pz_c3_protocol",
+      "type": "symbol_order",
+      "scene": "L_C3_Hall",
+      "clue_item_ids": [
+        "ev_c3_seating",
+        "ev_c3_booth_log"
+      ],
+      "solution": [
+        "chair",
+        "reich",
+        "secretariat",
+        "soviet"
+      ],
+      "display_symbols": [
+        "soviet",
+        "secretariat",
+        "chair",
+        "reich"
+      ],
+      "max_penalty": 0,
+      "retry_unlimited": true,
+      "hint_after_attempts": 2,
+      "world_note": "Fictional seating plan and interpreters' booth log of a fictional conference; not a real protocol."
     }
   ]
 }

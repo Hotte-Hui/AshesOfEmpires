@@ -18,6 +18,8 @@ const CHAPTER := {"L_A1_Railyard": ["ui.chapter_a1", "world.a1.title"], "L_M1_Ar
 const PLAYER := preload("res://scripts/actors/player.gd")
 const LayerStack := preload("res://scripts/levels/layer_stack.gd")
 const STILLS := "res://assets/ui/documents/"
+## Chapter 3+: data-driven director extensions (levels, line variants, reactions, puzzle UIs, §12.5 cinematics).
+const ChapterExt := preload("res://scripts/core/chapter_ext.gd")
 ## Reaction line after each choice: [speaker, text key, expression]
 const REACTIONS := {
 	"a1_choose": {"share_with_irina": ["irina", "dlg.irina.branch_a", "determined"],
@@ -52,6 +54,7 @@ var playtime := 0.0
 var auto := false
 var auto_choices: Dictionary = {}
 var auto_skip := false
+var ext = ChapterExt.new()
 
 var _fade_layer: CanvasLayer
 var _fade: ColorRect
@@ -74,6 +77,8 @@ func _ready() -> void:
 	palettes = p if p is Dictionary else {}
 	var g = _json("res://data/grades.json")
 	grades = g if g is Dictionary else {}
+	palettes.merge(ext.palettes, false)
+	grades.merge(ext.grades, false)
 
 
 func _json(path: String):
@@ -284,7 +289,7 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 	else:
 		_fade.color.a = 0.0
 	_unload_level()
-	var path: String = LEVELS.get(id, "")
+	var path: String = LEVELS.get(id, ext.level_path(id))
 	if path == "" or not ResourceLoader.exists(path):
 		push_error("Game: unknown level " + id)
 		return
@@ -302,8 +307,9 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 		await fade_in(0.9)
 	if intro:
 		await _intro_pan()
-	if CHAPTER.has(id) and not args.has("capture"):
-		_show_title(Loc.t(CHAPTER[id][0]), Loc.t(CHAPTER[id][1]))
+	var card: Array = CHAPTER.get(id, ext.chapter_card(id))
+	if card.size() == 2 and not args.has("capture"):
+		_show_title(Loc.t(card[0]), Loc.t(card[1]))
 	autosave("level_" + id)
 
 
@@ -315,7 +321,7 @@ func _first_visit() -> bool:
 		quest_obj.append(oid)
 	var j: Dictionary = Story.journal()
 	for o in j.get("objectives", []):
-		if str(o.get("state", "")) == "complete" and str(o.get("id", "")).begins_with(level.level_id.substr(2, 2).to_lower()):
+		if str(o.get("state", "")) == "complete" and str(Story.quest_for(str(o.get("id", ""))).get("scene", "")) == str(level.level_id):
 			return false
 	return true
 
@@ -355,7 +361,7 @@ func _setup_level(spawn: String) -> void:
 	var mode: String = str(level.get("mode")) if level.get("mode") != null else "oblique"
 	_apply_grade(level)
 	if mode == "oblique" or mode == "side":
-		var sp := spawn if spawn != "" else str(ENTRY_SPAWN.get(level.level_id, ""))
+		var sp := spawn if spawn != "" else str(ENTRY_SPAWN.get(level.level_id, ext.spawn_for(level.level_id)))
 		var pos: Vector2 = level.get_spawn(sp)
 		if _pending_spawn_pos != null:
 			pos = _pending_spawn_pos
@@ -548,7 +554,7 @@ func _do_dialogue(it: Node) -> void:
 		if not (line is Dictionary) or line.is_empty() or line.has("error"):
 			break
 		var node_id := str(line.get("node", ""))
-		await _speak(str(line.get("speaker", "")), Loc.t(str(line.get("text_key", ""))), LINE_EXPR.get(node_id, "neutral"))
+		await _speak(str(line.get("speaker", "")), Loc.t(ext.line_key(node_id, str(line.get("text_key", "")))), LINE_EXPR.get(node_id, ext.expr_for(node_id)))
 		var adv = Story.advance_dialogue(oid)
 		if not (adv is Dictionary) or not adv.get("ok", false) or adv.get("finished", false):
 			break
@@ -561,7 +567,9 @@ func _do_dialogue(it: Node) -> void:
 
 func _do_puzzle(it: Node) -> void:
 	var oid: String = it.objective_id
-	var pz := _ui("signal_puzzle") if oid == "a1_solve_signal" else _ui("blueprint_puzzle")
+	var pz: Node = ext.puzzle_ui(self, oid)
+	if pz == null:
+		pz = _ui("signal_puzzle") if oid == "a1_solve_signal" else _ui("blueprint_puzzle")
 	if pz == null:
 		toast("Rätsel-UI fehlt")
 		return
@@ -606,6 +614,7 @@ func _do_choice(it: Node) -> void:
 	var opts: Array = []
 	for c in obj.get("choices", []):
 		opts.append({"id": c["id"], "text": Loc.t(c["text_key"])})
+	opts = ext.choice_options(oid, opts)
 	var dlg := _ui("dialogue")
 	if (dlg == null and not auto) or opts.is_empty():
 		return
@@ -625,7 +634,7 @@ func _do_choice(it: Node) -> void:
 		toast(Loc.t("ui.invalid_action"))
 		return
 	Audio.sfx("stamp_thud", -6.0)
-	var react: Array = REACTIONS.get(oid, {}).get(str(cid), [])
+	var react: Array = REACTIONS.get(oid, {}).get(str(cid), ext.reaction(oid, str(cid)))
 	if react.size() == 3:
 		await _speak(react[0], Loc.t(react[1]), react[2])
 	_end_speech()
@@ -741,6 +750,8 @@ func _play_cinematic_by_id(cid: String) -> bool:
 			return await _cin_hall()
 		"LS_X1_Final":
 			return await _cin_final()
+	if ext.has_cinematic(cid):
+		return await ext.play_cinematic(self, cid)
 	return false
 
 

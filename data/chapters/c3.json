@@ -1,0 +1,494 @@
+{
+ "chapter": "c3",
+ "doc": "documentation/C3_DESIGN.md §3 — presentation rules for Chapter 3 (no Story state). Variant texts: data/locale/de_c3_dialogue.json.",
+ "levels": {
+  "L_C3_Station": "res://scenes/levels/L_C3_Station.tscn",
+  "L_C3_Hall": "res://scenes/levels/L_C3_Hall.tscn"
+ },
+ "entry_spawn": {
+  "L_C3_Station": "SP_C3_Platform",
+  "L_C3_Hall": "SP_C3_Vestibule"
+ },
+ "chapter_cards": {
+  "L_C3_Station": [
+   "ui.chapter_c3",
+   "world.c3a.title"
+  ],
+  "L_C3_Hall": [
+   "ui.chapter_c3",
+   "world.c3b.title"
+  ]
+ },
+ "palettes": {
+  "veltrava": {
+   "night": [
+    "#070A12",
+    "#0C111C",
+    "#121A26",
+    "#1A2431"
+   ],
+   "slate": [
+    "#1E2836",
+    "#2A3646",
+    "#3A4859",
+    "#4F5E70",
+    "#687789",
+    "#8593A3"
+   ],
+   "iron": [
+    "#15171C",
+    "#22262D",
+    "#323840",
+    "#464D55",
+    "#5E666E"
+   ],
+   "cream": [
+    "#4A4236",
+    "#645A49",
+    "#80745E",
+    "#9E9076",
+    "#BBAD8F",
+    "#D6CBAE"
+   ],
+   "patina": [
+    "#1E302E",
+    "#2B4541",
+    "#3D5E57",
+    "#56796E",
+    "#739585"
+   ],
+   "lamp": [
+    "#6E3F22",
+    "#A8643A",
+    "#D08F55",
+    "#EDB777",
+    "#FCE2B0"
+   ],
+   "sky": [
+    "#5C6B82",
+    "#7684A0",
+    "#95A0B8",
+    "#B6B9C9",
+    "#D3CDD3",
+    "#E8DCD6"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ]
+  },
+  "palais": {
+   "night": [
+    "#05080C",
+    "#0A1016",
+    "#10181F",
+    "#172229"
+   ],
+   "wall": [
+    "#1B2826",
+    "#26362F",
+    "#344539",
+    "#4A5B4C",
+    "#647260"
+   ],
+   "wood": [
+    "#22150F",
+    "#331F16",
+    "#4A2D1F",
+    "#63402C",
+    "#7E553B"
+   ],
+   "marble": [
+    "#4E4A44",
+    "#6A655C",
+    "#878075",
+    "#A59D8F",
+    "#C4BCAD",
+    "#E0D9CB"
+   ],
+   "brass": [
+    "#4A3415",
+    "#73531F",
+    "#9C7630",
+    "#C49A48",
+    "#E8C779"
+   ],
+   "daylight": [
+    "#263445",
+    "#3A4D63",
+    "#55708A",
+    "#7C98B0",
+    "#A9C0D0"
+   ],
+   "amber": [
+    "#6E3F22",
+    "#9A5A2F",
+    "#C88A4E",
+    "#E9B46E",
+    "#FCE0A6"
+   ],
+   "paper": [
+    "#6E6A5C",
+    "#8E8A78",
+    "#B0AA93",
+    "#CEC6AA",
+    "#E6DEC2",
+    "#F5EFDA"
+   ],
+   "ink": [
+    "#1A1C2A",
+    "#2E3248",
+    "#7A2A26",
+    "#A8382E"
+   ]
+  }
+ },
+ "grades": {
+  "veltrava": {
+   "lift": [
+    0.012,
+    0.014,
+    0.024
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.0,
+    1.0,
+    1.01
+   ],
+   "saturation": 0.93,
+   "tint": [
+    0.99,
+    0.99,
+    1.02
+   ],
+   "vignette": 0.3,
+   "grain": 0.018,
+   "palette_strength": 0.5,
+   "palette": "veltrava"
+  },
+  "palais": {
+   "lift": [
+    0.01,
+    0.012,
+    0.014
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.02,
+    1.0,
+    0.98
+   ],
+   "saturation": 0.95,
+   "tint": [
+    1.0,
+    0.99,
+    0.98
+   ],
+   "vignette": 0.32,
+   "grain": 0.016,
+   "palette_strength": 0.5,
+   "palette": "palais"
+  },
+  "c3_cine": {
+   "lift": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "saturation": 1.0,
+   "tint": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "vignette": 0.26,
+   "grain": 0.014,
+   "palette_strength": 0.0,
+   "palette": "veltrava"
+  }
+ },
+ "line_expr": {
+  "c3a_cond_01": "concerned",
+  "c3a_cond_02": "neutral",
+  "c3a_cond_03": "neutral",
+  "c3a_cond_04": "concerned",
+  "c3a_cond_05": "neutral",
+  "c3a_cond_06": "concerned",
+  "c3a_cond_07": "concerned",
+  "c3a_ctrl_01": "neutral",
+  "c3a_ctrl_02": "neutral",
+  "c3a_ctrl_03": "neutral",
+  "c3a_ctrl_04": "concerned",
+  "c3a_ctrl_05": "surprised",
+  "c3a_ctrl_06": "concerned",
+  "c3a_ctrl_07": "neutral",
+  "c3a_ctrl_08": "neutral",
+  "c3a_el_01": "neutral",
+  "c3a_el_02": "neutral",
+  "c3a_el_03": "determined",
+  "c3a_el_04": "concerned",
+  "c3a_el_05": "neutral",
+  "c3a_el_06": "concerned",
+  "c3a_el_07": "concerned",
+  "c3a_el_08": "concerned",
+  "c3a_el_09": "determined",
+  "c3b_arr_01": "neutral",
+  "c3b_arr_02": "concerned",
+  "c3b_arr_03": "neutral",
+  "c3b_arr_04": "neutral",
+  "c3b_arr_05": "neutral",
+  "c3b_arr_06": "neutral",
+  "c3b_arr_07": "concerned",
+  "c3b_arr_08": "neutral",
+  "c3b_arr_09": "determined",
+  "c3b_meet_01": "concerned",
+  "c3b_meet_02": "neutral",
+  "c3b_meet_03": "neutral",
+  "c3b_meet_04": "concerned",
+  "c3b_meet_05": "concerned",
+  "c3b_meet_06": "neutral",
+  "c3b_meet_07": "determined",
+  "c3b_meet_08": "concerned",
+  "c3b_meet_09": "determined",
+  "c3b_meet_10": "concerned",
+  "c3b_meet_11": "neutral",
+  "c3b_meet_12": "neutral"
+ },
+ "line_variants": {
+  "c3a_cond_02": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c3.cond_02.irina"
+   },
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c3.cond_02.secrecy"
+   }
+  ],
+  "c3a_ctrl_05": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c3.ctrl_05.irina"
+   },
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c3.ctrl_05.secrecy"
+   }
+  ],
+  "c3a_el_02": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c3.el_02.irina"
+   }
+  ],
+  "c3a_el_06": [
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c3.el_06.secrecy"
+   }
+  ],
+  "c3b_arr_02": [
+   {
+    "when": {
+     "konrad_evidence": ">=1"
+    },
+    "key": "dlg.c3.arr_02.evidence"
+   },
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c3.arr_02.suspicion"
+   }
+  ],
+  "c3b_arr_03": [
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c3.arr_03.suspicion"
+   }
+  ],
+  "c3b_meet_03": [
+   {
+    "when": {
+     "elena_trust": ">=1"
+    },
+    "key": "dlg.c3.meet_03.elena"
+   },
+   {
+    "when": {
+     "evidence_chain": ">=1"
+    },
+    "key": "dlg.c3.meet_03.evidence"
+   }
+  ],
+  "c3b_meet_07": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c3.meet_07.irina"
+   },
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c3.meet_07.secrecy"
+   }
+  ],
+  "c3b_meet_08": [
+   {
+    "when": {
+     "konrad_evidence": ">=1"
+    },
+    "key": "dlg.c3.meet_08.evidence"
+   },
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c3.meet_08.suspicion"
+   }
+  ]
+ },
+ "choice_text": {
+  "c3a_choose": {
+   "note_alone": [
+    {
+     "when": {
+      "irina_trust": ">=1"
+     },
+     "key": "choice.c3a.note_alone.irina"
+    },
+    {
+     "when": {
+      "alexei_secrecy": ">=1"
+     },
+     "key": "choice.c3a.note_alone.secrecy"
+    }
+   ]
+  },
+  "c3b_choose": {
+   "share_protocol": [
+    {
+     "when": {
+      "konrad_evidence": ">=1"
+     },
+     "key": "choice.c3b.share_protocol.evidence"
+    },
+    {
+     "when": {
+      "office_suspicion": ">=1"
+     },
+     "key": "choice.c3b.share_protocol.suspicion"
+    }
+   ],
+   "report_delegation": [
+    {
+     "when": {
+      "office_suspicion": ">=1"
+     },
+     "key": "choice.c3b.report_delegation.suspicion"
+    }
+   ]
+  }
+ },
+ "reactions": {
+  "c3a_choose": {
+   "ask_elena": [
+    {
+     "speaker": "elena",
+     "key": "dlg.c3.react.ask_elena",
+     "expr": "determined"
+    }
+   ],
+   "note_alone": [
+    {
+     "speaker": "elena",
+     "key": "dlg.c3.react.note_alone",
+     "expr": "concerned"
+    }
+   ]
+  },
+  "c3b_choose": {
+   "share_protocol": [
+    {
+     "speaker": "alexei",
+     "key": "dlg.c3.react.share_protocol",
+     "expr": "determined"
+    }
+   ],
+   "search_elena": [
+    {
+     "speaker": "alexei",
+     "key": "dlg.c3.react.search_elena",
+     "expr": "concerned"
+    }
+   ],
+   "report_delegation": [
+    {
+     "when": {
+      "elena_trust": ">=1"
+     },
+     "speaker": "alexei",
+     "key": "dlg.c3.react.report_delegation.elena",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "alexei",
+     "key": "dlg.c3.react.report_delegation",
+     "expr": "neutral"
+    }
+   ]
+  }
+ },
+ "puzzles": {
+  "c3b_solve_protocol": "res://scenes/ui/ProtocolPuzzle.tscn"
+ },
+ "cinematics": {
+  "LS_C3_Trains": "res://scenes/cinematics/ch3_trains/Ch3Trains.tscn",
+  "LS_C3_ToHall": "res://scenes/cinematics/ch3_tohall/Ch3ToHall.tscn",
+  "LS_C3_Close": "res://scenes/cinematics/ch3_close/Ch3Close.tscn"
+ }
+}

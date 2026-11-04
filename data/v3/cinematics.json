@@ -81,6 +81,75 @@
           "camera": "ui"
         }
       ]
+    },
+    {
+      "id": "LS_C3_Trains",
+      "trigger_event": "m1_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "t1",
+          "duration_s": 8,
+          "shot": "Konrad at the window of the German delegation's saloon car; night, snow plain, floodlit Line",
+          "camera": "fixed_window"
+        },
+        {
+          "id": "t2",
+          "duration_s": 2,
+          "shot": "Match cut through the window frame",
+          "camera": "fixed_window"
+        },
+        {
+          "id": "t3",
+          "duration_s": 8,
+          "shot": "Alexei at the window of the Soviet car; tea glass in a metal holder; same plain from the other side",
+          "camera": "fixed_window"
+        },
+        {
+          "id": "t4",
+          "duration_s": 6,
+          "shot": "Dawn: both trains converge on the river bridge into Veltrava",
+          "camera": "establishing"
+        }
+      ]
+    },
+    {
+      "id": "LS_C3_ToHall",
+      "trigger_event": "c3a_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "k1",
+          "duration_s": 3,
+          "shot": "Station clock at 9:40",
+          "camera": "macro_locked"
+        },
+        {
+          "id": "k2",
+          "duration_s": 3,
+          "shot": "Match cut to the palais clock at 9:40; control to Konrad",
+          "camera": "side_on"
+        }
+      ]
+    },
+    {
+      "id": "LS_C3_Close",
+      "trigger_event": "c3b_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "n1",
+          "duration_s": 6,
+          "shot": "Night, platform 5: a special train with dark windows leaves without stopping",
+          "camera": "establishing"
+        },
+        {
+          "id": "n2",
+          "duration_s": 6,
+          "shot": "Two lit hotel windows across the station square, two silhouettes, one whistle",
+          "camera": "fixed"
+        }
+      ]
     }
   ]
 }

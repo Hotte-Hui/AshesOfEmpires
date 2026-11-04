@@ -1,0 +1,32 @@
+{
+ "locale": "de",
+ "area": "c3_dialogue",
+ "strings": {
+  "dlg.c3.cond_02.irina": "In Karsk hätte meine Dispatcherin so einen Wagen längst aufgeschrieben. Ohne Schaffner?",
+  "dlg.c3.cond_02.secrecy": "Ich frage nur. Ein Wagen ohne Schaffner?",
+  "dlg.c3.ctrl_05.irina": "Davon wusste ich nichts. Gegengezeichnet hat meine Dispatcherin – für die Gleise, nicht für einen Wagen.",
+  "dlg.c3.ctrl_05.secrecy": "Davon wusste ich nichts. In Karsk hat niemand diesen Auftrag gegengezeichnet.",
+  "dlg.c3.el_02.irina": "Eine Kollegin hat mir beigebracht, zweimal hinzusehen. Einmal für die Akte, einmal für die Menschen.",
+  "dlg.c3.el_06.secrecy": "Und das erzählen Sie einem Fremden auf dem Bahnsteig?",
+  "dlg.c3.arr_02.evidence": "An der Linie wurde das Gepäck kontrolliert, Herr Ministerialdirektor. Auch mein Zeichenrohr.",
+  "dlg.c3.arr_02.suspicion": "An der Linie wurde mein Gepäck zweimal geöffnet, Herr Ministerialdirektor. Nur meines.",
+  "dlg.c3.arr_03.suspicion": "Sie hinterlegen die Pläne für Kordon-17 im Protokollbüro. Ihre Anfrage aus Berlin liegt übrigens auf meinem Tisch. Hier beantworte ich sie nicht.",
+  "dlg.c3.meet_03.elena": "Frau Weiss und ich waren nach der Sitzung verabredet. Hier, an Kabine zwei.",
+  "dlg.c3.meet_03.evidence": "Ich suche den Empfänger eines Kurierwagens. Plombe C-17/44. Die Wiegekarte nennt dieses Haus.",
+  "dlg.c3.meet_07.irina": "In Karsk fehlen drei Wagen. Eine Kollegin hat sie gezählt. Sie würde es bezeugen – ihr Name steht schon neben meinem.",
+  "dlg.c3.meet_07.secrecy": "In Karsk fehlen drei Wagen. Niemand dort weiß, dass ich hier danach frage. Das soll so bleiben.",
+  "dlg.c3.meet_08.evidence": "In Berlin trägt ein Korridor dieselbe Serie. Ich habe eine Abschrift des Vermerks. Was darin steht, behalte ich vorerst.",
+  "dlg.c3.meet_08.suspicion": "In Berlin trägt ein Korridor dieselbe Serie. Ich habe offiziell danach gefragt. Seitdem sieht man mir über die Schulter.",
+  "choice.c3a.note_alone.irina": "Die Plombennummer für Irinas Akte notieren und allein weitersuchen",
+  "choice.c3a.note_alone.secrecy": "Die Plombennummer notieren – und wieder niemandem etwas sagen",
+  "choice.c3b.share_protocol.evidence": "Ihm Elenas Notiz zeigen – und die Abschrift von Emils Vermerk",
+  "choice.c3b.share_protocol.suspicion": "Ihm Elenas Notiz zeigen, obwohl dein Amt dich beobachtet",
+  "choice.c3b.report_delegation.suspicion": "Den Dienstweg gehen – wie mit der Anfrage in Berlin",
+  "dlg.c3.react.ask_elena": "Nach der Eröffnungssitzung, Kabine zwei. Bringen Sie den Begleitschein mit – und kommen Sie allein.",
+  "dlg.c3.react.note_alone": "Wie Sie meinen. Aber Zahlen übersetzen sich nicht von selbst.",
+  "dlg.c3.react.share_protocol": "Begleitgut. Auf meinem Schein steht Fracht. – Heute Nacht um 23:40 fährt ein Zug ohne Halt nach Kordon-17. Jetzt wissen Sie auch etwas.",
+  "dlg.c3.react.search_elena": "Am Bahnhof hat sie für den Grenzbeamten übersetzt. Ich frage dort. Sie fragen hier. Getrennt.",
+  "dlg.c3.react.report_delegation": "Dann haben wir uns nie gesehen, Herr Adler.",
+  "dlg.c3.react.report_delegation.elena": "Melden Sie es. Aber nennen Sie Frau Weiss nicht beim Namen."
+ }
+}

@@ -35,7 +35,7 @@ const DATA_DIR := "res://data/v3"
 const DATA_FILES := ["flags", "quests", "items", "scenes", "dialogue", "puzzles", "cinematics", "locale_de",
 	"reference_manifest"]
 const OBJECTIVE_TYPES := ["inspect", "dialogue", "puzzle", "choice"]
-const LOCKED_CINEMATICS := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final"]
+const LOCKED_CINEMATICS := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close"]
 ## Hard-coded in the Python reference as well (finale()).
 const FINALE_SCENE := "L_X1_Montage"
 const FINALE_EVENT := "slice_completed"

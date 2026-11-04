@@ -1,0 +1,132 @@
+{
+ "id": "veltrava_station",
+ "palette": "veltrava",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "canvas_modulate": "#CBD0DA",
+ "placeholder": true,
+ "layers": [],
+ "props": [],
+ "walkable": [
+  [
+   0,
+   262
+  ],
+  [
+   1920,
+   262
+  ],
+  [
+   1920,
+   350
+  ],
+  [
+   0,
+   350
+  ]
+ ],
+ "spawns": {
+  "SP_C3_Platform": [
+   120,
+   300
+  ]
+ },
+ "hotspots": {
+  "conductor": [
+   600,
+   292
+  ],
+  "weighbill": [
+   690,
+   290
+  ],
+  "departures": [
+   900,
+   286
+  ],
+  "control": [
+   1190,
+   292
+  ],
+  "elena_cafe": [
+   1640,
+   300
+  ],
+  "elena_control": [
+   1222,
+   288
+  ],
+  "konrad_queue": [
+   1300,
+   280
+  ],
+  "voronova": [
+   330,
+   300
+  ],
+  "exp_four_rails": [
+   240,
+   270
+  ],
+  "exp_luggage": [
+   420,
+   300
+  ],
+  "exp_pigeons": [
+   480,
+   296
+  ],
+  "exp_bogie": [
+   730,
+   272
+  ],
+  "exp_mitten": [
+   800,
+   304
+  ],
+  "exp_clock": [
+   960,
+   292
+  ],
+  "exp_kiosk": [
+   1010,
+   300
+  ],
+  "exp_poster": [
+   1080,
+   290
+  ],
+  "exp_return_notice": [
+   1440,
+   292
+  ],
+  "exp_stove": [
+   1520,
+   296
+  ],
+  "exp_exchange": [
+   1770,
+   296
+  ],
+  "exp_tram": [
+   1880,
+   300
+  ],
+  "exp_footprints": [
+   160,
+   268
+  ]
+ },
+ "lights": [],
+ "fx": []
+}

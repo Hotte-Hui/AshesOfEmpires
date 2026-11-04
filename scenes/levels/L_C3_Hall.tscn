@@ -1,0 +1,202 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/actors/gated_interactable.gd" id="4"]
+
+[node name="L_C3_Hall" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C3_Hall"
+protagonist = "konrad"
+mode = "side"
+art_manifest = "res://assets/environments/veltrava_hall/scene.json"
+ambience = "amb_berlin_archive"
+music = "mus_berlin"
+footstep_surface = "wood"
+grade_preset = "palais"
+intro_pan = true
+intro_from = Vector2(1100, 0)
+intro_duration = 6.0
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Kessler" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "kessler"
+hotspot_id = "kessler"
+hotspot_offset = Vector2(16, 0)
+face_left = true
+
+[node name="ElenaArrival" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "elena"
+hotspot_id = "elena_arrival"
+hotspot_offset = Vector2(8, 0)
+face_left = true
+hide_after = "c3b_arrival"
+
+[node name="VoronovaBg" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "voronova"
+hotspot_id = "voronova_bg"
+look_at_player = false
+
+[node name="Typist" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "typist"
+hotspot_id = "typist"
+hotspot_offset = Vector2(14, 0)
+face_left = true
+
+[node name="Journalist" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "journalist"
+hotspot_id = "journalist"
+hotspot_offset = Vector2(14, 0)
+face_left = true
+
+[node name="Alexei" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "alexei"
+hotspot_id = "alexei_meet"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+show_after = "c3b_inspect_booth"
+
+[node name="Arrival" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_arrival"
+kind = "dialogue"
+hotspot_id = "kessler"
+npc_id = "kessler"
+radius = 38.0
+
+[node name="Seating" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_inspect_seating"
+kind = "inspect"
+hotspot_id = "seating"
+
+[node name="BoothLog" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_inspect_log"
+kind = "inspect"
+hotspot_id = "booth_log"
+
+[node name="ProtocolTable" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_solve_protocol"
+kind = "puzzle"
+hotspot_id = "protocol_table"
+
+[node name="Booth2" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_inspect_booth"
+kind = "inspect"
+hotspot_id = "booth_2"
+
+[node name="TalkAlexei" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_talk_alexei"
+kind = "dialogue"
+hotspot_id = "alexei_meet"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="ChoiceAlexei" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3b_choose"
+kind = "choice"
+hotspot_id = "alexei_meet"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="ChatTypist" type="Node2D" parent="Playfield"]
+script = ExtResource("4")
+kind = "chat"
+hotspot_id = "typist"
+explore_id = "veltrava.hall.chat_typist"
+npc_id = "typist"
+once = true
+radius = 34.0
+
+[node name="ChatJournalist" type="Node2D" parent="Playfield"]
+script = ExtResource("4")
+kind = "chat"
+hotspot_id = "journalist"
+explore_id = "veltrava.hall.chat_journalist"
+npc_id = "journalist"
+once = true
+radius = 34.0
+
+[node name="Find_Flags" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_flags"
+explore_id = "veltrava.hall.flags"
+once = true
+
+[node name="Find_Cloakroom" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_cloakroom"
+explore_id = "veltrava.hall.cloakroom"
+once = true
+
+[node name="Find_Photos" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_photos"
+explore_id = "veltrava.hall.photos"
+once = true
+
+[node name="Find_Chandelier" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_chandelier"
+explore_id = "veltrava.hall.chandelier"
+once = true
+
+[node name="Find_Buffet" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_buffet"
+explore_id = "veltrava.hall.buffet"
+once = true
+
+[node name="Find_Window" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_window"
+explore_id = "veltrava.hall.window"
+once = true
+
+[node name="Find_EvacPlan" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_evac_plan"
+explore_id = "veltrava.hall.evac_plan"
+once = true
+
+[node name="Find_TreatyShelf" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_treaty_shelf"
+explore_id = "veltrava.hall.treaty_shelf"
+once = true
+
+[node name="Find_Mimeograph" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_mimeograph"
+explore_id = "veltrava.hall.mimeograph"
+once = true
+
+[node name="Find_Headsets" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_headsets"
+explore_id = "veltrava.hall.headsets"
+once = true

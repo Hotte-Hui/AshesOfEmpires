@@ -2,7 +2,9 @@
   "schema_version": 3,
   "slice_end_requires": [
     "a1_completed",
-    "m1_completed"
+    "m1_completed",
+    "c3a_completed",
+    "c3b_completed"
   ],
   "quests": [
     {
@@ -168,6 +170,208 @@
               "text_key": "choice.ask_official",
               "effects": {
                 "office_suspicion": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_c3a_arrival",
+      "title_key": "ui.chapter_c3",
+      "character": "alexei",
+      "scene": "L_C3_Station",
+      "requires_events": [
+        "m1_completed"
+      ],
+      "completion_event": "c3a_completed",
+      "objectives": [
+        {
+          "id": "c3a_talk_conductor",
+          "type": "dialogue",
+          "text_key": "obj.c3a_conductor",
+          "requires": [],
+          "dialogue_id": "dlg_c3a_conductor"
+        },
+        {
+          "id": "c3a_inspect_weighbill",
+          "type": "inspect",
+          "text_key": "obj.c3a_weighbill",
+          "requires": [
+            "c3a_talk_conductor"
+          ],
+          "grant_item": "ev_c3_weighbill",
+          "effects": {
+            "courier_files_seen": {
+              "set": true
+            }
+          }
+        },
+        {
+          "id": "c3a_inspect_departures",
+          "type": "inspect",
+          "text_key": "obj.c3a_departures",
+          "requires": [
+            "c3a_talk_conductor"
+          ],
+          "grant_item": "ev_c3_departures"
+        },
+        {
+          "id": "c3a_pass_control",
+          "type": "dialogue",
+          "text_key": "obj.c3a_control",
+          "requires": [
+            "c3a_inspect_weighbill",
+            "c3a_inspect_departures"
+          ],
+          "dialogue_id": "dlg_c3a_control",
+          "grant_item": "ev_c3_travel_order"
+        },
+        {
+          "id": "c3a_talk_elena",
+          "type": "dialogue",
+          "text_key": "obj.c3a_elena",
+          "requires": [
+            "c3a_pass_control"
+          ],
+          "dialogue_id": "dlg_c3a_elena"
+        },
+        {
+          "id": "c3a_choose",
+          "type": "choice",
+          "text_key": "obj.c3a_choice",
+          "requires": [
+            "c3a_talk_elena"
+          ],
+          "choices": [
+            {
+              "id": "ask_elena",
+              "text_key": "choice.c3a.ask_elena",
+              "effects": {
+                "elena_trust": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "note_alone",
+              "text_key": "choice.c3a.note_alone",
+              "effects": {
+                "evidence_chain": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_c3b_palais",
+      "title_key": "ui.chapter_c3",
+      "character": "konrad",
+      "scene": "L_C3_Hall",
+      "requires_events": [
+        "c3a_completed"
+      ],
+      "completion_event": "c3b_completed",
+      "objectives": [
+        {
+          "id": "c3b_arrival",
+          "type": "dialogue",
+          "text_key": "obj.c3b_arrival",
+          "requires": [],
+          "dialogue_id": "dlg_c3b_arrival"
+        },
+        {
+          "id": "c3b_inspect_seating",
+          "type": "inspect",
+          "text_key": "obj.c3b_seating",
+          "requires": [
+            "c3b_arrival"
+          ],
+          "grant_item": "ev_c3_seating"
+        },
+        {
+          "id": "c3b_inspect_log",
+          "type": "inspect",
+          "text_key": "obj.c3b_log",
+          "requires": [
+            "c3b_arrival"
+          ],
+          "grant_item": "ev_c3_booth_log"
+        },
+        {
+          "id": "c3b_solve_protocol",
+          "type": "puzzle",
+          "text_key": "obj.c3b_protocol",
+          "requires": [
+            "c3b_inspect_seating",
+            "c3b_inspect_log"
+          ],
+          "puzzle_id": "pz_c3_protocol",
+          "effects": {
+            "protocol_matched": {
+              "set": true
+            }
+          }
+        },
+        {
+          "id": "c3b_inspect_booth",
+          "type": "inspect",
+          "text_key": "obj.c3b_booth",
+          "requires": [
+            "c3b_solve_protocol"
+          ],
+          "grant_item": "ev_c3_carbon",
+          "effects": {
+            "elena_missing": {
+              "set": true
+            }
+          }
+        },
+        {
+          "id": "c3b_talk_alexei",
+          "type": "dialogue",
+          "text_key": "obj.c3b_meet",
+          "requires": [
+            "c3b_inspect_booth"
+          ],
+          "dialogue_id": "dlg_c3b_meeting"
+        },
+        {
+          "id": "c3b_choose",
+          "type": "choice",
+          "text_key": "obj.c3b_choice",
+          "requires": [
+            "c3b_talk_alexei"
+          ],
+          "choices": [
+            {
+              "id": "share_protocol",
+              "text_key": "choice.c3b.share_protocol",
+              "effects": {
+                "alexei_konrad_trust": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "search_elena",
+              "text_key": "choice.c3b.search_elena",
+              "effects": {
+                "elena_trust": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "report_delegation",
+              "text_key": "choice.c3b.report_delegation",
+              "effects": {
+                "kessler_alerted": {
                   "delta": 1
                 }
               }

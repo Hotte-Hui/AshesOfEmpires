@@ -1,0 +1,128 @@
+{
+ "id": "veltrava_hall",
+ "palette": "palais",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "canvas_modulate": "#CDD0D0",
+ "placeholder": true,
+ "layers": [],
+ "props": [],
+ "walkable": [
+  [
+   18,
+   296
+  ],
+  [
+   1902,
+   296
+  ],
+  [
+   1902,
+   306
+  ],
+  [
+   18,
+   306
+  ]
+ ],
+ "spawns": {
+  "SP_C3_Vestibule": [
+   70,
+   300
+  ]
+ },
+ "hotspots": {
+  "kessler": [
+   300,
+   300
+  ],
+  "seating": [
+   930,
+   300
+  ],
+  "booth_log": [
+   1180,
+   300
+  ],
+  "protocol_table": [
+   1270,
+   300
+  ],
+  "booth_2": [
+   1650,
+   300
+  ],
+  "alexei_meet": [
+   1700,
+   300
+  ],
+  "elena_arrival": [
+   345,
+   300
+  ],
+  "voronova_bg": [
+   700,
+   300
+  ],
+  "typist": [
+   1120,
+   300
+  ],
+  "journalist": [
+   560,
+   300
+  ],
+  "exp_flags": [
+   150,
+   300
+  ],
+  "exp_cloakroom": [
+   240,
+   300
+  ],
+  "exp_photos": [
+   470,
+   300
+  ],
+  "exp_chandelier": [
+   640,
+   300
+  ],
+  "exp_buffet": [
+   780,
+   300
+  ],
+  "exp_window": [
+   850,
+   300
+  ],
+  "exp_evac_plan": [
+   1010,
+   300
+  ],
+  "exp_treaty_shelf": [
+   1070,
+   300
+  ],
+  "exp_mimeograph": [
+   1330,
+   300
+  ],
+  "exp_headsets": [
+   1520,
+   300
+  ]
+ },
+ "lights": [],
+ "fx": []
+}
