@@ -8,12 +8,20 @@ extends Node
 ##   main menu -> "Fortsetzen" resumes the last autosave.
 ##   godot --path . -- --inputplay=share_with_irina,preserve_evidence [--inputplay-skip] [--inputplay-shots=DIR]
 ## Prints INPUTPLAY_PASS / INPUTPLAY_FAIL and quits with exit code 0 / 1.
+## Chapter 3: after M1 the route continues through L_C3_Station (one exploration find + one optional chat by real
+## input first) and L_C3_Hall incl. the protocol puzzle (one wrong order, then the right one); optional 3rd/4th spec
+## values choose c3a_choose / c3b_choose. "Fortsetzen" must resume before the last decision (c3b_choose).
 
 const A1 := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal", "a1_inspect_ledger",
 	"a1_choose"]
 const M1 := ["m1_inspect_plan_a", "m1_inspect_plan_b", "m1_align_plans", "m1_talk_emil", "m1_choose"]
+const C3A := ["c3a_talk_conductor", "c3a_inspect_weighbill", "c3a_inspect_departures", "c3a_pass_control",
+	"c3a_talk_elena", "c3a_choose"]
+const C3B := ["c3b_arrival", "c3b_inspect_seating", "c3b_inspect_log", "c3b_solve_protocol", "c3b_inspect_booth",
+	"c3b_talk_alexei", "c3b_choose"]
 
-var choices := {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence"}
+var choices := {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence", "c3a_choose": "ask_elena",
+	"c3b_choose": "share_protocol"}
 var skip_cine := false
 var shots_dir := ""
 var failures: Array = []
@@ -29,6 +37,10 @@ func configure(spec: String, do_skip: bool, shots: String) -> void:
 		choices["a1_choose"] = parts[0]
 	if parts.size() >= 2:
 		choices["m1_choose"] = parts[1]
+	if parts.size() >= 3 and parts[2] != "":
+		choices["c3a_choose"] = parts[2]
+	if parts.size() >= 4 and parts[3] != "":
+		choices["c3b_choose"] = parts[3]
 	skip_cine = do_skip
 	shots_dir = shots
 
@@ -48,7 +60,8 @@ func run() -> void:
 		return
 	if await _menu_new_game() and await _intro() and await _menus_in_game() \
 			and await _play_route(A1, "L_A1_Railyard") and await _play_route(M1, "L_M1_Archive") \
-			and await _ending():
+			and await _explore_sample() and await _play_route(C3A, "L_C3_Station") \
+			and await _play_route(C3B, "L_C3_Hall") and await _ending():
 		await _continue_from_menu()
 	_finish(t0)
 
@@ -153,6 +166,8 @@ func _play_route(route: Array, level_id: String) -> bool:
 			"puzzle":
 				if oid == "a1_solve_signal":
 					await _signal_puzzle()
+				elif oid == "c3b_solve_protocol":
+					await _protocol_puzzle()
 				else:
 					await _blueprint_puzzle()
 		if not await _until(func(): return not Game.busy, 20.0):
@@ -194,9 +209,9 @@ func _continue_from_menu() -> void:
 	if not await _until(func(): return _gameplay_ready(), 30.0):
 		_fail("'Fortsetzen' did not resume play")
 		return
-	if str(Game.level.level_id) != "L_M1_Archive" or Story.objective_state("m1_choose") != "available":
-		_fail("'Fortsetzen' resumed at %s (m1_choose %s), expected the last playable autosave" % [
-			Game.level.level_id, Story.objective_state("m1_choose")])
+	if str(Game.level.level_id) != "L_C3_Hall" or Story.objective_state("c3b_choose") != "available":
+		_fail("'Fortsetzen' resumed at %s (c3b_choose %s), expected the last playable autosave" % [
+			Game.level.level_id, Story.objective_state("c3b_choose")])
 	await _wait(0.8)
 	await _shoot("continued")
 
@@ -221,7 +236,7 @@ func _dialogue(oid: String, choice_id: String) -> void:
 			if idx < 0:
 				_fail("unknown choice id " + choice_id)
 				return
-			if oid == "a1_choose":    # arrow keys + Enter
+			if oid == "a1_choose" or oid == "c3a_choose":    # arrow keys + Enter
 				for i in idx:
 					await _tap(KEY_DOWN)
 				await _tap(KEY_ENTER)
@@ -303,6 +318,77 @@ func _blueprint_puzzle() -> void:
 	await _tap(KEY_ENTER)
 	if not await _until(func(): return not pz.is_open, 6.0):
 		_fail("blueprint puzzle did not close after aligning (state %s)" % Story.objective_state("m1_align_plans"))
+
+
+## Chapter-3 protocol puzzle (scenes/ui/ProtocolPuzzle.tscn, registered by data/chapters/c3.json): number keys
+## place the n-th card of the tray (display order) into the next slot; one wrong order first, then the right one.
+func _protocol_puzzle() -> void:
+	var pz: Node = null
+	var t := 0.0
+	while t < 5.0 and (pz == null or not pz.is_open):
+		pz = _ui_child("protocol_puzzle.gd")
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if pz == null or not pz.is_open:
+		_fail("protocol puzzle did not open")
+		return
+	await _wait(0.6)
+	await _shoot("protocol_start")
+	for k in [KEY_1, KEY_2, KEY_3, KEY_4]:     # display order soviet, secretariat, chair, reich -> wrong
+		await _tap(k)
+	await _tap(KEY_ENTER)
+	await _wait(0.6)
+	if Story.objective_state("c3b_solve_protocol") == "complete":
+		_fail("protocol puzzle accepted a wrong order")
+		return
+	for i in 4:
+		await _tap(KEY_BACKSPACE)
+	var shown: Array = pz.get("symbols") if pz.get("symbols") is Array else ["soviet", "secretariat", "chair", "reich"]
+	for sym in ["chair", "reich", "secretariat", "soviet"]:
+		await _tap(KEY_1 + shown.find(sym))
+	await _wait(0.3)
+	await _shoot("protocol_solved")
+	await _tap(KEY_ENTER)
+	if not await _until(func(): return not pz.is_open, 8.0):
+		_fail("protocol puzzle did not close after the correct order (state %s)" % Story.objective_state("c3b_solve_protocol"))
+
+
+func _ui_child(script_suffix: String) -> Node:
+	for c in ui.get_children():
+		var sc = c.get_script()
+		if sc and str(sc.resource_path).ends_with(script_suffix):
+			return c
+	return null
+
+
+## Station: one exploration find and one optional conversation, by real input (§12 interactables).
+func _explore_sample() -> bool:
+	if not await _until(func(): return _gameplay_ready() and str(Game.level.level_id) == "L_C3_Station", 120.0):
+		return _fail("never got control in L_C3_Station")
+	for eid in ["veltrava.station.four_rails", "veltrava.station.chat_voronova"]:
+		var it := _optional(eid)
+		if it == null:
+			return _fail("no interactable for " + eid)
+		if not await _walk_to_focus(it):
+			return _fail("could not walk into the prompt range of " + eid)
+		await _shoot("prompt_" + eid)
+		await _tap(KEY_E)
+		if not await _until(func(): return Game.busy, 3.0):
+			return _fail("E did not start " + eid)
+		await _dialogue(eid, "")
+		if not await _until(func(): return not Game.busy, 20.0):
+			return _fail("interaction never finished: " + eid)
+		if Explore.has_method("is_found") and not Explore.is_found(eid):
+			return _fail("exploration entry not recorded: " + eid)
+		await _wait(0.5)
+	return true
+
+
+func _optional(explore_id: String) -> Node:
+	for it in get_tree().get_nodes_in_group("interactables"):
+		if it.is_inside_tree() and str(it.get("explore_id")) == explore_id:
+			return it
+	return null
 
 
 ## After an objective: run through any cinematic / level change until the player has control again
