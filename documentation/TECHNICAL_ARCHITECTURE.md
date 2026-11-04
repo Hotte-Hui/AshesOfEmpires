@@ -280,3 +280,25 @@ with portraits: `alexei`, `konrad`, `irina`, `emil`, `vendor`, `worker_a`, `babu
 No glorification; no false equivalence (each card stands on its own facts); easter eggs and jokes never sit
 on atrocity topics; in-world finds speak in the protagonist's voice (Alexei dry and tired, Konrad precise and
 euphemistic at first), history cards in a neutral documentary voice. German first. All generators deterministic.
+
+## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
+Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.
+- **Story chain.** The unchanged engine needs ONE linear scene chain ending in the non-quest montage, and a finale that
+  requires every quest event. New chapters are therefore inserted before `L_X1_Montage`
+  (`… L_M1_Archive → L_C3_Station → L_C3_Hall → L_X1_Montage`); `slice_end_requires` lists all quest events;
+  `LOCKED_CINEMATICS` (validator list only) lists every sequence of `data/v3/cinematics.json`. Story texts referenced by
+  `data/v3` must live in `data/v3/locale_de.json` (the validator checks that file); every other text goes to
+  `data/locale/de_<area>.json`.
+- **`ChapterExt`** (`scripts/core/chapter_ext.gd`, instance `Game.ext`) merges every `data/chapters/*.json` and answers the
+  director's chapter-specific questions without touching Story state: `levels`, `entry_spawn`, `chapter_cards`,
+  `palettes`/`grades` (merged into `Game.palettes/grades`), `line_expr`, `line_variants` (node → `[{when, key}]`),
+  `choice_text` (objective → choice → `[{when, key}]`), `reactions` (objective → choice → `[{when?, speaker, key, expr}]`),
+  `puzzles` (objective → UI scene, instanced once under UIRoot and pushed on the modal stack via `open(obj_id)`),
+  `cinematics` (sequence → §12.5 scene, played by `ChapterExt.play_cinematic(game, id)`). Conditions:
+  `{"<flag>": ">=1" | "<=n" | "==n" | "!=n" | ">n" | "<n" | true | false}`, all must hold, first match wins.
+  `game.gd` keeps its slice tables and falls back to `Game.ext` for unknown ids.
+- **Actors.** `scripts/actors/story_npc.gd` (extends npc.gd): `show_after` / `hide_after` objective ids control presence.
+  `scripts/actors/gated_interactable.gd` (extends interactable.gd): optional hotspots with `after_objective` /
+  `until_objective`, so an optional chat never competes with a story interaction at the same spot.
+- **Insignia.** `LayerStack.tex()` resolves every texture through `Symbols.pick()` (§12.4).
+- **Drivers.** `--autoplay=<a1>,<m1>[,<c3a>[,<c3b>]]` and `--inputplay=…` (same spec) play the whole chain.
