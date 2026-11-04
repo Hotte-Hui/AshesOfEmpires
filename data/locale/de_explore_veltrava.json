@@ -24,7 +24,7 @@
 
   "explore.veltrava.station.luggage.title": "Koffer mit Holzpferd",
   "explore.veltrava.station.luggage.prompt": "Koffer ansehen",
-  "explore.veltrava.station.luggage.text": "Ein Dienstkoffer der Delegation, verschnürt und nummeriert. Obendrauf ein Holzpferd, mit einem Hosengürtel festgeschnallt. Wer nimmt ein Spielzeug mit zu einer Konferenz? Jemand, der nicht allein reist.",
+  "explore.veltrava.station.luggage.text": "Ein Dienstkoffer der Delegation, verschnürt und nummeriert. Obendrauf ein Holzpferd, mit einem Hosengürtel festgeschnallt. Wer nimmt ein Spielzeug zu einer Konferenz mit? Jemand, der nicht allein reist.",
 
   "explore.veltrava.station.pigeons.title": "Verhandlung unter Tauben",
   "explore.veltrava.station.pigeons.prompt": "Tauben beobachten",
@@ -44,11 +44,11 @@
 
   "explore.veltrava.station.kiosk.title": "Drei Titelseiten",
   "explore.veltrava.station.kiosk.prompt": "Zeitungen ansehen",
-  "explore.veltrava.station.kiosk.text": "Dasselbe Foto auf drei Titelseiten: derselbe Händedruck, dieselbe Feder. Darüber ‚Sieg der Friedenspolitik‘, ‚Berlin gibt den Takt vor‘ und im Stadtblatt ‚Frost bis Donnerstag‘. Nachprüfen lässt sich nur das Stadtblatt.",
+  "explore.veltrava.station.kiosk.text": "Dasselbe Foto auf drei Titelseiten. Aus Moskau: ‚Sieg der Friedenspolitik‘. Aus Berlin: ‚Deutsche Ordnung auf allen Gleisen‘. Im Stadtblatt: ‚Frost bis Donnerstag‘. Nachprüfen lässt sich nur der Wetterbericht.",
 
   "explore.veltrava.station.poster.title": "Plakat der Kommission",
   "explore.veltrava.station.poster.prompt": "Plakat ansehen",
-  "explore.veltrava.station.poster.text": "‚Drei Korridore – ein Frieden.‘ Das Plakat der Kommission ist kein Jahr alt und löst sich schon. Jemand hat eine Ecke mit einer Reißzwecke festgesteckt. Die anderen drei hängen.",
+  "explore.veltrava.station.poster.text": "Auf dem Plakat der Kommission steht ‚Drei Korridore – ein Frieden‘. Es ist kein Jahr alt und löst sich schon. Jemand hat eine Ecke mit einer Reißzwecke festgesteckt. Die anderen drei hängen.",
 
   "explore.veltrava.station.chat_officer.title": "Gespräch mit dem Grenzbeamten",
   "explore.veltrava.station.chat_officer.prompt": "Mit dem Grenzbeamten sprechen",
@@ -63,7 +63,7 @@
 
   "explore.veltrava.station.return_notice.title": "Büro für Rückführung",
   "explore.veltrava.station.return_notice.prompt": "Aushang lesen",
-  "explore.veltrava.station.return_notice.text": "Ein Aushang in drei Sprachen, ‚Büro für Rückführung‘: Personen ohne gültige Korridorpapiere melden sich in Zimmer 4. Rückführung. Ein Wort, das nach Heimweg klingt.",
+  "explore.veltrava.station.return_notice.text": "Ein Aushang in drei Sprachen vom ‚Büro für Rückführung‘: Personen ohne gültige Korridorpapiere melden sich in Zimmer 4. Rückführung. Ein Wort, das nach Heimweg klingt.",
 
   "explore.veltrava.station.stove.title": "Kachelofen im Wartesaal",
   "explore.veltrava.station.stove.prompt": "Am Ofen wärmen",
@@ -137,6 +137,6 @@
 
   "explore.veltrava.hall.headsets.title": "Dolmetscherkopfhörer",
   "explore.veltrava.hall.headsets.prompt": "Kopfhörer ansehen",
-  "explore.veltrava.hall.headsets.text": "Vor den Kabinen liegen Kopfhörer mit einem Wahlschalter von 1 bis 4. Ein Dreh, und jeder Delegierte hört die Sitzung in seiner Sprache. Ob er versteht, was gemeint war, regelt kein Schalter."
+  "explore.veltrava.hall.headsets.text": "Vor den Kabinen liegen Kopfhörer mit einem Wahlschalter von 1 bis 4. Ein Dreh, und jede Delegation hört die Sitzung in ihrer Sprache. Ob sie versteht, was gemeint war, regelt kein Schalter."
  }
 }
