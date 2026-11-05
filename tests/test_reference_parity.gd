@@ -1,16 +1,26 @@
 extends RefCounted
-## Cross-check against the ORIGINAL Python reference. tests/reference/make_python_reference.py runs
-## preproduction/tools/story_engine_v4.py + simulate_slice.py (on preproduction/data/v3, ids mapped to this
-## project) and stores routes, legacy saves, API traces, a mutated/corrupted save corpus and json cases in
+## Cross-check against the ORIGINAL Python reference. tests/reference/make_python_reference.py runs the
+## unmodified preproduction/tools/story_engine_v4.py directly on this project's data/v3 (whole chain incl.
+## Chapter 3) and simulate_slice.py (v0.3 runtime: authentic saves on preproduction/data/v3 with ids mapped
+## to this project, plus a run on data/v3 for the GDScript port) and stores routes, legacy saves with their
+## load verdicts, API traces, a mutated/corrupted save corpus and json cases in
 ## tests/reference/python_reference.json.gz. This test replays everything with the GDScript port and
 ## demands identical results: byte-identical save JSON, identical accept/reject verdicts, identical
 ## StoryError messages and identical loaded states.
+## Regenerate after every data/v3 change:  python3 -P tests/reference/make_python_reference.py
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const Legacy := preload("res://tests/support/legacy_runtime_v2.gd")
 const ENGINE := preload("res://scripts/story/story_engine.gd")
 const FIXTURE := "res://tests/reference/python_reference.json.gz"
 const MAX_REPORTED := 25
+## simulate_slice.play_route() order (legacy fixtures replay its first `steps` objectives).
+const LEGACY_ORDER := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal",
+	"a1_inspect_ledger", "a1_choose", "m1_inspect_plan_a", "m1_inspect_plan_b", "m1_align_plans", "m1_talk_emil",
+	"m1_choose"]
+## The only non-additive change of data/v3 against the preproduction package: Chapter 3 is inserted between
+## the archive and the montage (documentation/C3_DESIGN.md §1). Everything else is an addition.
+const EXPECTED_DELTA := ["scenes/scenes[L_M1_Archive]/next_scene: \"L_X1_Montage\" -> \"L_C3_Station\""]
 
 var kit: Kit
 var fx: Dictionary = {}
@@ -21,7 +31,7 @@ func run() -> Array:
 	var t0 := Time.get_ticks_msec()
 	fx = _load_fixture()
 	if fx.is_empty():
-		kit.fail("fixture missing/unreadable: %s — run: py -3 -P tests/reference/make_python_reference.py" % FIXTURE)
+		kit.fail("fixture missing/unreadable: %s — run: python3 -P tests/reference/make_python_reference.py" % FIXTURE)
 		return kit.failures
 	print("      fixture parsed in %d ms (generated with Python %s)" % [Time.get_ticks_msec() - t0, fx.get("python", "?")])
 	kit.run_case("fixture_matches_current_reference_and_data", _fixture_current)
@@ -50,43 +60,93 @@ func _fixture_current() -> bool:
 	for f in fx["reference_sha256"]:
 		var path: String = "res://preproduction/tools/" + str(f)
 		kit.eq(FileAccess.get_sha256(path), fx["reference_sha256"][f], "%s unchanged since the fixture was generated" % f)
-	for stem in fx["data_sha256"]:
-		kit.eq(FileAccess.get_sha256("res://data/v3/%s.json" % stem), fx["data_sha256"][stem],
+	# The reference engine ran on THIS project's data: its hashes must match the current files.
+	kit.eq(fx.get("engine_data"), "data/v3", "reference engine ran on this project's data/v3")
+	for stem in ENGINE.DATA_FILES:
+		kit.eq(FileAccess.get_sha256("res://data/v3/%s.json" % stem), fx["data_sha256"].get(stem),
 			"data/v3/%s.json unchanged since the fixture was generated (else regenerate it)" % stem)
-	for stem in fx["data_equivalent"]:
-		kit.eq(fx["data_equivalent"][stem], true, "preproduction %s equals data/v3 after the id mapping" % stem)
+	# The authentic v0.3 saves come from simulate_slice on the preproduction data.
+	for stem in fx["legacy_data_sha256"]:
+		kit.eq(FileAccess.get_sha256("res://preproduction/data/v3/%s.json" % stem), fx["legacy_data_sha256"][stem],
+			"preproduction/data/v3/%s.json unchanged since the fixture was generated" % stem)
+	# Replaces the former "preproduction data equals data/v3" check: data/v3 only ADDS to the (id-mapped)
+	# preproduction data, except the documented insertion of Chapter 3 into the scene chain.
+	kit.eq(fx["preproduction_delta"]["modified"], EXPECTED_DELTA, "data/v3 extends the preproduction data (only the chain re-link differs)")
+	kit.ok(int(fx["preproduction_delta"]["added"]) > 0, "Chapter-3 additions recorded")
 	kit.eq(fx["format"], ENGINE.FORMAT, "save format id")
 	kit.eq(fx["version"], ENGINE.VERSION, "save version")
+	# CPython's json nesting limit depends on the build; the generator pins the Windows limit the port mirrors.
+	kit.eq(fx.get("json_max_nesting"), ENGINE.Json.MAX_DEPTH, "reference json nesting limit pinned to the port's")
 	return true
 
 
+## Every slice combination (a1 × m1) × every Chapter-3 option (c3a × c3b) × skip/play.
 func _routes() -> bool:
+	var g0 := kit.story()
+	var expected := {}
+	for a in g0.choices_for("a1_choose"):
+		for m in g0.choices_for("m1_choose"):
+			for c in g0.choices_for("c3a_choose"):
+				for b in g0.choices_for("c3b_choose"):
+					for mode in ["play", "skip"]:
+						expected["|".join([a["id"], m["id"], c["id"], b["id"], mode])] = true
+	kit.eq(_sorted_keys(fx["routes"]), _sorted_keys(expected), "route keys cover every option of every choice × skip/play (%d)" % expected.size())
 	for key in fx["routes"]:
-		var parts: PackedStringArray = (key as String).split("|")
-		var g := kit.play_verified_route(parts[0], parts[1], parts[2] == "skip")
+		var p: PackedStringArray = (key as String).split("|")
+		var g := kit.play_verified_route(p[0], p[1], p[4] == "skip", p[2], p[3])
 		kit.eq(g.save_json(), fx["routes"][key], "route %s" % key)
 		g.free()
 	return true
 
 
+static func _sorted_keys(d: Dictionary) -> Array:
+	var k: Array = d.keys()
+	k.sort()
+	return k
+
+
+## v0.3 runtime port (tests/support/legacy_runtime_v2.gd, reads data/v3): the first `steps` objectives of
+## simulate_slice.play_route(), optionally its finale().
+static func _legacy_port(spec: Dictionary) -> String:
+	if int(spec["steps"]) == LEGACY_ORDER.size() and spec["finale"]:
+		return Legacy.play_route(spec["a1"], spec["m1"]).save_json()
+	var rt := Legacy.new()
+	for i in int(spec["steps"]):
+		var o: String = LEGACY_ORDER[i]
+		rt.perform(o, {"a1_choose": spec["a1"], "m1_choose": spec["m1"]}.get(o))
+	if spec["finale"]:
+		rt.finale()
+	return rt.save_json()
+
+
+## Loads `text` into a fresh engine and compares with the Python verdict: the migrated state, or the exact
+## StoryError message with the live state untouched.
+func _check_verdict(text: String, v: Dictionary, label: String) -> void:
+	var g := kit.story()
+	var before: String = g.save_json()
+	var r: Dictionary = g.load_json(text)
+	if v["accept"]:
+		if kit.is_ok(r, label + " migrates"):
+			kit.eq(g.save_json(), v["state"], label + " migrated v3 state")
+	else:
+		kit.is_err(r, label + " rejected")
+		kit.eq(str(r.get("error", "")), v["error"], label + " StoryError message")
+		kit.eq(g.save_json(), before, label + " rejected without touching the live state")
+	g.free()
+
+
 func _legacy() -> bool:
+	var rejected := 0
 	for key in fx["legacy"]:
 		var exp: Dictionary = fx["legacy"][key]
-		var parts: PackedStringArray = (key as String).split("|")
-		var v2 := ""
-		if parts[0] == "boundary":
-			var rt := Legacy.new()
-			for o in ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal", "a1_inspect_ledger"]:
-				rt.perform(o)
-			rt.perform("a1_choose", parts[1])
-			v2 = rt.save_json()
-		else:
-			v2 = Legacy.play_route(parts[0], parts[1]).save_json()
-		kit.eq(v2, exp["v2"], "legacy v0.3 save %s (simulate_slice port)" % key)
-		var g := kit.story()
-		kit.is_ok(g.load_json(exp["v2"]), "migrate %s" % key)
-		kit.eq(g.save_json(), exp["migrated"], "migrated v3 save %s" % key)
-		g.free()
+		kit.eq(_legacy_port(exp), exp["port"], "legacy v0.3 runtime %s (simulate_slice port on data/v3)" % key)
+		_check_verdict(exp["v2"], exp["verdict"], "authentic v0.3 save %s" % key)
+		_check_verdict(exp["port"], exp["port_verdict"], "port v0.3 save %s" % key)
+		if not exp["verdict"]["accept"]:
+			rejected += 1
+	# Saves that claim the old demo end (slice_completed / montage right after M1) no longer replay; every
+	# save taken before it still migrates (C3_DESIGN §1).
+	kit.ok(rejected >= 4 and rejected < fx["legacy"].size(), "legacy fixtures contain both verdicts (%d rejected)" % rejected)
 	return true
 
 

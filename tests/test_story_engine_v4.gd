@@ -91,16 +91,20 @@ func _test_puzzle_payload_is_typed() -> bool:
 	return true
 
 
+## The verified route now runs through Chapter 3 (default options ask_elena / share_protocol) before the
+## finale: 5 events, 12 items, 24 objectives, 4 choices.
 func _test_valid_branch_combinations() -> bool:
 	for a in ["share_with_irina", "keep_private"]:
 		for m in ["preserve_evidence", "request_explanation"]:
 			var label := "%s/%s" % [a, m]
 			var r := kit.play_verified_route(a, m)
-			kit.eq(r.state["completed_events"], ["a1_completed", "m1_completed", "slice_completed"], label + " events")
-			kit.eq(r.state["inventory"].size(), 6, label + " inventory")
-			kit.eq(r.state["completed_objectives"].size(), 11, label + " objectives")
+			kit.eq(r.state["completed_events"], ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed",
+				"slice_completed"], label + " events")
+			kit.eq(r.state["inventory"].size(), 12, label + " inventory")
+			kit.eq(r.state["completed_objectives"].size(), 24, label + " objectives")
 			kit.eq(r.state["flags"]["slice_finished"], true, label + " slice_finished")
-			kit.eq(r.state["choice_history"], {"a1_choose": a, "m1_choose": m}, label + " choices")
+			kit.eq(r.state["choice_history"], {"a1_choose": a, "m1_choose": m, "c3a_choose": "ask_elena",
+				"c3b_choose": "share_protocol"}, label + " choices")
 			kit.eq(r.pending_cinematics(), [], label + " cinematics consumed")
 			var reload := kit.story()
 			kit.eq(reload.load_json(r.save_json()).get("state"), r.snapshot(), label + " reload equals snapshot")
@@ -171,16 +175,28 @@ func _test_bad_save_corruption_detected() -> bool:
 	return true
 
 
+## Python: legacy_play() (the v0.3 route up to its finale) migrates. Since Chapter 3 follows M1, that save claims
+## the old demo end and the reference itself rejects it ("Finale locked", recorded in the parity fixture);
+## the same assertions now run on the latest v0.3 save before that end (M1 decision pending).
 func _test_v03_save_migration() -> bool:
-	var old: String = Legacy.play_route().save_json()
 	var r := kit.story()
-	var res: Dictionary = r.load_json(old)
+	var before: Dictionary = r.snapshot()
+	var end: Dictionary = r.load_json(Legacy.play_route().save_json())
+	kit.is_err(end, "v2 save at the old demo end is rejected")
+	kit.eq(end.get("error"), "Finale locked", "reference message")
+	kit.eq(r.snapshot(), before, "rejected load is atomic")
+	var rt := Legacy.new()
+	for o in ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal", "a1_inspect_ledger",
+			"a1_choose", "m1_inspect_plan_a", "m1_inspect_plan_b", "m1_align_plans", "m1_talk_emil"]:
+		rt.perform(o, "share_with_irina" if o == "a1_choose" else null)
+	var res: Dictionary = r.load_json(rt.save_json())
 	kit.is_ok(res, "v2 save loads")
 	var st: Dictionary = res.get("state", {})
 	kit.eq(st.get("save_version"), 3, "migrated version")
 	kit.eq(st.get("flags", {}).get("irina_trust"), 1, "irina_trust kept")
-	kit.eq(st.get("completed_events"), ["a1_completed", "m1_completed", "slice_completed"], "events")
-	kit.eq(r.pending_cinematics(), ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final"], "cinematics pending after migration")
+	kit.eq(st.get("flags", {}).get("elena_trust"), 0, "Chapter-3 flag takes its default")
+	kit.eq(st.get("completed_events"), ["a1_completed"], "events")
+	kit.eq(r.pending_cinematics(), ["LS_A1_ToM1", "LS_M1_Hall"], "cinematics pending after migration")
 	kit.eq(kit.story().load_json(r.save_json()).get("state"), st, "v3 round trip")
 	return true
 
