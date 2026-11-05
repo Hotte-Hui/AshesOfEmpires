@@ -1,5 +1,5 @@
 extends RefCounted
-## Camera path for LS_M1_Hall (owner: great_hall_3d).
+## Camera path for LS_M1_Hall (owner: great_hall_3d; round 3 timing: hall-fix).
 ## The camera NEVER rotates: verticals stay perfectly vertical and the facade of the hall stays parallel to
 ## the image plane (1-point perspective -> crisp pixel columns for the pilaster rhythm).  "Tilts" are done
 ## with a lens shift (Camera3D frustum offset), "crane" and "push" with translation only.
@@ -14,13 +14,21 @@ const NEAR := 0.05
 const FAR := 9000.0
 
 ## t (s), position (m), velocity (m/s), lens shift in pixels (+y = horizon moves down on screen)
+## Round 3 (user: "imposanter Auftritt, länger"): 24 s instead of 11 s.
+##   h1  0.0– 5.5  the same crane path, 1.83x slower (velocities scaled accordingly)
+##   h2  5.5–14.5  long establishing hold: the camera nearly stops (drift ~0.01-0.1 m/s), the plaza life plays out
+##   h3 14.5–21.5  slow push (1.5 m), the camera sinks 0.3 m and tilts up by 28 px (lens shift 62 -> 90): a low-angle
+##                 reveal that ends with the whole dome AND the crowning eagle inside the game's 2.39:1 letterbox
+##                 (bars hide world rows 0-45 and 315-361): eagle top ~ row 50, the family's feet ~ row 309
+##       21.5–24.0  held monumental final frame (same x/z as round 2 -> facade calibration unchanged)
 var keys: Array = [
 	{"t": 0.0, "p": Vector3(-7.0, 7.78, 2.95), "v": Vector3(0.0, 0.0, 0.0), "shift": Vector2(0, -30)},
-	{"t": 0.6, "p": Vector3(-7.0, 7.95, 2.45), "v": Vector3(0.0, 0.45, -1.8), "shift": Vector2(0, -14)},
-	{"t": 1.4, "p": Vector3(-7.2, 7.75, -1.2), "v": Vector3(-0.6, -2.0, -6.2), "shift": Vector2(0, 24)},
-	{"t": 3.0, "p": Vector3(-8.75, 2.05, -17.9), "v": Vector3(-0.03, -0.12, -0.42), "shift": Vector2(0, 56)},
-	{"t": 8.0, "p": Vector3(-8.88, 1.92, -19.3), "v": Vector3(-0.01, -0.01, -0.2), "shift": Vector2(0, 56)},
-	{"t": 11.0, "p": Vector3(-8.9, 1.9, -20.0), "v": Vector3(0.0, 0.0, 0.0), "shift": Vector2(0, 56)},
+	{"t": 1.1, "p": Vector3(-7.0, 7.95, 2.45), "v": Vector3(0.0, 0.245, -0.98), "shift": Vector2(0, -14)},
+	{"t": 2.57, "p": Vector3(-7.2, 7.75, -1.2), "v": Vector3(-0.33, -1.09, -3.38), "shift": Vector2(0, 24)},
+	{"t": 5.5, "p": Vector3(-8.75, 2.05, -17.9), "v": Vector3(-0.01, -0.03, -0.23), "shift": Vector2(0, 62)},
+	{"t": 14.5, "p": Vector3(-8.82, 1.95, -18.5), "v": Vector3(-0.004, -0.008, -0.09), "shift": Vector2(0, 62)},
+	{"t": 21.5, "p": Vector3(-8.9, 1.65, -20.0), "v": Vector3(0.0, 0.0, 0.0), "shift": Vector2(0, 90)},
+	{"t": 24.0, "p": Vector3(-8.9, 1.65, -20.0), "v": Vector3(0.0, 0.0, 0.0), "shift": Vector2(0, 90)},
 ]
 
 

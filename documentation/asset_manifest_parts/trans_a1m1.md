@@ -1,6 +1,6 @@
 # Asset manifest part — trans_a1m1 (cinematic LS_A1_ToM1: Alexei/Karsk → Konrad/Berlin)
 
-* **Date:** 2026-11-04
+* **Date:** 2026-11-04, revised 2026-11-05 (user feedback: better train animation, banners waving more with bold swastikas)
 * **Area owner:** trans-a1m1 (soft protagonist switch after the A1 decision, TECHNICAL_ARCHITECTURE §12.5)
 * **Scene / code:** `scenes/cinematics/a1m1/CinA1ToM1.tscn`, `scripts/cinematics/a1m1/cin_a1_to_m1.gd`
   (`signal finished`, `configure(ctx)`, `play()`, `skip()`; plus `seek(t)`, `get_time()`, `get_duration()`
@@ -36,12 +36,13 @@
 | `karsk/yard.png` + `_n` + `_e` | 1760×220 | Fence, far track, water tower, signal mast (red lamp, emission), near track, snowy embankment, platform with trodden path. |
 | `karsk/fg.png` | 2000×120 | Near-black hand cart + snow bank (parallax 1.15). |
 | `karsk/loco.png` / `loco_hist.png` + `_n` + `_e` | 284×112 | 2-10-0 freight locomotive facing west; smoke deflector emblem (neutral gear-and-wheat / red star + hammer & sickle), cab with fire glow and driver, number Л-2317. |
-| `karsk/loco_wheels.png` + `_n` | 8 × 284×112 | One driver revolution: 5 coupled red spoked wheels, coupling/main rods, crosshead. |
+| `karsk/loco_wheels.png` + `_n` | 60 × 228×42 | One driver revolution in 6° steps (1.7 px of travel per frame), cropped to `wheels_crop` [20,70]: 5 coupled red spoked wheels with counterweights, coupling rod, main rod, crosshead in its slide bars, piston rod, Walschaerts valve gear (return crank, eccentric rod, swinging expansion link, radius rod, combination lever, union link, valve spindle) -- all from one wheel angle, so always in phase. |
+| `karsk/wheel_pilot.png`, `wheel_tender.png`, `wheel_box.png` + `_n` | 8 × 23×23 | Small spoked wheels (pilot truck, tender bogies, boxcar) turning over one spoke period, laid over the static wheels of the vehicle images (`small_wheels` in layout.json). |
 | `karsk/tender.png`, `gondola.png`, `boxcar.png` + `_n` | 196/180/196 wide | Tender 2317 with coal and snow, gondola 61-044 with scrap, covered wagon 42-905. |
 | `karsk/tail_lamp.png` + `_e` | 7×9 | Red tail signal on the C-17 wagon. |
 | `karsk/ledger_arm.png` + `_n` | 8×11 | The freight ledger under Alexei's arm (branch keep_private). |
-| `karsk/fx_puff.png` | 12 × 56×60 | Exhaust puff (spawned per exhaust beat, 4 per wheel revolution). |
-| `karsk/fx_steam.png`, `fx_whistle.png`, `fx_snowdrop.png` | 8 frames each | Cylinder-cock steam, whistle plume, snow sliding off the wagon roof at the coupling jolt. |
+| `karsk/fx_puff.png` | 12 × 56×60 | Exhaust puff (spawned per exhaust beat, 4 per driver revolution incl. the slip; launched with the engine's speed + blast, then wind drift and buoyancy). |
+| `karsk/fx_steam.png`, `fx_whistle.png`, `fx_snowdrop.png` | 8 frames each | Cylinder-cock steam (idle hiss, then one jet per piston stroke left in the air), whistle plume, snow sliding off the wagon roof at the coupling jolt. |
 | `close/ledger.png` / `ledger_hist.png` | 640×360 | Ledger page (sepia): rows 9.–16.1., wagon 24-311 with the blacked-out consignee; faded railway seal (neutral / hammer & sickle). |
 | `close/imprint.png` | 4 × 180×102 | Red C-17 stamp: wet gloss → spreading → soaked → dry. |
 | `close/stamp.png`, `stamp_shadow.png` | 3 × 300×330 | Rubber stamp from above (block, label C-17, ferrule, turned handle leaving the frame), three heights; dithered shadows. |
@@ -53,7 +54,7 @@
 | `berlin/far.png` + `_e` | 1000×200 | Distant roofs, firewalls, chimneys, a few early lights (parallax 0.45). |
 | `berlin/street.png` + `_n` + `_e` | 1000×620 | Bauarchiv (rusticated base, pilasters, BAUARCHIV attic, portal + lanterns), Gründerzeit tenements (balconies, stove pipes, bakery, tobacconist), tram stop, gas lamps, contact wire, pavement, cobbles with rails. |
 | `berlin/fg.png` + `_e` | 1100×200 | Near cast-iron lamp post + snow bank (parallax 1.15). |
-| `berlin/banner.png` / `banner_hist.png` | 3 × 24×96 | Vertical banners with sway (neutral Reichssiegel on black / red with white disc and swastika). |
+| `berlin/banner.png` / `banner_hist.png` | 32 × 30×96 | Vertical banners in the wind: 16 phases of a cloth wave travelling down from the pole (rows swing, billow light/shadow bands ride along, the free end narrows as it flaps), calm set 0-15 + gust set 16-31; the scene picks the phase from a closed-form gust integral (per-banner offset). Neutral: Reichssiegel on black; `_hist`: red, white disc (Ø20) with a bold 16 px 45°-turned black swastika (5-unit construction, arm width 1.2 units, hooks clockwise, exactly 4-fold symmetric). |
 | `berlin/relief.png` / `relief_hist.png` + `_n` | 52×34 | Stone eagle over the portal (wreath: Reichssiegel / swastika). |
 | `berlin/door.png` + `_e`, `jambs.png` + `_n` | 3 × 34×50, 54×64 | Portal doors closed/ajar/open with warm interior; jambs drawn over Konrad as he enters. |
 | `berlin/tram.png` + `_n` + `_e`, `tram_pole.png` + `_e` | 214×92, 3 × 70×64 | Two-axle tram "3 GR.HALLE" with lit windows and passengers; trolley pole with spark frames. |
@@ -66,7 +67,9 @@
 | `cine_a1m1_whistle.wav` / `cine_a1m1_whistle_far.wav` | 2.6 / 3.6 s | Deep three-chime steam whistle, near / far (sound bridge into Berlin). |
 | `cine_a1m1_chuff.wav` | 0.8 s | One exhaust beat (played per beat, quieter when the engine is far). |
 | `cine_a1m1_hiss.wav` | 2.6 s | Cylinder cocks venting. |
-| `cine_a1m1_depart.wav` | 6.0 s | Slack running out through the couplings, rail joints accelerating, rumble. |
+| `cine_a1m1_depart.wav` | 6.0 s | Low rumble of the heavy train getting under way (clanks and joints are now separate one-shots). |
+| `cine_a1m1_clank.wav` | 0.8 s | One coupling snatching taut (fired at each simulated snatch, quieter down the train). |
+| `cine_a1m1_clack.wav` | 0.16 s | One wheel set over a rail joint (fired per axle and joint, volume by distance to the camera). |
 | `cine_a1m1_stamp.wav` | 0.9 s | Swish, wooden knock, rubber squish (layered with the existing `stamp_thud`). |
 | `cine_a1m1_swell.wav` | 9.0 s | Soft open-fifth string pad under the stamp and the dissolve. |
 | `cine_a1m1_tram_arrive.wav` / `cine_a1m1_tram_depart.wav` | 4.0 / 4.5 s | Tram rolling in with brake squeal / motor whine and rumble receding. |
@@ -78,3 +81,15 @@ Existing project sounds used: `tram_bell`, `stamp_thud`, `wind_gust`, `step_snow
 ## Text — `data/locale/de_trans_a1m1.json`
 `cin.a1m1.alexei.share`, `cin.a1m1.alexei.keep` (inner voice, branch-dependent), `cin.a1m1.konrad` (inner voice),
 `cin.a1m1.caption` (description of the match dissolve for accessibility/QA).
+
+## Motion model (2026-11-05) -- `cin_a1_to_m1.gd`
+Total length 43.0 s (`EXT` = 2.4 s: shot 1B 5.2-11.4, 1C 11.4-18.4; everything after shifted). The departure is
+simulated once at build (240 Hz) and sampled, so every frame stays a pure function of t (seek/skip): regulator
+opening, traction `A0` with constant power above `V_POWER`, rolling resistance; the slack of each coupling
+(`SLACK` 1/2/2/2 px, buffers compressed after backing up) runs out in turn -- each snatch shares momentum and
+recoils in the draft gear; one wheel slip (`SLIP`, +1.5 driver revolutions) when the whole train hangs on the
+drawbar. Travel at 5.2 / 11 s after the start: 81 / 425 px (C-17 leaves the frame just before Alexei turns).
+Vehicles are snapped to the 1/k viewport grid; the driver frame comes from the drawn travel (+ slip); rail joints
+every 150 px give a clack per axle and a one-pixel dip; the engine heaves a pixel on each exhaust beat at low
+speed; firebox and ash-pan lights pulse with the beats. Harness `--cine-mode=motion` checks rod phase vs travel,
+grid, gaps/slack, no roll-back and 4 beats per revolution, and writes running-gear contact sheets.

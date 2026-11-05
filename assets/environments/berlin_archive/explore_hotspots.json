@@ -1,5 +1,7 @@
 {
  "note": "Exploration hotspots of the Berlin archive, owner: berlin-explore (TECHNICAL_ARCHITECTURE 12.2). Merged by scripts/levels/level.gd into scene.json; scene.json (berlin-env) WINS on every name it defines. Since the 2924 px library layout (scene.json 2026-11-04 20:44) defines every 12.2 name plus SP_M1_Arrival, nothing has to be added here; the old 1600 px fallbacks were removed so they can never shadow-place a find in the wrong room. Content-only hotspots go into 'hotspots' below. Spacing rules are checked on the merged result by tests/test_explore_berlin.gd (exploration spot >= 24 px from a story spot, >= 14 px from another exploration spot).",
- "hotspots": {},
+ "hotspots": {
+  "exp_radio_dial": [158, 300]
+ },
  "spawns": {}
 }

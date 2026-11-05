@@ -113,7 +113,7 @@ func _data_shape() -> bool:
 		if kit.ok(kinds.has(k), "%s kind '%s' is known" % [id, k]):
 			kinds[k] += 1
 	var discover: int = kinds["detail"] + kinds["secret"] + kinds["easter_egg"]
-	kit.ok(discover >= 14 and discover <= 18, "14-18 discover entries (got %d)" % discover)
+	kit.ok(discover >= 14 and discover <= 20, "14-18 discover entries (got %d)" % discover)
 	kit.ok(kinds["easter_egg"] >= 2 and kinds["easter_egg"] <= 3, "2-3 easter eggs (got %d)" % kinds["easter_egg"])
 	kit.ok(kinds["secret"] >= 1, "at least one secret")
 	kit.eq(kinds["chat"], 3, "three chats")

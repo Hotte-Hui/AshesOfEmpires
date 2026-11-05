@@ -837,7 +837,7 @@ func _show_card_detail(detail: VBoxContainer, c: Dictionary) -> void:
 	text.max_lines_visible = 6 if Kit.text_scale() < 1.2 else 4
 	text.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD_ELLIPSIS
 	v.add_child(text)
-	var srcs = c.get("sources", [])
+	var srcs = []   # sources are listed in the planned end-credits scene, not on the cards (user decision 2026-11-05)
 	if srcs is Array and not srcs.is_empty():
 		v.add_child(Kit.rule(Color(0, 0, 0, 0), 10))
 		var sk := Kit.label("%s: %d" % [Kit.t("ui.history.sources").to_upper(), srcs.size()], "HintLabel", 0, dim)

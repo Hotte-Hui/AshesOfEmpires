@@ -320,6 +320,24 @@
    "title_key": "explore.karsk.distant_train.title",
    "text_key": "explore.karsk.distant_train.text",
    "prompt_key": "explore.karsk.distant_train.prompt"
+  },
+  {
+   "id": "karsk.shunting",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.shunting.title",
+   "text_key": "explore.karsk.shunting.text",
+   "prompt_key": "explore.karsk.shunting.prompt",
+   "minigame": "res://scenes/ui/minigames/Shunting.tscn"
+  },
+  {
+   "id": "karsk.chess",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.chess.title",
+   "text_key": "explore.karsk.chess.text",
+   "prompt_key": "explore.karsk.chess.prompt",
+   "minigame": "res://scenes/ui/minigames/ChessProblem.tscn"
   }
  ]
 }

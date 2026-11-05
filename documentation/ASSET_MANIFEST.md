@@ -31,7 +31,9 @@ edit the part of the owning area and re-run the script.
 ## Index
 - [render-camera](#part-render-camera)
 - [env_karsk](#part-env_karsk)
+- [karsk_skyline](#part-karsk_skyline)
 - [explore_karsk](#part-explore_karsk)
+- [minigames](#part-minigames)
 - [env_berlin](#part-env_berlin)
 - [explore_berlin](#part-explore_berlin)
 - [characters](#part-characters)
@@ -295,6 +297,114 @@ panorama. In-engine verification captures are kept outside the project. Visual p
 forces a gust and a glint, saves frames to `--out=` (no saves, no autoplay).
 
 ---
+<a id="part-karsk_skyline"></a>
+
+## Asset manifest part — karsk_skyline (background buildings of scene A1 "Verladebahnhof Karsk")
+
+* **Date:** 2026-11-04
+* **Area owner:** karsk-skyline (redesign of the background planes of `L_A1_Railyard` after the user feedback
+  "bei der ersten Szene sehe ich hinten so komisch aussehende Gebäude … realistisch oder typisch russisch").
+* **Generator:** `py -3 -P tools/pixelgen/env_karsk_skyline.py` (add `--no-preview` to skip the review composites).
+  Modules: `env_karsk_skyline.py` (orchestrator + mid plane, manifests, palette check, previews),
+  `env_karsk_skyline_lib.py` (plane geometry, depth scale, palette access, haze chains, fonts incl. bold rooftop
+  capitals, emblem masks, QA), `env_karsk_skyline_kit.py` (shapes, windows, Khrushchyovka, grain elevator, rooftop
+  slogan, chimneys, masts, pylons, birches, people), `env_karsk_skyline_arch.py` (Orthodox church, Stalinist
+  administration, tower crane, izba, garages), `env_karsk_skyline_far.py` (far_industry, far_city),
+  `env_karsk_skyline_near.py` (near_bg), `env_karsk_skyline_preview.py` (review composites, sun check).
+  Depends only on `tools/pixelgen/pg.py` (unchanged) — independent of the `env_karsk_*` railyard generator.
+* **Determinism:** fixed seeds, no network. Verified: SHA-1 of all 17 outputs identical after regeneration.
+* **Licence / provenance:** original procedural pixel art created for ASHES OF EMPIRES: THE LAST WINTER by the
+  karsk-skyline generator (AI-authored code, project-owned, same licence as the game). No third-party images,
+  fonts or textures; no photo was traced or sampled (architecture drawn from general knowledge of Soviet
+  provincial towns around 1964). Palette `karsk` + the shared C-17 red ramp (`pg.PALETTES['sepia']['red']`) only;
+  palette check of every colour / emission PNG passes (no off-palette pixels).
+* **Fictional / historical content:** the slogan "СЛАВА ТРУДУ!" ("Glory to labour", generic civic slogan) stands
+  in red sheet-metal letters on the elevator's silo gallery. §12.4: `mid.png` shows the fictional gear-and-wheat
+  emblem beside it (red gear, golden ear), `mid_hist.png` the real hammer & sickle — identical files except the
+  11×11 emblem box (77 px). Other text: СКЛАД (church used as warehouse), ДЕПО, year "1953" on the Stalinist
+  attic. The red star on the spire is generic Soviet imagery (both variants).
+
+### Files (`assets/environments/karsk_skyline/`)
+All lit planes ship `<name>_n.png` (normal map, OpenGL +Y up) and `<name>_e.png` (emission: lit windows, red
+obstruction / crane lamps, gilt spire edge is *not* emissive). Sizes, `pos`, parallax and z are **identical** to the
+railyard layers they replace.
+
+| File | Size | pos / parallax / z | Content |
+|---|---|---|---|
+| `far_city.png` + `_n` + `_e` | 802×112 | [0,118] / 0.12 / -90 | Town on the horizon (1.27 px/m): panel-block districts in two hazy rows with tiny cranes, old quarter with a little church, bread factory stacks, power station with **two hyperboloid cooling towers at x 546 / 662 flanking the sun** (tops 149 / 157 = unchanged tower_plume anchors), boiler house, two striped chimneys (smoke anchor 688,123 unchanged), switchyard + pylon lines, guyed TV mast with red lamps near the sun (x 757). |
+| `far_industry.png` + `_n` + `_e` | 968×147 | [0,83] / 0.25 / -84 | Industrial belt (2.64 px/m): thermal power station (boiler house, turbine hall, coal conveyor, two red/white striped chimneys at x 36 / 50), brick saw-tooth halls with arched windows, Intze water tower, telescopic gasholder, a microdistrict of five-storey panel blocks with antennas, a brick school, low warehouses, east factory chimney (x 872), pylons; bypass railway embankment with rails at y 216. |
+| `mid.png` + `_n` + `_e`, `mid_hist.png` + `_hist_n` + `_hist_e` | 1224×185 | [0,49] / 0.45 / -74 | The readable town (4.75 px/m): **grain elevator** (x 76–304: 5 silos, patched shell hole on silo 2, gallery with the rooftop slogan + emblem, working house, conveyor bridge, brick receiving building, a worker with a ladder), **five-domed church turned warehouse** (x 336–452: crosses removed, rusty dome with missing sheets, boarded windows, scaffolding, СКЛАД), **Khrushchyovka** (x 467–591: 2 sections, 5 storeys, panel joints, balconies with laundry / firewood, stairwell windows, entrance canopies, antennas), garages, **Stalinist railway administration** (x 640–790: rusticated ground floor, portico, balustrades, clock tower, colonnaded belvedere, gilt spire with red star, "1953", 3 lit windows), izba, **panel block under construction + tower crane** (x 850–1030, mast at 1000, panel hoisted high, red jib lamp, two erectors), log houses, district boiler house with striped chimney (x 1150), garages, birches; **far railway embankment** across the plane (rail heads y 209, sleepers y 210 = KarskTrain rail). |
+| `near_bg.png` + `_n` + `_e` | 1570×113 | [0,137] / 0.72 / -60 | Near quarter (7.6 px/m): two-storey **timber barrack** (x 4–160, carved window frames, stovepipe through a window, laundry line to the pole at x 200), **izby** with steep snowy roofs and carved nalichniki (x 208, 412), birches, woodsheds and log piles, brick **locomotive shed ДЕПО** (x 690–1000, arched gates, row of smoke jacks), low goods shed, **half-stone merchant house** (x 1150–1270), garages, fences. |
+| `skyline.json` | — | — | Machine-readable integration data: the 4 layer entries, the 12 fx entries, laundry pegs, hotspot marks. |
+
+Depth scale (consistent, ∝ parallax as for a pinhole camera; the playfield person is hero-scale 47 px):
+architecture px/m = 10.56 × parallax → near_bg 7.6 (person 13 px, storey 21 px), mid 4.75 (person 8 px, storey
+13 px), far_industry 2.64 (storey 7 px), far_city 1.27 (storey 3 px). Haze: every plane is painted with its own
+material ramps (far: sky ramp, mid: sage/stone/wood, near: teal/wood/brick) and a ground-fog pass that shifts colours
+along palette chains toward the air light near the plane base (ordered dither, no new colours).
+
+Composition rules applied: the sun disc (screen 612,190) is kept free by low buildings on its path in every plane at
+cam 0 / 640 / 1280 (visible fraction of the disc 0.84 / 0.51 / 0.33, before 0.74 / 0.13 / 0.04); nothing busy sits on
+the roofline of the signal box (cam 0–186: the Khrushchyovka hides fully behind it at cam 0, the church dome stays
+below its roof at cam 186), the tea stall or the office (cam 1280: construction site stays below the office roof, the
+crane's panel hangs high, the boiler chimney moved east of the office); no tall mast behind the tea stall.
+
+### Integration into `assets/environments/karsk_railyard/scene.json` (lead)
+Verified in Godot: `ResourceLoader` resolves `../karsk_skyline/…` relative to the manifest directory (also the
+`_hist` pick through `Symbols.pick`), so the files stay in their own folder and survive railyard regenerations.
+Probe: `godot --headless --path . --script res://tests/visual/skyline/path_probe.gd`.
+
+1. **layers** — replace the four entries of the same name (note `emission` is now **true** for far_industry and
+   near_bg, they gained lit windows):
+```json
+{"name": "far_city", "file": "../karsk_skyline/far_city.png", "pos": [0, 118], "parallax": [0.12, 0.0], "z": -90, "normal": true, "emission": true, "lit": true, "emission_strength": 0.35},
+{"name": "far_industry", "file": "../karsk_skyline/far_industry.png", "pos": [0, 83], "parallax": [0.25, 0.0], "z": -84, "normal": true, "emission": true, "lit": true, "emission_strength": 0.35},
+{"name": "mid", "file": "../karsk_skyline/mid.png", "pos": [0, 49], "parallax": [0.45, 0.0], "z": -74, "normal": true, "emission": true, "lit": true, "emission_strength": 0.45},
+{"name": "near_bg", "file": "../karsk_skyline/near_bg.png", "pos": [0, 137], "parallax": [0.72, 0.0], "z": -60, "normal": true, "emission": true, "lit": true, "emission_strength": 0.45}
+```
+2. **fx** — delete every `anim_sprite` whose `"layer"` is `far_city`, `far_industry`, `mid` or `near_bg` (14 entries
+   today) and insert these 12 (same strips in `karsk_railyard/fx/`, placed on the new chimney mouths):
+```json
+{"type": "anim_sprite", "file": "fx/smoke_ribbon_a.png", "frames": 8, "fps": 4, "pos": [26, -41], "parallax": 0.25, "z": -83, "emission": false, "frame_size": [72, 132], "layer": "far_industry"},
+{"type": "anim_sprite", "file": "fx/smoke_ribbon_b.png", "frames": 8, "fps": 5, "pos": [40, -31], "parallax": 0.25, "z": -83, "emission": false, "frame_size": [72, 132], "layer": "far_industry"},
+{"type": "anim_sprite", "file": "fx/smoke_ribbon_far.png", "frames": 8, "fps": 4, "pos": [862, 13], "parallax": 0.25, "z": -83, "emission": false, "frame_size": [56, 96], "layer": "far_industry"},
+{"type": "anim_sprite", "file": "fx/smoke_ribbon_far.png", "frames": 8, "fps": 4, "pos": [678, 29], "parallax": 0.12, "z": -89, "emission": false, "frame_size": [56, 96], "layer": "far_city"},
+{"type": "anim_sprite", "file": "fx/tower_plume.png", "frames": 8, "fps": 5, "pos": [526, 87], "parallax": 0.12, "z": -89, "emission": false, "frame_size": [84, 64], "layer": "far_city"},
+{"type": "anim_sprite", "file": "fx/tower_plume.png", "frames": 8, "fps": 4, "pos": [642, 95], "parallax": 0.12, "z": -89, "emission": false, "frame_size": [84, 64], "layer": "far_city"},
+{"type": "anim_sprite", "file": "fx/smoke_ribbon_far.png", "frames": 8, "fps": 4, "pos": [1140, 13], "parallax": 0.45, "z": -73, "emission": false, "frame_size": [56, 96], "layer": "mid"},
+{"type": "anim_sprite", "file": "fx/chimney_wisp.png", "frames": 8, "fps": 5, "pos": [39, 139], "parallax": 0.72, "z": -59, "emission": false, "frame_size": [30, 60], "layer": "near_bg"},
+{"type": "anim_sprite", "file": "fx/chimney_wisp.png", "frames": 8, "fps": 6, "pos": [234, 146], "parallax": 0.72, "z": -59, "emission": false, "frame_size": [30, 60], "layer": "near_bg"},
+{"type": "anim_sprite", "file": "fx/chimney_wisp.png", "frames": 8, "fps": 5, "pos": [440, 146], "parallax": 0.72, "z": -59, "emission": false, "frame_size": [30, 60], "layer": "near_bg"},
+{"type": "anim_sprite", "file": "fx/chimney_wisp.png", "frames": 8, "fps": 6, "pos": [1176, 123], "parallax": 0.72, "z": -59, "emission": false, "frame_size": [30, 60], "layer": "near_bg"},
+{"type": "anim_sprite", "file": "fx/steam_puffs.png", "frames": 6, "fps": 5, "pos": [966, 126], "parallax": 0.72, "z": -59, "emission": false, "frame_size": [26, 44], "layer": "near_bg"}
+```
+3. **KarskLaundry** actor: `props.pegs` → `[[163,210],[169,210],[175,209],[182,207],[188,204],[193,201]]`
+   (line from the barrack wall at 159,209 to the pole top at 200,193; ±1 px from today's pegs).
+4. **KarskTrain**: no change. The current contract (pos [0,210], parallax 0.45, z -73) runs on the new mid-plane
+   embankment (rail heads y 209, sleepers y 210, wheels on y 210); verified in-engine at cam 150 (train passes
+   between tea stall and signal box). The far_industry plane additionally carries a bypass rail at y 216 (the
+   earlier 0.25 contract) — harmless if unused.
+5. **Hotspots**: **no player position changes**. `exp_grain` (elevator still at mid x 76–304, silos 76–196) and
+   `exp_cooling_towers` (tower 1 still at far_city x 546, top 149 → current mark [1250,175] at cam ~800 still points at
+   it; both towers are unobstructed at cam 800–840) keep their entries. Optional `hotspot_info.mark` refinements:
+   `exp_grain` → `[136, 173]` (centre of the silo row next to the patched silo; today [190,120] lands on the gallery
+   roof by the slogan), `exp_barrack` → `[82, 191]` (roof of the redrawn barrack, today [82,186]).
+6. Notes for `hotspot_info.what` (optional): exp_grain "five silos, silo 2 with a patched shell hole, СЛАВА ТРУДУ! on
+   the gallery"; exp_cooling_towers "two hyperboloid cooling towers flanking the sun"; exp_barrack "two-storey timber
+   barrack, stovepipe through a window, laundry line".
+
+### Verification
+* Python composites (`env_karsk_skyline_preview.py`, test manifest) at cam 0 / 640 / 1280 (2×) + 3× crops reviewed
+  over several rounds (slogan legibility → bold font; neutral emblem two-tone; shell-hole patch; calmer panel block;
+  radio mast removed from behind the tea stall; smoke kept off the church; sun windows).
+* In-engine (`tests/visual/skyline/L_KarskSkyline.tscn` = root of L_A1_Railyard with `art_manifest =
+  res://tests/visual/skyline/scene.json`, a generated copy of the railyard manifest with these planes / fx / pegs):
+  windowed captures at cam 0, 186, 640, 1280 with symbols on and `--symbols=0` (neutral emblem confirmed), and cam 150
+  after ~14 s (distant train on the embankment). Import settings of the new PNGs identical to the railyard layers.
+* Known limits: at cam 1280 the existing foreground tree (fg_frame) covers the TV mast and part of cooling tower 2,
+  and the office covers tower 1's lower half — the towers read best from the current exp_cooling_towers spot (cam ~800).
+
+---
 <a id="part-explore_karsk"></a>
 
 ## Asset manifest part — explore_karsk (exploration content of the Karsk railyard, Alexei's chapter)
@@ -357,6 +467,79 @@ text was written for this project.
 | `scenes/levels/L_A1_Railyard.tscn` | 20 exploration Interactables (`discover`/`chat`) + NPCs `Vendor` (char `vendor`, at the tea stall) and `WorkerB` (char `worker_b`, walking the back strip by the canopy); all story nodes unchanged. |
 | `tests/test_explore_karsk.gd` | Headless consistency test (run by `tests/run_all.gd`). |
 | `tests/visual/karsk_explore_shots.tscn` (+ `.gd`) | Windowed harness: prompts, DiscoveryView pages and chat lines in the real game, PNGs to `--kx-out`. |
+
+---
+<a id="part-minigames"></a>
+
+## Asset manifest — optional mini-games (area: minigames)
+
+Owner: minigames specialist · Date: 2026-11-05 · Engine: Godot 4.7.2 · Contract: TECHNICAL_ARCHITECTURE §12.8
+(user request: "mehr kleine mini games hinzufügen").
+
+Everything listed here is **original work**, generated procedurally by project scripts on 2026-11-05. No pixel,
+sample or melody was taken from `documentation/references/` or any external source; no downloads, no AI media.
+Colours come from `data/palettes.json` (`karsk` snow/stone/wood/rust/teal/night/copper, `archive`
+wood/amber/paper/ink/skin ramps). The porter's face in "Das Radio" is the existing portrait
+`assets/characters/porter/portrait.png` (characters area), only drawn, not modified. No regime insignia anywhere.
+Licence: original project work (same terms as the rest of the game).
+
+### The three mini-games
+
+| Explore entry | Scene / script | Place (hotspot, world px) | Game |
+|---|---|---|---|
+| `karsk.shunting` (detail) | `scenes/ui/minigames/Shunting.tscn` · `shunting_game.gd` + `shunting_logic.gd` | Karsk `exp_shunting` [1112, 256], beside the dwarf shunting signal | Inglenook-style shunting from above: headshunt (loco + 2 wagons), points 1/2, sidings 1 (3), 2 (2), 3 (2); four wagons (tank, coal, panels, covered). Build the evening train on siding 1 as the waybill says (points→buffer: panels, coal, tank). Optimal 6 trips (BFS solver in the logic, also feeds the third hint level). |
+| `karsk.chess` (detail) | `ChessProblem.tscn` · `chess_game.gd` + `chess_logic.gd` | Karsk `exp_chess` [362, 256], at the sleeper stack left of the signal-box stairs (next to `exp_stairs_under`) | The day/night-shift peg chess on a crate lid: mate in two for the day shift (White Kg1 Qc4 Nh6 Pf2 g2 h2 vs Black Kh8 Qb2 Ra8 Re8 Pa7 b7 g7 h7): 1. Dg8+ Txg8 (forced) 2. Sf7# (smothered mate). The line is hard-coded; every other move is refused with a reason (illegal, night-shift piece, too slow: Db1+, Sf7+ Kg8, Sxg8 …). |
+| `berlin.radio_dial` (detail) | `RadioDial.tscn` · `radio_game.gd` + `radio_logic.gd` | Berlin `exp_radio_dial` [158, 300], left end of the porter's counter (28 px from `exp_porter`) | Tune the 1955 set from the Reichssender (red line) to the pencil dot: static thins, magic eye closes, a jazz trio comes through; listen 5 s while the porter reads. When his paper sinks, the needle must be back on the red line (station key R); being "caught" only resets the needle and costs 40 % of the listening. |
+
+Shared base `scripts/ui/minigames/minigame_base.gd` (extends `ui_modal.gd`): chrome (kicker, title, subtitle,
+instruction, status, hint plate, buttons, key hints), UIRoot modal stack or stand-alone input, `finished(success)`,
+`open(ctx)`, auto mode (success after 0.2 s), hint after 2 refusals, solved hold 2.4 s (confirm continues),
+`demo_solve()` = synthetic key events only (`Input.parse_input_event`, keycode + physical_keycode). Keyboard,
+mouse and pad (d-pad/stick, A, B, Y/X). All text via Loc: `data/locale/de_minigames.json` (`mg.*`); find texts in
+`de_explore_karsk.json` / `de_explore_berlin.json` (protagonist voice).
+
+### Generators
+
+* `tools/pixelgen/gen_minigames.py` — `py -3 -P tools/pixelgen/gen_minigames.py`, then import (shared lock).
+  Deterministic (seeds = `crc32` of names). Drawn 1:1, **stored x3 nearest** in `assets/ui/minigames/`.
+* `tools/audiogen/minigame_sfx.py` — `py -3 -P tools/audiogen/minigame_sfx.py` (numpy only, deterministic).
+  44.1 kHz / 16-bit mono WAV in `assets/audio/sfx/`; loops carry a RIFF `smpl` chunk (import loop_mode detect).
+
+### Files
+
+| Path | Size (1:1 art px) | Use |
+|---|---|---|
+| `assets/ui/minigames/shunt_yard.png` | 360×150 | Snowy yard from above: headshunt + 3 sidings, two points, ballast, sleepers, rails, buffer stops, track boards 1–3, sleeper stack, fence |
+| `assets/ui/minigames/shunt_engine.png` | 34×12 | Shunting tank engine from above (cab/bunker rear, boiler, dome, chimney; red buffer beams) |
+| `assets/ui/minigames/shunt_wagon_{tank,coal,flat,box}.png` | 36×12 each | Tank wagon, coal gondola, flat wagon with wall panels, covered wagon with snow |
+| `assets/ui/minigames/shunt_lever_{0,1}.png` | 14×22 | Hand-throw points lever with lamp (0 straight, 1 thrown) |
+| `assets/ui/minigames/shunt_layout.json` | — | Route polylines, lever spots, buffers (art px) read by the script |
+| `assets/ui/minigames/chess_board.png` | 172×172 | Peg-chess board (19 px squares, peg holes) on a crate lid with nails and snow |
+| `assets/ui/minigames/chess_pieces.png` | 108×40 (6×2 cells 18×20) | K Q R B N P; row 0 day shift (birch), row 1 night shift (stained) |
+| `assets/ui/minigames/radio.png` | 288×146 | 1955 walnut table radio: fabric grille with ribs, magic-eye bezel, glass scale with ticks, red Reichssender line, pencil dot, 5 piano keys, volume knob |
+| `assets/ui/minigames/radio_eye.png` | 144×18 (8 frames) | Magic eye, 0 = no signal … 7 = tuned |
+| `assets/ui/minigames/radio_knob.png` | 192×24 (8 frames) | Tuning knob rotation |
+| `assets/ui/minigames/radio_newspaper.png` | 104×64 | The porter's newspaper (abstract print, no masthead text) held in two hands |
+| `assets/ui/minigames/radio_layout.json` | — | Scale / eye / knob / key positions (art px) |
+| `assets/audio/sfx/mg_points.wav` | 0.9 s | Points lever clank + blade slide |
+| `assets/audio/sfx/mg_couple.wav` | 1.1 s | Automatic coupler clash |
+| `assets/audio/sfx/mg_shunt.wav` | 1.5 s | Engine moving off (chuffs, rail joints) |
+| `assets/audio/sfx/mg_chess_tap.wav` | 0.22 s | Wooden peg piece set down |
+| `assets/audio/sfx/mg_radio_static.wav` | 4 s LOOP | Medium-wave hiss and crackle |
+| `assets/audio/sfx/mg_radio_jazz.wav` | 8 s LOOP | Original jazz trio (Dm7 G7 Cmaj7 A7, walking bass, brushes, comping) through far medium wave |
+| `assets/audio/sfx/mg_radio_whistle.wav` | 1 s LOOP | Heterodyne whistle; the UI bends its pitch with the detuning |
+| `assets/audio/sfx/mg_radio_key.wav` | 0.3 s | Radio piano key snapping down |
+
+The Reichssender plays the existing `assets/audio/sfx/berlin_radio_loop.wav` (audio area), unchanged.
+
+### Verification (2026-11-05)
+
+* `tests/test_minigames.gd` (10 cases, 557 checks): solver + hand solution accepted, wrong moves refused, chess
+  lines and soundness, radio porter cycle / caught / listening, entries + hotspots + Interactables + Loc keys,
+  auto mode, keyboard via `modal_input`, give-up.
+* `tests/visual/minigames_harness.gd` (windowed): real UIRoot over a game screenshot; start / hint / solved shots of
+  all three, each solved by `demo_solve()` through synthetic keys, `finished(true)` received, tree unpaused after.
+  `godot --path . --script res://tests/visual/minigames_harness.gd -- --shots=<dir> [--only=shunting|chess|radio]`
 
 ---
 <a id="part-env_berlin"></a>
@@ -769,7 +952,7 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 | | |
 |---|---|
 | Area owner | hall (great_hall_3d specialist) — round 2 "inhabited, monumental, symbolically charged" |
-| Date | 2026-11-04 (round 1 afternoon, round 2 evening) |
+| Date | 2026-11-04 (round 1 afternoon, round 2 evening), 2026-11-05 round 3 (hall-fix: user playtest feedback) |
 | Engine | Godot 4.7.2-stable, Forward+, GDScript |
 | Provenance | **100 % original.** Geometry is generated procedurally at runtime by GDScript (SurfaceTool); all 2D textures/sprites are generated by the deterministic Python generators below (Python 3.13, Pillow + numpy, on top of `tools/pixelgen/pg.py`, which is not modified). No downloads, no third-party models/textures, no AI image models, no Blender files, nothing traced from `documentation/references/`. Two runs of all generators produce byte-identical PNGs (verified by md5 over all 84 files). |
 | Licence | Project-owned original work (same terms as the game's own code/art). No third-party rights. |
@@ -777,6 +960,42 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 | Reproduce | `py -3 -P tools/pixelgen/gen_great_hall.py` (sky/fog/smoke, placeholders, door, drawing, posters, **writes all `.png.import` files**: lossless, `detect_3d/compress_to=0`, mipmaps only for 3D-quad textures) · `py -3 -P tools/pixelgen/gen_great_hall_symbols.py` · `py -3 -P tools/pixelgen/gen_great_hall_life.py` · then `"$GODOT" --headless --path . --import` (holding the shared `.import_lock`) |
 | Visual test | `"$GODOT" --path C:/Spiele/AshesOfEmpires res://tests/visual/HallPreview.tscn -- [--symbols=0|1] [--still=1,4,7,10,12] [--size=642x362]` (windowed; captures to `_preview/`, prints frame/GPU/CPU/update-cost statistics when playing in real time) |
 | Logic test | `"$GODOT" --headless --path C:/Spiele/AshesOfEmpires res://tests/visual/HallPreview.tscn -- --selftest` (exit 0 = pass) |
+
+### Round 3 (2026-11-05, hall-fix) — user playtest feedback
+User (verbatim, abridged): "links am Gebäude eine Flagge … hängt perspektivisch falsch", "der Platz scheint im vorderen
+Bereich überladen, mehr nach hinten verteilt", "die Szene soll länger gehen, da es ein imposanter Auftritt ist",
+"die Grafik scheint etwas anstrengender geworden … nur leicht reduzieren".
+* **Corner banner** (`hall_builder._build_street_flags` + new `_banner_flat`): the banner over the family's sealed door
+  used to be a camera-facing quad on a rod 0.8 m off the 45° chamfer — an upright rectangle in front of a
+  foreshortened facade. It now hangs **flat in the chamfer's plane** (0.3 m in front of the wall, rod + two wall
+  brackets) and converges with the window lintels. Same texture/`Symbols.pick` (swastika in `_hist`, Reichssiegel
+  otherwise). Street outriggers (right block) and cross-street banners were already correct.
+* **Plaza front thinned, life moved back**: queue 5 → 3 (+ the woman who joins at ~13 s), the two other near walkers
+  (walk_36) removed from the plaza edge; ring walkers (walk_24) now loop on 74 m paths whose ends lie outside the
+  visible wedge (no stop/pop during the longer run); mid plaza walk_14 6 → 10 (106 m loops), far plaza walk_8
+  18 → 28; the patrol starts off-frame and marches across the mid plaza from ~10.9 s to the end. Sprites 102 → 112.
+* **Slightly calmer picture**: screen-space snow density 0.55 → 0.45.
+* **24 s instead of 11 s** (`hall_camera_rig.keys`, `hall_reveal` SHOTS/CUES/`lock_from` 5.5/`window_close_at` 19.6):
+  h1 0–5.5 s the same crane 1.83× slower · h2 5.5–14.5 s long establishing hold (camera nearly stops, lens shift 62)
+  while the life plays out: tram bell + departure 6.4 s, car on the plaza 8.9–14.5 s, loudspeaker 8.6 s, pigeons
+  8.75 s, lorry 10.6–19.6 s, patrol 10.9 s, dark saloon 12.3–15.1 s, queue arrival 13.2 s · h3 14.5–21.5 s slow
+  low-angle push (1.5 m forward, 0.3 m down) with a **tilt up** (shift 62 → 90), loudspeaker 15.2 s, neighbour
+  closes the curtains 19.6 s, light out 20.6 s · 21.5–24 s held final frame. The final frame keeps x/z of round 2
+  (facade calibration unchanged) and is framed for the game's **2.39:1 letterbox** (`fade.letterbox`, bars hide world
+  rows 0–45 / 315–361): crowning eagle top ≈ row 48, the family's feet ≈ row 303 — in round 2 the bars hid the
+  eagle and the lantern in-game. h1-only timings (kiosk customer/halo, near smoke, babushka) scale with the crane.
+* API unchanged (`play/skip/finished once/cue/seek/get_time/get_duration/set_fade/set_people_sprites`);
+  `hall_people.ref_time` (= `lock_from`) replaces the hard-coded 3.0 s calibration time.
+* Locale: `hall.ad.h2`/`hall.ad.h3` audio descriptions mention the long hold and the tilt up to the eagle; cue
+  strings unchanged.
+
+**Verification round 3** (RTX 4090; note: a full-screen game was using the GPU at 99 % during these runs):
+harness stills at t = 2/3/5.5/7/11/16/18/19.9/20.5/23.5 s in both symbol modes, 35–36 colours per frame, **0 px outside
+`pg.PALETTES['berlin']`** (12 final frames `_preview/final_r3_s{0,1}_*`); real-time run (s1, 642×362): frame delta avg
+6.2 ms / p50 5.6 / p95 8.3 ms (GPU-contended; level GPU 0.18 ms, viewport CPU 0.30 ms, level update avg 0.81 ms,
+max 2.2 ms); `--selftest` PASS (finished once, 7 cues in order, locale keys, overrides, viewport restore);
+`tests/visual/camera_hall_rig_check.gd` PASS; in-game `-- --cinematic=LS_M1_Hall --capture=… --frames=3000/3550`
+(1920×1080, letterboxed): the reveal runs, story beat and final framing as above, engine FPS 175–198.
 
 ### Files
 
@@ -789,11 +1008,11 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 | `scripts/levels/hall/hall_life.gd` | **New.** Street life as a pure function of time: walkers in five distance bands, a woman who joins the queue, the marching patrol, sweeper + cart, pigeons (startled by the loudspeaker, fly off to the hall), crows on the cable, a flock wheeling in front of the dome, chimney smoke, manhole steam, the family's belongings (chair, crate, bedding roll, birdcage with a canary), a newspaper page tumbling across the road, the departing tram (accelerates along the curve), a grey saloon (crane shot), a dark saloon crossing the ring, a covered lorry, a far tram, moving head lights (SpotLight3D) and the lamp halos sent to the post shader every frame. |
 | `scripts/levels/hall/hall_people.gd` | Sprite actors (extended, same API): animated sheet rows (character `sheet.json` anims or life sheets), paths with arclength, **feet-planted walk cycles** (frame = distance walked in sprite pixels / ground speed), facing by screen direction, visibility windows, dithered dissolve, `always_lock` / `no_lock`, `pos_fn` / `frame_fn` callables. Texel lock from 3 s: 1 texel = 1 screen pixel, feet on whole pixels. The family now plays its `idle_side` rows (breathing). |
 | `scripts/levels/hall/hall_mesh_kit.gd` | SurfaceTool helper; new `quad_uv()` (atlas regions). |
-| `scripts/levels/hall/hall_camera_rig.gd` | Camera path — owned by **render-camera** this round (not edited by hall). |
+| `scripts/levels/hall/hall_camera_rig.gd` | Camera path (render-camera's smooth lens shift kept: whole low-res px + remainder via `Game.view.set_fraction`). Round 3: 24 s key table (see below). |
 | `assets/shaders/pixel3d_post.gdshader` | Post quad: + **lamp halos** (`halo_count`, `halo_a[32]`, `halo_b[32]`: screen pos/depth/radius + colour/strength; additive in sRGB, only behind the lamp's depth, turned into dithered rings by the palette snap). |
 | `assets/shaders/pixel3d_sprite.gdshader` | Sprites: + `unshaded` (smoke, steam, birds), + `dissolve` (ordered-dither fade / translucency). |
 | `assets/shaders/pixel3d_toon.gdshader` | Unchanged (banners use per-vertex emission via UV2.x). |
-| `tests/visual/HallPreview.tscn` + `hall_preview.gd` | Harness: default captures t = 1, 4, 7, 10, 12; reports the level's own update cost and sprite counts. |
+| `tests/visual/HallPreview.tscn` + `hall_preview.gd` | Harness: default captures t = 2, 7, 11, 16, 20.5, 23.5 (round 3); reports the level's own update cost and sprite counts; selftest playback guard is wall-clock (30 s) instead of 4000 frames. |
 | `data/locale/de_hall.json` | 7 cue strings (+ pigeons, patrol; tram bell and window cue rewritten) and the 3 audio-description lines rewritten for the new life and symbols. |
 
 #### Generators
@@ -838,14 +1057,18 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 ### Known limitations
 * The generated citizens are background extras (36 px and smaller); the 46 px class uses the character sheets (`clerk`, `babushka`, family, `guard`) and follows their redesigns automatically. A 64 px foreground walker was tried and rejected (too crude at that size).
 * The kiosk is only seen in the crane shot (h1); flying pigeons scale with perspective (no texel lock) while they fly away.
-* Not run inside `Main.tscn` / `Game._cin_hall()` end-to-end in this round (autoplay/inputplay were not allowed while others work); verified in the harness at 640×360 and 642×362.
+* Round 2 was not run inside `Main.tscn`; round 3 was captured in-game via `--cinematic=LS_M1_Hall` (no autoplay/inputplay).
+* The h2 hold (lens shift 62) still hides the lantern eagle under the in-game letterbox; it is revealed by the h3 tilt. If
+  the lead drops the bars for this cinematic, the frames are composed for the full 16:9 picture as well.
+* The top rows of the sky matte (painted cirrus streaks) become visible above the eagle in the un-letterboxed final frame.
+* `data/v3/cinematics.json` LS_M1_Hall still lists the old 3/5/3 s shot durations (canonical data, not owned by hall).
 
 ---
 <a id="part-trans_a1m1"></a>
 
 ## Asset manifest part — trans_a1m1 (cinematic LS_A1_ToM1: Alexei/Karsk → Konrad/Berlin)
 
-* **Date:** 2026-11-04
+* **Date:** 2026-11-04, revised 2026-11-05 (user feedback: better train animation, banners waving more with bold swastikas)
 * **Area owner:** trans-a1m1 (soft protagonist switch after the A1 decision, TECHNICAL_ARCHITECTURE §12.5)
 * **Scene / code:** `scenes/cinematics/a1m1/CinA1ToM1.tscn`, `scripts/cinematics/a1m1/cin_a1_to_m1.gd`
   (`signal finished`, `configure(ctx)`, `play()`, `skip()`; plus `seek(t)`, `get_time()`, `get_duration()`
@@ -881,12 +1104,13 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 | `karsk/yard.png` + `_n` + `_e` | 1760×220 | Fence, far track, water tower, signal mast (red lamp, emission), near track, snowy embankment, platform with trodden path. |
 | `karsk/fg.png` | 2000×120 | Near-black hand cart + snow bank (parallax 1.15). |
 | `karsk/loco.png` / `loco_hist.png` + `_n` + `_e` | 284×112 | 2-10-0 freight locomotive facing west; smoke deflector emblem (neutral gear-and-wheat / red star + hammer & sickle), cab with fire glow and driver, number Л-2317. |
-| `karsk/loco_wheels.png` + `_n` | 8 × 284×112 | One driver revolution: 5 coupled red spoked wheels, coupling/main rods, crosshead. |
+| `karsk/loco_wheels.png` + `_n` | 60 × 228×42 | One driver revolution in 6° steps (1.7 px of travel per frame), cropped to `wheels_crop` [20,70]: 5 coupled red spoked wheels with counterweights, coupling rod, main rod, crosshead in its slide bars, piston rod, Walschaerts valve gear (return crank, eccentric rod, swinging expansion link, radius rod, combination lever, union link, valve spindle) -- all from one wheel angle, so always in phase. |
+| `karsk/wheel_pilot.png`, `wheel_tender.png`, `wheel_box.png` + `_n` | 8 × 23×23 | Small spoked wheels (pilot truck, tender bogies, boxcar) turning over one spoke period, laid over the static wheels of the vehicle images (`small_wheels` in layout.json). |
 | `karsk/tender.png`, `gondola.png`, `boxcar.png` + `_n` | 196/180/196 wide | Tender 2317 with coal and snow, gondola 61-044 with scrap, covered wagon 42-905. |
 | `karsk/tail_lamp.png` + `_e` | 7×9 | Red tail signal on the C-17 wagon. |
 | `karsk/ledger_arm.png` + `_n` | 8×11 | The freight ledger under Alexei's arm (branch keep_private). |
-| `karsk/fx_puff.png` | 12 × 56×60 | Exhaust puff (spawned per exhaust beat, 4 per wheel revolution). |
-| `karsk/fx_steam.png`, `fx_whistle.png`, `fx_snowdrop.png` | 8 frames each | Cylinder-cock steam, whistle plume, snow sliding off the wagon roof at the coupling jolt. |
+| `karsk/fx_puff.png` | 12 × 56×60 | Exhaust puff (spawned per exhaust beat, 4 per driver revolution incl. the slip; launched with the engine's speed + blast, then wind drift and buoyancy). |
+| `karsk/fx_steam.png`, `fx_whistle.png`, `fx_snowdrop.png` | 8 frames each | Cylinder-cock steam (idle hiss, then one jet per piston stroke left in the air), whistle plume, snow sliding off the wagon roof at the coupling jolt. |
 | `close/ledger.png` / `ledger_hist.png` | 640×360 | Ledger page (sepia): rows 9.–16.1., wagon 24-311 with the blacked-out consignee; faded railway seal (neutral / hammer & sickle). |
 | `close/imprint.png` | 4 × 180×102 | Red C-17 stamp: wet gloss → spreading → soaked → dry. |
 | `close/stamp.png`, `stamp_shadow.png` | 3 × 300×330 | Rubber stamp from above (block, label C-17, ferrule, turned handle leaving the frame), three heights; dithered shadows. |
@@ -898,7 +1122,7 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 | `berlin/far.png` + `_e` | 1000×200 | Distant roofs, firewalls, chimneys, a few early lights (parallax 0.45). |
 | `berlin/street.png` + `_n` + `_e` | 1000×620 | Bauarchiv (rusticated base, pilasters, BAUARCHIV attic, portal + lanterns), Gründerzeit tenements (balconies, stove pipes, bakery, tobacconist), tram stop, gas lamps, contact wire, pavement, cobbles with rails. |
 | `berlin/fg.png` + `_e` | 1100×200 | Near cast-iron lamp post + snow bank (parallax 1.15). |
-| `berlin/banner.png` / `banner_hist.png` | 3 × 24×96 | Vertical banners with sway (neutral Reichssiegel on black / red with white disc and swastika). |
+| `berlin/banner.png` / `banner_hist.png` | 32 × 30×96 | Vertical banners in the wind: 16 phases of a cloth wave travelling down from the pole (rows swing, billow light/shadow bands ride along, the free end narrows as it flaps), calm set 0-15 + gust set 16-31; the scene picks the phase from a closed-form gust integral (per-banner offset). Neutral: Reichssiegel on black; `_hist`: red, white disc (Ø20) with a bold 16 px 45°-turned black swastika (5-unit construction, arm width 1.2 units, hooks clockwise, exactly 4-fold symmetric). |
 | `berlin/relief.png` / `relief_hist.png` + `_n` | 52×34 | Stone eagle over the portal (wreath: Reichssiegel / swastika). |
 | `berlin/door.png` + `_e`, `jambs.png` + `_n` | 3 × 34×50, 54×64 | Portal doors closed/ajar/open with warm interior; jambs drawn over Konrad as he enters. |
 | `berlin/tram.png` + `_n` + `_e`, `tram_pole.png` + `_e` | 214×92, 3 × 70×64 | Two-axle tram "3 GR.HALLE" with lit windows and passengers; trolley pole with spark frames. |
@@ -911,7 +1135,9 @@ panels, 9 speakers × neutral / concerned / determined / surprised / talk / blin
 | `cine_a1m1_whistle.wav` / `cine_a1m1_whistle_far.wav` | 2.6 / 3.6 s | Deep three-chime steam whistle, near / far (sound bridge into Berlin). |
 | `cine_a1m1_chuff.wav` | 0.8 s | One exhaust beat (played per beat, quieter when the engine is far). |
 | `cine_a1m1_hiss.wav` | 2.6 s | Cylinder cocks venting. |
-| `cine_a1m1_depart.wav` | 6.0 s | Slack running out through the couplings, rail joints accelerating, rumble. |
+| `cine_a1m1_depart.wav` | 6.0 s | Low rumble of the heavy train getting under way (clanks and joints are now separate one-shots). |
+| `cine_a1m1_clank.wav` | 0.8 s | One coupling snatching taut (fired at each simulated snatch, quieter down the train). |
+| `cine_a1m1_clack.wav` | 0.16 s | One wheel set over a rail joint (fired per axle and joint, volume by distance to the camera). |
 | `cine_a1m1_stamp.wav` | 0.9 s | Swish, wooden knock, rubber squish (layered with the existing `stamp_thud`). |
 | `cine_a1m1_swell.wav` | 9.0 s | Soft open-fifth string pad under the stamp and the dissolve. |
 | `cine_a1m1_tram_arrive.wav` / `cine_a1m1_tram_depart.wav` | 4.0 / 4.5 s | Tram rolling in with brake squeal / motor whine and rumble receding. |
@@ -923,6 +1149,18 @@ Existing project sounds used: `tram_bell`, `stamp_thud`, `wind_gust`, `step_snow
 ### Text — `data/locale/de_trans_a1m1.json`
 `cin.a1m1.alexei.share`, `cin.a1m1.alexei.keep` (inner voice, branch-dependent), `cin.a1m1.konrad` (inner voice),
 `cin.a1m1.caption` (description of the match dissolve for accessibility/QA).
+
+### Motion model (2026-11-05) -- `cin_a1_to_m1.gd`
+Total length 43.0 s (`EXT` = 2.4 s: shot 1B 5.2-11.4, 1C 11.4-18.4; everything after shifted). The departure is
+simulated once at build (240 Hz) and sampled, so every frame stays a pure function of t (seek/skip): regulator
+opening, traction `A0` with constant power above `V_POWER`, rolling resistance; the slack of each coupling
+(`SLACK` 1/2/2/2 px, buffers compressed after backing up) runs out in turn -- each snatch shares momentum and
+recoils in the draft gear; one wheel slip (`SLIP`, +1.5 driver revolutions) when the whole train hangs on the
+drawbar. Travel at 5.2 / 11 s after the start: 81 / 425 px (C-17 leaves the frame just before Alexei turns).
+Vehicles are snapped to the 1/k viewport grid; the driver frame comes from the drawn travel (+ slip); rail joints
+every 150 px give a clack per axle and a one-pixel dip; the engine heaves a pixel on each exhaust beat at low
+speed; firebox and ash-pan lights pulse with the beats. Harness `--cine-mode=motion` checks rod phase vs travel,
+grid, gaps/slack, no roll-back and 4 beats per revolution, and writes running-gear contact sheets.
 
 ---
 <a id="part-trans_finale"></a>

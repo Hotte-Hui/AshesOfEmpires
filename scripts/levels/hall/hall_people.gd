@@ -31,6 +31,8 @@ var _spec: Array = []
 var _tex_cache: Dictionary = {}
 var _json_cache: Dictionary = {}
 var time := 0.0
+## Reference time for the sprite world sizes (= the reveal's lock_from: first frame of h2); per-spec "ref_t" wins.
+var ref_time := 3.0
 
 
 func setup(spec: Array) -> void:
@@ -214,7 +216,7 @@ func _frame_from_sheet(png_path: String, e: Dictionary) -> Dictionary:
 ## applied (its analytic projection is used because Camera3D.project_position ignores frustum offsets).
 func calibrate(rig) -> void:
 	for a in actors:
-		var pr: Vector3 = rig.project(_feet_at(a, float((a["spec"] as Dictionary).get("ref_t", 3.0))))
+		var pr: Vector3 = rig.project(_feet_at(a, float((a["spec"] as Dictionary).get("ref_t", ref_time))))
 		a["ps_ref"] = rig.pixel_size_at(maxf(pr.z, 0.1))
 		(a["node"] as Sprite3D).pixel_size = a["ps_ref"]
 

@@ -246,3 +246,10 @@ script = ExtResource("2")
 kind = "discover"
 hotspot_id = "exp_coat_stand"
 explore_id = "berlin.coat_stand"
+
+[node name="ExpRadioDial" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_radio_dial"
+explore_id = "berlin.radio_dial"
+radius = 20.0

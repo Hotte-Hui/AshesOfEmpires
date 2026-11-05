@@ -7,18 +7,21 @@ extends Node2D
 ## Everything on screen is a pure function of the timeline time `t` (_apply), so the shot can be seeked
 ## frame-exactly (harness captures) and skipped at any moment. Sound cues fire only while playing forward.
 ##
-## Shots (≈40.6 s):
+## Shots (≈43.0 s):
 ##   1A  0.0  Karsk platform at dusk: the westbound train backs onto wagon 24-311 (C-17), clank, snow falls
-##   1B  5.2  the locomotive (red star / hammer & sickle, or the neutral gear-and-wheat): whistle, steam,
-##            wheel slip, it pulls out to the west; camera pans along
-##   1C 10.2  platform: the C-17 wagon slides out of frame, Alexei watches (Irina beside him, or alone with
+##   1B  5.2  the locomotive (red star / hammer & sickle, or the neutral gear-and-wheat): whistle, cylinder
+##            cocks, the slack runs out wagon by wagon (clank, clank ...), the drivers slip once, bite, and it
+##            pulls out to the west; rods + Walschaerts valve gear in phase with the distance travelled,
+##            exhaust beats 4 per revolution, rail-joint clatter per axle; camera pans along
+##   1C 11.4  platform: the C-17 wagon slides out of frame, Alexei watches (Irina beside him, or alone with
 ##            the ledger under his arm); inner voice, different per branch
-##   2  16.0  close-up: the rubber stamp comes down on the ledger -> red C-17, ink spreads
-##   3  20.0  match dissolve (ordered dither): page -> Berlin plan, then the red stamp -> the pencil C-17 at
+##   2  18.4  close-up: the rubber stamp comes down on the ledger -> red C-17, ink spreads
+##   3  22.4  match dissolve (ordered dither): page -> Berlin plan, then the red stamp -> the pencil C-17 at
 ##            the identical position; sound bridge distant train whistle -> tram bell
-##   4  23.6  Berlin, early morning snow: crane down from the Great Hall dome to the street, the tram stops
-##            and pulls away, Konrad (who got off) crosses to the Bauarchiv and goes in; inner voice
-##   end 39.4 fade to black -> Game shows the chapter card and loads M1 at SP_M1_Arrival
+##   4  26.0  Berlin, early morning snow: crane down from the Great Hall dome to the street, the tram stops
+##            and pulls away, Konrad (who got off) crosses to the Bauarchiv and goes in; the banners work
+##            in the wind (travelling cloth wave, gusts); inner voice
+##   end 41.8 fade to black -> Game shows the chapter card and loads M1 at SP_M1_Arrival
 
 signal finished
 
@@ -31,38 +34,48 @@ const KE := "res://assets/environments/karsk_railyard/"
 const SFX_DIR := "res://assets/audio/sfx/"
 
 # ------------------------------------------------------------------ timeline (seconds)
+const EXT := 2.4                           # 2026-11-05: longer departure (1B +1.2 s, 1C +1.2 s)
 const T_COUPLE := 3.0
 const T_SHOT_LOCO := 5.2
 const T_WHISTLE := 5.6
 const T_DEPART := 6.2
-const T_SHOT_PLAT := 10.2
-const T_LINE_A := 10.8
-const T_TURN := 14.9
-const T_SHOT_STAMP := 16.0
-const T_PRESS := 17.25
-const T_LIFT := 17.75
-const T_DISSOLVE := 20.0
-const T_BERLIN := 23.6
-const T_CRANE0 := 24.6
-const T_CRANE1 := 31.6
-const T_TRAM_IN := 25.8
-const T_TRAM_STOP := 29.6
-const T_TRAM_GO := 31.2
-const T_KONRAD_WALK := 32.6
-const T_LINE_K := 33.0
-const T_DOOR_OPEN := 36.0
-const T_ENTER := 36.55
-const T_DOOR_CLOSE := 37.45
-const T_PIGEONS := 37.9
-const T_FADE := 39.4
-const DURATION := 40.6
+const T_SHOT_PLAT := 11.4
+const T_LINE_A := 12.0
+const T_TURN := 14.9 + EXT
+const T_SHOT_STAMP := 16.0 + EXT
+const T_PRESS := 17.25 + EXT
+const T_LIFT := 17.75 + EXT
+const T_DISSOLVE := 20.0 + EXT
+const T_BERLIN := 23.6 + EXT
+const T_CRANE0 := 24.6 + EXT
+const T_CRANE1 := 31.6 + EXT
+const T_TRAM_IN := 25.8 + EXT
+const T_TRAM_STOP := 29.6 + EXT
+const T_TRAM_GO := 31.2 + EXT
+const T_KONRAD_WALK := 32.6 + EXT
+const T_LINE_K := 33.0 + EXT
+const T_DOOR_OPEN := 36.0 + EXT
+const T_ENTER := 36.55 + EXT
+const T_DOOR_CLOSE := 37.45 + EXT
+const T_PIGEONS := 37.9 + EXT
+const T_FADE := 39.4 + EXT
+const DURATION := 40.6 + EXT
 
 # ------------------------------------------------------------------ set geometry (world pixels)
 const CLOSE_O := Vector2(2000, 0)
 const BERLIN_O := Vector2(4000, 0)
 const C17_X := 1200.0
 const TRAIN := [["loco", 284.0], ["tender", 196.0], ["gondola", 180.0], ["boxcar", 196.0]]
-const DEP_ACC := 10.0                      # px/s^2 departure acceleration
+const SIM_HZ := 240.0                      # departure simulation rate
+const A0 := 12.5                           # traction (px/s^2 per unit train) once the regulator is open
+const V_POWER := 36.0                      # px/s: above it constant power (acceleration falls with speed)
+const SLACK := [1.0, 2.0, 2.0, 2.0]        # free slack per coupling: loco|tender, tender|gondola, ... |C-17
+const SNATCH_KEEP := [0.85, 0.85, 0.88, 0.9]   # speed kept by the engine when each coupling snatches
+const SLIP := [1.85, 2.6, 0.8]             # wheel slip window after T_DEPART (s) + regulator recovery (s)
+const SLIP_REV := 1.5                      # extra driver revolutions while slipping
+const JOINT := 150.0                       # rail length (px); joints at JOINT_X0 + n * JOINT
+const JOINT_X0 := 75.0
+const JET_POOL := 6
 const CAM_K_A := [Vector2(1000, 0), Vector2(1022, 0)]
 const CAM_K_B := [Vector2(250, 0), Vector2(200, 0)]
 const CAM_K_C := [Vector2(1010, 0), Vector2(988, 0)]
@@ -75,7 +88,8 @@ const TRAM_STOP_X := 380.0
 const KONRAD_FROM := 500.0
 const KONRAD_TO := 356.0
 const PUFF_LIFE := 1.8
-const PUFF_POOL := 16
+const PUFF_POOL := 24
+const BANNER_X := [300.0, 386.0]
 
 # ------------------------------------------------------------------ state
 var ctx: Dictionary = {}
@@ -93,6 +107,11 @@ var _old_enabled := true
 var _sets: Dictionary = {}
 var _n: Dictionary = {}                   # named nodes
 var _beats: PackedFloat32Array = PackedFloat32Array()
+var _sim_d := PackedFloat32Array()         # loco travel west after T_DEPART (px) at SIM_HZ
+var _sim_v := PackedFloat32Array()         # loco speed (px/s)
+var _snatch := PackedFloat32Array()        # absolute times at which each coupling snatched taut
+var _joint_t: Array = []                   # per vehicle: PackedFloat32Array of rail-joint hit times
+var _joint_ev: Array = []                  # [time, joint_x] for every axle over a joint (sound cues)
 var _puffs: Array = []
 var _players: Array[AudioStreamPlayer] = []
 var _streams: Dictionary = {}
@@ -222,7 +241,9 @@ func _build() -> void:
 	_build_berlin()
 	_build_overlays()
 	_build_audio()
+	_simulate()
 	_compute_beats()
+	_compute_joints()
 	_apply_variants()
 
 
@@ -288,10 +309,12 @@ func _build_karsk() -> void:
 		if vid == "loco":
 			var body := _spr(A + "karsk/loco.png", true, 0.55)
 			body.position = Vector2(0, -float(K.get("loco_size", [284, 112])[1]) + 1)
+			body.set_meta("y0", body.position.y)
 			holder.add_child(body)
 			_n["loco_body"] = body
-			var wh := _spr(A + "karsk/loco_wheels.png", true, 0.0, 8)
-			wh.position = body.position
+			var crop: Array = K.get("wheels_crop", [0, 0, 284, 112])
+			var wh := _spr(A + "karsk/loco_wheels.png", true, 0.0, int(K.get("wheel_frames", 8)))
+			wh.position = body.position + Vector2(float(crop[0]), float(crop[1]))
 			holder.add_child(wh)
 			_n["loco_wheels"] = wh
 		else:
@@ -300,6 +323,16 @@ func _build_karsk() -> void:
 			spr.position = Vector2(0, -tex_h + 1)
 			holder.add_child(spr)
 		_n["veh_" + vid] = holder
+		# small spoked wheels turning over the static ones of the vehicle image (pilot truck, bogies)
+		var vi := ["loco", "tender", "gondola", "boxcar"].find(vid)
+		var img_h := _tex_h(A + "karsk/%s.png" % vid)
+		for w in K.get("small_wheels", {}).get(vid, []):
+			var st := str(w[0])
+			var ws := _spr(A + "karsk/%s.png" % st, true, 0.0, int(K.get("small_frames", 8)))
+			ws.position = Vector2(float(w[1]) - 11.0, -img_h + 1.0 + float(w[2]) - 11.0)
+			holder.add_child(ws)
+			_n.get_or_add("small_wheels", []).append([ws, vi, float(K.get("small_r", {}).get(st, 9.5)),
+				int(K.get("small_spokes", {}).get(st, 8))])
 	var c17 := Node2D.new()
 	c17.position = Vector2(C17_X, rail)
 	pf.add_child(c17)
@@ -353,6 +386,12 @@ func _build_karsk() -> void:
 		f.visible = false
 		S.add_child(f)
 		_n[fxn] = f
+	for i in JET_POOL:                          # cylinder-cock jets, one per piston stroke, left in the air
+		var jf := _spr(A + "karsk/fx_steam.png", false, 0.0, 8)
+		jf.z_index = 6
+		jf.visible = false
+		S.add_child(jf)
+		_n.get_or_add("jets", []).append(jf)
 	var fg := _spr(A + "karsk/fg.png", false)
 	_par(S, fg, K_REF + Vector2(-980, 210), K_REF, Vector2(1.15, 1.0), 30)
 	# lights
@@ -361,6 +400,7 @@ func _build_karsk() -> void:
 	_light(_n["k_lights"], Vector2(1500, 236), Color("#F0C487"), 1.25, 70, 30, 0.03)
 	_n["l_cab"] = _light(_n["k_lights"], Vector2.ZERO, Color("#DCA16E"), 1.0, 40, 14, 0.12)
 	_n["l_head"] = _light(_n["k_lights"], Vector2.ZERO, Color("#FBE3AE"), 0.9, 60, 18, 0.0)
+	_n["l_ash"] = _light(_n["k_lights"], Vector2.ZERO, Color("#E0782E"), 0.45, 26, 6, 0.0)   # ash pan glow
 	_n["l_tail"] = _light(_n["k_lights"], Vector2.ZERO, Color("#C8503C"), 0.8, 22, 8, 0.0)
 	_light(_n["k_lights"], Vector2(1641, 162), Color("#C8503C"), 0.6, 16, 6, 0.0)
 	var west := DirectionalLight2D.new()
@@ -455,9 +495,10 @@ func _build_berlin() -> void:
 	street.z_index = -50
 	S.add_child(street)
 	# facade sprites: banners, eagle relief, door, window that lights up, queue, pigeons
-	for bx in [300.0, 386.0]:
-		var b := _spr(A + "berlin/banner.png", false, 0.0, 3)
-		b.position = BERLIN_O + Vector2(bx, 104)
+	var bn: Array = G.get("banner", [24, 96, 22, 0])
+	for bx in BANNER_X:
+		var b := _spr(A + "berlin/banner.png", false, 0.0, maxi(3, 2 * int(bn[3])))
+		b.position = BERLIN_O + Vector2(bx - (float(bn[0]) - 24.0) * 0.5, 104)
 		b.z_index = -48
 		S.add_child(b)
 		_n.get_or_add("banners", []).append(b)
@@ -668,74 +709,225 @@ func _cam_at(time: float) -> Vector2:
 	return CAM_B[1].lerp(CAM_B[2], _sine(_seg(time, T_KONRAD_WALK, T_ENTER + 0.3)))
 
 
-# ------------------------------------------------------------------ Karsk
-func _train_offset(time: float) -> float:
-	var off := 0.0
-	if time < T_COUPLE:
-		off = -62.0 * (1.0 - time / T_COUPLE)
-	else:
-		var dt := time - T_COUPLE
-		off = 2.4 * (1.0 - exp(-dt * 8.0)) * exp(-dt * 2.0)
-	if time > T_DEPART:
-		off -= 0.5 * DEP_ACC * pow(time - T_DEPART, 2.0)
-	return off
+# ------------------------------------------------------------------ Karsk: train dynamics
+## The departure is simulated once at build time (SIM_HZ) and sampled afterwards, so every frame stays a pure
+## function of t (seek/skip). Model: the regulator opens over 1 s; traction A0 (px/s^2) is limited by constant
+## power above V_POWER; rolling resistance; the free slack of each coupling runs out in turn -- every snatch
+## shares momentum (the engine visibly jerks) and recoils in the draft gear; the drivers slip once when the
+## whole train hangs on the drawbar (adhesion lost, the driver eases the regulator, it bites again).
+func _simulate() -> void:
+	_sim_d = PackedFloat32Array()
+	_sim_v = PackedFloat32Array()
+	_snatch = PackedFloat32Array()
+	var cums: Array = []
+	var cum := 0.0
+	for s in SLACK:
+		cum += float(s)
+		cums.append(cum)
+	var d := 0.0
+	var v := 0.0
+	var nxt := 0
+	var n := int((T_SHOT_STAMP + 0.5 - T_DEPART) * SIM_HZ) + 2
+	for i in n:
+		var tau := float(i) / SIM_HZ
+		var a := A0 * _smooth(tau) * (1.0 - 0.9 * _slip_env(tau)) * minf(1.0, V_POWER / maxf(v, 0.001))
+		if v > 0.0:
+			a -= 0.4 + 0.0004 * v * v
+		v = maxf(0.0, v + a / SIM_HZ)
+		d += v / SIM_HZ
+		while nxt < cums.size() and d >= float(cums[nxt]):
+			v *= float(SNATCH_KEEP[nxt])
+			_snatch.append(T_DEPART + tau)
+			nxt += 1
+		_sim_d.append(d)
+		_sim_v.append(v)
 
 
-func _c17_offset(time: float) -> float:
-	if time < T_COUPLE:
+## Adhesion loss envelope of the wheel slip (tau = seconds after T_DEPART).
+static func _slip_env(tau: float) -> float:
+	if tau < SLIP[0]:
 		return 0.0
-	return _train_offset(time)
+	if tau < SLIP[1]:
+		return 1.0
+	return 1.0 - _smooth((tau - SLIP[1]) / SLIP[2])
 
 
-func _wheel_angle(time: float) -> float:
+## Extra driver rotation while slipping (radians): the wheels race, then grip again.
+func _slip_angle(time: float) -> float:
+	return TAU * SLIP_REV * _smoother(_seg(time - T_DEPART, SLIP[0], SLIP[1] + 0.25))
+
+
+func _sample(arr: PackedFloat32Array, time: float) -> float:
+	if time <= T_DEPART or arr.is_empty():
+		return 0.0
+	var f := (time - T_DEPART) * SIM_HZ
+	var i := int(floor(f))
+	if i >= arr.size() - 1:
+		return arr[arr.size() - 1]
+	return lerpf(arr[i], arr[i + 1], f - float(i))
+
+
+## Loco travel west since the departure (px) and speed (px/s).
+func _loco_d(time: float) -> float:
+	return _sample(_sim_d, time)
+
+
+func _loco_v(time: float) -> float:
+	return _sample(_sim_v, time)
+
+
+## Backing onto the C-17 wagon (slowing to a gentle buffer contact), then the buffer bump after coupling.
+static func _approach(time: float) -> float:
+	if time < T_COUPLE:
+		var u := 1.0 - time / T_COUPLE
+		return -(62.0 - 24.0) * u * u - 24.0 * u
+	var dt := time - T_COUPLE
+	return 2.4 * (1.0 - exp(-dt * 8.0)) * exp(-dt * 2.0)
+
+
+## World-x offset of vehicle i (0 loco, 1 tender, 2 gondola, 3 boxcar, 4 C-17) from its rest position:
+## the loco's travel minus the slack still free in front of that vehicle, plus the draft-gear recoil after
+## its coupling snatched taut (buffers were compressed while backing up, so the gaps open one by one).
+func _veh_off(i: int, time: float) -> float:
+	var off := _approach(time) if (i < 4 or time >= T_COUPLE) else 0.0
+	if time <= T_DEPART:
+		return off
+	var free := 0.0
+	for j in i:
+		free += float(SLACK[j])
+	var travel := maxf(0.0, _loco_d(time) - free)
+	if i > 0 and _snatch.size() >= i:
+		var s := time - _snatch[i - 1]
+		if s > 0.0:
+			travel += 0.9 * exp(-s * 7.0) * sin(s * TAU * 3.2)
+	return off - travel
+
+
+static func _snap(v: float, k: float) -> float:
+	return roundf(v * k) / k
+
+
+func _driver_angle(time: float) -> float:
 	var r := float(layout.get("karsk", {}).get("wheel_r", 16))
-	var slip := TAU * _smooth(_seg(time, T_DEPART + 0.9, T_DEPART + 1.5))
-	return -_train_offset(time) / r + slip
+	return -_veh_off(0, time) / r + _slip_angle(time)
 
 
 func _compute_beats() -> void:
-	# exhaust beats (4 per wheel revolution) from the departure on -> puff spawn times, chuff cues
+	# exhaust beats (two cylinders, double acting: 4 per driver revolution, slip included) -> puffs, chuffs,
+	# cylinder-cock jets, firebox pulses
 	_beats = PackedFloat32Array()
-	var a0 := _wheel_angle(T_DEPART)
+	var a0 := _driver_angle(T_DEPART)
 	var n := 0
 	var tt := T_DEPART
-	while tt < T_SHOT_STAMP and _beats.size() < 200:
-		var k := int(floor((_wheel_angle(tt) - a0) / (PI * 0.5) + 0.97))
+	while tt < T_SHOT_STAMP and _beats.size() < 400:
+		var k := int(floor((_driver_angle(tt) - a0) / (PI * 0.5) + 0.97))
 		while n < k:
 			_beats.append(tt)
 			n += 1
 		tt += 1.0 / 240.0
 
 
+## Rail joints: every axle that crosses a joint (JOINT_X0 + n * JOINT) -> clack + a one-pixel dip of that
+## vehicle. Times per vehicle (sorted) and a flat event list [time, joint_x] for the sound cues.
+func _compute_joints() -> void:
+	var K: Dictionary = layout.get("karsk", {})
+	var ax: Dictionary = K.get("axles", {})
+	var names := ["loco", "tender", "gondola", "boxcar", "c17"]
+	var base := _veh_base()
+	_joint_t = []
+	_joint_ev = []
+	var prev: Array = []
+	for i in 5:
+		_joint_t.append(PackedFloat32Array())
+		prev.append(_veh_off(i, 0.0))
+	var tt := 1.0 / 120.0
+	while tt < T_SHOT_STAMP:
+		for i in 5:
+			var o := _veh_off(i, tt)
+			if absf(o - float(prev[i])) > 0.0001:
+				for a in ax.get(names[i], []):
+					var xa := float(base[i]) + float(a) + float(prev[i])
+					var xb := float(base[i]) + float(a) + o
+					var ja := floorf((xa - JOINT_X0) / JOINT)
+					var jb := floorf((xb - JOINT_X0) / JOINT)
+					if ja != jb:
+						_joint_t[i].append(tt)
+						_joint_ev.append([tt, JOINT_X0 + maxf(ja, jb) * JOINT])
+			prev[i] = o
+		tt += 1.0 / 120.0
+	for i in 5:
+		_joint_t[i].sort()
+	_joint_ev.sort_custom(func(p, q): return p[0] < q[0])
+
+
+func _veh_base() -> Array:
+	var xs: Array = [0.0, 0.0, 0.0, 0.0, C17_X]
+	var x := C17_X
+	for i in range(TRAIN.size() - 1, -1, -1):
+		x -= float(TRAIN[i][1])
+		xs[i] = x
+	return xs
+
+
+## One screen pixel down while an axle of vehicle i runs over a joint.
+func _bump(i: int, time: float, k: float) -> float:
+	if _joint_t.size() <= i:
+		return 0.0
+	var arr: PackedFloat32Array = _joint_t[i]
+	var j := arr.bsearch(time, false)
+	return (1.0 / k) if j > 0 and time - arr[j - 1] < 0.06 else 0.0
+
+
+func _last_beat(time: float) -> float:
+	var j := _beats.bsearch(time, false)
+	return _beats[j - 1] if j > 0 else -100.0
+
+
 func _apply_karsk(time: float, shot: String) -> void:
 	var K: Dictionary = layout.get("karsk", {})
 	var rail := float(K.get("rail_y", 272))
-	var off := _train_offset(time)
-	var x := C17_X
-	var xs := {}
-	for i in range(TRAIN.size() - 1, -1, -1):
-		x -= float(TRAIN[i][1])
-		xs[TRAIN[i][0]] = x
-	for vid in xs:
-		var h: Node2D = _n["veh_" + vid]
-		h.position = Vector2(float(xs[vid]) + off, rail)
+	var k := _px_scale()
+	var base := _veh_base()
+	var offs: Array = []
+	for i in 5:
+		offs.append(_snap(_veh_off(i, time), k))          # whole viewport pixels: no relative jitter
+	for i in TRAIN.size():
+		var h: Node2D = _n["veh_" + str(TRAIN[i][0])]
+		h.position = Vector2(float(base[i]) + float(offs[i]), rail + _bump(i, time, k))
 	var c17: Node2D = _n["c17"]
-	c17.position = Vector2(C17_X + _c17_offset(time), rail)
-	var loco_x := float(xs["loco"]) + off
+	c17.position = Vector2(C17_X + float(offs[4]), rail + _bump(4, time, k))
+	var loco_x := float(base[0]) + float(offs[0])
 	var loco_top := rail - float(K.get("loco_size", [284, 112])[1]) + 1
-	# wheels
-	var wf := posmod(int(floor(_wheel_angle(time) / TAU * 8.0)), 8)
-	_n["loco_wheels"].set_frame(wf)
-	# lights that ride with the train
+	var v := _loco_v(time)
+	# drivers + rods + valve gear: one frame per 6 deg of the driver angle taken from the DRAWN travel
+	# (+ slip), so the crank phase always matches the distance the engine has moved
+	var r := float(K.get("wheel_r", 16))
+	var nf := int(K.get("wheel_frames", 60))
+	var ang := -float(offs[0]) / r + _slip_angle(time)
+	_n["loco_wheels"].set_frame(posmod(int(floor(ang / TAU * nf)), nf))
+	var sf := int(K.get("small_frames", 8))
+	for sw in _n.get("small_wheels", []):                 # [sprite, vehicle, radius, spokes]
+		var a2: float = -float(offs[sw[1]]) / float(sw[2])
+		sw[0].set_frame(posmod(int(floor(a2 / (TAU / float(sw[3])) * sf)), sf))
+	# the engine heaves a pixel on each exhaust beat while it is working hard at low speed
+	var lb_age := time - _last_beat(time)
+	var heave := lb_age >= 0.0 and lb_age < 0.07 and v > 0.5 and v < 55.0
+	_n["loco_body"].position.y = float(_n["loco_body"].get_meta("y0")) - (1.0 / k if heave else 0.0)
+	# lights that ride with the train; the blast draws the fire after every beat
+	var pulse := exp(-maxf(0.0, lb_age) * 7.0) if lb_age < 2.0 else 0.0
 	var cw: Array = K.get("cab_window", [232, 44, 16, 14])
 	_n["l_cab"].position = Vector2(loco_x + float(cw[0]) + 8, loco_top + float(cw[1]) + 6)
+	_n["l_cab"].energy = 0.95 + 0.1 * sin(time * 23.0) * sin(time * 7.3) + 0.45 * pulse
+	_n["l_ash"].position = Vector2(loco_x + 238.0, rail - 9.0)
+	_n["l_ash"].energy = 0.45 + 0.08 * sin(time * 17.0 + 1.3) + 0.35 * pulse
 	var hl: Array = K.get("headlamp", [16, 22])
 	_n["l_head"].position = Vector2(loco_x + float(hl[0]) - 2, loco_top + float(hl[1]) + 4)
 	_n["l_tail"].position = c17.position + Vector2(196, -32)
-	# chimney puffs (pool, round robin over beats)
+	# exhaust: one puff per beat, launched from the chimney with the engine's own speed (drag) and the blast,
+	# then carried east by the wind and rising -- the plume lies back as the train gathers speed
 	var ch: Array = K.get("chimney", [40, 11])
-	for i in _puffs.size():
-		_puffs[i].visible = false
+	for p in _puffs:
+		p.visible = false
 	var slot := 0
 	for bi in _beats.size():
 		var tb := _beats[bi]
@@ -746,9 +938,11 @@ func _apply_karsk(time: float, shot: String) -> void:
 			continue
 		var p: Node2D = _puffs[slot % _puffs.size()]
 		slot += 1
-		var lx_at := float(xs["loco"]) + _train_offset(tb)
-		var base := Vector2(lx_at + float(ch[0]) - 28.0, loco_top + float(ch[1]) - 54.0)
-		p.position = base + Vector2(14.0, -10.0) * age
+		var ve := _loco_v(tb)
+		var p0 := Vector2(float(base[0]) + _veh_off(0, tb) + float(ch[0]) - 28.0, loco_top + float(ch[1]) - 54.0)
+		var drift := -ve * 0.3 * (1.0 - exp(-age / 0.3)) + 11.0 * age
+		var rise := 55.0 * 0.25 * (1.0 - exp(-age / 0.25)) + 7.0 * age
+		p.position = Vector2(_snap(p0.x + drift, k), _snap(p0.y - rise, k))
 		p.set_frame(clampi(int(age / PUFF_LIFE * 12.0), 0, 11))
 		p.visible = true
 	# standing loco: two lazy idle puffs before the whistle
@@ -760,13 +954,31 @@ func _apply_karsk(time: float, shot: String) -> void:
 			p2.position = Vector2(loco_x + float(ch[0]) - 28.0, loco_top + float(ch[1]) - 54.0) + Vector2(8.0, -14.0) * age2
 			p2.set_frame(clampi(int(age2 / PUFF_LIFE * 12.0) + 2, 0, 11))
 			p2.visible = true
-	# cylinder cocks steam while standing + starting
+	# cylinder cocks: a soft hiss while standing, then a jet on every piston stroke for the first metres,
+	# left behind in the air as the engine pulls away
+	var cs: Array = K.get("cyl_steam", [26, 98])
 	var st: Node2D = _n["fx_steam"]
-	st.visible = time >= T_SHOT_LOCO and time < T_DEPART + 2.6
+	st.visible = time >= T_SHOT_LOCO and time < T_DEPART + 0.15
 	if st.visible:
-		var cs: Array = K.get("cyl_steam", [26, 98])
 		st.position = Vector2(loco_x + float(cs[0]) - 8, loco_top + float(cs[1]) - 18)
-		st.set_frame(int((time - T_SHOT_LOCO) * 10.0) % 8)
+		st.set_frame(int((time - T_SHOT_LOCO) * 10.0) % 3)
+	var jets: Array = _n.get("jets", [])
+	for jn in jets:
+		jn.visible = false
+	var js := 0
+	for bi in _beats.size():
+		var tb2 := _beats[bi]
+		if tb2 > time or tb2 > T_DEPART + 3.4:
+			break
+		var age3 := time - tb2
+		if age3 >= 0.8 or jets.is_empty():
+			continue
+		var jn2: Node2D = jets[js % jets.size()]
+		js += 1
+		var j0 := Vector2(float(base[0]) + _veh_off(0, tb2) + float(cs[0]) - 8, loco_top + float(cs[1]) - 18)
+		jn2.position = Vector2(_snap(j0.x + 9.0 * age3, k), _snap(j0.y - 4.0 * age3, k))
+		jn2.set_frame(clampi(int(age3 / 0.8 * 8.0), 0, 7))
+		jn2.visible = true
 	var wst: Node2D = _n["fx_whistle"]
 	wst.visible = time >= T_WHISTLE and time < T_WHISTLE + 1.2
 	if wst.visible:
@@ -880,7 +1092,7 @@ func _apply_berlin(time: float) -> void:
 	if moving and int(time * 6.0) % 2 == 0:
 		tram.position.y -= 1.0 / _px_scale()          # one screen pixel of bounce over the rail joints
 	var spark := 0
-	for ts in [27.6, 28.7, 32.1, 32.9]:
+	for ts in [27.6 + EXT, 28.7 + EXT, 32.1 + EXT, 32.9 + EXT]:
 		if time >= ts and time < ts + 0.1:
 			spark = 1 if time < ts + 0.05 else 2
 	_n["tram_pole"].set_frame(spark)
@@ -932,23 +1144,24 @@ func _apply_berlin(time: float) -> void:
 	guard.face(false)
 	guard.anim("idle_side", time)
 	var clerk: Act = _n["p_clerk"]
-	var cu := maxf(0.0, time - 33.4)
+	var cu := maxf(0.0, time - 33.4 - EXT)
 	clerk.face(false)
 	clerk.position = BERLIN_O + Vector2(120.0 + 23.0 * cu, 274)
 	clerk.walk("walk_side", 23.0 * cu)
 	for id in ["berlin_mother", "berlin_child"]:
 		var a: Act = _n["p_" + id]
-		var mu := maxf(0.0, time - 32.8)
+		var mu := maxf(0.0, time - 32.8 - EXT)
 		var x0 := 860.0 if id == "berlin_mother" else 876.0
 		a.face(true)
 		a.position = BERLIN_O + Vector2(x0 - 17.0 * mu, 270 if id == "berlin_mother" else 271)
 		a.walk("walk_side", 17.0 * mu)
 	# life on the facade
+	var bph := int(G.get("banner", [0, 0, 0, 0])[3])
 	for i in _n.get("banners", []).size():
-		_n["banners"][i].set_frame([0, 1, 2, 1][int(time * 1.6 + i * 1.3) % 4])
+		_n["banners"][i].set_frame(_banner_frame(time, i, bph))
 	_n["queue"].set_frame(int(time / 0.9) % 2)
 	var won: Node2D = _n["window_on"]
-	won.visible = time >= 27.3
+	won.visible = time >= 27.3 + EXT
 	_n["l_window"].energy = 0.45 if won.visible else 0.0
 	for sm in _n.get("b_smoke", []):
 		sm.set_frame(int(time * 5.0 + float(sm.get_meta("phase", 0.0)) * 8.0) % 8)
@@ -965,6 +1178,20 @@ func _apply_berlin(time: float) -> void:
 		pig.visible = fu < 1.4
 	_n["l_dome"].energy = 0.7 if fmod(time, 2.0) < 0.5 else 0.0
 	_modulate.color = Color(0.56, 0.58, 0.74)
+
+
+## Banner wind: a travelling cloth wave whose speed follows a gust envelope (closed-form phase integral, so
+## the frame is a pure function of t); strong gusts switch to the large-amplitude set. Each banner has its own
+## phase and feels the gust a moment later.
+func _banner_frame(time: float, i: int, phases: int) -> int:
+	if phases <= 0:
+		return [0, 1, 2, 1][int(time * 1.6 + i * 1.3) % 4]
+	var tt := time - 0.35 * float(i)
+	var g := 0.5 + 0.4 * sin(TAU * tt / 7.3 + 1.1) + 0.25 * sin(TAU * tt / 3.1 + 0.4)
+	var cyc := (0.9 + 0.8 * 0.5) * tt - 0.8 * 0.4 * 7.3 / TAU * cos(TAU * tt / 7.3 + 1.1) \
+		- 0.8 * 0.25 * 3.1 / TAU * cos(TAU * tt / 3.1 + 0.4)      # integral of 0.9 + 0.8 * g (cycles)
+	var ph := posmod(int(floor(cyc * float(phases) + 5.3 * float(i))), phases)
+	return ph + (phases if g > 0.62 else 0)
 
 
 # ------------------------------------------------------------------ grade, fades, shake
@@ -1060,7 +1287,20 @@ func _cues(prev: float, now: float) -> void:
 		var tb := _beats[i]
 		if tb > prev and tb <= now:
 			var near := tb < T_SHOT_PLAT
-			_play("cine_a1m1_chuff", (-3.0 if near else -10.0) - float(i) * 0.15, 0.06)
+			_play("cine_a1m1_chuff", (-3.0 if near else -10.0) - minf(8.0, float(i) * 0.08), 0.06)
+	for i in _snatch.size():                    # the slack runs out down the train: clank, clank, clank
+		if _snatch[i] > prev and _snatch[i] <= now:
+			_play("cine_a1m1_clank", -2.0 - 3.5 * float(i), 0.04)
+	if now < T_SHOT_STAMP:
+		var cc := _cam_at(now).x + 320.0
+		for ev in _joint_ev:
+			var te: float = ev[0]
+			if te > now:
+				break
+			if te > prev:
+				var db := -6.0 - absf(float(ev[1]) - cc) * 0.03
+				if db > -24.0:
+					_play("cine_a1m1_clack", db, 0.08)
 	_cue("line_a", T_LINE_A, prev, now, func():
 		Game.subtitle(Loc.t("cin.a1m1.alexei.share" if share else "cin.a1m1.alexei.keep"), 4.9))
 	_cue("amb_out", T_SHOT_STAMP, prev, now, func(): Audio.stop_ambience(1.4))
@@ -1089,12 +1329,13 @@ func _cue(id: String, at: float, prev: float, now: float, f: Callable) -> void:
 
 
 const SOUNDS := ["cine_a1m1_couple", "cine_a1m1_hiss", "cine_a1m1_whistle", "cine_a1m1_depart", "cine_a1m1_chuff",
+	"cine_a1m1_clank", "cine_a1m1_clack",
 	"cine_a1m1_swell", "cine_a1m1_stamp", "cine_a1m1_whistle_far", "cine_a1m1_tram_arrive", "cine_a1m1_tram_depart",
 	"cine_a1m1_door", "cine_a1m1_pigeons", "stamp_thud", "tram_bell", "wind_gust"]
 
 
 func _build_audio() -> void:
-	for i in 10:
+	for i in 14:
 		var p := AudioStreamPlayer.new()
 		p.bus = "SFX" if AudioServer.get_bus_index("SFX") >= 0 else "Master"
 		add_child(p)

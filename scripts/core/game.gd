@@ -669,6 +669,11 @@ func _do_discover(it: Node) -> void:
 	var id := str(it.get("explore_id"))
 	if id == "" or not Explore.has_method("find"):
 		return
+	# §12.8 mini-game finds: the entry's "minigame" scene must be solved first (retry any time; Esc gives up)
+	var mg_path := str(Explore.entry(id).get("minigame", ""))
+	if mg_path != "" and not Explore.is_found(id):
+		if not await _run_minigame(mg_path, id):
+			return
 	it.used = true
 	if player:
 		player.play_action("inspect_side")
@@ -690,6 +695,28 @@ func _do_discover(it: Node) -> void:
 		var c: Dictionary = Explore.counts(str(e.get("level", "")))
 		var fmt := Loc.t("ui.toast.discovery")
 		toast(fmt.format({"name": Loc.t(str(e.get("title_key", ""))), "n": c.get("found", 0), "total": c.get("total", 0)}))
+
+
+## §12.8 mini-game host: instances the scene under the UI, open(ctx), waits for finished(success).
+## ctx = {"explore_id", "auto"}; in autoplay the mini-game resolves itself, the real-input driver calls demo_solve().
+func _run_minigame(path: String, id: String) -> bool:
+	if not ResourceLoader.exists(path) or ui == null:
+		return true                       # never block a find on a missing scene
+	var mg: Node = load(path).instantiate()
+	ui.add_child(mg)
+	var res := {"done": false, "ok": false}
+	mg.finished.connect(func(success: bool):
+		res["done"] = true
+		res["ok"] = success, CONNECT_ONE_SHOT)
+	if mg.has_method("open"):
+		mg.open({"explore_id": id, "auto": auto})
+	while not res["done"] and is_instance_valid(mg):
+		await get_tree().process_frame
+	if is_instance_valid(mg):
+		mg.queue_free()
+	if res["ok"]:
+		Audio.sfx("puzzle_success")
+	return bool(res["ok"])
 
 
 ## §12 optional conversation: lines come from the Explore entry (speaker, key, expr); NPCs face the player.
@@ -863,8 +890,12 @@ func _cin_hall() -> bool:
 	var hall: Node = load(path).instantiate()
 	main.level_root.add_child(hall)
 	_apply_grade(hall)
-	Audio.play_music("mus_hall_reveal", 0.3)
+	_call(_ui("fade"), "letterbox", [false])   # full 16:9: the lantern eagle stays in frame during the long hold
+	Audio.stop_music(1.5)                       # the reveal cue starts later so its swell lands on the final frame
 	Audio.play_ambience("amb_berlin_street", 0.6)
+	var hall_len: float = float(hall.get_duration()) if hall.has_method("get_duration") else 11.0
+	var music_at := maxf(0.0, hall_len - 11.5)
+	var music_started := false
 	await fade_in(0.6)
 	if hall.has_method("play"):
 		hall.play()
@@ -881,7 +912,7 @@ func _cin_hall() -> bool:
 				Audio.sfx("tram_bell", -6.0))
 	var t := 0.0
 	var said := false
-	while not done[0] and t < 16.0:
+	while not done[0] and t < 45.0:   # the hall reveal may run ~20–30 s
 		if _skip:
 			if hall.has_method("skip"):
 				hall.skip()
@@ -889,6 +920,9 @@ func _cin_hall() -> bool:
 		if not has_cues and t > 3.2 and not said:
 			said = true
 			subtitle(Loc.t("cinematic.hall_reveal"), 5.0)
+		if not music_started and t >= music_at:
+			music_started = true
+			Audio.play_music("mus_hall_reveal", 0.3)
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	await fade_out(0.7)

@@ -3,6 +3,8 @@
  "hotspots": {
   "exp_wreck": [84, 296],
   "exp_family": [306, 338],
-  "exp_flatcar": [1800, 284]
+  "exp_flatcar": [1800, 284],
+  "exp_shunting": [1112, 256],
+  "exp_chess": [362, 256]
  }
 }

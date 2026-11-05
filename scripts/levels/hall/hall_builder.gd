@@ -1263,6 +1263,20 @@ func _banner_at(x_from: float, x_to: float, top: float, z: float, wall: Vector3)
 			c(NIGHT[2]))
 
 
+## A banner hung FLAT on a facade, in the current local frame (+x along the wall, +z = outward normal): 30x90
+## texels on 1.2 x 3.6 m, `zoff` in front of the wall, from a rod along its top edge held by two wall brackets.
+## It lies in the facade's plane, so it foreshortens and converges with the wall.
+func _banner_flat(x_from: float, x_to: float, top: float, zoff: float) -> void:
+	var bh := 3.6
+	K("flag_street").quad(Vector3(x_from, top - bh, zoff), Vector3(x_from, top, zoff), Vector3(x_to, top, zoff),
+		Vector3(x_to, top - bh, zoff), Color.WHITE, 0.6)
+	var m := K("metal")
+	m.box(Vector3(x_from - 0.08, top - 0.03, zoff - 0.02), Vector3(x_to - x_from + 0.16, 0.07, 0.08),
+		{"front": c(NIGHT[2]), "top": c(SNOW[4])}, Kit.FACES_ALL)
+	for bx: float in [x_from - 0.02, x_to - 0.02]:
+		m.box(Vector3(bx, top - 0.02, 0.0), Vector3(0.04, 0.05, zoff), c(NIGHT[2]), Kit.FACES_ALL)
+
+
 func _build_street_flags() -> void:
 	_world()
 	var top := GROUND_H + FLOOR_H + 0.55
@@ -1278,15 +1292,15 @@ func _build_street_flags() -> void:
 	# family block, cross-street facade (faces +z): banners on the piers between the windows
 	for xx: float in [-25.6, -33.0]:
 		_banner_at(xx - 0.6, xx + 0.6, top, CHAMFER_A.z + 0.34, Vector3(xx, top, CHAMFER_A.z))
-	# the chamfered corner: the regime's banner hangs over the family's sealed door, between the first-floor
-	# windows (the left one, and the "story window" that is closed at the end of the shot)
-	var along := (CHAMFER_B - CHAMFER_A).normalized()
-	var nrm := along.cross(Vector3.UP).normalized()
+	# the chamfered corner: the regime's banner hangs flat on the corner facade over the family's sealed door,
+	# between the first-floor windows (the left one, and the "story window" that is closed at the end of the shot).
+	# Round 3 (user: "hängt perspektivisch falsch"): it used to face the camera from a rod 0.8 m off the diagonal
+	# wall -- an upright rectangle in front of a foreshortened facade; now it lies in the wall's plane.
 	var dxm := (CHAMFER_B - CHAMFER_A).length() * 0.5 - 0.5
-	var wall := CHAMFER_A + along * dxm + Vector3(0, top, 0)
-	var p := wall + nrm * 0.8
-	_banner_at(p.x - 0.6, p.x + 0.6, top, p.z, wall)
-	stats["door_flag"] = p
+	_frame(CHAMFER_A, CHAMFER_B - CHAMFER_A)
+	_banner_flat(dxm - 0.6, dxm + 0.6, top, 0.3)
+	stats["door_flag"] = _xf * Vector3(dxm, top, 0.3)
+	_world()
 
 
 # ============================================================================== tram stop + queue
@@ -1303,8 +1317,9 @@ func _build_tram_stop() -> void:
 	m.box(Vector3(px - 0.22, 1.9, pz - 0.03), Vector3(0.44, 0.3, 0.06), c(NIGHT[1]))      # timetable box
 	K("sign").quad(Vector3(px - 0.25, 2.6, pz + 0.05), Vector3(px - 0.25, 3.1, pz + 0.05),
 		Vector3(px + 0.25, 3.1, pz + 0.05), Vector3(px + 0.25, 2.6, pz + 0.05), Color.WHITE)
-	# the queue: five people waiting for the inbound tram, looking up the line (to the right)
-	var q := [[-7.3, 1, 0.0], [-6.5, 3, 0.4], [-5.85, 0, 1.1], [-5.1, 5, 0.7], [-4.4, 2, 1.6]]
+	# the queue: three people waiting for the inbound tram, looking up the line (to the right); a fourth joins at
+	# ~13 s (hall_life._add_queue_arrival).  Round 3: two fewer -- the front of the plaza was overloaded.
+	var q := [[-7.3, 1, 0.0], [-6.55, 0, 0.4], [-5.85, 5, 1.1]]
 	for e in q:
 		var row: int = e[1]
 		people_spec.append(life_spec("stand_36", row, {"role": "queue_%d" % row,
@@ -1336,8 +1351,8 @@ func _build_kiosk() -> void:
 	var customer := _xf * Vector3(-0.3, 0.16, 0.75)
 	_world()
 	people_spec.append(life_spec("stand_36", 4, {"role": "kiosk_customer", "pos": customer, "fps": 1.4,
-		"flip": false, "face_motion": false, "show": Vector2(0.0, 3.4)}))
-	halos.append({"pos": Vector3(10.2, 2.05, -55.5), "col": c(GLOW[1]), "r": 2.4, "k": 0.16, "until": 3.4})
+		"flip": false, "face_motion": false, "show": Vector2(0.0, 6.25)}))      # crane only (h1 ends at 5.5 s)
+	halos.append({"pos": Vector3(10.2, 2.05, -55.5), "col": c(GLOW[1]), "r": 2.4, "k": 0.16, "until": 6.25})
 
 
 # ============================================================================== manholes + steam

@@ -28,6 +28,13 @@ def main():
             'loco_size': [karsk.LOCO_W, karsk.LOCO_H], 'wheel_r': karsk.WHEEL_R, 'drivers': karsk.DRIVERS,
             'chimney': list(karsk.CHIMNEY), 'whistle': list(karsk.WHISTLE), 'cyl_steam': list(karsk.CYL_STEAM),
             'cab_window': list(karsk.CAB_WINDOW), 'headlamp': [16, 22],
+            'wheel_frames': karsk.WHEEL_FRAMES, 'wheels_crop': list(karsk.WHEELS_CROP),
+            'small_wheels': {v: [[n, x, y] for (n, x, y) in lst] for v, lst in karsk.SMALL_WHEELS.items()},
+            'small_frames': karsk.SMALL_FRAMES,
+            'small_r': {'wheel_pilot': 10.0, 'wheel_tender': 9.5, 'wheel_box': 9.5},
+            'small_spokes': {'wheel_pilot': 8, 'wheel_tender': 8, 'wheel_box': 9},
+            'axles': {'loco': [40] + list(karsk.DRIVERS), 'tender': [26, 54, 136, 164], 'gondola': [40, 140],
+                      'boxcar': [46, 150], 'c17': [53, 154]},
         },
         'close': {
             'glyph': info['close']['glyph_centre'], 'imprint': info['close']['imprint']['pos'],

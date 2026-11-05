@@ -202,36 +202,43 @@ def hiss():
 
 
 def depart():
+    """Rumble of the heavy train getting under way (the coupling clanks and rail-joint clacks are separate
+    one-shots that the scene fires in sync with the simulated slack and axle positions)."""
     r = rng('depart')
     sec = 6.0
     t = t_axis(sec)
     n = len(t)
-    x = np.zeros(n)
-    # slack running out through the couplings: clanks travelling away down the train
-    for k in range(5):
-        t0 = 0.15 + k * 0.32
-        i0 = int(t0 * SR)
-        ln = int(0.5 * SR)
-        tt = np.arange(ln) / SR
-        c = sum(a * np.sin(2 * np.pi * f * tt + r.uniform(0, 6)) * np.exp(-tt * d)
-                for f, a, d in ((380, 1.0, 12), (1040, 0.6, 18), (2090, 0.35, 26)))
-        c += lowpass(r.standard_normal(ln), 300) * np.exp(-tt * 30) * 0.8
-        g = 0.9 * (0.72 ** k)
-        x[i0:i0 + ln] += c[:max(0, min(ln, n - i0))] * g
-    # wheels over rail joints: clack pairs accelerating
-    tj, gap = 1.8, 1.1
-    while tj < sec - 0.2:
-        for dt in (0.0, 0.12 * max(0.35, gap)):
-            i0 = int((tj + dt) * SR)
-            ln = int(0.06 * SR)
-            k = bandpass(r.standard_normal(ln), 600, 4000) * np.exp(-np.arange(ln) / SR * 90)
-            x[i0:i0 + ln] += k[:max(0, min(ln, n - i0))] * 0.35
-        tj += gap
-        gap = max(0.32, gap * 0.82)
-    rumble = lowpass(r.standard_normal(n), 140) * np.clip((t - 1.0) / 4.0, 0, 1) * 0.5
-    x += rumble
+    x = lowpass(r.standard_normal(n), 140) * np.clip((t - 0.6) / 4.0, 0, 1) * 0.6
+    x += lowpass(r.standard_normal(n), 420) * np.clip((t - 1.5) / 4.0, 0, 1) * 0.18 * (1 + 0.3 * np.sin(2 * np.pi * 3.1 * t))
     x = reverb(x, 1.4, 0.3, 'depart', damp=2200)
-    return write('cine_a1m1_depart', norm(fit(x, sec), -9.0))
+    return write('cine_a1m1_depart', norm(fit(x, sec), -12.0))
+
+
+def clank():
+    """One coupling snatching taut: steel knock + chain rattle + short ring (slack running out)."""
+    r = rng('clank')
+    ln = int(0.7 * SR)
+    tt = np.arange(ln) / SR
+    c = sum(a * np.sin(2 * np.pi * f * tt + r.uniform(0, 6)) * np.exp(-tt * d)
+            for f, a, d in ((330, 1.0, 11), (910, 0.6, 16), (1870, 0.35, 24), (2650, 0.2, 30)))
+    c += lowpass(r.standard_normal(ln), 320) * np.exp(-tt * 28) * 0.9
+    rat = np.zeros(ln)
+    for k in range(5):
+        i0 = int((0.03 + k * 0.035 + r.uniform(0, 0.01)) * SR)
+        m = int(0.02 * SR)
+        rat[i0:i0 + m] += bandpass(r.standard_normal(m), 1500, 6000) * np.exp(-np.arange(m) / SR * 160) * (0.5 - k * 0.08)
+    x = reverb(c + rat, 1.0, 0.25, 'clank', damp=2600, stereo=False)
+    return write('cine_a1m1_clank', norm(fit(x, 0.8), -6.0))
+
+
+def clack():
+    """One wheel set over a rail joint: a short dull knock with a bright tick on top."""
+    r = rng('clack')
+    ln = int(0.16 * SR)
+    tt = np.arange(ln) / SR
+    k = bandpass(r.standard_normal(ln), 500, 3800) * np.exp(-tt * 70)
+    k += np.sin(2 * np.pi * 140 * tt) * np.exp(-tt * 45) * 0.6
+    return write('cine_a1m1_clack', norm(fit(k, 0.16), -9.0))
 
 
 def stamp():
@@ -360,7 +367,7 @@ def pigeons():
 
 
 def build():
-    return [couple(), whistle(), whistle_far(), chuff(), hiss(), depart(), stamp(), swell(), tram_arrive(),
+    return [couple(), whistle(), whistle_far(), chuff(), hiss(), depart(), clank(), clack(), stamp(), swell(), tram_arrive(),
             tram_depart(), door(), pigeons()]
 
 

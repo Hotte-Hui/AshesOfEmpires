@@ -365,6 +365,15 @@
    "history": [
     "hist.reich.schwerbelastungskoerper"
    ]
+  },
+  {
+   "id": "berlin.radio_dial",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.radio_dial.title",
+   "text_key": "explore.berlin.radio_dial.text",
+   "prompt_key": "explore.berlin.radio_dial.prompt",
+   "minigame": "res://scenes/ui/minigames/RadioDial.tscn"
   }
  ]
 }

@@ -7,17 +7,18 @@ extends Node
 ##
 ##   GODOT --path C:/Spiele/AshesOfEmpires res://tests/visual/cine_a1m1_harness.tscn -- \
 ##       --scene=L_A1_Railyard --capture=OUT/unused.png --frames=1000000 --symbols=1 \
-##       --cine-mode=frames|play|skip|integ --cine-branch=share|keep --cine-out=DIR [--cine-times=1,5.5,...]
+##       --cine-mode=frames|play|skip|motion|integ --cine-branch=share|keep --cine-out=DIR [--cine-times=1,5.5,...]
 ##
 ## frames : seek to fixed times, save the composed 1920x1080 window + the 640x360 world image per time
 ## play   : real-time playback, saves frames when the clock passes the capture times, frame-time stats
 ## skip   : play 2.5 s, skip() twice -> finished must be emitted exactly once, state at the end
+## motion : frame-sequence check of the train departure (see _run_motion), contact sheets of the running gear
 ## integ  : runs _integration_cin (the proposed Game code), presses "skip" via Game._skip after 3 s,
 ##          checks: finished once, returned skipped flag, black screen, level kept hidden, camera released
 
 const CIN := "res://scenes/cinematics/a1m1/CinA1ToM1.tscn"
-const DEFAULT_TIMES := [0.6, 2.2, 3.1, 5.9, 8.4, 11.6, 14.6, 15.7, 16.4, 17.3, 18.6, 20.9, 21.9, 22.9, 24.1,
-	26.5, 29.0, 30.6, 32.6, 34.8, 36.9, 37.7, 39.0]
+const DEFAULT_TIMES := [0.6, 2.2, 3.1, 5.9, 7.3, 8.4, 9.6, 11.0, 12.6, 15.0, 16.8, 18.1, 18.8, 19.7, 21.0, 23.3,
+	24.3, 25.3, 26.5, 28.9, 31.4, 33.0, 35.0, 37.2, 39.3, 40.1, 41.4]
 
 var mode := "frames"
 var branch := "keep_private"
@@ -69,6 +70,8 @@ func _ready() -> void:
 			await _run_skip()
 		"integ":
 			await _run_integ()
+		"motion":
+			await _run_motion()
 	_quit(0 if _fails.is_empty() else 1)
 
 
@@ -269,6 +272,84 @@ func _run_integ() -> void:
 	if left:
 		_fails.append("integration: cinematic node not freed")
 	_say("integration run: %.1f s wall, skipped=%s, fails=%d" % [(Time.get_ticks_msec() - started) / 1000.0, str(res[0]), _fails.size()])
+
+
+## Steps the departure at 1/60 s (seek = the frames a player sees) and checks, from the scene graph, that the
+## drivers' frame (rods + valve gear) is exactly the one implied by the loco's DRAWN travel (+ slip), that all
+## vehicles sit on the 1/k grid, buffers never overlap and gaps stay within the slack, the engine never rolls
+## back after the start, and the exhaust beats come 4 per driver revolution. Saves running-gear contact sheets
+## (12 consecutive frames) for the start, the slip and the run.
+func _run_motion() -> void:
+	cin = _spawn()
+	await get_tree().process_frame
+	var K: Dictionary = cin.layout.get("karsk", {})
+	var r := float(K.get("wheel_r", 16))
+	var nf := int(K.get("wheel_frames", 60))
+	var k := float(cin._px_scale())
+	var base: Array = cin._veh_base()
+	var widths := [284.0, 196.0, 180.0, 196.0]
+	var names := ["veh_loco", "veh_tender", "veh_gondola", "veh_boxcar", "c17"]
+	var bad := 0
+	var grid_bad := 0
+	var gap_bad := 0
+	var back_bad := 0
+	var n := 0
+	var prev_x := INF
+	var max_gap := [0.0, 0.0, 0.0, 0.0]
+	var tt := 0.0
+	while tt < cin.T_SHOT_STAMP:
+		cin.seek(tt)
+		var lx: float = cin._n["veh_loco"].position.x
+		var want := posmod(int(floor(((float(base[0]) - lx) / r + cin._slip_angle(tt)) / TAU * nf)), nf)
+		if want != int(cin._n["loco_wheels"].base.frame):
+			bad += 1
+		var xs: Array = []
+		for nm in names:
+			var px: float = cin._n[nm].position.x * k
+			if absf(px - roundf(px)) > 0.01:
+				grid_bad += 1
+			xs.append(cin._n[nm].position.x)
+		for i in 4:
+			var gap: float = float(xs[i + 1]) - float(xs[i]) - float(widths[i])
+			max_gap[i] = maxf(max_gap[i], gap)
+			if tt >= cin.T_COUPLE and (gap < -0.01 or gap > float(cin.SLACK[i]) + 1.0):
+				gap_bad += 1
+		if tt > cin.T_DEPART + 0.05 and lx > prev_x + 0.01:
+			back_bad += 1
+		prev_x = lx
+		n += 1
+		tt += 1.0 / 60.0
+	var revs: float = (cin._driver_angle(cin.T_SHOT_STAMP - 0.01) - cin._driver_angle(cin.T_DEPART)) / TAU
+	var beats: int = cin._beats.size()
+	_say("motion: %d frames  rod-phase mismatches %d  off-grid %d  gap violations %d  roll-backs %d" % [n, bad, grid_bad, gap_bad, back_bad])
+	_say("motion: max gaps %s  snatches %s  revs %.2f beats %d  joint hits %d" % [str(max_gap), str(cin._snatch), revs, beats, cin._joint_ev.size()])
+	for tau in [1.0, 2.0, 3.0, 5.2, 8.0, 11.0, 12.2]:
+		_say("  tau %.1f: travel %.1f px  v %.1f px/s" % [tau, cin._loco_d(cin.T_DEPART + tau), cin._loco_v(cin.T_DEPART + tau)])
+	if bad > 0:
+		_fails.append("rod phase != travelled distance in %d frames" % bad)
+	if grid_bad > 0 or gap_bad > 0 or back_bad > 0:
+		_fails.append("train motion: off-grid %d, gaps %d, roll-backs %d" % [grid_bad, gap_bad, back_bad])
+	if absi(beats - int(round(revs * 4.0))) > 1:
+		_fails.append("exhaust beats %d != 4 per revolution (%.2f rev)" % [beats, revs])
+	# contact sheets: 12 consecutive 1/60 s frames of the running gear (world image, 1 sample per texel)
+	for ph in [["start", 1.0], ["slip", 2.15], ["run", 4.6]]:
+		var sheet := Image.create(270, 12 * 64, false, Image.FORMAT_RGBA8)
+		for j in 12:
+			var t2: float = cin.T_DEPART + float(ph[1]) + float(j) / 60.0
+			cin.seek(t2)
+			for f in 2:
+				await get_tree().process_frame
+			await RenderingServer.frame_post_draw
+			var wi: Image = Game.view.capture_world_image() if Game.view and Game.view.has_method("capture_world_image") else null
+			if wi == null:
+				break
+			wi.convert(Image.FORMAT_RGBA8)
+			var cam: Vector2 = cin._cam_at(t2)
+			var lx2: float = cin._n["veh_loco"].position.x
+			var src := Rect2i(int(round(lx2 - cam.x)) - 10, 272 - 62 - int(cam.y), 270, 64)
+			sheet.blit_rect(wi, src, Vector2i(0, j * 64))
+		if out_dir != "":
+			sheet.save_png("%s/motion_%s.png" % [out_dir, ph[0]])
 
 
 # ------------------------------------------------------------------ util

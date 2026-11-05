@@ -11,8 +11,9 @@ Writes assets/cinematics/a1m1/berlin/ (all original, deterministic):
   far.png         1000x200   distant roofs, firewalls, chimneys (haze)                      parallax .45
   street.png (+_n,_e) 1000x620  facades (Bauarchiv + tenements), pavements, tram tracks    parallax 1
   fg.png          1100x200   near lamp post + overhead tram wire                           parallax 1.15
-  banner.png / banner_hist.png   strip 3: vertical banner (neutral: Reichssiegel on grey-black;
-                   _hist: red with white disc and black swastika), slight sway
+  banner.png / banner_hist.png   strip 32 (30x96): vertical banner in the wind -- 16 phases of a cloth wave
+                   travelling down from the pole, calm set + gust set (neutral: Reichssiegel on black;
+                   _hist: red with white disc and a bold, thick 45-degree black swastika)
   relief.png / relief_hist.png   stone eagle above the portal (neutral: wreath with the Reichssiegel)
   door.png         strip 3: portal doors closed / ajar / open (+_e warm interior)
   jambs.png        portal jambs drawn above Konrad as he enters
@@ -490,44 +491,107 @@ def make_fg():
 
 
 # =========================================================================== sprites
+BANNER_W, BANNER_H, BANNER_FW = 30, 96, 24     # frame size, fabric width at rest (centred, 3 px swing room)
+BANNER_PHASES = 16                             # frames per wave cycle; two sets: calm + gust (32 frames)
+BANNER_DISC = (12, 31, 20)                     # disc centre x, y on the flat fabric, diameter
+
+
+def swastika_bold(n: int = 16, h: float = 0.6, L: float = 2.0, ss: int = 10) -> np.ndarray:
+    """Bold historical swastika for the _hist banners: the classic 5-unit construction (arm width h*2 units,
+    hooks bent clockwise as on the NSDAP flag), turned 45 degrees, rasterised n x n with supersampling and
+    made exactly 4-fold symmetric (2-of-4 vote over the quarter turns) so it reads clean and thick at 1x."""
+    unit = n / ((L + h) * 2 * math.sqrt(2))
+    c = n / 2
+    g = np.zeros((n, n))
+    for yy in range(n * ss):
+        for xx in range(n * ss):
+            x = (xx + 0.5) / ss - c
+            y = (yy + 0.5) / ss - c
+            u = (x + y) / math.sqrt(2) / unit
+            v = (-x + y) / math.sqrt(2) / unit
+            au, av = abs(u), abs(v)
+            ins = (au <= h and av <= L + h) or (av <= h and au <= L + h)
+            ins |= (-L - h <= v <= -L + h and 0 <= u <= L + h) or (L - h <= u <= L + h and 0 <= v <= L + h)
+            ins |= (L - h <= v <= L + h and -L - h <= u <= 0) or (-L - h <= u <= -L + h and -L - h <= v <= 0)
+            if ins:
+                g[yy // ss, xx // ss] += 1
+    m = (g / (ss * ss)) > 0.5
+    return sum(np.rot90(m, k).astype(int) for k in range(4)) >= 2
+
+
+def _banner_flat(hist: bool):
+    """Flat fabric as material ids: 0 cloth, 1 disc, 2 emblem, 3 disc rim."""
+    FW, H = BANNER_FW, BANNER_H
+    ids = np.zeros((H, FW), np.int8)
+    cx, cy, d = BANNER_DISC
+    disc = lib.disc_mask(d)
+    ox, oy = cx - d // 2, cy - d // 2
+    ids[oy:oy + d, ox:ox + d][disc] = 1
+    if hist:
+        sw = swastika_bold(16, 0.6)
+        sy, sx = oy + (d - sw.shape[0]) // 2, ox + (d - sw.shape[1]) // 2
+        ids[sy:sy + sw.shape[0], sx:sx + sw.shape[1]][sw] = 2
+    else:
+        ids[oy:oy + d, ox:ox + d][lib.edge_of(disc)] = 3
+        rs = lib.REICHSSIEGEL_11
+        sy, sx = cy - rs.shape[0] // 2, cx - rs.shape[1] // 2
+        ids[sy:sy + rs.shape[0], sx:sx + rs.shape[1]][rs] = 2
+    return ids
+
+
 def make_banner(hist: bool):
+    """Vertical facade banner moving in the wind: BANNER_PHASES frames of a cloth wave travelling down from
+    the pole (rows shift sideways, light/shadow bands of the billow ride with it, the free lower end swings and
+    narrows as it flaps), as a calm set and a gust set (frames BANNER_PHASES..2*BANNER_PHASES-1). The emblem
+    rides on the cloth. _hist: red with white disc and a bold black swastika; neutral: black with the
+    fictional Reichssiegel (TECHNICAL_ARCHITECTURE 12.4)."""
+    W, H, FW = BANNER_W, BANNER_H, BANNER_FW
+    flat = _banner_flat(hist)
+    cloth = [RD[0], RD[1], RD[2], RD[3]] if hist else [NI[0], NI[1], NI[2], VI[1]]
+    kap = 2 * math.pi * 1.15 / H
     frames = []
-    W, H = 24, 96
-    for k in range(3):
-        F = Layer(W, H, 'banner%d' % k)
-        sway = [0, 1, 0][k]
-        for y in range(H):
-            off = int(round(sway * (y / H) ** 2 * 2))
-            u = y / H
-            for x in range(W - 2):
-                fold = math.sin((x + off) * 0.9 + k) * 0.5 + (0.5 if x in (6, 7, 15, 16) else 0)
-                if hist:
-                    ramp = [RD[0], RD[1], RD[2], RD[3]]
-                    t = 2.0 - fold * 0.8 - u * 0.4
-                else:
-                    ramp = [NI[0], NI[1], NI[2], VI[1]]
-                    t = 1.8 - fold * 0.8 - u * 0.3
-                idx = int(np.clip(round(t + (bayer(1, 1, x, y)[0, 0] - 0.5) * 0.8), 0, 3))
-                F.px(x + 1 + off, y, ramp[idx])
-        # pole at the top
-        F.rect(0, 0, W, 2, NI[2])
-        F.hline(0, 0, W, SN[3])
-        # emblem disc
-        d = lib.disc_mask(17)
-        ox, oy = 4 + sway, 26
-        F._put(d, ox, oy, SN[4] if hist else SN[3])
-        if hist:
-            sw = lib.swastika(3, 3, 2)
-            F._put(sw, ox + (17 - sw.shape[1]) // 2, oy + (17 - sw.shape[0]) // 2, NI[0])
-        else:
-            F._put(d, ox, oy, NI[0])
-            F._put(lib.edge_of(d), ox, oy, SN[2])
-            rs = lib.REICHSSIEGEL_11
-            F._put(rs, ox + 3, oy + 3, SN[3])
-        # fringe at the bottom
-        for x in range(1, W - 1, 2):
-            F.px(x + sway, H - 1, SN[1] if not hist else RD[0])
-        frames.append(F)
+    for gust in (0, 1):
+        aw, asw = (1.1, 0.8) if gust == 0 else (2.3, 2.1)
+        for k in range(BANNER_PHASES):
+            ph = 2 * math.pi * k / BANNER_PHASES
+            F = Layer(W, H, 'banner%d_%d' % (gust, k))
+            for y in range(H):
+                u = y / (H - 1)
+                wave = math.sin(kap * y - ph)
+                xo = aw * u ** 1.2 * wave + asw * u ** 1.5 * math.sin(ph - 0.6)
+                sh = int(round(xo))
+                billow = math.cos(kap * y - ph) * (0.35 + 0.65 * u) * (aw / 2.3)
+                emblem_row = BANNER_DISC[1] - BANNER_DISC[2] // 2 - 1 <= y <= BANNER_DISC[1] + BANNER_DISC[2] // 2 + 1
+                wf = 1.0 if emblem_row else 1.0 - 0.13 * (aw / 2.3) * max(0.0, (u - 0.5) / 0.5) * (0.5 + 0.5 * wave)
+                for x in range(W):
+                    fx = (x - (W - FW) / 2 - sh - FW / 2 + 0.5) / wf + FW / 2 - 0.5
+                    ix = int(round(fx))
+                    if ix < 0 or ix >= FW:
+                        continue
+                    mid = flat[y, ix]
+                    fold = 0.5 if ix in (6, 7, 16, 17) else 0.0
+                    dith = (bayer(1, 1, x, y)[0, 0] - 0.5) * 0.8
+                    tone = (2.0 if hist else 1.8) - billow * 1.1 - fold * 0.6 - u * 0.35 + dith
+                    if ix == 0 or ix == FW - 1:
+                        tone -= 0.8                                 # hem: the edge turns away
+                    if mid == 0:
+                        col = cloth[int(np.clip(round(tone), 0, 3))]
+                    elif mid == 1:
+                        col = SN[4] if tone > 1.75 else SN[3]
+                    elif mid == 2:
+                        col = NI[0] if hist else SN[3]
+                    else:
+                        col = SN[2]
+                    if not hist and mid == 1:
+                        col = NI[0]
+                    F.px(x, y, col)
+                if y == H - 1:                                      # fringe
+                    for x in range(W):
+                        if F.c[y, x, 3] and x % 2 == 1:
+                            F.px(x, y, RD[0] if hist else SN[1])
+            F.rect(0, 0, W, 2, NI[2])                               # pole
+            F.hline(0, 0, W, SN[3])
+            frames.append(F)
     return frames
 
 
@@ -787,7 +851,8 @@ def build():
     info['geometry'] = {'set_w': SET_W, 'y0': Y0, 'pave_y': PAVE_Y, 'street_y': STREET_Y,
                         'rail_far': list(RAIL_FAR), 'rail_near': list(RAIL_NEAR), 'arch': [ARCH_X0, ARCH_X1],
                         'portal_cx': PORTAL_CX, 'door': [PORTAL_CX - DOOR_W // 2, DOOR_Y, DOOR_W, DOOR_H],
-                        'chimneys': CHIMNEYS, 'wire_y': 148}
+                        'chimneys': CHIMNEYS, 'wire_y': 148,
+                        'banner': [BANNER_W, BANNER_H, BANNER_FW, BANNER_PHASES]}
     return info
 
 

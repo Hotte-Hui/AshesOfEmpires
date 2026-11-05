@@ -18,6 +18,7 @@ signal page_changed(index: int)
 
 ## The key press that opened the view (or a mashed one) must not skip the first page unread.
 const OPEN_GUARD_MS := 300
+const SHOW_SOURCES := false   # sources go to the planned end-credits scene instead (see NEXT_STEPS)
 const IMG_MAX := Vector2(960, 600)
 ## Notebook width next to a photo: whatever the row leaves free, kept between these (line length ~45-65 chars).
 const NOTE_W_MIN := 600.0
@@ -613,7 +614,9 @@ func _build_card(cid: String) -> Control:
 	Kit.scalable(text, 29)
 	body.add_child(text)
 	text.set_meta("pitch_label", true)
-	var srcs = c.get("sources", [])
+	# Sources are NOT shown on the card (user decision 2026-11-05: they clutter the reading); they stay in
+	# data/explore/history_*.json for the planned end-credits "Quellen" scene. SHOW_SOURCES re-enables them.
+	var srcs = c.get("sources", []) if SHOW_SOURCES else []
 	if srcs is Array and not srcs.is_empty():
 		body.add_child(Kit.rule(Color(0, 0, 0, 0), 14))
 		var sk := Kit.label(Kit.t("ui.history.sources").to_upper(), "HintLabel", 0, dim)

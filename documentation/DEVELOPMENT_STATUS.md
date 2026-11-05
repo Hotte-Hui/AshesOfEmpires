@@ -5,6 +5,20 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 3 (2026-11-05) — after the user's second playtest
+- Ch1→2 transition (43 s): the departing train now has 60-frame wheel rotation with rods and valve gear in phase
+  with travel, coupling slack (wagons start one after another), wheel slip, chuffs synced to revolutions, rail-joint
+  clacks; the swastika banners on Konrad's way to the archive wave strongly (32-frame cloth wave, gusts) and carry
+  bold swastikas (`_hist`); neutral variant unchanged.
+- Great Hall: the left banner now hangs flat in the facade plane; the plaza foreground is thinned and life moved
+  back (queue 5→3, more mid/far walkers, patrol in the mid plaza); the reveal runs 24 s instead of 11 s (slower
+  crane, 9 s establishing hold, slow push with tilt, held monumental frame), shown without letterbox bars, music
+  swell timed to the final frame.
+- Three optional mini-games (§12.8): shunting puzzle and a mate-in-two chess problem in Karsk, tuning the porter's
+  radio in Berlin — each unlocks a find; auto-solve for autoplay, `demo_solve()` for the real-input driver.
+- History cards no longer print their sources (planned: an end-credits scene listing all sources).
+- Image gently calmer: grain −35 %, palette-snap dither −15 %, vignette −10 %.
+
 ## Round 2 (2026-11-04 evening) — expansion after the user's first playtest
 User feedback: better characters and faces, more detail and life, fuller streets, smoother camera, much more to
 explore (incl. real post-war findings in a library), softer protagonist switches, real regime symbolism, ~10 min

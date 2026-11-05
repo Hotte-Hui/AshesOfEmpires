@@ -16,6 +16,13 @@ const Kit := preload("res://scripts/levels/hall/hall_mesh_kit.gd")
 const B := preload("res://scripts/levels/hall/hall_builder.gd")
 const LIFE := "res://assets/architecture/great_hall/life/"
 const CHAR := "res://assets/characters/"
+## Round 3 timeline (24 s, see hall_camera_rig.gd): h1 crane 0-5.5 s, h2 hold 5.5-14.5 s, h3 push 14.5-21.5 s + hold.
+## The near band (plaza edge, d ~ 40-46 m) is kept quiet so the evicted family stays the focus; the life is spread
+## over the middle and the back of the square (ring, mid plaza, far plaza) and timed to fill the long hold.
+const H1_SCALE := 5.5 / 3.0      ## the crane is the round-2 crane, 1.83x slower: h1-only timings scale with it
+const T_TRAM := 6.4              ## tram bell + departure (cue hall.cue.tram_bell)
+const T_PIGEONS := 8.75          ## loudspeaker_1 (8.6 s) startles the pigeons (cue hall.cue.pigeons)
+const T_PATROL := 3.0            ## the patrol starts off-frame right and enters the frame at ~10.9 s (cue)
 
 var builder
 var rig
@@ -89,85 +96,77 @@ func _add_walkers() -> void:
 	# a clerk with his parcel comes round the family's corner and crosses the street past them -- without a look
 	if ResourceLoader.exists(CHAR + "clerk/sheet.png"):
 		var p0 := Vector3(-11.0, 0.16, -48.5)
-		_add({"role": "clerk", "pos": p0, "anim": "walk_side", "speed": 1.35, "t0": 0.0, "s0": 2.1,
+		_add({"role": "clerk", "pos": p0, "anim": "walk_side", "speed": 1.1, "t0": 3.5, "s0": 2.1,
 			"path": [p0, Vector3(-8.6, 0.0, -53.0), Vector3(-7.6, 0.0, -53.6), Vector3(9.0, 0.0, -53.6)],
 			"stride_ref_depth": 34.0, "phase": 0.0})
 	# an old woman with her bag, h1 only, on the far sidewalk of the cross street
 	if ResourceLoader.exists(CHAR + "babushka/sheet.png"):
 		var b0 := Vector3(-30.0, 0.16, -49.6)
 		_add({"role": "babushka", "pos": b0, "anim": "walk_side", "speed": 0.9, "t0": 0.0,
-			"path": [b0, Vector3(-18.5, 0.16, -49.6)], "stride_ref_depth": 52.0, "show": Vector2(0.0, 3.0)})
-	# plaza edge (walk_36): people walking along the edge of the square, both directions
-	var edge := [
-		[3, [Vector3(7.0, 0.0, -61.8), Vector3(-1.5, 0.0, -61.8)], 1.25, 0.0],     # woman (hat) -> the stop
-		[0, [Vector3(-11.6, 0.0, -60.0), Vector3(-9.5, 0.0, -60.6), Vector3(18.0, 0.0, -60.6)], 1.45, 1.8],
-		[5, [Vector3(14.0, 0.0, -62.4), Vector3(3.0, 0.0, -62.4)], 0.85, 0.0],     # old man with a cane
-	]
-	for e in edge:
-		var pts: Array = e[1]
-		var t0 := float(e[3])
-		_add(_spec("walk_36", int(e[0]), {"role": "edge_%d" % int(e[0]), "pos": pts[0], "path": pts,
-			"speed": float(e[2]), "t0": t0, "stride_ref_depth": 43.0, "phase": float(e[0]) * 0.13,
-			"show": Vector2(t0 - 0.01, 99.0) if t0 > 0.0 else Vector2(0.0, 99.0)}))
-	# behind the tram on the plaza ring (walk_24)
-	var ring := [
-		[1, Vector3(-16.0, 0.0, -84.0), Vector3(24.0, 0.0, -84.0), 1.3, -2.0],
-		[4, Vector3(26.0, 0.0, -86.5), Vector3(-16.0, 0.0, -86.5), 1.4, -6.0],
-		[2, Vector3(-15.0, 0.0, -88.0), Vector3(25.0, 0.0, -88.0), 1.2, -12.0],
-		[0, Vector3(24.0, 0.0, -82.5), Vector3(-15.0, 0.0, -82.5), 1.5, -14.0],
-		[3, Vector3(-14.0, 0.0, -90.5), Vector3(24.0, 0.0, -90.5), 1.1, -20.0],
-	]
+			"path": [b0, Vector3(-18.5, 0.16, -49.6)], "stride_ref_depth": 52.0, "show": Vector2(0.0, 3.0 * H1_SCALE)})
+	# plaza edge (walk_36): only the woman who walks to the stop and joins the queue (_add_queue_arrival); the two
+	# other near walkers of round 2 were moved back onto the square (user: the front of the plaza was overloaded)
+	# behind the tram on the plaza ring (walk_24): looping paths whose ends lie outside the visible wedge
+	# (x < -14 is hidden by the family's block, x > 16 is outside the frame) -> no walker stops or pops in view.
+	# [row, z, direction, speed, x at t = 0]
+	var ring := [[1, -84.0, 1.0, 1.3, -20.0], [4, -86.5, -1.0, 1.4, 12.0], [2, -88.0, 1.0, 1.2, 0.0],
+		[0, -82.5, -1.0, 1.5, 26.0], [3, -90.5, 1.0, 1.1, -34.0]]
 	for e in ring:
-		var a2: Vector3 = e[1]
-		var b2: Vector3 = e[2]
-		_add(_spec("walk_24", int(e[0]), {"role": "ring_%d" % int(e[0]), "pos": a2, "path": [a2, b2],
-			"speed": float(e[3]), "t0": float(e[4]), "stride_ref_depth": 66.0, "phase": 0.2 * float(e[0])}))
-	# mid plaza (walk_14): people crossing towards the hall and back
-	for i in 6:
-		var z := -118.0 - i * 3.3
+		var z1: float = e[1]
+		var dir1: float = e[2]
+		var sp1: float = e[3]
+		var xs := -44.0 if dir1 > 0.0 else 30.0
+		var xe := 30.0 if dir1 > 0.0 else -44.0
+		var a2 := Vector3(xs, 0.0, z1)
+		_add(_spec("walk_24", int(e[0]), {"role": "ring_%d" % int(e[0]), "pos": a2, "path": [a2, Vector3(xe, 0.0, z1)],
+			"speed": sp1, "t0": -absf(float(e[4]) - xs) / sp1, "stride_ref_depth": 66.0,
+			"phase": 0.2 * float(e[0]), "loop_path": true}))
+	# mid plaza (walk_14): people crossing the square in both directions, spread along a 106 m loop
+	for i in 10:
+		var z := -116.0 - float(i) * 2.6
 		var right := i % 2 == 0
-		var xa := -18.0 if right else 40.0
-		var xb := 40.0 if right else -18.0
+		var xa := -60.0 if right else 46.0
+		var xb := 46.0 if right else -60.0
+		var sp := 1.15 + 0.1 * float(i % 3)
 		_add(_spec("walk_14", i % 4, {"role": "mid_%d" % i, "pos": Vector3(xa, 0, z),
-			"path": [Vector3(xa, 0, z), Vector3(xb, 0, z)], "speed": 1.2 + 0.1 * float(i % 3),
-			"t0": -float(i) * 6.0 - 3.0, "stride_ref_depth": 105.0, "loop_path": true}))
+			"path": [Vector3(xa, 0, z), Vector3(xb, 0, z)], "speed": sp,
+			"t0": -fposmod(float(i) * 37.3 + 20.0, 106.0) / sp, "stride_ref_depth": 105.0, "loop_path": true}))
 	# the far plaza (walk_8): small groups streaming towards the portico and along the ring
-	for i in 18:
-		var z2 := -190.0 - float(i) * 17.0
+	for i in 28:
+		var z2 := -190.0 - float(i) * 8.4
 		var dir := 1.0 if (i * 7) % 3 != 0 else -1.0
 		var x0 := -70.0
 		var x1 := 210.0
 		var pa := Vector3(x0 if dir > 0.0 else x1, 0.0, z2)
 		var pb := Vector3(x1 if dir > 0.0 else x0, 0.0, z2 - 6.0)
 		_add(_spec("walk_8", i % 4, {"role": "far_%d" % i, "pos": pa, "path": [pa, pb],
-			"speed": 1.3, "t0": -float((i * 53) % 197) - 20.0, "stride_ref_depth": 220.0, "loop_path": true}))
+			"speed": 1.2 + 0.05 * float(i % 4), "t0": -float((i * 53) % 197) - 20.0, "stride_ref_depth": 220.0,
+			"loop_path": true}))
 
 
-## The woman walking along the plaza edge reaches the end of the queue and waits there.
+## The woman walking along the plaza edge reaches the end of the (shorter) queue and waits there (~13.2 s).
 func _add_queue_arrival() -> void:
-	var a := Vector3(7.0, 0.0, -61.8)
+	var a := Vector3(10.5, 0.0, -61.8)
 	var b := Vector3(-1.5, 0.0, -61.8)
-	var c := Vector3(-3.7, 0.14, -63.25)
-	var t_arr := 0.0 + (a.distance_to(b) + b.distance_to(c)) / 1.25
-	# replace the straight walker of row 3 by one that turns onto the island
-	for i in range(builder.people_spec.size() - 1, -1, -1):
-		var e: Dictionary = builder.people_spec[i]
-		if str(e.get("role", "")) == "edge_3":
-			e["path"] = [a, b, c]
-			e["show"] = Vector2(0.0, t_arr)
+	var c := Vector3(-5.15, 0.14, -63.25)
+	var t0 := 0.5
+	var t_arr := t0 + (a.distance_to(b) + b.distance_to(c)) / 1.25
+	_add(_spec("walk_36", 3, {"role": "edge_3", "pos": a, "path": [a, b, c], "speed": 1.25, "t0": t0,
+		"stride_ref_depth": 43.0, "phase": 0.39, "show": Vector2(0.0, t_arr)}))
 	_add(_spec("stand_36", 3, {"role": "queue_new", "pos": c, "flip": false, "face_motion": false,
 		"phase": 0.9, "show": Vector2(t_arr, 99.0)}))
 
 
 # ------------------------------------------------------------------------------ patrol, sweeper
 func _add_patrol() -> void:
-	# a patrol of four, marching in step across the square (right to left), no insignia
+	# a patrol of four, marching in step across the square (right to left), no insignia: starts outside the frame
+	# and crosses the mid plaza through the hold and the push (still marching in the final frame)
 	for k in 4:
-		var x0 := 34.0 + k * 1.7
+		var x0 := 44.0 + k * 1.7
 		var a := Vector3(x0, 0.0, -127.0)
-		var b := Vector3(x0 - 70.0, 0.0, -127.0)
+		var b := Vector3(x0 - 92.0, 0.0, -127.0)
 		_add(_spec("march_14", 0, {"role": "patrol_%d" % k, "pos": a, "path": [a, b], "speed": 1.55,
-			"t0": 0.0, "stride_ref_depth": 108.0, "phase": 0.0}))
+			"t0": T_PATROL, "stride_ref_depth": 108.0, "phase": 0.0}))
 
 
 func _add_sweeper() -> void:
@@ -180,7 +179,7 @@ func _add_sweeper() -> void:
 # ------------------------------------------------------------------------------ birds
 func _add_birds() -> void:
 	# pigeons on the snow at the plaza edge; the loudspeaker (3.6 s) startles them: up and away to the hall
-	var take_off := 3.75
+	var take_off := T_PIGEONS
 	for i in 7:
 		var gp := Vector3(-1.4 + i * 0.55 + _rng.randf_range(-0.2, 0.2), 0.0, -58.6 - _rng.randf_range(0.0, 2.4))
 		var t_go := take_off + i * 0.06
@@ -221,7 +220,7 @@ func _add_smoke_and_steam() -> void:
 		var far := bool(sp.get("far", false))
 		_add(_spec("smoke", 0, {"role": "smoke_%d" % i, "pos": pos, "fps": 6.0 if far else 7.0,
 			"phase": float(i) * 0.53, "face_motion": false, "unshaded": 0.7, "always_lock": far,
-			"show": Vector2(0.0, 99.0) if far else Vector2(0.0, 3.2)}))
+			"show": Vector2(0.0, 99.0) if far else Vector2(0.0, 3.2 * H1_SCALE)}))
 		i += 1
 	var j := 0
 	for mp in builder.steam_spots:
@@ -247,7 +246,7 @@ func _add_belongings() -> void:
 
 func _add_paper() -> void:
 	# a newspaper page blown out of the side street, tumbling across the road in the wind
-	var t0 := 3.4
+	var t0 := 9.0
 	var fn := func(t: float) -> Vector3:
 		var u := maxf(0.0, t - t0)
 		var x := -18.0 + 3.1 * u + 0.4 * sin(u * 1.7)
@@ -295,7 +294,7 @@ func _setup_tram() -> void:
 	head.position = Vector3(builder.tram_len * 0.5 + 0.1, 0.9, 0.0)
 	head.rotation = Vector3(0.0, -PI * 0.5, 0.0)
 	head.rotate_object_local(Vector3.RIGHT, -0.12)
-	_tram = {"node": builder.tram_node, "path": path, "s0": s0, "t_dep": 1.6, "accel": 0.5, "vmax": 6.0}
+	_tram = {"node": builder.tram_node, "path": path, "s0": s0, "t_dep": T_TRAM, "accel": 0.5, "vmax": 6.0}
 	_halos.append({"node": builder.tram_node, "local": Vector3(0.0, 2.1, 0.0), "col": Color("#F4BA81"),
 		"r": 4.0, "k": 0.13})
 	_halos.append({"node": builder.tram_node, "local": Vector3(builder.tram_len * 0.5 + 0.2, 0.9, 0.0),
@@ -350,11 +349,13 @@ func _setup_vehicles() -> void:
 	while z > -120.0:
 		pa.append(Vector3(B.track_x(5.6, z) + 1.2, 0.0, z))
 		z -= 4.0
-	_vehicle("car_a", Color("#5F6973"), pa, 8.5, 0.0)
-	# B: a dark saloon crosses the plaza ring behind the waiting people, left to right
-	_vehicle("car_b", Color("#2A2130"), [Vector3(-34.0, 0.0, -73.5), Vector3(48.0, 0.0, -73.5)], 9.0, 3.0)
-	# C: a covered lorry far out on the square, right to left
-	_vehicle("truck", Color("#454E58"), [Vector3(66.0, 0.0, -142.0), Vector3(-50.0, 0.0, -142.0)], 6.2, 0.5)
+	# (passes under the crane at 2.6 s like round 2 at 1.4 s; enters the hold's frame at the plaza edge at ~8.9 s and
+	# leaves it on the curve to the right at ~14.5 s)
+	_vehicle("car_a", Color("#5F6973"), pa, 8.5, 1.17)
+	# B: a dark saloon crosses the plaza ring behind the waiting people, left to right (in view ~12.3-15.1 s)
+	_vehicle("car_b", Color("#2A2130"), [Vector3(-34.0, 0.0, -73.5), Vector3(48.0, 0.0, -73.5)], 9.0, 10.0)
+	# C: a covered lorry far out on the square, right to left (in view ~10.6-19.6 s)
+	_vehicle("truck", Color("#454E58"), [Vector3(66.0, 0.0, -142.0), Vector3(-50.0, 0.0, -142.0)], 6.2, 6.0)
 	# D: a second tram far away on the ring (lit windows sliding past)
 	var far := Node3D.new()
 	far.name = "FarTram"
@@ -374,12 +375,12 @@ func _setup_vehicles() -> void:
 		far.add_child(mi)
 	add_child(far)
 	_vehicles.append({"node": far, "path": _Path.new([Vector3(-90.0, 0.0, -300.0), Vector3(120.0, 0.0, -300.0)]),
-		"speed": 5.5, "t0": -14.0, "t1": 99.0})
+		"speed": 5.5, "t0": -7.0, "t1": 99.0})
 
 
 # ============================================================================== per frame
 func update(t: float) -> void:
-	# tram: waits, rings (cue at 1.6 s), departs along the curve
+	# tram: waits, rings (cue at T_TRAM), departs along the curve
 	if not _tram.is_empty():
 		var tau := maxf(0.0, t - float(_tram["t_dep"]))
 		var a: float = _tram["accel"]

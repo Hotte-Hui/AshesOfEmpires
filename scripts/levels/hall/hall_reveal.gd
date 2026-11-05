@@ -7,13 +7,15 @@ extends Node3D
 ## Contract for the lead (TECHNICAL_ARCHITECTURE §2/§3):
 ##   signal finished                  emitted exactly once per run (end of play() or skip(); a second
 ##                                    skip() or a skip() after the natural end does not emit again)
-##   func play()                      starts the ~11 s sequence from t = 0
+##   func play()                      starts the 24 s sequence from t = 0 (Game._cin_hall waits up to 45 s)
 ##   func skip()                      jumps to the final composed frame, emits `finished` once
 ##   func set_people_sprites(paths)   {role: "res://.../sheet.png" or any PNG}; roles: berlin_father,
 ##                                    berlin_mother, berlin_child, guard  (sheets: first idle_side frame)
 ## Extras (optional): signal cue(key) — subtitle/audio cue keys from data/locale/de_hall.json;
 ##   seek(t), set_paused(p), get_time(), get_shot_id() for tooling and the visual test harness.
-## Shots: h1 0–3 s crane out of the archive window, h2 3–8 s establishing, h3 8–11 s slow push and hold.
+## Shots (round 3, "imposanter Auftritt"): h1 0–5.5 s slow crane out of the archive window, h2 5.5–14.5 s long
+## establishing hold while the plaza life plays out (tram departs, loudspeaker, pigeons, patrol), h3 14.5–24 s slow
+## low-angle push with a tilt up (dome + crowning eagle inside the game's letterbox), story beat, held final frame.
 ## Street life (hall_life.gd): walkers in five distance bands, a queue at the tram stop, a marching patrol, a
 ## street sweeper, pigeons startled by the loudspeaker, crows, a wheeling flock over the square, chimney smoke,
 ## manhole steam, the departing tram, cars and a lorry with moving head lights, lamp halos (post process).
@@ -39,27 +41,27 @@ const TEX := "res://assets/architecture/great_hall/"
 ## palette colours from its own post process; an identity grade (no vignette/grain) keeps them exact.
 @export var grade_preset := "hall_3d"
 @export var autoplay := false
-@export_range(0.0, 1.0) var snow_density := 0.55
+@export_range(0.0, 1.0) var snow_density := 0.45
 ## Seconds at which the people switch to texel lock (camera has settled into h2).
-@export var lock_from := 3.0
+@export var lock_from := 5.5
 ## Time at which the lit window above the family is closed (h3 story beat).
-@export var window_close_at := 9.55
+@export var window_close_at := 19.6
 
 ## Shot table (mirrors LS_M1_Hall).
 const SHOTS := [
-	{"id": "h1", "start": 0.0, "end": 3.0},
-	{"id": "h2", "start": 3.0, "end": 8.0},
-	{"id": "h3", "start": 8.0, "end": 11.0},
+	{"id": "h1", "start": 0.0, "end": 5.5},
+	{"id": "h2", "start": 5.5, "end": 14.5},
+	{"id": "h3", "start": 14.5, "end": 24.0},
 ]
 ## Subtitle / audio cues (keys in data/locale/de_hall.json); the lead decides how to present them.
 const CUES := [
-	[0.15, "hall.cue.archive_room"],
-	[1.6, "hall.cue.tram_bell"],
-	[3.6, "hall.cue.loudspeaker_1"],
-	[3.75, "hall.cue.pigeons"],
-	[5.2, "hall.cue.patrol"],
-	[8.4, "hall.cue.loudspeaker_2"],
-	[9.55, "hall.cue.window_closes"],
+	[0.3, "hall.cue.archive_room"],
+	[6.4, "hall.cue.tram_bell"],          # = hall_life.T_TRAM
+	[8.6, "hall.cue.loudspeaker_1"],
+	[8.75, "hall.cue.pigeons"],           # = hall_life.T_PIGEONS
+	[10.9, "hall.cue.patrol"],            # the patrol marches into the frame (hall_life.T_PATROL)
+	[15.2, "hall.cue.loudspeaker_2"],
+	[19.6, "hall.cue.window_closes"],     # = window_close_at
 ]
 
 var camera: Camera3D
@@ -109,6 +111,7 @@ func _ready() -> void:
 		for k in _pending_people:
 			if _pending_people[k] != null and str(_pending_people[k]) != "":
 				people.overrides[k] = str(_pending_people[k])
+	people.ref_time = lock_from
 	people.setup(builder.people_spec)
 	# reference pose for the sprite world sizes = first frame of h2
 	rig.apply(camera, lock_from, _vp_size)

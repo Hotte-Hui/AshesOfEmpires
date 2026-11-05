@@ -29,6 +29,16 @@ with all 43 optional finds and chats ≈ 25–30 min (estimates; no human playte
 - ~120 MB lossless WAV in the pack; switch music/ambience to QOA or Ogg after the listening pass (~5× smaller).
 - Test on a mid-range and an integrated GPU (only an RTX 4090 so far); 1440p display check.
 
+## 3b. Requested by the user, not done yet
+- **End-credits scene** listing all sources of the history cards (data is in `data/explore/history_*.json`;
+  `SHOW_SOURCES` in `scripts/ui/discovery_view.gd` stays false).
+- **Playable Great Hall plaza** (user: "imposanter Auftritt … mit Aufgaben und Minigames"): a walkable Hall-district
+  level after the reveal, with tasks and mini-games (STORY_BIBLE ch. 2 lists "B (Hall district)").
+- **Merge branch `kapitel-3`** (cloud session: Chapter-3 story data, level shells without art, Veltrava finds,
+  E2E drivers) — follow `documentation/MERGE_NOTES_C3.md` on that branch, then build the Veltrava art.
+- `data/v3/cinematics.json` still lists the hall shots as 3/5/3 s (now 5.5/9/9.5 s) — informational only; update
+  together with the next data/v3 change (the parity fixture must be regenerated then).
+
 ## 4. Content and features for the full game
 - **Chapter 3 "Der eiserne Frieden"** — a prompt for a parallel cloud session (branch `kapitel-3`) was prepared; merge
   it here, then verify in-engine.

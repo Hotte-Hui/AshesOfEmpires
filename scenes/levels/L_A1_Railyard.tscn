@@ -250,3 +250,18 @@ script = ExtResource("2")
 kind = "discover"
 hotspot_id = "exp_distant_train"
 explore_id = "karsk.distant_train"
+
+[node name="ExpShunting" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_shunting"
+explore_id = "karsk.shunting"
+radius = 24.0
+
+[node name="ExpChess" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_chess"
+explore_id = "karsk.chess"
+radius = 22.0
+prompt_height = 42.0

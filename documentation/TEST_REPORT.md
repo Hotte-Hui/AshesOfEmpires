@@ -120,3 +120,13 @@ resolved through `Symbols.pick`.
 
 **Still not covered:** human playtest and listening pass (≈70 synthesized sounds, two new scores), physical
 controller, motion quality judged by a person, other GPUs/1440p displays.
+
+## 8. Round 3 (2026-11-05) — after the second playtest
+| Layer | Result |
+|---|---|
+| Unit tests | **19 files, 153 cases, 11,221 checks — all passed** (new: `test_minigames.gd`: solver/hand solutions accepted, wrong moves refused, chess line sound, porter cycle, auto mode, placement) |
+| Autoplay, cinematics watched (43 s train transition, 24 s hall, finale) | **AUTOPLAY_PASS** |
+| Autoplay, skip + exploration | **AUTOPLAY_PASS** — 46 finds (Karsk 22, Berlin 24, incl. the 3 mini-games), 16/16 history cards |
+| Real-input, windowed, skip + exploration | **INPUTPLAY_PASS** in 314 s — every find reached by walking; the three mini-games solved through synthetic key presses (`demo_solve`) |
+| Exported .exe, real-input route | **INPUTPLAY_PASS** in 118 s |
+| Specialist checks | train: 0 rod-phase/travel mismatches over 1,104 frames, 0 off-grid, skip finished once; hall: 0 off-palette pixels in 12 final frames, selftest + rig check pass; mini-games: demo_solve shunting 16.3 s, chess 1.8 s, radio 8.4 s |

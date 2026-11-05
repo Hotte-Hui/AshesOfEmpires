@@ -373,7 +373,13 @@ func _explore_level(level_id: String) -> void:
 ## Space through whatever the interaction opened (find pages, history cards, chat lines) until it is over.
 func _drain_interaction(id: String) -> void:
 	var t := 0.0
+	var solved := {}
 	while Game.busy and t < 90.0:
+		# §12.8 mini-games solve themselves through synthetic key presses (demo_solve), exactly once each
+		for mg in get_tree().get_nodes_in_group("minigame"):
+			if is_instance_valid(mg) and mg.has_method("demo_solve") and not solved.has(mg.get_instance_id()):
+				solved[mg.get_instance_id()] = true
+				await mg.demo_solve()
 		await _tap(KEY_SPACE)
 		await _wait(0.35)
 		t += 0.45

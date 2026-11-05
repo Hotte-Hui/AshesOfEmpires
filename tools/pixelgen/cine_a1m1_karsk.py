@@ -11,7 +11,8 @@ Assets written to assets/cinematics/a1m1/karsk/ (all original, deterministic):
   fg.png                 1900x120  near-black foreground framing (crate stack, post, snow bank)  (p 1.15)
   loco.png / loco_hist.png (+_n,_e)  locomotive body facing left; neutral = fictional gear-and-wheat
                           emblem, _hist = red star + hammer & sickle (TECHNICAL_ARCHITECTURE 12.4)
-  loco_wheels.png        strip 8 frames: drivers, rods, crosshead (one wheel revolution)
+  loco_wheels.png        strip 60 frames (crop WHEELS_CROP): drivers, rods, crosshead, Walschaerts valve gear
+  wheel_pilot/_tender/_box.png  strips 8: small spoked wheels turning over one spoke period
   tender.png, gondola.png, boxcar.png   further train vehicles (+_n)
   tail_lamp.png (+_e)    red tail signal for the last wagon (the C-17 wagon)
   fx_puff.png            strip 12: chimney exhaust puff (expand, rise, thin out)
@@ -54,6 +55,26 @@ CHIMNEY = (40, 11)                          # chimney mouth in loco image (x cen
 WHISTLE = (198, 20)
 CYL_STEAM = (26, 98)                        # cylinder cocks (front, low)
 CAB_WINDOW = (232, 44, 16, 14)
+WHEEL_FRAMES = 60                           # frames per driver revolution (6 deg: 1.7 px of travel per frame)
+WHEELS_CROP = (20, 70, 228, 42)             # x, y, w, h of the running-gear strip inside the loco image
+MAIN_ROD = 82
+# Walschaerts valve gear (loco faces left: cylinders front-left, link behind the slide bars)
+LINK_C = (104, 88)                          # expansion link trunnion
+LINK_H = 6                                  # half length of the link
+RET_THROW = 2.6                             # return crank throw around the main axle
+DIE = -4                                    # die block position on the link (forward gear: upper half)
+SPINDLE_Y = 84                              # valve spindle / lever top
+RADIUS_Y = 86                               # radius rod joint on the combination lever
+LEVER_B = CROSSHEAD_Y + 6                   # lever foot (union link)
+LEVER_X = 64                                # combination lever (mid position)
+UNION = 10                                  # union link length (crosshead arm -> lever foot)
+# small rotating wheels drawn over the static ones of the vehicle images (x, y centre in that image)
+SMALL_WHEELS = {
+    'loco': [('wheel_pilot', 40, LOCO_H - 1 - 10)],
+    'tender': [('wheel_tender', x, 82) for x in (26, 54, 136, 164)],
+    'boxcar': [('wheel_box', x, 81) for x in (46, 150)],
+}
+SMALL_FRAMES = 8                            # frames over one spoke period
 
 
 # =========================================================================== sky
@@ -568,73 +589,159 @@ def make_loco(hist: bool):
     return L
 
 
+def _rod(F, a, b, col, hi=None, lo=None, hgt=0.9):
+    """A steel rod a->b: body colour, optional lit upper edge / dark lower edge (1 px each)."""
+    F.line(a[0], a[1], b[0], b[1], col, hgt=hgt)
+    if hi is not None:
+        F.line(a[0], a[1] - 1, b[0], b[1] - 1, hi, hgt=hgt)
+    if lo is not None:
+        F.line(a[0], a[1] + 1, b[0], b[1] + 1, lo, hgt=hgt)
+
+
+def gear_state(ang: float) -> dict:
+    """Positions of every moving part for wheel angle `ang` (radians, screen space). The scene script uses
+    the same formulas only through the frame index, so the strip *is* the kinematics."""
+    cx_m, cy = DRIVERS[2], WHEEL_CY
+    pins = [(wx + math.cos(ang) * CRANK, cy + math.sin(ang) * CRANK) for wx in DRIVERS]
+    mp = pins[2]
+    chx = mp[0] - math.sqrt(max(1.0, MAIN_ROD ** 2 - (mp[1] - CROSSHEAD_Y) ** 2))
+    # return crank: 90 deg ahead of the main crank, small throw around the axle
+    ra = ang - math.pi / 2
+    E = (cx_m + math.cos(ra) * RET_THROW, cy + math.sin(ra) * RET_THROW)
+    E0x = cx_m                                   # mid position (for the link swing)
+    th = math.asin(max(-0.9, min(0.9, (E[0] - E0x) / (LINK_H + 1.0))))
+    sx, sy = math.sin(th), math.cos(th)
+    foot = (LINK_C[0] + sx * LINK_H, LINK_C[1] + sy * LINK_H)
+    top = (LINK_C[0] - sx * LINK_H, LINK_C[1] - sy * LINK_H)
+    die = (LINK_C[0] + sx * DIE, LINK_C[1] + sy * DIE)
+    R = (die[0] - (LINK_C[0] - LEVER_X), RADIUS_Y)
+    B = (chx - UNION, LEVER_B)
+    T = (R[0] + (R[0] - B[0]) * (RADIUS_Y - SPINDLE_Y) / (LEVER_B - RADIUS_Y), SPINDLE_Y)
+    return {'pins': pins, 'chx': chx, 'E': E, 'foot': foot, 'top': top, 'die': die, 'R': R, 'B': B, 'T': T}
+
+
+def _driver(F, cx, cy, ang):
+    F.ellipse(cx, cy, WHEEL_R + 0.5, WHEEL_R + 0.5, NI[1], hgt=0.5)       # tyre (steel, dark)
+    F.ellipse(cx, cy, WHEEL_R - 1.2, WHEEL_R - 1.2, RD[0], hgt=0.45)      # red wheel-centre rim
+    F.ellipse(cx, cy, WHEEL_R - 2.6, WHEEL_R - 2.6, NI[0], hgt=0.2)       # see-through gaps
+    for s in range(10):                                                   # spokes (10, red)
+        a = ang + s * (2 * math.pi / 10)
+        F.line(cx + math.cos(a) * 2, cy + math.sin(a) * 2,
+               cx + math.cos(a) * (WHEEL_R - 2.5), cy + math.sin(a) * (WHEEL_R - 2.5), RD[1])
+    # counterweight (crescent) opposite the crank
+    ca = ang + math.pi
+    m, mx, my = F.ellipse_mask(cx + math.cos(ca) * 8, cy + math.sin(ca) * 8, 6.5, 6.5)
+    yy, xx = np.mgrid[0:m.shape[0], 0:m.shape[1]]
+    inside = ((xx + mx + 0.5 - cx) ** 2 + (yy + my + 0.5 - cy) ** 2) <= (WHEEL_R - 1.2) ** 2
+    F._put(m & inside, mx, my, RD[1], hgt=0.55)
+    # tyre rim light: warm upper-left (west glow), cold steel lower-right -- fixed in screen space
+    for a in range(0, 360, 6):
+        rx = cx + int(round(math.cos(math.radians(a)) * WHEEL_R))
+        ry = cy + int(round(math.sin(math.radians(a)) * WHEEL_R))
+        if 180 <= a <= 270:
+            F.px(rx, ry, CO[0] if a < 230 else ST[2])
+        elif a > 270:
+            F.px(rx, ry, ST[1])
+    F.ellipse(cx, cy, 2.6, 2.6, ST[2], hgt=0.8)                            # hub
+    F.px(cx - 1, cy - 1, ST[4])
+
+
 def make_wheels():
-    """8 frames of one revolution: 5 coupled drivers (red centres, counterweights), coupling rod,
-    main rod + crosshead + piston rod. Frame k = rotation angle k*45 deg (wheel turning anticlockwise as the
-    engine moves left)."""
+    """WHEEL_FRAMES frames of one driver revolution, cropped to WHEELS_CROP: 5 coupled drivers (red centres,
+    counterweights), coupling rod, main rod, crosshead in its slide bars, piston rod, and the Walschaerts valve
+    gear (return crank, eccentric rod, swinging expansion link, radius rod, combination lever, union link,
+    valve spindle) -- all derived from the one wheel angle, so rods and valve gear are always in phase.
+    Frame k = rotation angle -k * 360/WHEEL_FRAMES deg (anticlockwise on screen: the engine runs left)."""
     frames = []
     W, H = LOCO_W, LOCO_H
-    for k in range(8):
+    x0, y0, cw, chh = WHEELS_CROP
+    for k in range(WHEEL_FRAMES):
         F = Layer(W, H, 'wheels%d' % k)
-        ang = -k * (2 * math.pi / 8)            # moving left -> anticlockwise in screen space
-        for i, wx in enumerate(DRIVERS):
-            cx, cy = wx, WHEEL_CY
-            F.ellipse(cx, cy, WHEEL_R + 0.5, WHEEL_R + 0.5, NI[1], hgt=0.5)       # tyre (steel, dark)
-            F.ellipse(cx, cy, WHEEL_R - 1.2, WHEEL_R - 1.2, RD[0], hgt=0.45)      # red wheel-centre rim
-            F.ellipse(cx, cy, WHEEL_R - 2.6, WHEEL_R - 2.6, NI[0], hgt=0.2)       # see-through gaps
-            # spokes (10, red) -> rotate with ang
-            for s in range(10):
-                a = ang + s * (2 * math.pi / 10)
-                F.line(cx + math.cos(a) * 2, cy + math.sin(a) * 2,
-                       cx + math.cos(a) * (WHEEL_R - 2.5), cy + math.sin(a) * (WHEEL_R - 2.5), RD[1])
-            # counterweight (crescent) opposite the crank
-            ca = ang + math.pi
-            m, mx, my = F.ellipse_mask(cx + math.cos(ca) * 8, cy + math.sin(ca) * 8, 6.5, 6.5)
-            outer, ox, oy = F.ellipse_mask(cx, cy, WHEEL_R - 1.2, WHEEL_R - 1.2)
-            big = np.zeros((H, W), bool)
-            big[max(0, my):my + m.shape[0], max(0, mx):mx + m.shape[1]] |= m[max(0, -my):, max(0, -mx):][
-                :min(m.shape[0], H - my), :min(m.shape[1], W - mx)]
-            ob = np.zeros((H, W), bool)
-            ob[oy:oy + outer.shape[0], ox:ox + outer.shape[1]] |= outer[:min(outer.shape[0], H - oy),
-                                                                         :min(outer.shape[1], W - ox)]
-            F._put(big & ob, 0, 0, RD[1], hgt=0.55)
-            # tyre highlight: warm on the upper-left (west glow), cold steel elsewhere
-            for a in range(0, 360, 6):
-                rx = cx + int(round(math.cos(math.radians(a)) * WHEEL_R))
-                ry = cy + int(round(math.sin(math.radians(a)) * WHEEL_R))
-                if 180 <= a <= 270:
-                    F.px(rx, ry, CO[0] if a < 230 else ST[2])
-                elif a > 270:
-                    F.px(rx, ry, ST[1])
-            F.ellipse(cx, cy, 2.6, 2.6, ST[2], hgt=0.8)                            # hub
-            F.px(cx - 1, cy - 1, ST[4])
-        # crank pins (all coupled in phase)
-        pins = [(wx + math.cos(ang) * CRANK, WHEEL_CY + math.sin(ang) * CRANK) for wx in DRIVERS]
-        # coupling rod: thick steel bar through all pins
-        for (ax, ay), (bx, by) in zip(pins[:-1], pins[1:]):
+        ang = -k * (2 * math.pi / WHEEL_FRAMES)
+        g = gear_state(ang)
+        # slide bars behind the crosshead + the expansion-link bracket (static parts on this strip)
+        F.hline(60, CROSSHEAD_Y - 5, 38, NI[2])
+        F.hline(60, CROSSHEAD_Y + 4, 38, NI[2])
+        F.rect(LINK_C[0] - 3, LINK_C[1] - 2, 7, 5, NI[1], hgt=0.6)        # link bracket
+        for wx in DRIVERS:
+            _driver(F, wx, WHEEL_CY, ang)
+        pins = g['pins']
+        for (ax, ay), (bx, by) in zip(pins[:-1], pins[1:]):               # coupling rod (thick steel bar)
             for d in (-1, 0, 1):
                 F.line(ax, ay + d, bx, by + d, NI[3] if d else ST[2])
             F.line(ax, ay - 1, bx, by - 1, ST[3])
         for (px_, py_) in pins:
             F.ellipse(px_, py_, 2.2, 2.2, ST[3], hgt=0.95)
-        # main rod: crosshead (slides horizontally) -> main pin (3rd driver)
-        mp = pins[2]
-        rod_len = 82
-        chx = mp[0] - math.sqrt(max(1.0, rod_len ** 2 - (mp[1] - CROSSHEAD_Y) ** 2))
-        F.line(chx, CROSSHEAD_Y, mp[0], mp[1], ST[2])
-        F.line(chx, CROSSHEAD_Y - 1, mp[0], mp[1] - 1, ST[3])
-        F.line(chx, CROSSHEAD_Y + 1, mp[0], mp[1] + 1, NI[3])
-        F.rect(int(chx) - 4, CROSSHEAD_Y - 3, 8, 6, NI[3], hgt=0.85)                 # crosshead
-        F.hline(int(chx) - 4, CROSSHEAD_Y - 3, 8, ST[3])
-        F.hline(52, CROSSHEAD_Y - 5, 46, NI[2])                                      # slide bars
-        F.hline(52, CROSSHEAD_Y + 4, 46, NI[2])
-        F.hline(52, CROSSHEAD_Y - 5, 46, ST[1])
-        F.line(40, CROSSHEAD_Y, chx - 4, CROSSHEAD_Y, ST[3])                         # piston rod
-        # valve gear hint (eccentric rod from the main pin, small)
-        er = (mp[0] + math.cos(ang + 1.6) * 3, mp[1] + math.sin(ang + 1.6) * 3)
-        F.line(er[0], er[1], er[0] - 30, WHEEL_CY - 12, NI[3])
-        frames.append(F)
+        chx, mp = g['chx'], pins[2]
+        # piston rod, crosshead, main rod
+        F.line(58, CROSSHEAD_Y, chx - 4, CROSSHEAD_Y, ST[3])
+        F.line(58, CROSSHEAD_Y + 1, chx - 4, CROSSHEAD_Y + 1, NI[2])
+        _rod(F, (chx, CROSSHEAD_Y), mp, ST[2], hi=ST[3], lo=NI[3])
+        F.rect(int(round(chx)) - 4, CROSSHEAD_Y - 3, 8, 7, NI[3], hgt=0.85)    # crosshead
+        F.hline(int(round(chx)) - 4, CROSSHEAD_Y - 3, 8, ST[3])
+        F.px(int(round(chx)) - 4, CROSSHEAD_Y - 2, CO[0])
+        F.rect(int(round(chx)) - 2, CROSSHEAD_Y + 4, 3, 3, NI[3])             # crosshead arm (union link)
+        F.hline(60, CROSSHEAD_Y - 5, 38, ST[1])                              # upper bar edge over it
+        # valve gear (outermost): return crank -> eccentric rod -> link -> radius rod -> lever -> spindle
+        E, foot, top, die, R, B, T = g['E'], g['foot'], g['top'], g['die'], g['R'], g['B'], g['T']
+        _rod(F, mp, E, ST[3])                                                # return crank
+        _rod(F, E, foot, ST[1])                                              # eccentric rod
+        _rod(F, top, foot, ST[2], lo=NI[2])                                  # expansion link (slotted arc)
+        F.ellipse(LINK_C[0], LINK_C[1], 1.6, 1.6, ST[3], hgt=1.0)            # trunnion
+        _rod(F, die, R, ST[1])                                               # radius rod
+        F.px(int(round(die[0])), int(round(die[1])), ST[4])                  # die block
+        _rod(F, (chx - 2, CROSSHEAD_Y + 5), B, NI[3])                        # union link
+        _rod(F, B, T, ST[2])                                                 # combination lever
+        F.line(58, SPINDLE_Y, T[0], SPINDLE_Y, ST[2])                        # valve spindle
+        F.ellipse(E[0], E[1], 1.3, 1.3, ST[4], hgt=1.0)
+        C = Layer(cw, chh, 'wheels%d' % k)
+        C.c = F.c[y0:y0 + chh, x0:x0 + cw].copy()
+        C.hgt = F.hgt[y0:y0 + chh, x0:x0 + cw].copy()
+        C.nrm = F.nrm[y0:y0 + chh, x0:x0 + cw].copy()
+        C.em = F.em[y0:y0 + chh, x0:x0 + cw].copy()
+        frames.append(C)
     return frames
+
+
+def _small_wheel(style: str, k: int) -> Layer:
+    """One frame of a small spoked wheel, centre (11, 11) of a 23x23 canvas, drawn exactly like the static
+    wheel of the vehicle image it covers, spokes turned by k/SMALL_FRAMES of one spoke period."""
+    F = Layer(23, 23, '%s%d' % (style, k))
+    c = 11
+    if style == 'wheel_pilot':                       # loco leading truck (make_loco)
+        n, rot = 8, -k * (2 * math.pi / 8) / SMALL_FRAMES
+        F.ellipse(c, c, 10.5, 10.5, NI[1], hgt=0.5)
+        F.ellipse(c, c, 9.0, 9.0, RD[0], hgt=0.45)
+        F.ellipse(c, c, 7.6, 7.6, NI[0], hgt=0.2)
+        F.ellipse(c, c, 2.4, 2.4, ST[2], hgt=0.7)
+        for s in range(n):
+            a = rot + s * 2 * math.pi / n
+            F.line(c, c, c + math.cos(a) * 8, c + math.sin(a) * 8, RD[1])
+    elif style == 'wheel_tender':                    # make_tender bogies
+        n, rot = 8, -k * (2 * math.pi / 8) / SMALL_FRAMES
+        F.ellipse(c, c, 9.5, 9.5, NI[1], hgt=0.5)
+        F.ellipse(c, c, 8.0, 8.0, RD[0], hgt=0.45)
+        F.ellipse(c, c, 6.6, 6.6, NI[0], hgt=0.2)
+        for s in range(n):
+            a = rot + s * 2 * math.pi / n
+            F.line(c, c, c + math.cos(a) * 6.5, c + math.sin(a) * 6.5, RD[0])
+        F.ellipse(c, c, 2.2, 2.2, ST[2], hgt=0.8)
+        for a in range(200, 271, 10):
+            F.px(c + int(round(math.cos(math.radians(a)) * 9)), c + int(round(math.sin(math.radians(a)) * 9)), CO[0])
+    else:                                            # make_boxcar (9 dark spokes)
+        n, rot = 9, -k * (2 * math.pi / 9) / SMALL_FRAMES
+        F.ellipse(c, c, 9.5, 9.5, NI[1], hgt=0.5)
+        F.ellipse(c, c, 8, 8, NI[2], hgt=0.45)
+        F.ellipse(c, c, 2.5, 2.5, ST[2], hgt=0.7)
+        for s in range(n):
+            a = rot + s * 2 * math.pi / n
+            F.line(c, c, c + math.cos(a) * 7, c + math.sin(a) * 7, NI[3])
+    return F
+
+
+def make_small_wheels() -> dict:
+    return {st: [_small_wheel(st, k) for k in range(SMALL_FRAMES)]
+            for st in ('wheel_pilot', 'wheel_tender', 'wheel_box')}
 
 
 def make_tender():
@@ -869,6 +976,8 @@ def build():
     info['loco'] = lib.save(make_loco(False), DIR + '/loco', normal=True)
     info['loco_hist'] = lib.save(make_loco(True), DIR + '/loco_hist', normal=True)
     info['loco_wheels'] = lib.strip(make_wheels(), DIR + '/loco_wheels', normal=True)
+    for k, frames in make_small_wheels().items():
+        info[k] = lib.strip(frames, DIR + '/' + k, normal=True)
     info['tender'] = lib.save(make_tender(), DIR + '/tender', normal=True)
     info['gondola'] = lib.save(make_gondola(), DIR + '/gondola', normal=True)
     info['boxcar'] = lib.save(make_boxcar(), DIR + '/boxcar', normal=True)
