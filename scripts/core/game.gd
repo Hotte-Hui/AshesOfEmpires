@@ -12,6 +12,7 @@ const LEVELS := {
 	"L_M1_Archive": "res://scenes/levels/L_M1_Archive.tscn",
 	"L_M1_HallReveal": "res://scenes/levels/L_M1_HallReveal.tscn",
 	"L_M1_Parade": "res://scenes/levels/L_M1_Parade.tscn",
+	"L_M1_Plaza": "res://scenes/levels/L_M1_Plaza.tscn",
 	"L_Test": "res://scenes/levels/L_Test.tscn",
 }
 const ENTRY_SPAWN := {"L_A1_Railyard": "SP_A1_Platform", "L_M1_Archive": "SP_M1_Arrival"}
@@ -43,7 +44,9 @@ var ui: Node = null
 var level: Node = null
 var player: Node = null
 var input_locked := false
-var interact_ready_at := 0      # ticks (ms); player interact presses before this are ignored
+var interact_ready_at := 0
+var side_level := false         # an optional walkable level outside the Story scene chain (the parade plaza)
+var _plaza_after_hall := false      # ticks (ms); player interact presses before this are ignored
 var busy := false
 var in_cinematic := false
 var args: Dictionary = {}
@@ -478,6 +481,8 @@ func interact(it: Node) -> void:
 			await _do_discover(it)
 		"chat":
 			await _do_chat(it)
+		"exit":
+			await _do_exit(it)
 	busy = false
 	input_locked = false
 	# The key press that closed the last line/panel must not immediately trigger the next interaction.
@@ -792,8 +797,13 @@ func _after_story_change() -> void:
 	for cid in Story.pending_cinematics():
 		var skipped := await _play_cinematic_by_id(str(cid))
 		Story.consume_cinematic(str(cid), skipped)
+	if _plaza_after_hall:           # after the Great Hall chain: Konrad stands on the parade plaza (explorable)
+		_plaza_after_hall = false
+		side_level = true
+		await goto_level("L_M1_Plaza", "SP_Plaza_Start", true)
+		return
 	var target := _story_scene()
-	if level and str(level.get("level_id")) != target:
+	if level and str(level.get("level_id")) != target and not side_level:
 		if target == "L_X1_Montage":
 			await _finale_flow()
 		else:
@@ -930,6 +940,9 @@ func _cin_hall() -> bool:
 	hall.queue_free()
 	await _cin_parade()   # second Great Hall scene (round 4): the parade on the plaza, same skip chain
 	camera.enabled = true
+	if _plaza_enabled():  # round 5: continue onto the walkable plaza instead of cutting back to the archive
+		_plaza_after_hall = true
+		return _end_cinematic()   # screen stays black; _after_story_change() loads the plaza
 	if prev_level and is_instance_valid(prev_level):
 		prev_level.visible = true
 		prev_level.process_mode = Node.PROCESS_MODE_INHERIT
@@ -939,6 +952,26 @@ func _cin_hall() -> bool:
 	var skipped := _end_cinematic()
 	await fade_in(0.7)
 	return skipped
+
+
+## The walkable parade plaza is optional gameplay; automated runs only visit it in their explore modes.
+func _plaza_enabled() -> bool:
+	if not ResourceLoader.exists(str(LEVELS.get("L_M1_Plaza", ""))):
+		return false
+	if auto and not args.has("autoplay-explore"):
+		return false
+	if args.has("inputplay") and not args.has("inputplay-explore"):
+		return false
+	return true
+
+
+## Exit of a side level (e.g. "Zurück ins Archiv"): back into the Story scene chain.
+func _do_exit(it: Node) -> void:
+	var target := str(it.get("target_level"))
+	if target == "":
+		return
+	side_level = false
+	await goto_level(target, str(it.get("target_spawn")), true)
 
 
 ## Later the same day: the regime's military parade on the plaza (scenes/levels/L_M1_Parade.tscn, 47 s, 8 shots).
@@ -1052,6 +1085,10 @@ func _finale_flow() -> void:
 	await fade_out(1.0)
 	_title.visible = false
 	_caption.visible = false
+	# closing credits roll with production credits and every source of the history cards (round 5)
+	if not auto and ui and ui.has_method("play_end_credits"):
+		await ui.play_end_credits()
+	_skip = false
 	in_cinematic = false
 	if not auto:
 		show_main_menu()

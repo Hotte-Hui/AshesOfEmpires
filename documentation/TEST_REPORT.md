@@ -130,3 +130,12 @@ controller, motion quality judged by a person, other GPUs/1440p displays.
 | Real-input, windowed, skip + exploration | **INPUTPLAY_PASS** in 314 s — every find reached by walking; the three mini-games solved through synthetic key presses (`demo_solve`) |
 | Exported .exe, real-input route | **INPUTPLAY_PASS** in 118 s |
 | Specialist checks | train: 0 rod-phase/travel mismatches over 1,104 frames, 0 off-grid, skip finished once; hall: 0 off-palette pixels in 12 final frames, selftest + rig check pass; mini-games: demo_solve shunting 16.3 s, chess 1.8 s, radio 8.4 s |
+
+## 9. Rounds 4–5 (2026-11-05 night)
+| Layer | Result |
+|---|---|
+| Unit tests | **22 files, 172 cases, 12,855 checks — all passed** (new: photo mode, end credits, plaza consistency) |
+| Autoplay, skip + exploration | **PASS** — Karsk 22, archive 24, **plaza 15** finds, 16/16 cards; plaza left through its exit |
+| Autoplay, watched (reveal 24 s + parade 47 s chain) | **PASS** |
+| Real-input, windowed, skip + exploration | **PASS** in 453 s — the plaza walked and explored by key presses, exit back to the archive, end-credits roll skipped with Esc |
+| Exported .exe, real-input, skip + exploration | **PASS** in 446 s |

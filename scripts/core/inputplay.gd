@@ -166,12 +166,29 @@ func _play_route(route: Array, level_id: String) -> bool:
 		await _settle(oid)
 		if not failures.is_empty():
 			return false
+		if Game.side_level:
+			await _visit_side_level_keys()
+			if not failures.is_empty():
+				return false
 	return true
 
 
 func _ending() -> bool:
 	var mm: Node = ui.get("main_menu")
-	if not await _until(func(): return mm.is_open, 120.0):
+	# the closing credits roll (≈84 s) is skipped with Esc, like a player would
+	var credits: Node = ui.get("end_credits")
+	var waited := 0.0
+	while not mm.is_open and waited < 180.0:
+		if credits and credits.visible:
+			await _wait(1.0)
+			await _shoot("end_credits")
+			await _tap(KEY_ESCAPE)
+			await _wait(1.0)
+			waited += 2.0
+			continue
+		await _wait(0.25)
+		waited += 0.25
+	if not mm.is_open:
 		return _fail("never returned to the main menu after the finale")
 	if not Story.flag("slice_finished"):
 		_fail("slice_finished flag missing after the finale")
@@ -331,6 +348,30 @@ func _settle(tag: String) -> void:
 		await _wait(0.2)
 		t += 0.2
 	_fail("game did not settle after " + tag)
+
+
+# ------------------------------------------------------------------ side levels (parade plaza)
+func _visit_side_level_keys() -> void:
+	if not await _until(_gameplay_ready, 30.0):
+		_fail("no control on the side level")
+		return
+	var lid := str(Game.level.level_id)
+	await _shoot("side_" + lid)
+	if Game.args.has("inputplay-explore"):
+		await _explore_level(lid)
+	var ex: Node = null
+	for it in get_tree().get_nodes_in_group("interactables"):
+		if it.is_inside_tree() and str(it.kind) == "exit":
+			ex = it
+	if ex == null:
+		_fail("side level %s has no exit" % lid)
+		return
+	if not await _walk_to_focus(ex, 60.0):
+		_fail("could not reach the exit of " + lid)
+		return
+	await _tap(KEY_E)
+	if not await _until(func(): return not Game.side_level and _gameplay_ready(), 40.0):
+		_fail("the exit of %s did not lead back" % lid)
 
 
 # ------------------------------------------------------------------ exploration pass (§12, --inputplay-explore)

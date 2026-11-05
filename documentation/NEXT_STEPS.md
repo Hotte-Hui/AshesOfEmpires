@@ -30,10 +30,9 @@ with all 43 optional finds and chats ≈ 25–30 min (estimates; no human playte
 - Test on a mid-range and an integrated GPU (only an RTX 4090 so far); 1440p display check.
 
 ## 3b. Requested by the user, not done yet
-- **End-credits scene** listing all sources of the history cards (data is in `data/explore/history_*.json`;
-  `SHOW_SOURCES` in `scripts/ui/discovery_view.gd` stays false).
-- **Playable Great Hall plaza** (user: "imposanter Auftritt … mit Aufgaben und Minigames"): a walkable Hall-district
-  level after the reveal, with tasks and mini-games (STORY_BIBLE ch. 2 lists "B (Hall district)").
+- Plaza polish: a mini-game or small task on the plaza (user wished for "Aufgaben und Minigames" there), more easter
+  eggs (only one so far), a portrait for the press photographer, close-up brightness vs. the evening art.
+- Parade: tribune officials are tiny (~14 px); possible pipeline-compile hitch on first play.
 - **Merge branch `kapitel-3`** (cloud session: Chapter-3 story data, level shells without art, Veltrava finds,
   E2E drivers) — follow `documentation/MERGE_NOTES_C3.md` on that branch, then build the Veltrava art.
 - `data/v3/cinematics.json` still lists the hall shots as 3/5/3 s (now 5.5/9/9.5 s) — informational only; update

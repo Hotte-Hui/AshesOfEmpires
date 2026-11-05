@@ -39,10 +39,15 @@ edit the part of the owning area and re-run the script.
 - [characters](#part-characters)
 - [portraits](#part-portraits)
 - [great_hall](#part-great_hall)
+- [parade](#part-parade)
+- [env_plaza](#part-env_plaza)
+- [explore_plaza](#part-explore_plaza)
 - [trans_a1m1](#part-trans_a1m1)
 - [trans_finale](#part-trans_finale)
 - [ui](#part-ui)
 - [explore_system](#part-explore_system)
+- [photo_mode](#part-photo_mode)
+- [credits](#part-credits)
 - [audio](#part-audio)
 - [story](#part-story)
 
@@ -1064,6 +1069,164 @@ max 2.2 ms); `--selftest` PASS (finished once, 7 cues in order, locale keys, ove
 * `data/v3/cinematics.json` LS_M1_Hall still lists the old 3/5/3 s shot durations (canonical data, not owned by hall).
 
 ---
+<a id="part-parade"></a>
+
+## Asset manifest part — parade (L_M1_Parade, 2026-11-05)
+
+Second Great Hall cinematic, played right after `L_M1_HallReveal`: later that day the regime stages a military
+parade on the plaza in front of the Great Hall. Mode C (3D pixel render, low-res world path), palette `berlin`,
+47 s, 8 shots with hard cuts. All assets are original and generated deterministically by the scripts below
+(licence: project-owned, no third-party material, no downloads).
+
+### Scene and code
+| Path | Content |
+|---|---|
+| `scenes/levels/L_M1_Parade.tscn` | root `Node3D` (script `parade_level.gd`), exports `level_id` L_M1_Parade, `mode` 3d, `protagonist` none, `grade_preset` hall_3d, `ambience` amb_berlin_street, `music` mus_parade |
+| `scripts/levels/parade/parade_level.gd` | API like the reveal: `signal finished` (once), `signal cue(key)`, `play/skip/seek/set_paused/set_fade/get_time/get_duration/get_shot_id`; reuses `hall_builder.gd`, `hall_people.gd`, `hall_camera_rig.gd`, `pixel3d_post.gdshader` read-only; `own_sfx` plays the `parade.sfx.*` cues via `Audio.sfx("parade_*")` |
+| `scripts/levels/parade/parade_shots.gd` | shot table p1–p8 (un-rotated camera, lens-shift tilts, eased moves, hard cuts) |
+| `scripts/levels/parade/parade_set.gd` | tribune, barrier, loudspeakers, 27 searchlight pillars, 7 vehicles (4 tanks, 3 half-tracks), 5 jets, MultiMesh crowd (~13.9k), formations (1.8k), 6 marching blocks (720), guards, officials, dust puffs, cold spot lights |
+| `assets/architecture/parade/parade_figures.gdshader` | MultiMesh billboard shader: per-instance LOD strip chosen from the projected height, feet snapped to whole pixels, 1 texel = 1 px (largest strip may scale ×2–3 for foreground silhouettes), toon light, flag 0.55 |
+
+### Generated art — `tools/pixelgen/gen_parade.py` (`py -3 -P tools/pixelgen/gen_parade.py`)
+| File | Content |
+|---|---|
+| `assets/architecture/parade/figures.png` + `figures.json` | 1368×399 atlas, 13 LOD strips (figure height 2–104 px) × 18 slots: marching soldier profile (4 frames), soldier front, guard front, 6 civilians from behind, child with limp flag, 2 grey officials, 3 dust puffs. Faces of troops = shadow band (anonymous) |
+| `assets/architecture/parade/flag_limp.png` / `flag_limp_hist.png` | the child's limp hand flag (neutral cloth / historical variant via `Symbols.pick`) |
+| `assets/architecture/parade/sky_parade.png`, `fog_parade.png` | 1024×720 cold overcast dusk matte and cold fog gradient (same screen mapping as the hall's sky, anchor 512,430) |
+
+Insignia (§12.4): tribune, portico and march banners use the hall builder's Symbols-resolved materials
+(`banner_portico`, `flag_street`); neutral mode shows the fictional Reichssiegel. No SS runes, no salutes.
+
+### Generated audio — `tools/audiogen/parade_audio.py` (`py -3 -P tools/audiogen/parade_audio.py`)
+| File | Length | Content |
+|---|---|---|
+| `assets/audio/music/mus_parade.wav` | 47.0 s one-shot | cold drum pulse (57 bpm bass drum, dry side-drum figure) over a low brass C/Db drone, tritone at the tribune, heartbeat in the crowd shot, silence under jets/Konrad, distant echo over the cleared street |
+| `assets/audio/sfx/parade_boots.wav` | 6 s | boots in step on packed snow |
+| `assets/audio/sfx/parade_tanks.wav` | 7 s | diesel rumble, track clatter, rattling window glass |
+| `assets/audio/sfx/parade_jets.wav` | 5 s | low jet formation pass |
+| `assets/audio/sfx/parade_pa_chime.wav` | 2.4 s | two-tone loudspeaker gong with plaza echo |
+
+### Text — `data/locale/de_parade.json`
+Loudspeaker lines (`parade.cue.loudspeaker_1..4`), Konrad's inner voice (`parade.cue.konrad`), sound-cue labels,
+shot titles.
+
+### Tests — `tests/visual/parade_harness.tscn` / `.gd`
+`--selftest` (headless): finished once (end + skip), skip idempotent, cues complete/in order with locale text,
+7–9 shots, 40–50 s, seek, banner texture follows `Symbols.enabled()`, viewport settings restored.
+Windowed: frames of every shot (`--out=DIR --symbols=0|1`), exact palette check, `--realtime=47` frame cost.
+
+---
+<a id="part-env_plaza"></a>
+
+## Asset manifest part — plaza-env (L_M1_Plaza art, 2026-11-05)
+
+Walkable level "Platz vor der Großen Halle" after the parade cinematic: evening, snow, palette `berlin`, Mode B
+(oblique 2.5D like Karsk), world 1920×360. All assets are original and generated deterministically by the scripts
+below (licence: project-owned, no third-party material, no downloads). Level root (owned by plaza-explore):
+`scenes/levels/L_M1_Plaza.tscn` with `art_manifest = res://assets/environments/hall_plaza/scene.json`.
+
+### Generators
+| Command | Writes |
+|---|---|
+| `py -3 -P tools/pixelgen/env_plaza.py [--preview=DIR]` | everything under `assets/environments/hall_plaza/` incl. `scene.json`; runs the hotspot check (inside walk band, outside collisions, ≥ 26 px in the oblique metric dy×1.6) and the palette check; optional software previews |
+| (module) `tools/pixelgen/env_plaza_sprites.py` | people painters (spectators from behind, guards front, marching soldiers 8-frame step), props, actor sheets, fx strips |
+| `py -3 -P tools/audiogen/plaza_sfx.py` | `assets/audio/sfx/plaza_march_loop.wav` (8 s seamless loop, `smpl` chunk), `plaza_tank_pass.wav` (9 s), `plaza_shutter.wav` (0.6 s) |
+
+Read-only reuse: `pg.py`, `env_berlin_insignia.py` (eagle / swastika masks), `env_berlin_kit.reichssiegel_mask`,
+`env_karsk_lib.figure` (vendor, tank crewman; off-palette pixels snapped), `scripts/levels/karsk/karsk_actor.gd` (base).
+
+### Layers (`scene.json` → LayerStack)
+| File | Parallax / z | Content |
+|---|---|---|
+| `sky.png` | 0.12 / -100 | overcast dusk, cloud base lit by the searchlights, faint afterglow |
+| `fx/beams.png` (12 frames, 3 fps, alpha 0.5) | 0.12 / -95 | 12 searchlight pillars ("Lichtdom"), slow sway |
+| `hall.png` + `_n/_e`, `hall_hist.png` | 0.12 / -90 | Great Hall: block with pilasters and 8 banners, portico with nine piers and the state eagle, drum colonnade, ribbed patina dome, lantern with the (plain) eagle above the globe, warning lights |
+| `far_plaza.png` + `_n/_e`, `far_plaza_hist.png` | 0.45 / -80 | tribune (banners, officials, lectern, floodlights), standing formations, flag masts |
+| `ground.png` + `_n/_e` | 1 / -16 | avenue setts, guard strip, crowd strip, pavement with walking band and snow ridges, kerb, street with tram rails, manholes, lamp reflections, cleared lot |
+| `plaza_mid.png` + `_n/_e` | 1 / -14 | guards facing the crowd, striped trestle barrier with sign board, 3 flood masts, chain line of the lot |
+| `street_back.png` + `_n/_e` | 1 / -13 | side street to the archive, two tenements (sealed family door, shop shutter, balcony, lit windows, mansard, chimneys), fire wall of the cleared block |
+| `fg_frame.png` | 1.25 / 60 | dark snow mounds and bollards at the bottom edge |
+
+Decals: `props/window_life.png` (8 frames, emission), `props/notice_door.png` (+`_hist`), `props/banner_near.png`
+(6 frames, +`_hist`), `props/crowd_1..7.png` (4 frames, 2 fps, playfield, base_y 266).
+Props (y-sorted, collision where in the walk band): `lamp_post` ×2, `tram_stop`, `litfass` (+`_hist`), `loudspeaker`,
+`children` (+`_hist`), `banner_mast`, `vendor` (emission), `photographer`, `tank_parked`, `barrel_guard` (emission),
+`rubble_a`, `rubble_b`. FX strips: `fx/smoke.png`, `fx/steam.png`, `fx/exhaust.png`; snow and two fog bands.
+
+### Actors (scenes/levels/plaza, scripts/levels/plaza)
+| Scene | Behaviour |
+|---|---|
+| `PlazaParade.tscn` / `plaza_parade.gd` | endless procession left→right at 20 px/s, in step (7 fps): standard bearers (`actors/standard.png` + `_hist` via `Symbols.pick`), blocks of 4×9 anonymous helmeted soldiers (`actors/march_block.png`), tanks (`actors/tank.png`, exhaust puffs); z -15 between ground and guards. Drum/boots loop via `Audio.sfx_loop("plaza_march_loop", "plaza_march", dB)` following the nearest block (−9…−26 dB), stopped on exit; `plaza_tank_pass` when a tank comes on screen |
+| `PlazaFlash.tscn` / `plaza_flash.gd` | the photographer's flash every 8–14 s (additive star + 0.3 s cold light, `plaza_shutter`); weak with `reduced_motion`, never a strobe |
+
+### Contract data
+Spawn `SP_Plaza_Start` (64,300). Hotspots (all inside the walk band y 270/276–352): `exit_archive`,
+`exp_pz_tram_stop`, `exp_pz_window`, `exp_pz_family_door`, `exp_pz_poster`, `exp_pz_loudspeaker`, `exp_pz_children`,
+`exp_pz_guard`, `exp_pz_barrier`, `exp_pz_tribune` (x 1000: hall + tribune centred on screen), `exp_pz_banner`,
+`exp_pz_vendor`, `exp_pz_photographer`, `exp_pz_tank`, `exp_pz_rubble`; `hotspot_info` gives a marker point and a
+description of the visible object for each. Lights: 2 street lamps, neighbours' window, vendor brazier, lot fire
+barrel (warm focals), 3 cold flood masts, tribune floods.
+
+### Insignia (§12.4) and tone
+Neutral base files show the fictional Reichssiegel (black disc, white pillar) or a plain eagle; `_hist` twins show
+the historical banners / wreathed eagle. The lantern figure is a plain eagle on the globe in both modes. Troops are
+anonymous (helmet shadow over the eyes), the crowd is seen from behind, no salutes, no fanfare in the audio.
+
+### Palette
+All colour pixels are `berlin` palette entries plus the project's story-accent red ramp (`sepia.red`:
+##4A1712 #7A2A26 #A8382E #C8503C), used only for historical banner cloth and the wax seal; binary alpha everywhere
+(checked by `env_plaza.py`).
+
+### Text
+`data/locale/de_env_plaza.json`: area name, time of day, short names of the 15 spots (`env.plaza.*`).
+
+---
+<a id="part-explore_plaza"></a>
+
+## Asset manifest part -- explore_plaza (exploration on the plaza before the Great Hall during the parade, Konrad)
+
+All files below are **original works** made for this project.  Close-ups are generated procedurally by
+`tools/pixelgen/explore_plaza.py`, which reuses (read-only) the close-up toolkit of `tools/pixelgen/explore_berlin.py`
+(tone-space Canvas, masks, 3x5/5x7 bitmap fonts, fictional Reichssiegel, eagle and swastika bitmaps) and the
+shared `pg.py` (palettes, Bayer dither, noise).  Nothing was copied, traced or sampled from
+`documentation/references/` or any other source; no third-party assets, fonts or textures.  All German text was
+written for this project.
+
+* Licence / rights: project-owned original work, freely redistributable with the game.
+* Provenance: deterministic generator (seeds = crc32 of `plaza.<name>`; re-running gives byte-identical files):
+  `py -3 -P tools/pixelgen/explore_plaza.py [--preview DIR] [names...]`.
+* Date: 2026-11-05.  Size: 240 x 150 px each, pixel art 1:1, shown x3 by the DiscoveryView (TECHNICAL_ARCHITECTURE
+  12.1).  No normal/emission maps (UI images).
+* Palettes: the Berlin close-up ramps of explore_berlin.py (`berlin` snow/stone/steel/violet/patina/glow, `sepia`
+  greys and red, `archive` paper/ink/wood/blue/amber, `green`, `graphite`); the generator reports any colour
+  outside them (none).  Light: the parade evening of `hall_plaza` (snow clouds, searchlight shafts of the
+  Lichtdom, lamp-lit walls), warm accents only at the brazier, the fire barrel and the lit window.
+* Insignia (TECHNICAL_ARCHITECTURE 12.4): neutral file = fictional Reichssiegel; `*_hist.png` = real historical
+  insignia, chosen at runtime by `Symbols.pick()` (`--symbols=0|1`).  Only in-world regime iconography inside the
+  critical narrative (the parade poster, the facade banners, the office stamp on the eviction order); never UI,
+  rewards or the player's side.  Like env's `banner_near`, the neutral banners are slate grey, `_hist` red.
+
+| File (`assets/explore/plaza/`) | Find (`data/explore/plaza.json`) | Content |
+|---|---|---|
+| `tram_stop.png` | plaza.tram_stop | stop disc, closed route 74, typed notice "Sonderfahrten für Umsiedler … Güterbahnhof West" |
+| `poster.png` / `poster_hist.png` | plaza.poster | parade poster on the Litfass column: dome silhouette, emblem (neutral / historical), programme, rubbed-out pencil house number |
+| `vendor.png` | plaza.vendor (easter egg) | chestnut drum on a brazier, chalkboard "Kinder mit roter Nase 20 Pf", cone folded from an old city map |
+| `loudspeaker.png` | plaza.loudspeaker | three-horn loudspeaker mast with snow caps, cables, crows, banner edge |
+| `barrier.png` | plaza.barrier | red-white trestle barrier, chain, sign "Neuordnungsbezirk – Aufstellung nach Hausnummern", residents behind |
+| `tank.png` | plaza.tank | parked tank in the cleared courtyard: snow on the hull, track, bent carpet-beating bar, crew's fire barrel |
+| `tribune.png` | plaza.tribune | stepped stone tribune with slate drapes, guests in fur collars, dome in the haze, the barrier chain in front |
+| `banner.png` / `banner_hist.png` | plaza.banner | 20 m banners (neutral: slate + Reichssiegel / historical: red + swastika disc), empty flat with a gathered curtain |
+| `rubble.png` | plaza.rubble | fire wall with the ghost of floors, stairs and wallpapers; rubble: blue-rose wallpaper, green stove tile, nameless bell plate, blue-white "OST" cloth badge |
+| `family_door.png` / `family_door_hist.png` | plaza.family_door | door of No. 9 with two laths, seal strip with red wax, enamel number, eviction order; office stamp (neutral Reichssiegel / historical eagle) |
+| `window.png` | plaza.window | lit third-floor window, the neighbour drawing the curtain, a covered plate left on the sill |
+
+Content files (same owner): `scenes/levels/L_M1_Plaza.tscn`, `data/explore/plaza.json` (13 finds + 2 chats; NPCs berlin_mother/father/child at `exp_pz_neighbour`),
+`data/locale/de_explore_plaza.json`, `assets/environments/hall_plaza/explore_hotspots.json`,
+`tests/test_explore_plaza.gd`.  History links (existing cards only): tribune → `hist.reich.germania`,
+family_door → `hist.reich.evictions`, tram_stop → `hist.reich.reichsbahn`, rubble → `hist.reich.forced_labor`.
+The fiction never quotes the real deportation sites (e.g. no "Gleis 17"): the real history stays on the cards.
+
+---
 <a id="part-trans_a1m1"></a>
 
 ## Asset manifest part — trans_a1m1 (cinematic LS_A1_ToM1: Alexei/Karsk → Konrad/Berlin)
@@ -1478,6 +1641,71 @@ Every texture is drawn at 1:1 and stored at x3 nearest (StyleBoxTexture cannot s
 `discovery`/`history`, settings toggle "Historische Hoheitszeichen", pause progress plate, strings in
 `data/locale/de_explore_ui.json`, tests `tests/test_explore.gd`, `tests/test_explore_data.gd`, harness
 `tests/visual/explore_ui_preview.tscn/.gd`.
+
+---
+<a id="part-photo_mode"></a>
+
+## Asset manifest — Photo mode (area: photo-mode)
+
+Owner: photo-mode specialist · Date: 2026-11-05 · Engine: Godot 4.7.2. Everything below is **original work**,
+generated procedurally by a project script (no downloads, no traced or sampled pixels). Colours: the UI kit palette
+of `scripts/ui/ui_kit.gd` (paper ramp, night/navy, copper, amber).
+
+### 1. Assets
+| File | Size | Generator | Notes |
+|---|---|---|---|
+| `assets/ui/photo/frame_print.png` | 640×360 RGBA (1:1, shown ×3 nearest) | `tools/pixelgen/gen_ui_photo.py` | 1940s deckle-edged paper print ("Büttenrand") on a dark album page, four black photo corners, transparent picture window (18,18)-(622,338). Seed crc32("photo_frame_print"). |
+| `assets/ui/photo/icon_camera.png` | 48×36 RGBA (16×12 drawn ×3) | same | Pixel rangefinder camera for the panel header. |
+
+Run: `py -3 -P tools/pixelgen/gen_ui_photo.py [--preview=<dir>]` (deterministic). Shutter sound: none in the audio set;
+the code plays the first of `ui_shutter`, `camera_shutter`, `shutter` if the audio department adds one (silent otherwise).
+
+### 2. Code / data
+* `scenes/ui/PhotoMode.tscn` + `scripts/ui/photo_mode.gd` (extends `ui_modal.gd`), registered by `scripts/ui/ui_root.gd`
+  as `photo` (instanced in `_ready`, UIRoot.tscn untouched) with `open_photo() -> bool`.
+* Strings: `data/locale/de_photo.json` (`ui.photo.*`). Reuses `ui.hint.close` and `ui.key.*`.
+* Tests: `tests/test_photo_mode.gd` (file names, filter presets restore the grade exactly incl. shader defaults, bounds
+  clamping, open/close restores camera/figure/grade, blocked in cinematic / dialogue / busy / without level).
+* Windowed harness: `tests/visual/photo_harness.tscn` (see its header; `--ph-real` writes the export copy to the
+  real Pictures folder).
+
+### 3. Behaviour contract
+* Opens only in free play (level loaded, not `Game.busy` / `in_cinematic` / `input_locked`, no UI cinematic, no modal
+  incl. dialogue). Pauses the world; hides every other UIRoot child and `Game.overlay`, restores them on close.
+* Camera: `cinematic = true`, `set_top_left()` inside `camera.bounds`; on close position, spring velocity and the
+  cinematic flag are restored exactly (`set_top_left(saved, false)`; not `snap_now()`, which would jump to the follow
+  goal). 3D / low-res path (`Game.view.is_hires() == false`): the camera is never touched.
+* Zoom 1×/2×/3×: integer scale of `Game.view.display` (nearest) placed on whole screen pixels — crisp texel blocks
+  (verified on a 1080p crop); world viewport, grade and dither are not changed. Restored on close.
+* Filters write `lift/gamma/gain/tint/saturation/vignette/grain` on `Game.grade.material` on top of the snapshot taken
+  at open (`palette_strength` kept); close writes the snapshot back (falls back to `Game._apply_grade(level)`).
+* Photo: UI hidden for the frame, frame overlay kept, root viewport image (window size) saved as
+  `user://photos/ashes_YYYYMMDD_HHMMSS[_n].png` and `<OS Pictures>/Ashes of Empires/` (same name), then flash
+  (dimmer with reduced motion) + toast with file name and folder.
+
+---
+<a id="part-credits"></a>
+
+## Asset manifest part — credits (end credits roll + source list)
+
+Date: 2026-11-05. No new image, audio or font assets: everything is built at runtime from existing UI assets.
+
+| Item | Path | Origin / generator | Licence |
+|---|---|---|---|
+| End credits scene | `scenes/ui/EndCredits.tscn`, `scripts/ui/end_credits.gd` | Hand-written GDScript. Reel built in code: title page, alternative-history note, production credits (`ui.credits.*`), "Quellen der historischen Karten" (all cards from `Explore.cards_list()` / `card()`), end page | Project code |
+| Edge fades | runtime `GradientTexture2D` (background colour → transparent, 150 px top/bottom) | generated in `end_credits.gd` | Project code |
+| Snow backdrop | `scripts/ui/snow_field.gd` (existing title-screen generator), alpha 0.35 (HC 0.2) | reused | Project code |
+| Ornament | `assets/ui/icons/ornament_diamond.png` (existing) | reused | see `ui.md` |
+| Fonts | `assets/fonts/fv_*.tres` (PT Serif, PT Mono, Oswald — existing) | reused | SIL OFL 1.1 |
+| Music | `assets/audio/music/mus_menu.wav` (existing), played via `Audio.play_music` | reused | see `audio.md` |
+| Text | `data/locale/de_credits.json` (`credits.end.*`, `credits.src.*`) | written for this round | Project text |
+| Source labels / URLs | `data/explore/history_reich.json`, `history_soviet.json` (16 cards, 78 sources) | displayed as stored, not modified | Bibliographic references |
+
+Main-menu "Mitwirkende" panel (`scripts/ui/credits.gd`) shows the same source list (shared builder
+`EndCredits.add_source_list`) plus a footer button "Zu den Quellen" / "Zum Anfang".
+
+Verification: `tests/test_end_credits.gd` (6 cases, 433 checks); windowed harness screenshots (start, production,
+two source pages, end; normal and high contrast + text scale 1.5) taken outside the project (scratchpad).
 
 ---
 <a id="part-audio"></a>

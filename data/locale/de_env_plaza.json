@@ -1,0 +1,23 @@
+{
+ "locale": "de",
+ "area": "env_plaza",
+ "strings": {
+  "env.plaza.name": "Platz vor der Großen Halle",
+  "env.plaza.time": "Paradeabend, Schneefall",
+  "env.plaza.spot.exit_archive": "Straße zum Archiv",
+  "env.plaza.spot.tribune": "Tribüne",
+  "env.plaza.spot.loudspeaker": "Lautsprechermast",
+  "env.plaza.spot.vendor": "Maronenverkäufer",
+  "env.plaza.spot.family_door": "Versiegelte Haustür",
+  "env.plaza.spot.barrier": "Absperrung",
+  "env.plaza.spot.guard": "Posten",
+  "env.plaza.spot.poster": "Litfaßsäule",
+  "env.plaza.spot.tank": "Abgestellter Panzer",
+  "env.plaza.spot.tram_stop": "Haltestelle",
+  "env.plaza.spot.children": "Kinder auf der Kiste",
+  "env.plaza.spot.banner": "Fahnenmast",
+  "env.plaza.spot.window": "Erleuchtetes Fenster",
+  "env.plaza.spot.rubble": "Trümmer des geräumten Blocks",
+  "env.plaza.spot.photographer": "Pressefotograf"
+ }
+}

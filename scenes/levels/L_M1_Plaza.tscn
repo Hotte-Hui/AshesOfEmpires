@@ -1,0 +1,142 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/npc.gd" id="3"]
+
+[node name="L_M1_Plaza" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_M1_Plaza"
+protagonist = "konrad"
+mode = "oblique"
+art_manifest = "res://assets/environments/hall_plaza/scene.json"
+ambience = "amb_berlin_street"
+music = ""
+footstep_surface = "snow"
+grade_preset = "berlin"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Mother" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "berlin_mother"
+hotspot_id = "exp_pz_neighbour"
+hotspot_offset = Vector2(12, -10)
+face_left = true
+
+[node name="Father" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "berlin_father"
+hotspot_id = "exp_pz_neighbour"
+hotspot_offset = Vector2(-8, -18)
+look_at_player = false
+
+[node name="Child" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "berlin_child"
+hotspot_id = "exp_pz_neighbour"
+hotspot_offset = Vector2(26, -6)
+look_at_player = false
+
+[node name="ExitArchive" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "exit"
+hotspot_id = "exit_archive"
+prompt_key = "explore.plaza.exit.prompt"
+target_level = "L_M1_Archive"
+target_spawn = "SP_M1_Arrival"
+
+[node name="ExpTramStop" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_tram_stop"
+explore_id = "plaza.tram_stop"
+
+[node name="ExpPoster" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_poster"
+explore_id = "plaza.poster"
+
+[node name="ExpVendor" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_vendor"
+explore_id = "plaza.vendor"
+
+[node name="ExpLoudspeaker" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_loudspeaker"
+explore_id = "plaza.loudspeaker"
+
+[node name="ExpChildren" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_children"
+explore_id = "plaza.children"
+
+[node name="ChatPhotographer" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "exp_pz_photographer"
+explore_id = "plaza.photographer"
+
+[node name="ExpBarrier" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_barrier"
+explore_id = "plaza.barrier"
+
+[node name="ExpGuard" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_guard"
+explore_id = "plaza.guard"
+
+[node name="ExpTank" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_tank"
+explore_id = "plaza.tank"
+
+[node name="ExpTribune" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_tribune"
+explore_id = "plaza.tribune"
+prompt_height = 70.0
+
+[node name="ExpBanner" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_banner"
+explore_id = "plaza.banner"
+prompt_height = 70.0
+
+[node name="ExpRubble" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_rubble"
+explore_id = "plaza.rubble"
+
+[node name="ExpFamilyDoor" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_family_door"
+explore_id = "plaza.family_door"
+
+[node name="ChatNeighbour" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "exp_pz_neighbour"
+explore_id = "plaza.neighbour"
+npc_id = "berlin_mother"
+
+[node name="ExpWindow" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_pz_window"
+explore_id = "plaza.window"
+prompt_height = 70.0

@@ -1,0 +1,6 @@
+{
+ "note": "Exploration hotspots owned by plaza-explore (merged by Level; scene.json wins on name clashes). exp_pz_neighbour = where Konrad stands to talk to the woman of the evicted family (berlin_mother) in front of No. 9, between the lit window (exp_pz_window) and the sealed door (exp_pz_family_door); >= 26 px from every other spot, inside the walkable polygon.",
+ "hotspots": {
+  "exp_pz_neighbour": [288, 314]
+ }
+}

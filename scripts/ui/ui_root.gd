@@ -3,7 +3,8 @@ extends Control
 ## instanced by Main under the `UI` CanvasLayer. Responsibilities:
 ## * exposes the panels as properties: hud, dialogue, inspect, signal_puzzle, blueprint_puzzle, journal,
 ##   discovery (DiscoveryView, §12 exploration finds + real-history cards), pause_menu, main_menu,
-##   settings_menu, saveload_menu, credits, confirm, subtitles, fade, photo (PhotoMode, added in _ready)
+##   settings_menu, saveload_menu, credits, confirm, subtitles, fade, photo (PhotoMode, added in _ready),
+##   end_credits (EndCredits, added in _ready; play_end_credits() rolls it after the demo end card)
 ## * modal stack: push_modal()/pop_modal(); the top modal gets input first (in _input, before the GUI);
 ##   pausing modals set get_tree().paused (all UI runs with PROCESS_MODE_ALWAYS)
 ## * applies theme.tres / theme_hc.tres and live text scaling from Settings
@@ -37,6 +38,9 @@ signal modal_changed(top: Control)
 ## Photo mode (scenes/ui/PhotoMode.tscn), instanced in _ready (not part of UIRoot.tscn); opened by open_photo().
 const PHOTO_SCENE := "res://scenes/ui/PhotoMode.tscn"
 var photo: Control = null
+## End credits (scenes/ui/EndCredits.tscn), instanced in _ready (not part of UIRoot.tscn); see play_end_credits().
+const END_CREDITS_SCENE := "res://scenes/ui/EndCredits.tscn"
+var end_credits: Control = null
 
 ## true while a cinematic runs (HUD hidden, letterbox); set through set_cinematic().
 var cinematic_mode := false
@@ -51,6 +55,7 @@ func _ready() -> void:
 	Kit.full_rect(self)
 	_apply_theme()
 	_add_photo_mode()
+	_add_end_credits()
 	for c in get_children():
 		if c is Control and "ui_root" in c:
 			c.set("ui_root", self)
@@ -301,6 +306,24 @@ func open_saveload(mode := "load", in_game := true) -> void:
 
 func open_credits() -> void:
 	credits.open()
+
+
+func _add_end_credits() -> void:
+	if end_credits != null or not ResourceLoader.exists(END_CREDITS_SCENE):
+		return
+	end_credits = (load(END_CREDITS_SCENE) as PackedScene).instantiate() as Control
+	end_credits.name = "EndCredits"
+	add_child(end_credits)
+	move_child(end_credits, toast_layer.get_index())
+
+
+## End credits after the demo end card: call while the screen is black. The roll draws on its own CanvasLayer
+## (95, above Game's fade layer 90), fades in from black, ends on black and hides again; returns when it has
+## finished or was skipped (Esc). A second call while it runs just waits for the same end.
+func play_end_credits() -> void:
+	if end_credits == null or not end_credits.has_method("play"):
+		return
+	await end_credits.play()
 
 
 func ask_confirm(text: String, yes_text := "", no_text := "", default_yes := false) -> bool:

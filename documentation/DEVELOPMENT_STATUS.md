@@ -5,6 +5,18 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Rounds 4–5 (2026-11-05 night) — parade, plaza, photo mode, credits
+- **Parade** (`L_M1_Parade`, 47 s, 8 shots) follows the Great Hall reveal: massed formations, the column behind the
+  barrier, tanks, the tribune under the eagle, the forced crowd with the evicted family, searchlights and jets,
+  Konrad, the sealed doors — oppressive, anonymous ranks, cold drum score; one skip press skips the whole chain.
+- **Walkable parade plaza** (`L_M1_Plaza`, optional side level): after the parade Konrad stands on the plaza —
+  looping parade behind the barriers, crowd, guards, tribune, the Great Hall; 13 finds + 2 chats (links to existing
+  history cards), the evicted family as NPCs; exit "Zurück ins Archiv" (interactable kind `exit`, Game.side_level).
+- **Photo mode** (P / pad R3): paused free camera, 1×–3× zoom, figure toggle, 6 filters, grain/vignette, 5 frames;
+  PNGs to user://photos and Pictures/Ashes of Empires.
+- **End-credits roll** (~84 s, Esc skips, hold Space speeds up) after the demo end card: production credits and all
+  78 sources of the 16 history cards; the same list in the main menu under "Mitwirkende".
+
 ## Round 3 (2026-11-05) — after the user's second playtest
 - Ch1→2 transition (43 s): the departing train now has 60-frame wheel rotation with rods and valve gear in phase
   with travel, coupling slack (wagons start one after another), wheel slip, chuffs synced to revolutions, rail-joint

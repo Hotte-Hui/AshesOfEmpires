@@ -1,0 +1,17 @@
+{
+ "locale": "de-DE",
+ "area": "credits",
+ "note": "Abspann nach der Demo (scripts/ui/end_credits.gd) und Quellenliste im Hauptmenü-Panel „Mitwirkende“ (scripts/ui/credits.gd). Sachlich, archivarisch, ohne Belohnungssprache. Quellentitel und Links stehen in data/explore/history_*.json.",
+ "strings": {
+  "credits.end.h_sources": "Quellen der historischen Karten",
+  "credits.end.sources_intro": "Die Karten „Reale Geschichte“ stehen außerhalb der fiktiven Handlung. Ihre Angaben stützen sich auf die folgenden Quellen, geordnet nach Karte.",
+  "credits.end.side.reich": "Nationalsozialistisches Deutschland",
+  "credits.end.side.soviet": "Sowjetunion",
+  "credits.end.no_url": "ohne Online-Fassung",
+  "credits.end.menu_hint": "Die Quellenliste mit allen Links steht auch im Hauptmenü unter „Mitwirkende“.",
+  "credits.end.skip": "Überspringen",
+  "credits.end.faster": "Schneller (halten)",
+  "credits.src.jump": "Zu den Quellen",
+  "credits.src.top": "Zum Anfang"
+ }
+}

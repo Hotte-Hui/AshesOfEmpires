@@ -58,6 +58,8 @@ func run() -> void:
 			_fail("objective not complete after interaction: " + oid)
 			break
 		await _shoot("after_" + oid)
+		if Game.side_level:
+			await _visit_side_level()
 		if oid == "a1_inspect_ledger":
 			var r = Saves.save("1")
 			if not (r is Dictionary and r.get("ok", false)):
@@ -120,6 +122,24 @@ func _explore_pass() -> void:
 	var c: Dictionary = Explore.counts(str(Game.level.level_id))
 	print("AUTOPLAY explored %d finds in %s (%s/%s), history %s" % [n, Game.level.level_id, c.get("found", 0),
 		c.get("total", 0), Explore.history_counts()])
+
+
+## Optional side level (parade plaza): explore it in explore mode, then leave through its exit.
+func _visit_side_level() -> void:
+	var t := 0.0
+	while (Game.busy or Game.in_cinematic) and t < 30.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if Game.args.has("autoplay-explore"):
+		await _explore_pass()
+	for it in get_tree().get_nodes_in_group("interactables"):
+		if it.is_inside_tree() and str(it.kind) == "exit":
+			_place_player_near(it)
+			await get_tree().create_timer(0.05).timeout
+			await Game.interact(it)
+			break
+	if Game.side_level:
+		_fail("side level %s was not left through its exit" % Game.level.level_id)
 
 
 func _fail(msg: String) -> void:
