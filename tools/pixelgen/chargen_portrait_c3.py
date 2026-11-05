@@ -402,8 +402,8 @@ def border_officer_portrait(expr):
     sc.ellipsoid((0, 10.4, 18.6), (7.0, 2.5, 3.2), mat='stache', group='stache', frame=fr)
     Hc = dict(frame=fr, group='hat')
     sc.ellipsoid((0, -16.6, -1.0), (19.4, 3.4, 20.6), mat='capband', k=0, **Hc)
-    sc.ellipsoid((0, -22.0, -2.5), (22.0, 6.2, 23.6), mat='cap', k=2.0, **Hc)
-    sc.ellipsoid((0, -25.5, -2.5), (20.6, 2.6, 22.4), mat='cap', k=2.5, **Hc)
+    sc.ellipsoid((0, -22.5, -2.5), (22.0, 7.0, 23.6), mat='cap', k=2.0, **Hc)
+    sc.ellipsoid((0, -27.6, -2.5), (20.6, 3.0, 22.4), mat='cap', k=2.5, **Hc)
     sc.ellipsoid((0, -14.2, 14.0), (15.5, 1.7, 10.0), R=rotm(0, -18, 0), mat='visor', k=0,
                  clip=lambda L: L[..., 2] > 6.0, **Hc)
     bf = shoulders(sc, cx=57.0, yaw=20.0, mat='coat', width=0.98, drop=4.0)
@@ -475,8 +475,7 @@ def conductor_portrait(expr):
     for sx in (-1, 1):
         sc.ellipsoid((sx * 10.5, 87, 3), (9.5, 8.6, 9.0), mat='coat2', k=3, **C_)
     sc.ellipsoid((0, 84, -9), (15, 9, 7), mat='coat2', k=3, **C_)
-    sc.ellipsoid((0, 90.5, 8.5), (6.0, 2.6, 5.2), mat='shirt', group='shirt', frame=bf)
-    sc.ellipsoid((0.3, 93.5, 11.0), (2.0, 2.4, 2.0), mat='tie', group='tie', frame=bf)
+    sc.ellipsoid((0, 90.0, 7.5), (4.6, 2.0, 4.6), mat='shirt', group='shirt', frame=bf)
     sc.ellipsoid((-16, 112, 18.5), (2.4, 24, 1.0), R=rotm(0, 0, -32), mat='strap', group='strap', frame=bf)
     ramps = {
         'skin': SKIN_V,
@@ -514,8 +513,21 @@ def conductor_portrait(expr):
         stamp(img, ['.ccc.'], x - 1, y + 3, {'c': R7[2] if not lit_at(x, y + 3) else R7[3]}, mask=skin_mask)
 
     out, info = finish_c3(sc, LOOK_VELTRAVA, ramps, expr, feat(VELTRAVA_FEAT, brow='#7A7874', brow2='#A6A49E'),
-                          extra, pre=pre, mouth=(expr == 'surprised'))
+                          extra, pre=pre, mouth=(expr == 'surprised'), stamps=KIND_STAMPS)
     return out
+
+
+# kind / tired variant of the generic brows: the outer ends droop (conductor)
+KIND_BROWS = {
+    'near': dict(PT.BROWS['near'], neutral=('''
+            ..bBBBBBb.
+            .bBb......
+            bb........''', (5, 1))),
+    'far': dict(PT.BROWS['far'], neutral=('''
+            BBBBb.
+            .....B''', (2, 1))),
+}
+KIND_STAMPS = dict(GENERIC, brows=KIND_BROWS)
 
 
 # =================================================================================== VORONOVA
@@ -614,8 +626,8 @@ def kessler_portrait(expr):
 
     def extra(img, sc, info, expr, cols, skin_mask, lit_at):
         # thin steel half-rim spectacles (lighter, finer than Emil's): upper rim + glints
-        spectacles(img, sc, lit_at, frame_c=hexc('#6E7478'), glint=hexc('#E8ECEE'), glint2=hexc('#9EAAB2'),
-                   rx=(4, 3), ry=3.0, thin=True)
+        spectacles(img, sc, lit_at, frame_c=hexc('#4A5056'), glint=hexc('#E8ECEE'), glint2=hexc('#9EAAB2'),
+                   rx=(4, 3), ry=3.0, thin=True, temple=False)
         Rk = np.stack(SKIN_P)
         x, y, _ = project(sc, 'nostril')
         stamp(img, ['c..', '.c.', '.c.', '..c'], x - 5, y + 1, {'c': Rk[2] if not lit_at(x - 4, y + 2) else Rk[3]},
@@ -638,27 +650,29 @@ def typist_portrait(expr):
     for sx in (-1, 1):
         sc.ellipsoid((sx * 10.2, 5.0, 11.0), (6.4, 5.6, 6.4), mat='skin', k=4, **E)            # round cheeks
 
-    def hair_clip(L):
+    def face(L):
         x, y, z = L[..., 0], L[..., 1], L[..., 2]
-        face = (z > 2.0) & (y > -11.0 + 0.02 * x * x)
-        return ~face & (y < 6.0)
+        return (z > 2.0) & (y > -10.5 + 0.02 * x * x + 1.6 * np.sin(x * 0.85))        # curly fringe line
+
+    def hair_clip(L):
+        return ~face(L) & (L[..., 1] < 7.0)
     Hh = dict(frame=fr, group='hair')
-    sc.ellipsoid((0, -9.0, -1.5), (21.0, 22.6, 23.0), mat='hair', k=0, clip=hair_clip, **Hh)
-    for (cx_, cy_, cz_) in ((-14, -14, 8), (-6, -20, 12), (4, -21, 11), (13, -15, 8), (-18, -4, -2),
-                            (17, -5, -2), (-10, -20, -10), (10, -20, -10), (0, -24, 0)):     # set curls
-        sc.ellipsoid((cx_, cy_, cz_), (6.2, 5.6, 6.2), mat='hair', k=3.5,
-                     clip=lambda L: ~((L[..., 2] > 2.0) & (L[..., 1] > -11.0 + 0.02 * L[..., 0] ** 2)), **Hh)
-    bf = shoulders(sc, cx=56.0, yaw=18.0, mat='coat', width=0.88, drop=9.0)
-    sc.ellipsoid((0, 93, 4), (12.0, 6.0, 11.0), mat='blouse', group='blouse', frame=bf)
+    sc.ellipsoid((0, -8.0, -2.0), (21.6, 22.8, 23.4), mat='hair', k=0, clip=hair_clip, **Hh)
+    for (cx_, cy_, cz_) in ((-19, -8, 6), (-21, 2, -4), (-17, 6, -15), (-9, -22, 11), (3, -25, 9),
+                            (14, -19, 8), (20, -7, 0), (-11, -16, -20), (6, -20, -19), (-3, -3, -25),
+                            (-3, -15, 17), (8, -14, 17)):
+        sc.ellipsoid((cx_, cy_, cz_), (6.4, 5.8, 6.4), mat='hair', k=0, clip=hair_clip, **Hh)      # set curls
+    bf = shoulders(sc, cx=56.0, yaw=18.0, mat='coat', width=0.88, drop=5.0)
+    sc.ellipsoid((0, 88, 4), (11.0, 6.0, 10.5), mat='blouse', group='blouse', frame=bf)
     for sx in (-1, 1):
-        sc.ellipsoid((sx * 5.2, 95.5, 12.5), (5.4, 3.2, 2.0), R=rotm(0, 0, sx * 18), mat='blouse', k=1.2,
+        sc.ellipsoid((sx * 5.2, 91.0, 12.0), (5.4, 3.2, 2.0), R=rotm(0, 0, sx * 18), mat='blouse', k=1.2,
                      group='collar', frame=bf)
     L_ = dict(frame=bf, group='lapel')
     for sx in (-1, 1):
         sc.ellipsoid((sx * 9.5, 106, 14.5), (4.2, 15, 1.3), R=rotm(0, 0, sx * -14), mat='coat2', k=0, **L_)
     ramps = {
         'skin': SKIN_W,
-        'hair': ramp('#0A0808', '#18100E', '#2A1C16', '#40291E', '#5A3C2A', '#765236', '#926A46'),
+        'hair': ramp('#0E0A0A', '#201612', '#34241A', '#4A3424', '#644630', '#80603E', '#9C7A50'),
         'coat': ramp('#0E0C0A', '#221C16', '#3A3022', '#584A34', '#76644A', '#94805E', '#B09C76'),
         'coat2': ramp('#0E0C0A', '#1E1814', '#342A1E', '#50432E', '#6C5A42', '#8A7656', '#A6906C'),
         'blouse': ramp('#14161C', '#2C2E36', '#4E5056', '#82827A', '#B2AE9E', '#D6D0B8', '#EEE6CC'),
@@ -669,11 +683,17 @@ def typist_portrait(expr):
         xx = np.mgrid[0:H, 0:W][1]
         rib = mat_mask(sc, 'coat') & (xx % 3 == 0) & (info['tone'] >= 2)
         tone_shift(img, sc, info, ramps, 'coat', rib, -1)
-        # set curls: short arcs in the hair
-        yy, xx2 = np.mgrid[0:H, 0:W]
-        h = hash2(xx2, yy, 31, 17, 13)
-        tone_shift(img, sc, info, ramps, 'hair', mat_mask(sc, 'hair') & (h < 2), +1)
-        tone_shift(img, sc, info, ramps, 'hair', mat_mask(sc, 'hair') & (h >= 2) & (h < 4), -1)
+        # set curls: small rings in head-local space (dark ring, light centre)
+        Lh = local_coords(sc, fr)
+        u = Lh[..., 0] + 40.0
+        v = Lh[..., 1] + 40.0 + 0.6 * Lh[..., 2]
+        off = (np.floor(u / 5.5) % 2) * 2.75
+        du = (u % 5.5) - 2.75
+        dv = ((v + off) % 5.5) - 2.75
+        d = np.sqrt(du * du + dv * dv)
+        hm = mat_mask(sc, 'hair')
+        tone_shift(img, sc, info, ramps, 'hair', hm & (d > 1.6) & (d < 2.5), -1)
+        tone_shift(img, sc, info, ramps, 'hair', hm & (d < 0.9) & (info['tone'] >= 2), +1)
 
     def extra(img, sc, info, expr, cols, skin_mask, lit_at):
         # pencil behind the near ear: yellow shaft, dark tip, pointing back and up
@@ -710,8 +730,8 @@ def journalist_portrait(expr):
         return ~face & ~ear & (y < 6.0)
     Hh = dict(frame=fr, group='hair')
     sc.ellipsoid((0, -9.5, -2.0), (20.0, 22.4, 22.6), mat='hair', k=0, clip=hair_clip, **Hh)
-    for (cx_, cy_, cz_, rx_) in ((6, -24, 12, 7.5), (-4, -26, 6, 7.0), (12, -20, 15, 5.5), (-12, -22, -4, 7.0),
-                                 (2, -25, -10, 7.5), (-17, -12, -10, 5.5)):          # tousled tufts
+    for (cx_, cy_, cz_, rx_) in ((4, -25, 8, 7.5), (-6, -26, 0, 7.0), (-14, -20, -10, 6.5), (2, -24, -12, 7.5),
+                                 (-18, -10, -12, 5.5), (12, -22, 4, 6.0)):           # tousled tufts
         sc.ellipsoid((cx_, cy_, cz_), (rx_, 5.0, rx_), mat='hair', k=3.0, clip=hair_clip, **Hh)
     sc.ellipsoid((9.0, -16.0, 16.5), (6.0, 3.2, 3.6), R=rotm(0, 0, -25), mat='hair2', group='fringe', frame=fr)
     bf = shoulders(sc, cx=57.0, yaw=20.0, mat='coat', width=0.94, drop=6.0)

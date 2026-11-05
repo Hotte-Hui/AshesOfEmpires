@@ -633,7 +633,7 @@ def kessler():
                     stride=6.0, swing=10.0, bob=1, walk_lean=0.0, lift=2.6, hem=0.5, idle_feet=(1.0, -1.0),
                     hold_n=(2.0, 4.0), arm_f_idle=(-3.0, 10.0),
                     talk_n=[(2.0, 4.0)] * 4,
-                    talk_f=[(-3.0, 10.0), (-8.0, 120.0), (-6.0, 132.0), (-4.0, 92.0)],
+                    talk_f=[(-3.0, 10.0), (4.0, 100.0), (8.0, 112.0), (2.0, 74.0)],
                     talk_hand_f=['side', 'side_open', 'side_open', 'side'],
                     talk_head=[(0, 0), (0, 0), (0, -1), (0, 0)],
                     front_r=(3.0, 0.0, 4.0))))
