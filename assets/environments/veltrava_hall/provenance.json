@@ -1,0 +1,323 @@
+{
+ "generator": "tools/pixelgen/env_veltrava_hall.py (+ _kit, _layout, _room, _props, _ext, _fx, _fg, _docs, _preview)",
+ "date": "2026-11-04",
+ "licence": "project-owned original artwork, generated procedurally; no copied, traced, downloaded or AI-generated pixels; bitmap fonts hand-defined in env_veltrava_hall_kit.py",
+ "run": "python3 -P tools/pixelgen/env_veltrava_hall.py",
+ "files": [
+  {
+   "path": "assets/environments/veltrava_hall/ext_river.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "frozen river, the three-arched bridge with a barrier, old-town roofs, dome and spire"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/ext_river_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "frozen river, the three-arched bridge with a barrier, old-town roofs, dome and spire -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/ext_sky.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "overcast winter morning sky (seen through every window)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/ext_square.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "the snowy square in front of the palais: stucco houses, tram stop, lamp post, car"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/ext_square_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "the snowy square in front of the palais: stucco houses, tram stop, lamp post, car -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/ext_town.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "far river bank with the Line: double fence, watchtowers, floodlight masts (hazy)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fg_frame.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fg.py",
+   "content": "foreground framing silhouettes (columns, velvet drapes, palm, chair)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fx_dust_foyer.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
+   "content": "dust motes in the foyer shafts (16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fx_dust_office.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
+   "content": "dust motes in the office window shaft (16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fx_dust_vestibule.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
+   "content": "dust motes in the entrance daylight (16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fx_glints.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
+   "content": "slow crystal glints on the foyer chandelier (16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fx_snow_river.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
+   "content": "snowfall in front of the river view (foyer + office windows, 16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/fx_snow_square.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
+   "content": "snowfall over the square, seen through the entrance glazing (16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/buffet.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "buffet: untouched Sekt and caviar on crushed ice"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/buffet_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "buffet: untouched Sekt and caviar on crushed ice -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/carbon_basket.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "wire basket of carbon copies on an oak cabinet (booth_log)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/carbon_basket_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "wire basket of carbon copies on an oak cabinet (booth_log) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/cloak_counter.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "cloakroom counter: bell, numbered tokens, lamp"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/cloak_counter_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "cloakroom counter: bell, numbered tokens, lamp -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/cloak_counter_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "cloakroom counter: bell, numbered tokens, lamp -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/easel_seating.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "seating-plan easel (horseshoe, mics 1/2/12)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/easel_seating_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "seating-plan easel (horseshoe, mics 1/2/12) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_commission.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: commission"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_commission_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: commission -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_finland.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: finland"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_finland_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: finland -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_reich.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: reich (neutral default; *_hist = historical flag)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_reich_hist.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: reich -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_reich_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: reich (neutral default; *_hist = historical flag) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_sweden.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: sweden"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_sweden_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: sweden -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_switzerland.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: switzerland"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_switzerland_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: switzerland -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_ussr.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: ussr (neutral default; *_hist = historical flag)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_ussr_hist.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: ussr -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/flag_ussr_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "flag on a brass pole: ussr (neutral default; *_hist = historical flag) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/mimeograph.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "stencil duplicator (mimeograph) on its stand, fresh copies"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/mimeograph_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "stencil duplicator (mimeograph) on its stand, fresh copies -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/palm_corridor.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "Kentia palm in a Jugendstil jardiniere"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/palm_corridor_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "Kentia palm in a Jugendstil jardiniere -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/palm_vest.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "Kentia palm in a Jugendstil jardiniere"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/palm_vest_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "Kentia palm in a Jugendstil jardiniere -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/protocol_table.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "the big table of the Protokollbuero (protocol_table)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/protocol_table_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "the big table of the Protokollbuero (protocol_table) -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/protocol_table_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "the big table of the Protokollbuero (protocol_table) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/saal_rope.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "brass stanchions with a velvet rope before the Saal doors"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/saal_rope_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "brass stanchions with a velvet rope before the Saal doors -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/typist_desk.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "typist desk: typewriter, carbon box, lamp, telephone"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/typist_desk_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "typist desk: typewriter, carbon box, lamp, telephone -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/props/typist_desk_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_props.py",
+   "content": "typist desk: typewriter, carbon box, lamp, telephone -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/room.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_room.py",
+   "content": "palais interior: vestibule, foyer + staircase, Protokollbuero, interpreters' corridor"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/room_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_room.py",
+   "content": "palais interior: vestibule, foyer + staircase, Protokollbuero, interpreters' corridor -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/room_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_room.py",
+   "content": "palais interior: vestibule, foyer + staircase, Protokollbuero, interpreters' corridor -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/saal_far.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "Grosser Saal head wall: windows, panelling, dais with six small flags, chandeliers"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/saal_far_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "Grosser Saal head wall: windows, panelling, dais with six small flags, chandeliers -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/saal_far_hist.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "same as saal_far with the historical USSR / Reich flags (Symbols.pick variant)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/saal_far_hist_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "same as saal_far with the historical USSR / Reich flags (Symbols.pick variant) -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/saal_near.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_ext.py",
+   "content": "the horseshoe table seen from the booths: presidium, delegates, secretariat table"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/scene.json",
+   "generator": "tools/pixelgen/env_veltrava_hall.py",
+   "content": "art manifest (TECHNICAL_ARCHITECTURE 3.1)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/shafts.png",
+   "generator": "tools/pixelgen/env_veltrava_hall.py",
+   "content": "volumetric daylight-shaft veil (soft alpha, plain alpha blending)"
+  },
+  {
+   "path": "assets/ui/documents/veltrava_hall_carbon.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_docs.py",
+   "content": "ev_c3_carbon: Elena's blotter from booth 2, pencil-rubbed impression of her last note"
+  },
+  {
+   "path": "assets/ui/documents/veltrava_hall_documents.json",
+   "generator": "tools/pixelgen/env_veltrava_hall_docs.py",
+   "content": "document metadata (alt key, marks) for ev_c3_carbon"
+  },
+  {
+   "path": "data/locale/de_env_veltrava_hall.json",
+   "generator": "tools/pixelgen/env_veltrava_hall_docs.py",
+   "content": "German alt text of the hall document"
+  }
+ ]
+}

@@ -1,6 +1,7 @@
 {
  "id": "veltrava_hall",
  "palette": "palais",
+ "palette_exterior": "veltrava",
  "world_size": [
   1920,
   360
@@ -13,10 +14,405 @@
    360
   ]
  },
- "canvas_modulate": "#CDD0D0",
- "placeholder": true,
- "layers": [],
- "props": [],
+ "canvas_modulate": "#C9CDCC",
+ "layers": [
+  {
+   "name": "ext_sky",
+   "file": "ext_sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.04,
+    1.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "ext_town",
+   "file": "ext_town.png",
+   "pos": [
+    60,
+    0
+   ],
+   "parallax": [
+    0.12,
+    1.0
+   ],
+   "z": -97,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "ext_river",
+   "file": "ext_river.png",
+   "pos": [
+    120,
+    0
+   ],
+   "parallax": [
+    0.2,
+    1.0
+   ],
+   "z": -95,
+   "normal": false,
+   "emission": true,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "ext_square",
+   "file": "ext_square.png",
+   "pos": [
+    -80,
+    0
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -90,
+   "normal": false,
+   "emission": true,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "saal_far",
+   "file": "saal_far.png",
+   "pos": [
+    761,
+    200
+   ],
+   "parallax": [
+    0.46,
+    1.0
+   ],
+   "z": -84,
+   "normal": false,
+   "emission": true,
+   "lit": false,
+   "repeat_x": 0,
+   "hist_variant": "saal_far_hist.png"
+  },
+  {
+   "name": "saal_near",
+   "file": "saal_near.png",
+   "pos": [
+    1017,
+    200
+   ],
+   "parallax": [
+    0.66,
+    1.0
+   ],
+   "z": -82,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "repeat_x": 0
+  },
+  {
+   "name": "room",
+   "file": "room.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "lit": true
+  },
+  {
+   "name": "shafts",
+   "file": "shafts.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 10,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "note": "soft alpha veil (max ~16 %); reads as dithered light in front of actors"
+  },
+  {
+   "name": "fg_frame",
+   "file": "fg_frame.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "props": [
+  {
+   "name": "flag_commission",
+   "file": "props/flag_commission.png",
+   "pos": [
+    115,
+    218
+   ],
+   "base_y": 291,
+   "size": [
+    18,
+    74
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "flag_ussr",
+   "file": "props/flag_ussr.png",
+   "pos": [
+    131,
+    218
+   ],
+   "base_y": 291,
+   "size": [
+    18,
+    74
+   ],
+   "normal": true,
+   "emission": false,
+   "hist_variant": "props/flag_ussr_hist.png"
+  },
+  {
+   "name": "flag_reich",
+   "file": "props/flag_reich.png",
+   "pos": [
+    147,
+    218
+   ],
+   "base_y": 291,
+   "size": [
+    18,
+    74
+   ],
+   "normal": true,
+   "emission": false,
+   "hist_variant": "props/flag_reich_hist.png"
+  },
+  {
+   "name": "flag_sweden",
+   "file": "props/flag_sweden.png",
+   "pos": [
+    163,
+    218
+   ],
+   "base_y": 291,
+   "size": [
+    18,
+    74
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "flag_switzerland",
+   "file": "props/flag_switzerland.png",
+   "pos": [
+    179,
+    218
+   ],
+   "base_y": 291,
+   "size": [
+    18,
+    74
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "flag_finland",
+   "file": "props/flag_finland.png",
+   "pos": [
+    195,
+    218
+   ],
+   "base_y": 291,
+   "size": [
+    18,
+    74
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "cloak_counter",
+   "file": "props/cloak_counter.png",
+   "pos": [
+    210,
+    244
+   ],
+   "base_y": 292,
+   "size": [
+    94,
+    49
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "palm_vest",
+   "file": "props/palm_vest.png",
+   "pos": [
+    377,
+    223
+   ],
+   "base_y": 292,
+   "size": [
+    34,
+    70
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "buffet",
+   "file": "props/buffet.png",
+   "pos": [
+    768,
+    231
+   ],
+   "base_y": 293,
+   "size": [
+    64,
+    63
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "easel_seating",
+   "file": "props/easel_seating.png",
+   "pos": [
+    906,
+    231
+   ],
+   "base_y": 294,
+   "size": [
+    48,
+    64
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "saal_rope",
+   "file": "props/saal_rope.png",
+   "pos": [
+    950,
+    264
+   ],
+   "base_y": 293,
+   "size": [
+    46,
+    30
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "typist_desk",
+   "file": "props/typist_desk.png",
+   "pos": [
+    1110,
+    230
+   ],
+   "base_y": 293,
+   "size": [
+    56,
+    64
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "carbon_basket",
+   "file": "props/carbon_basket.png",
+   "pos": [
+    1168,
+    236
+   ],
+   "base_y": 292,
+   "size": [
+    30,
+    57
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "protocol_table",
+   "file": "props/protocol_table.png",
+   "pos": [
+    1214,
+    233
+   ],
+   "base_y": 294,
+   "size": [
+    112,
+    62
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "mimeograph",
+   "file": "props/mimeograph.png",
+   "pos": [
+    1330,
+    244
+   ],
+   "base_y": 293,
+   "size": [
+    36,
+    50
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "palm_corridor",
+   "file": "props/palm_corridor.png",
+   "pos": [
+    1471,
+    229
+   ],
+   "base_y": 292,
+   "size": [
+    34,
+    64
+   ],
+   "normal": true,
+   "emission": false
+  }
+ ],
  "walkable": [
   [
    18,
@@ -83,7 +479,7 @@
    300
   ],
   "exp_flags": [
-   150,
+   154,
    300
   ],
   "exp_cloakroom": [
@@ -91,7 +487,7 @@
    300
   ],
   "exp_photos": [
-   470,
+   474,
    300
   ],
   "exp_chandelier": [
@@ -99,23 +495,23 @@
    300
   ],
   "exp_buffet": [
-   780,
+   792,
    300
   ],
   "exp_window": [
-   850,
+   866,
    300
   ],
   "exp_evac_plan": [
-   1010,
+   1036,
    300
   ],
   "exp_treaty_shelf": [
-   1070,
+   1080,
    300
   ],
   "exp_mimeograph": [
-   1330,
+   1342,
    300
   ],
   "exp_headsets": [
@@ -123,6 +519,804 @@
    300
   ]
  },
- "lights": [],
- "fx": []
+ "lights": [
+  {
+   "name": "entrance_day",
+   "pos": [
+    62,
+    170
+   ],
+   "color": "#A9C0D0",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "foyer_window",
+   "pos": [
+    865,
+    170
+   ],
+   "color": "#A9C0D0",
+   "energy": 0.45,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "office_window",
+   "pos": [
+    1190,
+    160
+   ],
+   "color": "#A9C0D0",
+   "energy": 0.32,
+   "radius": 110,
+   "flicker": 0.0,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lunette_2",
+   "pos": [
+    588,
+    46
+   ],
+   "color": "#A9C0D0",
+   "energy": 0.25,
+   "radius": 130,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "saal_glow_1",
+   "pos": [
+    1586,
+    239
+   ],
+   "color": "#D3DEE6",
+   "energy": 0.32,
+   "radius": 64,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "saal_glow_2",
+   "pos": [
+    1652,
+    239
+   ],
+   "color": "#D3DEE6",
+   "energy": 0.32,
+   "radius": 64,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "saal_glow_3",
+   "pos": [
+    1718,
+    239
+   ],
+   "color": "#D3DEE6",
+   "energy": 0.32,
+   "radius": 64,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "vest_lantern",
+   "pos": [
+    176,
+    50
+   ],
+   "color": "#E9B46E",
+   "energy": 0.4,
+   "radius": 100,
+   "flicker": 0.04,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "chandelier",
+   "pos": [
+    648,
+    82
+   ],
+   "color": "#E9B46E",
+   "energy": 1.05,
+   "radius": 200,
+   "flicker": 0.0,
+   "height": 44,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "saal_doors",
+   "pos": [
+    973,
+    222
+   ],
+   "color": "#E9B46E",
+   "energy": 0.6,
+   "radius": 92,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "sconce_buffet_l",
+   "pos": [
+    776,
+    194
+   ],
+   "color": "#E9B46E",
+   "energy": 0.28,
+   "radius": 60,
+   "flicker": 0.03,
+   "height": 14,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "sconce_buffet_r",
+   "pos": [
+    824,
+    194
+   ],
+   "color": "#E9B46E",
+   "energy": 0.28,
+   "radius": 60,
+   "flicker": 0.03,
+   "height": 14,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "globe_1470",
+   "pos": [
+    1470,
+    82
+   ],
+   "color": "#E9B46E",
+   "energy": 0.28,
+   "radius": 90,
+   "flicker": 0.0,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "globe_1830",
+   "pos": [
+    1830,
+    82
+   ],
+   "color": "#E9B46E",
+   "energy": 0.28,
+   "radius": 90,
+   "flicker": 0.0,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "sign_ruhe",
+   "pos": [
+    1652,
+    171
+   ],
+   "color": "#A8382E",
+   "energy": 0.18,
+   "radius": 36,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "booth_1_lamp",
+   "pos": [
+    1568,
+    250
+   ],
+   "color": "#E9B46E",
+   "energy": 0.28,
+   "radius": 46,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "booth_2_lamp",
+   "pos": [
+    1634,
+    250
+   ],
+   "color": "#E9B46E",
+   "energy": 1.0,
+   "radius": 110,
+   "flicker": 0.02,
+   "height": 10,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "booth_3_lamp",
+   "pos": [
+    1700,
+    250
+   ],
+   "color": "#E9B46E",
+   "energy": 0.28,
+   "radius": 46,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "sconce_interp",
+   "pos": [
+    1772,
+    192
+   ],
+   "color": "#E9B46E",
+   "energy": 0.25,
+   "radius": 60,
+   "flicker": 0.03,
+   "height": 14,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "cloak_lamp",
+   "pos": [
+    293,
+    248
+   ],
+   "color": "#E9B46E",
+   "energy": 0.95,
+   "radius": 120,
+   "flicker": 0.02,
+   "height": 20,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "typist_lamp",
+   "pos": [
+    1137,
+    249
+   ],
+   "color": "#E9B46E",
+   "energy": 0.5,
+   "radius": 80,
+   "flicker": 0.03,
+   "height": 16,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "table_lamp",
+   "pos": [
+    1311,
+    250
+   ],
+   "color": "#E9B46E",
+   "energy": 0.95,
+   "radius": 120,
+   "flicker": 0.02,
+   "height": 10,
+   "on_layer": "playfield"
+  }
+ ],
+ "fx": [
+  {
+   "type": "anim_sprite",
+   "file": "fx_snow_square.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    -50,
+    34
+   ],
+   "parallax": [
+    0.5,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_square (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_snow_river.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    350,
+    64
+   ],
+   "parallax": [
+    0.45,
+    1.0
+   ],
+   "z": -93,
+   "lit": false,
+   "note": "between ext_river (z -95) and the square/Saal layers: only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_vestibule.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    16,
+    60
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_foyer.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    470,
+    40
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_office.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    1170,
+    110
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_glints.png",
+   "frames": 16,
+   "fps": 3,
+   "pos": [
+    620,
+    38
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -40,
+   "lit": false
+  }
+ ],
+ "hotspot_info": {
+  "kessler": {
+   "kind": "story",
+   "stand": [
+    300,
+    300
+   ],
+   "focus": [
+    316,
+    256
+   ],
+   "facing": "right",
+   "what": "Kessler stands at x 316 (hotspot_offset +16) by the lit cloakroom counter"
+  },
+  "seating": {
+   "kind": "story",
+   "stand": [
+    930,
+    300
+   ],
+   "focus": [
+    930,
+    236
+   ],
+   "facing": "back",
+   "what": "brass easel with the seating plan in front of the doors to the Grosser Saal"
+  },
+  "booth_log": {
+   "kind": "story",
+   "stand": [
+    1180,
+    300
+   ],
+   "focus": [
+    1182,
+    254
+   ],
+   "facing": "back",
+   "what": "wire basket of carbon copies on the oak cabinet under the office window"
+  },
+  "protocol_table": {
+   "kind": "story",
+   "stand": [
+    1270,
+    300
+   ],
+   "focus": [
+    1270,
+    254
+   ],
+   "facing": "back",
+   "what": "the big baize table with the brass desk lamp"
+  },
+  "booth_2": {
+   "kind": "story",
+   "stand": [
+    1650,
+    300
+   ],
+   "focus": [
+    1652,
+    246
+   ],
+   "facing": "back",
+   "what": "booth 2 (RU <-> DE): empty chair, dangling headset, pencil, blotter pad, lamp on"
+  },
+  "alexei_meet": {
+   "kind": "story",
+   "stand": [
+    1700,
+    300
+   ],
+   "focus": [
+    1718,
+    256
+   ],
+   "facing": "right",
+   "what": "in front of booth 3; Alexei appears at x 1718"
+  },
+  "elena_arrival": {
+   "kind": "npc_anchor",
+   "stand": [
+    345,
+    300
+   ],
+   "focus": [
+    353,
+    256
+   ],
+   "facing": "right",
+   "what": "Elena at x 353, in front of the directory board"
+  },
+  "voronova_bg": {
+   "kind": "npc_anchor",
+   "stand": [
+    700,
+    300
+   ],
+   "focus": [
+    700,
+    256
+   ],
+   "facing": "right",
+   "what": "below the staircase landing (background NPC)"
+  },
+  "typist": {
+   "kind": "npc_anchor",
+   "stand": [
+    1120,
+    300
+   ],
+   "focus": [
+    1134,
+    256
+   ],
+   "facing": "right",
+   "what": "typist at x 1134 in front of her desk (typewriter, carbon box)"
+  },
+  "journalist": {
+   "kind": "npc_anchor",
+   "stand": [
+    560,
+    300
+   ],
+   "focus": [
+    574,
+    256
+   ],
+   "facing": "right",
+   "what": "journalist at x 574 at the foot of the grand staircase"
+  },
+  "exp_flags": {
+   "kind": "exploration",
+   "stand": [
+    154,
+    300
+   ],
+   "focus": [
+    156,
+    236
+   ],
+   "facing": "back",
+   "what": "six flags: commission, USSR, Reich, Sweden, Switzerland, Finland"
+  },
+  "exp_cloakroom": {
+   "kind": "exploration",
+   "stand": [
+    240,
+    300
+   ],
+   "focus": [
+    262,
+    236
+   ],
+   "facing": "back",
+   "what": "numbered hooks; Elena's charcoal coat with the wine-red scarf"
+  },
+  "exp_photos": {
+   "kind": "exploration",
+   "stand": [
+    474,
+    300
+   ],
+   "focus": [
+    476,
+    214
+   ],
+   "facing": "back",
+   "what": "photo wall: the 1953 armistice signing"
+  },
+  "exp_chandelier": {
+   "kind": "exploration",
+   "stand": [
+    640,
+    300
+   ],
+   "focus": [
+    648,
+    80
+   ],
+   "facing": "back",
+   "what": "the crystal chandelier above"
+  },
+  "exp_buffet": {
+   "kind": "exploration",
+   "stand": [
+    792,
+    300
+   ],
+   "focus": [
+    800,
+    262
+   ],
+   "facing": "back",
+   "what": "untouched Sekt and caviar on crushed ice"
+  },
+  "exp_window": {
+   "kind": "exploration",
+   "stand": [
+    866,
+    300
+   ],
+   "focus": [
+    865,
+    150
+   ],
+   "facing": "back",
+   "what": "old town, the frozen river, the bridge and the watchtowers of the Line"
+  },
+  "exp_evac_plan": {
+   "kind": "exploration",
+   "stand": [
+    1036,
+    300
+   ],
+   "focus": [
+    1036,
+    218
+   ],
+   "facing": "back",
+   "what": "evacuation plan: a dashed staff corridor leads down to a cellar room"
+  },
+  "exp_treaty_shelf": {
+   "kind": "exploration",
+   "stand": [
+    1080,
+    300
+   ],
+   "focus": [
+    1080,
+    200
+   ],
+   "facing": "back",
+   "what": "bookcase of bound treaty volumes 1953 / 1963"
+  },
+  "exp_mimeograph": {
+   "kind": "exploration",
+   "stand": [
+    1342,
+    300
+   ],
+   "focus": [
+    1348,
+    262
+   ],
+   "facing": "back",
+   "what": "stencil duplicator with fresh copies"
+  },
+  "exp_headsets": {
+   "kind": "exploration",
+   "stand": [
+    1520,
+    300
+   ],
+   "focus": [
+    1520,
+    226
+   ],
+   "facing": "back",
+   "what": "glazed cabinet with numbered headsets (two hooks empty)"
+  }
+ },
+ "npcs": {
+  "kessler": {
+   "feet": [
+    316,
+    300
+   ],
+   "facing": "left"
+  },
+  "elena": {
+   "feet": [
+    353,
+    300
+   ],
+   "facing": "left"
+  },
+  "voronova": {
+   "feet": [
+    700,
+    300
+   ],
+   "facing": "right"
+  },
+  "typist": {
+   "feet": [
+    1134,
+    300
+   ],
+   "facing": "left"
+  },
+  "journalist": {
+   "feet": [
+    574,
+    300
+   ],
+   "facing": "left"
+  },
+  "alexei": {
+   "feet": [
+    1718,
+    300
+   ],
+   "facing": "left"
+  }
+ },
+ "windows": {
+  "glass_note": "room.png is transparent at the glazing; ext_* / saal_* layers show through",
+  "saal_windows": [
+   [
+    1562,
+    220,
+    48,
+    38
+   ],
+   [
+    1628,
+    220,
+    48,
+    38
+   ],
+   [
+    1694,
+    220,
+    48,
+    38
+   ]
+  ]
+ },
+ "notes": [
+  "Side view like L_M1_Archive: feet line y 300, walk band 296-306 (flat 8x2 collider), x 18-1902.",
+  "Warm focal lights: cloakroom lamp (vestibule, Kessler), chandelier (foyer), Saal-door glass (seating easel), table lamp (Protokollbuero), booth 2 lamp (interpreters' corridor).",
+  "Flags: props/flag_ussr.png and props/flag_reich.png are the neutral defaults; *_hist.png variants (and saal_far_hist.png) carry the historical insignia; layer_stack resolves them via Symbols.pick.",
+  "Elena's charcoal coat with the wine-red scarf hangs on the sixth cloakroom hook (x ~264).",
+  "The seating easel matches the puzzle: horseshoe, presidium on top, mics clockwise from 1, secretariat (12) at the open end; only 1, 2 and 12 are printed.",
+  "Booth 2 (x 1622-1682): empty chair, headset dangling on its cable, pencil, blotter pad, lamp on.",
+  "The evacuation plan shows a dashed staff corridor down to a cellar room (foreshadowing).",
+  "No story character is painted into the art; NPC sprites stand at the npc anchors."
+ ],
+ "meta": {
+  "mode": "side",
+  "feet_y": 300,
+  "generator": "tools/pixelgen/env_veltrava_hall.py",
+  "date": "2026-11-04",
+  "palette_ramps": {
+   "night": [
+    "#05080C",
+    "#0A1016",
+    "#10181F",
+    "#172229"
+   ],
+   "wall": [
+    "#1B2826",
+    "#26362F",
+    "#344539",
+    "#4A5B4C",
+    "#647260"
+   ],
+   "wood": [
+    "#22150F",
+    "#331F16",
+    "#4A2D1F",
+    "#63402C",
+    "#7E553B"
+   ],
+   "marble": [
+    "#4E4A44",
+    "#6A655C",
+    "#878075",
+    "#A59D8F",
+    "#C4BCAD",
+    "#E0D9CB"
+   ],
+   "brass": [
+    "#4A3415",
+    "#73531F",
+    "#9C7630",
+    "#C49A48",
+    "#E8C779"
+   ],
+   "daylight": [
+    "#263445",
+    "#3A4D63",
+    "#55708A",
+    "#7C98B0",
+    "#A9C0D0",
+    "#D3DEE6"
+   ],
+   "amber": [
+    "#6E3F22",
+    "#9A5A2F",
+    "#C88A4E",
+    "#E9B46E",
+    "#FCE0A6"
+   ],
+   "paper": [
+    "#6E6A5C",
+    "#8E8A78",
+    "#B0AA93",
+    "#CEC6AA",
+    "#E6DEC2",
+    "#F5EFDA"
+   ],
+   "ink": [
+    "#1A1C2A",
+    "#2E3248",
+    "#7A2A26",
+    "#A8382E"
+   ]
+  },
+  "palette_note": "'palais' = c3.json palettes.palais + daylight #D3DEE6 (cold near-white)"
+ }
 }
