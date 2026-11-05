@@ -5,6 +5,8 @@ TECHNICAL_ARCHITECTURE 12.1).  Close-ups whose subject is regime iconography als
 real historical insignia (12.4: the neutral file always exists; loaders resolve via Symbols.pick):
   poster   the parade poster: state emblem above the dome (neutral: fictional Reichssiegel)
   banner   the facade banners (neutral: Reichssiegel on the white disc)
+plaza-polish (2026-11-05) adds: leaflet (find of the mini-game "Das Blatt im Schnee"), frost_heart and paws (two quiet
+easter eggs) and the world decal world/paw_trail.png (Sprite2D in L_M1_Plaza); none of them carries insignia.
 Painting toolkit (tone-space Canvas, masks, 3x5/5x7 fonts, emblems) is imported read-only from
 explore_berlin.py, so both chapters share one look and one palette (pg.py scene ramps, Bayer dithering).
 Light = the parade evening of hall_plaza: snow clouds, searchlight shafts, warm accents where people keep warm.
@@ -513,6 +515,145 @@ def s_family_door(cv: Canvas, hist=False):
     snowfall(cv, 60, 10)
 
 
+# =========================================================================== plaza-polish additions (2026-11-05)
+def s_leaflet(cv: Canvas, hist=False):
+    """The mini-game find: a typed carbon copy "WER FEHLT?" being slid into Konrad's coat (no insignia)."""
+    coat = cv.full(cv.rect(0, 0, W, H, 'blue', 1.3))
+    cv.noise(9, 0.35, coat, seed_add=1)
+    cv.grain(0.2, coat, seed_add=2)
+    lining = cv.full(cv.poly([(0, 0), (58, 0), (46, 150), (0, 150)], 'room', 1.6))
+    cv.noise(6, 0.3, lining, seed_add=3)
+    cv.line(57, 0, 45, 149, 'blue', 2.6, flat=False)
+    pocket = cv.full(cv.rect(8, 58, 40, 9, 'room', 0.6))
+    cv.bevel(pocket, 0.6, 0.4)
+    for (x, y) in ((220, 34), (220, 98)):
+        b = cv.full(cv.ellipse(x, y, 4.2, 4.2, 'graphite', 1.4))
+        cv.bevel(b, 1.2, 0.8)
+    note = paper_sheet(cv, 66, 10, 138, 132, tone=5.9, seed=11, age=0.65)
+    cv.shadow(note, 3, 3, 1.4)
+    cv.text(135, 16, 'WER FEHLT?', 'ink', 0, font='57', align='center')
+    cv.line(96, 25, 174, 25, 'ink', 1, flat=False)
+    rows = ['NR 9', 'NR 9', 'NR 11', 'NR 11', 'NR 12', 'NR 14', 'NR 14', 'NR 17']
+    for i, nr in enumerate(rows):
+        y = 32 + i * 10
+        typed_line(cv, 74, y, 62 + (i * 7) % 22, 'ink', 1, cv.seed + 60 + i, h=2)
+        cv.text(196, y, nr, 'ink', 1, align='right')
+        typed_line(cv, 142, y + 1, 18, 'ink', 1, cv.seed + 80 + i, h=1)
+    scribble(cv, 78, 116, 64, 'graphite', 1, cv.seed + 5)
+    cv.text(80, 126, 'BITTE WEITERGEBEN', 'graphite', 1)
+    wet = cv.full(ellipse_mask(176, 122, 24, 13)) & note
+    cv.adjust(-0.9, wet)
+    for k in range(5):   # the edge of a boot print across the lower corner
+        cv.line(160 + k * 7, 140, 166 + k * 7, 131, 'paper', 3.6, flat=False)
+    glove = cv.full(cv.ellipse(70, 86, 15, 21, 'wood', 1.6))
+    for i in range(4):
+        f = cv.full(cv.ellipse(82, 70 + i * 9, 9, 4.2, 'wood', 1.8 + 0.2 * i))
+        cv.bevel(f, 0.8, 0.6)
+    cv.bevel(glove, 0.8, 0.8)
+    cv.line(60, 102, 76, 110, 'wood', 1.0, flat=False)
+    cv.spot(200, 10, 170, 1.0)
+    finish(cv, (0.2, -0.6), 1.3)
+    snowfall(cv, 40, 11)
+
+
+def heart_mask(cv, cx, cy, r):
+    m = cv.full(ellipse_mask(cx - r * 0.55, cy - r * 0.25, r * 0.62, r * 0.62)) | \
+        cv.full(ellipse_mask(cx + r * 0.55, cy - r * 0.25, r * 0.62, r * 0.62))
+    for y in range(int(cy - r * 0.3), int(cy + r * 1.05)):
+        half = max(0.0, (cy + r * 1.05 - y) / (r * 1.35)) * r * 1.15
+        for x in range(int(cx - half), int(cx + half) + 1):
+            if 0 <= x < W and 0 <= y < H:
+                m[y, x] = True
+    return m
+
+
+def s_frost_heart(cv: Canvas, hist=False):
+    """Easter egg: a heart breathed into the hoarfrost of the lamp post at the side street (no politics)."""
+    overcast(cv, H, 1.6, 3.0)
+    crowd(cv, 150, 104, 6, 1.6, 'violet', 13)
+    post = cv.full(cv.rect(84, 0, 74, H, 'steel', 2.6))
+    cv.adjust(-np.clip(np.abs(XX - 121) / 37.0, 0, 1) ** 1.6 * 1.8, post)
+    for x in range(92, 152, 9):
+        cv.line(x, 0, x, H - 1, 'steel', 1.6, flat=False)
+    ring = cv.full(cv.rect(78, 14, 86, 9, 'steel', 3.4))
+    cv.bevel(ring, 1.2, 1.2)
+    rng = np.random.default_rng(cv.seed + 4)
+    heart = heart_mask(cv, 121, 70, 30)
+    clumps = np.repeat(np.repeat(rng.random((H // 3 + 1, W // 3 + 1)), 3, 0), 3, 1)[:H, :W]
+    frost = post & ~ring & (rng.random((H, W)) < 0.95)
+    cv.put(frost & ~heart, 0, 0, 'snow', 2.6, flat=True)            # hoarfrost: a soft, even fur of ice
+    cv.put(frost & ~heart & (clumps < 0.18), 0, 0, 'snow', 2.2, flat=True)
+    cv.put(frost & ~heart & (rng.random((H, W)) < 0.03), 0, 0, 'snow', 3.8, flat=True)
+    cv.put(heart & post, 0, 0, 'steel', 1.9)                       # the breathed patch: wet dark metal
+    cv.put(edge(heart) & post, 0, 0, 'snow', 4.6, flat=True)       # the glove-traced outline
+    cv.text(121, 58, 'H+G', 'snow', 4.4, scale=2, align='center')
+    cv.text(121, 108, 'NA ENDLICH', 'steel', 1.2, align='center')
+    snow_cap(cv, 78, 14, 86, 2, 3)
+    cv.spot(121, -30, 120, 1.2)
+    finish(cv, (0.5, -0.3), 1.3)
+    snowfall(cv, 70, 12)
+
+
+def s_paws(cv: Canvas, hist=False):
+    """Easter egg: a cat's neat trail from under the barrier across the pavement to the chestnut cart."""
+    cv.grad(0, 0, W, 34, 'violet', 1.4, 2.6)
+    for x in range(0, W, 9):   # boots of the column beyond the barrier
+        cv.rect(x + 2, 12, 5, 16, 'steel', 1.2)
+    board = cv.full(cv.rect(0, 26, W, 7, 'paper', 6.2))
+    for x in range(0, W, 24):
+        cv.rect(x, 26, 12, 7, 'red', 3.0)
+    cv.bevel(board, 0.6, 1.0)
+    cv.grad(0, 33, W, 117, 'snow', 2.6, 3.7)
+    sn = cv.full((np.ones((117, W), bool), 0, 33))
+    cv.noise(12, 0.35, sn, seed_add=7)
+    for x in (30, 150):
+        cv.polyline([(x, 33), (x + 14, 60)], 'wood', 2.2, flat=False, width=3)
+        cv.polyline([(x + 26, 33), (x + 12, 60)], 'wood', 2.0, flat=False, width=3)
+    rng = np.random.default_rng(cv.seed + 3)
+    for k in range(4):   # human boot prints, untidy and crossing
+        x0, y0 = 20 + k * 52 + int(rng.integers(-8, 8)), 70 + int(rng.integers(0, 50))
+        cv.ellipse(x0, y0, 5, 9, 'snow', 2.0)
+        cv.ellipse(x0 + 1, y0 + 9, 4, 3, 'snow', 2.2)
+    for i in range(12):   # the cat: tidy, one print in front of the other
+        t = i / 11.0
+        x = 44 + t * 150 + (3 if i % 2 else -3)
+        y = 40 + t * 96
+        s = 0.6 + 0.6 * t
+        cv.ellipse(x, y, 2.2 * s + 0.6, 1.8 * s + 0.6, 'snow', 1.6)
+        for dx in (-1.6, -0.5, 0.6, 1.7):
+            cv.px(x + dx * s * 1.4, y - 2.4 * s - 0.8, 'snow', 1.5)
+    cv.spot(230, 140, 70, 1.8)
+    wheel = cv.full(cv.ellipse(226, 132, 26, 26, 'wood', 2.4)) & ~cv.full(ellipse_mask(226, 132, 21, 21))
+    cv.put(wheel, 0, 0, 'wood', 2.6)
+    cv.bevel(wheel, 0.8, 0.8)
+    for a in range(0, 360, 45):
+        r_ = math.radians(a)
+        cv.line(226, 132, 226 + 22 * math.cos(r_), 132 + 22 * math.sin(r_), 'wood', 3.0, flat=False)
+    cv.ellipse(226, 132, 4, 4, 'brass', 3.4)
+    for (x, y) in ((176, 120), (186, 128)):   # two chestnut shells
+        cv.ellipse(x, y, 3, 2.2, 'wood', 2.0)
+        cv.px(x - 1, y - 1, 'brass', 4)
+    finish(cv, (-0.2, 0.6), 1.2)
+    snowfall(cv, 50, 13)
+
+
+def world_paw_trail(path):
+    """World decal for L_M1_Plaza (Sprite2D near exp_pz_paws): the same trail as tiny dents in the snow."""
+    w, h = 48, 26
+    a = np.zeros((h, w, 4), np.uint8)
+    dent, rim = (110, 106, 115, 210), (210, 204, 203, 170)
+    for i in range(9):
+        t = i / 8.0
+        x = int(round(2 + t * 42 + (1 if i % 2 else -1)))
+        y = int(round(2 + t * 21))
+        for (dx, dy, c) in ((0, 0, dent), (1, 0, dent), (0, -1, rim)):
+            if 0 <= x + dx < w and 0 <= y + dy < h:
+                a[y + dy, x + dx] = c
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    Image.fromarray(a, 'RGBA').save(path)
+    print('wrote', os.path.relpath(path, ROOT))
+
+
 SCENES = {
     'tram_stop': (s_tram_stop, False),
     'poster': (s_poster, True),
@@ -525,6 +666,9 @@ SCENES = {
     'rubble': (s_rubble, False),
     'family_door': (s_family_door, True),
     'window': (s_window, False),
+    'leaflet': (s_leaflet, False),
+    'frost_heart': (s_frost_heart, False),
+    'paws': (s_paws, False),
 }
 
 
@@ -541,6 +685,8 @@ def main(argv: list[str]) -> int:
             preview = argv[i + 1]; i += 2; continue
         only.append(argv[i]); i += 1
     os.makedirs(OUT, exist_ok=True)
+    if not only or 'paws' in only:
+        world_paw_trail(os.path.join(OUT, 'world', 'paw_trail.png'))
     shots = []
     for name, (fn, has_hist) in SCENES.items():
         if only and name not in only:

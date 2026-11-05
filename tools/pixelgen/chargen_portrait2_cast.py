@@ -1497,3 +1497,105 @@ def pass_scarf_border(front_y, slope=1.15, z_off=0.5, band=(-2.7, -1.6), lit='#b
                 rgb[yy, x] = cl if v[yy, x] > 0.28 else cs
         return rgb
     return fn
+
+
+# ======================================================================================= plaza: press photographer
+# (plaza-polish 2026-11-05) chat speaker "photographer" of explore entry plaza.photographer (L_M1_Plaza): a tired,
+# wry press photographer in his forties; fedora pushed back with a press card in the band, dark gabardine coat
+# (matches the world prop on the stepladder), loosened tie, a rangefinder camera on a leather strap at the chest.
+def press_card(M, hp, y0=-12.8, z0=-5.2, tilt=(9.0, -4.0), band_r=(17.4, 21.6), angle=-38.0):
+    """Small white press card tucked into the fedora band on the side turned towards the viewer."""
+    m = M('card')
+    hf = S.Frame((0.0, y0, z0), S.rot(0, tilt[0], tilt[1]))
+    a = np.radians(angle)
+    rx, rz = band_r[0] + 1.0, band_r[1] + 1.0
+    c = (rx * np.sin(a), -4.6, rz * np.cos(a))
+    card = S.RoundBox(c, (2.7, 3.0, 0.32), 0.25, m, R=S.rot(angle, 0.0, -8.0))
+    return dict(node=S.Xform(card, frame=hf))
+
+
+def rangefinder(M, t, at=(-1.5, 13.0, 17.6)):
+    """Rangefinder camera hanging at the chest (torso frame): leatherette body, chrome top plate, lens, strap."""
+    body, chrome, lens = M('camera'), M('chrome'), M('lens')
+    x, y, z = at
+    parts = [S.RoundBox((x, y, z), (7.2, 3.9, 2.7), 0.9, body),
+             S.RoundBox((x, y - 4.2, z - 0.1), (7.0, 0.8, 2.6), 0.4, chrome),
+             S.RoundBox((x - 4.6, y - 5.4, z - 0.3), (1.6, 0.6, 1.2), 0.3, chrome),
+             S.RoundCone((x + 1.2, y + 0.3, z + 2.2), (x + 1.2, y + 0.4, z + 5.6), 3.0, 2.7, chrome),
+             S.RoundCone((x + 1.2, y + 0.4, z + 5.4), (x + 1.2, y + 0.4, z + 6.3), 2.2, 2.2, lens)]
+    parts.append(strap(M, [(x - 6.6, y - 3.0, z - 0.4), (-9.0, 4.0, 13.2), (-8.6, -3.0, 9.0)], r=0.85))
+    parts.append(strap(M, [(x + 6.6, y - 3.0, z - 0.4), (8.8, 4.0, 13.2), (8.2, -3.0, 9.0)], r=0.85))
+    return S.Union(parts, k=0.3)
+
+
+def photographer():
+    rim = '#6e8fa6'
+    sk = ramp('#0b0d16', '#1d1b28', '#3a2933', '#62393f', '#8f554b', '#b8775f', '#d79c7c', '#eec3a0')
+    lip = ramp('#0b0d16', '#1d1b28', '#3c2832', '#62363e', '#8b4f4d', '#ad6a5e', '#cb8c78', '#e2ae96')
+    styles = skin_styles(sk, rim, lip)
+    coat = ramp('#07060a', '#100e13', '#1a161c', '#262027', '#332b32', '#43383e', '#56484b')
+    cth = [0.05, 0.12, 0.22, 0.36, 0.54, 0.76]
+    felt = ramp('#0a0908', '#16130f', '#231e18', '#322a21', '#43392c', '#574a39', '#6d5d48', '#857258')
+    fth = [0.03, 0.08, 0.15, 0.25, 0.38, 0.55, 0.75]
+    styles.update({
+        'felt': MatStyle(felt, fth, dither=0.05, rim='#7a8a9a'),
+        'brim': MatStyle(felt, fth, dither=0.0, rim='#7a8a9a'),
+        'ribbon': MatStyle(ramp('#050406', '#0d0b0d', '#171316', '#231d20', '#30282b'), [0.06, 0.16, 0.32, 0.55],
+                           rim='#4a5a6a'),
+        'card': MatStyle(ramp('#3a3a3e', '#7c7a78', '#b4aea4', '#dcd4c4', '#f2ead8'), [0.08, 0.2, 0.4, 0.65],
+                         rim='#f2ead8'),
+        'hair': MatStyle(ramp('#0b0a0b', '#1b1716', '#2c2522', '#41372f', '#5b5048', '#7d7468'),
+                         [0.05, 0.12, 0.24, 0.40, 0.60], rim='#8ea0ac', wrap=0.3),
+        'coat': MatStyle(coat, cth, dither=0.05, rim=rim),
+        'coat_lapel': MatStyle(coat, cth, rim=rim),
+        'shirt': MatStyle(ramp('#121318', '#2c2d33', '#4d4d52', '#77756f', '#a29d92', '#c8c0b0'),
+                          [0.05, 0.12, 0.24, 0.42, 0.62], rim='#9eb2c2'),
+        'tie': MatStyle(ramp('#0a0507', '#1c0c0f', '#311519', '#4a2024', '#62302e'), [0.06, 0.15, 0.3, 0.5],
+                        rim='#5a4a62'),
+        'strap': MatStyle(ramp('#0a0607', '#1b0f0c', '#2e1a12', '#472918', '#633a22', '#7d4f30'),
+                          [0.05, 0.12, 0.24, 0.40, 0.6], rim='#6a6a76'),
+        'camera': MatStyle(ramp('#050506', '#0c0c0e', '#151518', '#202024', '#2e2e33'), [0.08, 0.2, 0.4, 0.65],
+                           dither=0.06, rim='#5d6c7c'),
+        'chrome': MatStyle(ramp('#121418', '#30343c', '#5a606a', '#8c929a', '#c2c6c8', '#eef0ee'),
+                           [0.06, 0.16, 0.32, 0.52, 0.74], rim='#c2c6c8', spec=1.6, spec_pow=16.0),
+        'lens': MatStyle(ramp('#030304', '#0a0c12', '#1a2232', '#3a4c66', '#9fb4c8'), [0.1, 0.3, 0.6, 0.85],
+                         rim='#9fb4c8', spec=1.8, spec_pow=22.0),
+    })
+    head = dict(mid_h=(12.0, 7.0, 11.6), jaw_angle=(11.6, 15.6, -3.8), cheek_c=(10.8, 3.2, 9.8),
+                chin_h=(5.0, 3.4, 3.4), nose_tip=(0.0, 9.6, 20.2), tip_r=2.7, low_r=(12.0, 11.2, 12.8),
+                brow_r=(12.6, 3.0, 3.6))
+    return dict(
+        id='photographer', city='berlin',
+        look=dict(key=(0.56, -0.42, 0.71), rim=(-0.80, -0.35, -0.50), ambient=0.07, bg='berlin',
+                  glow=(0.80, 0.18)),
+        head=head, zoom=1.10,
+        head_pos=(55.0, 53.0, 0.0), yaw=26.0, pitch=2.0, roll=-1.0,
+        torso_pos=(55.0, 85.5, -0.5), torso_yaw=14.0, torso=dict(width=1.06, depth=1.08, slope=1.0),
+        poses=POSES_STD,
+        head_items=[lambda M, hp: fedora(M, hp, tilt=(9.0, -4.0), y0=-12.8),
+                    lambda M, hp: press_card(M, hp, angle=-38.0),
+                    lambda M, hp: hair_short(M, hp, hairline=-14.0, front_z=8.0, burn_y=2.0)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.40, v_top=3.0, lapel=True, collar_h=8.0, collar_r=(12.4, 14.0)),
+            lambda M, t: tie_knot_collar(M),
+            lambda M, t: tie(M, mat='tie', top=(0.6, 4.6, 12.6), bot=(1.4, 24.0, 13.8)),
+            lambda M, t: rangefinder(M, t),
+        ],
+        styles=styles,
+        skin=('skin', 'lip', 'ear', 'neck'),
+        groups={'skin': 0, 'lip': 0, 'ear': 0, 'hair': 0, 'neck': 1, 'felt': 2, 'ribbon': 2, 'brim': 3, 'card': 9,
+                'coat': 4, 'coat_lapel': 8, 'shirt': 5, 'tie': 5, 'strap': 7, 'camera': 10, 'chrome': 10,
+                'lens': 10, 'body': 4},
+        tone_passes=[pass_grain('felt', 0.07, seed=8), pass_grain('coat', 0.05, seed=9), pass_strands('hair')],
+        eye=dict(iris='#5a5244', iris_d='#363026', sclera='#c4bcb0', sclera_d='#746e76', lash='#140c10',
+                 pupil='#0a0a0e', catch='#f2ead8'),
+        brow=dict(col='#2e2420', col_l='#4c3e34'),
+        mouth=dict(line='#3a1a1e', corner='#55282a', inner='#1a0a0d', teeth='#b2a593', tongue='#6c3034'),
+        features=dict(extra=[ear_detail, stubble(density=0.65), eye_bags(), wrinkles(forehead=2, under=False)],
+                      brows={**BROWS_STD, 'neutral': dict(arch=0.5, lift_inner=0.4)},
+                      brow_thick=((3, 2, 2), (2, 2, 1)), mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.2)}),
+        priority={'card': 3, 'chrome': 2, 'lens': 2, 'brim': 2, 'ribbon': 2, 'strap': 1},
+    )
+
+
+CAST['photographer'] = photographer

@@ -1,6 +1,9 @@
 {
- "note": "Exploration hotspots owned by plaza-explore (merged by Level; scene.json wins on name clashes). exp_pz_neighbour = where Konrad stands to talk to the woman of the evicted family (berlin_mother) in front of No. 9, between the lit window (exp_pz_window) and the sealed door (exp_pz_family_door); >= 26 px from every other spot, inside the walkable polygon.",
+ "note": "Exploration hotspots owned by plaza-explore (merged by Level; scene.json wins on name clashes). exp_pz_neighbour = where Konrad stands to talk to the woman of the evicted family (berlin_mother) in front of No. 9, between the lit window (exp_pz_window) and the sealed door (exp_pz_family_door); >= 26 px from every other spot, inside the walkable polygon. plaza-polish: exp_pz_frost_heart = right of the lamp post at the side street (37 px from the spawn, outside its 30 px prompt radius); exp_pz_leaflet = between exp_pz_guard and exp_pz_barrier (mini-game, world cue sprite in the snow); exp_pz_paws = left of the chestnut cart (world decal paw_trail). All >= 26 px from every other spot, inside the walkable polygon.",
  "hotspots": {
-  "exp_pz_neighbour": [288, 314]
+  "exp_pz_neighbour": [288, 314],
+  "exp_pz_frost_heart": [96, 318],
+  "exp_pz_leaflet": [856, 302],
+  "exp_pz_paws": [1208, 312]
  }
 }

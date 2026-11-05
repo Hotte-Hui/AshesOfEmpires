@@ -1,7 +1,16 @@
 {
  "area": "plaza",
- "note": "Exploration content of the plaza before the Great Hall during the army parade (Konrad, chapter 2), owner: plaza-explore. Optional finds never touch Story. Entry order = Konrad's walk from the archive exit across the plaza to the cleared block. Voice: precise and euphemistic, cracking; never celebratory (STORY_BIBLE 2, TECHNICAL_ARCHITECTURE 12.7). Hotspots: hall_plaza/scene.json (env) + explore_hotspots.json; nodes in scenes/levels/L_M1_Plaza.tscn; strings in data/locale/de_explore_plaza.json; history cards by id only.",
+ "note": "Exploration content of the plaza before the Great Hall during the army parade (Konrad, chapter 2), owner: plaza-explore. Optional finds never touch Story. Entry order = Konrad's walk from the archive exit across the plaza to the cleared block. Voice: precise and euphemistic, cracking; never celebratory (STORY_BIBLE 2, TECHNICAL_ARCHITECTURE 12.7). Hotspots: hall_plaza/scene.json (env) + explore_hotspots.json; nodes in scenes/levels/L_M1_Plaza.tscn; strings in data/locale/de_explore_plaza.json; history cards by id only. plaza-polish (2026-11-05): mini-game find plaza.leaflet (\"Das Blatt im Schnee\", scenes/ui/minigames/LeafletSnow.tscn, strings mg.leaflet.* in de_minigame_plaza.json) and the easter eggs plaza.frost_heart and plaza.paws.",
  "entries": [
+  {
+   "id": "plaza.frost_heart",
+   "kind": "easter_egg",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.frost_heart.title",
+   "text_key": "explore.plaza.frost_heart.text",
+   "prompt_key": "explore.plaza.frost_heart.prompt",
+   "image": "res://assets/explore/plaza/frost_heart.png"
+  },
   {
    "id": "plaza.tram_stop",
    "kind": "detail",
@@ -22,6 +31,15 @@
    "text_key": "explore.plaza.poster.text",
    "prompt_key": "explore.plaza.poster.prompt",
    "image": "res://assets/explore/plaza/poster.png"
+  },
+  {
+   "id": "plaza.paws",
+   "kind": "easter_egg",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.paws.title",
+   "text_key": "explore.plaza.paws.text",
+   "prompt_key": "explore.plaza.paws.prompt",
+   "image": "res://assets/explore/plaza/paws.png"
   },
   {
    "id": "plaza.vendor",
@@ -65,6 +83,16 @@
    "title_key": "explore.plaza.guard.title",
    "text_key": "explore.plaza.guard.text",
    "prompt_key": "explore.plaza.guard.prompt"
+  },
+  {
+   "id": "plaza.leaflet",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.leaflet.title",
+   "text_key": "explore.plaza.leaflet.text",
+   "prompt_key": "explore.plaza.leaflet.prompt",
+   "image": "res://assets/explore/plaza/leaflet.png",
+   "minigame": "res://scenes/ui/minigames/LeafletSnow.tscn"
   },
   {
    "id": "plaza.tank",

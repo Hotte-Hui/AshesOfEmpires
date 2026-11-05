@@ -5,6 +5,12 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 6 (2026-11-05 night) — plaza task
+- Plaza mini-game "Das Blatt im Schnee" (secure the carbon copy "WER FEHLT?" while the guards watch the parade),
+  two quiet easter eggs (frost heart, cat trail), a portrait for the press photographer. Plaza: 18 finds/chats.
+- Not done: preparing the `kapitel-3` merge (the isolated worktree could not be created because the session folder
+  is not the game repository) — do it in a session started inside C:/Spiele/AshesOfEmpires.
+
 ## Rounds 4–5 (2026-11-05 night) — parade, plaza, photo mode, credits
 - **Parade** (`L_M1_Parade`, 47 s, 8 shots) follows the Great Hall reveal: massed formations, the column behind the
   barrier, tanks, the tribune under the eagle, the forced crowd with the evicted family, searchlights and jets,

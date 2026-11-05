@@ -142,7 +142,7 @@ func _data_file() -> bool:
 		if kind == "easter_egg":   # §12.7: jokes never sit on atrocity topics
 			kit.ok((e.get("history", []) as Array).is_empty(), "%s: easter eggs carry no history card" % id)
 	var discover := _entries().size() - int(by_kind.get("chat", 0))
-	kit.ok(discover >= 12 and discover <= 14, "12–14 discover entries (have %d)" % discover)
+	kit.ok(discover >= 12 and discover <= 17, "12–17 discover entries (have %d)" % discover)
 	kit.eq(int(by_kind.get("chat", 0)), 2, "two chats")
 	return true
 

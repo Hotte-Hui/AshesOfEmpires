@@ -139,3 +139,8 @@ controller, motion quality judged by a person, other GPUs/1440p displays.
 | Autoplay, watched (reveal 24 s + parade 47 s chain) | **PASS** |
 | Real-input, windowed, skip + exploration | **PASS** in 453 s — the plaza walked and explored by key presses, exit back to the archive, end-credits roll skipped with Esc |
 | Exported .exe, real-input, skip + exploration | **PASS** in 446 s |
+
+## 10. Round 6 (plaza task)
+Unit **23 files, 178 cases, 13,195 checks — all passed**; autoplay skip+exploration **PASS** (plaza 18/18, cards 16/16);
+real-input skip+exploration **PASS** in 461 s (the plaza mini-game solved by synthetic key presses); exported .exe
+real-input skip+exploration **PASS** in 461 s.
