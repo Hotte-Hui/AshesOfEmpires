@@ -21,11 +21,12 @@ const ACTIONS := {
 	"run": [KEY_SHIFT], "interact": [KEY_E, KEY_SPACE, KEY_ENTER],
 	"cancel": [KEY_ESCAPE, KEY_BACKSPACE], "journal": [KEY_J, KEY_TAB],
 	"pause": [KEY_ESCAPE], "skip": [KEY_ESCAPE], "advance": [KEY_SPACE, KEY_ENTER, KEY_E],
+	"photo_mode": [KEY_P],
 }
 const PAD := {
 	"interact": [JOY_BUTTON_A], "advance": [JOY_BUTTON_A], "cancel": [JOY_BUTTON_B],
 	"journal": [JOY_BUTTON_BACK], "pause": [JOY_BUTTON_START], "skip": [JOY_BUTTON_Y],
-	"run": [JOY_BUTTON_LEFT_SHOULDER],
+	"run": [JOY_BUTTON_LEFT_SHOULDER], "photo_mode": [JOY_BUTTON_RIGHT_STICK],
 }
 
 var values: Dictionary = DEFAULTS.duplicate(true)

@@ -3,7 +3,7 @@ extends Control
 ## instanced by Main under the `UI` CanvasLayer. Responsibilities:
 ## * exposes the panels as properties: hud, dialogue, inspect, signal_puzzle, blueprint_puzzle, journal,
 ##   discovery (DiscoveryView, §12 exploration finds + real-history cards), pause_menu, main_menu,
-##   settings_menu, saveload_menu, credits, confirm, subtitles, fade
+##   settings_menu, saveload_menu, credits, confirm, subtitles, fade, photo (PhotoMode, added in _ready)
 ## * modal stack: push_modal()/pop_modal(); the top modal gets input first (in _input, before the GUI);
 ##   pausing modals set get_tree().paused (all UI runs with PROCESS_MODE_ALWAYS)
 ## * applies theme.tres / theme_hc.tres and live text scaling from Settings
@@ -34,6 +34,10 @@ signal modal_changed(top: Control)
 @onready var subtitles: Control = $Subtitles
 @onready var fade: Control = $Fade
 
+## Photo mode (scenes/ui/PhotoMode.tscn), instanced in _ready (not part of UIRoot.tscn); opened by open_photo().
+const PHOTO_SCENE := "res://scenes/ui/PhotoMode.tscn"
+var photo: Control = null
+
 ## true while a cinematic runs (HUD hidden, letterbox); set through set_cinematic().
 var cinematic_mode := false
 var _stack: Array[Control] = []
@@ -46,6 +50,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Kit.full_rect(self)
 	_apply_theme()
+	_add_photo_mode()
 	for c in get_children():
 		if c is Control and "ui_root" in c:
 			c.set("ui_root", self)
@@ -267,6 +272,23 @@ func open_journal(tab := "") -> void:
 ## Re-opens an exploration find (and its real-history pages) — e.g. from the journal.
 func open_discovery(explore_id: String) -> void:
 	discovery.open(explore_id)
+
+
+func _add_photo_mode() -> void:
+	if photo != null or not ResourceLoader.exists(PHOTO_SCENE):
+		return
+	photo = (load(PHOTO_SCENE) as PackedScene).instantiate() as Control
+	photo.name = "PhotoMode"
+	add_child(photo)
+	move_child(photo, toast_layer.get_index())
+
+
+## Photo mode (free camera, filters, frames, saves PNGs): only in free play — never during a cinematic, a
+## dialogue or over another panel (PhotoMode.can_open() also checks Game.busy / in_cinematic / level).
+func open_photo() -> bool:
+	if photo == null or cinematic_mode or is_modal_open():
+		return false
+	return photo.open()
 
 
 func open_settings() -> void:

@@ -11,6 +11,7 @@ const LEVELS := {
 	"L_A1_Railyard": "res://scenes/levels/L_A1_Railyard.tscn",
 	"L_M1_Archive": "res://scenes/levels/L_M1_Archive.tscn",
 	"L_M1_HallReveal": "res://scenes/levels/L_M1_HallReveal.tscn",
+	"L_M1_Parade": "res://scenes/levels/L_M1_Parade.tscn",
 	"L_Test": "res://scenes/levels/L_Test.tscn",
 }
 const ENTRY_SPAWN := {"L_A1_Railyard": "SP_A1_Platform", "L_M1_Archive": "SP_M1_Arrival"}
@@ -927,6 +928,7 @@ func _cin_hall() -> bool:
 		t += get_process_delta_time()
 	await fade_out(0.7)
 	hall.queue_free()
+	await _cin_parade()   # second Great Hall scene (round 4): the parade on the plaza, same skip chain
 	camera.enabled = true
 	if prev_level and is_instance_valid(prev_level):
 		prev_level.visible = true
@@ -937,6 +939,39 @@ func _cin_hall() -> bool:
 	var skipped := _end_cinematic()
 	await fade_in(0.7)
 	return skipped
+
+
+## Later the same day: the regime's military parade on the plaza (scenes/levels/L_M1_Parade.tscn, 47 s, 8 shots).
+## Played right after the reveal inside LS_M1_Hall; one skip press skips the whole Great Hall chain.
+func _cin_parade() -> void:
+	var path: String = LEVELS.get("L_M1_Parade", "")
+	if _skip or path == "" or not ResourceLoader.exists(path):
+		return
+	var par: Node = load(path).instantiate()
+	main.level_root.add_child(par)
+	_apply_grade(par)
+	if par.has_signal("cue"):
+		par.cue.connect(func(k: String):
+			if k.begins_with("parade.cue.") and Loc.has(k):
+				subtitle(Loc.t(k), 4.8 if k == "parade.cue.konrad" else 3.8))
+	await fade_in(0.6)
+	Audio.play_music("mus_parade", 0.2)
+	if par.has_method("play"):
+		par.play()
+	var done := [false]
+	if par.has_signal("finished"):
+		par.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	var t := 0.0
+	while not done[0] and t < 60.0:
+		if _skip:
+			if par.has_method("skip"):
+				par.skip()
+			break
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	await fade_out(0.7)
+	par.queue_free()
+	Audio.stop_music(0.6)
 
 
 ## X1 finale (§12.5): animated two-desk montage driven by both decisions (scenes/cinematics/finale).
@@ -1185,6 +1220,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if player.try_interact():
 			get_viewport().set_input_as_handled()
 			return
+	if event.is_action_pressed("photo_mode") and not get_tree().paused and ui and ui.has_method("open_photo"):
+		ui.open_photo()          # §12.9 photo mode (free camera, filters, frames, saves PNGs)
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("pause") and not get_tree().paused:
 		if _call(ui, "open_pause") == null and ui and not ui.has_method("open_pause"):
 			_call(_ui("pause_menu"), "open")

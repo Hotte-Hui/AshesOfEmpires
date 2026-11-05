@@ -1,0 +1,20 @@
+{
+ "parade.cue.loudspeaker_1": "LAUTSPRECHER: Achtung. Die Bewohner der Neuordnungsbezirke stellen sich geschlossen hinter der Absperrung auf.",
+ "parade.cue.loudspeaker_2": "LAUTSPRECHER: Heute sieht die Welt, was Ordnung vermag.",
+ "parade.cue.loudspeaker_3": "LAUTSPRECHER: Die Anwesenheit wird festgestellt. Bleiben Sie an Ihrem Platz.",
+ "parade.cue.konrad": "KONRAD (denkt): Ich habe diese Achse gezeichnet. Platz für hunderttausend. Wer dafür ausziehen musste, stand in keinem Plan.",
+ "parade.cue.loudspeaker_4": "LAUTSPRECHER (fern): … jeder an seinem Platz.",
+ "parade.sfx.pa_chime": "Lautsprecher-Gong",
+ "parade.sfx.boots": "Gleichschritt",
+ "parade.sfx.tanks": "Panzerketten, klirrende Fenster",
+ "parade.sfx.jets": "Düsenjäger im Tiefflug",
+ "parade.title": "Die Parade",
+ "parade.shot.p1": "Der Platz vor der Großen Halle",
+ "parade.shot.p2": "Die Kolonne",
+ "parade.shot.p3": "Panzer",
+ "parade.shot.p4": "Die Tribüne",
+ "parade.shot.p5": "Hinter der Absperrung",
+ "parade.shot.p6": "Lichtdom",
+ "parade.shot.p7": "Konrad",
+ "parade.shot.p8": "Die geräumte Straße"
+}
