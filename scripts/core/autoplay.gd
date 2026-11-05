@@ -61,7 +61,7 @@ func run() -> void:
 		if not ok:
 			_fail("objective never became available: " + oid + " scene=" + Game._story_scene())
 			break
-		if (oid == "a1_talk_irina" or oid == "m1_inspect_plan_a") and Game.args.has("autoplay-explore"):
+		if oid in ["a1_talk_irina", "m1_inspect_plan_a", "c3a_talk_conductor", "c3b_arrival"] and Game.args.has("autoplay-explore"):
 			await _explore_pass()
 		var it := _find_interactable(oid)
 		if it == null:

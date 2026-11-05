@@ -18,6 +18,10 @@ file that already existed on `master` at 2d087fa, with the reason and how to res
 | `tests/**` | legacy tests follow the new chain; fixture regenerated from `data/v3` | the demo end moved behind Chapter 3 | after merging data/v3 changes from both sides, re-run `python3 -P tests/reference/make_python_reference.py` |
 | `documentation/QUEST_DATABASE.md` | Chapter-3 section between `C3:BEGIN/END` markers (generated), §1 flow, §7.3 note, §10 tests | `test_quest_database.gd` | re-run `python3 -P tools/docs/gen_quest_db_c3.py` |
 | `documentation/TECHNICAL_ARCHITECTURE.md` | §13 appended | contract for the new APIs | keep both appended sections |
+| `scripts/core/audio.gd` | `LOOPING_MUSIC` += `mus_veltrava` | the chapter cue loops | keep both lists' entries |
+| `tests/test_end_credits.gd` | expected card count derived from `data/explore/*.json` instead of the constant 16 | Chapter 3 adds 3 real-history cards | keep the data-driven count |
+| `scripts/core/autoplay.gd` | `--autoplay-explore` pass also runs at `c3a_talk_conductor` / `c3b_arrival` | every C3 find and chat is exercised through the DiscoveryView | keep the list |
+| **`origin/master` merged into `kapitel-3`** (6a2f321, expansion rounds 2–6) | conflicts in `game.gd` (ChapterExt const + master's cinematic consts; `goto_level` path = `LEVELS` → `ext.level_path` → raw `res://`), `layer_stack.gd` (one `Symbols.pick`), `autoplay.gd` (both sides' helpers kept) | master should merge `kapitel-3` as a fast-forward-like merge without re-resolving | if master moved again, the same three spots are the only ones that touch both sides |
 (The table is completed at the end of the branch — see §3.)
 
 ## 2. Behaviour changes a player can notice
