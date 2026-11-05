@@ -24,7 +24,7 @@ W = 1920
 BAND_Y = 20                 # rear eaves girder bottom of our canopy (screen y)
 COLUMN_XS = (30, 290, 545, 900, 1095, 1352)
 LAMP_XS = (150, 410, 700, 990, 1290, 1520, 1860)
-CLOCK_X = 960
+CLOCK_X = 936               # the exp_clock hotspot (960) stands just right of it, looking up
 
 
 # =========================================================================== small painters
@@ -145,19 +145,20 @@ def make_canopy(E):
         E['lamps'].append((lx, BAND_Y + 21))
     # the triple clock on a bracket: Berlin / Veltrava / Moskau (each city keeps its own time)
     cx = CLOCK_X
+    hw = 50                                                     # housing half-width (three dials + plates)
     L.rect(cx - 1, BAND_Y + 7, 3, 7, IR[1])
-    L.rect(cx - 30, BAND_Y + 13, 61, 3, IR[1], hgt=0.8)
-    L.hline(cx - 30, BAND_Y + 13, 61, IR[3])
-    for k in (-24, 24):
+    L.rect(cx - hw, BAND_Y + 13, 2 * hw + 1, 3, IR[1], hgt=0.8)
+    L.hline(cx - hw, BAND_Y + 13, 2 * hw + 1, IR[3])
+    for k in (-44, 44):
         L.vline(cx + k, BAND_Y + 16, 4, IR[1])
-    L.rect(cx - 30, BAND_Y + 20, 61, 30, NI[2], hgt=0.75)       # housing
-    L.rect(cx - 29, BAND_Y + 21, 59, 28, IR[1])
-    L.hline(cx - 29, BAND_Y + 21, 59, IR[3])
-    L.vline(cx + 30, BAND_Y + 20, 30, IR[3])
+    L.rect(cx - hw, BAND_Y + 20, 2 * hw + 1, 30, NI[2], hgt=0.75)      # housing
+    L.rect(cx - hw + 1, BAND_Y + 21, 2 * hw - 1, 28, IR[1])
+    L.hline(cx - hw + 1, BAND_Y + 21, 2 * hw - 1, IR[3])
+    L.vline(cx + hw, BAND_Y + 20, 30, IR[3])
     clock_face(L, cx, BAND_Y + 33, 9, 8, 55)
-    clock_face(L, cx - 20, BAND_Y + 33, 6, 7, 55)
-    clock_face(L, cx + 20, BAND_Y + 33, 6, 9, 55)
-    for (lx, label) in ((cx - 20, 'BERLIN'), (cx, 'VELTRAVA'), (cx + 20, 'МОСКВА')):
+    clock_face(L, cx - 34, BAND_Y + 33, 7, 7, 55)
+    clock_face(L, cx + 34, BAND_Y + 33, 7, 9, 55)
+    for (lx, label) in ((cx - 34, 'BERLIN'), (cx, 'VELTRAVA'), (cx + 34, 'МОСКВА')):
         tw = text_width(label, 's')
         L.rect(lx - tw // 2 - 1, BAND_Y + 51, tw + 2, 7, SN[3], hgt=0.75)
         text(L, lx - tw // 2, BAND_Y + 52, label, NI[2])
@@ -213,21 +214,22 @@ def column_prop(kind=None):
         info['board'] = (bx + bw // 2, by + bh // 2)
         P.rect(cx - 6, by + bh + 1, 12, 3, IR[1])              # bracket
     elif kind == 'poster':
-        bx, by = cx - 13, 186
-        P.rect(bx - 1, by - 1, 28, 38, IR[2], hgt=0.8)
-        P.rect(bx, by, 26, 36, CR[4], hgt=0.75)
-        P.rect(bx + 1, by + 1, 24, 15, SL[3])                  # printed image: the bridge arms, three arches
-        P.hline(bx + 3, by + 7, 20, SN[4])
-        for k in (6, 12, 18):
-            P.px(bx + k, by + 8, SN[4]); P.px(bx + k + 2, by + 8, SN[4])
-            P.vline(bx + k - 1, by + 8, 3, SN[4]); P.vline(bx + k + 3, by + 8, 3, SN[4])
-        for k in range(bx + 2, bx + 24, 2):
-            P.px(k, by + 13 + (k // 2) % 2, SN[3])
-        text(P, bx + 2, by + 18, 'WILLKOMMEN', SL[0])
-        text(P, bx + 2, by + 24, 'ДОБРО ПОЖ.', SL[1])
-        text(P, bx + 2, by + 30, 'BIENVENUE', SL[1])
-        P.px(bx + 12, by - 1, NI[2])
-        info['poster'] = (bx + 13, by + 18)
+        bx, by, pw = cx - 25, 184, 50
+        P.rect(bx - 1, by - 1, pw + 2, 40, IR[2], hgt=0.8)
+        P.rect(bx, by, pw, 38, CR[4], hgt=0.75)
+        P.rect(bx + 1, by + 1, pw - 2, 15, SL[3])              # printed image: the bridge arms, three arches
+        P.hline(bx + 7, by + 6, pw - 14, SN[4])
+        for k in (13, 25, 37):
+            P.px(bx + k - 1, by + 7, SN[4]); P.px(bx + k + 1, by + 7, SN[4])
+            P.vline(bx + k - 2, by + 7, 4, SN[4]); P.vline(bx + k + 2, by + 7, 4, SN[4])
+        for k in range(bx + 6, bx + pw - 6, 2):
+            P.px(k, by + 12 + (k // 2) % 2, SN[3])
+        text_center(P, bx + pw // 2, by + 18, 'WILLKOMMEN', SL[0])
+        text_center(P, bx + pw // 2, by + 24, 'ДОБРО ПОЖ.', SL[1])
+        text_center(P, bx + pw // 2, by + 30, 'BIENVENUE', SL[1])
+        P.px(bx + pw // 2, by - 1, NI[2])
+        P.px(bx + 3, by + 36, SL[1]); P.px(bx + pw - 4, by + 36, SL[1])   # drawing pins
+        info['poster'] = (bx + pw // 2, by + 18)
     elif kind == 'track':
         P.rect(cx - 6, 160, 12, 14, SN[3], hgt=0.8)
         P.rect(cx - 5, 161, 10, 12, SL[1])
@@ -271,20 +273,29 @@ def luggage_cart():
     return P, (31, by)
 
 
-def bench(mitten=False):
+def bench(mitten=False, seated=False):
     """Station bench (cast-iron ends, wooden slats) facing the tracks: we see its back.  mitten: a lost
-    child's mitten (red, knitted) lies on the seat (exp_mitten)."""
-    P = Layer(52, 24, 'bench')
-    by = 23
+    child's mitten (red, knitted) lies on the seat (exp_mitten).  seated: two waiting travellers seen from
+    behind (baked; far from every NPC anchor)."""
+    o = 16 if seated else 0
+    P = Layer(52, 24 + o, 'bench')
+    by = 23 + o
+    if seated:
+        a = figure(30, [SL[0], SL[1], SL[2]], hat='scarf', hat_col=RD[1], facing='back', coat_len=0.7, seed=61,
+                   rim=SL[3], hair=NI[1])
+        b = figure(31, [IR[0], IR[1], IR[2]], hat='cap', hat_col=NI[1], facing='back', coat_len=0.72, seed=62,
+                   rim=SL[3], hair=CR[1])
+        P.blit(a, 11, o + 16 - 22)
+        P.blit(b, 27, o + 16 - 23)
     for lx in (3, 45):
-        P.rect(lx, 6, 3, 17, NI[2], hgt=0.6)
-        P.px(lx + 2, 6, IR[2])
+        P.rect(lx, o + 6, 3, 17, NI[2], hgt=0.6)
+        P.px(lx + 2, o + 6, IR[2])
         P.line(lx, by, lx + 3, by - 6, NI[2])
     for k, yy in enumerate((4, 8, 12)):                        # back slats
-        P.rect(1, yy, 50, 3, CR[1] if k % 2 else CR[2], hgt=0.62)
-        P.hline(1, yy, 50, CR[3])
-        P.hline(1, yy + 2, 50, CR[0])
-    P.rect(1, 16, 50, 2, CR[0], hgt=0.6)                       # seat edge
+        P.rect(1, o + yy, 50, 3, CR[1] if k % 2 else CR[2], hgt=0.62)
+        P.hline(1, o + yy, 50, CR[3])
+        P.hline(1, o + yy + 2, 50, CR[0])
+    P.rect(1, o + 16, 50, 2, CR[0], hgt=0.6)                   # seat edge
     if mitten:
         P.rect(30, 1, 6, 4, RD[2], hgt=0.75)
         P.px(36, 2, RD[2]); P.px(35, 0, RD[2])
@@ -350,46 +361,55 @@ def booth():
     """Temporary booth of the commission's passport control (painted slate blue): counter 2 'Sowjetische
     Delegation' (left, x 1180-1246 when placed at 1180) with the warm desk lamp, counter 1 'Reichsdelegation'
     (right).  Trilingual counter signs, stamp, papers, a stovepipe."""
-    P = Layer(156, 78, 'booth')
-    by = 77
-    x0, x1 = 2, 152
-    P.rect(x0, 22, x1 - x0, by - 22, SL[2], hgt=0.55)
+    P = Layer(160, 94, 'booth')
+    by = 93
+    x0, x1 = 2, 156
+    top = 24
+    P.rect(x0, top, x1 - x0, by - top, SL[2], hgt=0.55)
     for x in range(x0 + 3, x1, 5):                              # vertical boarding
-        P.vline(x, 24, by - 26, SL[1])
-    P.vline(x0, 22, by - 22, SL[0])
-    P.vline(x1 - 1, 22, by - 22, SL[4])
-    P.rect(x0 - 3, 16, x1 - x0 + 6, 6, SL[1], hgt=0.75)        # flat roof with a lip
-    P.hline(x0 - 3, 16, x1 - x0 + 6, SL[3])
-    P.hline(x0 - 3, 21, x1 - x0 + 6, NI[3])
-    P.rect(x1 - 18, 2, 3, 14, NI[2])                            # stovepipe
-    P.vline(x1 - 16, 2, 14, IR[3])
-    P.hline(x1 - 19, 1, 5, NI[1])
+        P.vline(x, top + 2, by - top - 4, SL[1])
+    P.vline(x0, top, by - top, SL[0])
+    P.vline(x1 - 1, top, by - top, SL[4])
+    P.rect(x0 - 3, top - 6, x1 - x0 + 6, 6, SL[1], hgt=0.75)   # flat roof with a lip
+    P.hline(x0 - 3, top - 6, x1 - x0 + 6, SL[3])
+    P.hline(x0 - 3, top - 1, x1 - x0 + 6, NI[3])
+    P.rect(x1 - 18, 4, 3, 14, NI[2])                            # stovepipe
+    P.vline(x1 - 16, 4, 14, IR[3])
+    P.hline(x1 - 19, 3, 5, NI[1])
     info = {}
-    for k, (cxw, lines, num) in enumerate(((x0 + 34, ['SOWJ. DELEGATION', 'СОВ. ДЕЛЕГАЦИЯ', 'DÉL. SOVIÉTIQUE'], '2'),
-                                           (x0 + 112, ['REICHSDELEGATION', 'ДЕЛЕГАЦИЯ РЕЙХА', 'DÉL. DU REICH'], '1'))):
-        wx, wy, ww, wh = cxw - 26, 46, 52, 18                    # counter window
+    for k, (cxw, lines, num) in enumerate(((x0 + 38, ['SOWJ. DELEGATION', 'СОВ. ДЕЛЕГАЦИЯ', 'DÉL. SOVIÉTIQUE'], '2'),
+                                           (x0 + 116, ['REICHSDELEGATION', 'ДЕЛЕГАЦИЯ РЕЙХА', 'DÉL. DU REICH'], '1'))):
+        # trilingual counter sign, then the „Schalter n“ plate, then the counter window with its shelf
+        sign_board(P, cxw - 35, top + 2, lines, fg=SN[4], bg=SL[0], frame=SN[2], pad=1, gap=1)
+        plate = 'SCHALTER ' + num
+        pw = text_width(plate, 's') + 6
+        P.rect(cxw - pw // 2, top + 25, pw, 9, CR[4], hgt=0.75)
+        P.rect(cxw - pw // 2 + 1, top + 26, pw - 2, 7, SL[1])
+        text(P, cxw - pw // 2 + 3, top + 27, plate, SN[4])
+        wx, wy, ww, wh = cxw - 26, top + 37, 52, 18              # counter window
         P.rect(wx - 2, wy - 2, ww + 4, wh + 4, CR[3], hgt=0.7)
         P.rect(wx, wy, ww, wh, NI[3], hgt=0.3)
         P.hline(wx, wy, ww, SL[0])
         P.px(wx + ww - 2, wy + 1, SK[2])
         P.rect(wx - 3, wy + wh, ww + 6, 3, CR[2], hgt=0.75)     # counter shelf
         P.hline(wx - 3, wy + wh, ww + 6, CR[4])
-        sx, sy, sw, sh = sign_board(P, cxw - 33, 23, lines, fg=SN[4], bg=SL[0], frame=SN[2], pad=1, gap=1)
-        P.rect(cxw - 5, wy + 4, 9, 9, SN[3], hgt=0.75)          # counter number disc
-        P.rect(cxw - 4, wy + 5, 7, 7, SL[1])
-        text(P, cxw - 1, wy + 6, num, SN[4])
+        P.rect(cxw + 16, wy + 4, 7, 7, SN[3], hgt=0.75)         # counter number disc
+        P.rect(cxw + 17, wy + 5, 5, 5, SL[1])
+        text(P, cxw + 18, wy + 5, num, SN[4])
         info['counter%s' % num] = (cxw, wy + wh)
-    # counter 2 interior: the warm desk lamp (green shade), stamp, papers; counter 1: officer's ledger
-    lx = x0 + 14
-    P.rect(lx - 3, 50, 7, 3, PA[2])
-    P.px(lx, 53, LA[4], em=LA[4])
-    P.rect(lx - 2, 53, 5, 3, LA[3], em=LA[3])
-    P.rect(lx - 6, 56, 16, 6, LA[1], em=LA[1])
-    P.vline(lx, 53, 9, LA[0])
-    P.rect(x0 + 40, 60, 10, 3, CR[5])
-    P.rect(x0 + 52, 59, 4, 4, NI[2])                             # rubber stamp
-    P.rect(x0 + 100, 60, 14, 3, CR[4])
-    info['lamp'] = (lx, 55)
+        if num == '2':
+            lx, ly = x0 + 18, wy + 4                           # the warm desk lamp (green shade), stamp, papers
+            P.rect(lx - 3, ly, 7, 3, PA[2])
+            P.px(lx, ly + 3, LA[4], em=LA[4])
+            P.rect(lx - 2, ly + 3, 5, 3, LA[3], em=LA[3])
+            P.rect(lx - 6, ly + 6, 16, 6, LA[1], em=LA[1])
+            P.vline(lx, ly + 3, 9, LA[0])
+            P.rect(cxw + 2, wy + 14, 10, 3, CR[5])
+            P.rect(cxw - 10, wy + 13, 4, 4, NI[2])              # rubber stamp
+            info['lamp'] = (lx, ly + 5)
+        else:
+            P.rect(cxw - 12, wy + 14, 14, 3, CR[4])             # the officer's ledger
+            P.rect(cxw - 2, wy + 10, 3, 6, SL[3])               # ink stand
     P.rect(x0, by - 4, x1 - x0, 4, SL[1], hgt=0.6)              # skirting
     return P, (77, by), info
 
@@ -498,16 +518,22 @@ def queue_reich():
 
 
 def menu_stand():
-    P = Layer(18, 26, 'menu_stand')
-    by = 25
-    P.line(2, by, 6, 2, CR[0])
-    P.line(16, by, 12, 2, CR[0])
-    P.rect(5, 3, 8, 16, NI[2], hgt=0.6)
-    P.hline(5, 3, 8, CR[1])
-    for yy in range(6, 18, 2):
-        P.hline(6, yy, 5 - (yy % 4) // 2, SN[2])
-    text(P, 6, 4, 'KAFE', LA[3])
-    return P, (9, by)
+    """Chalk-board menu of the café on an easel, a small storm lantern on top (warm accent at the door)."""
+    P = Layer(22, 32, 'menu_stand')
+    by = 31
+    P.line(3, by, 8, 7, CR[0])
+    P.line(19, by, 14, 7, CR[0])
+    P.rect(6, 7, 11, 18, NI[2], hgt=0.6)
+    P.hline(6, 7, 11, CR[1])
+    P.vline(16, 7, 18, CR[1])
+    P.rect(7, 8, 9, 3, PA[0])
+    for yy in range(13, 24, 2):
+        P.hline(8, yy, 4 + (yy % 4) // 2, SN[2])
+    P.px(9, 9, LA[3]); P.px(11, 9, LA[3]); P.px(13, 9, LA[3])
+    P.rect(10, 1, 4, 5, IR[2], hgt=0.7)                         # storm lantern
+    P.rect(11, 2, 2, 3, LA[3], em=LA[3])
+    P.px(11, 0, IR[3])
+    return P, (11, by)
 
 
 # =========================================================================== CONCOURSE FAÇADE (layer)
@@ -518,8 +544,9 @@ def make_concourse(E):
     square (x 1836-1912, transparent: the square layer shows through) — tall hall windows above."""
     L = Layer(W, 360, 'concourse')
     x0, x1 = 1352, W
-    S = dict(deep=NI[3], sh=SL[0], body=SL[1], lit=SL[2], rim=SL[3], hi=CR[3], joint=SL[0])
-    # upper wall: ashlar with tall round-headed hall windows between pilasters
+    S = dict(deep=SL[0], sh=SL[1], body=SL[2], lit=SL[3], rim=SL[4], hi=CR[3], joint=SL[1])
+    # upper wall: ashlar with tall round-headed hall windows between pilasters (mid value, like the station
+    # across the tracks; the glass mirrors the dawn sky so the upper band stays the lighter value group)
     L.rect(x0, BAND_Y + 6, x1 - x0, 150 - BAND_Y - 6, S['body'], hgt=0.5)
     for yy in range(BAND_Y + 8, 150, 6):
         L.hline(x0, yy, x1 - x0, S['joint'])
@@ -529,19 +556,21 @@ def make_concourse(E):
     for k, wx in enumerate(range(x0 + 30, x1 - 20, 64)):
         m = arch_mask(30, 88, 15)
         put_mask(L, dilate(m, 2), wx - 2, 48, S['lit'], hgt=0.6)
-        put_mask(L, m, wx, 50, NI[3], hgt=0.25)
+        gy, gx = np.mgrid[0:88, 0:30].astype(np.float32)
+        refl = np.clip(gx / 30.0 * 0.8 + (1 - gy / 88.0) * 1.0 - 0.45, 0, 1) * 2.4
+        ladder_paint(L, m, wx, 50, refl, [SL[1], SL[2], SL[3], SK[0]], steep=2.4, hgt=0.25)
         for kk in range(1, 3):
-            L.vline(wx + kk * 10, 64, 74, SL[1])
+            L.vline(wx + kk * 10, 64, 74, SL[0])
         for yy in range(72, 138, 16):
-            L.hline(wx, yy, 30, SL[1])
-        for kk in range(12):                                  # cold reflection of the dawn in the glass
-            L.px(wx + 26 - kk, 66 + kk * 2, SL[3])
-        L.px(wx + 24, 56, SL[4])
+            L.hline(wx, yy, 30, SL[0])
+        L.px(wx + 24, 56, SK[1])
+        L.px(wx + 25, 57, SK[1])
         if k % 2 == 0:
             for kk in range(4):                                # hall lamps inside, dim
                 L.px(wx + 6 + kk * 6, 90 + (kk % 2) * 4, LA[1])
         L.rect(wx + 32, 40, 4, 110, S['lit'], hgt=0.6)        # pilaster
         L.vline(wx + 35, 40, 110, S['rim'])
+        L.hline(wx + 31, 40, 6, CR[2])                         # capital catches the lamp light
     L.rect(x0, 146, x1 - x0, 8, S['lit'], hgt=0.7)            # string course / cornice of the ground floor
     L.hline(x0, 146, x1 - x0, CR[2])
     L.hline(x0, 153, x1 - x0, S['deep'])
@@ -552,8 +581,8 @@ def make_concourse(E):
     for yy in range(154, 262, 7):
         L.hline(x0, yy, 22 if (yy // 7) % 2 else 16, S['rim'])
     L.vline(x0, BAND_Y + 6, 262 - BAND_Y - 6, S['deep'])
-    L.rect(x0, 254, x1 - x0, 8, SL[0], hgt=0.6)               # plinth
-    L.hline(x0, 254, x1 - x0, SL[2])
+    L.rect(x0, 254, x1 - x0, 8, SL[1], hgt=0.6)               # plinth
+    L.hline(x0, 254, x1 - x0, SL[3])
     # --- notice case (exp_return_notice): glazed board with the trilingual official notice
     nx, ny = 1404, 196
     L.rect(nx - 2, ny - 2, 60, 46, CR[1], hgt=0.75)

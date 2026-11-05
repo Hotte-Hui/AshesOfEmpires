@@ -372,7 +372,7 @@
    "name": "column_5",
    "file": "props/column_5.png",
    "pos": [
-    1080,
+    1069,
     18
    ],
    "base_y": 266,
@@ -460,7 +460,7 @@
    "file": "props/bench_a.png",
    "pos": [
     181,
-    263
+    253
    ],
    "base_y": 282,
    "collision": [
@@ -605,7 +605,7 @@
    "file": "props/control_booth.png",
    "pos": [
     1180,
-    201
+    187
    ],
    "base_y": 277,
    "collision": [
@@ -662,8 +662,8 @@
    "name": "flag_ussr",
    "file": "props/flag_ussr.png",
    "pos": [
-    1195,
-    218
+    1189,
+    184
    ],
    "base_y": 278,
    "collision": [],
@@ -675,8 +675,8 @@
    "name": "flag_reich",
    "file": "props/flag_reich.png",
    "pos": [
-    1313,
-    218
+    1323,
+    184
    ],
    "base_y": 278,
    "collision": [],
@@ -717,8 +717,8 @@
    "name": "menu_stand",
    "file": "props/menu_stand.png",
    "pos": [
-    1597,
-    267
+    1596,
+    259
    ],
    "base_y": 290,
    "collision": [
@@ -740,7 +740,7 @@
     ]
    ],
    "normal": true,
-   "emission": false
+   "emission": true
   }
  ],
  "walkable": [
@@ -889,8 +889,8 @@
    "kind": "dialogue",
    "npc": "border_officer",
    "mark": [
-    1216,
-    254
+    1220,
+    253
    ],
    "radius": 36,
    "document": "res://assets/ui/documents/veltrava_station_travel_order.png",
@@ -982,7 +982,7 @@
   "exp_clock": {
    "kind": "discover",
    "mark": [
-    960,
+    936,
     53
    ],
    "radius": 30,
@@ -1001,7 +1001,7 @@
    "kind": "discover",
    "mark": [
     1095,
-    222
+    220
    ],
    "radius": 26,
    "desc": "Commission welcome poster (WILLKOMMEN / ДОБРО ПОЖ. / BIENVENUE) on the column."
@@ -1061,8 +1061,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.0,
    "height": 60,
    "on_layer": "playfield"
@@ -1074,8 +1074,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.0,
    "height": 60,
    "on_layer": "playfield"
@@ -1087,8 +1087,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.0,
    "height": 60,
    "on_layer": "playfield"
@@ -1100,8 +1100,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.04,
    "height": 60,
    "on_layer": "playfield"
@@ -1113,8 +1113,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.0,
    "height": 60,
    "on_layer": "playfield"
@@ -1126,8 +1126,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.0,
    "height": 60,
    "on_layer": "playfield"
@@ -1139,8 +1139,8 @@
     292
    ],
    "color": "#DEE2E7",
-   "energy": 0.42,
-   "radius": 92,
+   "energy": 0.55,
+   "radius": 104,
    "flicker": 0.0,
    "height": 60,
    "on_layer": "playfield"
@@ -1174,8 +1174,8 @@
   {
    "id": "control_booth_lamp",
    "pos": [
-    1200,
-    273
+    1204,
+    272
    ],
    "color": "#EDB777",
    "energy": 0.85,

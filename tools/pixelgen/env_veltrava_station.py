@@ -190,7 +190,7 @@ def build():
     P, foot = PR.luggage_cart()
     ent, _, _ = save_prop(P, 'luggage_cart', foot, (424, 290), 290, rect_poly(398, 283, 452, 291))
     props.append(ent)
-    P, foot = PR.bench()
+    P, foot = PR.bench(seated=True)
     ent, _, _ = save_prop(P, 'bench_a', foot, (206, 282), 282, rect_poly(181, 276, 233, 283))
     props.append(ent)
     P, foot = PR.bench(mitten=True)
@@ -214,10 +214,11 @@ def build():
     P, foot = PR.flag('commission')
     ent, _, _ = save_prop(P, 'flag_commission', foot, (1176, 279), 279, rect_poly(1173, 276, 1180, 280))
     props.append(ent)
-    for kind, fxw in (('ussr', A['counter2'][0] - 20), ('reich', A['counter1'][0] + 20)):
+    for kind, fxw in (('ussr', A['counter2'][0] - 30), ('reich', A['counter1'][0] + 26)):
+        # small delegation flags on wall staffs at the roof lip of the booth (above the counter signs)
         P, foot = PR.flag(kind, hist=False)
         H, _ = PR.flag(kind, hist=True)
-        ent, _, _ = save_prop(P, 'flag_' + kind, foot, (fxw, 236), 278, [], hist=H)
+        ent, _, _ = save_prop(P, 'flag_' + kind, foot, (fxw, bpos[1] + 15), 278, [], hist=H)
         props.append(ent)
     P, foot = PR.queue_reich()
     ent, _, _ = save_prop(P, 'queue_reich', foot, (1342, 280), 280, rect_poly(1320, 274, 1364, 281))
@@ -231,7 +232,8 @@ def build():
             (1704, 270, (LA[2], LA[1]), 0.95, 3), (A['booth_lamp'][0], 282, (LA[2], LA[1]), 0.6, 1),
             (ET['saloon'][0], 268, (LA[1], LA[0]), 0.5, 1)]
     EG = {}
-    ground = TR.make_ground(EG, cold, warm)
+    door_xs = [dx + dw // 2 for car in ET['cars'] for (dx, dw) in car['doors'] if 0 <= dx < 1920]
+    ground = TR.make_ground(EG, cold, warm, door_xs=door_xs)
     e, _, _ = save_layer(ground, 'ground', 1.0, -20, crop='box')
     layers.append(e)
     e, _, _ = save_layer(PR.make_fg(), 'fg_frame', 1.3, 60, lit=False, normal=False)
@@ -302,8 +304,8 @@ def build():
     ]
     # ------------------------------------------------------------------ lights
     for i, (lx, ly) in enumerate(EC['lamps']):
-        lights.append({'id': 'canopy_lamp_%d' % (i + 1), 'pos': [lx, 292], 'color': hexc(SN[3]), 'energy': 0.42,
-                       'radius': 92, 'flicker': 0.04 if i == 3 else 0.0, 'height': 60, 'on_layer': 'playfield'})
+        lights.append({'id': 'canopy_lamp_%d' % (i + 1), 'pos': [lx, 292], 'color': hexc(SN[3]), 'energy': 0.55,
+                       'radius': 104, 'flicker': 0.04 if i == 3 else 0.0, 'height': 60, 'on_layer': 'playfield'})
     lights += [
         {'id': 'cafe_korridor', 'pos': [1650, 284], 'color': hexc(LA[3]), 'energy': 1.3, 'radius': 140,
          'flicker': 0.02, 'height': 30, 'on_layer': 'playfield'},

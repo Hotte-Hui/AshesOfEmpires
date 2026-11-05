@@ -372,21 +372,34 @@ def r_slab(row, k):
     return 3 if h < 4 else (4 if h == 9 else (h % 3))
 
 
-def make_ground(E_props, cold_lamps, warm_sources):
-    """Track 5 (four rails, buffer stop at x 1340) and the walkable platform under our canopy: dry dark
-    slabs, tracked-in wet patches mirroring the cold canopy lamps, blown snow only along the open rear edge
-    (outside the roof) with footprints at x 150-178 (exp_footprints), warm café reflections at x 1560-1730."""
+SLAB_LADDER = [SL[0], SL[1], SL[2], SL[3], SL[4]]
+IRON_LADDER = [IR[1], IR[2], IR[3], IR[4]]
+
+
+def _key(c):
+    return int(c[0]) << 16 | int(c[1]) << 8 | int(c[2])
+
+
+def make_ground(E_props, cold_lamps, warm_sources, door_xs=()):
+    """Track 5 (four rails, buffer stop at x 1340) and the walkable platform under our canopy.  Value plan like
+    the Karsk platform: mid-value granite slabs (slate / iron) with clean joints, a blown-snow drift along the
+    OPEN rear edge (the roof ends there) with the hidden footprints at x 148-182, slush tracked in from every
+    carriage door toward the concourse, a polished walking line, wet patches mirroring the lamps, painted light
+    pools under the cold canopy lamps (the PointLight2D adds on top), puddles, drains and asphalt repairs."""
     L = Layer(W, 360, 'ground')
     rng = np.random.default_rng(77)
     nz = value_noise(W, 360, 11, seed=2, octaves=3)
     nzf = value_noise(W, 360, 4, seed=8, octaves=2)
     four_rail_track(L, 0, 1344, NEAR_RAILS, 244, 261, seed=9, snow=0.5)
-    # concourse forecourt (head of track 5): paving behind the buffer stop
-    L.rect(1344, 240, W - 1344, 22, SL[1], hgt=0.3)
+    # concourse forecourt (head of track 5): paving behind the buffer stop, snow-dusted
+    L.rect(1344, 240, W - 1344, 22, SL[2], hgt=0.3)
     for x in range(1344, W, 16):
-        L.vline(x, 240, 22, SL[0])
+        L.vline(x, 240, 22, SL[1])
     for y in range(243, 262, 6):
-        L.hline(1344, y, W - 1344, SL[0])
+        L.hline(1344, y, W - 1344, SL[1])
+    for x in range(1344, W):
+        if nzf[241, x] > 0.52:
+            L.px(x, 240 + int(nz[242, x] * 4), SN[1], 0.3)
     # ---- platform edge coping (light stone) + worn white line
     pe = PLATFORM_EDGE
     L.rect(0, pe, W, 3, CR[3], hgt=0.7)
@@ -397,8 +410,8 @@ def make_ground(E_props, cold_lamps, warm_sources):
     for x in range(W):
         if (x // 5) % 7 != 6 and nzf[pe + 3, x] > 0.3:
             L.px(x, pe + 4, SN[2] if x % 9 else SN[1], 0.5)
-    # ---- slabs (dry, dark): rows grow toward the camera (oblique), long slabs, soft joints
-    tones = [SL[1], SL[1], IR[2], SL[1], IR[2], SL[2]]
+    # ---- granite slabs: rows grow toward the camera (oblique), long slabs, flat tones, clean joints
+    tones = [SL[2], SL[2], SL[3], SL[2], IR[3], SL[2], SL[3], SL[1], IR[3], SL[2]]
     y0 = 266
     row = 0
     for rh in (8, 9, 10, 11, 12, 13, 14, 15, 16):
@@ -406,55 +419,101 @@ def make_ground(E_props, cold_lamps, warm_sources):
         shift = (row * 37) % sw
         for k, x0 in enumerate(range(-shift, W, sw)):
             L.rect(x0, y0, sw, rh, tones[r_slab(row, k) % len(tones)], hgt=0.3)
-            L.vline(x0, y0, rh, SL[0], 0.26)
-        L.hline(0, y0, W, SL[0], 0.26)
+            L.vline(x0, y0, rh, SL[1], 0.26)
+        L.hline(0, y0, W, SL[1], 0.26)
         y0 += rh
         row += 1
         if y0 >= 360:
             break
-    L.rect(0, 265, W, 1, NI[3])
-    # wear on the walking line (lighter polish) + scuffs
-    for x in range(0, W):
-        fy = 300 + int(6 * math.sin(x / 97.0))
-        for y in (fy, fy + 7):
-            if nzf[y, x] > 0.55 and (L.c[y, x, :3] != NI[3][:3]).any():
-                L.px(x, y, SL[2])
-    # ---- tracked-in wet patches (darker) reflecting the cold lamps (dashes); slush streaks
+    L.rect(0, 265, W, 1, SL[0])
+    # chipped slab corners and a few cracks (1 px, sparse)
+    for _ in range(90):
+        x = int(rng.integers(0, W - 4))
+        y = int(rng.integers(270, 356))
+        if rng.random() < 0.5:
+            L.px(x, y, SL[1]); L.px(x + 1, y + 1, SL[1])
+        else:
+            L.hline(x, y, int(rng.integers(2, 5)), SL[3], 0.3)
+    # ---- polished walking line (passengers, porters) and the broader grey wear in front of the doors
+    yy, xx = np.mgrid[0:360, 0:W].astype(np.float32)
+    walk = np.exp(-((yy - (300 + 5 * np.sin(xx / 131.0))) / 9.0) ** 2) * 0.9
+    ladder_shift(L, SLAB_LADDER, (walk * (0.5 + 0.5 * nzf))[268:360], 0, 268, W, 360)
+    # ---- light pools under the cold canopy lamps (soft, dithered; the dynamic light adds on top)
+    pool = np.zeros((360, W), np.float32)
+    for (lx, ly_base, col_list, strength, spread) in cold_lamps:
+        d = np.sqrt(((xx - lx) / 78.0) ** 2 + ((yy - 302) / 40.0) ** 2)
+        pool = np.maximum(pool, np.clip(1 - d, 0, 1) ** 1.3 * 1.1)
+    ladder_shift(L, SLAB_LADDER, pool[266:360], 0, 266, W, 360)
+    ladder_shift(L, IRON_LADDER, pool[266:360] * 0.8, 0, 266, W, 360)
+    # ---- wet patches (darker, tracked-in melt) that mirror the lamps; slush streaks
     wet = value_noise(W, 360, 30, seed=41, octaves=2)
+    slab_keys = {_key(c) for c in (SL[1], SL[2], SL[3], IR[2], IR[3])}
     for y in range(268, 360, 2):
         x = 0
         while x < W:
-            if wet[y, x] > 0.62:
+            if wet[y, x] > 0.63:
                 ln = 3 + (x * 7 + y) % 6
-                for xx in range(x, min(W, x + ln)):
-                    cur = L.c[y, xx, :3]
-                    if (cur == SL[1][:3]).all() or (cur == IR[2][:3]).all() or (cur == IR[1][:3]).all():
-                        L.px(xx, y, NI[3] if (xx + y) % 5 else SL[0], 0.28)
+                for xx_ in range(x, min(W, x + ln)):
+                    if _key(L.c[y, xx_]) in slab_keys:
+                        L.px(xx_, y, SL[1] if (xx_ + y) % 5 else SL[0], 0.28)
                 x += ln + 2 + (x * 3 + y) % 5
             else:
                 x += 3
-    for _ in range(120):
+    for _ in range(170):
         x = int(rng.integers(0, W - 8))
         y = int(rng.integers(272, 350))
-        ln = int(rng.integers(3, 8))
+        ln = int(rng.integers(3, 9))
         L.hline(x, y, ln, SN[0], 0.32)
-    # ---- blown snow along the open rear edge (outside the roof drip line) + footprints (hidden find)
+        if ln > 5 and rng.random() < 0.5:
+            L.hline(x + 2, y + 1, ln - 4, SL[4], 0.32)
+    # ---- slush tracked in from the carriage doors (fans widening toward the camera)
+    for dx_ in door_xs:
+        for k in range(46):
+            y = 266 + k
+            if y >= 352:
+                break
+            half = 3 + k // 4
+            for xx_ in range(int(dx_) - half, int(dx_) + half + 1):
+                if 0 <= xx_ < W and nz[y, xx_ % W] > 0.42 + k * 0.011 and (xx_ * 3 + y) % 4:
+                    L.px(xx_, y, SN[0] if nzf[y, xx_] < 0.55 else SN[1], 0.34)
+    # ---- blown snow along the open rear edge (outside the roof drip line): a real drift, deeper in the gaps
+    # between the columns, almost none where the concourse wall closes the platform (x > 1352)
     for x in range(W):
-        d = int(1 + 2.4 * nz[266, x] + 1.6 * nzf[267, x])
-        if 1344 < x:
-            d = max(0, d - 2)
+        d = int(2 + 3.2 * nz[266, x] + 2.2 * nzf[267, x])
+        if x > 1352:
+            d = max(0, d - 4)
         for k in range(d):
-            L.px(x, 266 + k, SN[2] if k == 0 else SN[1], 0.4)
-    for i in range(7):                                        # footprints in the edge snow (exp_footprints)
+            c = SN[2] if k < d - 2 else (SN[1] if k < d - 1 else SN[0])
+            if k == 0 and (x * 5) % 7 < 2:
+                c = SN[3]
+            L.px(x, 266 + k, c, 0.4)
+        if d > 3 and nzf[270, x] > 0.6:                         # grey, trodden margin of the drift
+            L.px(x, 266 + d, SL[4], 0.36)
+    for i in range(8):                                        # footprints in the drift (exp_footprints)
         fx = 148 + i * 5
-        fy = 266 + (i % 2) * 2
+        fy = 267 + (i % 2) * 2
         L.rect(fx, fy, 2, 2, SL[2] if i % 2 else SL[3])
-        L.px(fx + 1, fy, SN[0])
-        if i % 3 == 0:
-            L.rect(fx, 266, 3, 6, SN[1])
-            L.rect(fx + 1, 267 + (i % 2), 2, 3, SL[3])
+        L.px(fx + 1, fy + 1, SL[1])
+        L.px(fx + 2, fy, SN[0])
     E_props['footprints'] = (160, 268)
-    # puddles near the front (the canopy drips at its front edge, off-screen above the camera)
+    # ---- drains at the rear edge, asphalt repairs, a dropped newspaper, cigarette ends
+    for gx in (372, 846, 1238, 1694):
+        L.rect(gx, 274, 12, 4, IR[1], hgt=0.2)
+        for k in range(gx + 1, gx + 12, 2):
+            L.vline(k, 274, 4, NI[2])
+        L.hline(gx, 274, 12, IR[3])
+        L.hline(gx, 278, 12, SL[3])
+    for (ax, ay, aw_, ah) in ((300, 318, 44, 10), (1040, 330, 38, 10), (1560, 310, 48, 11)):
+        L.rect(ax, ay, aw_, ah, SL[1], hgt=0.28)
+        for _ in range(aw_ * ah // 7):
+            L.px(ax + int(rng.integers(0, aw_)), ay + int(rng.integers(0, ah)), SL[0])
+        L.hline(ax, ay, aw_, SL[0])
+        L.hline(ax, ay + ah, aw_, SL[3])
+    L.rect(1052, 296, 8, 5, SN[3], hgt=0.32)                   # dropped newspaper page near the kiosk
+    L.hline(1053, 297, 6, SL[3]); L.hline(1053, 299, 5, SL[3])
+    for (bx, by_) in ((612, 306), (1176, 312), (1304, 296), (1590, 330)):
+        L.px(bx, by_, CR[4]); L.px(bx + 1, by_, CR[3])
+    # ---- puddles near the front (the canopy drips at its front edge, off-screen above the camera)
     for (px_, py_, rx, ry) in ((210, 344, 26, 3), (560, 336, 30, 4), (980, 346, 34, 3), (1270, 338, 24, 3),
                                (1490, 344, 30, 4), (1800, 340, 28, 3), (760, 352, 22, 2)):
         m, mx, my = L.ellipse_mask(px_, py_, rx, ry)
@@ -468,10 +527,10 @@ def make_ground(E_props, cold_lamps, warm_sources):
         for x in range(mx, mx + ww):
             colm = m[:, x - mx]
             if colm.any():
-                L.px(x, my + int(np.nonzero(colm)[0].max()) + 1, SL[2])
+                L.px(x, my + int(np.nonzero(colm)[0].max()) + 1, SL[3])
     # ---- reflections: short broken dashes below each source on wet/dark pixels (emissive)
     wet_cols = [NI[1], NI[2], NI[3], SL[0], SL[1], SL[2], IR[1], IR[2]]
-    wet_keys = set(int(c[0]) << 16 | int(c[1]) << 8 | int(c[2]) for c in wet_cols)
+    wet_keys = {_key(c) for c in wet_cols}
     rr = np.random.default_rng(5)
     for (lx, ly_base, col_list, strength, spread) in warm_sources + cold_lamps:
         for k, y in enumerate(range(ly_base, min(360, ly_base + 40), 2)):
@@ -483,9 +542,7 @@ def make_ground(E_props, cold_lamps, warm_sources):
             for x in range(int(lx) - half + off, int(lx) + half + off + 1):
                 if not (0 <= x < W):
                     continue
-                c = L.c[y, x]
-                key = int(c[0]) << 16 | int(c[1]) << 8 | int(c[2])
-                if key in wet_keys and (x + y) % 3:
+                if _key(L.c[y, x]) in wet_keys and (x + y) % 3:
                     cc = col_list[0] if t < 0.35 else col_list[1]
                     L.px(x, y, cc, em=cc if col_list[0] is not SK[1] else None)
     flat_normal(L, 0, 262, W, 360 - 262, UP)
@@ -501,7 +558,7 @@ def soviet_car(L, x0, x1, number, seed=0, saloon_window=None, doors=('l', 'r')):
     length = x1 - x0
     wy = NEAR_RAILS[3]
     roof_top, body_top, body_bot = 160, 171, 234
-    G = dict(deep=NI[3], sh=PA[0], body=PA[1], lit=PA[2], rim=PA[3], hi=PA[4])
+    G = dict(deep=PA[0], sh=PA[1], body=PA[2], lit=PA[3], rim=PA[4], hi=PA[4])
     L.rect(x0, body_top, length, body_bot - body_top, G['body'], hgt=0.5)
     L.rect(x0, body_top, length, 3, G['lit'], hgt=0.55)
     for xx in range(x0, x1, 3):
@@ -590,7 +647,7 @@ def soviet_car(L, x0, x1, number, seed=0, saloon_window=None, doors=('l', 'r')):
     out['bogies'] = []
     for bx in (x0 + 36, x1 - 36):
         out['bogies'].append(bogie(L, bx, wy, r=7))
-    stains(L, x0, body_top + 5, length, body_bot - body_top - 8, [NI[3], PA[0], PA[1], PA[2]], seed=seed,
+    stains(L, x0, body_top + 5, length, body_bot - body_top - 8, [PA[0], PA[1], PA[2], PA[3]], seed=seed,
            density=0.12, length=(3, 10))
     return out
 
