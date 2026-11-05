@@ -346,7 +346,7 @@ func _puzzle_ui() -> bool:
 
 
 func _explore_entries() -> bool:
-	for f in ["veltrava_station.json", "veltrava_hall.json", "c3_history.json"]:
+	for f in ["veltrava_station.json", "veltrava_hall.json", "c3_history_soviet.json", "c3_history_reich.json"]:
 		kit.ok(FileAccess.file_exists(EXPLORE_DIR + f), "%s%s missing (C3_DESIGN §6)" % [EXPLORE_DIR, f])
 	var per_level := {}
 	for id in entries:
@@ -395,7 +395,7 @@ func _explore_entries() -> bool:
 	# the three new real-history cards: sober, sourced, 450–800 characters, found where §6 places them
 	for cid in HISTORY_AT:
 		var card = cards.get(cid)
-		if not kit.ok(card is Dictionary, "history card %s missing (data/explore/c3_history.json)" % cid):
+		if not kit.ok(card is Dictionary, "history card %s missing (data/explore/c3_history_<side>.json)" % cid):
 			continue
 		var n: int = loc.t(str(card.get("text_key", ""))).length()
 		kit.ok(n >= 450 and n <= 800, "card %s text length %d within 450–800" % [cid, n])

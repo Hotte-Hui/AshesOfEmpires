@@ -281,7 +281,7 @@ Spawn `SP_C3_Vestibule` ~(70). Warm focal light: chandelier/booth 2 lamp at the 
 | `journalist` | Nils Ekdahl (40s), Swedish newspaper correspondent | tweed coat, scarf, notebook, camera on a strap | idle_side, walk_side, talk_side |
 Names/roles: `data/locale/de_c3_characters.json` (`char.<id>.name`, `char.<id>.role`).
 
-## 6. Exploration (§12) — `data/explore/veltrava_station.json`, `veltrava_hall.json`, `c3_history.json`
+## 6. Exploration (§12) — `data/explore/veltrava_station.json`, `veltrava_hall.json`, `c3_history_soviet.json`, `c3_history_reich.json` (one history file per side, §12.1)
 Area `veltrava`; ids `veltrava.station.<name>` / `veltrava.hall.<name>`; strings in
 `data/locale/de_explore_veltrava.json`. Station: 12 finds + 1 hidden + 2 chats; palais: 10 finds + 2 chats.
 Real-history cards (new file, sober documentary voice, 450–800 chars, verified sources):
@@ -295,7 +295,7 @@ trial 1945–46) at `exp_headsets`. Jokes and easter eggs never touch atrocity t
 |---|---|
 | integration (orchestrator) | `scripts/core/chapter_ext.gd`, `scripts/actors/story_npc.gd`, `scripts/actors/gated_interactable.gd`, `data/chapters/c3.json`, `scenes/levels/L_C3_*.tscn`, hook lines in `game.gd`/`layer_stack.gd`/`story_engine.gd`, `scripts/core/autoplay.gd`, `scripts/core/inputplay.gd` |
 | story data | `data/v3/*.json` (C3 additions), `data/locale/de_c3_*.json`, `documentation/QUEST_DATABASE.md` §C3 |
-| exploration content | `data/explore/veltrava_*.json`, `data/explore/c3_history.json`, `data/locale/de_explore_veltrava.json` |
+| exploration content | `data/explore/veltrava_*.json`, `data/explore/c3_history_*.json`, `data/locale/de_explore_veltrava.json`, `de_history_c3.json` |
 | station art | `tools/pixelgen/env_veltrava_station*.py`, `env_veltrava_lib.py`, `assets/environments/veltrava_station/**`, station documents in `assets/ui/documents/veltrava_station_*` + `veltrava_station_documents.json` |
 | palais art | `tools/pixelgen/env_veltrava_hall*.py`, `assets/environments/veltrava_hall/**`, hall documents `assets/ui/documents/veltrava_hall_*` + `veltrava_hall_documents.json` |
 | characters | `tools/pixelgen/chargen_cast_c3.py`, `chargen_portrait_c3.py`, `characters_c3.py`, `assets/characters/{elena,border_officer,conductor,voronova,kessler,typist,journalist}/` |
