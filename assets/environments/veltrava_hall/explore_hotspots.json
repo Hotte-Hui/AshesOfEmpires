@@ -1,0 +1,7 @@
+{
+ "doc": "Exploration hotspots added after the art pass (Level._merge_explore_hotspots; scene.json wins on name clashes). Append-only: one block per contributing area.",
+ "hotspots": {
+ },
+ "spawns": {
+ }
+}
