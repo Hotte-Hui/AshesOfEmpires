@@ -396,7 +396,7 @@ func _explore_sample() -> bool:
 		await _tap(KEY_E)
 		if not await _until(func(): return Game.busy, 3.0):
 			return _fail("E did not start " + eid)
-		await _dialogue(eid, "")
+		await _drain_interaction(eid)      # pages through the DiscoveryView / chat lines with Space
 		if not await _until(func(): return not Game.busy, 20.0):
 			return _fail("interaction never finished: " + eid)
 		if Explore.has_method("is_found") and not Explore.is_found(eid):
