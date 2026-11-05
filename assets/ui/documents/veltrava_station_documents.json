@@ -1,0 +1,320 @@
+{
+ "scene": "L_C3_Station",
+ "palette": "veltrava (incl. the shared C-17 red accent)",
+ "generator": "tools/pixelgen/env_veltrava_station_docs.py (via env_veltrava_station.py)",
+ "date": "2026-11-05",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Text is scribble except the story-critical figures (legible pixel glyphs). All rects are [x, y, w, h] in document pixels.",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/veltrava_station_weighbill.png",
+   "size": [
+    240,
+    160
+   ],
+   "display_scale": 3,
+   "id": "veltrava_station_weighbill",
+   "alt_key": "doc.veltrava.weighbill.alt",
+   "item_id": "ev_c3_weighbill",
+   "objective": "c3a_inspect_weighbill",
+   "hotspot": "weighbill",
+   "title_key": "item.c3_weighbill.name",
+   "description_key": "item.c3_weighbill.description",
+   "describes": "Weighing ticket in the brass frame of courier wagon 4: cargo „Akten, Anlage C“ (scribble), the stamped mass 2 410 kg (legible), the red seal number C-17/44 (legible) and the round slate-blue counter-seal of the commission (bridge arms) over the signature.",
+   "marks": {
+    "header": {
+     "rect": [
+      24,
+      18,
+      192,
+      25
+     ]
+    },
+    "wagon": {
+     "rect": [
+      76,
+      47,
+      60,
+      7
+     ]
+    },
+    "cargo": {
+     "rect": [
+      76,
+      60,
+      110,
+      7
+     ],
+     "note": "Ladung „Akten, Anlage C“ (scribble)"
+    },
+    "recipient": {
+     "rect": [
+      76,
+      72,
+      126,
+      7
+     ],
+     "note": "Empfänger: Sekretariat der Kommission"
+    },
+    "mass": {
+     "rect": [
+      32,
+      107,
+      73,
+      16
+     ],
+     "text": "2 410 kg"
+    },
+    "seal_no": {
+     "rect": [
+      136,
+      102,
+      80,
+      16
+     ],
+     "text_rect": [
+      142,
+      106,
+      46,
+      7
+     ],
+     "text": "C-17/44",
+     "color": "red"
+    },
+    "counter_seal": {
+     "rect": [
+      182,
+      124,
+      33,
+      33
+     ],
+     "note": "Gegensiegel der Kommission (bridge arms)"
+    },
+    "frame": {
+     "rect": [
+      12,
+      6,
+      216,
+      148
+     ],
+     "note": "brass frame with glass"
+    },
+    "ticket": {
+     "rect": [
+      18,
+      12,
+      204,
+      136
+     ]
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/veltrava_station_departures.png",
+   "size": [
+    300,
+    190
+   ],
+   "display_scale": 3,
+   "id": "veltrava_station_departures",
+   "alt_key": "doc.veltrava.departures.alt",
+   "item_id": "ev_c3_departures",
+   "objective": "c3a_inspect_departures",
+   "hotspot": "departures",
+   "title_key": "item.c3_departures.name",
+   "description_key": "item.c3_departures.description",
+   "describes": "Split-flap departures board: four day trains as scribble flaps; the freshly inserted last line reads 23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible).",
+   "marks": {
+    "header": {
+     "rect": [
+      12,
+      12,
+      276,
+      16
+     ]
+    },
+    "row_1": {
+     "rect": [
+      14,
+      48,
+      272,
+      11
+     ],
+     "note": "day train (scribble)"
+    },
+    "row_2": {
+     "rect": [
+      14,
+      64,
+      272,
+      11
+     ],
+     "note": "day train (scribble)"
+    },
+    "row_3": {
+     "rect": [
+      14,
+      80,
+      272,
+      11
+     ],
+     "note": "day train (scribble)"
+    },
+    "row_4": {
+     "rect": [
+      14,
+      96,
+      272,
+      11
+     ],
+     "note": "day train (scribble)"
+    },
+    "time": {
+     "rect": [
+      19,
+      115,
+      25,
+      7
+     ],
+     "text": "23:40"
+    },
+    "destination": {
+     "rect": [
+      61,
+      115,
+      50,
+      7
+     ],
+     "text": "KORDON-17"
+    },
+    "track": {
+     "rect": [
+      141,
+      115,
+      36,
+      7
+     ],
+     "text": "GLEIS 5"
+    },
+    "category": {
+     "rect": [
+      193,
+      115,
+      53,
+      7
+     ],
+     "text": "LEERFAHRT"
+    },
+    "night_line": {
+     "rect": [
+      14,
+      111,
+      272,
+      15
+     ],
+     "text": "23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT",
+     "note": "freshly inserted; Zuggattung reads only Leerfahrt"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/veltrava_station_travel_order.png",
+   "size": [
+    260,
+    200
+   ],
+   "display_scale": 3,
+   "id": "veltrava_station_travel_order",
+   "alt_key": "doc.veltrava.travel_order.alt",
+   "item_id": "ev_c3_travel_order",
+   "objective": "c3a_pass_control",
+   "hotspot": "control",
+   "title_key": "item.c3_travel_order.name",
+   "description_key": "item.c3_travel_order.description",
+   "describes": "Typed Soviet travel order (grey office paper, faded ribbon, round stamps, signatures). The addendum typed later on another machine is legible in Russian and German: СОПРОВОЖДАЮЩИЙ: КУРЬЕРСКИЙ ВАГОН 4 (ГРУЗ) / BEGLEITPERSON: KURIERWAGEN 4 (AKTEN).",
+   "marks": {
+    "letterhead": {
+     "rect": [
+      24,
+      14,
+      212,
+      20
+     ]
+    },
+    "name": {
+     "rect": [
+      62,
+      60,
+      56,
+      6
+     ],
+     "text": "МОРОЗОВ А. И."
+    },
+    "body": {
+     "rect": [
+      24,
+      58,
+      212,
+      50
+     ],
+     "note": "typed form fields (scribble)"
+    },
+    "addendum_ru": {
+     "rect": [
+      26,
+      114,
+      163,
+      7
+     ],
+     "text": "СОПРОВОЖДАЮЩИЙ: КУРЬЕРСКИЙ ВАГОН 4 (ГРУЗ)",
+     "note": "Russian: he accompanies freight (груз)"
+    },
+    "addendum_de": {
+     "rect": [
+      26,
+      123,
+      138,
+      7
+     ],
+     "text": "BEGLEITPERSON: KURIERWAGEN 4 (AKTEN)",
+     "note": "German: he accompanies files (Akten)"
+    },
+    "addendum": {
+     "rect": [
+      22,
+      113,
+      171,
+      18
+     ],
+     "text": "Begleitperson Kurierwagen 4",
+     "note": "typed later on another machine: darker ribbon, baseline off by 1 px"
+    },
+    "stamp": {
+     "rect": [
+      54,
+      128,
+      41,
+      41
+     ],
+     "note": "round ministry stamp, slate ink"
+    },
+    "commission_stamp": {
+     "rect": [
+      198,
+      112,
+      25,
+      25
+     ],
+     "note": "commission control stamp"
+    },
+    "signature": {
+     "rect": [
+      28,
+      146,
+      70,
+      18
+     ]
+    }
+   }
+  }
+ ]
+}
