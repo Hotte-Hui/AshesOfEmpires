@@ -2019,5 +2019,21 @@ Seven sprite sheets with normal maps and 4-expression portrait strips through th
 | `assets/audio/amb/amb_veltrava_palais.wav` | conference palace interior: room tone, murmur behind doors, typewriter bursts, mimeograph, clock, radiator ticks | 60 s loop, RMS ≈ −25 dBFS |
 | `assets/audio/music/mus_veltrava.wav` | chapter cue: restrained chamber texture, slow clockwork pulse over a bowed drone, hesitant two-voice motif; sits under dialogue | 90 s loop (listed in `Audio.LOOPING_MUSIC`), RMS ≈ −20 dBFS, peak −4.9 |
 
-### Environments, documents, puzzle UI, cinematics
-(Entries added by the integration when the corresponding streams are merged — see `documentation/C3_REPORT.md`.)
+### Environments — `tools/pixelgen/env_veltrava_station*.py` + `env_veltrava_lib.py`, `env_veltrava_hall*.py`
+| Path | Content | How it was made |
+|---|---|---|
+| `assets/environments/veltrava_station/**` (14 layers, 18 props, fx strips, `scene.json`) | Bahnhof Veltrava at dawn: old-town skyline, station building, dual-gauge tracks, both delegation trains, courier wagon 4, canopies, passport control, concourse with Café „Korridor“; flags as neutral `*.png` + `*_hist.png` | generated (deterministic, palette `veltrava` registered by `env_veltrava_lib.py`); final polish pass not done |
+| `assets/environments/veltrava_hall/**` (74 files: room, shafts, exteriors, Saal parallax, 15 props, fx, `scene.json`, `provenance.json`) | Palais der Kommission: vestibule, foyer, Protokollbüro, interpreters' corridor; flags neutral + `_hist` | generated (deterministic, palette `palais`) |
+| `assets/ui/documents/veltrava_station_weighbill.png`, `veltrava_station_departures.png`, `veltrava_station_travel_order.png` + `veltrava_station_documents.json` | inspect documents of the station (scribble glyphs + legible key figures) | `tools/pixelgen/env_veltrava_station_docs.py` |
+| `assets/ui/documents/veltrava_hall_carbon.png` + `veltrava_hall_documents.json` | the carbon-copy blotter from booth 2 | `tools/pixelgen/env_veltrava_hall_docs.py` |
+| `data/locale/de_env_veltrava_station.json`, `de_env_veltrava_hall.json` | alt texts of the documents | hand-written |
+
+### Puzzle UI — `tools/pixelgen/gen_ui_c3.py`
+`assets/ui/puzzle/c3_*` (plan, log sheet, 4 name cards, 4 glyphs, slot, arrow, `c3_protocol_board.json`),
+`assets/ui/documents/veltrava_protocol_seating.png`, `veltrava_protocol_booth_log.png` + `veltrava_protocol_documents.json` — generated,
+deterministic; HD text is overlaid by `scripts/ui/protocol_puzzle.gd` (hand-written, with `scenes/ui/ProtocolPuzzle.tscn`,
+`tests/test_c3_puzzle_ui.gd`, `tests/visual/ProtocolPuzzlePreview.tscn`).
+
+### Cinematics (open, branch `c3-cine` only)
+`scenes/cinematics/ch3_trains/**`, `ch3_tohall/**`, `ch3_close/**`, `ch3_common/**`, `tests/test_c3_cinematics.gd` (hand-written) and
+`tools/pixelgen/env_veltrava_cine.py` (generator, unfinished; no assets generated yet) — see `documentation/C3_REPORT.md` §4.
