@@ -29,7 +29,7 @@ const VOLUME_KEYS := {
 	"sfx_volume": "SFX", "ui_volume": "UI",
 }
 ## Music that loops (every other file under music/ is a one-shot cue / stinger).
-const LOOPING_MUSIC := ["mus_karsk", "mus_berlin", "mus_menu"]
+const LOOPING_MUSIC := ["mus_karsk", "mus_berlin", "mus_menu", "mus_veltrava"]
 const SFX_VOICES := 16
 const UI_VOICES := 6
 const MIN_DB := -80.0

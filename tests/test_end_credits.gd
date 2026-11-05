@@ -46,7 +46,8 @@ func _check_all(texts: Array, where: String) -> void:
 	if not kit.ok(ex != null and ex.has_method("cards_list"), where + ": Explore autoload present"):
 		return
 	var cards: Array = ex.cards_list()
-	kit.eq(cards.size(), 16, where + ": 16 real-history cards")
+	var expected := _cards_in_data()   # every card of every data/explore/*.json history file (16 slice + 3 Chapter 3)
+	kit.eq(cards.size(), expected, where + ": %d real-history cards" % expected)
 	var n_src := 0
 	for c in cards:
 		var cd: Dictionary = ex.card(str(c["id"]))
@@ -59,7 +60,7 @@ func _check_all(texts: Array, where: String) -> void:
 			kit.ok(have.has(str(s["label"])), "%s: source '%s' listed" % [where, s["label"]])
 			if str(s.get("url", "")) != "":
 				kit.ok(have.has(str(s["url"])), "%s: url %s listed" % [where, s["url"]])
-	kit.ok(n_src >= 16, where + ": at least one source per card (%d)" % n_src)
+	kit.ok(n_src >= cards.size(), where + ": at least one source per card (%d)" % n_src)
 
 
 func _end_lists_all() -> bool:
@@ -156,3 +157,18 @@ func _ui_root_api() -> bool:
 	kit.ok(src.contains("func play_end_credits() -> void:"), "UIRoot.play_end_credits() exists")
 	kit.ok(src.contains("var end_credits"), "UIRoot registers end_credits")
 	return true
+
+
+## Number of real-history cards delivered by the data (so the check follows the data instead of a constant).
+func _cards_in_data() -> int:
+	var n := 0
+	var dir := DirAccess.open("res://data/explore")
+	if dir == null:
+		return 0
+	for f in dir.get_files():
+		if not f.ends_with(".json"):
+			continue
+		var data = JSON.parse_string(FileAccess.get_file_as_string("res://data/explore/" + f))
+		if data is Dictionary and data.get("cards", null) is Array:
+			n += (data["cards"] as Array).size()
+	return n

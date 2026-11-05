@@ -1,0 +1,58 @@
+{
+ "side": "soviet",
+ "doc": "documentation/C3_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — real-history cards of Chapter 3 (presented outside the fiction as „REALE GESCHICHTE“). Texts: data/locale/de_history_c3.json. Unlocked by veltrava.station.return_notice, veltrava.hall.treaty_shelf and veltrava.hall.headsets.",
+ "cards": [
+  {
+   "id": "hist.soviet.repatriation",
+   "side": "soviet",
+   "title_key": "hist.soviet.repatriation.title",
+   "text_key": "hist.soviet.repatriation.text",
+   "year": "1945",
+   "sources": [
+    {
+     "label": "Wikipedia: Konferenz von Jalta",
+     "url": "https://de.wikipedia.org/wiki/Konferenz_von_Jalta"
+    },
+    {
+     "label": "Wikipedia (englisch): Operation Keelhaul",
+     "url": "https://en.wikipedia.org/wiki/Operation_Keelhaul"
+    },
+    {
+     "label": "Nicholas Bethell: The Last Secret. London 1974",
+     "url": ""
+    },
+    {
+     "label": "Nikolai Tolstoy: Victims of Yalta. London 1977",
+     "url": ""
+    }
+   ],
+   "review": "Quellen in dieser Sitzung nicht online geprüft – vor Veröffentlichung gegenprüfen"
+  },
+  {
+   "id": "hist.soviet.handover_1940",
+   "side": "soviet",
+   "title_key": "hist.soviet.handover_1940.title",
+   "text_key": "hist.soviet.handover_1940.text",
+   "year": "1940",
+   "sources": [
+    {
+     "label": "Wikipedia: Margarete Buber-Neumann",
+     "url": "https://de.wikipedia.org/wiki/Margarete_Buber-Neumann"
+    },
+    {
+     "label": "Wikipedia: Hitler-Stalin-Pakt",
+     "url": "https://de.wikipedia.org/wiki/Hitler-Stalin-Pakt"
+    },
+    {
+     "label": "Margarete Buber-Neumann: Als Gefangene bei Stalin und Hitler. 1949",
+     "url": ""
+    },
+    {
+     "label": "Hans Schafranek: Zwischen NKWD und Gestapo. Frankfurt am Main 1990",
+     "url": ""
+    }
+   ],
+   "review": "Quellen in dieser Sitzung nicht online geprüft – vor Veröffentlichung gegenprüfen"
+  }
+ ]
+}
