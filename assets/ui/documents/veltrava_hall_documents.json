@@ -1,0 +1,100 @@
+{
+ "scene": "L_C3_Hall",
+ "palette": "palais",
+ "generator": "tools/pixelgen/env_veltrava_hall_docs.py (via env_veltrava_hall.py)",
+ "date": "2026-11-05",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Handwriting from hand-defined stroke skeletons; the UI shows the item name/description as HD text. All rects are [x, y, w, h] in document pixels. Seating plan and booth log documents are owned by the puzzle stream.",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/veltrava_hall_carbon.png",
+   "size": [
+    300,
+    200
+   ],
+   "display_scale": 3,
+   "id": "veltrava_hall_carbon",
+   "alt_key": "doc.veltrava_hall.carbon.alt",
+   "item_id": "ev_c3_carbon",
+   "objective": "c3b_inspect_booth",
+   "hotspot": "booth_2",
+   "title_key": "item.c3_carbon.name",
+   "description_key": "item.c3_carbon.description",
+   "describes": "Elena's desk blotter from interpreter booth 2, lightly rubbed with a pencil. Pale in the graphite: '§ 4 – Personen.' (underlined twice) / 'Vom Sekretariat,' / 'nicht von einer Delegation.' / 'Wer hat den Text geliefert?'. Faint older entry '10:09 - Mik. 12'; mirrored ink blots; the pencil lies across the corner.",
+   "marks": {
+    "line_1": {
+     "rect": [
+      47,
+      45,
+      145,
+      20
+     ],
+     "text": "§ 4 – Personen."
+    },
+    "line_2": {
+     "rect": [
+      51,
+      78,
+      121,
+      17
+     ],
+     "text": "Vom Sekretariat,"
+    },
+    "line_3": {
+     "rect": [
+      46,
+      102,
+      199,
+      21
+     ],
+     "text": "nicht von einer Delegation."
+    },
+    "line_4": {
+     "rect": [
+      50,
+      127,
+      208,
+      21
+     ],
+     "text": "Wer hat den Text geliefert?"
+    },
+    "note": {
+     "rect": [
+      46,
+      45,
+      212,
+      103
+     ],
+     "note": "Elena's last note, pressed through and revealed by the rubbing"
+    },
+    "old_entry": {
+     "rect": [
+      198,
+      168,
+      70,
+      11
+     ],
+     "text": "10:09 - Mik. 12",
+     "note": "older, faint impression; matches the booth log (10:09, microphone 12)"
+    },
+    "rubbing": {
+     "rect": [
+      30,
+      43,
+      242,
+      126
+     ],
+     "note": "graphite rubbing"
+    },
+    "pencil": {
+     "rect": [
+      196,
+      124,
+      90,
+      42
+     ],
+     "note": "pencil used for the rubbing"
+    }
+   }
+  }
+ ]
+}
