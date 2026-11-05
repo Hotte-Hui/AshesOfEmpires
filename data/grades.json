@@ -27,9 +27,9 @@
    1.0,
    1.02
   ],
-  "vignette": 0.3,
-  "grain": 0.018,
-  "palette_strength": 0.55,
+  "vignette": 0.27,
+  "grain": 0.0117,
+  "palette_strength": 0.468,
   "palette": "karsk"
  },
  "archive": {
@@ -54,29 +54,35 @@
    0.99,
    0.98
   ],
-  "vignette": 0.34,
-  "grain": 0.016,
-  "palette_strength": 0.5,
+  "vignette": 0.306,
+  "grain": 0.0104,
+  "palette_strength": 0.425,
   "palette": "archive"
  },
  "berlin": {
   "saturation": 0.95,
-  "vignette": 0.28,
-  "grain": 0.015,
+  "vignette": 0.252,
+  "grain": 0.0097,
   "palette_strength": 0.0,
   "palette": "berlin"
  },
  "sepia": {
   "saturation": 0.6,
-  "vignette": 0.35,
-  "grain": 0.02,
-  "palette_strength": 0.6,
+  "vignette": 0.315,
+  "grain": 0.013,
+  "palette_strength": 0.51,
   "palette": "sepia"
  },
  "hall_3d": {
   "saturation": 1.0,
   "vignette": 0.0,
   "grain": 0.0,
+  "palette_strength": 0.0
+ },
+ "finale": {
+  "saturation": 0.97,
+  "vignette": 0.27,
+  "grain": 0.0078,
   "palette_strength": 0.0
  }
 }

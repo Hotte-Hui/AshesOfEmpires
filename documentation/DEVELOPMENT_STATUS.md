@@ -5,6 +5,55 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 6 (2026-11-05 night) — plaza task
+- Plaza mini-game "Das Blatt im Schnee" (secure the carbon copy "WER FEHLT?" while the guards watch the parade),
+  two quiet easter eggs (frost heart, cat trail), a portrait for the press photographer. Plaza: 18 finds/chats.
+- Not done: preparing the `kapitel-3` merge (the isolated worktree could not be created because the session folder
+  is not the game repository) — do it in a session started inside C:/Spiele/AshesOfEmpires.
+
+## Rounds 4–5 (2026-11-05 night) — parade, plaza, photo mode, credits
+- **Parade** (`L_M1_Parade`, 47 s, 8 shots) follows the Great Hall reveal: massed formations, the column behind the
+  barrier, tanks, the tribune under the eagle, the forced crowd with the evicted family, searchlights and jets,
+  Konrad, the sealed doors — oppressive, anonymous ranks, cold drum score; one skip press skips the whole chain.
+- **Walkable parade plaza** (`L_M1_Plaza`, optional side level): after the parade Konrad stands on the plaza —
+  looping parade behind the barriers, crowd, guards, tribune, the Great Hall; 13 finds + 2 chats (links to existing
+  history cards), the evicted family as NPCs; exit "Zurück ins Archiv" (interactable kind `exit`, Game.side_level).
+- **Photo mode** (P / pad R3): paused free camera, 1×–3× zoom, figure toggle, 6 filters, grain/vignette, 5 frames;
+  PNGs to user://photos and Pictures/Ashes of Empires.
+- **End-credits roll** (~84 s, Esc skips, hold Space speeds up) after the demo end card: production credits and all
+  78 sources of the 16 history cards; the same list in the main menu under "Mitwirkende".
+
+## Round 3 (2026-11-05) — after the user's second playtest
+- Ch1→2 transition (43 s): the departing train now has 60-frame wheel rotation with rods and valve gear in phase
+  with travel, coupling slack (wagons start one after another), wheel slip, chuffs synced to revolutions, rail-joint
+  clacks; the swastika banners on Konrad's way to the archive wave strongly (32-frame cloth wave, gusts) and carry
+  bold swastikas (`_hist`); neutral variant unchanged.
+- Great Hall: the left banner now hangs flat in the facade plane; the plaza foreground is thinned and life moved
+  back (queue 5→3, more mid/far walkers, patrol in the mid plaza); the reveal runs 24 s instead of 11 s (slower
+  crane, 9 s establishing hold, slow push with tilt, held monumental frame), shown without letterbox bars, music
+  swell timed to the final frame.
+- Three optional mini-games (§12.8): shunting puzzle and a mate-in-two chess problem in Karsk, tuning the porter's
+  radio in Berlin — each unlocks a find; auto-solve for autoplay, `demo_solve()` for the real-input driver.
+- History cards no longer print their sources (planned: an end-credits scene listing all sources).
+- Image gently calmer: grain −35 %, palette-snap dither −15 %, vignette −10 %.
+
+## Round 2 (2026-11-04 evening) — expansion after the user's first playtest
+User feedback: better characters and faces, more detail and life, fuller streets, smoother camera, much more to
+explore (incl. real post-war findings in a library), softer protagonist switches, real regime symbolism, ~10 min
+of quality content first. Delivered by 16 parallel specialists + integration (evidence: TEST_REPORT.md §7):
+| Area | Now |
+|---|---|
+| Camera / rendering | world renders at screen resolution (k = 3/4/6 for 1080p/1440p/4K), camera and actors move in single screen pixels with a critically damped follow; post effects stay on the 640×360 texel grid; the 3D hall keeps its low-res path with a sub-pixel lens shift |
+| Characters | 12 sprite sheets redesigned (heads, faces, costumes, walk/idle/talk) + librarian, porter, vendor, worker_b; 9 speakers with sculpted portraits, 4 expressions × talking mouth + blink, animated in the DialogueBox |
+| Karsk | far richer art and 10 kinds of ambient life (crows that flee, the cat, a passing train, lamp, laundry, sparks…); a realistic Soviet skyline (grain elevator with "СЛАВА ТРУДУ!", church used as a warehouse, Khrushchyovka, Stalinist administration, log houses) |
+| Berlin | archive extended to 2924 px: arrival through the stairwell (porter's lodge), a library / reading room with five shelf sections, pigeons, a mouse, clock, radio, passing tram |
+| Exploration | 43 optional finds and chats (20 Karsk, 23 Berlin) with close-up images, a DiscoveryView, journal tabs "Entdeckungen" and "Geschichte" |
+| Real history | 16 sourced "REALE GESCHICHTE" cards (8 Nazi state, 8 Soviet Union) — researched, then independently fact-checked; shown outside the fiction, without fanfare |
+| Great Hall | inhabited street and plaza (walkers in five depth bands, queue, patrol, sweeper, moving tram and cars, pigeons), more architecture; swastika banners and the lantern eagle above the globe (Speer's final 1939 design) |
+| Transitions | Ch1→2: 40 s animated sequence (train departure → stamp → match dissolve → Berlin morning, branch-dependent); finale: 47 s two-desk montage at the same minute, branch-dependent |
+| Symbols | real insignia as `_hist` variants with the setting "Historische Hoheitszeichen" (default on), neutral twins when off |
+| UX | the porter greets Konrad on arrival; history cards also after chats; prompt marks found/new finds |
+
 ## What exists and is verified
 | Area | Content | Verified by |
 |---|---|---|

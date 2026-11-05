@@ -764,7 +764,8 @@ def contact_sheet():
 
 def main():
     os.makedirs(ROOT, exist_ok=True)
-    make_sky()
+    import gen_great_hall_sky   # the dramatic sky (round 2) replaces make_sky(); same matte mapping
+    gen_great_hall_sky.make_sky()
     make_fog()
     make_smoke()
     make_people()
@@ -779,7 +780,8 @@ def main():
 
 
 # ============================================================================ Godot import settings
-MIPMAPPED = {'drawing.png', 'banner.png'}
+MIPMAPPED = {'drawing.png', 'banner.png', 'flag_street.png', 'flag_street_hist.png', 'flag_pole.png',
+             'flag_pole_hist.png', 'kiosk_front.png'}
 
 
 def write_import_settings():

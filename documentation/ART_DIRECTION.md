@@ -51,11 +51,16 @@ beat** — big silhouettes, tiny people, deep blue-green/violet shadows, smoke r
   stoves, laundry, repaired roofs, people.
 * **German (Berlin):** neoclassical/monumental stripped classicism — endless pilaster rhythms, colossal square
   piers, bronze doors, travertine-ochre stone, heavy cornices, the fictional completed **Große Halle** (dome with
-  green-black patina, no historical insignia). Ordinary Berlin: Gründerzeit tenements with balconies, tram wires,
+  green-black patina; on the lantern the eagle above the globe, as in Speer's final 1939 plan). Ordinary Berlin: Gründerzeit tenements with balconies, tram wires,
   sealed apartment doors, notice boards. Monumentality is always **juxtaposed with small, pressured lives**.
-* **Insignia policy:** no swastikas, no SS runes, no real Nazi eagle. The fictional German state uses the
-  **Reichssiegel** (a white pillar/obelisk in a black disc) on grey-black banners. Soviet imagery uses stars,
-  gears and a fictional "hammer-and-gear" variant. Symbols are shown as instruments of power, never as rewards.
+* **Insignia policy (updated 2026-11-04, user decision — TECHNICAL_ARCHITECTURE §12.4):** real regime insignia
+  (swastika flags and banners, the state eagle with the wreathed swastika on stamps and plaques; hammer & sickle
+  and red star) appear as in-world iconography of the two oppressive states while the player setting
+  "Historische Hoheitszeichen" is on (default), always inside the critical narrative (social-adequacy clause,
+  StGB §86 Abs. 4). Every such asset has a neutral twin used when the setting is off: the fictional
+  **Reichssiegel** (white pillar/obelisk in a black disc) or a plain eagle; on the Soviet side a fictional
+  gear-and-wheat emblem. Never SS runes, never on the player's side, in menus, UI chrome or rewards. Symbols are
+  shown as instruments of power.
 
 ## 5. Lighting
 * **Baked key light in the painted layers** (art-directed), plus **dynamic Godot 2D lights** for local life:

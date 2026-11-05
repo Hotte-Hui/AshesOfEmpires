@@ -5,6 +5,9 @@ berlin_plan_b.png   older archived draft: the corridor continues behind a second
 berlin_plan_*_lines.png   the same drawings without paper (transparent) for the overlay UI.
 berlin_plans.json   cell size, grid, landmark cells, solution, hidden-corridor rects.
 berlin_emil_note.png      Emil's handwritten archive slip with 'C-17'.
+*_hist.png                historical-insignia variants (TECHNICAL_ARCHITECTURE 12.4): the official seal on plan A,
+                          the archive receipt stamp on plan B and the printed form emblem on Emil's slip show the
+                          Reichsadler with the wreathed swastika; the base files show the fictional Reichssiegel.
 
 Geometry (cells of 16 px, sheet 18 x 12 cells = 288 x 192 px):
   plan A  staircase anchor (4,2) [2x2], chimney (9,7) [1x1]
@@ -19,6 +22,7 @@ import os
 
 import numpy as np
 
+import env_berlin_insignia as INS
 import env_berlin_kit as kit
 import pg
 
@@ -373,6 +377,71 @@ def stamp_box(sh, x, y, text, ramp='I', tone=2.0, seed=0, emblem=True):
     return w, h
 
 
+def seal(sh: Sheet, cx, cy, r, hist: bool, ramp='I', tone=1.0, seed=0, coverage=0.86, ink=True):
+    """Round official seal (Dienstsiegel): double ring, micro-lettering suggested by dashes between the rings,
+    the state emblem in the centre -- neutral: the fictional Reichssiegel; hist: the Reichsadler with the
+    wreathed swastika.  Uneven stamp coverage."""
+    rng = np.random.default_rng(seed)
+    n = 2 * r + 3
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    c = n / 2.0
+    d = np.sqrt((xx + 0.5 - c) ** 2 + (yy + 0.5 - c) ** 2)
+    m = (np.abs(d - r) < 0.75) | (np.abs(d - (r - 4.0)) < 0.6)
+    # lettering between the rings: short arcs of 1-3 px with gaps, a star at the bottom
+    ang = np.arctan2(yy + 0.5 - c, xx + 0.5 - c)
+    band = (d > r - 3.2) & (d < r - 1.0)
+    words = (np.floor((ang + math.pi) / (2 * math.pi) * 46) % 4 != 3) & (np.abs(d - (r - 2.1)) < 0.7)
+    words &= ~((ang > 1.25) & (ang < 1.9))
+    m |= band & words
+    for k in (-1, 0, 1):
+        m[int(c + r - 2), int(c) + k] = True
+    if hist:
+        ew0 = int(2 * (r - 4) - 3) | 1
+        e = INS.eagle_masks(ew0)
+        eh, ew = e['size']
+        ex, ey = int(round(c - ew / 2.0)), int(round(c - eh / 2.0)) + 1
+        em = np.zeros((n, n), bool)
+        sub = e['body'] & ~e['lines'] if ew >= 25 else e['body'].copy()
+        sub = sub | e['wreath'] | e['swastika']
+        hh, ww = min(eh, n - ey), min(ew, n - ex)
+        em[ey:ey + hh, ex:ex + ww] = sub[:hh, :ww]
+    else:
+        em = np.zeros((n, n), bool)
+        dd = int(2 * (r - 5)) | 1
+        disc, pillar = kit.reichssiegel_mask(dd)
+        o = int(round(c - dd / 2.0))
+        em[o:o + dd, o:o + dd] |= disc & ~pillar
+    keep = rng.random(m.shape) < coverage
+    m &= keep
+    m |= em & (rng.random(m.shape) < max(coverage, 0.95))
+    x0, y0 = int(cx - c), int(cy - c)
+    if ink:
+        sh.ink_mask(m, x0, y0, ramp, tone)
+    else:
+        sh.lay.put(m, x0, y0, ramp, tone, flat=True)
+    return m
+
+
+def receipt_stamp(sh: Sheet, x, y, hist: bool, seed=0):
+    """Faded rectangular archive receipt stamp with a small round emblem (paper only, not part of the
+    overlay lines)."""
+    rng = np.random.default_rng(seed)
+    lay = sh.lay
+    w, h = 74, 22
+    box = np.zeros((h, w), bool)
+    box[0, :] = box[-1, :] = True
+    box[:, 0] = box[:, -1] = True
+    m1 = kit.text_mask('BAUARCHIV', '35')  # noqa
+    m2 = kit.text_mask('EINGANG 14.2.58', '35')
+    box[3:3 + 5, 22:22 + m1.shape[1]] |= m1
+    box[11:11 + 5, 16:16 + min(m2.shape[1], w - 18)] |= m2[:, :w - 18]
+    keep = rng.random(box.shape) < 0.72
+    lay.put(box & keep, x, y, 'I', 2.6, flat=True)
+    seal(sh, x + 9, y + 11, 8, False, ramp='I', tone=2.6, seed=seed + 1, coverage=0.7, ink=False)
+    # the archive's round seal beside it (faded): emblem variant as on plan A
+    seal(sh, x + 92, y + 11, 13, hist, ramp='I', tone=2.4, seed=seed + 2, coverage=0.62, ink=False)
+
+
 # =========================================================================== handwriting (pencil)
 def pencil(sh: Sheet, polys, radius=0.9, seed=0, tones=(2.4, 3.2)):
     m = kit.stroke_mask(sh.w, sh.h, polys, radius, jitter=0.12, seed=seed)
@@ -392,7 +461,7 @@ def arrow(sh, pts, seed=0, head=4):
 
 
 # =========================================================================== sheets
-def plan_a():
+def plan_a(hist: bool = False):
     sh = Sheet(W, H, 'berlin_plan_a')
     paper(sh, seed=301, age=0.15, stains=0)
     grid(sh)
@@ -401,7 +470,8 @@ def plan_a():
     # title block (bottom right) + approval stamp
     title_block(sh, 190, 150, 92, 36, [('BAUAMT BERLIN', '35', 2.4), ('GRUNDRISS 2.OG', '35', 3.0),
                                        ('---', '', 0), ('BLATT 3/A  M 1:200', '35', 3.0)])
-    stamp_box(sh, 100, 150, 'GENEHMIGT', 'I', 2.0, seed=4)
+    stamp_box(sh, 100, 150, 'GENEHMIGT', 'I', 2.0, seed=4, emblem=False)
+    seal(sh, 60, 168, 17, hist, ramp='I', tone=1.0, seed=6)
     # signature + date beside the stamp (ink)
     pol = kit.scribble_polys(104, 182, 34, 3, seed=8, words=5)
     m = kit.stroke_mask(W, H, pol, 0.45)
@@ -410,7 +480,7 @@ def plan_a():
     return sh
 
 
-def plan_b():
+def plan_b(hist: bool = False):
     sh = Sheet(W, H, 'berlin_plan_b')
     paper(sh, seed=417, age=0.85, folds=True, torn=True, stains=1)
     grid(sh, tone=5.6)
@@ -418,6 +488,7 @@ def plan_b():
     building(sh, DX, DY, 'B')
     # title block top right (older sheet layout)
     title_block(sh, 196, 9, 86, 22, [('VORENTWURF 1958', '35', 3.0), ('ARCHIV NR. 31/4', '35', 3.4)], tone=3.4)
+    receipt_stamp(sh, 14, 164, hist, seed=58)
     # pencil annotation 'C-17' with an arrow to the hidden corridor + a circle round the 2nd wall
     hx, hy = 236, 118
     polys = kit.hand_polys('C-17', hx, hy, 11, 7, 2.5, slant=0.15, seed=21)
@@ -438,7 +509,7 @@ def lines_only(sh: Sheet) -> np.ndarray:
     return out
 
 
-def emil_note():
+def emil_note(hist: bool = False):
     w, h = 220, 150
     sh = Sheet(w, h, 'berlin_emil_note')
     lay = sh.lay
@@ -446,6 +517,13 @@ def emil_note():
     # printed form: header, ruled lines, field labels (pale blue print)
     label(sh, 'BAUARCHIV', 34, 12, tone=2.4, font='57')
     label(sh, 'AUSKUNFT / LEIHSCHEIN', 34, 22, tone=3.4)
+    if hist:
+        e = INS.eagle_masks(21)
+        em = e['body'] & ~e['lines'] | e['wreath'] | e['swastika']
+        lay.put(em, 154, 4, 'B', 2.4, flat=True)
+    else:
+        disc, pillar = kit.reichssiegel_mask(15)
+        lay.put(disc & ~pillar, 157, 6, 'B', 2.4, flat=True)
     lay.rect(34, 30, 176, 1, 'B', 4.0, flat=True)
     rows = [('SIGNATUR', 48), ('SERIE', 68), ('BETREFF', 88), ('VERMERK', 108), ('DATUM', 128)]
     for (t, y) in rows:
@@ -488,19 +566,33 @@ def build_all(doc_dir, prev_dir=None):
     a.lay.resolve()
     b, note_rect = plan_b()
     b.lay.resolve()
-    for sh, name, desc in ((a, 'berlin_plan_a', 'approved public floor plan (supply wing closed), 18x12 cells'),
-                           (b, 'berlin_plan_b', 'archived 1958 draft: corridor behind a second wall, pencil C-17')):
+    ah = plan_a(hist=True)
+    ah.lay.resolve()
+    bh, _ = plan_b(hist=True)
+    bh.lay.resolve()
+    for sh, name, desc, lines in (
+            (a, 'berlin_plan_a', 'approved public floor plan (supply wing closed), 18x12 cells, Reichssiegel seal', True),
+            (ah, 'berlin_plan_a_hist', 'plan A, historical-insignia variant (eagle seal)', True),
+            (b, 'berlin_plan_b', 'archived 1958 draft: corridor behind a second wall, pencil C-17', True),
+            (bh, 'berlin_plan_b_hist', 'plan B, historical-insignia variant (receipt stamp with eagle)', False)):
         p = os.path.join(doc_dir, name + '.png')
         kit.save_rgba(sh.lay.c, p)
         out.append((p, desc))
-        pl = os.path.join(doc_dir, name + '_lines.png')
-        kit.save_rgba(lines_only(sh), pl)
-        out.append((pl, desc + ' -- lines only on transparent (overlay UI)'))
+        if lines:
+            base = name.replace('_hist', '')
+            pl = os.path.join(doc_dir, base + '_lines' + ('_hist' if name.endswith('_hist') else '') + '.png')
+            kit.save_rgba(lines_only(sh), pl)
+            out.append((pl, desc + ' -- lines only on transparent (overlay UI)'))
     e = emil_note()
     e.lay.resolve()
     pe = os.path.join(doc_dir, 'berlin_emil_note.png')
     kit.save_rgba(e.lay.c, pe)
-    out.append((pe, "Emil's handwritten archive slip (Serie C-17)"))
+    out.append((pe, "Emil's handwritten archive slip (Serie C-17), printed Reichssiegel"))
+    eh = emil_note(hist=True)
+    eh.lay.resolve()
+    peh = os.path.join(doc_dir, 'berlin_emil_note_hist.png')
+    kit.save_rgba(eh.lay.c, peh)
+    out.append((peh, "Emil's slip, historical-insignia variant (printed eagle)"))
     # ---- json
     hid_b = [gx(WING_X + DX), gx(CORR_Y[0] + DY), W - gx(WING_X + DX), CELL]
     hid_a = [hid_b[0] + SOLUTION['offset_x'] * CELL, hid_b[1] + SOLUTION['offset_y'] * CELL,
@@ -539,7 +631,8 @@ def build_all(doc_dir, prev_dir=None):
     out.append((pj, 'overlay puzzle data: cells, landmarks, solution (+2,-1,rot 0), hidden corridor rects'))
     if prev_dir:
         kit.ensure_gdignore(prev_dir)
-        for sh, name in ((a, 'plan_a'), (b, 'plan_b'), (e, 'emil_note')):
+        for sh, name in ((a, 'plan_a'), (b, 'plan_b'), (e, 'emil_note'), (ah, 'plan_a_hist'), (bh, 'plan_b_hist'),
+                         (eh, 'emil_note_hist')):
             pg.upscale(sh.lay.image(), 3).save(os.path.join(prev_dir, 'doc_%s_x3.png' % name))
         # overlay check: plan A with plan B lines shifted by the solution
         comp = a.lay.c.copy()

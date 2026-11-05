@@ -13,6 +13,7 @@ import math
 
 import numpy as np
 
+import env_berlin_insignia as INS
 import env_berlin_kit as kit
 import env_berlin_layout as L
 import pg
@@ -34,9 +35,19 @@ RB = kit.Ramps({
             Bp['glow'][4]],
     'SNW': [Bp['violet'][2], Bp['snow'][0], Bp['snow'][1], Bp['snow'][2], Bp['snow'][3], Bp['snow'][4]],
     'WIN': [Bp['night'][0], Bp['steel'][0], Bp['night'][3], Bp['steel'][1], Bp['steel'][2]],
+    # flag cloth (archive ink reds -- the post-process snaps to the archive palette)
+    'RED': [Bp['night'][1], '#2A1B16', '#7A2A26', '#A8382E'],
 })
 
-DOME_X = 262          # far-layer local x of the dome axis (seen through window 2 at camera x = 0)
+# far-layer local x of the dome axis: seen through the middle office window when the player stands at it
+DOME_X = int(round(L.local_x(L.X(262), L.PARALLAX['ext_far'], L.cam_for(L.X(262)))))
+# near-layer anchors (same idea): the low house that opens the dome view, and the two banner positions
+LOW_C = int(round(L.local_x(L.X(262), L.PARALLAX['ext_near'], L.cam_for(L.X(262)))))
+BANNERS = [  # (local x, through which windows it is mostly seen)
+    (int(round(L.local_x(L.LIB_WINDOWS[1][0] + 10, L.PARALLAX['ext_near'], L.cam_for(L.HOTSPOTS['exp_reading_table'][0])))), 'library'),
+    (int(round(L.local_x(L.WINDOWS[2][0] + 12, L.PARALLAX['ext_near'], L.cam_for(L.HOTSPOTS['plan_a'][0])))), 'office'),
+]
+NEAR_SITES = []       # filled by build_near(): (name, x, y, w, h) of insignia sites (banners)
 
 
 # =========================================================================== sky
@@ -172,20 +183,21 @@ def build_far():
             lay.rect(cxx, top - 8, 3, 9, 'HAZE', 2.2, flat=True)
         x += bw
     # gasholder frame far right and a slim church spire left (generic, not a real landmark)
-    gx = 610
+    gx = DOME_X + 330
     for k in range(5):
         lay.rect(gx + k * 9, horizon - 30, 1, 30, 'HAZE', 3.0, flat=True)
     for yy in range(horizon - 30, horizon, 6):
         lay.rect(gx, yy, 37, 1, 'HAZE', 3.0, flat=True)
     lay.rect(gx + 2, horizon - 20, 33, 20, 'HAZE', 3.4, flat=True)
-    sx = 96
+    sx = DOME_X - 240
     lay.poly([(sx - 3, horizon - 22), (sx + 4, horizon - 22), (sx + 1, horizon - 58)], 'HAZE', 3.2)
     lay.rect(sx - 4, horizon - 22, 9, 30, 'HAZE', 3.2, flat=True)
     lay.px(sx + 1, horizon - 60, 'HAZE', 3.2)
     # the Great Hall
     great_hall(lay, DOME_X, horizon - 6)
     # tall industrial chimneys with smoke drifting east (coal heating, winter)
-    for (cx_, top, seed) in [(150, 120, 3), (452, 132, 5), (700, 126, 9)]:
+    for (cx_, top, seed) in [(DOME_X - 300, 124, 1), (DOME_X - 110, 120, 3), (DOME_X + 190, 132, 5),
+                             (DOME_X + 420, 126, 9)]:
         lay.rect(cx_ - 2, top, 4, horizon - top + 4, 'HAZE', 2.6, flat=True)
         lay.rect(cx_ - 2, top, 1, horizon - top + 4, 'HAZE', 3.4, flat=True)
         lay.rect(cx_ - 3, top, 6, 2, 'HAZE', 2.2, flat=True)
@@ -331,39 +343,89 @@ def tenement(lay, x0, x1, cornice_y, rng, kind='mansard', lit_p=0.22, sealed=Fal
     return lit_rects, roof_top
 
 
-def build_near():
+def banner(lay, x, top, w, h, hist: bool):
+    """Long state banner hanging down a facade (insignia site).  neutral: grey-black cloth with the fictional
+    Reichssiegel (black disc, white pillar); hist: red cloth, white disc, black swastika standing on a corner."""
+    rng = np.random.default_rng(900 + x)
+    field_r, t0 = ('RED', 2.0) if hist else ('HAZE', 4.4)       # neutral: grey cloth that reads on the facade
+    # rod + cords
+    lay.rect(x - 2, top - 2, w + 4, 2, 'ROOF', 1.0, flat=True)
+    lay.px(x - 2, top - 3, 'SNW', 3.0)
+    # cloth with vertical folds and a waving lower edge
+    for xx in range(w):
+        fold = 0.55 * math.sin(xx / w * math.pi * 3.0 + 0.6)
+        hh = h - int(round(1.5 + 1.5 * math.sin(xx * 0.9)))
+        lay.rect(x + xx, top, 1, hh, field_r, t0 + fold, flat=False)
+    lay.rect(x, top, 1, h - 2, field_r, t0 + 0.7, flat=True)
+    lay.rect(x + w - 1, top, 1, h - 3, field_r, t0 - 0.9, flat=True)
+    # emblem disc in the upper third
+    d = w - 4 if (w - 4) % 2 == 1 else w - 5
+    cx, cy = x + w // 2, top + 6 + d // 2
+    m, mx, my = lay.ellipse_mask(cx + 0.5, cy + 0.5, d / 2.0, d / 2.0)
+    if hist:
+        lay.put(m, mx, my, 'SNW', 4.0, flat=True)
+        sd = d - 3 if (d - 3) % 2 == 1 else d - 4
+        sw = INS.swastika_mask(sd)
+        lay.put(sw, cx - sd // 2, cy - sd // 2 + (0 if sd % 2 else 0), 'ROOF', 0.0, flat=True)
+    else:
+        lay.put(m, mx, my, 'ROOF', 0.0, flat=True)
+        disc, pillar = kit.reichssiegel_mask(d)
+        lay.put(pillar, cx - d // 2, cy - d // 2, 'SNW', 3.6, flat=True)
+    # a thin stripe of snow on the rod
+    lay.rect(x - 1, top - 3, w + 2, 1, 'SNW', 4.0, flat=True)
+
+
+def build_near(hist: bool = False):
     w = L.layer_width(L.PARALLAX['ext_near'])
     lay = kit.MLayer(w, L.WORLD_H, RB, 'ext_near')
     rng = np.random.default_rng(57)
     lits = []
+    lc = LOW_C
     plan = [
         # x0, x1, cornice_y, kind, sealed, stovepipe, firewall, ghost
         (-8, 96, 190, 'mansard', False, False, False, None),
         (96, 196, 184, 'mansard', True, False, True, 'KOHLEN'),
-        (222, 318, 206, 'flat', False, True, False, None),       # low house: opens the view to the dome
-        (318, 430, 186, 'mansard', False, False, False, None),
-        (430, 548, 192, 'mansard', True, True, False, None),
-        (548, 640, 182, 'mansard', False, False, True, None),
-        (666, 760, 188, 'mansard', False, False, False, None),
-        (760, w + 8, 194, 'mansard', False, True, False, None),
+        (222, 318, 196, 'mansard', False, True, False, None),
+        (318, 410, 188, 'mansard', False, False, False, None),
+        (410, lc - 48, 186, 'mansard', True, True, False, None),
+        (lc - 48, lc + 48, 206, 'flat', False, True, False, None),       # low house: opens the view to the dome
+        (lc + 48, lc + 152, 184, 'mansard', False, False, False, None),
+        (lc + 152, lc + 250, 192, 'mansard', True, True, False, None),
+        (lc + 250, lc + 340, 182, 'mansard', False, False, True, None),
+        (lc + 366, lc + 460, 188, 'mansard', False, False, False, None),
+        (lc + 460, w + 8, 194, 'mansard', False, True, False, None),
     ]
+    cornice_at = {}
     for (x0, x1, cy, kind, sealed, stove, fw, ghost) in plan:
+        if x1 <= x0:
+            continue
         lr, top = tenement(lay, x0, x1, cy, rng, kind=kind, sealed=sealed, stovepipe=stove, firewall=fw,
                            ghost=ghost)
         lits += lr
-    # tram catenary: two trolley wires + span wires to rosettes, poles at intervals
-    for wy, sag in ((229, 3), (233, 3)):
-        for x0 in range(-40, w, 120):
-            pts = pg.catenary(x0, wy, x0 + 120, wy, sag)
-            for (px_, py_) in pts:
-                xx, yy = int(round(px_)), int(round(py_))
-                if 0 <= xx < w:
-                    lay.px(xx, yy, 'ROOF', 1.0)
-    for x0 in range(-40, w, 120):
-        lay.rect(x0, 222, 1, 140, 'ROOF', 2.4, flat=True)
-        lay.rect(x0 - 3, 226, 8, 1, 'ROOF', 1.4, flat=True)
-        # street lamp glow on the pole (a cold mercury lamp)
-        lay.rect(x0 + 2, 225, 4, 2, 'SNW', 5.0, emis=True, flat=True)
+        for xx in range(max(0, x0), min(w, x1)):
+            cornice_at[xx] = cy
+    # state banners hanging from the cornices (insignia sites; the _hist decals overlay them)
+    NEAR_SITES.clear()
+    for i, (bx, _) in enumerate(BANNERS):
+        cy = cornice_at.get(bx + 10, 186)
+        bw, bh = 20, 70
+        banner(lay, bx, cy + 1, bw, bh, hist=hist)
+        NEAR_SITES.append(('banner_%d' % (i + 1), (bx - 3, cy - 4, bw + 6, bh + 6), (bx, cy + 1, bw, bh)))
+    # tram line: straight contact wires (pantographs touch L.TRAM_WIRE_Y), bracket arms on poles, mercury lamps
+    for wy in (L.TRAM_WIRE_Y, L.TRAM_WIRE_Y + 3):
+        lay.rect(0, wy, w, 1, 'ROOF', 1.0, flat=True)
+    for x0 in range(-40, w + 40, 120):
+        wy = L.TRAM_WIRE_Y
+        lay.rect(x0, wy - 10, 1, 170, 'ROOF', 2.4, flat=True)
+        lay.rect(x0 - 3, wy - 6, 7, 1, 'ROOF', 1.4, flat=True)
+        lay.line(x0, wy - 5, x0 + 22, wy - 3, 'ROOF', 1.6)                          # bracket arm
+        lay.line(x0 + 1, wy + 4, x0 + 22, wy - 3, 'ROOF', 1.4)                      # brace
+        lay.rect(x0 + 21, wy - 3, 1, 3, 'ROOF', 1.2, flat=True)                     # hanger to the wire
+        # street lamp hanging from the span wire (a cold mercury lamp), clear of the banners
+        lx = x0 + 36
+        lay.rect(lx, wy - 9, 1, 5, 'ROOF', 1.4, flat=True)
+        lay.rect(lx - 2, wy - 4, 5, 2, 'ROOF', 2.0, flat=True)
+        lay.rect(lx - 1, wy - 2, 3, 1, 'SNW', 5.0, emis=True, flat=True)
     lay.unlit[:] = True
     lay.resolve()
     lay.lit_windows = lits

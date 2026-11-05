@@ -11,15 +11,19 @@ const LEVELS := {
 	"L_A1_Railyard": "res://scenes/levels/L_A1_Railyard.tscn",
 	"L_M1_Archive": "res://scenes/levels/L_M1_Archive.tscn",
 	"L_M1_HallReveal": "res://scenes/levels/L_M1_HallReveal.tscn",
+	"L_M1_Parade": "res://scenes/levels/L_M1_Parade.tscn",
+	"L_M1_Plaza": "res://scenes/levels/L_M1_Plaza.tscn",
 	"L_Test": "res://scenes/levels/L_Test.tscn",
 }
-const ENTRY_SPAWN := {"L_A1_Railyard": "SP_A1_Platform", "L_M1_Archive": "SP_M1_Office"}
+const ENTRY_SPAWN := {"L_A1_Railyard": "SP_A1_Platform", "L_M1_Archive": "SP_M1_Arrival"}
 const CHAPTER := {"L_A1_Railyard": ["ui.chapter_a1", "world.a1.title"], "L_M1_Archive": ["ui.chapter_m1", "world.m1.title"]}
 const PLAYER := preload("res://scripts/actors/player.gd")
 const LayerStack := preload("res://scripts/levels/layer_stack.gd")
 const STILLS := "res://assets/ui/documents/"
 ## Chapter 3+: data-driven director extensions (levels, line variants, reactions, puzzle UIs, §12.5 cinematics).
 const ChapterExt := preload("res://scripts/core/chapter_ext.gd")
+const CIN_A1_M1 := "res://scenes/cinematics/a1m1/CinA1ToM1.tscn"
+const FINALE_SCENE := "res://scenes/cinematics/finale/Finale.tscn"
 ## Reaction line after each choice: [speaker, text key, expression]
 const REACTIONS := {
 	"a1_choose": {"share_with_irina": ["irina", "dlg.irina.branch_a", "determined"],
@@ -42,7 +46,9 @@ var ui: Node = null
 var level: Node = null
 var player: Node = null
 var input_locked := false
-var interact_ready_at := 0      # ticks (ms); player interact presses before this are ignored
+var interact_ready_at := 0
+var side_level := false         # an optional walkable level outside the Story scene chain (the parade plaza)
+var _plaza_after_hall := false      # ticks (ms); player interact presses before this are ignored
 var busy := false
 var in_cinematic := false
 var args: Dictionary = {}
@@ -290,6 +296,8 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 		_fade.color.a = 0.0
 	_unload_level()
 	var path: String = LEVELS.get(id, ext.level_path(id))
+	if path == "" and id.begins_with("res://"):   # dev/test: --scene=res://path/Level.tscn (art previews)
+		path = id
 	if path == "" or not ResourceLoader.exists(path):
 		push_error("Game: unknown level " + id)
 		return
@@ -311,6 +319,25 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 	if card.size() == 2 and not args.has("capture"):
 		_show_title(Loc.t(card[0]), Loc.t(card[1]))
 	autosave("level_" + id)
+	await _porter_greeting(id)
+
+
+## Soft start of Konrad's chapter: the porter greets him once, right after he comes in through the stairwell
+## door (optional chat — Explore only, never Story). Not in tests/captures; not if Konrad already walked off.
+func _porter_greeting(id: String) -> void:
+	if id != "L_M1_Archive" or args.has("capture") or args.has("capture-world") or auto or args.has("inputplay"):
+		return
+	if not Explore.has_method("is_found") or Explore.is_found("berlin.porter"):
+		return
+	var porter_chat: Node = level.playfield.get_node_or_null("TalkPorter") if level and level.get("playfield") else null
+	if porter_chat == null or player == null:
+		return
+	await get_tree().create_timer(4.2).timeout   # let the chapter card play out first
+	if not is_instance_valid(porter_chat) or not is_instance_valid(player) or busy or in_cinematic or get_tree().paused:
+		return
+	if absf(porter_chat.global_position.x - player.global_position.x) < 200.0:
+		player.face(porter_chat.global_position.x - player.global_position.x)
+		await interact(porter_chat)
 
 
 func _first_visit() -> bool:
@@ -431,7 +458,8 @@ func update_prompt(target: Node) -> void:
 	if hud == null or target == null:
 		return
 	var p: Vector2 = world_to_ui(target.global_position - Vector2(0, target.get("prompt_height") if target.get("prompt_height") else 56.0))
-	_call(hud, "show_prompt", [p, target.prompt_text()])
+	_call(hud, "show_prompt", [p, target.prompt_text(), "interact",
+		target.prompt_state() if target.has_method("prompt_state") else ""])
 
 
 func world_to_ui(world_pos: Vector2) -> Vector2:
@@ -459,6 +487,8 @@ func interact(it: Node) -> void:
 			await _do_discover(it)
 		"chat":
 			await _do_chat(it)
+		"exit":
+			await _do_exit(it)
 	busy = false
 	input_locked = false
 	# The key press that closed the last line/panel must not immediately trigger the next interaction.
@@ -654,6 +684,11 @@ func _do_discover(it: Node) -> void:
 	var id := str(it.get("explore_id"))
 	if id == "" or not Explore.has_method("find"):
 		return
+	# §12.8 mini-game finds: the entry's "minigame" scene must be solved first (retry any time; Esc gives up)
+	var mg_path := str(Explore.entry(id).get("minigame", ""))
+	if mg_path != "" and not Explore.is_found(id):
+		if not await _run_minigame(mg_path, id):
+			return
 	it.used = true
 	if player:
 		player.play_action("inspect_side")
@@ -677,6 +712,28 @@ func _do_discover(it: Node) -> void:
 		toast(fmt.format({"name": Loc.t(str(e.get("title_key", ""))), "n": c.get("found", 0), "total": c.get("total", 0)}))
 
 
+## §12.8 mini-game host: instances the scene under the UI, open(ctx), waits for finished(success).
+## ctx = {"explore_id", "auto"}; in autoplay the mini-game resolves itself, the real-input driver calls demo_solve().
+func _run_minigame(path: String, id: String) -> bool:
+	if not ResourceLoader.exists(path) or ui == null:
+		return true                       # never block a find on a missing scene
+	var mg: Node = load(path).instantiate()
+	ui.add_child(mg)
+	var res := {"done": false, "ok": false}
+	mg.finished.connect(func(success: bool):
+		res["done"] = true
+		res["ok"] = success, CONNECT_ONE_SHOT)
+	if mg.has_method("open"):
+		mg.open({"explore_id": id, "auto": auto})
+	while not res["done"] and is_instance_valid(mg):
+		await get_tree().process_frame
+	if is_instance_valid(mg):
+		mg.queue_free()
+	if res["ok"]:
+		Audio.sfx("puzzle_success")
+	return bool(res["ok"])
+
+
 ## §12 optional conversation: lines come from the Explore entry (speaker, key, expr); NPCs face the player.
 func _do_chat(it: Node) -> void:
 	var id := str(it.get("explore_id"))
@@ -687,7 +744,22 @@ func _do_chat(it: Node) -> void:
 		if l is Dictionary:
 			await _speak(str(l.get("speaker", "")), Loc.t(str(l.get("key", ""))), str(l.get("expr", "neutral")))
 	_end_speech()
-	Explore.find(id)
+	var r: Dictionary = Explore.find(id)
+	# a chat can unlock real-history cards (e.g. the barrel workers → Novocherkassk 1962): show them like a find
+	var cards: Array = r.get("cards_new", [])
+	var view := _ui("discovery")
+	if not cards.is_empty() and view and view.has_method("open_cards"):
+		_call(view, "open_cards", [cards, true])
+		if auto:
+			await get_tree().create_timer(0.3).timeout
+			_call(view, "close")
+		else:
+			await _await_closed(view)
+	if r.get("new", false):
+		var e: Dictionary = r.get("entry", {})
+		var c: Dictionary = Explore.counts(str(e.get("level", "")))
+		toast(Loc.t("ui.toast.discovery").format({"name": Loc.t(str(e.get("title_key", ""))),
+			"n": c.get("found", 0), "total": c.get("total", 0)}))
 
 
 func _await_closed(node: Node) -> void:
@@ -734,8 +806,13 @@ func _after_story_change() -> void:
 	for cid in Story.pending_cinematics():
 		var skipped := await _play_cinematic_by_id(str(cid))
 		Story.consume_cinematic(str(cid), skipped)
+	if _plaza_after_hall:           # after the Great Hall chain: Konrad stands on the parade plaza (explorable)
+		_plaza_after_hall = false
+		side_level = true
+		await goto_level("L_M1_Plaza", "SP_Plaza_Start", true)
+		return
 	var target := _story_scene()
-	if level and str(level.get("level_id")) != target:
+	if level and str(level.get("level_id")) != target and not side_level:
 		if target == "L_X1_Montage":
 			await _finale_flow()
 		else:
@@ -774,8 +851,38 @@ func _end_cinematic() -> bool:
 	return s
 
 
+## Ch1 → Ch2 protagonist switch (§12.5): the animated train departure → stamp → match dissolve → Berlin morning
+## sequence (scenes/cinematics/a1m1). Leaves the screen black; goto_level() then fades M1 in at SP_M1_Arrival.
 func _cin_a1_to_m1() -> bool:
 	_begin_cinematic()
+	if not ResourceLoader.exists(CIN_A1_M1):
+		return await _cin_a1_to_m1_stills()
+	Audio.stop_music(1.5)
+	await fade_out(0.8)
+	var prev_level := level
+	if prev_level:
+		prev_level.visible = false
+		prev_level.process_mode = Node.PROCESS_MODE_DISABLED
+	var cin: Node = load(CIN_A1_M1).instantiate()
+	main.level_root.add_child(cin)
+	cin.configure({"choices": Story.choice_history(), "flags": Story.flags() if Story.has_method("flags") else {},
+		"symbols": Symbols.enabled()})
+	var done := [false]
+	cin.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	cin.play()
+	_fade.color.a = 0.0          # the cinematic fades in from its own black frame
+	while not done[0]:
+		if _skip and cin.has_method("skip"):
+			cin.skip()
+		await get_tree().process_frame
+	_fade.color.a = 1.0          # stay black: goto_level() fades M1 in and shows the chapter card
+	cin.queue_free()
+	camera.release()
+	return _end_cinematic()
+
+
+## Fallback (round-1 version): two stills with a match cut.
+func _cin_a1_to_m1_stills() -> bool:
 	Audio.stop_music(1.5)
 	await fade_out(0.8)
 	_show_still(STILLS + "x1_stamp_closeup.png")
@@ -805,8 +912,12 @@ func _cin_hall() -> bool:
 	var hall: Node = load(path).instantiate()
 	main.level_root.add_child(hall)
 	_apply_grade(hall)
-	Audio.play_music("mus_hall_reveal", 0.3)
+	_call(_ui("fade"), "letterbox", [false])   # full 16:9: the lantern eagle stays in frame during the long hold
+	Audio.stop_music(1.5)                       # the reveal cue starts later so its swell lands on the final frame
 	Audio.play_ambience("amb_berlin_street", 0.6)
+	var hall_len: float = float(hall.get_duration()) if hall.has_method("get_duration") else 11.0
+	var music_at := maxf(0.0, hall_len - 11.5)
+	var music_started := false
 	await fade_in(0.6)
 	if hall.has_method("play"):
 		hall.play()
@@ -818,10 +929,12 @@ func _cin_hall() -> bool:
 	if has_cues:
 		hall.cue.connect(func(key: String):
 			if key.begins_with("hall.cue.loudspeaker") and Loc.has(key):
-				subtitle(Loc.t(key), 3.6))
+				subtitle(Loc.t(key), 3.6)
+			elif key == "hall.cue.tram_bell":
+				Audio.sfx("tram_bell", -6.0))
 	var t := 0.0
 	var said := false
-	while not done[0] and t < 16.0:
+	while not done[0] and t < 45.0:   # the hall reveal may run ~20–30 s
 		if _skip:
 			if hall.has_method("skip"):
 				hall.skip()
@@ -829,11 +942,18 @@ func _cin_hall() -> bool:
 		if not has_cues and t > 3.2 and not said:
 			said = true
 			subtitle(Loc.t("cinematic.hall_reveal"), 5.0)
+		if not music_started and t >= music_at:
+			music_started = true
+			Audio.play_music("mus_hall_reveal", 0.3)
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	await fade_out(0.7)
 	hall.queue_free()
+	await _cin_parade()   # second Great Hall scene (round 4): the parade on the plaza, same skip chain
 	camera.enabled = true
+	if _plaza_enabled():  # round 5: continue onto the walkable plaza instead of cutting back to the archive
+		_plaza_after_hall = true
+		return _end_cinematic()   # screen stays black; _after_story_change() loads the plaza
 	if prev_level and is_instance_valid(prev_level):
 		prev_level.visible = true
 		prev_level.process_mode = Node.PROCESS_MODE_INHERIT
@@ -845,7 +965,101 @@ func _cin_hall() -> bool:
 	return skipped
 
 
+## The walkable parade plaza is optional gameplay; automated runs only visit it in their explore modes.
+func _plaza_enabled() -> bool:
+	if not ResourceLoader.exists(str(LEVELS.get("L_M1_Plaza", ""))):
+		return false
+	if auto and not args.has("autoplay-explore"):
+		return false
+	if args.has("inputplay") and not args.has("inputplay-explore"):
+		return false
+	return true
+
+
+## Exit of a side level (e.g. "Zurück ins Archiv"): back into the Story scene chain.
+func _do_exit(it: Node) -> void:
+	var target := str(it.get("target_level"))
+	if target == "":
+		return
+	side_level = false
+	await goto_level(target, str(it.get("target_spawn")), true)
+
+
+## Later the same day: the regime's military parade on the plaza (scenes/levels/L_M1_Parade.tscn, 47 s, 8 shots).
+## Played right after the reveal inside LS_M1_Hall; one skip press skips the whole Great Hall chain.
+func _cin_parade() -> void:
+	var path: String = LEVELS.get("L_M1_Parade", "")
+	if _skip or path == "" or not ResourceLoader.exists(path):
+		return
+	var par: Node = load(path).instantiate()
+	main.level_root.add_child(par)
+	_apply_grade(par)
+	if par.has_signal("cue"):
+		par.cue.connect(func(k: String):
+			if k.begins_with("parade.cue.") and Loc.has(k):
+				subtitle(Loc.t(k), 4.8 if k == "parade.cue.konrad" else 3.8))
+	await fade_in(0.6)
+	Audio.play_music("mus_parade", 0.2)
+	if par.has_method("play"):
+		par.play()
+	var done := [false]
+	if par.has_signal("finished"):
+		par.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	var t := 0.0
+	while not done[0] and t < 60.0:
+		if _skip:
+			if par.has_method("skip"):
+				par.skip()
+			break
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	await fade_out(0.7)
+	par.queue_free()
+	Audio.stop_music(0.6)
+
+
+## X1 finale (§12.5): animated two-desk montage driven by both decisions (scenes/cinematics/finale).
+## Leaves the screen black; _finale_flow() then fades in the end card.
 func _cin_final() -> bool:
+	if not ResourceLoader.exists(FINALE_SCENE):
+		return await _cin_final_stills()
+	_begin_cinematic()
+	Audio.stop_music(1.2)
+	Audio.stop_ambience(1.2)
+	await fade_out(0.9)
+	var prev_level := level
+	if prev_level:
+		prev_level.visible = false
+		prev_level.process_mode = Node.PROCESS_MODE_DISABLED
+	var fin: Node = load(FINALE_SCENE).instantiate()
+	main.level_root.add_child(fin)
+	fin.configure({
+		"choices": Story.choice_history() if Story.has_method("choice_history") else {},
+		"flags": Story.flags() if Story.has_method("flags") else {},
+		"symbols": Symbols.enabled(),
+		"reduced_motion": bool(Settings.get_value("reduced_motion")),
+	})
+	_apply_grade(fin)
+	var done := [false]
+	fin.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	fin.play()
+	await fade_in(0.8)
+	while not done[0]:
+		if _skip:
+			fin.skip()
+			break
+		await get_tree().process_frame
+	await fade_out(1.0)
+	fin.queue_free()
+	camera.release()
+	if prev_level and is_instance_valid(prev_level):
+		prev_level.visible = true
+		prev_level.process_mode = Node.PROCESS_MODE_INHERIT
+	return _end_cinematic()
+
+
+## Fallback (round-1 version): three stills.
+func _cin_final_stills() -> bool:
 	_begin_cinematic()
 	Audio.play_music("mus_finale_x1", 0.8)
 	await fade_out(0.9)
@@ -871,6 +1085,7 @@ func _finale_flow() -> void:
 	_unload_level()
 	in_cinematic = true      # end card is skippable like any cinematic
 	_skip = false
+	Audio.play_ambience("amb_transition", 2.0)   # the finale's own score ends with the lamps going out
 	_show_end_card()
 	await fade_in(1.0)
 	var t := 0.0 if not auto else 11.0
@@ -881,6 +1096,10 @@ func _finale_flow() -> void:
 	await fade_out(1.0)
 	_title.visible = false
 	_caption.visible = false
+	# closing credits roll with production credits and every source of the history cards (round 5)
+	if not auto and ui and ui.has_method("play_end_credits"):
+		await ui.play_end_credits()
+	_skip = false
 	in_cinematic = false
 	if not auto:
 		show_main_menu()
@@ -1049,6 +1268,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if player.try_interact():
 			get_viewport().set_input_as_handled()
 			return
+	if event.is_action_pressed("photo_mode") and not get_tree().paused and ui and ui.has_method("open_photo"):
+		ui.open_photo()          # §12.9 photo mode (free camera, filters, frames, saves PNGs)
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("pause") and not get_tree().paused:
 		if _call(ui, "open_pause") == null and ui and not ui.has_method("open_pause"):
 			_call(_ui("pause_menu"), "open")
@@ -1073,8 +1296,9 @@ func _capture_flow() -> void:
 		img.save_png(str(args["capture"]))
 		print("CAPTURED ", args["capture"], " ", img.get_size())
 	if args.has("capture-world"):
-		var wi := world.get_texture().get_image()
-		wi.get_region(Rect2i(1, 1, 640, 360)).save_png(str(args["capture-world"]))
+		var wi: Image = view.capture_world_image() if view and view.has_method("capture_world_image") \
+			else world.get_texture().get_image().get_region(Rect2i(1, 1, 640, 360))
+		wi.save_png(str(args["capture-world"]))
 		print("CAPTURED_WORLD ", args["capture-world"])
 	print("FPS ", Engine.get_frames_per_second(), " frame_ms ", Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
 	get_tree().quit()

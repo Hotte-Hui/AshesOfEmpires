@@ -8,12 +8,14 @@ extends Node2D
 ##   "chat"     — an optional conversation (data/explore/<area>.json entry of kind "chat", `explore_id`)
 
 @export var objective_id := ""
-@export_enum("inspect", "dialogue", "puzzle", "choice", "observe", "discover", "chat") var kind := "inspect"
+@export_enum("inspect", "dialogue", "puzzle", "choice", "observe", "discover", "chat", "exit") var kind := "inspect"
 @export var hotspot_id := ""            ## snaps to manifest hotspots[hotspot_id] (scene.json or explore_hotspots.json)
 @export var hotspot_offset := Vector2.ZERO
 @export var prompt_key := ""            ## default: per kind (ui.prompt.*) else ui.interact
 @export var observe_key := ""           ## observe: "<key>.prompt" / "<key>.text"
 @export var explore_id := ""            ## discover / chat: entry id in data/explore/*.json
+@export var target_level := ""          ## exit: level to walk to (side levels such as the parade plaza)
+@export var target_spawn := ""          ## exit: spawn in the target level
 @export var npc_id := ""                ## dialogue/choice/chat: speaking NPC (faces the player while talking)
 @export var radius := 30.0
 @export var prompt_height := 58.0       ## prompt anchor above the hotspot (world px)
@@ -31,6 +33,8 @@ func is_optional() -> bool:
 
 
 func is_active() -> bool:
+	if kind == "exit":
+		return target_level != ""
 	if is_optional():
 		if kind != "observe" and explore_id == "":
 			return false
@@ -53,3 +57,17 @@ func prompt_text() -> String:
 		return Loc.t(prompt_key)
 	var k := "ui.prompt." + kind
 	return Loc.t(k) if Loc.has(k) else Loc.t("ui.interact")
+
+
+## Presentation hint for the HUD prompt (§12): "new" = an exploration find not discovered yet (small amber
+## spark), "found" = already discovered / already looked at (dimmed verb + tick), "" = story hotspot (plain).
+## Read-only: never changes Story or Explore state.
+func prompt_state() -> String:
+	if (kind == "discover" or kind == "chat") and explore_id != "":
+		var ex = get_node_or_null("/root/Explore")
+		if ex != null and ex.has_method("is_found"):
+			return "found" if ex.is_found(explore_id) else "new"
+		return ""
+	if kind == "observe":
+		return "found" if used else ""
+	return ""

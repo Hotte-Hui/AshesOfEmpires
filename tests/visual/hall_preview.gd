@@ -1,13 +1,14 @@
 extends Node
 ## Visual test harness for the Great Hall reveal (owner: great_hall_3d).
 ## Instances scenes/levels/L_M1_HallReveal.tscn inside a 640x360 SubViewport (shown at 3x, nearest), plays
-## the cinematic in real time and saves exact frames of the viewport at t = 1, 4, 7, 10 s to
+## the cinematic in real time and saves exact frames of the viewport at t = 2, 7, 11, 16, 20.5, 23.5 s to
 ## assets/architecture/great_hall/_preview/ (1:1 PNG + 3x nearest PNG), prints frame-time statistics
 ## (Performance monitors + measured viewport CPU/GPU render time) and quits.
 ## Run windowed (headless has no renderer):
 ##   "$LOCALAPPDATA/Programs/Godot/Godot_v4.7.2-stable_win64.exe" --path C:/Spiele/AshesOfEmpires \
 ##       res://tests/visual/HallPreview.tscn
 ## Optional user args after "--":  --times=0.5,2.2  --prefix=iter2  --debug=1 (post debug view)
+##   --symbols=0|1 (historical insignia off/on for this run, handled by the Settings autoload)
 ##   --size=642x362 (match the in-game world viewport)  --nosnow  --still=2.5,10 (seek, no playback)
 ##   --placeholders  (force the generated placeholder people instead of assets/characters sheets)
 ##   --selftest  (logic checks, also works with --headless: finished-once, skip, cues, sprite overrides,
@@ -16,7 +17,7 @@ extends Node
 const LEVEL_PATH := "res://scenes/levels/L_M1_HallReveal.tscn"
 const OUT_DIR := "res://assets/architecture/great_hall/_preview/"
 
-var capture_times: Array = [1.0, 4.0, 7.0, 10.0]
+var capture_times: Array = [2.0, 7.0, 11.0, 16.0, 20.5, 23.5]
 var prefix := "hall"
 var debug_view := 0
 var no_snow := false
@@ -104,10 +105,9 @@ func _selftest() -> void:
 	# full playback (accelerated) -> finished once more, all cues in order
 	Engine.time_scale = 25.0
 	lv.play()
-	var guard_frames := 0
-	while fin[0] < 2 and guard_frames < 4000:
+	var guard_ms := Time.get_ticks_msec()       # wall-clock guard (the reveal runs 24 s since round 3)
+	while fin[0] < 2 and Time.get_ticks_msec() - guard_ms < 30000:
 		await get_tree().process_frame
-		guard_frames += 1
 	Engine.time_scale = 1.0
 	if fin[0] != 2:
 		fails.append("play(): finished count %d after playback (expected 2)" % fin[0])
@@ -242,6 +242,12 @@ func _report() -> void:
 	_say("draw calls     : " + _stat(_samples["draws"]))
 	_say("primitives     : " + _stat(_samples["prims"]))
 	_say("FPS (engine)   : %.1f" % Performance.get_monitor(Performance.TIME_FPS))
+	var pf: Dictionary = level.get("perf") if level.get("perf") != null else {}
+	if not pf.is_empty() and int(pf.get("n", 0)) > 0:
+		_say("level update us: avg %.0f  max %d  (%d updates; camera + sprites + life + halos)" % [
+			float(pf["sum"]) / float(pf["n"]), int(pf["max"]), int(pf["n"])])
+	if level.get("people") != null:
+		_say("sprites        : %d (visible at the end: %d)" % [level.people.actors.size(), level.people.count_visible()])
 	_say("video mem MB   : %.1f" % (Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED) / 1048576.0))
 
 

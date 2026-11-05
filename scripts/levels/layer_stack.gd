@@ -1,16 +1,32 @@
 extends Node2D
-## Builds a level's parallax backdrop, y-sorted props, 2D lights and FX from an art manifest
+## Builds a level's parallax backdrop, y-sorted props, decals, 2D lights and FX from an art manifest
 ## (assets/environments/<id>/scene.json — TECHNICAL_ARCHITECTURE §3.1) and keeps parallax layers
 ## positioned relative to the world camera every frame.
+##
+## Rendering (round 2, owner render-camera): in the high-resolution world path parallax layers sit on the
+## viewport's pixel grid (1/k world px) so they glide in single screen pixels without shimmer; every texture
+## path goes through Symbols.pick() (§12.4: `<name>_hist.png` variant when historical symbols are on; its maps
+## are `<name>_hist_n.png` / `<name>_hist_e.png`, falling back to the neutral maps); lit sprites get the
+## per-texel lighting material (scripts/render/texel_light.gd).
+##
+## scene.json additions understood here:
+##   layers[].blend "add" | "mix" (default)        layers[].alpha 0..1 (default 1)        fx[].alpha 0..1
+##   "decals": [{"file", "pos": [x, y], "z": 0, "parallax": [px, py] | p, "layer"?: "<layer name>|playfield",
+##               "lit"?: true, "normal"?: true, "emission"?: false, "emission_strength"?: 0.22, "alpha"?: 1,
+##               "flip_h"?: false, "frames"?: 1, "fps"?: 6, "base_y"?: y, "name"?: "..."}]
+##   (see documentation/asset_manifest_parts/render-camera.md for the full decal contract)
 
 const SnowFx := preload("res://scripts/levels/fx_snow.gd")
 const FlickerLight := preload("res://scripts/levels/flicker_light.gd")
+const TexelLightLib := preload("res://scripts/render/texel_light.gd")
 
 var manifest: Dictionary = {}
 var base_dir := ""
 var layers_by_name: Dictionary = {}
+var decals_by_name: Dictionary = {}
 var _parallax: Array = []          # [{node, home: Vector2, parallax: Vector2}]
 var _anims: Array = []             # [{sprite, frames, fps, t}]
+var _cam_connected := false
 static var _light_tex: Texture2D
 
 
@@ -18,6 +34,7 @@ func _init() -> void:
 	process_priority = 10   # after the camera
 
 
+## Loads a texture; the path is resolved through Symbols.pick() (historical-insignia variant, §12.4).
 static func tex(path: String) -> Texture2D:
 	if path == "":
 		return null
@@ -31,13 +48,23 @@ static func tex(path: String) -> Texture2D:
 	return null
 
 
+## Path of the `_n` / `_e` map that belongs to `path` after symbol resolution: the picked variant's own map
+## (`name_hist_n.png`) if it exists, otherwise the neutral map (`name_n.png`, itself symbol-resolved).
+static func map_path(path: String, suffix: String) -> String:
+	var picked := Symbols.pick(path)
+	var own := picked.get_basename() + suffix + "." + picked.get_extension()
+	if picked != path and (ResourceLoader.exists(own) or FileAccess.file_exists(own)):
+		return own
+	return path.get_basename() + suffix + "." + path.get_extension()
+
+
 static func canvas_tex(path: String, with_normal: bool) -> Texture2D:
 	var d := tex(path)
 	if d == null:
 		return null
 	if not with_normal:
 		return d
-	var n := tex(path.get_basename() + "_n.png")
+	var n := tex(map_path(path, "_n"))
 	if n == null:
 		return d
 	var ct := CanvasTexture.new()
@@ -71,10 +98,37 @@ func build(m: Dictionary, dir: String, playfield: Node2D, lights_root: Node2D, f
 		_build_layer(L)
 	for P in m.get("props", []):
 		_build_prop(P, playfield)
+	for D in m.get("decals", []):
+		if D is Dictionary:
+			_build_decal(D, playfield)
 	for li in m.get("lights", []):
 		_build_light(li, lights_root)
 	for fx in m.get("fx", []):
 		_build_fx(fx, fx_root)
+	_update_parallax()
+
+
+func _ready() -> void:
+	_connect_camera()
+
+
+func _connect_camera() -> void:
+	if _cam_connected or Game.camera == null or not Game.camera.has_signal("moved"):
+		return
+	Game.camera.moved.connect(_on_camera_moved)
+	_cam_connected = true
+
+
+func _emission_sprite(t: Texture2D, strength: float) -> Sprite2D:
+	var es := Sprite2D.new()
+	es.texture = t
+	es.centered = false
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	mat.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+	es.material = mat
+	es.modulate = Color(1, 1, 1, strength)
+	return es
 
 
 func _build_layer(L: Dictionary) -> void:
@@ -91,32 +145,35 @@ func _build_layer(L: Dictionary) -> void:
 	spr.centered = false
 	if not bool(L.get("lit", true)):
 		spr.light_mask = 0
+	match str(L.get("blend", "mix")):
+		"add":
+			var bm := CanvasItemMaterial.new()
+			bm.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+			if spr.light_mask == 0:
+				bm.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+			spr.material = bm
+	if L.has("alpha"):
+		holder.modulate.a = clampf(float(L["alpha"]), 0.0, 1.0)
+	var home := _v2(L.get("pos", [0, 0]))
 	holder.add_child(spr)
+	TexelLightLib.apply(spr, home)
 	var rep := int(L.get("repeat_x", 0))
 	if rep > 0:   # tile horizontally (e.g. drifting cloud bands)
 		for i in range(1, rep + 1):
 			var s2 := spr.duplicate() as Sprite2D
 			s2.position.x = t.get_width() * i
 			holder.add_child(s2)
+			if TexelLightLib.is_coded(s2):
+				s2.set_instance_shader_parameter("dither_anchor", home + Vector2(t.get_width() * i, 0))
 	if bool(L.get("emission", false)):
-		var e := tex(path.get_basename() + "_e.png")
+		var e := tex(map_path(path, "_e"))
 		if e:
-			var es := Sprite2D.new()
-			es.texture = e
-			es.centered = false
-			var mat := CanvasItemMaterial.new()
-			mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-			mat.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
-			es.material = mat
-			es.modulate = Color(1, 1, 1, float(L.get("emission_strength", 0.22)))
-			holder.add_child(es)
+			holder.add_child(_emission_sprite(e, float(L.get("emission_strength", 0.22))))
 	add_child(holder)
-	var p: Array = L.get("parallax", [1, 1])
-	var home := _v2(L.get("pos", [0, 0]))
-	var par := Vector2(float(p[0]), float(p[1] if p.size() > 1 else p[0]))
 	holder.position = home
+	holder.set_meta("home", home)
 	layers_by_name[holder.name] = holder
-	_parallax.append({"node": holder, "home": home, "parallax": par})
+	_parallax.append({"node": holder, "home": home, "parallax": _par(L.get("parallax", [1, 1]))})
 
 
 func _build_prop(P: Dictionary, playfield: Node2D) -> void:
@@ -136,18 +193,12 @@ func _build_prop(P: Dictionary, playfield: Node2D) -> void:
 	spr.centered = false
 	spr.offset = Vector2(0, pos.y - base_y)
 	node.add_child(spr)
+	TexelLightLib.apply(spr, pos)
 	if bool(P.get("emission", false)):
-		var e := tex(path.get_basename() + "_e.png")
+		var e := tex(map_path(path, "_e"))
 		if e:
-			var es := Sprite2D.new()
-			es.texture = e
-			es.centered = false
+			var es := _emission_sprite(e, 0.22)
 			es.offset = spr.offset
-			var mat := CanvasItemMaterial.new()
-			mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-			mat.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
-			es.material = mat
-			es.modulate.a = 0.22
 			node.add_child(es)
 	var col = P.get("collision", null)
 	if col is Array and col.size() >= 3:
@@ -160,6 +211,70 @@ func _build_prop(P: Dictionary, playfield: Node2D) -> void:
 		body.add_child(cp)
 		node.add_child(body)
 	playfield.add_child(node)
+
+
+## Small sprites (typically insignia, posters, stamps) placed on top of layers without being baked into them,
+## so the §12.4 symbol switch can exchange them. `pos` = top-left in world px at camera (0, 0), like layers.
+func _build_decal(D: Dictionary, playfield: Node2D) -> void:
+	var path := base_dir + "/" + str(D.get("file", ""))
+	var lit := bool(D.get("lit", true))
+	var t := canvas_tex(path, lit and bool(D.get("normal", true)))
+	if t == null:
+		push_warning("LayerStack: missing decal " + path)
+		return
+	var frames := maxi(1, int(D.get("frames", 1)))
+	var spr := Sprite2D.new()
+	spr.texture = t
+	spr.centered = false
+	spr.hframes = frames
+	spr.flip_h = bool(D.get("flip_h", false))
+	if not lit:
+		spr.light_mask = 0
+	var pos := _v2(D.get("pos", [0, 0]))
+	var nm := str(D.get("name", str(D.get("file", "decal")).get_file().get_basename()))
+	var node := Node2D.new()
+	node.name = nm
+	node.add_child(spr)
+	if bool(D.get("emission", false)):
+		var e := tex(map_path(path, "_e"))
+		if e:
+			var es := _emission_sprite(e, float(D.get("emission_strength", 0.22)))
+			es.hframes = frames
+			es.flip_h = spr.flip_h
+			node.add_child(es)
+			if frames > 1:
+				_anims.append({"sprite": es, "frames": frames, "fps": float(D.get("fps", 6)), "t": 0.0})
+	if D.has("alpha"):
+		node.modulate.a = clampf(float(D["alpha"]), 0.0, 1.0)
+	if frames > 1:
+		_anims.append({"sprite": spr, "frames": frames, "fps": float(D.get("fps", 6)), "t": 0.0})
+	TexelLightLib.apply(spr, pos, Vector2(t.get_width() / frames, t.get_height()) if frames > 1 else Vector2.ZERO)
+	var on := str(D.get("layer", ""))
+	if on == "playfield":
+		var h := float(t.get_height())
+		var base_y := float(D.get("base_y", pos.y + h))
+		node.position = Vector2(pos.x, base_y)
+		spr.offset = Vector2(0, pos.y - base_y)
+		for c in node.get_children():
+			(c as Sprite2D).offset = spr.offset
+		node.z_index = int(D.get("z", 0))
+		playfield.add_child(node)
+	elif on != "" and layers_by_name.has(on):
+		var holder: Node2D = layers_by_name[on]
+		node.position = pos - (holder.get_meta("home", holder.position) as Vector2)
+		node.z_index = int(D.get("z", 0))         # relative to the layer
+		holder.add_child(node)
+	else:
+		if on != "":
+			push_warning("LayerStack: decal %s: unknown layer '%s' (placed with its own parallax)" % [nm, on])
+		var holder2 := Node2D.new()
+		holder2.name = "decal_" + nm
+		holder2.z_index = int(D.get("z", 0))
+		holder2.add_child(node)
+		add_child(holder2)
+		holder2.position = pos
+		_parallax.append({"node": holder2, "home": pos, "parallax": _par(D.get("parallax", [1, 1]))})
+	decals_by_name[nm] = node
 
 
 func _build_light(li: Dictionary, lights_root: Node2D) -> void:
@@ -207,12 +322,13 @@ func _build_fx(fx: Dictionary, fx_root: Node2D) -> void:
 			var holder := Node2D.new()
 			holder.z_index = int(fx.get("z", -20))
 			holder.add_child(spr)
-			add_child(holder)
+			if fx.has("alpha"):
+				holder.modulate.a = clampf(float(fx["alpha"]), 0.0, 1.0)
 			var home := _v2(fx.get("pos", [0, 0]))
-			var pv = fx.get("parallax", 1.0)
-			var par := Vector2(float(pv[0]), float(pv[1])) if pv is Array else Vector2(float(pv), float(pv))
+			TexelLightLib.apply(spr, home, Vector2(t.get_width() / frames, t.get_height()) if frames > 1 else Vector2.ZERO)
+			add_child(holder)
 			holder.position = home
-			_parallax.append({"node": holder, "home": home, "parallax": par})
+			_parallax.append({"node": holder, "home": home, "parallax": _par(fx.get("parallax", 1.0))})
 			_anims.append({"sprite": spr, "frames": frames, "fps": float(fx.get("fps", 6)), "t": randf() * 5.0})
 		"fog_band":
 			_build_fog(fx)
@@ -251,17 +367,42 @@ func _build_fog(fx: Dictionary) -> void:
 	_parallax.append({"node": holder, "home": home, "parallax": Vector2(par, par)})
 
 
-func _process(delta: float) -> void:
+func _on_camera_moved(_top_left: Vector2) -> void:
+	_update_parallax()
+
+
+## Parallax layer position for a camera top-left `cam`: on screen the layer sits at (home - cam * parallax)
+## world px from the window's top-left, rounded to the viewport pixel grid (k px per world px) so every layer
+## lands on whole screen pixels -> crisp texels, monotonic motion, no shimmer between layers.
+func _update_parallax() -> void:
 	var cam: Vector2 = Game.camera.drawn if Game.camera else Vector2.ZERO
+	var k := 1.0
+	if Game.camera and Game.camera.has_method("px_scale"):
+		k = maxf(1.0, Game.camera.px_scale())
 	for e in _parallax:
 		var p: Vector2 = e["parallax"]
 		if p == Vector2.ONE:
 			continue
 		var home: Vector2 = e["home"]
-		e["node"].position = (home + cam * (Vector2.ONE - p)).round()
+		if k <= 1.0:
+			e["node"].position = (home + cam * (Vector2.ONE - p)).round()
+		else:
+			e["node"].position = cam + ((home - cam * p) * k + Vector2(0.5, 0.5)).floor() / k
+
+
+func _process(delta: float) -> void:
+	if not _cam_connected:
+		_connect_camera()
+		_update_parallax()
 	for a in _anims:
 		a["t"] += delta
 		a["sprite"].frame = int(a["t"] * a["fps"]) % int(a["frames"])
+
+
+static func _par(pv) -> Vector2:
+	if pv is Array:
+		return Vector2(float(pv[0]), float(pv[1] if pv.size() > 1 else pv[0]))
+	return Vector2(float(pv), float(pv))
 
 
 static func _v2(v) -> Vector2:

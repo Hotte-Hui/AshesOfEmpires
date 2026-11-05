@@ -2,6 +2,7 @@ extends "res://scripts/ui/ui_modal.gd"
 ## Pause menu: Fortsetzen, Tagebuch, Speichern, Laden, Einstellungen, Hauptmenü, Beenden.
 ## Signals for Game: main_menu_requested, quit_requested (plus load_requested/loaded relayed by SaveLoadMenu).
 ## Every entry works stand-alone too (fallbacks when nothing is connected) — no dead buttons.
+## Under the location it shows the overall exploration progress (Explore, §12): finds and real-history cards.
 
 signal main_menu_requested
 signal quit_requested
@@ -11,6 +12,9 @@ var _buttons: Dictionary = {}
 var _who: Label
 var _where: Label
 var _chapter: Label
+var _explore_box: VBoxContainer
+var _explore_label: Label
+var _history_label: Label
 
 
 func _ready() -> void:
@@ -33,6 +37,30 @@ func _ready() -> void:
 	v.add_child(_chapter)
 	_where = Kit.label("", "DimLabel")
 	v.add_child(_where)
+	# exploration progress: a small plate at the bottom right, outside the menu column (keeps its layout)
+	var plate := Kit.panel("PlatePanel")
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	plate.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	plate.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	plate.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	plate.offset_right = -72
+	plate.offset_bottom = -72
+	add_child(plate)
+	_explore_box = Kit.vbox(6)
+	plate.add_child(_explore_box)
+	for k in ["discovery", "history"]:
+		var row := Kit.hbox(12)
+		var ic := Kit.ex_sprite("icons/icon_%s.png" % k)
+		ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(ic)
+		var l := Kit.label("", "HintLabel")
+		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(l)
+		_explore_box.add_child(row)
+		if k == "discovery":
+			_explore_label = l
+		else:
+			_history_label = l
 	v.add_child(Kit.rule(Color(0, 0, 0, 0), 10))
 	v.add_child(HSeparator.new())
 	v.add_child(Kit.rule(Color(0, 0, 0, 0), 6))
@@ -72,7 +100,16 @@ func open() -> void:
 	(_buttons["save"] as Button).disabled = not can_save
 	(_buttons["save"] as Button).tooltip_text = "" if can_save else Kit.t("ui.saveload.unavailable")
 	(_buttons["load"] as Button).disabled = not Kit.has_svc("Saves", "list_slots")
+	_refresh_explore()
 	open_modal()
+
+
+func _refresh_explore() -> void:
+	var pr := Kit.explore_progress()
+	_explore_box.get_parent().visible = int(pr["total"]) > 0 or int(pr["cards_total"]) > 0
+	_explore_label.text = Kit.t("ui.pause.explore", {"n": pr["found"], "total": pr["total"]}).to_upper()
+	_history_label.text = Kit.t("ui.pause.history", {"n": pr["cards_found"], "total": pr["cards_total"]}).to_upper()
+	_history_label.get_parent().visible = int(pr["cards_total"]) > 0
 
 
 func _resume() -> void:

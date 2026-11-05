@@ -1,15 +1,17 @@
 {
  "locale": "de-DE",
  "area": "great_hall",
- "note": "Filmsequenz LS_M1_Hall (Shot S011, Level L_M1_HallReveal). Schlüssel hall.cue.* werden vom Level über das Signal cue(key) zeitgenau gemeldet (Untertitel / Geräuschbeschreibung, Lead entscheidet über die Darstellung). hall.ad.* = Audiodeskription pro Einstellung (Barrierefreiheit). Die Große Halle ist fiktiv; keine realen Hoheitszeichen.",
+ "note": "Filmsequenz LS_M1_Hall (Shot S011, Level L_M1_HallReveal). Schlüssel hall.cue.* werden vom Level über das Signal cue(key) zeitgenau gemeldet (Untertitel / Geräuschbeschreibung, Lead entscheidet über die Darstellung). hall.ad.* = Audiodeskription pro Einstellung (Barrierefreiheit). Die Große Halle ist im Spiel fertiggebaut (fiktiv); Adler über der Weltkugel auf der Laterne nach dem realen Entwurf von 1939. Hoheitszeichen nach TECHNICAL_ARCHITECTURE §12.4: Hakenkreuzfahnen nur mit der Einstellung historical_symbols, sonst das fiktive Reichssiegel.",
  "strings": {
   "hall.cue.archive_room": "[Leises Papierrascheln. Draußen fällt Schnee.]",
-  "hall.cue.tram_bell": "[Eine Straßenbahnglocke, weit entfernt]",
+  "hall.cue.tram_bell": "[Eine Straßenbahnglocke. Die Bahn fährt an.]",
   "hall.cue.loudspeaker_1": "LAUTSPRECHER: „Achtung. Die Umsiedlung der Bewohner aus den Planquadraten Süd sieben bis zwölf erfolgt planmäßig.“",
+  "hall.cue.pigeons": "[Tauben flattern erschrocken auf.]",
+  "hall.cue.patrol": "[Gleichmäßige Marschschritte einer Streife auf dem Platz.]",
   "hall.cue.loudspeaker_2": "LAUTSPRECHER: „Die Hauptstadt dankt ihren Bürgern für ihr Verständnis.“",
-  "hall.cue.window_closes": "[Über der Familie wird ein Fenster zugezogen. Die Lautsprecher sprechen weiter.]",
-  "hall.ad.h1": "Vom Zeichentisch im Bauarchiv gleitet der Blick durch das offene Fenster hinaus und sinkt über die verschneite Straße hinab.",
-  "hall.ad.h2": "Am Ende der Straße beherrscht die Große Halle den Horizont, eine schwarze Kuppel vor glühendem Abendhimmel. Im Vordergrund wartet eine Familie mit Koffern vor einer versiegelten Wohnungstür. Ein Posten steht unter einem Lautsprechermast.",
-  "hall.ad.h3": "Die Kamera rückt langsam näher. Über der Familie erlischt ein Fenster. Abblende."
+  "hall.cue.window_closes": "[Über der Familie zieht eine Nachbarin die Vorhänge zu. Das Licht erlischt. Die Lautsprecher sprechen weiter.]",
+  "hall.ad.h1": "Vom Zeichentisch im Bauarchiv gleitet der Blick durch das offene Fenster hinaus und sinkt über die verschneite Straße hinab. Fahnen hängen an den Fassaden, ein Auto fährt zum Platz, an einem Kiosk kauft ein Mann eine Zeitung, aus den Schornsteinen steigt Rauch.",
+  "hall.ad.h2": "Am Ende der Straße beherrscht die Große Halle den Horizont: eine schwarze Kuppel vor glühendem Abendhimmel, gekrönt vom Adler über der Weltkugel, Fahnen am Portikus, Kräne an den Flügeln. Im Vordergrund wartet eine Familie mit Koffern vor einer versiegelten Wohnungstür, über der eine Fahne hängt. Lange verharrt der Blick auf dem Platz. Passanten gehen vorbei, ohne hinzusehen. An der Haltestelle wartet eine Schlange, die Straßenbahn fährt ab, ein Straßenkehrer fegt Schnee, ein Posten steht unter einem Lautsprechermast, eine Streife marschiert über den Platz.",
+  "hall.ad.h3": "Die Kamera rückt langsam näher, sinkt etwas ab und blickt an der Kuppel hinauf bis zum Adler auf der Laterne. Über der Familie tritt eine Nachbarin ans Fenster, zieht die Vorhänge zu, das Licht erlischt. Lange ruht das Bild auf der Halle, die Streife marschiert weiter über den Platz. Abblende."
  }
 }

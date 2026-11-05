@@ -3,14 +3,14 @@
  "palette": "archive",
  "palette_exterior": "berlin",
  "world_size": [
-  1600,
+  2924,
   360
  ],
  "camera": {
   "bounds": [
    0,
    0,
-   1600,
+   2924,
    360
   ]
  },
@@ -68,6 +68,22 @@
    "repeat_x": 0
   },
   {
+   "name": "win_outer",
+   "file": "win_outer.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
    "name": "room",
    "file": "room.png",
    "pos": [
@@ -120,10 +136,145 @@
  ],
  "props": [
   {
+   "name": "porter_lodge",
+   "file": "props/porter_lodge.png",
+   "pos": [
+    136,
+    222
+   ],
+   "base_y": 293,
+   "size": [
+    102,
+    72
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "hall_bench",
+   "file": "props/hall_bench.png",
+   "pos": [
+    396,
+    268
+   ],
+   "base_y": 291,
+   "size": [
+    46,
+    24
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "umbrella_stand",
+   "file": "props/umbrella_stand.png",
+   "pos": [
+    96,
+    267
+   ],
+   "base_y": 292,
+   "size": [
+    10,
+    26
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "lib_catalogue",
+   "file": "props/lib_catalogue.png",
+   "pos": [
+    790,
+    211
+   ],
+   "base_y": 292,
+   "size": [
+    50,
+    82
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "lib_desk",
+   "file": "props/lib_desk.png",
+   "pos": [
+    854,
+    234
+   ],
+   "base_y": 293,
+   "size": [
+    92,
+    60
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "globe",
+   "file": "props/globe.png",
+   "pos": [
+    951,
+    244
+   ],
+   "base_y": 295,
+   "size": [
+    25,
+    52
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "reading_table",
+   "file": "props/reading_table.png",
+   "pos": [
+    1058,
+    239
+   ],
+   "base_y": 294,
+   "size": [
+    84,
+    56
+   ],
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "lib_ladder",
+   "file": "props/lib_ladder.png",
+   "pos": [
+    616,
+    97
+   ],
+   "base_y": 291,
+   "size": [
+    28,
+    195
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "book_trolley",
+   "file": "props/book_trolley.png",
+   "pos": [
+    1158,
+    264
+   ],
+   "base_y": 293,
+   "size": [
+    30,
+    30
+   ],
+   "normal": true,
+   "emission": false
+  },
+  {
    "name": "coat_stand",
    "file": "props/coat_stand.png",
    "pos": [
-    96,
+    1420,
     226
    ],
    "base_y": 291,
@@ -138,7 +289,7 @@
    "name": "drafting_covered",
    "file": "props/drafting_covered.png",
    "pos": [
-    172,
+    1496,
     220
    ],
    "base_y": 293,
@@ -153,7 +304,7 @@
    "name": "drafting_konrad",
    "file": "props/drafting_konrad.png",
    "pos": [
-    284,
+    1608,
     219
    ],
    "base_y": 294,
@@ -168,7 +319,7 @@
    "name": "stool_konrad",
    "file": "props/stool_konrad.png",
    "pos": [
-    362,
+    1686,
     266
    ],
    "base_y": 295,
@@ -183,7 +334,7 @@
    "name": "typist_desk",
    "file": "props/typist_desk.png",
    "pos": [
-    446,
+    1770,
     228
    ],
    "base_y": 293,
@@ -198,7 +349,7 @@
    "name": "plan_basket",
    "file": "props/plan_basket.png",
    "pos": [
-    612,
+    1936,
     272
    ],
    "base_y": 309,
@@ -213,7 +364,7 @@
    "name": "ladder",
    "file": "props/ladder.png",
    "pos": [
-    652,
+    1976,
     150
    ],
    "base_y": 291,
@@ -228,7 +379,7 @@
    "name": "flat_file",
    "file": "props/flat_file.png",
    "pos": [
-    790,
+    2114,
     244
    ],
    "base_y": 293,
@@ -243,7 +394,7 @@
    "name": "card_catalogue",
    "file": "props/card_catalogue.png",
    "pos": [
-    990,
+    2314,
     231
    ],
    "base_y": 292,
@@ -258,7 +409,7 @@
    "name": "light_table",
    "file": "props/light_table.png",
    "pos": [
-    1136,
+    2460,
     245
    ],
    "base_y": 294,
@@ -273,7 +424,7 @@
    "name": "counter",
    "file": "props/counter.png",
    "pos": [
-    1334,
+    2658,
     240
    ],
    "base_y": 292,
@@ -288,7 +439,7 @@
    "name": "bench",
    "file": "props/bench.png",
    "pos": [
-    1296,
+    2620,
     268
    ],
    "base_y": 291,
@@ -306,11 +457,11 @@
    296
   ],
   [
-   1582,
+   2906,
    296
   ],
   [
-   1582,
+   2906,
    306
   ],
   [
@@ -319,38 +470,126 @@
   ]
  ],
  "spawns": {
+  "SP_M1_Arrival": [
+   76,
+   300
+  ],
   "SP_M1_Office": [
-   140,
+   1464,
    300
   ]
  },
  "hotspots": {
   "plan_a": [
-   322,
+   1646,
    300
   ],
   "plan_b": [
-   842,
+   2166,
    300
   ],
   "overlay_table": [
-   1178,
+   2502,
    300
   ],
   "emil": [
-   1412,
+   2736,
    284
   ],
   "obs_window": [
-   262,
+   1586,
    300
   ],
   "obs_photo": [
-   204,
+   1528,
    300
   ],
   "obs_notice": [
-   1318,
+   2642,
+   300
+  ],
+  "exp_porter": [
+   186,
+   300
+  ],
+  "exp_radio": [
+   228,
+   300
+  ],
+  "exp_clock": [
+   274,
+   300
+  ],
+  "exp_pigeons": [
+   338,
+   300
+  ],
+  "exp_photo": [
+   430,
+   300
+  ],
+  "exp_lib_shelf_1": [
+   592,
+   300
+  ],
+  "exp_lib_shelf_2": [
+   668,
+   300
+  ],
+  "exp_heater": [
+   748,
+   300
+  ],
+  "exp_card_catalogue": [
+   815,
+   300
+  ],
+  "exp_librarian_desk": [
+   900,
+   300
+  ],
+  "exp_globe": [
+   963,
+   300
+  ],
+  "exp_lib_shelf_3": [
+   1020,
+   300
+  ],
+  "exp_reading_table": [
+   1100,
+   300
+  ],
+  "exp_lib_shelf_4": [
+   1176,
+   300
+  ],
+  "exp_lib_shelf_5": [
+   1232,
+   300
+  ],
+  "exp_lib_hidden": [
+   1284,
+   300
+  ],
+  "exp_coat_stand": [
+   1431,
+   300
+  ],
+  "exp_poster_aufbau": [
+   1800,
+   300
+  ],
+  "exp_mouse": [
+   2244,
+   300
+  ],
+  "exp_pneumatic_tube": [
+   2394,
+   300
+  ],
+  "exp_master_plan": [
+   2786,
    300
   ]
  },
@@ -358,7 +597,7 @@
   {
    "name": "window_1",
    "pos": [
-    142,
+    1466,
     200
    ],
    "color": "#A7BCCB",
@@ -371,7 +610,7 @@
   {
    "name": "window_2",
    "pos": [
-    262,
+    1586,
     200
    ],
    "color": "#A7BCCB",
@@ -384,7 +623,7 @@
   {
    "name": "window_3",
    "pos": [
-    382,
+    1706,
     200
    ],
    "color": "#A7BCCB",
@@ -395,9 +634,139 @@
    "on_layer": "playfield"
   },
   {
+   "name": "window_h1",
+   "pos": [
+    338,
+    200
+   ],
+   "color": "#A7BCCB",
+   "energy": 0.5,
+   "radius": 140,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "window_l1",
+   "pos": [
+    748,
+    206
+   ],
+   "color": "#A7BCCB",
+   "energy": 0.55,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "window_l2",
+   "pos": [
+    1100,
+    206
+   ],
+   "color": "#A7BCCB",
+   "energy": 0.55,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "stair_glass",
+   "pos": [
+    66,
+    214
+   ],
+   "color": "#F0C487",
+   "energy": 0.3,
+   "radius": 64,
+   "flicker": 0.03,
+   "height": 8,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lodge_lamp",
+   "pos": [
+    187,
+    232
+   ],
+   "color": "#F0C487",
+   "energy": 0.85,
+   "radius": 92,
+   "flicker": 0.03,
+   "height": 14,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "hall_pendant",
+   "pos": [
+    252,
+    102
+   ],
+   "color": "#F0C487",
+   "energy": 0.55,
+   "radius": 130,
+   "flicker": 0.02,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lib_sconce",
+   "pos": [
+    846,
+    204
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 76,
+   "flicker": 0.05,
+   "height": 16,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lib_pendant_1",
+   "pos": [
+    690,
+    94
+   ],
+   "color": "#F0C487",
+   "energy": 0.5,
+   "radius": 126,
+   "flicker": 0.02,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lib_pendant_2",
+   "pos": [
+    1000,
+    102
+   ],
+   "color": "#F0C487",
+   "energy": 0.5,
+   "radius": 126,
+   "flicker": 0.02,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lib_pendant_3",
+   "pos": [
+    1200,
+    94
+   ],
+   "color": "#F0C487",
+   "energy": 0.5,
+   "radius": 126,
+   "flicker": 0.02,
+   "height": 40,
+   "on_layer": "playfield"
+  },
+  {
    "name": "corridor_glass",
    "pos": [
-    46,
+    1370,
     214
    ],
    "color": "#F0C487",
@@ -410,7 +779,7 @@
   {
    "name": "archive_pendant",
    "pos": [
-    842,
+    2166,
     201
    ],
    "color": "#F0C487",
@@ -423,7 +792,7 @@
   {
    "name": "archive_sconce",
    "pos": [
-    954,
+    2278,
     194
    ],
    "color": "#F0C487",
@@ -434,9 +803,48 @@
    "on_layer": "playfield"
   },
   {
+   "name": "lamp_librarian",
+   "pos": [
+    919,
+    253
+   ],
+   "color": "#8FC79A",
+   "energy": 0.75,
+   "radius": 86,
+   "flicker": 0.02,
+   "height": 10,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "read_lamp_1",
+   "pos": [
+    1075,
+    257
+   ],
+   "color": "#8FC79A",
+   "energy": 0.75,
+   "radius": 82,
+   "flicker": 0.02,
+   "height": 10,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "read_lamp_2",
+   "pos": [
+    1125,
+    257
+   ],
+   "color": "#8FC79A",
+   "energy": 0.75,
+   "radius": 82,
+   "flicker": 0.02,
+   "height": 10,
+   "on_layer": "playfield"
+  },
+  {
    "name": "lamp_konrad",
    "pos": [
-    337,
+    1661,
     239
    ],
    "color": "#F0C487",
@@ -449,7 +857,7 @@
   {
    "name": "lamp_typist",
    "pos": [
-    461,
+    1785,
     241
    ],
    "color": "#F0C487",
@@ -462,7 +870,7 @@
   {
    "name": "light_table",
    "pos": [
-    1178,
+    2502,
     258
    ],
    "color": "#E3ECEA",
@@ -475,7 +883,7 @@
   {
    "name": "lamp_emil",
    "pos": [
-    1463,
+    2787,
     254
    ],
    "color": "#8FC79A",
@@ -493,7 +901,92 @@
    "frames": 16,
    "fps": 6,
    "pos": [
-    -171,
+    56,
+    80
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_near (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_window_snow.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    216,
+    80
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_near (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_window_snow.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    376,
+    80
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_near (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_window_snow.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    536,
+    80
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_near (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_window_snow.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    696,
+    80
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -88,
+   "lit": false,
+   "note": "between ext_near (z -90) and room (z -50): only visible through the glass"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_window_snow.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    856,
     80
    ],
    "parallax": [
@@ -510,7 +1003,39 @@
    "frames": 16,
    "fps": 5,
    "pos": [
-    104,
+    1428,
+    84
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_library.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    700,
+    84
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_hall.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    300,
     84
    ],
    "parallax": [
@@ -526,8 +1051,24 @@
    "frames": 16,
    "fps": 4,
    "pos": [
-    800,
+    2124,
     196
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx_dust_reading.png",
+   "frames": 16,
+   "fps": 4,
+   "pos": [
+    1062,
+    228
    ],
    "parallax": [
     1.0,
@@ -537,111 +1078,647 @@
    "lit": false
   }
  ],
+ "decals": [
+  {
+   "name": "insignia_plaque",
+   "file": "decals/decal_plaque.png",
+   "pos": [
+    103,
+    167
+   ],
+   "layer": "room",
+   "z": 1,
+   "lit": true,
+   "normal": true,
+   "note": "insignia site (12.4): neutral file; Symbols.pick -> decal_plaque_hist.png"
+  },
+  {
+   "name": "insignia_poster",
+   "file": "decals/decal_poster.png",
+   "pos": [
+    1781,
+    159
+   ],
+   "layer": "room",
+   "z": 1,
+   "lit": true,
+   "normal": true,
+   "note": "insignia site (12.4): neutral file; Symbols.pick -> decal_poster_hist.png"
+  },
+  {
+   "name": "insignia_banner_1",
+   "file": "decals/decal_banner_1.png",
+   "pos": [
+    445,
+    182
+   ],
+   "layer": "ext_near",
+   "z": 1,
+   "lit": false,
+   "normal": false,
+   "note": "facade banner (12.4), local coords of ext_near; Symbols.pick -> _hist"
+  },
+  {
+   "name": "insignia_banner_2",
+   "file": "decals/decal_banner_2.png",
+   "pos": [
+    606,
+    180
+   ],
+   "layer": "ext_near",
+   "z": 1,
+   "lit": false,
+   "normal": false,
+   "note": "facade banner (12.4), local coords of ext_near; Symbols.pick -> _hist"
+  }
+ ],
+ "actors": [
+  {
+   "scene": "res://scenes/levels/berlin/BerlinTram.tscn",
+   "pos": [
+    0,
+    260
+   ],
+   "props": {
+    "sheet_path": "res://assets/environments/berlin_archive/actors/tram.png",
+    "spark_path": "res://assets/environments/berlin_archive/actors/spark.png",
+    "sound_path": "res://assets/audio/sfx/berlin_tram_rumble.wav",
+    "parallax": 0.2,
+    "top_y": 208.0,
+    "pantograph_x": 198.0,
+    "wire_y": 211.0,
+    "period": 45.0,
+    "first_delay": 9.0,
+    "speed": 46.0,
+    "layer_width": 1120.0,
+    "glass_rects": [
+     [
+      316,
+      84,
+      44,
+      152
+     ],
+     [
+      726,
+      84,
+      44,
+      166
+     ],
+     [
+      1078,
+      84,
+      44,
+      166
+     ],
+     [
+      1444,
+      84,
+      44,
+      152
+     ],
+     [
+      1564,
+      84,
+      44,
+      152
+     ],
+     [
+      1684,
+      84,
+      44,
+      152
+     ]
+    ]
+   },
+   "note": "tram on the street below; z -89 (behind the glass), warm light sweep through the windows"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinPigeons.tscn",
+   "pos": [
+    322,
+    227
+   ],
+   "props": {
+    "sheet_path": "res://assets/environments/berlin_archive/actors/pigeons.png",
+    "count": 3,
+    "span": 30.0,
+    "coo_path": "res://assets/audio/sfx/berlin_pigeon_coo.wav",
+    "flutter_path": "res://assets/audio/sfx/berlin_pigeon_flutter.wav"
+   },
+   "note": "exp_pigeons: they flutter off when Konrad comes close and return later"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinMouse.tscn",
+   "pos": [
+    2242,
+    288
+   ],
+   "props": {
+    "sheet_path": "res://assets/environments/berlin_archive/actors/mouse.png",
+    "squeak_path": "res://assets/audio/sfx/berlin_mouse_squeak.wav"
+   },
+   "note": "exp_mouse: peeks out of the hole, sniffs, retreats when the player approaches"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinClock.tscn",
+   "pos": [
+    274,
+    158
+   ],
+   "props": {
+    "radius": 8.0,
+    "second_hand": true,
+    "pendulum_path": "res://assets/environments/berlin_archive/actors/pendulum.png",
+    "pendulum_frames": 12,
+    "pendulum_offset": [
+     -10,
+     14
+    ],
+    "tick_path": "res://assets/audio/sfx/berlin_clock_tick.wav",
+    "tock_path": "res://assets/audio/sfx/berlin_clock_tock.wav",
+    "chime_path": "res://assets/audio/sfx/berlin_clock_chime.wav"
+   },
+   "note": "exp_clock: working regulator (hands, pendulum, tick-tock, quarter chime)"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinClock.tscn",
+   "pos": [
+    1860,
+    166
+   ],
+   "props": {
+    "radius": 5.0,
+    "second_hand": false,
+    "pendulum_path": "",
+    "tick_path": "",
+    "tock_path": "",
+    "chime_path": ""
+   },
+   "note": "office wall clock, same time as the regulator"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinRadiator.tscn",
+   "pos": [
+    724,
+    287
+   ],
+   "props": {
+    "steam_path": "res://assets/environments/berlin_archive/actors/steam.png",
+    "valve_offset": [
+     0,
+     -15
+    ],
+    "knock_path": "res://assets/audio/sfx/berlin_radiator_knock.wav",
+    "hiss_path": "res://assets/audio/sfx/berlin_radiator_hiss.wav"
+   },
+   "note": "exp_heater: steam puffs at the valve, knocking in the pipes"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinRadio.tscn",
+   "pos": [
+    209,
+    262
+   ],
+   "props": {
+    "glow_path": "res://assets/environments/berlin_archive/actors/radio_glow.png",
+    "glow_offset": [
+     0,
+     -28
+    ],
+    "loop_path": "res://assets/audio/sfx/berlin_radio_loop.wav"
+   },
+   "note": "exp_radio: glowing dial, breathing magic eye, faint music"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinPapers.tscn",
+   "pos": [
+    1060,
+    295
+   ],
+   "props": {
+    "sheet_path": "res://assets/environments/berlin_archive/actors/papers.png",
+    "sheet_offset": [
+     0,
+     -38
+    ],
+    "rustle_path": "res://assets/audio/sfx/berlin_paper_flutter.wav"
+   },
+   "note": "papers lifting in the draught from the open fanlight"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinTube.tscn",
+   "pos": [
+    2388,
+    287
+   ],
+   "props": {
+    "sheet_path": "res://assets/environments/berlin_archive/actors/tube.png",
+    "sheet_offset": [
+     -1,
+     -81
+    ],
+    "sound_path": "res://assets/audio/sfx/berlin_tube_capsule.wav"
+   },
+   "note": "exp_pneumatic_tube: a capsule arrives now and then"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinAnim.tscn",
+   "pos": [
+    226,
+    293.5
+   ],
+   "props": {
+    "sheet_path": "res://assets/environments/berlin_archive/actors/smoke_curl.png",
+    "frames": 16,
+    "fps": 6.0,
+    "sheet_offset": [
+     -6,
+     -72
+    ]
+   },
+   "note": "smoke curling up from the porter's ashtray on the lodge sill"
+  }
+ ],
  "npcs": {
   "emil": {
    "pos": [
-    1412,
+    2736,
     284
    ],
    "facing": "left",
    "note": "stands behind the counter prop (counter base_y 292 > feet y 284)"
+  },
+  "porter": {
+   "pos": [
+    190,
+    287
+   ],
+   "facing": "left",
+   "hotspot": "exp_porter",
+   "offset": [
+    4,
+    -13
+   ],
+   "note": "inside the porter's lodge, seen through its glazing (lodge prop base_y 293 > feet 287)"
+  },
+  "librarian": {
+   "pos": [
+    906,
+    284
+   ],
+   "facing": "left",
+   "hotspot": "exp_librarian_desk",
+   "offset": [
+    6,
+    -16
+   ],
+   "note": "behind the librarian's desk (desk prop base_y 293 > feet 284)"
   }
  },
  "interaction": {
   "plan_a": {
    "approach": [
-    310,
+    1634,
     300
    ],
    "facing": "right",
    "focus": [
-    322,
+    1646,
     246
    ]
   },
   "plan_b": {
    "approach": [
-    826,
+    2150,
     300
    ],
    "facing": "right",
    "focus": [
-    842,
+    2166,
     262
    ]
   },
   "overlay_table": {
    "approach": [
-    1160,
+    2484,
     300
    ],
    "facing": "right",
    "focus": [
-    1178,
+    2502,
     262
    ]
   },
   "emil": {
    "approach": [
-    1376,
+    2700,
     300
    ],
    "facing": "right",
    "focus": [
-    1412,
+    2736,
     250
    ]
   },
   "obs_window": {
    "approach": [
-    262,
+    1586,
     300
    ],
    "facing": "back",
    "focus": [
-    262,
+    1586,
     150
    ]
   },
   "obs_photo": {
    "approach": [
-    190,
+    1514,
     300
    ],
    "facing": "right",
    "focus": [
-    206,
+    1530,
     250
    ]
   },
   "obs_notice": {
    "approach": [
-    1318,
+    2642,
     300
    ],
    "facing": "back",
    "focus": [
-    1318,
+    2642,
     214
+   ]
+  },
+  "exp_porter": {
+   "approach": [
+    174,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    190,
+    244
+   ]
+  },
+  "exp_radio": {
+   "approach": [
+    216,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    220,
+    240
+   ]
+  },
+  "exp_clock": {
+   "approach": [
+    274,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    274,
+    160
+   ]
+  },
+  "exp_pigeons": {
+   "approach": [
+    338,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    338,
+    228
+   ]
+  },
+  "exp_photo": {
+   "approach": [
+    430,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    430,
+    186
+   ]
+  },
+  "exp_lib_shelf_1": {
+   "approach": [
+    592,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    592,
+    150
+   ]
+  },
+  "exp_lib_shelf_2": {
+   "approach": [
+    668,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    668,
+    150
+   ]
+  },
+  "exp_heater": {
+   "approach": [
+    736,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    742,
+    272
+   ]
+  },
+  "exp_card_catalogue": {
+   "approach": [
+    803,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    815,
+    250
+   ]
+  },
+  "exp_librarian_desk": {
+   "approach": [
+    888,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    900,
+    254
+   ]
+  },
+  "exp_globe": {
+   "approach": [
+    951,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    963,
+    256
+   ]
+  },
+  "exp_lib_shelf_3": {
+   "approach": [
+    1020,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    1020,
+    150
+   ]
+  },
+  "exp_reading_table": {
+   "approach": [
+    1088,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    1100,
+    264
+   ]
+  },
+  "exp_lib_shelf_4": {
+   "approach": [
+    1176,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    1176,
+    150
+   ]
+  },
+  "exp_lib_shelf_5": {
+   "approach": [
+    1232,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    1232,
+    150
+   ]
+  },
+  "exp_lib_hidden": {
+   "approach": [
+    1272,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    1274,
+    274
+   ]
+  },
+  "exp_coat_stand": {
+   "approach": [
+    1419,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    1431,
+    240
+   ]
+  },
+  "exp_poster_aufbau": {
+   "approach": [
+    1800,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    1800,
+    186
+   ]
+  },
+  "exp_mouse": {
+   "approach": [
+    2232,
+    300
+   ],
+   "facing": "right",
+   "focus": [
+    2244,
+    284
+   ]
+  },
+  "exp_pneumatic_tube": {
+   "approach": [
+    2394,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    2394,
+    214
+   ]
+  },
+  "exp_master_plan": {
+   "approach": [
+    2786,
+    300
+   ],
+   "facing": "back",
+   "focus": [
+    2738,
+    84
    ]
   }
  },
  "windows": {
   "glass_rects": [
    [
-    120,
+    316,
     84,
     44,
     152
    ],
    [
-    240,
+    726,
+    84,
+    44,
+    166
+   ],
+   [
+    1078,
+    84,
+    44,
+    166
+   ],
+   [
+    1444,
     84,
     44,
     152
    ],
    [
-    360,
+    1564,
+    84,
+    44,
+    152
+   ],
+   [
+    1684,
     84,
     44,
     152
@@ -649,11 +1726,40 @@
   ],
   "note": "room.png is transparent here; ext_* layers show through"
  },
+ "rooms": {
+  "hall": [
+   0,
+   520
+  ],
+  "library": [
+   544,
+   1300
+  ],
+  "office": [
+   1324,
+   1892
+  ],
+  "archive": [
+   1920,
+   2416
+  ],
+  "lightroom": [
+   2436,
+   2604
+  ],
+  "emil": [
+   2604,
+   2924
+  ]
+ },
  "meta": {
   "mode": "side",
   "feet_y": 300,
   "generator": "tools/pixelgen/env_berlin.py",
   "date": "2026-11-04",
+  "first_slice_offset_x": 1324,
+  "entry_spawn": "SP_M1_Arrival",
+  "insignia": "neutral art in the layers; \"decals\" (layer_stack) swap to *_hist via Symbols.pick",
   "shafts_blend": "shafts.png is meant for additive/screen blending; with plain alpha it reads as dithered motes"
  }
 }

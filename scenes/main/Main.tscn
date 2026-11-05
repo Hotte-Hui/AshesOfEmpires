@@ -39,6 +39,20 @@ offset_right = 642.0
 offset_bottom = 362.0
 mouse_filter = 2
 
+[node name="Graded" type="SubViewport" parent="."]
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(642, 362)
+render_target_update_mode = 0
+
+[node name="GradeStage" type="TextureRect" parent="Graded"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_grade")
+offset_right = 642.0
+offset_bottom = 362.0
+mouse_filter = 2
+expand_mode = 1
+
 [node name="WorldView" type="Control" parent="."]
 clip_contents = true
 layout_mode = 3

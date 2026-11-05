@@ -1,0 +1,245 @@
+{
+ "karsk": {
+  "yard": [
+   0,
+   140
+  ],
+  "rail_y": 272,
+  "platform_y": 279,
+  "loco_size": [
+   284,
+   112
+  ],
+  "wheel_r": 16,
+  "drivers": [
+   84,
+   120,
+   156,
+   192,
+   228
+  ],
+  "chimney": [
+   40,
+   11
+  ],
+  "whistle": [
+   198,
+   20
+  ],
+  "cyl_steam": [
+   26,
+   98
+  ],
+  "cab_window": [
+   232,
+   44,
+   16,
+   14
+  ],
+  "headlamp": [
+   16,
+   22
+  ],
+  "wheel_frames": 60,
+  "wheels_crop": [
+   20,
+   70,
+   228,
+   42
+  ],
+  "small_wheels": {
+   "loco": [
+    [
+     "wheel_pilot",
+     40,
+     101
+    ]
+   ],
+   "tender": [
+    [
+     "wheel_tender",
+     26,
+     82
+    ],
+    [
+     "wheel_tender",
+     54,
+     82
+    ],
+    [
+     "wheel_tender",
+     136,
+     82
+    ],
+    [
+     "wheel_tender",
+     164,
+     82
+    ]
+   ],
+   "boxcar": [
+    [
+     "wheel_box",
+     46,
+     81
+    ],
+    [
+     "wheel_box",
+     150,
+     81
+    ]
+   ]
+  },
+  "small_frames": 8,
+  "small_r": {
+   "wheel_pilot": 10.0,
+   "wheel_tender": 9.5,
+   "wheel_box": 9.5
+  },
+  "small_spokes": {
+   "wheel_pilot": 8,
+   "wheel_tender": 8,
+   "wheel_box": 9
+  },
+  "axles": {
+   "loco": [
+    40,
+    84,
+    120,
+    156,
+    192,
+    228
+   ],
+   "tender": [
+    26,
+    54,
+    136,
+    164
+   ],
+   "gondola": [
+    40,
+    140
+   ],
+   "boxcar": [
+    46,
+    150
+   ],
+   "c17": [
+    53,
+    154
+   ]
+  }
+ },
+ "close": {
+  "glyph": [
+   320,
+   176
+  ],
+  "imprint": [
+   229,
+   125
+  ],
+  "pencil": [
+   109,
+   83
+  ],
+  "stamp_anchor": [
+   130,
+   250
+  ],
+  "initials": [
+   46,
+   152
+  ]
+ },
+ "berlin": {
+  "set_w": 1000,
+  "y0": -260,
+  "pave_y": 262,
+  "street_y": 276,
+  "rail_far": [
+   288,
+   292
+  ],
+  "rail_near": [
+   302,
+   306
+  ],
+  "arch": [
+   210,
+   500
+  ],
+  "portal_cx": 355,
+  "door": [
+   338,
+   206,
+   34,
+   50
+  ],
+  "chimneys": [
+   [
+    17,
+    17
+   ],
+   [
+    82,
+    17
+   ],
+   [
+    167,
+    17
+   ],
+   [
+    516,
+    9
+   ],
+   [
+    627,
+    9
+   ],
+   [
+    666,
+    9
+   ],
+   [
+    982,
+    5
+   ],
+   [
+    760,
+    5
+   ],
+   [
+    893,
+    5
+   ]
+  ],
+  "wire_y": 148,
+  "banner": [
+   30,
+   96,
+   24,
+   16
+  ]
+ },
+ "frames": {
+  "loco_wheels": 60,
+  "wheel_pilot": 8,
+  "wheel_tender": 8,
+  "wheel_box": 8,
+  "fx_puff": 12,
+  "fx_steam": 8,
+  "fx_whistle": 8,
+  "fx_snowdrop": 8,
+  "imprint": 4,
+  "stamp": 3,
+  "stamp_shadow": 3,
+  "banner": 32,
+  "banner_hist": 32,
+  "door": 3,
+  "tram_pole": 3,
+  "smoke": 8,
+  "pigeons": 2,
+  "queue": 2
+ }
+}

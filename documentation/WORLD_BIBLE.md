@@ -35,10 +35,12 @@ Status: AUTHORED 2026-11-04; the divergence/armistice details remain OPEN for th
 | **Veltrava** — conference palace, station, exile quarter, print shop, hotel | neutral | Ch3, Ch6 | B/A/C |
 | Night trains, border interchange **Kordon-17** | — | Ch3, Ch5, Ch6 | A/B |
 
-## Symbols and language policy (binding, see ART_DIRECTION §4)
-* No swastikas, SS runes, real Nazi eagles or real party slogans. The German state is represented by the
-  fictional **Reichssiegel** (white pillar/obelisk in a black disc) on grey-black banners; uniforms are grey,
-  insignia generic. Never usable as rewards, collectibles or player decoration.
+## Symbols and language policy (binding, see ART_DIRECTION §4 and TECHNICAL_ARCHITECTURE §12.4)
+* Real regime insignia (swastika banners and flags, the state eagle on stamps and plaques; hammer & sickle, red
+  star) are part of the in-world iconography of both states when the setting "Historische Hoheitszeichen" is on
+  (default); off → the fictional **Reichssiegel** (white pillar/obelisk in a black disc) or a plain eagle, and a
+  Soviet gear-and-wheat emblem. No SS runes, no real party slogans. Never usable as rewards, collectibles or
+  player decoration; uniforms grey, unit insignia generic.
 * Soviet imagery: stars, gears, red banners, fictional slogans of reconstruction (e.g. "ВОССТАНОВИМ ВМЕСТЕ").
 * Text in the world is German, Russian or both; UI German first (localisation-ready).
 * Opening disclaimer: fictional alternative history; the game condemns the crimes of both regimes and does not

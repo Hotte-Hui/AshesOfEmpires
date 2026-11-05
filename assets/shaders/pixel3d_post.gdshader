@@ -68,6 +68,12 @@ uniform float px_per_m_at_1m = 846.8;          // focal length in pixels
 uniform vec3 snow_near = vec3(0.925, 0.902, 0.878);
 uniform vec3 snow_far = vec3(0.698, 0.675, 0.690);
 
+// Lamp halos (scattering around lights in the snowy haze), set per frame by the level script:
+// halo_a = (screen x, screen y [px, top-left origin], depth [m], radius [px]); halo_b = (sRGB colour, strength)
+uniform int halo_count = 0;
+uniform vec4 halo_a[32];
+uniform vec4 halo_b[32];
+
 // Palette
 uniform float palette_strength = 1.0;
 uniform float dither_spread = 0.62;     // 0 = hard snap, 1 = full ordered-dither gradient
@@ -323,6 +329,19 @@ void fragment() {
 		vec3 fc = matte(fog_tex, frag, vp);
 		col = mix(col, fc, fog);
 		col = mix(col, rim_out, rim_amt);
+	}
+
+	// ---- lamp halos: additive in sRGB, the palette snap turns them into dithered rings; a halo only lights
+	// what is behind the lamp (objects in front of it occlude the scattering)
+	for (int i = 0; i < halo_count; i++) {
+		vec4 ha = halo_a[i];
+		vec4 hb = halo_b[i];
+		vec2 dv = (frag - ha.xy) * vec2(1.0, 1.2);
+		float r = length(dv) / max(ha.w, 0.5);
+		if (r < 1.0 && (sky0 || d0 > ha.z * 0.985)) {
+			float g = 1.0 - r;
+			col += hb.rgb * (g * g * hb.a);
+		}
 	}
 
 	// ---- screen-space snow: three parallax layers, depth tested

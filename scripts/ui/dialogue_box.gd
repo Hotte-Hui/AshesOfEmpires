@@ -5,6 +5,11 @@ extends "res://scripts/ui/ui_modal.gd"
 ## controller focus, and a history log (H / button).
 ## API: show_line(speaker_id, text, expression), show_choices([{id, text}]) -> signal chosen(id),
 ##      signal advanced, close() / hide_box(), skip_typing(), clear_history().
+## Living portraits: when portrait.json has an "anim" block (grid portrait_anim.png: column = expression,
+## rows = rest, talk_half, talk_open, blink, blink_talk_half, blink_talk_open) the mouth moves while the
+## typewriter types (shape picked from the last revealed letter, rests on punctuation pauses and at the end of
+## the line) and the eyes blink every few seconds; the expression column never changes within a line.
+## Strips without "anim" stay static; speakers without a portrait keep the silhouette placeholder.
 
 signal advanced
 signal chosen(id: String)
@@ -47,6 +52,23 @@ const CHOICE_GUARD_MS := 450
 var _speaker_id := ""
 var _portrait_cache: Dictionary = {}
 var _blink := 0.0
+# ---- living portrait state
+const MOUTH_REST := 0
+const MOUTH_HALF := 1
+const MOUTH_OPEN := 2
+const VOWELS := "aeiouyäöüAEIOUYÄÖÜаеёиоуыэюяАЕЁИОУЫЭЮЯ"
+const LABIALS := "mbpMBPмбпМБП"
+var _p_entry: Dictionary = {}      # cache entry of the current speaker (tex, anim, size, ...)
+var _p_atlas: AtlasTexture = null  # region is moved per frame (no texture churn)
+var _p_col := 0
+var _p_mouth := MOUTH_REST
+var _p_eyes_closed := false
+var _p_mouth_t := 0.0
+var _p_blink_t := 0.0
+var _p_next_blink := 3.0
+var _p_blink_left := 0.0
+var _p_double := false
+var _p_rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
@@ -263,44 +285,163 @@ func play_objective(obj_id: String, expressions: Dictionary = {}) -> bool:
 func _set_portrait(speaker_id: String, expression: String) -> void:
 	if speaker_id == "":
 		_portrait_panel.visible = false
+		_p_entry = {}
 		return
 	_portrait_panel.visible = true
-	var entry: Dictionary = _portrait_cache.get(speaker_id, {})
-	if entry.is_empty():
-		var dir := Kit.CHAR_DIR + speaker_id + "/"
-		var t2 := Kit.optional_tex(dir + "portrait.png")
-		var meta = Kit.json(dir + "portrait.json")
-		var size := Vector2i(PORTRAIT, PORTRAIT)
-		var exprs: Array = ["neutral"]
-		if meta is Dictionary:
-			var s = meta.get("size", [PORTRAIT, PORTRAIT])
-			if s is Array and s.size() >= 2:
-				size = Vector2i(int(s[0]), int(s[1]))
-			exprs = meta.get("expressions", exprs)
-		entry = {"tex": t2, "size": size, "expressions": exprs}
-		_portrait_cache[speaker_id] = entry
+	var entry := _portrait_entry(speaker_id)
 	var tex2: Texture2D = entry["tex"]
 	if tex2 == null:
+		_p_entry = {}
 		_portrait.texture = Kit.tex(PLACEHOLDER)
 		return
 	var sz: Vector2i = entry["size"]
 	var frames := maxi(1, int(tex2.get_width() / maxi(1, sz.x)))
 	var idx: int = maxi(0, (entry["expressions"] as Array).find(expression))
 	idx = clampi(idx, 0, frames - 1)
-	var at := AtlasTexture.new()
-	at.atlas = tex2
-	at.region = Rect2(idx * sz.x, 0, sz.x, sz.y)
-	_portrait.texture = at
+	var same_speaker: bool = not _p_entry.is_empty() and _p_entry.get("id", "") == speaker_id
+	_p_entry = entry
+	_p_col = idx
+	if _p_atlas == null:
+		_p_atlas = AtlasTexture.new()
+	var anim: Texture2D = entry.get("anim_tex")
+	_p_atlas.atlas = anim if anim != null else tex2
+	_p_mouth = MOUTH_REST
+	_p_mouth_t = 0.0
+	if not same_speaker:
+		# a new face on screen: eyes open, first blink after a short random wait
+		_p_eyes_closed = false
+		_p_blink_left = 0.0
+		_p_blink_t = 0.0
+		_p_rng.seed = speaker_id.hash() & 0x7fffffff
+		_p_next_blink = _p_rng.randf_range(1.2, 2.6)
+	_portrait.texture = _p_atlas
 	_portrait.custom_minimum_size = Vector2(sz) * 3
+	_apply_portrait_frame()
+
+
+## Loads (once) the portrait strip, its metadata and the optional animation grid of a speaker.
+func _portrait_entry(speaker_id: String) -> Dictionary:
+	var entry: Dictionary = _portrait_cache.get(speaker_id, {})
+	if not entry.is_empty():
+		return entry
+	var dir := Kit.CHAR_DIR + speaker_id + "/"
+	var t2 := Kit.optional_tex(dir + "portrait.png")
+	var meta = Kit.json(dir + "portrait.json")
+	var size := Vector2i(PORTRAIT, PORTRAIT)
+	var exprs: Array = ["neutral"]
+	var anim_tex: Texture2D = null
+	var rows: Array = []
+	var anim_meta: Dictionary = {}
+	if meta is Dictionary:
+		var s = meta.get("size", [PORTRAIT, PORTRAIT])
+		if s is Array and s.size() >= 2:
+			size = Vector2i(int(s[0]), int(s[1]))
+		exprs = meta.get("expressions", exprs)
+		var a = meta.get("anim")
+		if t2 != null and a is Dictionary and str(a.get("file", "")) != "":
+			anim_tex = Kit.optional_tex(dir + str(a["file"]))
+			rows = a.get("rows", [])
+			anim_meta = a
+			# the grid must really hold every expression column and every documented row
+			if anim_tex != null and (anim_tex.get_width() < size.x * exprs.size() or rows.is_empty()
+					or anim_tex.get_height() < size.y * rows.size()):
+				anim_tex = null
+	entry = {"id": speaker_id, "tex": t2, "size": size, "expressions": exprs, "anim_tex": anim_tex,
+		"rows": rows, "blink_offset": int(anim_meta.get("blink_offset", 3)),
+		"mouth_fps": float(anim_meta.get("mouth_fps", 11.0)), "blink_ms": float(anim_meta.get("blink_ms", 130.0)),
+		"blink_interval": anim_meta.get("blink_interval_s", [2.6, 5.2])}
+	_portrait_cache[speaker_id] = entry
+	return entry
+
+
+func _p_animated() -> bool:
+	return not _p_entry.is_empty() and _p_entry.get("anim_tex") != null
+
+
+func _apply_portrait_frame() -> void:
+	if _p_atlas == null or _p_entry.is_empty():
+		return
+	var sz: Vector2i = _p_entry["size"]
+	var row := 0
+	if _p_animated():
+		var rows: Array = _p_entry["rows"]
+		row = _p_mouth + (int(_p_entry["blink_offset"]) if _p_eyes_closed else 0)
+		row = clampi(row, 0, rows.size() - 1)
+	_p_atlas.region = Rect2(_p_col * sz.x, row * sz.y, sz.x, sz.y)
+
+
+## Mouth shape for the text revealed so far: vowels open, labials and gaps close, the rest half-open.
+func _mouth_for_text() -> int:
+	var n := _text.visible_characters
+	if n <= 0:
+		return MOUTH_REST
+	var ch := _text.text.substr(n - 1, 1)
+	if ch == " " or ch == "\n" or LABIALS.contains(ch) or not (ch.to_upper() != ch.to_lower() or ch.is_valid_int()):
+		return MOUTH_REST
+	if VOWELS.contains(ch):
+		return MOUTH_HALF if _p_mouth == MOUTH_OPEN else MOUTH_OPEN
+	return MOUTH_HALF
+
+
+func _animate_portrait(delta: float) -> void:
+	if not _p_animated() or not _portrait_panel.visible:
+		return
+	var changed := false
+	# ---- mouth: follows the typewriter, at most mouth_fps changes per second
+	var want := MOUTH_REST
+	if _typing and _delay <= 0.0:
+		_p_mouth_t += delta
+		var step := 1.0 / maxf(1.0, float(_p_entry["mouth_fps"]) * (0.5 if Kit.reduced_motion() else 1.0))
+		if _p_mouth_t >= step:
+			_p_mouth_t = fmod(_p_mouth_t, step)
+			want = _mouth_for_text()
+			if Kit.reduced_motion() and want == MOUTH_OPEN:
+				want = MOUTH_HALF
+		else:
+			want = _p_mouth
+	if want != _p_mouth:
+		_p_mouth = want
+		changed = true
+	# ---- blink: every few seconds, sometimes twice
+	if _p_blink_left > 0.0:
+		_p_blink_left -= delta
+		if _p_blink_left <= 0.0:
+			_p_eyes_closed = false
+			changed = true
+			if _p_double:
+				_p_double = false
+				_p_next_blink = 0.16
+	else:
+		_p_blink_t += delta
+		if _p_blink_t >= _p_next_blink:
+			_p_blink_t = 0.0
+			var iv: Array = _p_entry.get("blink_interval", [2.6, 5.2])
+			_p_next_blink = _p_rng.randf_range(float(iv[0]), float(iv[1])) if iv.size() >= 2 else 3.6
+			_p_eyes_closed = true
+			_p_blink_left = float(_p_entry["blink_ms"]) / 1000.0
+			_p_double = _p_rng.randf() < 0.18
+			changed = true
+	if changed:
+		_apply_portrait_frame()
+
+
+## Test / debug view of the living portrait (read-only).
+func portrait_state() -> Dictionary:
+	var region := _p_atlas.region if _p_atlas != null else Rect2()
+	return {"speaker": _speaker_id, "animated": _p_animated(), "column": _p_col, "mouth": _p_mouth,
+		"eyes_closed": _p_eyes_closed, "region": region,
+		"placeholder": _portrait.texture == Kit.tex(PLACEHOLDER)}
 
 
 # ================================================================ typewriter
 func _process(delta: float) -> void:
 	if not is_open:
 		return
+	var was_typing := _typing
 	if _typing:
 		_type(delta)
-	elif _advance_arrow.visible and not _choices_active:
+	_animate_portrait(delta)
+	if not was_typing and _advance_arrow.visible and not _choices_active:
 		_blink += delta
 		if Kit.reduced_motion():
 			_advance_arrow.modulate.a = 1.0
@@ -335,6 +476,9 @@ func _finish_typing() -> void:
 	_text.visible_characters = -1
 	_advance_arrow.modulate.a = 1.0
 	_blink = 0.0
+	if _p_mouth != MOUTH_REST:
+		_p_mouth = MOUTH_REST
+		_apply_portrait_frame()
 	line_finished.emit()
 	if not _pending_choices.is_empty():
 		_present_choices()
@@ -497,6 +641,10 @@ func _on_open() -> void:
 
 func _on_close() -> void:
 	_typing = false
+	_p_mouth = MOUTH_REST
+	_p_eyes_closed = false
+	_p_blink_left = 0.0
+	_apply_portrait_frame()
 	_pending_choices = []
 	_clear_choices()
 	_history_panel.visible = false

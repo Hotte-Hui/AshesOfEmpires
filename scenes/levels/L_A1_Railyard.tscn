@@ -101,3 +101,167 @@ hotspot_id = "obs_family"
 hotspot_offset = Vector2(55, -9)
 face_left = true
 look_at_player = false
+
+[node name="WorkerB" type="Node2D" parent="Playfield"]
+position = Vector2(1048, 262)
+script = ExtResource("3")
+char_id = "worker_b"
+wander = 34.0
+wander_speed = 23.0
+
+[node name="ChatVendor" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "exp_stall"
+hotspot_offset = Vector2(16, 0)
+explore_id = "karsk.vendor"
+npc_id = "vendor"
+
+[node name="ChatFamily" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "exp_family"
+explore_id = "karsk.family"
+npc_id = "babushka"
+
+[node name="ChatWorkers" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "exp_workers"
+explore_id = "karsk.workers"
+npc_id = "worker_a"
+
+[node name="ExpWreck" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_wreck"
+explore_id = "karsk.wreck"
+
+[node name="ExpBarrack" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_barrack"
+explore_id = "karsk.barrack"
+prompt_height = 72.0
+
+[node name="ExpMitten" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_mitten"
+explore_id = "karsk.mitten"
+radius = 26.0
+
+[node name="ExpGrain" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_grain"
+explore_id = "karsk.grain"
+
+[node name="ExpSnowman" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_snowman"
+explore_id = "karsk.snowman"
+radius = 26.0
+prompt_height = 44.0
+
+[node name="ExpStairsUnder" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_stairs_under"
+explore_id = "karsk.stairs_under"
+radius = 20.0
+prompt_height = 40.0
+
+[node name="ExpNewspaper" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_newspaper"
+explore_id = "karsk.newspaper"
+radius = 26.0
+prompt_height = 46.0
+
+[node name="ExpCrows" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_crows"
+explore_id = "karsk.crows"
+
+[node name="ExpLoudspeaker" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_loudspeaker"
+explore_id = "karsk.loudspeaker"
+radius = 28.0
+prompt_height = 72.0
+
+[node name="ExpWagonChalk" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_wagon_chalk"
+explore_id = "karsk.wagon_chalk"
+radius = 28.0
+
+[node name="ExpCat" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_cat"
+explore_id = "karsk.cat"
+radius = 26.0
+prompt_height = 40.0
+
+[node name="ExpBanner" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_banner"
+explore_id = "karsk.banner"
+prompt_height = 66.0
+
+[node name="ExpStash" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_stash"
+explore_id = "karsk.stash"
+radius = 20.0
+prompt_height = 40.0
+
+[node name="ExpKontoraShelf" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_kontora_shelf"
+explore_id = "karsk.kontora_shelf"
+radius = 26.0
+prompt_height = 66.0
+
+[node name="ExpCoolingTowers" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_cooling_towers"
+explore_id = "karsk.cooling_towers"
+
+[node name="ExpFlatcar" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_flatcar"
+explore_id = "karsk.flatcar"
+
+[node name="ExpDistantTrain" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_distant_train"
+explore_id = "karsk.distant_train"
+
+[node name="ExpShunting" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_shunting"
+explore_id = "karsk.shunting"
+radius = 24.0
+
+[node name="ExpChess" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_chess"
+explore_id = "karsk.chess"
+radius = 22.0
+prompt_height = 42.0

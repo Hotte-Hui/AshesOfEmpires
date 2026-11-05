@@ -1,0 +1,266 @@
+{
+ "area": "plaza",
+ "note": "Exploration content of the plaza before the Great Hall during the army parade (Konrad, chapter 2), owner: plaza-explore. Optional finds never touch Story. Entry order = Konrad's walk from the archive exit across the plaza to the cleared block. Voice: precise and euphemistic, cracking; never celebratory (STORY_BIBLE 2, TECHNICAL_ARCHITECTURE 12.7). Hotspots: hall_plaza/scene.json (env) + explore_hotspots.json; nodes in scenes/levels/L_M1_Plaza.tscn; strings in data/locale/de_explore_plaza.json; history cards by id only. plaza-polish (2026-11-05): mini-game find plaza.leaflet (\"Das Blatt im Schnee\", scenes/ui/minigames/LeafletSnow.tscn, strings mg.leaflet.* in de_minigame_plaza.json) and the easter eggs plaza.frost_heart and plaza.paws.",
+ "entries": [
+  {
+   "id": "plaza.frost_heart",
+   "kind": "easter_egg",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.frost_heart.title",
+   "text_key": "explore.plaza.frost_heart.text",
+   "prompt_key": "explore.plaza.frost_heart.prompt",
+   "image": "res://assets/explore/plaza/frost_heart.png"
+  },
+  {
+   "id": "plaza.tram_stop",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.tram_stop.title",
+   "text_key": "explore.plaza.tram_stop.text",
+   "prompt_key": "explore.plaza.tram_stop.prompt",
+   "image": "res://assets/explore/plaza/tram_stop.png",
+   "history": [
+    "hist.reich.reichsbahn"
+   ]
+  },
+  {
+   "id": "plaza.poster",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.poster.title",
+   "text_key": "explore.plaza.poster.text",
+   "prompt_key": "explore.plaza.poster.prompt",
+   "image": "res://assets/explore/plaza/poster.png"
+  },
+  {
+   "id": "plaza.paws",
+   "kind": "easter_egg",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.paws.title",
+   "text_key": "explore.plaza.paws.text",
+   "prompt_key": "explore.plaza.paws.prompt",
+   "image": "res://assets/explore/plaza/paws.png"
+  },
+  {
+   "id": "plaza.vendor",
+   "kind": "easter_egg",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.vendor.title",
+   "text_key": "explore.plaza.vendor.text",
+   "prompt_key": "explore.plaza.vendor.prompt",
+   "image": "res://assets/explore/plaza/vendor.png"
+  },
+  {
+   "id": "plaza.loudspeaker",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.loudspeaker.title",
+   "text_key": "explore.plaza.loudspeaker.text",
+   "prompt_key": "explore.plaza.loudspeaker.prompt",
+   "image": "res://assets/explore/plaza/loudspeaker.png"
+  },
+  {
+   "id": "plaza.children",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.children.title",
+   "text_key": "explore.plaza.children.text",
+   "prompt_key": "explore.plaza.children.prompt"
+  },
+  {
+   "id": "plaza.barrier",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.barrier.title",
+   "text_key": "explore.plaza.barrier.text",
+   "prompt_key": "explore.plaza.barrier.prompt",
+   "image": "res://assets/explore/plaza/barrier.png"
+  },
+  {
+   "id": "plaza.guard",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.guard.title",
+   "text_key": "explore.plaza.guard.text",
+   "prompt_key": "explore.plaza.guard.prompt"
+  },
+  {
+   "id": "plaza.leaflet",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.leaflet.title",
+   "text_key": "explore.plaza.leaflet.text",
+   "prompt_key": "explore.plaza.leaflet.prompt",
+   "image": "res://assets/explore/plaza/leaflet.png",
+   "minigame": "res://scenes/ui/minigames/LeafletSnow.tscn"
+  },
+  {
+   "id": "plaza.tank",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.tank.title",
+   "text_key": "explore.plaza.tank.text",
+   "prompt_key": "explore.plaza.tank.prompt",
+   "image": "res://assets/explore/plaza/tank.png"
+  },
+  {
+   "id": "plaza.tribune",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.tribune.title",
+   "text_key": "explore.plaza.tribune.text",
+   "prompt_key": "explore.plaza.tribune.prompt",
+   "image": "res://assets/explore/plaza/tribune.png",
+   "history": [
+    "hist.reich.germania"
+   ]
+  },
+  {
+   "id": "plaza.banner",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.banner.title",
+   "text_key": "explore.plaza.banner.text",
+   "prompt_key": "explore.plaza.banner.prompt",
+   "image": "res://assets/explore/plaza/banner.png"
+  },
+  {
+   "id": "plaza.rubble",
+   "kind": "secret",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.rubble.title",
+   "text_key": "explore.plaza.rubble.text",
+   "prompt_key": "explore.plaza.rubble.prompt",
+   "image": "res://assets/explore/plaza/rubble.png",
+   "history": [
+    "hist.reich.forced_labor"
+   ]
+  },
+  {
+   "id": "plaza.family_door",
+   "kind": "detail",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.family_door.title",
+   "text_key": "explore.plaza.family_door.text",
+   "prompt_key": "explore.plaza.family_door.prompt",
+   "image": "res://assets/explore/plaza/family_door.png",
+   "history": [
+    "hist.reich.evictions"
+   ]
+  },
+  {
+   "id": "plaza.window",
+   "kind": "secret",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.window.title",
+   "text_key": "explore.plaza.window.text",
+   "prompt_key": "explore.plaza.window.prompt",
+   "image": "res://assets/explore/plaza/window.png"
+  },
+  {
+   "id": "plaza.photographer",
+   "kind": "chat",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.photographer.title",
+   "text_key": "explore.plaza.photographer.text",
+   "prompt_key": "explore.plaza.photographer.prompt",
+   "lines": [
+    {
+     "speaker": "photographer",
+     "key": "explore.plaza.photographer.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.photographer.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "photographer",
+     "key": "explore.plaza.photographer.l3",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.photographer.l4",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "photographer",
+     "key": "explore.plaza.photographer.l5",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.photographer.l6",
+     "expr": "surprised"
+    },
+    {
+     "speaker": "photographer",
+     "key": "explore.plaza.photographer.l7",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.photographer.l8",
+     "expr": "concerned"
+    }
+   ]
+  },
+  {
+   "id": "plaza.neighbour",
+   "kind": "chat",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.neighbour.title",
+   "text_key": "explore.plaza.neighbour.text",
+   "prompt_key": "explore.plaza.neighbour.prompt",
+   "lines": [
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.neighbour.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "berlin_mother",
+     "key": "explore.plaza.neighbour.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.neighbour.l3",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "berlin_mother",
+     "key": "explore.plaza.neighbour.l4",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "berlin_mother",
+     "key": "explore.plaza.neighbour.l5",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.neighbour.l6",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "berlin_mother",
+     "key": "explore.plaza.neighbour.l7",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "konrad",
+     "key": "explore.plaza.neighbour.l8",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "berlin_mother",
+     "key": "explore.plaza.neighbour.l9",
+     "expr": "neutral"
+    }
+   ]
+  }
+ ]
+}

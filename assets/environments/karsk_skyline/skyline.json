@@ -1,0 +1,340 @@
+{
+ "_doc": "Drop-in replacement planes for assets/environments/karsk_railyard/scene.json (generator: tools/pixelgen/env_karsk_skyline.py).  layers: replace the four entries of the same name (file paths are relative to karsk_railyard).  fx: replace every anim_sprite whose \"layer\" is far_city / far_industry / mid / near_bg.  laundry_pegs: KarskLaundry actor props.pegs.  hotspot_marks: optional hotspot_info marks (player positions of exp_* are unchanged).",
+ "layers": [
+  {
+   "name": "far_city",
+   "file": "../karsk_skyline/far_city.png",
+   "pos": [
+    0,
+    118
+   ],
+   "parallax": [
+    0.12,
+    0.0
+   ],
+   "z": -90,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.35
+  },
+  {
+   "name": "far_industry",
+   "file": "../karsk_skyline/far_industry.png",
+   "pos": [
+    0,
+    83
+   ],
+   "parallax": [
+    0.25,
+    0.0
+   ],
+   "z": -84,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.35
+  },
+  {
+   "name": "mid",
+   "file": "../karsk_skyline/mid.png",
+   "pos": [
+    0,
+    49
+   ],
+   "parallax": [
+    0.45,
+    0.0
+   ],
+   "z": -74,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.45
+  },
+  {
+   "name": "near_bg",
+   "file": "../karsk_skyline/near_bg.png",
+   "pos": [
+    0,
+    137
+   ],
+   "parallax": [
+    0.72,
+    0.0
+   ],
+   "z": -60,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.45
+  }
+ ],
+ "fx": [
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_a.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    26,
+    -41
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_b.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    40,
+    -31
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    72,
+    132
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    862,
+    13
+   ],
+   "parallax": 0.25,
+   "z": -83,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "far_industry"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    678,
+    29
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/tower_plume.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    526,
+    87
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    84,
+    64
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/tower_plume.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    642,
+    95
+   ],
+   "parallax": 0.12,
+   "z": -89,
+   "emission": false,
+   "frame_size": [
+    84,
+    64
+   ],
+   "layer": "far_city"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke_ribbon_far.png",
+   "frames": 8,
+   "fps": 4,
+   "pos": [
+    1140,
+    13
+   ],
+   "parallax": 0.45,
+   "z": -73,
+   "emission": false,
+   "frame_size": [
+    56,
+    96
+   ],
+   "layer": "mid"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    39,
+    139
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    234,
+    146
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    440,
+    146
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/chimney_wisp.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    1176,
+    123
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    30,
+    60
+   ],
+   "layer": "near_bg"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/steam_puffs.png",
+   "frames": 6,
+   "fps": 5,
+   "pos": [
+    966,
+    126
+   ],
+   "parallax": 0.72,
+   "z": -59,
+   "emission": false,
+   "frame_size": [
+    26,
+    44
+   ],
+   "layer": "near_bg"
+  }
+ ],
+ "laundry_pegs": [
+  [
+   163,
+   210
+  ],
+  [
+   169,
+   210
+  ],
+  [
+   175,
+   209
+  ],
+  [
+   182,
+   207
+  ],
+  [
+   188,
+   204
+  ],
+  [
+   193,
+   201
+  ]
+ ],
+ "hotspot_marks": {
+  "exp_grain": {
+   "mark": [
+    136,
+    173
+   ],
+   "layer": "mid"
+  },
+  "exp_cooling_towers": {
+   "mark": [
+    1250,
+    175
+   ],
+   "layer": "far_city"
+  },
+  "exp_barrack": {
+   "mark": [
+    82,
+    191
+   ],
+   "layer": "near_bg"
+  }
+ }
+}

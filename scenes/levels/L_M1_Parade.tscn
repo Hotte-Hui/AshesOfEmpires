@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/parade/parade_level.gd" id="1_parade"]
+
+[node name="L_M1_Parade" type="Node3D"]
+script = ExtResource("1_parade")
+ambience = "amb_berlin_street"
+music = "mus_parade"
+
+[node name="Camera" type="Camera3D" parent="."]
+projection = 2
+current = true
+size = 0.0212557
+near = 0.05
+far = 9000.0

@@ -165,7 +165,7 @@ static func res(path: String) -> Resource:
 
 
 static func tex(path: String) -> Texture2D:
-	return res(path) as Texture2D
+	return res(Symbols.pick(path)) as Texture2D   # §12.4: *_hist variant when historical_symbols is on
 
 
 static func ui_tex(name: String) -> Texture2D:
@@ -187,6 +187,7 @@ static func theme(hc := false) -> Theme:
 ## Optional image that may not exist yet (documents/portraits from other departments).
 ## Uses the imported resource when available, else loads the PNG directly (unimported fresh files).
 static func optional_tex(path: String) -> Texture2D:
+	path = Symbols.pick(path)   # §12.4
 	if _res_cache.has(path):
 		return _res_cache[path]
 	var tx: Texture2D = null
@@ -591,15 +592,144 @@ const UI_SOUNDS := {"confirm": "select", "back": "back", "move": "move", "advanc
 	"toast": "page_turn", "card": "card_place", "snap": "card_place", "tick": "type_tick",
 	"fail": "puzzle_fail", "success_signal": "metal_clank", "success_plan": "page_turn",
 	"save": "stamp_thud", "page": "page_turn", "paper": ""}
+## Cues with fallbacks (first sound the audio department provides wins). "discovery" = soft chime for an
+## ordinary find; "history" = neutral paper only (real-history cards are never celebrated, §12.3).
+const UI_SOUND_CHAINS := {"discovery": ["ui_discovery", "discovery_chime", "ui_chime", "chime", "page_turn"],
+	"history": ["ui_archive", "paper_rustle", "page_turn"]}
 
 
 static func ui_sound(name: String) -> void:
+	if UI_SOUND_CHAINS.has(name):
+		ui_sound_first(UI_SOUND_CHAINS[name])
+		return
 	var id: String = UI_SOUNDS.get(name, name)
 	if id == "":
 		return
 	var a := svc("Audio")
 	if a != null and a.has_method("ui"):
 		a.ui(id)
+
+
+## Plays the first sound of `ids` that exists (Audio.has_sound); silent when none does.
+static func ui_sound_first(ids: Array) -> void:
+	var a := svc("Audio")
+	if a == null or not a.has_method("ui"):
+		return
+	for id in ids:
+		if not a.has_method("has_sound") or bool(a.has_sound(str(id))):
+			a.ui(str(id))
+			return
+
+
+# ================================================================ exploration (Explore autoload, §12)
+const EXPLORE_UI_DIR := "res://assets/ui/explore/"
+const EXPLORE_KINDS := ["detail", "secret", "easter_egg", "chat"]
+
+
+static func explore() -> Object:
+	return svc("Explore")
+
+
+## Texture of the exploration UI kit (tools/pixelgen/gen_ui_explore.py), imported or not.
+static func ex_tex(rel: String) -> Texture2D:
+	return optional_tex(EXPLORE_UI_DIR + rel)
+
+
+## Pixel sprite of the exploration kit (already stored at x3), drawn 1:1.
+static func ex_sprite(rel: String) -> TextureRect:
+	var r := TextureRect.new()
+	r.texture = ex_tex(rel)
+	r.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	r.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return r
+
+
+## 9-patch style of the exploration kit; margins in screen px (x3 art px), content margins l,t,r,b.
+static func ex_style(rel: String, m: Array, cm: Array, tile_h := false, tile_v := false) -> StyleBox:
+	var t2 := ex_tex(rel)
+	if t2 == null:
+		var f := StyleBoxFlat.new()
+		f.bg_color = C_PAPER
+		f.content_margin_left = cm[0]
+		f.content_margin_top = cm[1]
+		f.content_margin_right = cm[2]
+		f.content_margin_bottom = cm[3]
+		return f
+	var sb := StyleBoxTexture.new()
+	sb.texture = t2
+	sb.texture_margin_left = m[0]
+	sb.texture_margin_top = m[1]
+	sb.texture_margin_right = m[2]
+	sb.texture_margin_bottom = m[3]
+	sb.content_margin_left = cm[0]
+	sb.content_margin_top = cm[1]
+	sb.content_margin_right = cm[2]
+	sb.content_margin_bottom = cm[3]
+	if tile_h:
+		sb.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	if tile_v:
+		sb.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	return sb
+
+
+static func _key_or(key: String, fallback: String) -> String:
+	return t(key) if has_key(key) else fallback
+
+
+## "Beobachtung", "Versteck", "Kurioses", "Gespräch".
+static func explore_kind_label(kind: String) -> String:
+	return _key_or("ui.explore.kind." + kind, kind.capitalize())
+
+
+static func explore_kind_icon(kind: String) -> String:
+	return "icons/kind_%s.png" % (kind if kind in EXPLORE_KINDS else "detail")
+
+
+static func explore_area_label(area: String) -> String:
+	return _key_or("ui.explore.area." + area, area.capitalize())
+
+
+## Place of a find for kickers: per-level label ("Verladebahnhof Karsk"), else the area label.
+static func explore_place(e: Dictionary) -> String:
+	var lvl := str(e.get("level", ""))
+	if lvl != "" and has_key("ui.explore.place." + lvl):
+		return t("ui.explore.place." + lvl)
+	return explore_area_label(str(e.get("area", "")))
+
+
+static func explore_title(e: Dictionary) -> String:
+	var k := str(e.get("title_key", ""))
+	return t(k) if k != "" else str(e.get("id", ""))
+
+
+static func history_side_label(side: String) -> String:
+	return _key_or("ui.history.side." + side, side.capitalize())
+
+
+## {found, total, cards_found, cards_total} from the Explore autoload (zeros when it is missing).
+static func explore_progress() -> Dictionary:
+	var p = call_svc("Explore", "progress", [], null)
+	if p is Dictionary:
+		return p
+	return {"found": 0, "total": 0, "cards_found": 0, "cards_total": 0}
+
+
+## Small horizontal progress bar drawn with the exploration kit (on paper). ratio 0..1; the fill snaps
+## to the 3 px art grid and keeps its end caps.
+static func ex_bar(ratio: float, width := 240, neutral := false) -> Control:
+	var bar := Control.new()
+	bar.custom_minimum_size = Vector2(width, 15)
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var track := ex_style("frames/bar_track.png", [6, 6, 6, 6], [0, 0, 0, 0])
+	var fill := ex_style("frames/bar_fill_neutral.png" if neutral else "frames/bar_fill.png", [6, 6, 6, 6], [0, 0, 0, 0])
+	var rr := clampf(ratio, 0.0, 1.0)
+	bar.draw.connect(func() -> void:
+		bar.draw_style_box(track, Rect2(Vector2.ZERO, bar.size))
+		var fw := floorf(bar.size.x * rr / 3.0) * 3.0
+		if fw >= 12.0:
+			bar.draw_style_box(fill, Rect2(Vector2.ZERO, Vector2(fw, bar.size.y))))
+	return bar
 
 
 static func format_time(v) -> String:

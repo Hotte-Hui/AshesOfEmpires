@@ -145,41 +145,46 @@ def tower_plume(frames=8, fw=84, fh=64, seed=0, cols=None):
     return S, (20, fh - 2)
 
 
-def barrel_flames(frames=6, fw=18, fh=20, seed=0):
-    """Flame tongues above the barrel rim (emissive teardrops: pale core, amber body, copper edge,
-    flickering heights and leans).  Origin = rim centre at local (9, fh-1)."""
+def barrel_flames(frames=8, fw=18, fh=20, seed=0):
+    """Flames above the barrel rim: one merged, organic fire body (not separate stripes) whose tongues rise,
+    split and lick upward.  Heat field = envelope (wide low base, narrowing) + rising periodic turbulence;
+    banded into pale core / amber / copper / dark smoky tips.  Seamless loop: every turbulence term moves an
+    integer number of periods per loop.  Origin = rim centre at local (fw//2, fh-1).  All pixels emissive."""
     S = Layer(fw * frames, fh, 'flames')
     rng = np.random.default_rng(seed)
-    ph0 = rng.uniform(0, 2 * math.pi, 4)
+    yy, xx = np.mgrid[0:fh, 0:fw].astype(np.float32)
+    v = (fh - 1 - yy) / (fh - 1)                       # 0 at the rim .. 1 at the top
+    u = (xx + 0.5 - fw / 2.0) / (fw / 2.0) * 1.3        # base ~ the barrel mouth (12 of 18 px)
+    terms = [(rng.uniform(1.2, 2.6), int(rng.integers(1, 3)), rng.uniform(0, 2 * math.pi), rng.uniform(0.5, 1.0))
+             for _ in range(5)]
     for f in range(frames):
-        ph = 2 * math.pi * f / frames
-        for k, fx in enumerate((4, 8, 12, 15)):
-            base_h = (9, 13, 11, 6)[k]
-            hgt = int(round(base_h + 3 * math.sin(ph + ph0[k]) + 1.5 * math.sin(2 * ph + k)))
-            lean = 1.6 * math.sin(ph * 2 + ph0[k])
-            for j in range(hgt):
-                t = j / max(1, hgt - 1)
-                half = 1.6 * (1 - t) ** 0.8 + 0.2
-                cx = fx + lean * t * t
-                for x in range(int(math.floor(cx - half)), int(math.ceil(cx + half)) + 1):
-                    d = abs(x - cx) / max(0.6, half)
-                    if d > 1.05:
-                        continue
-                    if t < 0.35 and d < 0.45:
-                        c = CO[4]
-                    elif t < 0.75 and d < 0.8:
-                        c = CO[3]
-                    elif t < 0.92:
-                        c = CO[2]
-                    else:
-                        c = CO[1]
-                    S.px(f * fw + x, fh - 1 - j, c, em=c)
-        for s_ in range(2):                    # sparks rising
-            a = (f / frames + s_ * 0.5) % 1.0
-            sx = 6 + s_ * 6 + int(round(2 * math.sin(ph + s_)))
-            sy = int(fh - 12 - a * 7)
-            if 0 <= sy < fh:
-                S.px(f * fw + sx, sy, CO[3], em=CO[3])
+        t = f / frames
+        turb = np.zeros_like(u)
+        for (kx, m, ph, amp) in terms:
+            turb += amp * np.sin(2 * math.pi * (kx * u * 0.9 + m * (v * 1.3 - t)) + ph)
+        turb /= sum(tm[3] for tm in terms)
+        lean = 0.12 * math.sin(2 * math.pi * t) * v       # the whole fire sways a little
+        env = 1.0 - np.abs(u - lean) ** 1.5 * (0.9 + 0.8 * v) - v ** 1.15 * 0.95
+        heat = env + turb * (0.2 + 0.5 * v)
+        heat[yy >= fh - 1] = np.maximum(heat[yy >= fh - 1], 0.5 - np.abs(u[yy >= fh - 1]) * 0.55)
+        bands = [(0.7, CO[4]), (0.46, CO[3]), (0.27, CO[2]), (0.13, CO[1]), (0.05, CO[0])]
+        for x in range(fw):
+            for y in range(fh):
+                h = heat[y, x]
+                for thr, c in bands:
+                    if h > thr:
+                        if c is CO[0] and v[y, x] < 0.5:
+                            break                          # dark smoky edge only on the high tips
+                        S.px(f * fw + x, y, c, em=c)
+                        break
+        # remove isolated single pixels (clean clusters)
+        sub = S.c[:, f * fw:(f + 1) * fw]
+        a = sub[..., 3] > 0
+        p = np.pad(a, 1)
+        nb = p[:-2, 1:-1].astype(int) + p[2:, 1:-1] + p[1:-1, :-2] + p[1:-1, 2:]
+        lone = a & (nb == 0)
+        sub[lone] = 0
+        S.em[:, f * fw:(f + 1) * fw][lone] = 0
     return S, (fw // 2, fh - 1)
 
 

@@ -1,0 +1,343 @@
+{
+ "area": "karsk",
+ "note": "Exploration content of the Karsk railyard (Alexei, chapter 1), owner: karsk-explore. Optional finds never touch Story. Order = Alexei's walk from the platform spawn (west) to the freight office and the line's end (east). Hotspots: the exp_* names of TECHNICAL_ARCHITECTURE 12.2 come from scene.json (karsk-env); exp_wreck, exp_family and exp_flatcar from assets/environments/karsk_railyard/explore_hotspots.json; nodes in scenes/levels/L_A1_Railyard.tscn. Strings: data/locale/de_explore_karsk.json. Close-ups: tools/pixelgen/explore_karsk.py (insignia: neutral file + _hist). History cards are referenced by id only (12.3); in-world text stays inside the 1964 fiction.",
+ "entries": [
+  {
+   "id": "karsk.wreck",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.wreck.title",
+   "text_key": "explore.karsk.wreck.text",
+   "prompt_key": "explore.karsk.wreck.prompt"
+  },
+  {
+   "id": "karsk.barrack",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.barrack.title",
+   "text_key": "explore.karsk.barrack.text",
+   "prompt_key": "explore.karsk.barrack.prompt",
+   "image": "res://assets/explore/karsk/barrack.png",
+   "history": [
+    "hist.soviet.gulag"
+   ]
+  },
+  {
+   "id": "karsk.vendor",
+   "kind": "chat",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.vendor.title",
+   "text_key": "explore.karsk.vendor.text",
+   "prompt_key": "explore.karsk.vendor.prompt",
+   "lines": [
+    {
+     "speaker": "vendor",
+     "key": "explore.karsk.vendor.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.vendor.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "vendor",
+     "key": "explore.karsk.vendor.l3",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.vendor.l4",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "vendor",
+     "key": "explore.karsk.vendor.l5",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.vendor.l6",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "vendor",
+     "key": "explore.karsk.vendor.l7",
+     "expr": "neutral"
+    }
+   ]
+  },
+  {
+   "id": "karsk.cat",
+   "kind": "easter_egg",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.cat.title",
+   "text_key": "explore.karsk.cat.text",
+   "prompt_key": "explore.karsk.cat.prompt",
+   "image": "res://assets/explore/karsk/cat.png"
+  },
+  {
+   "id": "karsk.family",
+   "kind": "chat",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.family.title",
+   "text_key": "explore.karsk.family.text",
+   "prompt_key": "explore.karsk.family.prompt",
+   "lines": [
+    {
+     "speaker": "babushka",
+     "key": "explore.karsk.family.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.family.l2",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "babushka",
+     "key": "explore.karsk.family.l3",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "babushka",
+     "key": "explore.karsk.family.l4",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.family.l5",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "babushka",
+     "key": "explore.karsk.family.l6",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.family.l7",
+     "expr": "determined"
+    },
+    {
+     "speaker": "babushka",
+     "key": "explore.karsk.family.l8",
+     "expr": "concerned"
+    }
+   ]
+  },
+  {
+   "id": "karsk.stairs_under",
+   "kind": "easter_egg",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.stairs_under.title",
+   "text_key": "explore.karsk.stairs_under.text",
+   "prompt_key": "explore.karsk.stairs_under.prompt",
+   "image": "res://assets/explore/karsk/stairs_under.png"
+  },
+  {
+   "id": "karsk.loudspeaker",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.loudspeaker.title",
+   "text_key": "explore.karsk.loudspeaker.text",
+   "prompt_key": "explore.karsk.loudspeaker.prompt",
+   "image": "res://assets/explore/karsk/loudspeaker.png"
+  },
+  {
+   "id": "karsk.newspaper",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.newspaper.title",
+   "text_key": "explore.karsk.newspaper.text",
+   "prompt_key": "explore.karsk.newspaper.prompt",
+   "image": "res://assets/explore/karsk/newspaper.png",
+   "history": [
+    "hist.soviet.katyn"
+   ]
+  },
+  {
+   "id": "karsk.cooling_towers",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.cooling_towers.title",
+   "text_key": "explore.karsk.cooling_towers.text",
+   "prompt_key": "explore.karsk.cooling_towers.prompt",
+   "image": "res://assets/explore/karsk/cooling_towers.png",
+   "history": [
+    "hist.soviet.kyshtym"
+   ]
+  },
+  {
+   "id": "karsk.wagon_chalk",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.wagon_chalk.title",
+   "text_key": "explore.karsk.wagon_chalk.text",
+   "prompt_key": "explore.karsk.wagon_chalk.prompt",
+   "image": "res://assets/explore/karsk/wagon_chalk.png",
+   "history": [
+    "hist.soviet.deportations"
+   ]
+  },
+  {
+   "id": "karsk.workers",
+   "kind": "chat",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.workers.title",
+   "text_key": "explore.karsk.workers.text",
+   "prompt_key": "explore.karsk.workers.prompt",
+   "history": [
+    "hist.soviet.novocherkassk"
+   ],
+   "lines": [
+    {
+     "speaker": "worker_a",
+     "key": "explore.karsk.workers.l1",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.workers.l2",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "worker_a",
+     "key": "explore.karsk.workers.l3",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.workers.l4",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "worker_a",
+     "key": "explore.karsk.workers.l5",
+     "expr": "concerned"
+    },
+    {
+     "speaker": "worker_a",
+     "key": "explore.karsk.workers.l6",
+     "expr": "neutral"
+    },
+    {
+     "speaker": "alexei",
+     "key": "explore.karsk.workers.l7",
+     "expr": "determined"
+    },
+    {
+     "speaker": "worker_a",
+     "key": "explore.karsk.workers.l8",
+     "expr": "concerned"
+    }
+   ]
+  },
+  {
+   "id": "karsk.grain",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.grain.title",
+   "text_key": "explore.karsk.grain.text",
+   "prompt_key": "explore.karsk.grain.prompt",
+   "image": "res://assets/explore/karsk/grain.png",
+   "history": [
+    "hist.soviet.holodomor"
+   ]
+  },
+  {
+   "id": "karsk.snowman",
+   "kind": "easter_egg",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.snowman.title",
+   "text_key": "explore.karsk.snowman.text",
+   "prompt_key": "explore.karsk.snowman.prompt",
+   "image": "res://assets/explore/karsk/snowman.png"
+  },
+  {
+   "id": "karsk.banner",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.banner.title",
+   "text_key": "explore.karsk.banner.text",
+   "prompt_key": "explore.karsk.banner.prompt",
+   "image": "res://assets/explore/karsk/banner.png",
+   "history": [
+    "hist.soviet.great_terror"
+   ]
+  },
+  {
+   "id": "karsk.crows",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.crows.title",
+   "text_key": "explore.karsk.crows.text",
+   "prompt_key": "explore.karsk.crows.prompt",
+   "image": "res://assets/explore/karsk/crows.png"
+  },
+  {
+   "id": "karsk.stash",
+   "kind": "secret",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.stash.title",
+   "text_key": "explore.karsk.stash.text",
+   "prompt_key": "explore.karsk.stash.prompt",
+   "image": "res://assets/explore/karsk/stash.png"
+  },
+  {
+   "id": "karsk.kontora_shelf",
+   "kind": "secret",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.kontora_shelf.title",
+   "text_key": "explore.karsk.kontora_shelf.text",
+   "prompt_key": "explore.karsk.kontora_shelf.prompt",
+   "image": "res://assets/explore/karsk/kontora_shelf.png",
+   "history": [
+    "hist.soviet.secret_protocol"
+   ]
+  },
+  {
+   "id": "karsk.mitten",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.mitten.title",
+   "text_key": "explore.karsk.mitten.text",
+   "prompt_key": "explore.karsk.mitten.prompt",
+   "image": "res://assets/explore/karsk/mitten.png"
+  },
+  {
+   "id": "karsk.flatcar",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.flatcar.title",
+   "text_key": "explore.karsk.flatcar.text",
+   "prompt_key": "explore.karsk.flatcar.prompt"
+  },
+  {
+   "id": "karsk.distant_train",
+   "kind": "secret",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.distant_train.title",
+   "text_key": "explore.karsk.distant_train.text",
+   "prompt_key": "explore.karsk.distant_train.prompt"
+  },
+  {
+   "id": "karsk.shunting",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.shunting.title",
+   "text_key": "explore.karsk.shunting.text",
+   "prompt_key": "explore.karsk.shunting.prompt",
+   "minigame": "res://scenes/ui/minigames/Shunting.tscn"
+  },
+  {
+   "id": "karsk.chess",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.chess.title",
+   "text_key": "explore.karsk.chess.text",
+   "prompt_key": "explore.karsk.chess.prompt",
+   "minigame": "res://scenes/ui/minigames/ChessProblem.tscn"
+  }
+ ]
+}

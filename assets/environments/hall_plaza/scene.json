@@ -1,0 +1,1090 @@
+{
+ "id": "hall_plaza",
+ "palette": "berlin",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "canvas_modulate": "#BAB8C8",
+ "layers": [
+  {
+   "name": "sky",
+   "file": "sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.12,
+    0.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "hall",
+   "file": "hall.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.12,
+    0.0
+   ],
+   "z": -90,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.6
+  },
+  {
+   "name": "far_plaza",
+   "file": "far_plaza.png",
+   "pos": [
+    0,
+    96
+   ],
+   "parallax": [
+    0.45,
+    0.0
+   ],
+   "z": -80,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.6
+  },
+  {
+   "name": "ground",
+   "file": "ground.png",
+   "pos": [
+    0,
+    182
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -16,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.3
+  },
+  {
+   "name": "plaza_mid",
+   "file": "plaza_mid.png",
+   "pos": [
+    0,
+    104
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -14,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.7
+  },
+  {
+   "name": "street_back",
+   "file": "street_back.png",
+   "pos": [
+    0,
+    90
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -13,
+   "normal": true,
+   "emission": true,
+   "lit": true,
+   "emission_strength": 0.45
+  },
+  {
+   "name": "fg_frame",
+   "file": "fg_frame.png",
+   "pos": [
+    0,
+    320
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "decals": [
+  {
+   "name": "window_life",
+   "file": "props/window_life.png",
+   "pos": [
+    238,
+    184
+   ],
+   "layer": "street_back",
+   "frames": 8,
+   "fps": 1.2,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": true
+  },
+  {
+   "name": "notice_door",
+   "file": "props/notice_door.png",
+   "pos": [
+    326,
+    227
+   ],
+   "layer": "street_back",
+   "lit": true
+  },
+  {
+   "name": "banner_near",
+   "file": "props/banner_near.png",
+   "pos": [
+    1119,
+    104
+   ],
+   "layer": "playfield",
+   "base_y": 271,
+   "frames": 6,
+   "fps": 4,
+   "lit": true
+  },
+  {
+   "name": "crowd_1",
+   "file": "props/crowd_1.png",
+   "pos": [
+    548,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  },
+  {
+   "name": "crowd_2",
+   "file": "props/crowd_2.png",
+   "pos": [
+    718,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  },
+  {
+   "name": "crowd_3",
+   "file": "props/crowd_3.png",
+   "pos": [
+    818,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  },
+  {
+   "name": "crowd_4",
+   "file": "props/crowd_4.png",
+   "pos": [
+    936,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  },
+  {
+   "name": "crowd_5",
+   "file": "props/crowd_5.png",
+   "pos": [
+    1150,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  },
+  {
+   "name": "crowd_6",
+   "file": "props/crowd_6.png",
+   "pos": [
+    1318,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  },
+  {
+   "name": "crowd_7",
+   "file": "props/crowd_7.png",
+   "pos": [
+    1440,
+    215
+   ],
+   "layer": "playfield",
+   "base_y": 266,
+   "frames": 4,
+   "fps": 2,
+   "lit": true
+  }
+ ],
+ "props": [
+  {
+   "name": "lamp_post",
+   "file": "props/lamp_post.png",
+   "pos": [
+    52,
+    226
+   ],
+   "base_y": 319,
+   "normal": true,
+   "emission": true,
+   "collision": [
+    [
+     54,
+     315
+    ],
+    [
+     62,
+     315
+    ],
+    [
+     62,
+     320
+    ],
+    [
+     54,
+     320
+    ]
+   ]
+  },
+  {
+   "name": "lamp_post_2",
+   "file": "props/lamp_post.png",
+   "pos": [
+    1612,
+    226
+   ],
+   "base_y": 319,
+   "normal": true,
+   "emission": true,
+   "collision": [
+    [
+     1614,
+     315
+    ],
+    [
+     1622,
+     315
+    ],
+    [
+     1622,
+     320
+    ],
+    [
+     1614,
+     320
+    ]
+   ]
+  },
+  {
+   "name": "tram_stop",
+   "file": "props/tram_stop.png",
+   "pos": [
+    152,
+    252
+   ],
+   "base_y": 319,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     158,
+     315
+    ],
+    [
+     162,
+     315
+    ],
+    [
+     162,
+     320
+    ],
+    [
+     158,
+     320
+    ]
+   ]
+  },
+  {
+   "name": "litfass",
+   "file": "props/litfass.png",
+   "pos": [
+    440,
+    238
+   ],
+   "base_y": 299,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     441,
+     293
+    ],
+    [
+     461,
+     293
+    ],
+    [
+     461,
+     300
+    ],
+    [
+     441,
+     300
+    ]
+   ]
+  },
+  {
+   "name": "loudspeaker",
+   "file": "props/loudspeaker.png",
+   "pos": [
+    580,
+    150
+   ],
+   "base_y": 269,
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "children",
+   "file": "props/children.png",
+   "pos": [
+    674,
+    232
+   ],
+   "base_y": 275,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     675,
+     268
+    ],
+    [
+     703,
+     268
+    ],
+    [
+     703,
+     277
+    ],
+    [
+     675,
+     277
+    ]
+   ]
+  },
+  {
+   "name": "banner_mast",
+   "file": "props/banner_mast.png",
+   "pos": [
+    1116,
+    96
+   ],
+   "base_y": 270,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     1126,
+     266
+    ],
+    [
+     1136,
+     266
+    ],
+    [
+     1136,
+     272
+    ],
+    [
+     1126,
+     272
+    ]
+   ]
+  },
+  {
+   "name": "vendor",
+   "file": "props/vendor.png",
+   "pos": [
+    1262,
+    232
+   ],
+   "base_y": 279,
+   "normal": true,
+   "emission": true,
+   "collision": [
+    [
+     1264,
+     272
+    ],
+    [
+     1302,
+     272
+    ],
+    [
+     1302,
+     280
+    ],
+    [
+     1264,
+     280
+    ]
+   ]
+  },
+  {
+   "name": "photographer",
+   "file": "props/photographer.png",
+   "pos": [
+    1408,
+    214
+   ],
+   "base_y": 277,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     1410,
+     272
+    ],
+    [
+     1430,
+     272
+    ],
+    [
+     1430,
+     278
+    ],
+    [
+     1410,
+     278
+    ]
+   ]
+  },
+  {
+   "name": "tank_parked",
+   "file": "props/tank_parked.png",
+   "pos": [
+    1556,
+    218
+   ],
+   "base_y": 251,
+   "normal": true,
+   "emission": false
+  },
+  {
+   "name": "barrel_guard",
+   "file": "props/barrel_guard.png",
+   "pos": [
+    1690,
+    222
+   ],
+   "base_y": 269,
+   "normal": true,
+   "emission": true
+  },
+  {
+   "name": "rubble_a",
+   "file": "props/rubble_a.png",
+   "pos": [
+    1726,
+    258
+   ],
+   "base_y": 287,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     1730,
+     280
+    ],
+    [
+     1786,
+     280
+    ],
+    [
+     1786,
+     288
+    ],
+    [
+     1730,
+     288
+    ]
+   ]
+  },
+  {
+   "name": "rubble_b",
+   "file": "props/rubble_b.png",
+   "pos": [
+    1836,
+    264
+   ],
+   "base_y": 287,
+   "normal": true,
+   "emission": false,
+   "collision": [
+    [
+     1840,
+     282
+    ],
+    [
+     1884,
+     282
+    ],
+    [
+     1884,
+     288
+    ],
+    [
+     1840,
+     288
+    ]
+   ]
+  }
+ ],
+ "walkable": [
+  [
+   0,
+   276
+  ],
+  [
+   540,
+   276
+  ],
+  [
+   552,
+   270
+  ],
+  [
+   1920,
+   270
+  ],
+  [
+   1920,
+   352
+  ],
+  [
+   0,
+   352
+  ]
+ ],
+ "spawns": {
+  "SP_Plaza_Start": [
+   64,
+   300
+  ]
+ },
+ "hotspots": {
+  "exit_archive": [
+   16,
+   300
+  ],
+  "exp_pz_tram_stop": [
+   174,
+   306
+  ],
+  "exp_pz_window": [
+   244,
+   286
+  ],
+  "exp_pz_family_door": [
+   332,
+   286
+  ],
+  "exp_pz_poster": [
+   452,
+   312
+  ],
+  "exp_pz_loudspeaker": [
+   604,
+   288
+  ],
+  "exp_pz_children": [
+   690,
+   294
+  ],
+  "exp_pz_guard": [
+   800,
+   282
+  ],
+  "exp_pz_barrier": [
+   912,
+   282
+  ],
+  "exp_pz_tribune": [
+   1000,
+   290
+  ],
+  "exp_pz_banner": [
+   1132,
+   290
+  ],
+  "exp_pz_vendor": [
+   1284,
+   296
+  ],
+  "exp_pz_photographer": [
+   1420,
+   292
+  ],
+  "exp_pz_tank": [
+   1598,
+   284
+  ],
+  "exp_pz_rubble": [
+   1760,
+   302
+  ]
+ },
+ "hotspot_info": {
+  "exit_archive": {
+   "mark": [
+    18,
+    228
+   ],
+   "what": "mouth of the side street back to the archive (lamp, far lit windows)"
+  },
+  "exp_pz_tram_stop": {
+   "mark": [
+    160,
+    250
+   ],
+   "what": "tram stop sign 'H' with timetable case, pasted-over strip (traffic suspended)"
+  },
+  "exp_pz_window": {
+   "mark": [
+    244,
+    180
+   ],
+   "what": "lit window above the sealed flat: a woman behind the lace curtain leans to look down (decal window_life)"
+  },
+  "exp_pz_family_door": {
+   "mark": [
+    332,
+    214
+   ],
+   "what": "sealed front door of the evicted family: crossed boards, paper seal strip with red wax, official notice (decal notice_door, stamp = insignia site)"
+  },
+  "exp_pz_poster": {
+   "mark": [
+    451,
+    234
+   ],
+   "what": "advertising column: state poster (eagle / Reichssiegel), ration notice, torn posters"
+  },
+  "exp_pz_loudspeaker": {
+   "mark": [
+    600,
+    148
+   ],
+   "what": "loudspeaker pole with three horns over the crowd, junction box, cables"
+  },
+  "exp_pz_children": {
+   "mark": [
+    690,
+    230
+   ],
+   "what": "two children on a crate behind the crowd, one with a limp paper flag (insignia site)"
+  },
+  "exp_pz_guard": {
+   "mark": [
+    796,
+    186
+   ],
+   "what": "guard behind the barrier facing the crowd, helmet shadow over the eyes, rifle at order arms"
+  },
+  "exp_pz_barrier": {
+   "mark": [
+    912,
+    220
+   ],
+   "what": "striped trestle barrier with a small white sign board"
+  },
+  "exp_pz_tribune": {
+   "mark": {
+    "mark": [
+     626,
+     146
+    ],
+    "layer": "far_plaza"
+   },
+   "layer": "far_plaza",
+   "what": "tribune before the hall: banners, a row of officials, a speaker at the lectern, floodlights; the Great Hall and the portico eagle above (layer hall)"
+  },
+  "exp_pz_banner": {
+   "mark": [
+    1131,
+    100
+   ],
+   "what": "tall mast with a long state banner (decal banner_near, insignia site)"
+  },
+  "exp_pz_vendor": {
+   "mark": [
+    1286,
+    228
+   ],
+   "what": "chestnut vendor's handcart with a glowing brazier, old man warming his hands (warm focal light)"
+  },
+  "exp_pz_photographer": {
+   "mark": [
+    1420,
+    210
+   ],
+   "what": "press photographer on a stepladder with flash reflector (actor PlazaFlash fires every 8-14 s)"
+  },
+  "exp_pz_tank": {
+   "mark": [
+    1598,
+    214
+   ],
+   "what": "parked tank in the cleared lot, snow on the hull; crewman at a fire barrel"
+  },
+  "exp_pz_rubble": {
+   "mark": [
+    1760,
+    254
+   ],
+   "what": "rubble of the cleared block; the remaining fire wall shows the ghost of stairs, floors and wallpaper"
+  }
+ },
+ "lights": [
+  {
+   "id": "lamp_archive_street",
+   "pos": [
+    58,
+    238
+   ],
+   "color": "#F4BA81",
+   "energy": 1.0,
+   "radius": 120,
+   "flicker": 0.03,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "lamp_lot",
+   "pos": [
+    1618,
+    238
+   ],
+   "color": "#F4BA81",
+   "energy": 0.7,
+   "radius": 100,
+   "flicker": 0.03,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "window_neighbours",
+   "pos": [
+    244,
+    196
+   ],
+   "color": "#F0AE6E",
+   "energy": 0.6,
+   "radius": 56,
+   "flicker": 0.02,
+   "height": 20,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "vendor_brazier",
+   "pos": [
+    1276,
+    244
+   ],
+   "color": "#F0AE6E",
+   "energy": 1.3,
+   "radius": 104,
+   "flicker": 0.18,
+   "height": 18,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "lot_fire_barrel",
+   "pos": [
+    1698,
+    250
+   ],
+   "color": "#E5945A",
+   "energy": 1.1,
+   "radius": 92,
+   "flicker": 0.2,
+   "height": 18,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "flood_1",
+   "pos": [
+    700,
+    118
+   ],
+   "color": "#A3ACB4",
+   "energy": 0.85,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "flood_2",
+   "pos": [
+    1000,
+    118
+   ],
+   "color": "#A3ACB4",
+   "energy": 0.85,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "flood_3",
+   "pos": [
+    1310,
+    118
+   ],
+   "color": "#A3ACB4",
+   "energy": 0.85,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield"
+  },
+  {
+   "id": "tribune_floods",
+   "pos": [
+    626,
+    146
+   ],
+   "color": "#D2CCCB",
+   "energy": 0.8,
+   "radius": 110,
+   "flicker": 0.0,
+   "height": 30,
+   "on_layer": "far_plaza"
+  }
+ ],
+ "fx": [
+  {
+   "type": "snow",
+   "density": 0.6,
+   "wind": 7.0,
+   "color_far": "#8F8A92",
+   "color_near": "#D2CCCB"
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/beams.png",
+   "frames": 12,
+   "fps": 3,
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.12,
+    0.0
+   ],
+   "z": -95,
+   "alpha": 0.5
+  },
+  {
+   "type": "fog_band",
+   "y": 180,
+   "height": 40,
+   "color": "#6E6A73",
+   "alpha": 0.32,
+   "parallax": 0.3,
+   "z": -85,
+   "seed": 5
+  },
+  {
+   "type": "fog_band",
+   "y": 198,
+   "height": 22,
+   "color": "#8F8A92",
+   "alpha": 0.2,
+   "parallax": 0.7,
+   "z": -60,
+   "seed": 6
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    94,
+    50
+   ],
+   "parallax": 1.0,
+   "z": -12
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    230,
+    50
+   ],
+   "parallax": 1.0,
+   "z": -12
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/smoke.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    414,
+    50
+   ],
+   "parallax": 1.0,
+   "z": -12
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/steam.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    1284,
+    230
+   ],
+   "parallax": 1.0,
+   "z": 1
+  },
+  {
+   "type": "anim_sprite",
+   "file": "fx/exhaust.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    1546,
+    212
+   ],
+   "parallax": 1.0,
+   "z": 1
+  }
+ ],
+ "actors": [
+  {
+   "scene": "res://scenes/levels/plaza/PlazaParade.tscn",
+   "pos": [
+    0,
+    0
+   ],
+   "props": {
+    "z": -15,
+    "block": "res://assets/environments/hall_plaza/actors/march_block.png",
+    "standard": "res://assets/environments/hall_plaza/actors/standard.png",
+    "tank": "res://assets/environments/hall_plaza/actors/tank.png",
+    "puff": "res://assets/environments/hall_plaza/actors/exhaust_puff.png",
+    "feet_y": 220.0,
+    "speed": 20.0,
+    "span": [
+     -260.0,
+     2240.0
+    ]
+   }
+  },
+  {
+   "scene": "res://scenes/levels/plaza/PlazaFlash.tscn",
+   "pos": [
+    1428,
+    217
+   ],
+   "props": {
+    "z": 2,
+    "sprite": "res://assets/environments/hall_plaza/actors/flash.png"
+   }
+  }
+ ],
+ "notes": {
+  "generator": "tools/pixelgen/env_plaza.py (+ env_plaza_sprites.py); py -3 -P tools/pixelgen/env_plaza.py",
+  "rows": {
+   "avenue": [
+    188,
+    226
+   ],
+   "parade_feet": 220,
+   "guards_feet": 232,
+   "barrier": [
+    224,
+    240
+   ],
+   "crowd_feet": 266,
+   "walk_band": [
+    270,
+    352
+   ],
+   "pavement": [
+    271,
+    318
+   ],
+   "kerb": 318,
+   "street": [
+    322,
+    352
+   ],
+   "tram_rails": [
+    332,
+    342
+   ]
+  },
+  "axis": "hall + tribune are centred on screen when the player stands at x 1000 (exp_pz_tribune)",
+  "z_order": "sky -100 < beams -95 < hall -90 < fog -85 < far_plaza -80 < fog -60 < ground -16 < PlazaParade -15 < plaza_mid (guards, barrier) -14 < street_back -13 < smoke -12 < playfield 0 (crowd, props, player) < fg 60",
+  "insignia": "hall.png/hall_hist.png, far_plaza.png/far_plaza_hist.png, props/litfass, props/banner_near, props/children, props/notice_door, actors/standard: neutral base + _hist twin (Symbols.pick); the lantern figure is a plain eagle on the globe in both modes",
+  "hotspots": "15 hotspots inside the walk band, >= 26 px apart (oblique metric dy x 1.6), outside prop collisions; mark = where a marker may float"
+ }
+}

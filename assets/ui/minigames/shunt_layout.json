@@ -1,0 +1,103 @@
+{
+ "_doc": "Karsk shunting mini-game layout in ART px (the PNGs are stored x3). Routes run from the headshunt buffer (left) to the siding buffer stops; vehicles are placed by arc length.",
+ "size": [
+  360,
+  150
+ ],
+ "pitch": 40,
+ "routes": {
+  "1": [
+   [
+    14,
+    30
+   ],
+   [
+    296,
+    30
+   ]
+  ],
+  "2": [
+   [
+    14,
+    30
+   ],
+   [
+    140,
+    30
+   ],
+   [
+    184,
+    74
+   ],
+   [
+    306,
+    74
+   ]
+  ],
+  "3": [
+   [
+    14,
+    30
+   ],
+   [
+    140,
+    30
+   ],
+   [
+    184,
+    74
+   ],
+   [
+    200,
+    74
+   ],
+   [
+    244,
+    118
+   ],
+   [
+    346,
+    118
+   ]
+  ]
+ },
+ "levers": {
+  "1": [
+   134,
+   6
+  ],
+  "2": [
+   194,
+   50
+  ]
+ },
+ "switch_points": {
+  "1": [
+   140,
+   30
+  ],
+  "2": [
+   200,
+   74
+  ]
+ },
+ "siding_labels": {
+  "1": [
+   288,
+   11
+  ],
+  "2": [
+   298,
+   55
+  ],
+  "3": [
+   338,
+   99
+  ]
+ },
+ "buffers": {
+  "1": 296,
+  "2": 306,
+  "3": 346
+ }
+}

@@ -1,0 +1,241 @@
+{
+ "side": "soviet",
+ "cards": [
+  {
+   "id": "hist.soviet.secret_protocol",
+   "side": "soviet",
+   "title_key": "hist.soviet.secret_protocol.title",
+   "text_key": "hist.soviet.secret_protocol.text",
+   "year": "1989/1992",
+   "sources": [
+    {
+     "label": "Deutscher Bundestag, Wissenschaftliche Dienste: Der deutsch-sowjetische Nichtangriffspakt („Hitler-Stalin-Pakt“), Aktueller Begriff Nr. 22/14 (2014)",
+     "url": "https://www.bundestag.de/resource/blob/295520/c0f1b92fcd29fcc9062f675ce40b0eb1/Hitler-Stalin-Pakt.pdf"
+    },
+    {
+     "label": "bpb, Online-Ausstellung „Riss durch Europa“: Der Pakt in Dokumenten",
+     "url": "https://www.bpb.de/themen/europaeische-geschichte/onlineausstellung-riss-durch-europa/548417/der-pakt-in-dokumenten/"
+    },
+    {
+     "label": "Avalon Project, Yale Law School: Secret Additional Protocol vom 23.08.1939 (aus: Nazi-Soviet Relations 1939–1941, US Department of State 1948)",
+     "url": "https://avalon.law.yale.edu/20th_century/addsepro.asp"
+    },
+    {
+     "label": "History News Network: What We Don’t Remember About Nuremberg (Abdruck im St. Louis Post-Dispatch, 22.05.1946)",
+     "url": "https://historynewsnetwork.org/article/what-we-dont-remember-about-nuremberg-but-should"
+    },
+    {
+     "label": "Beschluss des Kongresses der Volksdeputierten der UdSSR vom 24.12.1989 (engl. Übersetzung, histdoc.net)",
+     "url": "https://histdoc.net/history/1989-12-24%20Resolution%20of%20the%20Congress%20of%20People%27s%20Deputies.html"
+    },
+    {
+     "label": "UPI, 29.10.1992: Russia releases original Molotov-Ribbentrop pacts",
+     "url": "https://www.upi.com/Archives/1992/10/29/Russia-releases-original-Molotov-Ribbentrop-pacts/1305720334800/"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.katyn",
+   "side": "soviet",
+   "title_key": "hist.soviet.katyn.title",
+   "text_key": "hist.soviet.katyn.text",
+   "year": "1990/1992",
+   "sources": [
+    {
+     "label": "Europäischer Gerichtshof für Menschenrechte (Große Kammer): Janowiec u. a. ./. Russland, Urteil vom 21.10.2013, Rn. 17–24 und 38–41",
+     "url": "https://hudoc.echr.coe.int/eng?i=001-127684"
+    },
+    {
+     "label": "Instytut Pamięci Narodowej (IPN): Decision to commence investigation into Katyn Massacre (2004)",
+     "url": "https://eng.ipn.gov.pl/en/news/77,Decision-to-commence-investigation-into-Katyn-Massacre.html"
+    },
+    {
+     "label": "UPI, 13.04.1990: Soviets admit, apologize for Katyn massacre",
+     "url": "https://www.upi.com/Archives/1990/04/13/Soviets-admit-apologize-for-Katyn-massacre/9889639979200/"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.deportations",
+   "side": "soviet",
+   "title_key": "hist.soviet.deportations.title",
+   "text_key": "hist.soviet.deportations.text",
+   "year": "1989/1991",
+   "sources": [
+    {
+     "label": "bpb, Kurz & knapp: Tag der Russlanddeutschen",
+     "url": "https://www.bpb.de/kurz-knapp/taegliche-dosis-politik/580955/tag-der-russlanddeutschen/"
+    },
+    {
+     "label": "Seventeen Moments in Soviet History (Michigan State University): Beria Report on the Deportation (Juli 1944)",
+     "url": "https://soviethistory.msu.edu/1943/deportation-of-minorities/deportation-of-minorities-texts/beria-report-on-the-deportation/"
+    },
+    {
+     "label": "J. Otto Pohl: Stalin’s genocide against the „Repressed Peoples“, Journal of Genocide Research 2/2 (2000), 267–293",
+     "url": "https://doi.org/10.1080/713677598"
+    },
+    {
+     "label": "Deklaration des Obersten Sowjets der UdSSR Nr. 772-I vom 14.11.1989 (Volltext, Wikisource, russ.)",
+     "url": "https://ru.wikisource.org/wiki/%D0%94%D0%B5%D0%BA%D0%BB%D0%B0%D1%80%D0%B0%D1%86%D0%B8%D1%8F_%D0%92%D0%A1_%D0%A1%D0%A1%D0%A1%D0%A0_%D0%BE%D1%82_14.11.1989"
+    },
+    {
+     "label": "Gesetz der RSFSR Nr. 1107-1 vom 26.04.1991 „Über die Rehabilitierung der repressierten Völker“ (Volltext, ConsultantPlus, russ.)",
+     "url": "https://www.consultant.ru/document/cons_doc_LAW_7348/"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.novocherkassk",
+   "side": "soviet",
+   "title_key": "hist.soviet.novocherkassk.title",
+   "text_key": "hist.soviet.novocherkassk.text",
+   "year": "1990/1992",
+   "sources": [
+    {
+     "label": "Meduza (2017): The Novocherkassk massacre",
+     "url": "https://meduza.io/en/feature/2017/11/23/the-novocherkassk-massacre"
+    },
+    {
+     "label": "Seventeen Moments in Soviet History (Michigan State University): Novocherkassk Massacre",
+     "url": "https://soviethistory.msu.edu/1961/novocherkassk-massacre/"
+    },
+    {
+     "label": "Pravo.ru (2013): Zum Beschluss des Obersten Sowjets über die Ereignisse in Nowotscherkassk vom Mai 1992 (russ.)",
+     "url": "https://pravo.ru/news/view/85374/"
+    },
+    {
+     "label": "Nowaja Gaseta, 04.06.2007: Hintergrund zu Nowotscherkassk 1962 (russ.)",
+     "url": "https://novayagazeta.ru/articles/2007/06/04/33233-problemu-reshili-zalpom"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.kyshtym",
+   "side": "soviet",
+   "title_key": "hist.soviet.kyshtym.title",
+   "text_key": "hist.soviet.kyshtym.text",
+   "year": "1976/1989",
+   "sources": [
+    {
+     "label": "Norwegian Radiation Protection Authority: The Kyshtym accident, 29th September 1957 (StrålevernInfo 8/2007)",
+     "url": "https://dsa.no/publikasjoner/straleverninfo-8-2007-the-kyshtym-accident-29th-september-1957/StralevernInfo_8_2007.pdf"
+    },
+    {
+     "label": "Akleyev, Krestinina, Degteva, Tolstykh: Consequences of the radiation accident at the Mayak production association in 1957, J. Radiol. Prot. 37 (2017)",
+     "url": "https://doi.org/10.1088/1361-6498/aa7f8d"
+    },
+    {
+     "label": "Seventeen Moments in Soviet History (Michigan State University): Kyshtym Explosion",
+     "url": "https://soviethistory.msu.edu/1956/kyshtym-explosion/"
+    },
+    {
+     "label": "Seventeen Moments in Soviet History: Medvedev Exposes the Kyshtym Explosion (New Scientist, 04.11.1976)",
+     "url": "https://soviethistory.msu.edu/1956/kyshtym-explosion/kyshtym-explosion-texts/medvedev-discloses-the-explosion/"
+    },
+    {
+     "label": "AP via Deseret News, 17.06.1989: USSR admits ’57 N-blast at weapons plant",
+     "url": "https://www.deseret.com/1989/6/17/18811614/ussr-admits-57-n-blast-at-weapons-plant/"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.gulag",
+   "side": "soviet",
+   "title_key": "hist.soviet.gulag.title",
+   "text_key": "hist.soviet.gulag.text",
+   "year": "1989/1993",
+   "sources": [
+    {
+     "label": "Gulag: Many Days, Many Lives (Roy Rosenzweig Center for History and New Media, George Mason University, mit Memorial)",
+     "url": "https://gulaghistory.org/exhibits/days-and-lives.html"
+    },
+    {
+     "label": "dekoder, Gnose: GULAG (Corinna Kuhr-Korolev)",
+     "url": "https://www.dekoder.org/de/gnose/gulag"
+    },
+    {
+     "label": "Platform of European Memory and Conscience: Soviet Gulag",
+     "url": "https://www.memoryandconscience.eu/europeangulag/soviet_gulag.html"
+    },
+    {
+     "label": "UPI, 11.11.1989: New figures: Nearly 1 million died in gulag (erste Archivzahlen in Argumenty i Fakty)",
+     "url": "https://www.upi.com/Archives/1989/11/11/New-figures-Nearly-1-million-died-in-gulag/9065626763600/"
+    },
+    {
+     "label": "Getty, Rittersporn, Zemskov: Victims of the Soviet Penal System in the Pre-war Years, American Historical Review 98/4 (1993)",
+     "url": "https://doi.org/10.2307/2166597"
+    },
+    {
+     "label": "Yale University Press: Golfo Alexopoulos, Illness and Inhumanity in Stalin’s Gulag (2017)",
+     "url": "https://yalebooks.yale.edu/9780300179415/illness-and-inhumanity-in-stalins-gulag"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.great_terror",
+   "side": "soviet",
+   "title_key": "hist.soviet.great_terror.title",
+   "text_key": "hist.soviet.great_terror.text",
+   "year": "1989/1992",
+   "sources": [
+    {
+     "label": "Nicolas Werth: The NKVD Mass Secret Operation n° 00447 (August 1937 – November 1938), Sciences Po – Mass Violence & Résistance (2010)",
+     "url": "https://www.sciencespo.fr/mass-violence-war-massacre-resistance/en/document/nkvd-mass-secret-operation-n-00447-august-1937-november-1938.html"
+    },
+    {
+     "label": "USC Shoah Foundation (2017): The 80th Anniversary of the NKVD Order #00447",
+     "url": "https://sfi.usc.edu/node/18091"
+    },
+    {
+     "label": "Meduza (2017): Questions about Stalin’s Great Terror (mit dem Memorial-Historiker Sergej Bondarenko)",
+     "url": "https://amp.meduza.io/en/feature/2017/08/01/questions-you-re-too-embarrassed-to-ask-about-stalin-s-great-terror"
+    },
+    {
+     "label": "R. W. Davies: Reply to Robert Conquest, New Left Review I/225 (1997)",
+     "url": "https://newleftreview.org/I/225/r-w-davies-reply-to-robert-conquest"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.holodomor",
+   "side": "soviet",
+   "title_key": "hist.soviet.holodomor.title",
+   "text_key": "hist.soviet.holodomor.text",
+   "year": "1990",
+   "sources": [
+    {
+     "label": "Deutscher Bundestag, Drucksache 20/4681: Holodomor in der Ukraine: Erinnern – Gedenken – Mahnen (2022)",
+     "url": "https://dserver.bundestag.de/btd/20/046/2004681.pdf"
+    },
+    {
+     "label": "bpb: Holodomor (Reihe „Was Sie über die Ukraine wissen sollten“)",
+     "url": "https://www.bpb.de/mediathek/reihen/was-sie-ueber-die-ukraine-wissen-sollten/523333/holodomor/"
+    },
+    {
+     "label": "Rudnytskyi, Levchuk, Wolowyna, Shevchuk, Kovbasiuk: Demography of a man-made human catastrophe, Canadian Studies in Population 42 (2015), 53–80",
+     "url": "https://shevchenko.org/research-publications/publications/demography-of-a-man-made-human-catastrophe-the-case-of-massive-famine-in-ukraine-1932-1933/"
+    },
+    {
+     "label": "Nicolas Werth: The Great Ukrainian Famine of 1932–33, Sciences Po – Mass Violence & Résistance",
+     "url": "https://www.sciencespo.fr/mass-violence-war-massacre-resistance/en/document/great-ukrainian-famine-1932-33.html"
+    },
+    {
+     "label": "Wilson Center: Sarah Cameron, The Hungry Steppe (Cornell University Press, 2018)",
+     "url": "https://wilsoncenter.org/book/the-hungry-steppe-famine-violence-and-the-making-soviet-kazakhstan"
+    },
+    {
+     "label": "Deutscher Bundestag, Textarchiv 2022 (KW 48): Holodomor",
+     "url": "https://www.bundestag.de/dokumente/textarchiv/2022/kw48-de-holodomor-923060"
+    },
+    {
+     "label": "Europäisches Parlament, Legislative Observatory: Entschließung „90 years after the Holodomor“ (15.12.2022)",
+     "url": "https://oeil.europarl.europa.eu/oeil/en/document-summary?id=1728089"
+    },
+    {
+     "label": "Contemporary European History 27/3 (2018): Roundtable on Soviet Famines",
+     "url": "https://doi.org/10.1017/S0960777318000279"
+    }
+   ]
+  }
+ ]
+}

@@ -1,9 +1,10 @@
 extends "res://scripts/ui/ui_modal.gd"
 ## Settings: every key of scripts/core/settings.gd — fullscreen, vsync, pixel_post, the five volumes,
 ## text_scale (100/125/150 %, applied live), subtitles, dialogue_speed, high_contrast, reduced_motion,
-## puzzle_hints — plus key rebinding for the main actions (Settings.rebind). Values are written through
-## Settings.set_value (persisted by Settings). Left/right change the focused value; a line at the bottom
-## explains the focused option.
+## puzzle_hints, historical_symbols (§12.4: real regime insignia in the critical in-world depiction, off =
+## fictional emblems, applied at the next scene load) — plus key rebinding for the main actions
+## (Settings.rebind). Values are written through Settings.set_value (persisted by Settings). Left/right change
+## the focused value; a line at the bottom explains the focused option.
 
 const TABS := ["display", "audio", "access", "controls"]
 const BIND_ACTIONS := ["move_left", "move_right", "move_up", "move_down", "run", "interact", "advance", "journal"]
@@ -143,6 +144,8 @@ func show_tab(id: String) -> void:
 			_toggle_row("fullscreen")
 			_toggle_row("vsync")
 			_slider_row("pixel_post")
+			_section("ui.settings.section.content")
+			_toggle_row("historical_symbols", true)
 		"audio":
 			for k in ["master_volume", "music_volume", "ambience_volume", "sfx_volume", "ui_volume"]:
 				_slider_row(k)
@@ -189,10 +192,18 @@ func _hook_desc(c: Control, desc_key: String) -> void:
 	c.mouse_entered.connect(func(): _desc.text = Kit.t(desc_key))
 
 
-func _toggle_row(key: String) -> void:
+## Small kicker that separates groups of options inside a tab.
+func _section(key: String) -> void:
+	var m := Kit.margin(0, 22, 0, 4)
+	var l := Kit.label(Kit.t(key).to_upper(), "KickerLabel")
+	m.add_child(l)
+	_rows_box.add_child(m)
+
+
+func _toggle_row(key: String, fallback := false) -> void:
 	var h := _row("ui.settings." + key, "ui.settings.desc." + key)
 	var cb := CheckBox.new()
-	cb.button_pressed = bool(Kit.setting(key, false))
+	cb.button_pressed = bool(Kit.setting(key, fallback))
 	cb.text = Kit.t("ui.common.on") if cb.button_pressed else Kit.t("ui.common.off")
 	cb.focus_mode = Control.FOCUS_ALL
 	cb.size_flags_vertical = Control.SIZE_SHRINK_CENTER
