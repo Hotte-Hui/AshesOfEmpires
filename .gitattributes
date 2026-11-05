@@ -1,0 +1,16 @@
+# Keep LF in the working tree on every platform: tests hash data files and parse .tscn lines,
+# and the cloud sessions (Linux) and this PC must see byte-identical text.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.png binary
+*.jpg binary
+*.wav binary
+*.ogg binary
+*.ttf binary
+*.otf binary
+*.ico binary
+*.gz binary
+*.exe binary
+*.pck binary
+*.zip binary
