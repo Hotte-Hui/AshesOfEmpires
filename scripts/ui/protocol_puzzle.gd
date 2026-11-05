@@ -185,11 +185,11 @@ func _ready() -> void:
 		s.changed.connect(_on_setting_changed)
 
 
-## Default: the four actions sit in a 2x2 grid under the notes column. With enlarged text (> 125 %) the
-## notes need the whole column (wrong-answer note + hint), so the actions move into the footer row.
-## Called on open() and again whenever Settings "text_scale" changes (UIRoot rescales the labels).
+## Default (100 %): the four actions sit in a 2x2 grid under the notes column. With enlarged text (125 %
+## and 150 %) the notes need the whole column (wrong-answer note + hint), so the actions move into the
+## footer row. Called on open() and again whenever Settings "text_scale" changes (UIRoot rescales the labels).
 func _apply_layout() -> void:
-	var wide := Kit.text_scale() > 1.3
+	var wide := Kit.text_scale() > 1.1
 	var target: Control = _footer if wide else _col_b
 	if _actions.get_parent() != target:
 		_actions.get_parent().remove_child(_actions)

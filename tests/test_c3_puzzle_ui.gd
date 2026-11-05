@@ -323,8 +323,9 @@ func _correct() -> bool:
 	return true
 
 
-## 100 % / 125 %: the four actions sit in a 2x2 grid under the notes; 150 %: the notes need the whole
-## column, the actions move into the footer row. Live when Settings emits `changed`, and again on open().
+## 100 %: the four actions sit in a 2x2 grid under the notes; 125 % / 150 %: the notes need the whole
+## column (wrong note + hint), the actions move into the footer row. Live when Settings emits `changed`,
+## and again on open().
 func _layout() -> bool:
 	var g := _story(true)
 	var pz := _make(g)
@@ -335,9 +336,10 @@ func _layout() -> bool:
 	kit.ok(pz._actions.get_parent() == pz._footer and pz._actions.columns == 4, "150 % (live): actions in the footer row")
 	for b in [pz._undo_btn, pz._reset_btn, pz._check_btn, pz._close_btn]:
 		kit.ok(b.get_parent() == pz._actions and b.custom_minimum_size.x > 0, "button keeps a fixed width in the footer")
+	s.set_value("text_scale", 1.0)
+	kit.ok(pz._actions.get_parent() == pz._col_b and pz._actions.columns == 2, "back at 100 %: grid under the notes")
 	s.set_value("text_scale", 1.25)
-	kit.ok(pz._actions.get_parent() == pz._col_b and pz._actions.columns == 2, "125 %: grid under the notes")
-	s.set_value("text_scale", 1.5)
+	kit.ok(pz._actions.get_parent() == pz._footer and pz._actions.columns == 4, "125 %: the hint needs the column, actions in the footer")
 	pz.close()
 	s.values["text_scale"] = 1.0              # changed silently (e.g. settings loaded from disk)
 	pz.open(OBJ)

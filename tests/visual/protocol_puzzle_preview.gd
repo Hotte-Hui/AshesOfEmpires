@@ -189,11 +189,11 @@ func _run() -> void:
 		await key(KEY_ENTER)
 		await wait(0.4)
 		check(pz.hint_shown(), "hint shown at 125 %")
-		check(pz._actions.get_parent() == pz._col_b, "125 %: actions stay under the notes")
+		check(pz._actions.get_parent() == pz._footer, "125 %: actions move into the footer row (the hint needs the column)")
 		await shot("protocol_text125")
 		_set_setting(s, "text_scale", 1.5)              # live, while open: UIRoot rescales, the puzzle re-lays out
 		await wait(0.4)
-		check(pz._actions.get_parent() == pz._footer, "150 %: actions move into the footer row")
+		check(pz._actions.get_parent() == pz._footer, "150 %: actions stay in the footer row")
 		await shot("protocol_text150")
 		_set_setting(s, "text_scale", 1.0)
 		check(pz._actions.get_parent() == pz._col_b, "100 %: actions back under the notes")
