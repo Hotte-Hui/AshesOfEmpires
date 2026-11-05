@@ -20,13 +20,16 @@ const DISPLAY := ["soviet", "secretariat", "chair", "reich"]
 
 
 class MockSettings extends Node:
+	signal changed(key: String, value)
 	var values := {"puzzle_hints": 1, "reduced_motion": true, "text_scale": 1.0, "high_contrast": false}
 
 	func get_value(key: String):
 		return values.get(key)
 
+	## Like the real Settings: stores, then emits `changed` (UIRoot rescales labels, the puzzle re-lays out).
 	func set_value(key: String, v) -> void:
 		values[key] = v
+		changed.emit(key, v)
 
 
 class MockAudio extends Node:
@@ -70,6 +73,7 @@ func run() -> Array:
 	kit.run_case("hint_follows_settings_and_attempts", _hints)
 	kit.run_case("keys_use_the_original_tray_order", _keys)
 	kit.run_case("correct_order_solves_once", _correct)
+	kit.run_case("layout_follows_the_text_scale", _layout)
 	kit.run_case("escape_closes", _escape)
 	kit.run_case("locked_without_clues_shows_engine_error", _locked)
 	kit.run_case("refused_or_missing_story_never_breaks", _refused)
@@ -308,12 +312,37 @@ func _correct() -> bool:
 	kit.ok(not pz.place("soviet") and not pz.undo() and not pz.reset_order(), "board locked after success")
 	kit.eq(count[0], 1, "still exactly one solved signal")
 	kit.ok(pz.modal_input(key_event(KEY_ENTER)) and pz.is_open, "Enter right after success is swallowed (guard)")
+	var beat: float = pz.success_beat()
+	kit.ok(beat >= 3.0 and beat <= 6.0, "auto-close beat %.2f s: a reading pause, but inside the 8 s the input driver waits" % beat)
 	pz._solved_at -= 1000
 	kit.ok(pz.modal_input(key_event(KEY_ENTER)), "Enter after the guard confirms")
 	kit.ok(not pz.is_open and not pz.visible, "closed on confirm")
 	kit.eq(closed[0], 1, "closed emitted once")
 	pz.open(OBJ)
 	kit.ok(not pz.is_done() and pz.slots == ["", "", "", ""], "reopening starts clean")
+	return true
+
+
+## 100 % / 125 %: the four actions sit in a 2x2 grid under the notes; 150 %: the notes need the whole
+## column, the actions move into the footer row. Live when Settings emits `changed`, and again on open().
+func _layout() -> bool:
+	var g := _story(true)
+	var pz := _make(g)
+	pz.open(OBJ)
+	kit.ok(pz._actions.get_parent() == pz._col_b and pz._actions.columns == 2, "100 %: 2x2 grid under the notes")
+	var s = UIKit.overrides["Settings"]
+	s.set_value("text_scale", 1.5)
+	kit.ok(pz._actions.get_parent() == pz._footer and pz._actions.columns == 4, "150 % (live): actions in the footer row")
+	for b in [pz._undo_btn, pz._reset_btn, pz._check_btn, pz._close_btn]:
+		kit.ok(b.get_parent() == pz._actions and b.custom_minimum_size.x > 0, "button keeps a fixed width in the footer")
+	s.set_value("text_scale", 1.25)
+	kit.ok(pz._actions.get_parent() == pz._col_b and pz._actions.columns == 2, "125 %: grid under the notes")
+	s.set_value("text_scale", 1.5)
+	pz.close()
+	s.values["text_scale"] = 1.0              # changed silently (e.g. settings loaded from disk)
+	pz.open(OBJ)
+	kit.ok(pz._actions.get_parent() == pz._col_b and pz._actions.columns == 2, "open() re-applies the layout")
+	kit.ok(pz.is_open and pz.slots == ["", "", "", ""], "the board itself is untouched by the re-layout")
 	return true
 
 

@@ -3,8 +3,9 @@ extends Control
 ## UI theme at 1920x1080. Instances scenes/ui/UIRoot.tscn, adds the puzzle under it exactly like
 ## ChapterExt.puzzle_ui does (before the toast layer, `ui_root` set), drives the REAL Story autoload to
 ## c3b_solve_protocol through the public API, plays the puzzle with synthetic key presses that travel through
-## UIRoot's modal routing (1-4, Backspace, R, Enter, Esc), saves screenshots and finally opens both inspect
-## documents through the real InspectView.
+## UIRoot's modal routing (1-4, Backspace, R, Enter, Esc), switches text scale (125 % / 150 %) and high
+## contrast live through Settings.changed, checks that the solved modal closes by itself without a confirm,
+## saves screenshots and finally opens both inspect documents through the real InspectView.
 ##   xvfb-run -a -s "-screen 0 1920x1080x24" godot --path . --rendering-method gl_compatibility \
 ##       --rendering-driver opengl3 res://tests/visual/ProtocolPuzzlePreview.tscn -- --out=/abs/dir [--bg=/abs/world.png]
 ## --bg: a 640x360 world capture (e.g. --capture-world of a level) shown x3 behind the UI. With --headless
@@ -95,6 +96,13 @@ func key(code: int) -> void:
 	await frames(2)
 
 
+## Changes a setting in memory and emits Settings.changed exactly like the settings menu does — never saved.
+func _set_setting(s: Node, key: String, value) -> void:
+	s.values[key] = value
+	if s.has_signal("changed"):
+		s.changed.emit(key, value)
+
+
 func shot(name: String) -> void:
 	shots += 1
 	if headless or out_dir == "":
@@ -167,13 +175,12 @@ func _run() -> void:
 	await key(KEY_ENTER)
 	await frames(3)
 	check(not pz.is_open and ui.top_modal() == null and not get_tree().paused, "confirm closes after success")
-	# ---------------------------------------------------------------- 150 % text + high contrast (fresh state)
+	# ---------------------------------------------------------------- 125 % / 150 % text + high contrast (fresh state)
 	var r = st.load_json(before)
 	check(Kit.ok(r), "state reloaded before the solve")
 	var s := Kit.svc("Settings")
 	if s != null and "values" in s:
-		s.values["text_scale"] = 1.5
-		Kit.refresh_text_scale()
+		_set_setting(s, "text_scale", 1.25)
 		pz.open(OBJ)
 		await wait(0.4)
 		for k in [KEY_1, KEY_2, KEY_3, KEY_4]:
@@ -181,16 +188,19 @@ func _run() -> void:
 		await key(KEY_ENTER)
 		await key(KEY_ENTER)
 		await wait(0.4)
-		check(pz.hint_shown(), "hint shown at 150 %")
+		check(pz.hint_shown(), "hint shown at 125 %")
+		check(pz._actions.get_parent() == pz._col_b, "125 %: actions stay under the notes")
+		await shot("protocol_text125")
+		_set_setting(s, "text_scale", 1.5)              # live, while open: UIRoot rescales, the puzzle re-lays out
+		await wait(0.4)
+		check(pz._actions.get_parent() == pz._footer, "150 %: actions move into the footer row")
 		await shot("protocol_text150")
-		s.values["text_scale"] = 1.0
-		Kit.refresh_text_scale()
-		s.values["high_contrast"] = true
-		ui._apply_theme()
+		_set_setting(s, "text_scale", 1.0)
+		check(pz._actions.get_parent() == pz._col_b, "100 %: actions back under the notes")
+		_set_setting(s, "high_contrast", true)
 		await wait(0.3)
 		await shot("protocol_high_contrast")
-		s.values["high_contrast"] = false
-		ui._apply_theme()
+		_set_setting(s, "high_contrast", false)
 		s.values["puzzle_hints"] = 0
 		pz._refresh()
 		check(not pz.hint_shown(), "puzzle_hints = 0 hides the hint")
@@ -199,6 +209,19 @@ func _run() -> void:
 		await frames(3)
 		check(not pz.is_open and ui.top_modal() == null, "Esc closes the puzzle through UIRoot")
 		check(st.objective_state(OBJ) == "available", "closing without solving keeps the objective open")
+	# ---------------------------------------------------------------- solved without a confirm: closes by itself
+	pz.open(OBJ)
+	await wait(0.3)
+	for k in [KEY_3, KEY_4, KEY_2, KEY_1]:
+		await key(k)
+	await key(KEY_ENTER)
+	check(pz.is_done() and st.objective_state(OBJ) == "complete", "solved again from the reloaded state")
+	var t := 0.0
+	while pz.is_open and t < 7.5:
+		await wait(0.25)
+		t += 0.25
+	check(not pz.is_open and ui.top_modal() == null and not get_tree().paused,
+		"closes by itself after %.2f s (beat %.2f s, the input driver waits 8 s)" % [t, pz.success_beat()])
 	# ---------------------------------------------------------------- inspect documents through the real InspectView
 	ui.inspect.open("ev_c3_seating")
 	await wait(0.7)

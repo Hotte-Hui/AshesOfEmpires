@@ -17,7 +17,8 @@ extends "res://scripts/ui/ui_modal.gd"
 ## ui_accept lays/takes back/presses, ui_cancel closes · Esc closes (handle_cancel).
 ## Wrong answers cost nothing: neutral note, the cards stay for editing, the engine counts the attempt; the
 ## hint appears per Settings.puzzle_hints (0 off · 1 after Story.puzzle_hint_available · 2 at once).
-## Success: stamp + success text, `solved(obj_id)` once, the modal closes after a reading beat or on confirm.
+## Success: stamp + success text, `solved(obj_id)` once, the modal closes after a reading beat (see
+## success_beat(), at most SUCCESS_BEAT_MAX seconds) or earlier on confirm, so Game's `await closed` returns.
 ## Cards are told apart by name AND shape glyph (circle/square/triangle/diamond) — never by colour.
 ## Pixel art (assets/ui/puzzle/c3_*, tools/pixelgen/gen_ui_c3.py) is drawn 1:1 and shown at exactly x3.
 
@@ -34,6 +35,9 @@ const BLUE_INK := Color("2b3c50")
 const BLUE_INK_L := Color("3e546b")
 ## Swallow confirm/cancel presses this long after success, so a key still held for „Prüfen" cannot skip it.
 const SUCCESS_GUARD_MS := 600
+## Longest reading beat before the solved modal closes by itself. The real-input driver
+## (scripts/core/inputplay.gd) waits 8 s for `closed` after the correct order — stay well inside that.
+const SUCCESS_BEAT_MAX := 5.5
 
 var suppress_toasts := true
 var obj_id := ""
@@ -176,11 +180,14 @@ func _ready() -> void:
 	_build_tray()
 	_apply_layout()
 	_refresh()
+	var s := Kit.svc("Settings")
+	if s != null and s.has_signal("changed"):
+		s.changed.connect(_on_setting_changed)
 
 
 ## Default: the four actions sit in a 2x2 grid under the notes column. With enlarged text (> 125 %) the
 ## notes need the whole column (wrong-answer note + hint), so the actions move into the footer row.
-## Called on open(); the text scale cannot change while this modal is open.
+## Called on open() and again whenever Settings "text_scale" changes (UIRoot rescales the labels).
 func _apply_layout() -> void:
 	var wide := Kit.text_scale() > 1.3
 	var target: Control = _footer if wide else _col_b
@@ -192,6 +199,11 @@ func _apply_layout() -> void:
 	for b in [_undo_btn, _reset_btn, _check_btn, _close_btn]:
 		b.custom_minimum_size.x = 196 if wide else 0
 		b.size_flags_horizontal = Control.SIZE_FILL if wide else Control.SIZE_EXPAND_FILL
+
+
+func _on_setting_changed(key: String, _value) -> void:
+	if key == "text_scale":
+		_apply_layout()
 
 
 func _gap(h: int) -> Control:
@@ -778,11 +790,15 @@ func _on_solved() -> void:
 	_close_btn.grab_focus.call_deferred()
 	solved_count += 1
 	solved.emit(obj_id)
-	# reading beat: long enough for the two sentences, any confirm closes earlier
-	var beat := clampf(2.0 + Kit.t("ui.c3.protocol.success").length() * 0.05, 4.0, 9.0)
 	_beat_token += 1
 	if is_inside_tree():
-		get_tree().create_timer(beat, true).timeout.connect(_on_beat.bind(_beat_token), CONNECT_ONE_SHOT)
+		get_tree().create_timer(success_beat(), true).timeout.connect(_on_beat.bind(_beat_token), CONNECT_ONE_SHOT)
+
+
+## Seconds the solved modal stays open by itself: a reading beat for the success text (two sentences),
+## capped at SUCCESS_BEAT_MAX; any confirm (Enter / Space / Esc / A / B / „Weiter") closes it earlier.
+func success_beat() -> float:
+	return clampf(1.5 + Kit.t("ui.c3.protocol.success").length() * 0.03, 3.0, SUCCESS_BEAT_MAX)
 
 
 func _on_beat(token: int) -> void:
