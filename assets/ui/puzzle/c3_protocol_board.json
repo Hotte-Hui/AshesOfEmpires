@@ -45,13 +45,13 @@
    "observer_se": [
     160,
     100,
-    60,
+    42,
     15
    ],
    "observer_ch": [
-    13,
+    41,
     100,
-    70,
+    42,
     15
    ],
    "secretariat": [
@@ -68,7 +68,7 @@
    ],
    "legend": [
     14,
-    148,
+    145,
     186,
     9
    ]
@@ -305,7 +305,7 @@
    8,
    23,
    216,
-   123
+   121
   ],
   "numbering": "clockwise from the presidium (1): right arm 2-5 going down, corners 6 (right) and 7 (left), left arm 8-11 going up, secretariat table 12; printed: 1, 2, 12"
  },
@@ -381,8 +381,8 @@
   ],
   "cols": {
    "time": 22,
-   "mic": 46,
-   "channel": 60,
+   "mic": 47,
+   "channel": 61,
    "remark": 30,
    "note": 30,
    "right": 160

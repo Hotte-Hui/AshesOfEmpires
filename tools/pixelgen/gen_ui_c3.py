@@ -323,16 +323,16 @@ def plan_geometry():
         'chair': [s1[0] + s1[2] + 4, s1[1] - 1, 44, 8],
         'soviet': [tags['2'][0] + tags['2'][2] + 2, arm_y[1] - 3, lab_r - (tags['2'][0] + tags['2'][2] + 2), 20],
         'reich': [lab_l, arm_y[1] + 2, (lx0 - gap - sw - 3) - lab_l, 9],
-        'observer_se': [rx1 + 4, arm_end - 1, lab_r - (rx1 + 4), 15],
-        'observer_ch': [lab_l, arm_end - 1, (lx0 - 4) - lab_l, 15],
+        'observer_se': [rx1 + 4, arm_end - 1, 42, 15],          # narrow: always two lines
+        'observer_ch': [(lx0 - 4) - 42, arm_end - 1, 42, 15],
         'secretariat': [cx - 24, s12[1] + s12[3] + 2, 49, 8],
         'booths': [180, 33, 40, 7],
-        'legend': [14, 148, 186, 9],
+        'legend': [14, 145, 186, 9],
     }
     return {'cx': cx, 'table': table, 'seats': seats, 'tags': tags, 'labels': labels,
-            'arm_y': arm_y, 'top': top, 'arm_end': arm_end, 'hall': [8, 23, PW - 16, 123],
-            'door': [cx - 10, 144, 21, 2], 'booth_strip': [180, 26, 40, 5],
-            'clockwise': [PW - 25, 147, 11, 11]}
+            'arm_y': arm_y, 'top': top, 'arm_end': arm_end, 'hall': [8, 23, PW - 16, 121],
+            'door': [cx - 8, 23 + 121 - 2, 17, 2], 'booth_strip': [180, 26, 40, 5],
+            'clockwise': [PW - 25, 145, 11, 10]}
 
 
 def draw_plan(with_text: bool):
@@ -443,8 +443,7 @@ def draw_plan(with_text: bool):
           '#..........',
           '.#.........',
           '..#....#...',
-          '...####....',
-          '...........']
+          '...####....']
     for yy, row in enumerate(CW):
         for xx, ch in enumerate(row):
             if ch == '#':
@@ -496,7 +495,7 @@ LOG_ROW0 = 40            # first text row (board); rows are 8 px apart, rule und
 LOG_PITCH = 8
 # board rows: (entry, kind) -- kind a = time/mic/channel line, b = remark, n = Elena's note
 LOG_ROWS = [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b'), (2, 'b'), (3, 'a'), (3, 'b'), (3, 'n'), (4, 'a'), (4, 'b')]
-LOG_COLS = {'time': 22, 'mic': 46, 'channel': 60, 'remark': 30, 'note': 30, 'right': 160}
+LOG_COLS = {'time': 22, 'mic': 47, 'channel': 61, 'remark': 30, 'note': 30, 'right': 160}
 # monospace advance of the typed board text (Courier Prime 20 px = 12 screen px = 4 art px) and the
 # position of "§ 4" inside the 10:09 remark ("verliest § 4 ..."), underlined by Elena
 TYPE_ADV = 4
