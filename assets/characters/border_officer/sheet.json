@@ -1,0 +1,32 @@
+{
+ "id": "border_officer",
+ "cell": [
+  32,
+  56
+ ],
+ "origin": [
+  16,
+  54
+ ],
+ "facing": "right",
+ "anims": {
+  "idle_side": {
+   "row": 0,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "talk_side": {
+   "row": 1,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "idle_front": {
+   "row": 2,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  }
+ }
+}

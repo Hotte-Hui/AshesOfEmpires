@@ -1,0 +1,41 @@
+{
+ "id": "elena",
+ "cell": [
+  32,
+  56
+ ],
+ "origin": [
+  16,
+  54
+ ],
+ "facing": "right",
+ "anims": {
+  "idle_side": {
+   "row": 0,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "walk_side": {
+   "row": 1,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "idle_front": {
+   "row": 2,
+   "frames": 6,
+   "fps": 5,
+   "loop": true
+  },
+  "talk_side": {
+   "row": 3,
+   "frames": 4,
+   "fps": 6,
+   "loop": true
+  }
+ },
+ "ground_speed": {
+  "walk_side": 29.2
+ }
+}
