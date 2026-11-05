@@ -74,7 +74,7 @@ c3b_arrival ─┬─> c3b_inspect_seating ─┐
 ### 2.4 Choices
 | objective | choice id | base text (de) | effect | reaction (speaker: line) |
 |---|---|---|---|---|
-| `c3a_choose` | `ask_elena` | Elena bitten, Anlage C nach der Sitzung mit dir zu vergleichen | `elena_trust +1` | elena: „Nach der Eröffnungssitzung, Kabine zwei. Bringen Sie den Begleitschein mit – und kommen Sie allein.“ |
+| `c3a_choose` | `ask_elena` | Elena bitten, Anlage C nach der Sitzung mit dir zu vergleichen | `elena_trust +1` | elena: „Nach der Eröffnungssitzung, Kabine zwei. Bringen Sie Ihren Reiseauftrag mit – ich bringe die drei Fassungen.“ |
 | | `note_alone` | Die Plombennummer notieren und allein weitersuchen | `evidence_chain +1` | elena: „Wie Sie meinen. Aber Zahlen übersetzen sich nicht von selbst.“ |
 | `c3b_choose` | `share_protocol` | Ihm Elenas Notiz zu Paragraph vier zeigen | `alexei_konrad_trust +1` | alexei: „Begleitgut. Auf meinem Schein steht Fracht. – Heute Nacht um 23:40 fährt ein Zug ohne Halt nach Kordon-17. Jetzt wissen Sie auch etwas.“ |
 | | `search_elena` | Nur über Elena reden: Wo wurde sie zuletzt gesehen? | `elena_trust +1` | alexei: „Am Bahnhof hat sie für den Grenzbeamten übersetzt. Ich frage dort. Sie fragen hier. Getrennt.“ |
@@ -160,7 +160,7 @@ Events: `c3a_completed`, `c3b_completed`. No combined morality score (QUEST_DATA
 3. `c3a_el_03` (elena) „Dann lesen Sie Anlage C zweimal. Es gibt sie auf Deutsch, auf Russisch und auf Französisch. Verbindlich sind alle drei.“
 4. `c3a_el_04` (alexei) „Und sagen alle drei dasselbe?“
 5. `c3a_el_05` (elena) „Fast. Ich notiere die Stellen, an denen sie es nicht tun. Dafür bezahlt mich die Kommission.“
-6. `c3a_el_06` (alexei) „Nur dafür?“ · v alexei_secrecy≥1: „Und das erzählen Sie einem Fremden auf dem Bahnsteig?“
+6. `c3a_el_06` (alexei) „Nur dafür?“ · v alexei_secrecy≥1: „Und das erzählen Sie einem Fremden im Bahnhofscafé?“
 7. `c3a_el_07` (elena) „Mein Bruder hat einmal ein Formular unterschrieben, ohne das Kleingedruckte zu verstehen. Seitdem übersetze ich das Kleingedruckte.“
 8. `c3a_el_08` (alexei) „Wo ist Ihr Bruder jetzt?“
 9. `c3a_el_09` (elena, end) „Auf einer Liste. – Gehen Sie zu Ihrer Delegation, Herr Morozov. In Veltrava hören alle mit. Die Neutralen am genauesten.“
@@ -179,11 +179,11 @@ Events: `c3a_completed`, `c3b_completed`. No combined morality score (QUEST_DATA
 `dlg_c3b_meeting` (entry `c3b_meet_01`):
 1. `c3b_meet_01` (alexei) „Das ist nicht Ihre Kabine.“
 2. `c3b_meet_02` (konrad) „Ihre auch nicht. Sowjetische Delegation, nehme ich an – das Abzeichen.“
-3. `c3b_meet_03` (alexei) „Technischer Gutachter. Ich suche Frau Weiss.“ · v elena_trust≥1: „Frau Weiss und ich waren nach der Sitzung verabredet. Hier, an Kabine zwei.“ · v evidence_chain≥1: „Ich suche den Empfänger eines Kurierwagens. Plombe C-17/44. Die Wiegekarte nennt dieses Haus.“
+3. `c3b_meet_03` (alexei) „Technischer Gutachter. Ich suche Frau Weiss.“ · v elena_trust≥1: „Frau Weiss und ich waren nach der Sitzung verabredet. Hier, an Kabine zwei.“ · v evidence_chain≥1: „Ich suche den Empfänger eines Kurierwagens. Die Plombennummer habe ich. Die Wiegekarte nennt dieses Haus.“
 4. `c3b_meet_04` (konrad) „Sie ist nicht hier. Ihr Protokollheft auch nicht. Unten in der Garderobe hängt noch ihr Mantel.“
 5. `c3b_meet_05` (alexei) „Und Sie stehen zufällig in ihrer Kabine. Mit einem Bleistift in der Hand.“
 6. `c3b_meet_06` (konrad) „Ich bin Zeichner. Ich lese, was auf Tischen liegt.“
-7. `c3b_meet_07` (alexei) „In Karsk fehlen drei Wagen. Auf ihrem Siegel stand dieselbe Serie wie auf den Papieren hier.“ · v irina_trust≥1: „In Karsk fehlen drei Wagen. Eine Kollegin hat sie gezählt. Sie würde es bezeugen – ihr Name steht schon neben meinem.“ · v alexei_secrecy≥1: „In Karsk fehlen drei Wagen. Niemand dort weiß, dass ich hier danach frage. Das soll so bleiben.“
+7. `c3b_meet_07` (alexei) „In Karsk fehlen drei Wagen. Auf ihrem Siegel stand dieselbe Serie wie auf den Papieren hier.“ · v irina_trust≥1: „In Karsk fehlen drei Wagen mit derselben Serie wie auf den Papieren hier. Eine Kollegin hat sie gezählt – ihr Name steht neben meinem.“ · v alexei_secrecy≥1: „In Karsk fehlen drei Wagen mit derselben Serie wie auf den Papieren hier. Niemand dort weiß, dass ich danach frage. Das soll so bleiben.“
 8. `c3b_meet_08` (konrad) „In Berlin trägt ein Korridor dieselbe Serie. Einer, den es nicht geben dürfte.“ · v konrad_evidence≥1: „In Berlin trägt ein Korridor dieselbe Serie. Ich habe eine Abschrift des Vermerks. Was darin steht, behalte ich vorerst.“ · v office_suspicion≥1: „In Berlin trägt ein Korridor dieselbe Serie. Ich habe offiziell danach gefragt. Seitdem sieht man mir über die Schulter.“
 9. `c3b_meet_09` (alexei) „C-17.“
 10. `c3b_meet_10` (konrad) „C-17. – Sie sind Russe, ich bin Deutscher. Man hat uns beigebracht, dass einer von uns lügt.“
