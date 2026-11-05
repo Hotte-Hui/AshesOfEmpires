@@ -1320,7 +1320,7 @@ class Room:
         self.wood_dado(x0, x1, top=236, panel_w=20)
         # acoustic wall: quilted dark-green leather bays between walnut battens
         uy0, uy1 = 96, 232
-        lay.rect(x0, uy0, x1 - x0, uy1 - uy0, 'G', 3.0, hgt=0.3)
+        lay.rect(x0, uy0, x1 - x0, uy1 - uy0, 'G', 3.4, hgt=0.3)
         for yy in range(uy0 + 6, uy1, 12):
             for xx in range(x0 + 6 + ((yy // 12) % 2) * 6, x1, 12):
                 lay.px(xx, yy, 'G', 1.6, hgt=0.2)                            # buttons
@@ -1351,7 +1351,7 @@ class Room:
             lay.ellipse(gx - 0.5, L.CEIL + 66, 2.5, 2.5, 'A', 4.6, emis=True)
             lay.rect(gx - 2, L.CEIL + 61, 5, 2, 'B', 3.4, hgt=0.7)
             self.lights.append({'name': 'globe_%d' % gx, 'pos': (gx, L.CEIL + 70), 'kind': 'warm',
-                                'energy': 0.4, 'radius': 96, 'height': 30})
+                                'energy': 0.8, 'radius': 140, 'height': 36})
         # interpreters' sign by the door
         sx = 1414
         lay.rect(sx - 2, 112, kit.text_width('INTERPRÈTES  ПЕРЕВОДЧИКИ') + 4, 20, 'D', 2.0, hgt=0.6)
@@ -1454,7 +1454,7 @@ class Room:
         lay.rect(fx0 - 2, wy0 - 2, fx1 - fx0 + 4, wy1 - wy0 + 3, 'S', 1.6, hgt=-0.5)
         win = np.ones((wy1 - wy0, fx1 - fx0), bool)
         win[:, (fx1 - fx0) // 2] = False
-        self.cut_glass(win, fx0, wy0)
+        self.cut_glass(win, fx0, wy0, shaft=0.35)      # the daylit Saal throws cold light into the corridor
         lay.rect(fx0 + (fx1 - fx0) // 2, wy0, 1, wy1 - wy0, 'S', 1.4, hgt=-0.5)
         self.saal_windows.append((fx0, wy0, fx1, wy1))
         # desk top (seen slightly from above), console, microphone
@@ -1478,7 +1478,7 @@ class Room:
         if lit:
             lay.line(lx + 2, dy - 14, lx + 8, dy - 14, 'A', 5.0, emis=True)
             lay.rect(lx + 4, dy - 13, 3, 1, 'A', 4.6, emis=True)
-            self.lights.append({'name': 'booth_2_lamp', 'pos': (lx + 5, dy - 12), 'kind': 'warm', 'energy': 1.7,
+            self.lights.append({'name': 'booth_2_lamp', 'pos': (lx + 5, dy - 12), 'kind': 'warm', 'energy': 1.4,
                                 'radius': 110, 'height': 10, 'cone': (0.25, 1.0, -0.25)})
         else:
             lay.line(lx + 2, dy - 14, lx + 8, dy - 14, 'A', 2.4, emis=True)
@@ -1628,7 +1628,9 @@ class Room:
             lay.rect(ox0, ra, ox1 - ox0, 1, 'D', 1.6, hgt=0.0)
         # --- interpreters' corridor: wine-dark carpet with a border
         ix0 = L.PART3[1]
-        lay.rect(ix0, y0, W - ix0, H - y0, 'R', 1.6, hgt=0.0)
+        # wine-dark wool: painted on the walnut ramp (same base colour #331F16) so lamp light lifts it to a
+        # warm brown pool instead of a saturated red one; the wine accents are the border and the pile
+        lay.rect(ix0, y0, W - ix0, H - y0, 'D', 2.3, hgt=0.0, gain=0.9)
         tex = pg.white_noise(W - ix0, H - y0, 5)
         lay.put(tex > 0.7, ix0, y0, 'R', 1.9, hgt=0.0)
         for (by, t) in ((y0 + 2, 2.4), (y0 + 3, 1.2), (y0 + 30, 2.2)):
@@ -1652,8 +1654,8 @@ class Room:
         f = np.zeros((H, W), np.float32)
         xs = np.arange(W, dtype=np.float32)
         reg = np.zeros(W, np.float32)
-        reg[L.OFFICE[0]:] = -0.5
-        reg[L.INTERP[0]:] = -1.1
+        reg[L.OFFICE[0]:] = -0.4
+        reg[L.INTERP[0]:] = -0.75
         k = np.ones(25, np.float32) / 25
         reg = np.convolve(np.pad(reg, 12, mode='edge'), k, mode='valid')
         f += reg[None, :]
@@ -1682,38 +1684,53 @@ class Room:
 # =========================================================================== shafts
 def window_shafts(sources, w=L.WORLD_W, h=L.WORLD_H, ax=0.85, kz=0.32):
     """Volumetric daylight from back-wall glass (3-D rays projected to the side view).
-    Returns (air density, floor landing), both ~[0, 1]."""
+    Returns (air density, floor landing), both ~[0, 1].
+    Sources are normalised PER ROOM (vestibule / foyer / office / interpreters): the huge entrance
+    glazing must not drown the single foyer window or the office window, and every room keeps a
+    readable shaft; the strongest source strength of a room sets that room's peak."""
     air = np.zeros((h, w), np.float32)
     land = np.zeros((h, w), np.float32)
-    for (mask, x0, y0, strength) in sources:
-        gy, gx = np.nonzero(mask)
-        if len(gx) == 0:
-            continue
-        sub = max(1, len(gx) // 3000)
-        gy, gx = gy[::sub], gx[::sub]
-        xg = gx.astype(np.float32) + x0 + 0.5
-        yg = gy.astype(np.float32) + y0 + 0.5
-        tend = (L.FLOOR - yg) / (1 + kz)
-        tmax = int(tend.max()) + 1
-        wgt = strength * sub
-        for t in range(0, tmax):
-            alive = tend > t
-            if not alive.any():
-                break
-            sx = np.round(xg[alive] + ax * t).astype(np.int32)
-            sy = np.round(yg[alive] + t * (1 + kz)).astype(np.int32)
-            ok = (sx >= 0) & (sx < w) & (sy >= 0) & (sy < h)
-            np.add.at(air, (sy[ok], sx[ok]), wgt)
-        lx = np.round(xg + ax * tend).astype(np.int32)
-        ly = np.round(L.FLOOR + kz * tend * 0.9).astype(np.int32)
-        ok = (lx >= 0) & (lx < w) & (ly >= 0) & (ly < h)
-        np.add.at(land, (ly[ok], lx[ok]), wgt)
-    air = kit.box_blur(air, 2)
-    land = kit.box_blur(land, 2)
-    if (air > 0).any():
-        air /= max(1e-6, np.percentile(air[air > 0], 99.0))
-    if (land > 0).any():
-        land /= max(1e-6, np.percentile(land[land > 0], 96))
+    rooms = (L.VEST[1], L.FOYER[1], L.OFFICE[1], L.WORLD_W)
+    groups: dict = {}
+    for src in sources:
+        gi = next(i for i, lim in enumerate(rooms) if src[1] < lim)
+        groups.setdefault(gi, []).append(src)
+    for gi, srcs in sorted(groups.items()):
+        g_air = np.zeros((h, w), np.float32)
+        g_land = np.zeros((h, w), np.float32)
+        peak = 0.0
+        for (mask, x0, y0, strength) in srcs:
+            gy, gx = np.nonzero(mask)
+            if len(gx) == 0:
+                continue
+            peak = max(peak, float(strength))
+            sub = max(1, len(gx) // 3000)
+            gy, gx = gy[::sub], gx[::sub]
+            xg = gx.astype(np.float32) + x0 + 0.5
+            yg = gy.astype(np.float32) + y0 + 0.5
+            tend = (L.FLOOR - yg) / (1 + kz)
+            tmax = int(tend.max()) + 1
+            wgt = strength * sub
+            for t in range(0, tmax):
+                alive = tend > t
+                if not alive.any():
+                    break
+                sx = np.round(xg[alive] + ax * t).astype(np.int32)
+                sy = np.round(yg[alive] + t * (1 + kz)).astype(np.int32)
+                ok = (sx >= 0) & (sx < w) & (sy >= 0) & (sy < h)
+                np.add.at(g_air, (sy[ok], sx[ok]), wgt)
+            lx = np.round(xg + ax * tend).astype(np.int32)
+            ly = np.round(L.FLOOR + kz * tend * 0.9).astype(np.int32)
+            ok = (lx >= 0) & (lx < w) & (ly >= 0) & (ly < h)
+            np.add.at(g_land, (ly[ok], lx[ok]), wgt)
+        g_air = kit.box_blur(g_air, 2)
+        g_land = kit.box_blur(g_land, 2)
+        if (g_air > 0).any():
+            g_air *= peak / max(1e-6, np.percentile(g_air[g_air > 0], 99.0))
+        if (g_land > 0).any():
+            g_land *= peak / max(1e-6, np.percentile(g_land[g_land > 0], 96))
+        air = np.maximum(air, g_air)
+        land = np.maximum(land, g_land)
     return np.clip(air, 0, 1.2), np.clip(land, 0, 1.2)
 
 
@@ -1744,7 +1761,7 @@ def bake(room: Room, extra_lights=None):
     room.shaft_air, room.shaft_land = air, land
     floor = np.zeros_like(air)
     floor[L.FLOOR:, :] = 1.0
-    F['cold'] += (air ** 0.85) * 0.5 + land * floor * 0.8
+    F['cold'] += (air ** 0.85) * 0.55 + land * floor * 0.9
     # warm lamp pools on the polished floors
     for lt in lights:
         if lt['kind'] == 'warm' and lt.get('pool'):

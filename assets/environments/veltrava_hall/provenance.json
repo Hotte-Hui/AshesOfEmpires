@@ -1,6 +1,6 @@
 {
  "generator": "tools/pixelgen/env_veltrava_hall.py (+ _kit, _layout, _room, _props, _ext, _fx, _fg, _docs, _preview)",
- "date": "2026-11-04",
+ "date": "2026-11-05",
  "licence": "project-owned original artwork, generated procedurally; no copied, traced, downloaded or AI-generated pixels; bitmap fonts hand-defined in env_veltrava_hall_kit.py",
  "run": "python3 -P tools/pixelgen/env_veltrava_hall.py",
  "files": [

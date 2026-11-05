@@ -27,7 +27,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import pg  # noqa: E402
 
-DATE = '2026-11-04'
+DATE = '2026-11-05'
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 
 # --------------------------------------------------------------------------- palettes

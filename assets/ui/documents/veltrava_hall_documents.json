@@ -2,7 +2,7 @@
  "scene": "L_C3_Hall",
  "palette": "palais",
  "generator": "tools/pixelgen/env_veltrava_hall_docs.py (via env_veltrava_hall.py)",
- "date": "2026-11-04",
+ "date": "2026-11-05",
  "note": "Pixel art drawn 1:1, shown at 3x (nearest). Handwriting from hand-defined stroke skeletons; the UI shows the item name/description as HD text. All rects are [x, y, w, h] in document pixels. Seating plan and booth log documents are owned by the puzzle stream.",
  "documents": [
   {

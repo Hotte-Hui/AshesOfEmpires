@@ -150,7 +150,7 @@
    "normal": false,
    "emission": false,
    "lit": false,
-   "note": "soft alpha veil (max ~16 %); reads as dithered light in front of actors"
+   "note": "soft alpha veil (max ~21 %); reads as dithered light in front of actors"
   },
   {
    "name": "fg_frame",
@@ -683,10 +683,10 @@
     82
    ],
    "color": "#E9B46E",
-   "energy": 0.28,
-   "radius": 90,
+   "energy": 0.42,
+   "radius": 120,
    "flicker": 0.0,
-   "height": 30,
+   "height": 32,
    "on_layer": "playfield"
   },
   {
@@ -696,10 +696,10 @@
     82
    ],
    "color": "#E9B46E",
-   "energy": 0.28,
-   "radius": 90,
+   "energy": 0.42,
+   "radius": 120,
    "flicker": 0.0,
-   "height": 30,
+   "height": 32,
    "on_layer": "playfield"
   },
   {
@@ -1250,7 +1250,7 @@
   "mode": "side",
   "feet_y": 300,
   "generator": "tools/pixelgen/env_veltrava_hall.py",
-  "date": "2026-11-04",
+  "date": "2026-11-05",
   "palette_ramps": {
    "night": [
     "#05080C",

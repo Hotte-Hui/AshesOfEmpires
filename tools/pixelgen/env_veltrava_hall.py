@@ -42,7 +42,7 @@ DYN = {
     'chandelier': (1.05, 200, 44, 0.0, 'warm'), 'sconce_buffet_l': (0.28, 60, 14, 0.03, 'warm'),
     'sconce_buffet_r': (0.28, 60, 14, 0.03, 'warm'), 'saal_doors': (0.6, 92, 8, 0.0, 'warm'),
     'typist_lamp': (0.5, 80, 16, 0.03, 'warm'), 'table_lamp': (0.95, 120, 10, 0.02, 'warm'),
-    'globe_1470': (0.28, 90, 30, 0.0, 'warm'), 'globe_1830': (0.28, 90, 30, 0.0, 'warm'),
+    'globe_1470': (0.42, 120, 32, 0.0, 'warm'), 'globe_1830': (0.42, 120, 32, 0.0, 'warm'),
     'booth_1_lamp': (0.28, 46, 8, 0.0, 'warm'), 'booth_2_lamp': (1.0, 110, 10, 0.02, 'warm'),
     'booth_3_lamp': (0.28, 46, 8, 0.0, 'warm'), 'saal_glow_1': (0.32, 64, 4, 0.0, 'white'),
     'saal_glow_2': (0.32, 64, 4, 0.0, 'white'), 'saal_glow_3': (0.32, 64, 4, 0.0, 'white'),
@@ -144,7 +144,7 @@ def build_scene():
                desc='volumetric daylight-shaft veil (soft alpha, plain alpha blending)')
     layers.append({'name': 'shafts', 'file': 'shafts.png', 'pos': [0, 0], 'parallax': [1, 1], 'z': Z['shafts'],
                    'normal': False, 'emission': False, 'lit': False,
-                   'note': 'soft alpha veil (max ~16 %); reads as dithered light in front of actors'})
+                   'note': 'soft alpha veil (max ~21 %); reads as dithered light in front of actors'})
     save_layer(fg, os.path.join(ENV_DIR, 'fg_frame'), normal=False, gen='env_veltrava_hall_fg.py',
                desc='foreground framing silhouettes (columns, velvet drapes, palm, chair)')
     layers.append({'name': 'fg_frame', 'file': 'fg_frame.png', 'pos': [0, 0], 'parallax': [L.PARALLAX['fg_frame'], 1.0],
@@ -240,12 +240,12 @@ def build_shaft_overlay(room):
     lay = pg.Layer(W, H, 'shafts')
     y = np.arange(H, dtype=np.float32)[:, None]
     fade = np.clip((L.FLOOR + 26 - y) / 50, 0, 1) * np.clip((y - 20) / 40, 0, 1)
-    a = (np.clip(air, 0, 1) ** 1.3) * fade
+    a = (np.clip(air, 0, 1) ** 1.05) * fade
     a[room.glass] = 0
     from env_veltrava_hall_kit import dilate
     near_glass = dilate(room.glass, 3)
     a[near_glass] *= 0.25
-    alpha = np.clip(np.round(a * 42), 0, 255).astype(np.uint8)
+    alpha = np.clip(np.round(a * 54), 0, 255).astype(np.uint8)
     col = pg.hx(kit.PALAIS['daylight'][4])
     lay.c[..., 0], lay.c[..., 1], lay.c[..., 2] = col[0], col[1], col[2]
     lay.c[..., 3] = alpha
