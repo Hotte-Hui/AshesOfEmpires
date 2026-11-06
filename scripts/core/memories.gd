@@ -268,7 +268,8 @@ func memory_flags(id: String, live_flags: Dictionary, live_choices: Dictionary) 
 	for k in ch:
 		if str(live_choices.get(k, "")) != str(ch[k]):
 			return live_flags
-	return fl
+	# round 10: a snapshot recorded by an earlier build lacks the flags added since — they had their defaults then
+	return SAVES.fill_flag_defaults({"flags": fl})["flags"]
 
 
 func explore_state() -> Dictionary:

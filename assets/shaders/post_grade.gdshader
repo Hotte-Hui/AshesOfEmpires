@@ -26,7 +26,7 @@ uniform float grain = 0.0;          // 0..0.08
 uniform float grain_seed = 0.0;
 uniform float palette_strength = 0.0;
 uniform int palette_size = 0;
-uniform vec3 palette[64];
+uniform vec3 palette[128];
 uniform vec4 fade_color : source_color = vec4(0.0, 0.0, 0.0, 0.0);
 uniform float px_scale = 1.0;       // viewport px per world px
 uniform vec2 dither_origin = vec2(0.0);   // world-anchoring offset of the palette dither (viewport px)
@@ -60,7 +60,7 @@ void fragment() {
 	// palette snap FIRST (painted pixels are already on-palette -> unchanged; light gradients get dithered)
 	if (palette_strength > 0.0 && palette_size > 1) {
 		float d1 = 1e9; float d2 = 1e9; vec3 c1 = c; vec3 c2 = c;
-		for (int i = 0; i < 64; i++) {
+		for (int i = 0; i < 128; i++) {
 			if (i >= palette_size) { break; }
 			vec3 p = palette[i];
 			vec3 dd = (c - p) * vec3(0.30, 0.59, 0.11) * 3.0;

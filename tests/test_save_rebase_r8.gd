@@ -4,7 +4,9 @@ extends RefCounted
 ## now follows their last completed event instead of failing the replay validation (SaveSystem.rebase_story, used by
 ## read_container and Memories.snapshot_raw). Valid current states, finished playthroughs and unknown shapes stay
 ## untouched. Round 9 grew the chain again behind c3g_completed (Chapter 4 part 1, documentation/C4_DESIGN.md §1.1):
-## the round-8 form „montage after c3g“ continues in L_C4_TunnelsA with Alexei.
+## the round-8 form „montage after c3g“ continues in L_C4_TunnelsA with Alexei. Round 10 grew it behind c4d_completed
+## (Chapter 4 part 2, documentation/C4P2_DESIGN.md §1.1): the round-9 form „montage after c4d“ — written before the flag
+## people_protected existed — continues in L_C4P2_KarskA with Alexei, its missing flag filled with the default.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const SAVES := preload("res://scripts/core/save_system.gd")
@@ -23,6 +25,8 @@ func run() -> Array:
 	kit.run_case("old_memory_snapshot_rebased", _memory)
 	kit.run_case("round8_montage_save_continues_in_chapter4", _old_save_r8)
 	kit.run_case("round8_quay_snapshot_rebased", _memory_r8)
+	kit.run_case("round9_montage_save_continues_in_part2", _old_save_r9)
+	kit.run_case("round9_annex_snapshot_rebased", _memory_r9)
 	for f in DirAccess.get_files_at(TMP):
 		DirAccess.remove_absolute(TMP.path_join(f))
 	DirAccess.remove_absolute(TMP)
@@ -69,7 +73,7 @@ func _old_save() -> bool:
 
 
 func _unchanged() -> bool:
-	for stage in ["a1", "c3b", "c3d", "c3g", "c4a", "c4c", "c4d"]:
+	for stage in ["a1", "c3b", "c3d", "c3g", "c4a", "c4c", "c4d", "c4e", "c4g", "c4h"]:
 		var g := kit.story()
 		kit.play_until(g, stage)
 		var st: Dictionary = ENGINE.json_parse(g.save_json())["value"]
@@ -131,6 +135,8 @@ func _old_save_r8() -> bool:
 	kit.play_c4b(g)
 	kit.play_c4c(g)
 	kit.play_c4d(g)
+	for stage in ["c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage)
 	kit.is_ok(g.finale(), "and plays on to the finale")
 	return true
 
@@ -142,4 +148,64 @@ func _memory_r8() -> bool:
 	var p: Dictionary = ENGINE.json_parse(raw)
 	kit.eq(p["value"].get("current_scene"), "L_C4_TunnelsA", "the recorded quay snapshot is re-based")
 	kit.ok(kit.story().validate_save_json(raw).get("ok", false), "and validates (menu memory of the quay stays usable)")
+	return true
+
+
+## A Story state as a round-9 build stored it right after c4d_completed (memory snapshot of the annex, or the montage):
+## the montage, nobody playing, and no flag people_protected (flags.json of round 9 had sixteen flags).
+func _stale_after_c4d() -> Dictionary:
+	var g := kit.story()
+	kit.play_until(g, "c4d", {"c3g": "hide_for_elena", "c4d": "protect_marta"})
+	var st: Dictionary = ENGINE.json_parse(g.save_json())["value"]
+	st["current_scene"] = "L_X1_Montage"
+	st["active_character"] = "none"
+	(st["flags"] as Dictionary).erase("people_protected")
+	return st
+
+
+func _old_save_r9() -> bool:
+	var stale := _stale_after_c4d()
+	var g := kit.story()
+	kit.ok(not g.validate_save_json(ENGINE.json_dumps(stale, 2)).get("ok", false),
+		"precondition: the round-9 form is invalid against the grown chain and the grown flag table")
+	var reb: Dictionary = SAVES.rebase_story(stale)
+	kit.eq([reb.get("current_scene"), reb.get("active_character")], ["L_C4P2_KarskA", "alexei"],
+		"re-based to the scene after c4d_completed (the Karsk depot) and its protagonist")
+	kit.eq(reb["flags"].get("people_protected"), 0, "the flag the round-9 build did not know is filled with its default")
+	kit.ok(not (stale["flags"] as Dictionary).has("people_protected"), "the input dictionary is not modified")
+	kit.ok(g.validate_save_json(ENGINE.json_dumps(reb, 2)).get("ok", false), "the re-based state validates")
+	var meta := {"version": SAVES.CONTAINER_VERSION, "timestamp": 1.0, "chapter_key": "ui.chapter_c4",
+		"character": "none", "scene": "L_X1_Montage", "playtime_s": 3600.0, "label": ""}
+	var path := TMP.path_join("old_r9.json")
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(ENGINE.json_dumps({"meta": meta, "story": stale, "extra": {}}, 1))
+	f.close()
+	var c: Dictionary = SAVES.read_container(path)
+	if not kit.ok(c.get("ok", false), "container reads: " + str(c.get("error", ""))):
+		return false
+	kit.ok(str(c.get("warnings", [])).contains("re-based"), "the re-base is reported as a warning")
+	kit.ok(str(c.get("warnings", [])).contains("people_protected"), "the flag fill is reported as a warning")
+	var r: Dictionary = g.load_json(c["story_raw"])
+	kit.ok(r.get("ok", false), "the round-9 save loads: " + str(r.get("error", "")))
+	kit.eq([g.current_scene, g.active_character, g.available()],
+		["L_C4P2_KarskA", "alexei", ["c4e_inspect_order", "c4e_inspect_list"]], "it continues at the Karsk depot")
+	for stage in ["c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage, {"c4g": "protect_first"})
+	kit.is_ok(g.finale(), "and plays on to the finale")
+	kit.eq(g.flags()["people_protected"], 1, "protect_first raises the new meter on the migrated save")
+	return true
+
+
+func _memory_r9() -> bool:
+	var m = MEM.new(TMP.path_join("profile_r9.json"))
+	m.data["completed"]["L_C4_AnnexB"] = {"t": 1.0, "story": _stale_after_c4d()}
+	var raw: String = m.snapshot_raw("L_C4_AnnexB")
+	var p: Dictionary = ENGINE.json_parse(raw)
+	kit.eq(p["value"].get("current_scene"), "L_C4P2_KarskA", "the recorded annex snapshot is re-based")
+	kit.eq(p["value"]["flags"].get("people_protected"), 0, "and its missing flag filled")
+	kit.ok(kit.story().validate_save_json(raw).get("ok", false), "and validates (menu memory of the annex stays usable)")
+	var mf: Dictionary = m.memory_flags("L_C4_AnnexB", {}, {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence",
+		"c3a_choose": "ask_elena", "c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "hide_for_elena",
+		"c4d_choose": "protect_marta"})
+	kit.eq(mf.get("people_protected"), 0, "memory_flags of the snapshot know the new flag")
 	return true

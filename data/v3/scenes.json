@@ -142,8 +142,52 @@
       "entry_spawn": "SP_C4_Ladder",
       "associated_quest": "q_c4d_annex",
       "exit_on_event": "c4d_completed",
-      "next_scene": "L_X1_Montage",
+      "next_scene": "L_C4P2_KarskA",
       "render_profile": "rp_berlin_annex"
+    },
+    {
+      "id": "L_C4P2_KarskA",
+      "title_key": "world.c4e.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4P2_Yard",
+      "associated_quest": "q_c4e_depot",
+      "exit_on_event": "c4e_completed",
+      "next_scene": "L_C4P2_BerlinA",
+      "render_profile": "rp_karsk_depot_dawn"
+    },
+    {
+      "id": "L_C4P2_BerlinA",
+      "title_key": "world.c4f.title",
+      "protagonist": "konrad",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4P2_Platform",
+      "associated_quest": "q_c4f_platform",
+      "exit_on_event": "c4f_completed",
+      "next_scene": "L_C4P2_KarskB",
+      "render_profile": "rp_berlin_station_night"
+    },
+    {
+      "id": "L_C4P2_KarskB",
+      "title_key": "world.c4g.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4P2_Signal",
+      "associated_quest": "q_c4g_press",
+      "exit_on_event": "c4g_completed",
+      "next_scene": "L_C4P2_BerlinB",
+      "render_profile": "rp_karsk_depot_evening"
+    },
+    {
+      "id": "L_C4P2_BerlinB",
+      "title_key": "world.c4h.title",
+      "protagonist": "konrad",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4P2_Gate",
+      "associated_quest": "q_c4h_house",
+      "exit_on_event": "c4h_completed",
+      "next_scene": "L_X1_Montage",
+      "render_profile": "rp_berlin_yard_night"
     },
     {
       "id": "L_X1_Montage",

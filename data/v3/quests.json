@@ -13,7 +13,11 @@
     "c4a_completed",
     "c4b_completed",
     "c4c_completed",
-    "c4d_completed"
+    "c4d_completed",
+    "c4e_completed",
+    "c4f_completed",
+    "c4g_completed",
+    "c4h_completed"
   ],
   "quests": [
     {
@@ -911,6 +915,253 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "q_c4e_depot",
+      "title_key": "ui.chapter_c4",
+      "character": "alexei",
+      "scene": "L_C4P2_KarskA",
+      "requires_events": [
+        "c4d_completed"
+      ],
+      "completion_event": "c4e_completed",
+      "objectives": [
+        {
+          "id": "c4e_inspect_order",
+          "type": "inspect",
+          "text_key": "obj.c4e_order",
+          "requires": [],
+          "grant_item": "ev_c4_special_order"
+        },
+        {
+          "id": "c4e_talk_irina",
+          "type": "dialogue",
+          "text_key": "obj.c4e_irina",
+          "requires": [
+            "c4e_inspect_order"
+          ],
+          "dialogue_id": "dlg_c4e_irina"
+        },
+        {
+          "id": "c4e_inspect_list",
+          "type": "inspect",
+          "text_key": "obj.c4e_list",
+          "requires": [],
+          "grant_item": "ev_c4_work_list"
+        },
+        {
+          "id": "c4e_talk_maria",
+          "type": "dialogue",
+          "text_key": "obj.c4e_maria",
+          "requires": [
+            "c4e_talk_irina",
+            "c4e_inspect_list"
+          ],
+          "dialogue_id": "dlg_c4e_maria"
+        },
+        {
+          "id": "c4e_inspect_notice",
+          "type": "inspect",
+          "text_key": "obj.c4e_notice",
+          "requires": [
+            "c4e_talk_maria"
+          ],
+          "grant_item": "ev_c4_press_notice"
+        }
+      ]
+    },
+    {
+      "id": "q_c4f_platform",
+      "title_key": "ui.chapter_c4",
+      "character": "konrad",
+      "scene": "L_C4P2_BerlinA",
+      "requires_events": [
+        "c4e_completed"
+      ],
+      "completion_event": "c4f_completed",
+      "objectives": [
+        {
+          "id": "c4f_inspect_board",
+          "type": "inspect",
+          "text_key": "obj.c4f_board",
+          "requires": [],
+          "grant_item": "ev_c4_departures_east"
+        },
+        {
+          "id": "c4f_talk_marta",
+          "type": "dialogue",
+          "text_key": "obj.c4f_marta",
+          "requires": [
+            "c4f_inspect_board"
+          ],
+          "dialogue_id": "dlg_c4f_marta"
+        },
+        {
+          "id": "c4f_inspect_courier",
+          "type": "inspect",
+          "text_key": "obj.c4f_courier",
+          "requires": [],
+          "grant_item": "ev_c4_courier_seals"
+        },
+        {
+          "id": "c4f_talk_ekdahl",
+          "type": "dialogue",
+          "text_key": "obj.c4f_ekdahl",
+          "requires": [
+            "c4f_talk_marta",
+            "c4f_inspect_courier"
+          ],
+          "dialogue_id": "dlg_c4f_ekdahl"
+        },
+        {
+          "id": "c4f_inspect_book",
+          "type": "inspect",
+          "text_key": "obj.c4f_book",
+          "requires": [
+            "c4f_talk_ekdahl"
+          ],
+          "grant_item": "ev_c4_konrad_tracing"
+        }
+      ]
+    },
+    {
+      "id": "q_c4g_press",
+      "title_key": "ui.chapter_c4",
+      "character": "alexei",
+      "scene": "L_C4P2_KarskB",
+      "requires_events": [
+        "c4f_completed"
+      ],
+      "completion_event": "c4g_completed",
+      "objectives": [
+        {
+          "id": "c4g_talk_ekdahl",
+          "type": "dialogue",
+          "text_key": "obj.c4g_ekdahl",
+          "requires": [],
+          "dialogue_id": "dlg_c4g_ekdahl"
+        },
+        {
+          "id": "c4g_inspect_book",
+          "type": "inspect",
+          "text_key": "obj.c4g_book",
+          "requires": [
+            "c4g_talk_ekdahl"
+          ],
+          "grant_item": "ev_c4_guidebook"
+        },
+        {
+          "id": "c4g_talk_lev",
+          "type": "dialogue",
+          "text_key": "obj.c4g_lev",
+          "requires": [
+            "c4g_inspect_book"
+          ],
+          "dialogue_id": "dlg_c4g_lev",
+          "grant_item": "ev_c4_card_ru_original"
+        },
+        {
+          "id": "c4g_solve_halves",
+          "type": "puzzle",
+          "text_key": "obj.c4g_halves",
+          "requires": [
+            "c4g_talk_lev"
+          ],
+          "puzzle_id": "pz_c4_halves"
+        },
+        {
+          "id": "c4g_inspect_card",
+          "type": "inspect",
+          "text_key": "obj.c4g_card",
+          "requires": [
+            "c4g_solve_halves"
+          ],
+          "grant_item": "ev_c4_card_whole"
+        },
+        {
+          "id": "c4g_choose",
+          "type": "choice",
+          "text_key": "obj.c4g_choice",
+          "requires": [
+            "c4g_inspect_card"
+          ],
+          "choices": [
+            {
+              "id": "publish_now",
+              "text_key": "choice.c4g.publish_now",
+              "effects": {
+                "evidence_chain": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "protect_first",
+              "text_key": "choice.c4g.protect_first",
+              "effects": {
+                "people_protected": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_c4h_house",
+      "title_key": "ui.chapter_c4",
+      "character": "konrad",
+      "scene": "L_C4P2_BerlinB",
+      "requires_events": [
+        "c4g_completed"
+      ],
+      "completion_event": "c4h_completed",
+      "objectives": [
+        {
+          "id": "c4h_inspect_gate",
+          "type": "inspect",
+          "text_key": "obj.c4h_gate",
+          "requires": [],
+          "grant_item": "ev_c4_house_notice"
+        },
+        {
+          "id": "c4h_talk_hanna",
+          "type": "dialogue",
+          "text_key": "obj.c4h_hanna",
+          "requires": [
+            "c4h_inspect_gate"
+          ],
+          "dialogue_id": "dlg_c4h_hanna"
+        },
+        {
+          "id": "c4h_inspect_cards",
+          "type": "inspect",
+          "text_key": "obj.c4h_cards",
+          "requires": [
+            "c4h_talk_hanna"
+          ],
+          "grant_item": "ev_c4_house_cards"
+        },
+        {
+          "id": "c4h_solve_house",
+          "type": "puzzle",
+          "text_key": "obj.c4h_house",
+          "requires": [
+            "c4h_inspect_cards"
+          ],
+          "puzzle_id": "pz_c4_house"
+        },
+        {
+          "id": "c4h_talk_wendt",
+          "type": "dialogue",
+          "text_key": "obj.c4h_wendt",
+          "requires": [
+            "c4h_solve_house"
+          ],
+          "dialogue_id": "dlg_c4h_wendt"
         }
       ]
     }

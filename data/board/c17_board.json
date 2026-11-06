@@ -7,7 +7,10 @@
   {"id": "veltrava", "title_key": "board.place.veltrava",
    "scenes": ["L_C3_Station", "L_C3_Hall", "L_C3_RegistryA", "L_C3_RegistryB", "L_C3_RegistryC", "L_C3_RegistryD", "L_C3_Quay"]},
   {"id": "karsk_c4", "title_key": "board.place.karsk_c4", "scenes": ["L_C4_TunnelsA", "L_C4_TunnelsB"]},
-  {"id": "berlin_c4", "title_key": "board.place.berlin_c4", "scenes": ["L_C4_AnnexA", "L_C4_AnnexB"]}
+  {"id": "berlin_c4", "title_key": "board.place.berlin_c4", "scenes": ["L_C4_AnnexA", "L_C4_AnnexB"]},
+  {"id": "karsk_depot", "title_key": "board.place.karsk_depot", "scenes": ["L_C4P2_KarskA", "L_C4P2_KarskB"]},
+  {"id": "berlin_ost", "title_key": "board.place.berlin_ost", "scenes": ["L_C4P2_BerlinA"]},
+  {"id": "berlin_k14", "title_key": "board.place.berlin_k14", "scenes": ["L_C4P2_BerlinB"]}
  ],
  "spots": {
   "L_A1_Railyard": "board.spot.railyard",
@@ -22,7 +25,11 @@
   "L_C4_TunnelsA": "board.spot.cellar",
   "L_C4_TunnelsB": "board.spot.siding",
   "L_C4_AnnexA": "board.spot.loop",
-  "L_C4_AnnexB": "board.spot.annex"
+  "L_C4_AnnexB": "board.spot.annex",
+  "L_C4P2_KarskA": "board.spot.coal_stage",
+  "L_C4P2_KarskB": "board.spot.showcase",
+  "L_C4P2_BerlinA": "board.spot.platform_k",
+  "L_C4P2_BerlinB": "board.spot.courtyard_14"
  },
  "looks": [
   {"item": "ev_c3_kordon_plan", "when": {"choice.c3d_choose": "admit_plan"}, "look": "burned", "note_key": "board.note.kordon_burned"},
@@ -31,7 +38,10 @@
   {"item": "ev_c3_escort_list", "when": {"choice.c3g_choose": "swap_halves"}, "note_key": "board.note.list_swap"},
   {"item": "ev_c3_escort_list", "when": {"choice.c3g_choose": "hide_for_elena"}, "note_key": "board.note.list_elena"},
   {"item": "ev_c4_card_ru", "note_key": "board.note.card_copy"},
-  {"item": "ev_c4_card_de", "when": {"items": ["ev_c4_card_ru"]}, "note_key": "board.note.card_whole"}
+  {"item": "ev_c4_card_de", "when": {"objectives": ["c4g_solve_halves"]}, "note_key": "board.note.card_joined"},
+  {"item": "ev_c4_card_de", "when": {"objectives": ["c4f_inspect_book"]}, "note_key": "board.note.card_sent"},
+  {"item": "ev_c4_card_de", "when": {"items": ["ev_c4_card_ru"]}, "note_key": "board.note.card_whole"},
+  {"item": "ev_c4_card_ru_original", "when": {"objectives": ["c4g_inspect_card"]}, "note_key": "board.note.card_back_in_box"}
  ],
  "summary": [
   {"id": "karsk_wagons", "when": {"items": ["ev_timetable"]}, "text_key": "board.sum.karsk_wagons"},
@@ -68,6 +78,18 @@
   {"id": "c4_wendt", "when": {"items": ["ev_c4_tube_slip"]}, "text_key": "board.sum.c4_wendt"},
   {"id": "c4_named", "slot": "marta", "when": {"choice.c4d_choose": "name_marta"}, "text_key": "board.sum.c4_named"},
   {"id": "c4_protected", "slot": "marta", "when": {"choice.c4d_choose": "protect_marta"}, "text_key": "board.sum.c4_protected"},
-  {"id": "c4_tuesday", "when": {"events": ["c4d_completed"]}, "text_key": "board.sum.c4_tuesday"}
+  {"id": "c4p2_tuesday_publish", "slot": "tuesday", "when": {"events": ["c4h_completed"], "choice.c4g_choose": "publish_now"}, "text_key": "board.sum.c4p2_tuesday_publish"},
+  {"id": "c4p2_tuesday_protect", "slot": "tuesday", "when": {"events": ["c4h_completed"], "choice.c4g_choose": "protect_first"}, "text_key": "board.sum.c4p2_tuesday_protect"},
+  {"id": "c4_tuesday", "slot": "tuesday", "when": {"events": ["c4d_completed"]}, "text_key": "board.sum.c4_tuesday"},
+  {"id": "c4p2_kolonne", "when": {"items": ["ev_c4_work_list"]}, "text_key": "board.sum.c4p2_kolonne"},
+  {"id": "c4p2_card_first", "when": {"objectives": ["c4e_talk_maria"]}, "text_key": "board.sum.c4p2_card_first"},
+  {"id": "c4p2_tarpaulin", "when": {"items": ["ev_c4_press_notice"]}, "text_key": "board.sum.c4p2_tarpaulin"},
+  {"id": "c4p2_green_wagon", "when": {"items": ["ev_c4_courier_seals"]}, "text_key": "board.sum.c4p2_green_wagon"},
+  {"id": "c4p2_sent", "when": {"objectives": ["c4f_inspect_book"]}, "text_key": "board.sum.c4p2_sent"},
+  {"id": "c4p2_whole", "when": {"items": ["ev_c4_card_whole"]}, "text_key": "board.sum.c4p2_whole"},
+  {"id": "c4p2_publish", "slot": "ekdahl", "when": {"choice.c4g_choose": "publish_now"}, "text_key": "board.sum.c4p2_publish"},
+  {"id": "c4p2_protect", "slot": "ekdahl", "when": {"choice.c4g_choose": "protect_first"}, "text_key": "board.sum.c4p2_protect"},
+  {"id": "c4p2_k14", "when": {"items": ["ev_c4_house_notice"]}, "text_key": "board.sum.c4p2_k14"},
+  {"id": "c4p2_hidden", "when": {"objectives": ["c4h_solve_house"]}, "text_key": "board.sum.c4p2_hidden"}
  ]
 }

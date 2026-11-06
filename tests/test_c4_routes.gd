@@ -5,7 +5,8 @@ extends RefCounted
 ## step), both puzzles (route overlay „Linie 74“, number chain „Die Nummernkette“), save/load at every C4 step,
 ## round-8 saves continuing into Chapter 4, the line variants per route (no dead variant, fallback-only bases never
 ## heard), the presentation contract of data/chapters/c4.json, the two level shells, the engine's reading of the
-## data, German typography, and the end card's decision list in story order.
+## data, German typography, and the end card's decision list in story order. Since round 10 every full route goes on
+## through Chapter 4 part 2 with the Kit default (publish_now); part 2 has its own tests/test_c4p2_routes.gd.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const ENGINE := preload("res://scripts/story/story_engine.gd")
@@ -20,7 +21,8 @@ const C3G := ["split_by_language", "swap_halves", "hide_for_elena"]
 const C4D := ["name_marta", "protect_marta"]
 const C4_SCENES := ["L_C4_TunnelsA", "L_C4_AnnexA", "L_C4_TunnelsB", "L_C4_AnnexB"]
 const PROTAGONIST := {"L_C4_TunnelsA": "alexei", "L_C4_AnnexA": "konrad", "L_C4_TunnelsB": "alexei",
-	"L_C4_AnnexB": "konrad"}
+	"L_C4_AnnexB": "konrad", "L_C4P2_KarskA": "alexei"}
+const C4P2_SCENES := ["L_C4P2_KarskA", "L_C4P2_BerlinA", "L_C4P2_KarskB", "L_C4P2_BerlinB"]
 const TUNNELS := "res://scenes/levels/L_C4_Tunnels.tscn"
 const ANNEX := "res://scenes/levels/L_C4_Annex.tscn"
 const ENVS := {TUNNELS: "res://assets/environments/karsk_tunnels/scene.json",
@@ -36,7 +38,7 @@ const C4_ITEMS := ["ev_c4_book_gap", "ev_c4_cut_signatures", "ev_c4_carbon", "ev
 	"ev_c4_wagon_inside", "ev_c4_drawer_s8", "ev_c4_annex_plan", "ev_c4_tube_slip"]
 const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "c3c_completed", "c3d_completed",
 	"c3e_completed", "c3f_completed", "c3g_completed", "c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed",
-	"slice_completed"]
+	"c4e_completed", "c4f_completed", "c4g_completed", "c4h_completed", "slice_completed"]
 const C4_CINEMATICS := ["LS_C4_Homeward", "LS_C4_Number", "LS_C4_Card", "LS_C4_Stamp", "LS_C4_Voices"]
 const C4_DIALOGUES := ["dlg_c4a_lev", "dlg_c4a_tunnel", "dlg_c4b_marta", "dlg_c4b_ilse", "dlg_c4c_lev", "dlg_c4d_counter"]
 ## Base lines that a variant always replaces in normal play (a1 / m1 / c3g cover every option).
@@ -90,14 +92,18 @@ func run() -> Array:
 
 
 # ------------------------------------------------------------------ helpers
-## Meters of a finished route (C3_DESIGN §2.4, C3P2_DESIGN §2.4, C4_DESIGN §2.4: every option raises one meter).
-static func meters(a1: String, m1: String, c3a: String, c3b: String, c3d: String, c3g: String, c4d: String) -> Dictionary:
+## Meters of a finished route (C3_DESIGN §2.4, C3P2_DESIGN §2.4, C4_DESIGN §2.4, C4P2_DESIGN §2.4: every option raises
+## one meter). The part-2 decision is the Kit default (publish_now) unless named.
+static func meters(a1: String, m1: String, c3a: String, c3b: String, c3d: String, c3g: String, c4d: String,
+		c4g := "publish_now") -> Dictionary:
 	return {"irina_trust": int(a1 == "share_with_irina"), "alexei_secrecy": int(a1 == "keep_private"),
 		"konrad_evidence": int(m1 == "preserve_evidence"), "office_suspicion": int(m1 == "request_explanation"),
 		"elena_trust": int(c3a == "ask_elena") + int(c3b == "search_elena") + int(c3g == "hide_for_elena"),
-		"evidence_chain": int(c3a == "note_alone") + int(c3d == "pocket_plan") + int(c3g == "split_by_language") + int(c4d == "name_marta"),
+		"evidence_chain": int(c3a == "note_alone") + int(c3d == "pocket_plan") + int(c3g == "split_by_language") +
+			int(c4d == "name_marta") + int(c4g == "publish_now"),
 		"alexei_konrad_trust": int(c3b == "share_protocol") + int(c3d == "admit_plan") + int(c3g == "swap_halves"),
-		"kessler_alerted": int(c3b == "report_delegation"), "civilian_welfare": int(c4d == "protect_marta")}
+		"kessler_alerted": int(c3b == "report_delegation"), "civilian_welfare": int(c4d == "protect_marta"),
+		"people_protected": int(c4g == "protect_first")}
 
 
 ## Flags + "choice.<objective>" keys: what ChapterExt conditions see at this moment of the playthrough.
@@ -162,11 +168,14 @@ func _quest_of(oid: String) -> Dictionary:
 	return {}
 
 
+## Chapter 4 part 1 with the given decision, then part 2 with the Kit defaults (C4P2_DESIGN).
 func _play_c4(g: Node, c4d := "name_marta") -> void:
 	kit.play_c4a(g)
 	kit.play_c4b(g)
 	kit.play_c4c(g)
 	kit.play_c4d(g, c4d)
+	for stage in ["c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage)
 
 
 # ------------------------------------------------------------------ cases
@@ -189,10 +198,10 @@ func _all_combinations() -> bool:
 								kit.ok(int(f["evidence_chain"]) <= 6 and int(f["civilian_welfare"]) <= 3, label + " meters in range")
 								kit.eq(g.completed_events(), EVENTS, label + " events")
 								kit.eq([g.current_scene, g.active_character], ["L_X1_Montage", "none"], label + " montage")
-								kit.eq(g.inventory().slice(22), C4_ITEMS, label + " Chapter-4 evidence in order")
-								kit.eq(g.completed_objectives().slice(43), C4_OBJECTIVES, label + " Chapter-4 objectives in data order")
+								kit.eq(g.inventory().slice(22, 37), C4_ITEMS, label + " Chapter-4 evidence in order")
+								kit.eq(g.completed_objectives().slice(43, 65), C4_OBJECTIVES, label + " Chapter-4 objectives in data order")
 								kit.eq(g.choice_history().get("c4d_choose"), c4d, label + " c4d recorded")
-								kit.eq(g.choice_history().size(), 7, label + " seven decisions")
+								kit.eq(g.choice_history().size(), 8, label + " eight decisions (part 2 adds c4g)")
 								kit.eq([g.is_finished(), g.is_finale_viewed(), g.pending_cinematics()], [true, true, []], label + " finished")
 								finals[g.save_json()] = label
 								n += 1
@@ -234,7 +243,7 @@ func _step_by_step() -> bool:
 		["inspect", "c4d_inspect_drawer", ["c4d_inspect_tube"], "L_C4_AnnexB", []],
 		["inspect", "c4d_inspect_tube", ["c4d_talk_registrar"], "L_C4_AnnexB", []],
 		["talk", "c4d_talk_registrar", ["c4d_choose"], "L_C4_AnnexB", []],
-		["choose", "c4d_choose", [], "L_X1_Montage", ["LS_C4_Voices"]],
+		["choose", "c4d_choose", ["c4e_inspect_order", "c4e_inspect_list"], "L_C4P2_KarskA", ["LS_C4_Voices", "LS_C4P2_Depot"]],
 	]
 	kit.eq(g.available(), ["c4a_inspect_shelf"], "cellar gate")
 	_sweep_locked(g, "cellar entry")
@@ -263,10 +272,13 @@ func _step_by_step() -> bool:
 		kit.eq(queued, s[4], "cinematics queued by %s" % oid)
 		_sweep_locked(g, "after " + oid)
 	kit.ok(g.has_item("ev_c4_tunnel_plan") and g.has_item("ev_c4_route_board"), "both dialogue items granted at their last line")
-	kit.eq([g.current_quest(), g.available()], [{}, []], "montage: no quest, nothing available")
+	kit.eq(g.current_quest().get("id"), "q_c4e_depot", "part 2 follows: the Karsk depot")
 	kit.eq(g.choice_history().get("c4d_choose"), "protect_marta", "second option recorded")
 	kit.eq(g.flags()["civilian_welfare"], 1, "protect_marta: civilian_welfare +1 (first use of the meter)")
-	kit.is_ok(g.finale(true), "finale open after c4d")
+	for stage in ["c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage)
+	kit.eq([g.current_quest(), g.available()], [{}, []], "montage: no quest, nothing available")
+	kit.is_ok(g.finale(true), "finale open after c4h")
 	kit.eq(g.completed_events(), EVENTS, "events once each, in order")
 	return true
 
@@ -392,16 +404,17 @@ func _decision() -> bool:
 		kit.eq(g.save_json(), before, "invalid option %s changes nothing" % Kit.fmt(bad))
 	var r2: Dictionary = g.choose("c4d_choose", "name_marta")
 	kit.eq(r2.get("changes"), {"flags": {"evidence_chain": 2}, "objectives": ["c4d_choose"], "items": [],
-		"events": ["c4d_completed"], "cinematics": ["LS_C4_Voices"], "scene": "L_X1_Montage"}, "name_marta changes")
+		"events": ["c4d_completed"], "cinematics": ["LS_C4_Voices", "LS_C4P2_Depot"], "scene": "L_C4P2_KarskA"},
+		"name_marta changes")
 	kit.eq(g.flags()["civilian_welfare"], 0, "name_marta leaves civilian_welfare")
 	kit.eq(g.choose("c4d_choose", "protect_marta").get("error_key"), "sys.err.locked", "decided once only")
 	g.free()
-	# the flag table is unchanged: Chapter 4 adds no flag (C4_DESIGN §1.1)
-	kit.eq((data["flags"]["flags"] as Dictionary).size(), 16, "16 flags, as in round 7/8")
+	# Chapter 4 part 1 added no flag (C4_DESIGN §1.1); part 2 adds people_protected after the save migration (round 10)
+	kit.eq((data["flags"]["flags"] as Dictionary).size(), 17, "16 flags of round 7/8 + people_protected")
 	for e in ["c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed"]:
 		kit.ok((data["flags"]["events"] as Array).has(e), "event %s" % e)
 	kit.eq(data["flags"]["events"][-1], "slice_completed", "slice_completed stays the last event")
-	kit.eq(data["quests"]["slice_end_requires"], EVENTS.slice(0, EVENTS.size() - 1), "the finale needs all thirteen quest events")
+	kit.eq(data["quests"]["slice_end_requires"], EVENTS.slice(0, EVENTS.size() - 1), "the finale needs all seventeen quest events")
 	return true
 
 
@@ -440,9 +453,12 @@ func _save_load() -> bool:
 			"choice":
 				kit.step(g.choose(oid, o["choices"][-1]["id"]), oid)
 		roundtrip.call("after " + oid)
+	for stage in ["c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage)
+	roundtrip.call("part 2 played, montage")
 	kit.is_ok(g.finale(false), "finale")
 	roundtrip.call("finished")
-	kit.ok(checkpoints[0] >= 85, "checkpoints exercised (%d)" % checkpoints[0])
+	kit.ok(checkpoints[0] >= 86, "checkpoints exercised (%d)" % checkpoints[0])
 	g.free()
 	return true
 
@@ -507,7 +523,7 @@ func _variants() -> bool:
 							reaction_keys[str(ext.reaction("c4d_choose", opt, cond_flags(g))[1])] = true
 						g.free()
 	for node_id in ext.line_variants:
-		if not str(node_id).begins_with("c4"):
+		if not (str(node_id).substr(0, 3) in ["c4a", "c4b", "c4c", "c4d"]):    # part 2: tests/test_c4p2_routes.gd
 			continue
 		for v in ext.line_variants[node_id]:
 			kit.ok(heard.has(str(v["key"])), "variant %s of %s is heard on some route" % [v["key"], node_id])
@@ -550,7 +566,8 @@ func _presentation() -> bool:
 		chain.append(cur)
 		cur = scenes[cur]["next_scene"]
 	kit.eq(chain, Kit.CHAIN, "the whole chain = Kit.CHAIN")
-	kit.eq(chain.slice(chain.find("L_C3_Quay")), ["L_C3_Quay"] + C4_SCENES + ["L_X1_Montage"], "Chapter 4 sits between the quay and the montage")
+	kit.eq(chain.slice(chain.find("L_C3_Quay")), ["L_C3_Quay"] + C4_SCENES + C4P2_SCENES + ["L_X1_Montage"],
+		"Chapter 4 (both parts) sits between the quay and the montage")
 	for sid in C4_SCENES:
 		var s: Dictionary = scenes[sid]
 		kit.eq(s["protagonist"], PROTAGONIST[sid], "%s protagonist" % sid)
@@ -748,12 +765,12 @@ func _end_card() -> bool:
 	var loc = kit.track(load("res://scripts/story/loc.gd").new())
 	loc.reload()
 	var want: Array = []
-	for oid in ["a1_choose", "m1_choose", "c3a_choose", "c3b_choose", "c3d_choose", "c3g_choose", "c4d_choose"]:
+	for oid in ["a1_choose", "m1_choose", "c3a_choose", "c3b_choose", "c3d_choose", "c3g_choose", "c4d_choose", "c4g_choose"]:
 		for c in objectives[oid]["choices"]:
 			if c["id"] == g.choice_history()[oid]:
 				want.append("• " + loc.t(c["text_key"]))
-	kit.eq(game.end_card_decisions(g.choice_history()), want, "seven decisions in story order (live)")
-	kit.eq(game.end_card_decisions(h.choice_history()), want, "seven decisions in story order (after a reload)")
+	kit.eq(game.end_card_decisions(g.choice_history()), want, "eight decisions in story order (live)")
+	kit.eq(game.end_card_decisions(h.choice_history()), want, "eight decisions in story order (after a reload)")
 	g.free()
 	h.free()
 	return true

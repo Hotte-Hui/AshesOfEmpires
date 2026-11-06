@@ -181,6 +181,51 @@
    "id": "households",
    "caption_key": "board.link.households",
    "items": ["ev_c4_drawer_s8", "ev_c4_tube_slip"]
+  },
+  {
+   "id": "run_45",
+   "caption_key": "board.link.run_45",
+   "items": ["ev_c4_special_order", "ev_c4_stencils"]
+  },
+  {
+   "id": "kolonne_14",
+   "caption_key": "board.link.kolonne_14",
+   "items": ["ev_c4_work_list", "ev_c4_wagon_inside"]
+  },
+  {
+   "id": "tarpaulin",
+   "caption_key": "board.link.tarpaulin",
+   "items": ["ev_c4_press_notice", "ev_c4_work_list"]
+  },
+  {
+   "id": "green_wagon",
+   "caption_key": "board.link.green_wagon",
+   "items": ["ev_c4_departures_east", "ev_c4_courier_seals", "ev_c4_card_de"]
+  },
+  {
+   "id": "blatt_7_again",
+   "caption_key": "board.link.blatt_7_again",
+   "items": ["ev_c3_kordon_plan", "ev_c4_konrad_tracing", "ev_c4_guidebook"]
+  },
+  {
+   "id": "card_joined",
+   "caption_key": "board.link.card_joined",
+   "items": ["ev_c4_card_de", "ev_c4_card_whole", "ev_c4_card_ru_original"]
+  },
+  {
+   "id": "tuesday_2340",
+   "caption_key": "board.link.tuesday_2340",
+   "items": ["ev_c4_special_order", "ev_c4_card_whole"]
+  },
+  {
+   "id": "signed_ka_14",
+   "caption_key": "board.link.signed_ka_14",
+   "items": ["ev_c4_notice", "ev_c4_house_notice"]
+  },
+  {
+   "id": "house_cards",
+   "caption_key": "board.link.house_cards",
+   "items": ["ev_c4_drawer_s8", "ev_c4_house_cards"]
   }
  ]
 }

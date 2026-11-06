@@ -99,11 +99,13 @@ func _test_deep_valid() -> bool:
 	kit.ok(registry.size() >= 25, "assets >= 25 (got %d)" % registry.size())
 	# The slice locked three sequences; Chapter 3 adds LS_C3_Trains, LS_C3_ToHall, LS_C3_Close (C3_DESIGN §2.9),
 	# part 2 LS_C3_Radio, LS_C3_Fire, LS_C3_Escape, LS_C3_Halves (C3P2_DESIGN §2.9), Chapter 4 part 1 the homeward
-	# journey and the three match cuts plus the closing (C4_DESIGN §2.9).
-	kit.eq(r.get("report", {}).get("cinematics"), 15, "fifteen locked cinematics")
+	# journey and the three match cuts plus the closing (C4_DESIGN §2.9), part 2 the depot opening, the three match cuts
+	# and the clock (C4P2_DESIGN §2.9).
+	kit.eq(r.get("report", {}).get("cinematics"), 20, "twenty locked cinematics")
 	kit.eq(Kit.sorted(ENGINE.LOCKED_CINEMATICS), Kit.sorted(["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains",
 		"LS_C3_ToHall", "LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves", "LS_C4_Homeward",
-		"LS_C4_Number", "LS_C4_Card", "LS_C4_Stamp", "LS_C4_Voices"]), "validator list of locked cinematics")
+		"LS_C4_Number", "LS_C4_Card", "LS_C4_Stamp", "LS_C4_Voices", "LS_C4P2_Depot", "LS_C4P2_Steam", "LS_C4P2_Book",
+		"LS_C4P2_Express", "LS_C4P2_Clock"]), "validator list of locked cinematics")
 	return true
 
 

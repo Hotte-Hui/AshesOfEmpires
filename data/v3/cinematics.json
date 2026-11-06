@@ -441,6 +441,161 @@
           "shot": "Black; caption: Tuesday, 23.40, wagon C-17/45"
         }
       ]
+    },
+    {
+      "id": "LS_C4P2_Depot",
+      "trigger_event": "c4d_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "p1",
+          "duration_s": 5,
+          "camera": "establishing",
+          "shot": "Karsk locomotive depot before dawn: floodlights over the coal stage, the work gang of returnees shovelling in a line, a young guard at a barrel fire"
+        },
+        {
+          "id": "p2",
+          "duration_s": 4,
+          "camera": "side_on",
+          "shot": "Alexei with his toolbox under the roundhouse arch, breath in the cold; the banner ВОССТАНОВИМ ВМЕСТЕ patched with sacking"
+        },
+        {
+          "id": "p3",
+          "duration_s": 4,
+          "camera": "close",
+          "shot": "Irina's lit dispatch window, a typed order on the sill; control to Alexei"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4P2_Steam",
+      "trigger_event": "c4e_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "m1",
+          "duration_s": 4,
+          "camera": "side_on",
+          "shot": "The coal stage: the special-run locomotive takes coal; workers stretch a tarpaulin on poles \"for tomorrow\"; Alexei watches"
+        },
+        {
+          "id": "m2",
+          "duration_s": 1.5,
+          "camera": "macro_locked",
+          "shot": "Macro: a white jet of steam from the locomotive's safety valve (match cut)"
+        },
+        {
+          "id": "m3",
+          "duration_s": 4,
+          "camera": "macro_to_medium",
+          "shot": "Berlin, Ostbahnhof 20.30: the same white jet from the express locomotive under the glass roof; the departure board flips to D 303 Karsk 21.10"
+        },
+        {
+          "id": "m4",
+          "duration_s": 3,
+          "camera": "establishing",
+          "shot": "Konrad on platform K in the crowd, Marta at the buffet in her driver's coat; control to Konrad"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4P2_Book",
+      "trigger_event": "c4f_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "b1",
+          "duration_s": 3.5,
+          "camera": "close",
+          "shot": "Dining car: Konrad's hand slides the card half and the tracing between pages 212 and 213 of Ekdahl's guidebook; Ekdahl closes it; the man from the kiosk reflected in the window"
+        },
+        {
+          "id": "b2",
+          "duration_s": 1.5,
+          "camera": "macro_locked",
+          "shot": "Macro: the book closing (match cut)"
+        },
+        {
+          "id": "b3",
+          "duration_s": 4,
+          "camera": "macro_to_medium",
+          "shot": "Karsk, Tuesday 17.30: the same book opening at page 212 on the canteen table under a gloved hand; Alexei's fingers on the German half"
+        },
+        {
+          "id": "b4",
+          "duration_s": 3,
+          "camera": "establishing",
+          "shot": "The depot showcase under floodlights: the brass band, the polished locomotive with red ribbons, the press minder lighting a cigarette; control to Alexei"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4P2_Express",
+      "trigger_event": "c4g_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "x1",
+          "duration_s": 4,
+          "camera": "side_on",
+          "shot": "Karsk platform 1, 20.10: the westbound express starts; Ekdahl at his window holds up a film canister (publish_now) or shows an empty hand and nods (protect_first)"
+        },
+        {
+          "id": "x2",
+          "duration_s": 4,
+          "camera": "fixed",
+          "shot": "Alexei and Lev on the emptying platform; the express recedes down the line; Lev buttons his carbons back into his coat (protect_first) or his hands are empty (publish_now)"
+        },
+        {
+          "id": "x3",
+          "duration_s": 1.5,
+          "camera": "macro_locked",
+          "shot": "Macro: the express's red tail lamp (match cut)"
+        },
+        {
+          "id": "x4",
+          "duration_s": 3.5,
+          "camera": "tracking",
+          "shot": "Berlin, Kolonnenstraße 22.10: a red warning lamp on the building-site barrier of No. 12; Konrad walks under it into the gate passage of No. 14; control to Konrad"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4P2_Clock",
+      "trigger_event": "c4h_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "k1",
+          "duration_s": 5,
+          "camera": "establishing",
+          "shot": "Berlin, 23.40: the courtyard of No. 14 from above; the black car leaves; Hanna's window stays lit; in the cobbler's basement window a candle, Ilse asleep on leather offcuts under the cobbler's coat"
+        },
+        {
+          "id": "k2",
+          "duration_s": 6,
+          "camera": "establishing",
+          "shot": "Kordon-17, 23.40 corridor time, wide and from far: floodlights, the room on the Line, Tür Ost. publish_now: a flashbulb at the fence, a man with a notebook, the door stays shut, two figures are led back into the German hall; protect_first: the door opens, two figures cross the light into wagon C-17/45, the door closes (no faces, no force shown)"
+        },
+        {
+          "id": "k3",
+          "duration_s": 5,
+          "camera": "side_on",
+          "shot": "Karsk, 1.40: Alexei at Irina's dispatch window; the teleprinter types (publish_now: handover suspended; protect_first: C-17/45 left Kordon-17); Lev's lamp in the freight office"
+        },
+        {
+          "id": "k4",
+          "duration_s": 4,
+          "camera": "macro_locked",
+          "shot": "Irina's desk under the lamp: the German half of card 0417 beside a film canister (protect_first) or beside Lev's empty folder (publish_now)"
+        },
+        {
+          "id": "k5",
+          "duration_s": 4,
+          "camera": "title",
+          "shot": "Black; caption: end of the fourth chapter"
+        }
+      ]
     }
   ]
 }

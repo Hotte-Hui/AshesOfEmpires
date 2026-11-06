@@ -19,6 +19,10 @@
     "c4b_completed",
     "c4c_completed",
     "c4d_completed",
+    "c4e_completed",
+    "c4f_completed",
+    "c4g_completed",
+    "c4h_completed",
     "slice_completed"
   ],
   "flags": {
@@ -103,11 +107,18 @@
     "elena_missing": {
       "type": "boolean",
       "default": false
+    },
+    "people_protected": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "max": 6
     }
   },
   "notes": [
     "Defaults and bounds are canonical. Runtime state is per save slot.",
     "Integer effects are deltas, boolean effects are explicit set operations.",
-    "Save versions 1 -> 2 migration must retain known flags and populate new defaults."
+    "Save versions 1 -> 2 migration must retain known flags and populate new defaults.",
+    "Round 10: saves written before a flag existed get its default on load (SaveSystem.fill_flag_defaults); a new flag is only ever written by objectives of the chapter that introduces it."
   ]
 }

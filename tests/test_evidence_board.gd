@@ -7,7 +7,9 @@ extends RefCounted
 ## a real board), the board never changes Story state, sizes at 100/125/150 % text (no overlapping cards, labels fit
 ## their cards, every region inside 1920x1080; the detail strip shows every whole name and decision note, the sheet
 ## opens on its newest lines with a whole first line), high contrast, the journal tab „Akte“ (the seven index tabs
-## keep their size, cover page, „Pinnwand öffnen“) and the art.
+## keep their size, cover page, „Pinnwand öffnen“) and the art. Round 10: the strip's threads come in pages of whole
+## groups that fit its lines („+n weitere“, page count in the kicker; F / pad X / click / wheel turn them, the hint only
+## while a card pages), the cork unchanged.
 
 const TKit := preload("res://tests/support/test_kit.gd")
 const UIKit := preload("res://scripts/ui/ui_kit.gd")
@@ -83,6 +85,8 @@ func run() -> Array:
 	kit.run_case("board_navigation_and_inspect_are_read_only", _navigation)
 	kit.run_case("sizes_at_100_125_150_percent", _sizes)
 	kit.run_case("detail_strip_shows_whole_name_and_note", _strip_whole)
+	kit.run_case("detail_strip_threads_in_whole_pages", _thread_pages_whole)
+	kit.run_case("detail_strip_threads_turn_by_key_pad_click", _thread_paging)
 	kit.run_case("summary_sheet_first_line_whole", _sheet_whole)
 	kit.run_case("high_contrast_rebuild", _contrast)
 	kit.run_case("new_cards_since_the_last_opening", _new_cards)
@@ -487,7 +491,8 @@ func _chapter4() -> bool:
 		var g := _story_at("c3g")
 		_play_c4(g, c4d)
 		var m := _model(g)
-		kit.eq(int(m["owned"]), int(m["total"]), "%s: every item of Chapters 1-4 is in the file" % c4d)
+		# round 10: Chapter 4 part 2 follows (C4P2_DESIGN.md) — its eleven items are still ahead after c4d
+		kit.eq([int(m["owned"]), int(m["total"])], [37, 48], "%s: every item of Chapters 1-4 part 1 is in the file" % c4d)
 		for t in m["threads"]:
 			kit.ok(g.has_item(str(t["a"])) and g.has_item(str(t["b"])), "%s: thread %s joins owned items" % [c4d, t["group"]])
 		var groups := {}
@@ -507,7 +512,9 @@ func _chapter4() -> bool:
 		for p in m["places"]:
 			if p["known"]:
 				known.append(p["id"])
-		kit.eq(known, ["karsk", "berlin", "veltrava", "karsk_c4", "berlin_c4"], "%s: five places on the board" % c4d)
+		# the Karsk depot of part 2 is the place the story has just reached (its cards reserved, „?“ pins)
+		kit.eq(known, ["karsk", "berlin", "veltrava", "karsk_c4", "berlin_c4", "karsk_depot"],
+			"%s: five places of the file and the depot that comes next" % c4d)
 	return true
 
 
@@ -721,6 +728,161 @@ func _strip_whole() -> bool:
 			"%d%%: and the strip holds it (%s in %s)" % [int(ts * 100), board._strip.get_combined_minimum_size(), region.size])
 	_settings.values["text_scale"] = 1.0
 	UIKit.refresh_text_scale()
+	return true
+
+
+## Labels under `n` (the controls row's hints).
+static func _texts_under(n: Node, out: Array = []) -> Array:
+	for c in n.get_children():
+		if c is Label:
+			out.append((c as Label).text)
+		_texts_under(c, out)
+	return out
+
+
+## Round 10 (NEXT_STEPS §1): the strip's thread list never trails off in „…“. At 100 / 125 / 150 % every owned card of
+## the Chapter-4 file shows its thread groups in pages of WHOLE groups that fit the visible lines (laid out: the label
+## needs no more lines than it shows), the pages cover the groups once each in order, a page ends in „+n weitere“ while
+## n groups follow (never on the last), the kicker counts the pages; cards with many groups do page, and turning the
+## pages leaves the cork as it was (cards, canvas, regions; the strip keeps its region).
+func _thread_pages_whole() -> bool:
+	var g := _story_at("c4d", {"c3d": "pocket_plan", "c3g": "hide_for_elena"})
+	var paged := {}
+	for ts in [1.0, 1.25, 1.5]:
+		_settings.values["text_scale"] = ts
+		var board := _make_board(g)
+		UIKit.refresh_text_scale()
+		board.rebuild()
+		_lay_out(board, board._strip)
+		var pct := int(ts * 100)
+		var cork := [board.layout_info.duplicate(true), board._canvas.custom_minimum_size, board._regions.duplicate()]
+		var bad: Array = []
+		var groups := 0
+		var lone := 0
+		var tails := 0
+		for id in board._cards:
+			board.focus_card(id)
+			var bits: Array = board._thread_bits.duplicate()
+			var pages: Array = board._thread_pages.duplicate(true)
+			groups = maxi(groups, bits.size())
+			var next := 0
+			for p in pages.size():
+				var first := int(pages[p][0])
+				var count := int(pages[p][1])
+				if first != next or count < 1:
+					bad.append("%s: page %d starts at %d (expected %d)" % [id, p + 1, first, next])
+				next = first + count
+				board._thread_page = p
+				board._show_thread_page()
+				_lay_out(board, board._strip)
+				var l: Label = board._d_threads
+				if l.get_line_count() > l.max_lines_visible:
+					bad.append("%s p%d/%d: needs %d lines, shows %d („%s“)" % [id, p + 1, pages.size(), l.get_line_count(), l.max_lines_visible, l.text])
+				var rest := bits.size() - next
+				var want := "  ·  ".join(bits.slice(first, first + count))
+				if bool(pages[p][2]):
+					want += "  ·  " + UIKit.t("board.detail.more", {"n": rest})
+				elif rest > 0:
+					lone += 1
+					if count != 1:
+						bad.append("%s p%d: %d groups without „+%d weitere“" % [id, p + 1, count, rest])
+				if l.text != want:
+					bad.append("%s p%d: „%s“, expected „%s“" % [id, p + 1, l.text, want])
+				var kick: String = board._d_threads_kicker.text
+				if pages.size() > 1 and not kick.ends_with("%d/%d" % [p + 1, pages.size()]):
+					bad.append("%s p%d: kicker „%s“ without the page" % [id, p + 1, kick])
+				if board._strip.size != (board._regions["strip"] as Rect2).size:
+					bad.append("%s p%d: the strip left its region (%s)" % [id, p + 1, board._strip.size])
+			if next != bits.size():
+				bad.append("%s: the pages cover %d of %d groups" % [id, next, bits.size()])
+			if pages.size() > 1:
+				paged[id] = true
+			for pg in pages:
+				tails += 1 if bool(pg[2]) else 0
+		kit.eq(bad, [], "%d%%: every card's threads in whole pages, „+n weitere“ while groups follow" % pct)
+		kit.ok(tails > lone, "%d%%: most pages that are followed say „+n weitere“ (%d; %d lone groups fill theirs)" % [pct, tails, lone])
+		kit.ok(groups >= 6, "%d%%: the file has a card with many thread groups (%d)" % [pct, groups])
+		kit.eq([board.layout_info, board._canvas.custom_minimum_size, board._regions], cork, "%d%%: turning pages leaves the cork as it was" % pct)
+	kit.ok(paged.has("ev_c3_intake_book"), "the intake book (7 thread groups) pages (%s)" % [paged.keys()])
+	_settings.values["text_scale"] = 1.0
+	UIKit.refresh_text_scale()
+	return true
+
+
+## Round 10: the pure packer, then the real board -- F (physical key, no echo), pad X, a click and the wheel on the
+## threads turn the focused card's pages with a page sound, wrapping; another card starts on page 1; the controls row
+## says „Fäden blättern“ and the column takes the mouse only while the card pages (never a dead control).
+func _thread_paging() -> bool:
+	var fits := func(t: String) -> bool: return t.length() <= 20
+	var more := func(n: int) -> String: return "+%d" % n
+	kit.eq(B.thread_pages([], fits, more), [], "no groups: no pages")
+	kit.eq(B.thread_pages(["aaaa", "bbbb", "cccc", "dddd"], fits, more), [[0, 2, true], [2, 2, false]],
+		"whole groups per page, the count of what follows included in the fit")
+	kit.eq(B.thread_pages(["x".repeat(10), "y".repeat(10)], fits, more), [[0, 1, true], [1, 1, false]],
+		"a lone group keeps „+n“ when it fits beside it")
+	kit.eq(B.thread_pages(["x".repeat(18), "bb"], fits, more), [[0, 1, false], [1, 1, false]],
+		"a lone group that fills the page leaves the count to the kicker")
+	kit.eq(B.thread_pages(["x".repeat(30), "bb"], fits, more), [[0, 1, false], [1, 1, false]],
+		"a group too long for a page gets its own")
+	kit.eq(B.page_text(["aaaa", "bbbb"], 2, more), "aaaa  ·  bbbb  ·  +2", "page text with what follows")
+	kit.eq(B.page_text(["cccc"], 0, more), "cccc", "the last page announces nothing")
+	_settings.values["text_scale"] = 1.0
+	var board := _make_board(_story_at("c4d", {"c3d": "pocket_plan", "c3g": "hide_for_elena"}))
+	UIKit.refresh_text_scale()
+	board.rebuild()
+	var hint := UIKit.t("board.hint.threads")
+	var single := ""
+	for id in board._cards:
+		board.focus_card(id)
+		if not board.threads_paged() and not board._thread_bits.is_empty():
+			single = id
+			break
+	if kit.ok(single != "", "a card whose threads fit one page"):
+		kit.ok(not _texts_under(board._controls).has(hint), "one page: no „%s“ hint" % hint)
+		kit.eq(board._d_threads_col.mouse_filter, Control.MOUSE_FILTER_IGNORE, "one page: the threads take no clicks")
+		kit.ok(not board.page_threads(1), "one page: nothing to turn")
+	board.focus_card("ev_c3_intake_book")
+	var n: int = board._thread_pages.size()
+	if not kit.ok(n >= 2, "the intake book pages (%d)" % n):
+		return true
+	kit.eq(board._thread_page, 0, "a card opens on its first page")
+	kit.ok(_texts_under(board._controls).has(hint), "paged: the controls row says „%s“" % hint)
+	kit.eq(board._d_threads_col.mouse_filter, Control.MOUSE_FILTER_STOP, "paged: the threads take clicks")
+	var audio: Node = UIKit.overrides["Audio"]
+	var sounds: int = audio.played.size()
+	var key := InputEventKey.new()
+	key.physical_keycode = B.PAGE_KEY
+	key.pressed = true
+	kit.ok(board.modal_input(key), "F is the board's")
+	kit.eq(board._thread_page, 1, "F turns to page 2")
+	kit.ok(board._d_threads_kicker.text.ends_with("2/%d" % n), "the kicker shows page 2 of %d" % n)
+	kit.ok(audio.played.size() > sounds, "turning sounds like paper")
+	key.echo = true
+	board.modal_input(key)
+	kit.eq(board._thread_page, 1, "a held F does not race through the pages")
+	var pad := InputEventJoypadButton.new()
+	pad.button_index = B.PAGE_BUTTON
+	pad.pressed = true
+	kit.ok(board.modal_input(pad), "pad X is the board's")
+	kit.eq(board._thread_page, 2 % n, "pad X turns on")
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_WHEEL_UP
+	click.pressed = true
+	board._on_threads_input(click)
+	kit.eq(board._thread_page, 1, "the wheel turns back")
+	click.button_index = MOUSE_BUTTON_LEFT
+	for i in n:
+		board._on_threads_input(click)
+	kit.eq(board._thread_page, 1, "a click turns on and the pages wrap")
+	var other := ""
+	for id in board._cards:
+		if id != "ev_c3_intake_book":
+			other = id
+			break
+	board.focus_card(other)
+	board.focus_card("ev_c3_intake_book")
+	kit.eq(board._thread_page, 0, "back on the card: page 1 again")
+	board.close()
 	return true
 
 

@@ -73,6 +73,13 @@ edit the part of the owning area and re-run the script.
 - [explore_c4](#part-explore_c4)
 - [board](#part-board)
 - [feel_r9](#part-feel_r9)
+- [env_c4p2_karsk](#part-env_c4p2_karsk)
+- [env_c4p2_berlin](#part-env_c4p2_berlin)
+- [c4p2_cine](#part-c4p2_cine)
+- [c4p2_puzzle](#part-c4p2_puzzle)
+- [c4p2_cast_audio](#part-c4p2_cast_audio)
+- [explore_c4p2](#part-explore_c4p2)
+- [polish_r10](#part-polish_r10)
 - [ui](#part-ui)
 - [explore_system](#part-explore_system)
 - [photo_mode](#part-photo_mode)
@@ -3247,7 +3254,8 @@ of the other side-level NPCs + portrait with the four expressions) and §8 (audi
   breaths and chords only (the contract's „bayan breath“) — no folk melody, no augmented-second scale, no cliché.
 * No insignia on any new sprite or portrait: Marta's cap carries only the line number „74“, Fengler's lapel pin is a
   plain round pin. Licence: project-owned original assets, no attribution needed.
-* Deterministic: verified 2026-11-06 — all 15 WAVs rebuilt and md5-compared (identical); all 18 character files
+* Deterministic: verified 2026-11-06 — all 15 WAVs rebuilt and md5-compared (identical; round 10: 11 WAVs, the
+  three re-voiced cues rebuild bit-identically and `amb_berlin_annex`, which shares `stamp_take`, is unchanged); all 18 character files
   (3 × sheet.png, sheet_n.png, sheet.json, portrait.png, portrait_anim.png, portrait.json) rebuilt into a scratch
   directory and byte-compared (identical).
 
@@ -3256,7 +3264,7 @@ of the other side-level NPCs + portrait with the four expressions) and §8 (audi
 py -3 -P tools/pixelgen/characters_c4.py --portraits   # 3 speakers: sheets, normal maps, living portraits, checks
 py -3 -P tools/pixelgen/characters_c4.py --check       # validators only (characters_check + C4 contract checks)
 py -3 -P tools/pixelgen/characters_c4.py --heads       # review image of the hand-drawn heads (8x)
-py -3 -P tools/audiogen/c4_audio.py                    # 15 WAVs + .import + analysis + numeric checks
+py -3 -P tools/audiogen/c4_audio.py                    # 11 WAVs + .import + analysis + numeric checks
 py -3 -P tools/audiogen/c4_audio.py --list             # names and where each is (to be) wired
 ## then the shared, locked import (TECHNICAL_ARCHITECTURE §1)
 ```
@@ -3293,13 +3301,10 @@ Measured on the delivered files (RMS / sample peak in dBFS; seam = level step ov
 | `music/mus_c4_karsk.wav` | sparse low strings in D Aeolian, a cello line descending D–C–Bb–A, the bayan breathing three times (Dm, Dsus2, an open fifth into the loop), soft low plucks, K once on the felt piano | 71.1 s loop (54 bpm, 64 beats) | −22.0 / −5.5 (+0.7 dB) | `L_C4_Tunnels.tscn` music; switches `L_C4_TunnelsA` / `B` |
 | `music/mus_c4_berlin.wav` | cool and mechanical in G Aeolian: a muted-piano pulse in 3+3+2, a card machine's dry tick (a heavier feed every two bars), brass chords over the G pedal, a cold harmonic line, B on the celesta, B low on the piano | 53.3 s loop (72 bpm, 64 beats) | −21.0 / −2.3 (−1.9 dB) | `L_C4_Annex.tscn` music; switches `L_C4_AnnexA` / `B` |
 | `music/mus_c4_voices.wav` | the closing: a clock on every beat; the Karsk drone and K on the piano, then B on the celesta over the G pedal, then K_B and B together (B's Eb bent to E where they meet), the clock alone again. The first 24 s are a full arc for LS_C4_Voices (≈ 24 s); the loop serves longer scenes | 48.0 s loop (60 bpm, 48 beats) | −21.0 / −1.0 (−1.9 dB) | LS_C4_Voices `{"music": "mus_c4_voices"}` (cine stream) |
-| `sfx/c4_stencil_brush.wav` | a stippling brush dabbed through a stencil on wagon planks, wiped on the tin's rim | 5.0 s | −35.3 / −9.0 | LS_C4_Number n1 |
-| `sfx/c4_card_tear.wav` | a stiff registry card torn along its perforation (the tear runs 0.20–0.66 s) | 1.4 s | −39.9 / −10.0 | LS_C4_Card c1 → c2 |
-| `sfx/c4_stamp_accept.wav` | Karsk „ПРИНЯТЬ“: ink pad at 0.00 s, the stroke at 0.36 s on the siding office's wooden desk (small wooden booth) | 2.0 s | −31.5 / −6.0 | LS_C4_Stamp s1 / s2 |
-| `sfx/c4_stamp_dispatch.wav` | Berlin „ABGANG“: same timing, on the annex counter (linoleum over steel, concrete hall) — the match cut lands on the stroke | 2.4 s | −33.9 / −6.0 | LS_C4_Stamp s3 |
-| `sfx/c4_bell_once.wav`, `c4_bell_twice.wav` | Marta's foot gong in the open loop (slap off the bare party wall), one ring / two | 4.6 s | −27.4 / −7.0, −25.4 / −7.0 | LS_C4_Voices v2 (name_marta / protect_marta) |
-| `sfx/c4_train_overhead.wav` | a goods train crossing above a vault: rumble, wheelsets over a rail joint along the train, the vault's low modes, dust trickling, the lamp chain rattling | 13.0 s | −25.3 / −6.0 | LS_C4_Homeward w3 (optional); a tunnels level script (see note) |
-| `sfx/c4_lamp_out.wav` | the work lamp switched off: hum and ballast buzz, the switch (at 0.62 s), the filament ticking as it cools | 3.6 s | −26.3 / −9.0 | LS_C4_Voices v4 |
+| `sfx/c4_stamp_accept.wav` | the surface of the Karsk stamp „ПРИНЯТЬ“ on the siding office's wooden desk in the small wooden booth: the desk's knock, the rubber's slap, the handle's ring — strike at 0.36 s; no ink pad, no low body, high-passed at 190 Hz (round 10: a layer over the film's bed) | 2.0 s | −36.7 / −6.0 | LS_C4_Stamp s2: `{"sfx": "c4_stamp_accept", "db": -5}` at `STAMP_RU[0]`, over the bed `c4cine_stamp_ru` |
+| `sfx/c4_stamp_dispatch.wav` | the same for the Berlin stamp „ABGANG“ on the annex counter (linoleum over steel, concrete hall) — the match cut lands on two surfaces in two rooms | 2.4 s | −35.4 / −6.0 | LS_C4_Stamp s3a: at `STAMP_DE[0]`, over `c4cine_stamp_de` |
+| `sfx/c4_card_tear.wav` | the perforator splits a card (round 10, re-timed on the picture): the card flexes under the coming lever, at the split (0.12 s) 28 teeth let go in equal steps along the perforation on the picture's ease-out while the fibres hiss with the halves' speed, the last tooth at 0.36 s where the halves come to rest; annex room, from the counter's side | 1.2 s | −40.9 / −9.0 | LS_C4_Stamp s3b: `{"sfx": "c4_card_tear", "db": -6}` at `LEVER[0]` (the bed `c4cine_annex` has the lever's clack) |
+| `sfx/c4_train_overhead.wav` | a goods train crossing above a vault: rumble, wheelsets over a rail joint along the train, the vault's low modes, dust trickling, the lamp chain rattling | 13.0 s | −25.3 / −6.0 | `scripts/levels/c4/tunnels_level.gd` (the trains over the vault) |
 
 Level windows enforced by the generator (`c3p2_audio.check_rows`) and `tests/test_c4_cast_audio.gd`: ambiences −28…−21
 dBFS RMS, peak ≤ −2.5; music −25…−19, peak ≤ −0.8; one-shots −45…−9, peak ≤ −2.5, ending in silence. Loops: `smpl`
@@ -3310,13 +3315,33 @@ Karsk pair was de-rumbled (energy below 120 Hz 55 % / 68 % → 36 % / 38 %, like
 the levels of their relatives (`tram_bell` −27.7 RMS, `stamp_thud` −35.8 / −6 peak). SFX ids never end in `_<n>`
 (Audio.sfx would treat them as random variants). Spectrograms + `c4_analysis.json`: `assets/audio/_preview/`.
 
+#### Round 10: the cast cues per beat (`tools/audiogen/c4_audio.py`, `scenes/cinematics/ch4_stamp/ch4_stamp.gd`)
+The films had their own `c4cine_*` beds (`c4_cine_audio.py`, synced to the pictures and pinned by
+`tests/test_c4_cinematics.gd`), so seven cast cues were never heard. Compared per beat (picture, sync, spectrum):
+* **Stamps (s2 / s3a): layered.** The beds carry the descent's air, the thump on the contact frame and the lift, but
+  their thump is 97 % / 87 % energy below 200 Hz (centroid 151 / 259 Hz) — on small speakers barely a stamp. The cast
+  takes added the surfaces (desk knock, rubber slap, handle ring; booth vs. concrete hall) with the same 0.36 s strike;
+  now re-voiced as layers without the ink-pad dab (the stamp enters the frame already inked) and the low body, played
+  with their beds at −5 dB (≈ 2 dB under equal A-weighted energy with the bed's thump at −4 dB; centroid 590 / 800 Hz).
+* **Card tear: moved to s3b.** No card tears in LS_C4_Card (it is found torn); the perforator in s3b splits one — the
+  bed has only the lever's clack. Re-timed to the picture (split at `LEVER[1]`, rest at 90 % of the 5-px ease-out),
+  annex room, −6 dB (≈ 2 dB under the clack's A-weighted energy).
+* **Dropped:** `c4_stencil_brush` (n1 shows the number painted and wet, nobody paints), `c4_bell_once` / `_twice`
+  (`c4cine_bell` is the same 1480-Hz bell tram 74 rings in LS_C4_Number n4; the double ring's 0.26 s gap misses the
+  picture's 0.75 s; a second bell at once would be a second tram), `c4_lamp_out` (v4: nobody is at the wagon — the
+  lamp fails and `c4cine_lamp_out` flickers it in sync; the cue's switch click and 100-Hz ballast hum contradict it).
+  Generator, test and disk no longer carry them. Tests: every one-shot the generator builds is heard; the layers start
+  with their beds without pitch variation, strike on the contact frames; the tear starts on the split and its last
+  tooth lands where the picture's halves rest (`audio_*` cases in `tests/test_c4_cast_audio.gd`).
+
 ### Tests
 `tests/test_c4_cast_audio.gd` — sheets (rows, 8-frame rhythm, variants, ground speed, size, normal map, feet on the
 origin), the rig (every row loads and plays), living portraits (contract, the mouth opens and the eyes close in every
 expression, expressions differ, opaque), individual silhouettes (IoU vs each other and 16 existing figures) and faces,
 names and speakers (every speaker of the C4 dialogues and every `char_id` of the two level shells has a sheet and a
 portrait), every WAV's format, loop chunk, import loop mode and length, levels and seams on the PCM, wiring (shell
-ambience / music ids, the four switch ambiences of `c4.json`, every c4 sound a C4 cinematic cue names).
+ambience / music ids, the four switch ambiences of `c4.json`, every c4 sound a C4 cinematic cue names), and (round 10)
+every one-shot heard and the LS_C4_Stamp layers in sync with the picture.
 
 ---
 <a id="part-explore_c4"></a>
@@ -3478,6 +3503,698 @@ were not re-generated (their generators keep the old glyphs unless they pass `ov
 ### 4. Data
 `data/explore/quay_tasks.json` + `data/locale/de_quay_tasks.json` — side task „Eine Decke für Frau Brunner“ (hand-written
 text, German typography checked by `tests/test_feel_r9.gd`).
+
+---
+<a id="part-env_c4p2_karsk"></a>
+
+## Asset manifest — env-karsk, round 10 (Chapter 4 part 2: L_C4P2_Karsk, the Karsk locomotive depot)
+
+Area owner: env-karsk specialist · Date: **2026-11-06, round 10** · Engine target: Godot 4.7.2 ·
+Contract: `documentation/C4P2_DESIGN.md` §4.1 (art ↔ content), §2.5 (documents), §6 (the explore stream's
+`explore_hotspots.json` `info` = the art contract of every find).
+
+### Provenance & licence
+Everything here is original project work, made by the project's own deterministic Python generators (numpy /
+Pillow / stdlib; fixed seeds, no network). No samples, no third-party art, no traced or AI-generated pixels; the
+bitmap fonts are hand-defined (`env_veltrava_hall_kit.py`, `env_c4_tunnels_kit.py`, `env_c4p2_karsk_kit.py`).
+Project-owned, no attribution needed. No real person is named or depicted; the eleven names of the work list are
+illegible on purpose; the guidebook has no real publisher. Real insignia exist only as `*_hist` variants
+(`Symbols.pick()`, TECHNICAL_ARCHITECTURE §12.4); neutral = the fictional gear-and-wheat emblem of Chapter 1.
+
+### Reproduce
+```bash
+## run the generators UNDER the worktree's import lock: an import that scans the folder while the generator
+## rewrites it marks the half-written PNGs valid=false and never retries them (seen once this round; fix: delete the
+## stale *.png.import sidecars and import again)
+until mkdir .import_lock 2>/dev/null; do sleep 3; done
+py -3 -P tools/pixelgen/env_c4p2_karsk.py [--preview=DIR]   # the level art (≈ 15 s, byte-identical re-runs)
+py -3 -P tools/pixelgen/env_c4p2_karsk_docs.py              # the six inspect documents + their alt texts
+"$GODOT" --headless --path . --import > /dev/null 2>&1; rmdir .import_lock
+godot --path . res://tests/visual/c4p2_karsk_shots.tscn -- --scene=L_C4P2_KarskA --char=alexei \
+      --capture=<dir>/boot.png --frames=100000 --ts-out=<dir> --ts-cams=0,238 [--ts-done=…] [--symbols=0]
+```
+The generator follows the round-10 shared-folder rules (`tools/pixelgen/env_keep.py`): it removes only the PNGs
+its own previous run recorded, merges its `scene.json` over the old one (foreign keys and `actors` stay) and keeps
+other generators' provenance rows; `explore_hotspots.json` (explore stream) is never touched.
+
+### Generators (tools/pixelgen/)
+| File | What |
+|---|---|
+| `env_c4p2_karsk.py` | assembly: the two bakes, story patches, insignia sites, backgrounds, veils, foreground, life strips, fx, actor sprites, `scene.json`, `provenance.json`, a parallax-correct preview composer |
+| `env_c4p2_karsk_kit.py` | palette `DEPOT` (c4p2.json `palettes.depot` + the ramps of this stream, incl. `skyglow` and `violet` of the review pass), tone ramps, light hue tables, fonts (Cyrillic incl. a 5-px Д, Å, the 5×7 slogan font; „4“ in its open form so it never reads as „Ч“; overhang tables: „Й“ with its breve and the distinct umlauts one row above the cap line), painters (brick, planks, snow caps, icicles, windows, coal heaps, ground, signs) |
+| `env_c4p2_karsk_layout.py` | every coordinate: the story contract (hotspots, spawns, NPC anchors, blocker, camera zones) and the art placement |
+| `env_c4p2_karsk_yard.py` | scene A, Monday 6.10 dawn: yard lamp, sleepers, fire board, Irina's dispatch office (lit window, the carbon on the sill, the duty roster, the padded door), the canteen's back (hatch, kasha pot, radio), the water crane (straw lagging, brazier), the coal stage (gondola, deck, chutes, strut with Lena's mitten, the stair, the list post), the special run's tender (chalk „ВТ“), the floodlight mast, the ash pit, the fire barrel (a full drum with two rows of glowing air holes, the snow melted back into wet cinders round it), the roundhouse back (stall door ajar, smoke hoods, the patched banner „ВОССТАНОВИМ ВМЕСТЕ“ in the 5×7 font with its sacking only at the ends and in the word gap, the back door with the press notice, the emblem disc on the parapet between two smoke hoods), the tarpaulin's back (patches, sack, mirrored letters, a child's chalk train) |
+| `env_c4p2_karsk_show.py` | scene B, Tuesday evening: the tarpaulin's painted front (the coal stage and its mast over it), the restored colour-light signal (green aspect, bows, rust foot with „А. М.“, the lineman's wire box), the roundhouse front with the polished engine head-on (wreath, ribbons, emblem, brass plate „1939“, white-rimmed wheels), the band stage under a string of bulbs, the press canteen cut open (white cloth, tea glasses, bread with red and black caviar, the guidebook, the samovar, the curtain and, inside its right wall, the tiled kitchen corner with the range and the band's kasha), the turntable (running wheels; the cabin with the empty stool, the operator's cap on the controller), the sand-drying house cut open (limewash worn through in a few broad places, a grey-green dado, soot over the sand stove, round sieves, the red fire board, „НЕ КУРИТЬ“, the wall phone, coats on hooks, the platform sack scale and sacks, the cat's sand heap, Lev's bench under the green lamp), a lattice floodlight mast behind it, the gate with an iron bracket carrying the sign and the two clocks (19.10 / „КОР. ВРЕМЯ“ 17.10), platform 1 under the same trodden snow as the yard (swept and wet where people stand), the canopy, the westbound Corridor express with its lettering on the letterboard ABOVE the windows (route board „БЕРЛИН – КАРСК“, „СПАЛЬНЫЙ ВАГОН 07“, „ВАГОН-РЕСТОРАН“) |
+| `env_c4p2_karsk_far.py` | parallax backgrounds per scene: sky (dawn decks with rose undersides / evening: a lit town's night, dark blue-grey up high, the sodium skyglow under the low cloud, the cloud decks lighter than the gaps), the town of Karsk (blocks of flats with snow on the roofs, works chimneys whose smoke catches the town's light, water tower, crane, a radio mast with red lamps, warm haze; in B the station with its clock tower and its lit name „КАРСК“), the embankment (telegraph line, birches, far signal box) / the station side |
+| `env_c4p2_karsk_people.py` | the figure rig in tone space (joints, garments, head patterns per headgear, rim/outline pass, baked in the scene's light at the figure's world position), the shovelling cycle |
+| `env_c4p2_karsk_life.py` | the life strips of both scenes (below) |
+| `env_c4p2_karsk_fx.py` | fx strips, light veils, actor sprites (sparrows, dog, breath, barrel flames, the far goods train) |
+| `env_c4p2_karsk_docs.py` | the six documents, `karsk_c4p2_documents.json`, `data/locale/de_env_karsk_c4p2.json` |
+
+### Files — `assets/environments/karsk_c4p2/` (163 generated files; full list with one line each in `provenance.json`)
+| File(s) | What |
+|---|---|
+| `depot_a.png` (+ `_n`, `_e`) | scene A baked in its light (x 0–904): dawn, sodium floods, windows, fire |
+| `depot_b.png` (+ `_n`, `_e`) | scene B baked in its light (x 856–1920): evening floodlight, canteen, platform lamps |
+| `sky_a/b`, `town_a/b` (+ `_e`), `line_a/b` (+ `_e`) | parallax 0.10 / 0.30 / 0.55 backgrounds, sized to each scene's camera range |
+| `veils_a/b.png` | light cones of the floods and lamps in the haze (unlit, plain alpha) |
+| `fg_a/b.png` | foreground snowbanks and silhouettes below y 318 (parallax 1.25) |
+| `patches/order_taken`, `book_taken`, `halves_on_bench`, `card_joined` (+ maps) | story states (gated after / until objectives) |
+| `patches/insignia_roundhouse_back`, `insignia_roundhouse_front`, `insignia_engine` (+ `_hist`, maps) | insignia sites, neutral + historical |
+| `life/*.png` (+ `_n`, some `_e`) | 38 life strips: A — Kolonne 4 (`k4_gondola_0/1`, `k4_bar`, `k4_stair`, `k4_shovel_a/b`, `k4_barrow`, `k4_old`, `k4_rags`, `k4_bowl`), the cook seen through the hatch (clipped to the opening, behind the pot), the stoker at the brazier, the fitter in the stall door; B — the band, five different people on one beat (`t0` 0): the turntable man bareheaded with the helicon, a young fitter, a woman from the wagon shop, an older man with a moustache, a tall stoker with the bass drum; two children on the stage edge, the cleaner at the engine, the waitress, the cook at the kitchen range, an old fitter oiling the turntable, a smoker in the sand-house door, a woman sifting sand, the depot cat; on platform 1 as the explore text tells it: the patrol (grey greatcoats, fur hats), a woman holding her permit out to the young militiaman, a man handing a parcel up to a window, two children on a suitcase (the boy eats a pirozhok), the grandmother (side task), the conductor (navy, silver cap band, shirt and tie, lantern; side task), a mother lifting her boy to a window, a couple, the pirozhki seller, the porter (quilted jacket, white apron, badge cap, cart) |
+| `fx/*.png` (+ some `_e`) | steam from the stall door, smoke hoods, stove pipes, the canteen vent, the kasha pot, the samovar, the sand-house chimney, the turntable cabin, the heating steam under the express; snow, coal dust in the floods, coal grains from the chutes, barrel sparks, brazier embers, the sand stove's fire door, the shovels and coal dust behind the tarpaulin, the barrel flames |
+| `actors/*.png` | `sparrows` (KarskCrows layout), `dog` (+ `_e`, KarskCat layout), `breath_puff`, `train_loco`, `train_wag_box/gond/tank/flat`, `train_puff` |
+| `scene.json`, `provenance.json` | the art manifest (registry gates + `scene` filters of `annex_level.gd`, camera zones, looks, actors) and the provenance list |
+
+### Files — elsewhere
+| File | What |
+|---|---|
+| `assets/ui/documents/karsk_c4p2_order.png`, `_work_list`, `_press_notice`, `_guidebook`, `_card_ru`, `_card_whole` + `karsk_c4p2_documents.json` | the inspect close-ups of the six Karsk items of part 2 (shown at ×3) |
+| `data/locale/de_env_karsk_c4p2.json` | their German alt texts (`doc.karsk_c4p2_*.alt`) |
+| `scenes/levels/c4p2/KarskDepotTrain.tscn` + `scripts/levels/c4p2/karsk_depot_train.gd` | the passing goods train (karsk_train.gd with this level's sprites): every 30–50 s, −8 dB, waits while a film runs |
+| `scenes/levels/c4p2/KarskDepotDog.tscn` + `scripts/levels/c4p2/karsk_depot_dog.gd` | the yard dog on the ash pit (karsk_cat.gd behaviour, no purr) |
+| `scenes/levels/c4p2/KarskDepotSparrows.tscn` + `scripts/levels/c4p2/karsk_depot_sparrows.gd` | sparrows on the hatch and the cornice (karsk_crows.gd behaviour, no caws, softer wings) |
+| `tests/test_c4p2_karsk_art.gd` | the art test (contract, files, places, insignia, palette, people, patches, objects, level, train, documents; review pass: story text readable (no strip, sparrow or NPC over the `readable` rects), the cook inside the hatch, the evening sky not black, no twins in the band and on the platform, the showcase middle populated, the barrel unburied, the emblem above the windows, the train's colours) |
+| `tests/visual/c4p2_karsk_shots.gd/.tscn` | capture harness (camera positions, story states, the train: put into the current view at `--ts-train-at`, default the stage/roundhouse gap at camera 238, so the shot is never empty) |
+| `documentation/screenshots/c4p2_karsk_*.png` | contact sheet, the four views, story states, insignia neutral vs historical, the documents |
+
+### Round-10 art review (fixes)
+Every point of the art director's list is fixed in the generators and re-captured
+(`documentation/screenshots/c4p2_karsk_*`): the cook shows only through the hatch (clipped to the opening, the pot in
+front; „РАЗДАЧА“ clear; the sparrows perch on top of the board and on the counter); the express lettering runs on the
+letterboard above the windows and the canopy columns stand clear of it, so the platform crowd cannot hide it; scene
+B's upper picture is a lit town's night (skyglow, lit cloud decks, lit roofs and smoke, warm haze, a floodlight mast,
+the station's lit name) -- top 40 % with luma < 25 is 7-9 % in the captures (was 75-78 %; A 23 %); five different band
+members with a readable helicon and bass drum, the patrol in grey greatcoats and fur hats apart from the navy
+railwaymen; the turntable and the sand-drying house populated before Lev arrives (oiler, smoker, sifting woman, cat),
+the limewash worn in a few broad places instead of chips; the fire barrel a full drum clear of the guard and of any
+snow bank, its flames three tongues; the gable emblem on the parapet, clear of the window bays; the 3x5 „4“ no longer
+equals „Ч“ and „Й“ has its breve (the documents read „НАРЯД № 45/С“, „19.40“, „СПЕЦРЕЙС“, „ШВЕДСКОЙ“, „ЗАДНИЙ“), the
+roundhouse banner uses the 5x7 font; the tarpaulin panel is lashed in front of its poles, vendor and porter stand
+apart, the gate clocks hang from an iron bracket, platform and yard lie under one trodden snow, the kitchen sits
+inside the canteen's wall (no black slab); the far goods train is oxide red / grey / snow with a lit headlamp and red
+wheels; the order's carbon is violet as its alt text says. `scene.json` lists the story text under `readable` (rect +
+scene) and the test keeps it clear.
+
+---
+<a id="part-env_c4p2_berlin"></a>
+
+## Asset manifest part -- env_c4p2_berlin (Chapter 4 part 2, Konrad's Berlin: the Ostbahnhof and Kolonnenstraße 14, L_C4P2_Berlin)
+
+All files below are **original works generated procedurally** by the scripts in `tools/pixelgen/`
+(`env_c4p2_berlin.py` drives `env_c4p2_berlin_station.py` (scene A), `env_c4p2_berlin_yard.py` (scene B),
+`env_c4p2_berlin_strips.py` + `env_c4p2_berlin_life.py` (life strips, steam, snow, smoke), `env_c4p2_berlin_crowd.py`
+(walker rigs), `env_c4p2_berlin_docs.py` (inspect documents); helpers `env_c4p2_berlin_kit.py`,
+`env_c4p2_berlin_layout.py`; read-only: `pg.py`, the tone-space painter / light bake / fonts of
+`env_veltrava_hall_kit.py`, the painters of `env_c3p2_archive_kit.py`, the insignia drawings of
+`env_berlin_insignia.py` / `env_karsk_emblems.py`, the character pipeline through `walkers_r8.build_rig`, the
+shared-folder rules of `env_keep.py`).  No pixels were copied, traced, sampled, downloaded or AI-generated; no
+third-party assets, fonts or textures are embedded.  References (photographs of Berlin courtyards, station halls,
+DR rolling stock) were used for study only.
+
+* Licence / rights: project-owned original artwork, freely redistributable with the game.  Provenance: deterministic
+  generator (a re-run reproduces every file byte for byte, scene.json included), re-run with
+  `py -3 -P tools/pixelgen/env_c4p2_berlin.py [--preview=DIR] [--no-docs]`, then the shared, locked `--import`.
+  Machine-readable list: `assets/environments/berlin_c4p2/provenance.json` (154 rows).  The generator follows
+  `env_keep.py`: it removes only its own previously recorded PNGs, merges scene.json (the explore stream's keys and any
+  foreign `actors` stay) and provenance.json; `explore_hotspots.json` (exploration stream) is never touched.
+* Date: 2026-11-06 (round 10).  Owner: env-berlin stream (C4P2_DESIGN §10).
+* Level script: `scripts/levels/c4p2/berlin_c4p2_level.gd` (root `script` line of `L_C4P2_Berlin.tscn`; extends the
+  round-9 two-places script `annex_level.gd`: scene filter, camera zones, after / until / choice gates, looks) plus the
+  footsteps of the place (concrete under the glass roof, snow in the courtyard) and `look()` = station | courtyard.
+  Actor `scenes/levels/c4p2/C4P2StationClock.tscn` (`scripts/levels/c4p2/station_clock.gd`): the platform clock's
+  hands at 20.31 when the level opens -- the minute hand jumps, the red second hand rests at the top.  Capture
+  harness `scripts/levels/c4p2/berlin_shots.tscn` (`--as-shots`, `--as-done`, like the annex harness).
+
+### Palettes (proposal for data/chapters/c4p2.json -- the story stream's ramps are kept colour for colour)
+* `palettes.ostbahnhof` + **`wood`** `#2A1B12 #43291A #5E3B24 #7C5233` (buffet, kiosk, benches, the painted board)
+  · **`brick`** `#2B1A15 #3F261D #573527 #714734` (the hall's far wall) · **`enamel`** `#101C34 #1C2E52 #2E4878` (the
+  departure board, the K signs, the sleeping car) · **`cream`** `#E9DFC4 #F6F0DE` (tablecloths, enamel letters, the
+  clock dial) -- 53 colours in all.
+* `palettes.courtyard` + **`dusk`** `#1C2433 #273248 #36435C #4A5874 #63718C` (night-blue plaster and snow in shadow)
+  · **`wood`** (as above: doors, window frames, Kuhnert's box) · **`green`** `#1B2E28 #28423A #3A5B4F` (the stair
+  door, the pump) -- 50 colours.
+* Every layer, patch, strip and document is palette-pure in its place's palette (`tests/test_c4p2_berlin_art.gd`;
+  scene.json `meta.palette_ostbahnhof` / `meta.palette_courtyard`).  Until the ramps are in c4p2.json the grade's
+  palette snap (strength 0.5) pulls the proposed colours half-way to the placeholder ramps -- it still reads.
+
+### Scene A -- Ostbahnhof, Korridorbahnsteig K (L_C4P2_BerlinA, Monday 17.2.1964, 20.30, x 0..918)
+* `station.png` (+ `_n` / `_e`): track K with the D 303 -- the engine 01 064, a Pacific (the big Wagner deflectors
+  with their lit edge and handhold, the chimney with a lazy wisp of smoke, the long boiler with a warm rim, polished
+  bands, handrail, feed pump, injector, two rounded domes, safety valves and whistle, the red bar frame, cylinder,
+  slide bars, crosshead and Walschaerts gear, the leading bogie, three red-spoked drivers with coupling and connecting
+  rods, the trailing axle, the cab with its lit window -- the driver -- the plate above the number (neutral „DR“
+  monogram / `_hist` Reichsbahn eagle) and the number plate „01 064“): its boiler shows above the buffet's canopy, its
+  drivers through the gap between buffet and kiosk (x 338..380, steam from the drain cocks), its cab above the
+  kiosk's roof; the tender „DEUTSCHE REICHSBAHN“ with coal and the water filler, the
+  two-axle courier van without windows (plates „KURIER / КУРЬЕР“, „C-17“, the sealed sliding door with two lead seals on
+  its wire, x ~500), the coaches not yet coupled (buffers, the brake hose, the folded gangway, a shunter's hand lamp)
+  and through that gap the next track, the wine-red dining car „SPEISEWAGEN“ (kitchen end with frosted windows and
+  chimney, five lit windows with cloths and red-shaded lamps, the destination plate „BERLIN-KARSK“, the open door with
+  the first table, a tea glass and the blue guidebook, x ~800), the blue sleeping car „SCHLAFWAGEN“ („KORDON-17“) running
+  on behind the Corridor fence; platform K -- the liaison booth at the barrier (two officials at one desk under one
+  lamp, „KONTROLLE / КОНТРОЛЬ“, the two plates), the enamel departure board „KORRIDOR OST · BAHNSTEIG K · D 303 BERLIN
+  OST 21.10 · KORDON-17 · KARSK · MIT SPEISEWAGEN“ and the painted board for Tuesday („BAHNSTEIG K GESPERRT“ in red on
+  a cream strip), the baggage hut „GEPÄCK“ with the decimal scale and a suitcase on it, the buffet „ERFRISCHUNGEN“ (an
+  open stand under a green canopy on three posts: the back counter with stacked cups, bottles, the nickel urn and the
+  cash box, the menu board „KAFFEE 20 · BRÜHE 25 · WURST 60“ hanging from the canopy, the counter with cups, rolls,
+  sugar and a paper), the newspaper kiosk „ZEITUNGEN“ (the headline board „EIN WINTER / DES FRIEDENS“ of the explore
+  text, papers clipped at the sides with the same big W in three inks, the „vergriffen“ card on its hook, magazines),
+  the porters' carts, a bench with a forgotten paper, six sodium lamps on long rods, the K signs, the Accord's banner
+  „DREI KORRIDORE · EIN FRIEDEN“ under the vault, the clock with the plate „ORTSZEIT / KARSK + 2“, the Corridor fence
+  (the blocker) with „KEIN / DURCHGANG“ hanging from an iron arm, stone slabs, coping, the white line, melt water and
+  blown-in snow at the open end, the timber deck at the platform's end (the hidden ticket stub at 850, 296).
+* Parallax: `st_sky` (0.05), `st_city` (0.15, the night city through the open end of the hall and the far windows),
+  `st_hall` (0.40: the glass barrel vault under its smoke lantern -- louvres, snow on the ledges, soot fanning down
+  the glass --, the great lattice arches every 118 px with gusset plates and cast-iron consoles, their lower chords
+  catching the sodium light, purlins in perspective, panes clear / snowed over / sooted / boarded since the war / one
+  broken with icicles, cables sagging between the arches, pigeons, two rows of smaller lamps over the far platforms
+  with their glow on the glass, the warm band of the vault facing the lamps; the far brick wall „BERLIN OSTBAHNHOF“
+  with cornice and arched windows; the end screen with icicles), `st_track2` (0.92, the green windowless car with
+  barred hatches and the chalk „DI – KORDON“, one hatch frosted from inside -- exp_green_car), `fg_station` (1.25: the
+  coping and the stone face of the platform wall with cables on hooks, weep holes, soot and icicles, signal wires on
+  their pulleys, the near track with snow-dusted sleepers, the lamps mirrored in the rail heads, joints with
+  fishplates, meltwater with the lamps in it, coal, a newspaper, a cigarette packet, a broken bottle, a dwarf signal,
+  the stair down to the underpass with lit nosings).
+* `props/counter_front.png` -- the buffet counter cut from the layer (y-sorted, base_y 292: the buffet woman stands
+  behind it).
+* Patches: `roster_l3` / `roster_l74` -- Marta's duty roster (choice `c4d_choose` = name_marta / !name_marta);
+  insignia sites `plates_booth` (Reichssiegel + gear-and-wheat / state eagle + hammer and sickle) and `plate_cab`
+  (the „DR“ monogram / the Reichsbahn eagle, a plate of its own above the number), each with `_hist` (+ maps).
+* Life (`life/`): `booth_officials` (the German railway policeman stamps and rules, the Soviet liaison officer drinks
+  from the tea glass in its metal holder), `baggage_clerk`, `sleeping_boy` (exp_corridor_permit: a boy curled on the
+  family's suitcase -- cheek on his arm, the knitted cap slipped back, scarf, knees drawn up, one shoe over the edge, a
+  wooden engine held to his chest; he breathes, his foot twitches; y-sorted in front of the counter), `kiosk_woman`,
+  `loco_crew` (the driver in the cab window: leaning on the sill, looking back along the platform, turning to the fire;
+  the firebox glow flickers), `diners` (a couple with wine, a man behind his paper, Ekdahl's empty table with hat, cup
+  and scarf, two women talking, an old man with soup, the waiter walking the aisle), `sleeper_passenger`.  Every
+  platform strip is clipped to the pixels its own object owns in the layer (the station's owner map), so no figure or
+  glow spills onto what stands in front of it.  FX (`fx/`): the safety valve's plume, a wisp from the chimney, steam
+  from the drain cocks between the drivers, the kitchen chimney, steam heating leaking at the uncoupled ends and between
+  diner and sleeper, the urn, the haze under the vault, snow blown in at the open end.
+* People (`crowd/`, `walkers_a.json`, ambient walkers): 13 colour variants of existing characters re-rendered through
+  the character pipeline (rigs with their own normal maps; no insignia -- the railway policeman's armband and emblem
+  are painted over in his coat colour): a railway policeman walking the buffet, the buffet woman behind her counter,
+  the family of the sleeping boy, a man reading the board, two porters by their carts, the sleeping-car conductor, the
+  grandmother and her son at the sleeper's door, a railway worker with his coffee, two travellers walking the platform.
+  The two porters are two builds: the young one in the long coat (porter), the older one in a short blue work jacket
+  and felt boots with the brass badge on his cap (worker_a).
+* Reused actors (by path, unchanged): the Veltrava station's pigeons (`StationPigeons`, tugging at a roll between
+  buffet and kiosk), breath puffs (`KarskBreath`) for Marta and Ekdahl.
+
+### Scene B -- Kolonnenstraße 14, gate passage and courtyard (L_C4P2_BerlinB, Tuesday 18.2.1964, 22.10, x 918..1920)
+* `yard.png` (+ `_n` / `_e`): the courtyard unrolled into one elevation like the house puzzle's cutaway --
+  Vorderhaus | Seitenflügel | Hinterhaus -- with the gate passage in the front wing's ground floor (the street door
+  open to the night, the red-white barrier of No. 12 with its warning lamp, green-and-cream tiles, the cork board
+  with the Blockleitung's notice and the pinned site plan (gate_notice), letterboxes, the residents' board, the front
+  wing's stair door, a timer switch, the caged sodium lamp, the keystone „14“, a guard stone; the notice is typed
+  „BEKANNT- / MACHUNG“ on two lines, the site plan pinned beside it has four hatched houses, No. 14 ringed in red), the
+  façades in night-blue
+  render (rusticated ground floor and window hoods on the front wing, a stair tower on the side wing, render repairs,
+  fallen plaster with brick, cornices with snow, icicles, downpipes in the inner corners), 60-odd box windows each with
+  its own small life (frame paint, drapes / net curtains / blinds, flower boxes under snow, a cat, a bird feeder, jars
+  between the panes) -- the lit ones are the households of §2.7 (scene.json `households`); the side wing's green
+  stair door „AUFG. B“ (Ilse's frost drawing: a house with all windows lit, exp_ilse_drawing), the briquettes delivered
+  today with the shovel and the open iron cellar hatch with a luminous arrow (the white „LSR →“ on the wall), the lodge
+  window (Frau Kuhnert, the radio, the wooden card box with one red tab on the sill), the bicycle, a sled, the
+  wash-house door „WASCH“, four bins „VH SF HH HH 3“ (fir twigs, a chair leg, newspaper lining), the cast-iron pump
+  with its frozen spout, the carpet rack with the plate of house rules and the hopscotch in chalk on the swept setts
+  (1 to 5, „HIM…“ running under the new snow), the frozen laundry
+  high across the corner (shirts, a stiff sheet, children's stockings in three sizes), Frau Grabowski's basket on a
+  washing line from her dark kitchen window, the back wing's hall door four steps up and the cobbler's souterrain
+  „SCHUHMACHEREI PIETSCH“ (half-sunk windows, shelves of shoes with name tags, the boot sign), roofs under snow with
+  hatches, chimneys, television aerials, the neighbour's firewall „WASCHANSTALT · PLÄTTEREI“.
+* Parallax: `yd_sky` (0.03), `yd_dome` (0.08, pos y 0: the Great Hall floodlit far above the roofs -- ribbed dome,
+  lantern with the eagle on the globe, the arcaded drum, searchlight beams in the haze -- and four long banners on the
+  drum: neutral grey cloth with the fictional Reichssiegel / `_hist` red cloth, white disc, swastika; drum and banners
+  stand above the courtyard's ridge), `yd_roofs` (0.30, the roofscape kept low behind the dome, a church spire),
+  `fg_yard` (1.25: trodden snow over the setts with footprints and a sledge track, a gully grate, a frozen puddle with
+  a lit window in it, a handcart with a sack of briquettes, a crate of milk bottles, a broom and a frozen bucket, the
+  railing of a light well, a child's lost mitten, cat tracks).
+* Patches (after `c4h_solve_house`, z -48, under the life strips): `stairs_v` / `stairs_s` / `stairs_h` (the three
+  stairwells lit -- the sweep went up), `car` (the sweep's car head-on in the doorway: snow on the roof, the windscreen
+  with the street lamp in it, chrome grille, bumper, plate, two headlamps with their glare), `headlights` (their light
+  on the passage's setts, soft and falling off, the two men's long shadows toward the courtyard), `candle_ws` (the
+  candle in the souterrain); insignia site `notice_k14` (no emblem / the party eagle above the title, `_hist`).  The
+  after-state is baked without the dynamic lights (headlights, candle, stairwells -- scene.json lights do them), so
+  each patch differs from the base only where something is painted differently: tight boxes, no seams, none of them
+  reaches the notice.
+* Life: `v1_schulz`, `v3_lenz`, `s1_mertens`, `s2_pohl`, `s3_ilse` (until c4h_solve_house), `s3_hanna` (after: Hanna
+  seen from the front behind the left lower pane -- dark cardigan, rust scarf, the bun lit by her lamp, eyes, nose and
+  mouth; she holds the curtain aside and looks down into the courtyard), `se_kuhnert`, `h1_kuehn`, `sweep_men` (after:
+  two of the sweep's men in the doorway, rim-lit by the headlights, one smoking), `candle_flame` (after: the flame
+  flickers, its glow breathes, Ilse sits by it, her face lit by the flame, looking into it and up at the window),
+  `warning_lamp`.  FX: snow in two halves, chimney smoke, the car's exhaust (after).
+* Reused actors (by path, unchanged): `KarskCat` (a cat asleep on the lodge's warm sill, it wakes when Konrad comes to
+  the card box), `KarskWind` (gusts blow snow off the eaves and the ridge), `KarskBreath` (Kuhnert), `BerlinRadio`
+  (dance music, faint, from the lodge; own 3-frame glow `actors/radio_glow.png`).
+
+### Documents (`assets/ui/documents/`, metadata `berlin_c4p2_documents.json`, alt texts `data/locale/de_env_berlin_c4p2.json`)
+`berlin_c4p2_departures` (ev_c4_departures_east), `berlin_c4p2_seals` + `_hist` (ev_c4_courier_seals: the German seal
+a plain disc „DR“ / an eagle, the Soviet seal a wheel / a star, both „C-17“; the green car's barred hatch and the
+chalk), `berlin_c4p2_tracing` (ev_c4_konrad_tracing: the 1938 guidebook -- original design, no publisher -- at page
+212, the card half upside down, the tracing of Kordon-17 -- „SCHALTER“ under the counter, „‹TÜR WEST“ / „TÜR OST›“
+beside their doors, „BANK FÜR 14“ -- and its folded corner „MOROZOV – 0417 / DI 23.40 – TÜR OST“),
+`berlin_c4p2_house_notice` + `_hist` (ev_c4_house_notice; on the site plan every house number 12..18 sits on a clear
+label, No. 14 ringed in red pencil), `berlin_c4p2_house_cards` (ev_c4_house_cards: six cards and the cobbler's slip).
+Drawn 1:1, shown at 3x; the story-critical lines are legible 3x5 capitals (the kit adds the en dash, the middle dot,
+Å and a 5-wide W to the shared font -- its 3-wide W read as H).
+
+### Content rules kept
+No real person is named in the windows, the cards or the lists; Kordon-17 appears only as words and as Konrad's
+drawing; real insignia only in the `_hist` files chosen by `Symbols.pick()` (booth plates, cab plate, dome banners,
+the notice, two documents); the two apparatuses stay distinct (the Soviet liaison officer and the German railway
+policeman share one desk -- shown, not equated); the Accord's slogan hangs as the regime's own banner.
+
+### Review round 10 (art director) -- what was fixed
+* **Sweep's men cut at the chest (high):** the after-patches now lie under the life strips (z -48 < -47); the
+  headlights patch is split into `car` (the doorway) and `headlights` (the setts, y 288+), so the men stand whole, in
+  front of the car, rim-lit, with their shadows on the floor.  Test: `strips_over_patches_and_insignia`.
+* **„KORDON-1“:** the sleeper's plate is sized from its words and moved clear of the fence's bars („KORDON-17“).
+* **Near-black vault and foreground bands:** the vault rebuilt with form (lantern, arches, lit chords, lamps, glow);
+  both foregrounds painted as places (platform wall + near track / courtyard snow with things left out).  Measured on
+  the captures: station top 24 -> 36 (std 14 -> 22), station bottom 13 -> 34 (std 7 -> 28), courtyard bottom
+  10 -> 66 (std 3.5 -> 17).  Test: `no_empty_dark_bands`.
+* **Engine 01 064 unreadable:** the buffet is an open stand with a lower canopy, the kiosk narrower and lower; the
+  drivers and rods show in the gap, the boiler above the canopy, the cab, the eagle / DR plate and the number plate
+  above the kiosk.  The old cab strip painted the firebox glow over the kiosk (the „blank peach rectangle“) and the
+  neutral DR over the eagle: the platform strips are now clipped by the station's owner map, and the kit's TLayer
+  clears the glow flag of every pixel painted over (a hidden glow no longer shows through).
+* **The candle never flickered:** strips above patches; the candle moved off the window's bar; Ilse sits by it.
+* **No working dome variant:** the banners hang on the drum above the courtyard's ridge (the far roofs kept low
+  behind the dome); neutral Reichssiegel vs historical swastika banners.  Test: `dome_banners_above_the_ridge`.
+* **Cab plate overlap:** a plate of its own above the number; nothing drawn over it.
+* **The car / the beam:** a dark saloon head-on with glare instead of a pale box; the beam as light on the setts.
+* **Blocks and twins:** the sleeping boy redrawn, the older porter another build, Hanna a readable frontal figure.
+* **Clipped text:** clock plate on two lines, „KEIN DURCHGANG“ whole and readable from the platform, the kiosk headline
+  of the explore text, „КУРЬЕР“ inside its plate, the 5-wide W („WASCH“, „WURST“, „TÜR WEST“), the menu one line
+  per row above Marta's roster, the tracing's labels apart, the site plan's numbers on labels, the notice's title
+  on two lines beside the plan, the dustbin „HH 3“, the hopscotch in bright chalk.
+* Captures: both scenes at all camera stops with `--symbols=0` and `=1`, and after `c4h_solve_house`
+  (`scripts/levels/c4p2/berlin_shots.tscn`); `documentation/screenshots/c4p2_berlin_contact.png`,
+  `c4p2_berlin_documents.png`.
+
+---
+<a id="part-c4p2_cine"></a>
+
+## Asset manifest part — c4p2_cine (Chapter-4 part-2 cinematics LS_C4P2_Depot, _Steam, _Book, _Express, _Clock)
+
+* **Date:** 2026-11-06 (round 10)
+* **Area owner:** cine stream (C4P2_DESIGN.md §2.9, §10)
+* **Scenes / code:** `scenes/cinematics/ch4p2_depot/` (`Ch4p2Depot.tscn`, `ch4p2_depot.gd`), `ch4p2_steam/`,
+  `ch4p2_book/`, `ch4p2_express/`, `ch4p2_clock/`, shared `scenes/cinematics/ch4p2_common/c4p2_cinematic.gd` (extends
+  the C4 base `c4_common/c4_cinematic.gd` and through it the §12.5 contract of `ch3_common/c3_cinematic.gd`: textures
+  and `layout.json` from `assets/cinematics/c4p2/`, sheets with any cell width, `puffs()` steam / breath emitters as
+  pure functions of t, `optional_amb()`, `c4g()` / `c4d()` with the drivers' defaults). Registered in
+  `data/chapters/c4p2.json` → `cinematics`, played by `ChapterExt.play_cinematic()`. Lengths = the registered shot
+  sheets of `data/v3/cinematics.json`: 13 / 12.5 / 12 / 13 / 24 s (74.5 s in all). Film titles for the memory page
+  „Filmsequenzen“: `data/locale/de_c4p2_cine.json`.
+* **Match cuts (hard cuts on shared objects, each city in its own palette):** the safety valve's steam jet (one
+  12-frame jet sheet on one clock at one anchor `steam.jet_base`, over the Karsk engine's twin pop valves against the
+  coal stage at dawn and the Berlin express engine's brass valve under the iron and glass of the roof; one sound bed
+  across the cut that changes rooms on it); the guidebook (on the tables one 3-D model, `env_c4p2_cine_book3d.py`,
+  seen from above; in the macros one profile drawing — the closing book on the dining car's damask and the opening
+  book on the canteen's oilcloth are the same pixels at the same place, the same card corner); the red lamp (the
+  express's tail lamp and the building site's warning lamp at one centre `express.lamp_c` and one radius). The
+  macro_to_medium moves (b3, m3) are hard cuts on the movement with a small settle of the camera — no dissolves.
+* **Generators:** `py -3 -P tools/pixelgen/env_c4p2_cine.py [--only depot,steam,book,express,clock]` writes every
+  texture (~150 files) and `assets/cinematics/c4p2/layout.json` (anchors shared with the runtimes;
+  `tests/test_c4p2_cinematics.gd` checks them). Close and macro plates and most establishing plates are **painted
+  flat as pixel art** by `env_c4p2_cine_flat.py`: every surface a flat colour from a short ramp, light laid on in
+  stepped rings with a one-pixel checker seam, a dark outline on the shadow side, a lit edge on the key side, cast
+  shadows as flat offset silhouettes, textures as explicit patterns (damask lattice, the canteen oilcloth's rose
+  print in perspective, plank floors, cobbles, brick bond, quilting) — no soft gradients, no bokeh, no blur.
+  `env_c4p2_cine_hands.py` draws hands and sleeves with the game's own sprite shader (chargen_core: six-tone ramps,
+  cel thresholds, the selective outline, inner lines, contact shadows) at full resolution: fingers as single parts
+  with creases, knuckles and nails, gloves with their stitched points and press stud, sleeves whose height field
+  carries real folds (navy wool with a shirt cuff, tweed in herringbone, the quilted telogreika with its knitted cuff).
+  `env_c4p2_cine_loco.py` paints the steam engines (soviet 2-10-0, the polished green show engine with ribbons and
+  garland, the german express with smoke deflectors; side-on with tender, and head-on) with stepped cylinder bands,
+  rivets, domes, pop valves, rods, valve gear, spoked wheels and snow on every upper edge. `env_c4p2_cine_busts.py`
+  runs the dialogue-portrait pipeline (read-only) without its background so the close figures are the cast's own
+  busts; `env_c4p2_cine_people.py` places the rig figures on their contact shadows, graded by the shot's light with a
+  rim on the key side; `env_c4p2_cine_show.py` is the depot showcase (Book b4). The wide plates of Depot p1/p2 still
+  use the G-buffer painter of `env_c4p2_cine_kit.py` (lights, palette quantiser; calm wind-laid snow), with the
+  stall's interior in p2 painted flat. Other modules: `env_c4p2_cine_pal.py` (city palettes),
+  `env_c4p2_cine_places.py` (skyline, roundhouse, masts, gantry crane, coal heap, wagons, fire basket, the jet),
+  `env_c4p2_cine_rig.py` (poses and props on the rig — the shovel cycle digs, bites low and throws high),
+  `env_c4p2_cine_book3d.py` and one module per film. The earlier signed-distance busts and hands
+  (`env_c4p2_cine_figs.py`) were removed in the lead's round-10 cleanup, with the stale `express/x2_band.png`.
+  Sound: `py -3 -P tools/audiogen/c4p2_cine_audio.py [--only ...]` →
+  `assets/audio/sfx/c4p2cine_*.wav` (21 beds incl. the stand-in tick); the picture-synced times are module constants
+  checked by the test, the shovel bites and the teleprinter's characters are read from `layout.json`.
+* **Figures:** the people of the wide shots are the game's own rig (`chargen_body` with the cast specs of
+  `chargen_cast*`, `characters_c4` and the round-10 cast stream's `characters_c4p2`) in poses made for these films —
+  eleven returnees of Kolonne 4 on their own footing down the heap, out of step, each with its own lean and reach
+  (8-frame cycle, the contact frame drives the sound), a twelfth resting on his shovel, Alexei's walk with the
+  toolbox, a fitter's oil can, the tarpaulin men, a works band of six in two rows round the drum, the depot chief,
+  the bread-and-salt woman, workers, the photographer, the guard, the minder's match; platform K in three depths with a
+  clear lane for Konrad (1 texel = 1 px, never scaled). Close figures are the cast's **dialogue busts** at their native
+  112 px, graded to the shot (Irina at her dispatch window, p3; Irina at the teleprinter and Alexei outside the frosted
+  window, k3; Ekdahl behind his compartment window with the film canister / the open empty hand, x1; Lev on the
+  platform, his coat continued below the bust, with the white bundle of carbons going under his coat or his empty
+  hands shown, x2). Over-the-shoulder figures are painted silhouettes with a lit rim (Alexei from behind in x2 and m1).
+  Hands of the book shots: Konrad's bare right hand, Ekdahl's grey gloves (resting, reaching, lifting; and from the
+  side in the macro), Alexei's worn hand where Konrad's lay (`env_c4p2_cine_hands.py`). Far figures (Kordon-17) are
+  painted small. Stand-ins: none (`layout.json` → `standins` is empty).
+* **Content rules:** no violence shown, no face at Tür Ost, nobody inside a wagon (Kordon-17 only wide and from far:
+  figures 12 px, no force); the guard is a bored boy at a fire, not a threat staged for effect; the slogan banners are
+  shown as the place has them (ВОССТАНОВИМ ВМЕСТЕ patched with sacking; ДОБРО ПОЖАЛОВАТЬ for the press) and the
+  pictures put the people before them (the tarpaulin with the shovellers' shadows behind the showcase). No real
+  insignia, no state emblems (the engines carry number plates; the band wears plain caps); no brands (the dining car,
+  the guidebook — a Swedish „resehandbok“ of 1938 — and the canister are generic). The pre-rename name of the German
+  protagonist never appears. Typed and printed texts: KARSK, СТОЙЛО 7, ДИСПЕТЧЕРСКАЯ, ДОБРО ПОЖАЛОВАТЬ, ВОССТАНОВИМ
+  ВМЕСТЕ, the board's trains (E 412 WARSCHAU, P 1307 STRALSUND, P 1188 FRANKFURT(O); P 1265 FÜRSTENWALDE flipping to
+  D 303 KARSK 21.10 K), ABFAHRT / ОТПРАВЛЕНИЕ, ZEITUNGEN, ERFRISCHUNGEN, BERLIN - KARSK D 303, КАРСК - БЕРЛИН,
+  СПАЛЬНЫЙ ВАГОН, ПРЯМОГО СООБЩЕНИЯ, SPEISEKARTE, the canteen paper СИГНАЛ, ГРАФИК, ТА-68, ПЕСОК, ПГ, КОРДОН-17,
+  SCHUHMACHEREI PIETSCH, KOHLEN · BRIKETTS, BAUSTELLE / BETRETEN VERBOTEN, the hoarding's posters (RADRENNEN, KINO,
+  WINTERBALL, TANZ, SAMMLUNG), the engines' plates (Л-2238, Л-1964, 01 1064, DR as on the level's express), the card half (0417, LINDNER, ANNA, GEB. KOWALENKO — the item text),
+  the teleprinter (ПЕРЕДАЧА ПРИОСТАНОВЛЕНА ТЧК / С-17/45 УБЫЛ КОРДОН-17 ТЧК, C4P2_DESIGN §2.9 k3).
+* **Provenance:** every image and sound is original, generated in code from fixed seeds (no time, no global random
+  state, no image or audio inputs, nothing traced or sampled). Reference study only (railway depots, coaling stages,
+  Soviet and German steam engines, Berlin tenement courtyards, split-flap boards, teleprinters) — nothing copied.
+* **Tests:** `tests/test_c4p2_cinematics.gd` (27 cases: contract, registered lengths and shot order, finished once in
+  every path, readable German lines ≤ 19 characters per second, every texture / sound present, layout in sync, frames
+  a pure function of t, the three match cuts, the decision shown per c4g / c4d, reduced motion, sound sync for all five
+  films; and the art review of round 10: no dissolve in the macro_to_medium moves, the close figures are the dialogue
+  busts, Kolonne 4 off the ruled line and out of step, Konrad's lane on platform K clear, the courtyard's tilt (a cut
+  with reduced motion), Lev's gesture readable at a glance); `tests/test_c3_assets.gd` runs the five films with
+  c3b-level contexts.
+
+---
+<a id="part-c4p2_puzzle"></a>
+
+## Asset manifest part — Chapter 4 part 2, puzzle UIs „Die Hälften“ and „Haus 14“ (puzzle UI stream, round 10)
+
+Date for all entries: **2026-11-06** (revised the same day after the art director's review: card lettering, the
+house's figures, stairs, cellars, workshop and back house, the cap mark, the ring; see „Review fixes“ below).
+Everything below is original work for this project, produced by a deterministic generator in this repository or
+written by hand; no downloaded images, fonts or sounds, no AI image services, no tracing of references. Licence:
+project-owned, same as the game. Contract: `documentation/C4P2_DESIGN.md` §2.5 (document descriptions), §2.7 (puzzle
+contracts), §4 (the courtyard of L_C4P2_BerlinB), §5 (cast looks), §10 (ownership).
+
+### Puzzle art — `tools/pixelgen/gen_ui_c4p2.py` (`py -3 -P tools/pixelgen/gen_ui_c4p2.py [--preview=DIR]`)
+Drawn 1:1, shown at x3 with nearest filtering. Words the player must read are set in HD by the UI from Loc keys; the
+painted characters are document type (the card, the book page, the box label, the shop sign) in the 3×5 / 5×7 bitmap
+types of `tools/pixelgen/env_veltrava_hall_kit.py` (imported read-only) with the distinct Ä / Ö / Ü of
+`tools/pixelgen/pixfont_umlauts.py` (round 9, imported read-only: the dots one row above the cap line, never touching
+the letter) plus glyphs added in the generator (Щ, №, *, –, Ø, a distinct Å and Ё in the same manner, a rounded 8 that
+cannot be read as B, a flat-roofed Д with feet that cannot be read as А, a Л with its left leg kicked out that cannot be
+read as П, the digits 0 / 4 / 7 of the 5×7 type). Palette: the UI / archive ramps (paper, ink, red, amber) plus wood,
+sand, brass, steel, stamp violet, night sky, three courtyard plasters, sooted brick, lamp and sodium light. Fixed seeds,
+identical output on every run. The generator verifies the puzzle data against `data/v3/puzzles.json` and the contract
+before writing (see the two `*_check` blocks of the layout files).
+
+| Path | Kind | How it was made |
+|---|---|---|
+| `assets/ui/documents/karsk_c4p2_halves_de.png`, `karsk_c4p2_halves_ru.png` | card No. 0417 as two halves: the German half (left, five teeth, the red C-17 tab, the left half of the round stamp in German letters), stored upside down as Konrad laid it into the guidebook; the Russian half (right, five notches, the right half of the stamp in Cyrillic, the rectangular red „ПРИНЯТЬ“ top right with two clear pixels round its letters, the number №0417 at the foot). No tooth comes near the stamp's centre, so the joined stamp reads „C-17“ | procedural: the WHOLE card is painted once (paper, ruled form, typed lines, perforation, the violet round stamp „C-17“ across the cut) and then cut along the toothed edge, so the halves fit by construction |
+| `assets/ui/puzzle/c4p2_halves_table.png` | the table of the sand house in the Karsk depot under a hanging lamp: the open Swedish guidebook (pages 212/213, original design, no publisher's name), Konrad's tracing of the Kordon room with the bench for fourteen, Lev's card box „С-17/45 ПРИНЯТЬ“ with the empty slot, a pocket watch at 19.05, a generic 1950s rangefinder camera (no maker's name), a tin mug, a sieve and drying sand | procedural planks (one cell high), grain and nails; props drawn with primitives; banded, dithered lamp light |
+| `assets/ui/puzzle/c4p2_halves_snap.png`, `c4p2_halves_ring.png`, `c4p2_halves_click.png` | amber corner brackets (a tooth in its notch), the pale violet ring of the closed stamp, the spark of a tooth clicking in | procedural |
+| `assets/ui/puzzle/c4p2_halves_legend_teeth.png`, `…_legend_stamp.png`, `…_legend_lines.png` | legend drawings: tooth and notch, a stamp half, ruled lines with their ticks at the cut | procedural |
+| `assets/ui/documents/karsk_c4p2_halves.json` | cell size, files, board (with the paper's margin to the table's edge), mark positions and inward normals of both sheets, start pose, the offset range of every turn (the whole half stays on the table), legend files, measured surface colours (no answer; the generator verifies that only half a turn lets the marks face each other, that exactly one pose joins all five teeth and the stamp — the solution of `pz_c4_halves` — that no other pose joins even one tooth, and that the start, the solution and every pose of the input driver lie inside the ranges) | written by the generator |
+| `assets/ui/puzzle/c4p2_house_board.png`, `c4p2_house_night.png` | Kolonnenstraße 14 seen from the courtyard, Tuesday night, in the plasters of the courtyard level L_C4P2_BerlinB: Vorderhaus (ochre-grey plaster, keystones, rusticated ground floor, the gate passage with Kuhnert in his cap under the vault lamp), Seitenflügel (sooty plaster, a patch of fallen plaster, the lodge with Frau Kuhnert and the card box on the sill), Hinterhaus (cool grey plaster with two spalled patches; one long roof; it goes on right of its stairwell over the cobbler's souterrain, whose board „SCHUHMACHEREI / PIETSCH“ hangs over the souterrain windows as in the courtyard); stairwells cut open (oil-paint dado, a dog-leg stair per storey — the far flight, the half landing, the near flight with its handrail —, landings, tall flat doors — Pohl's spy hole, the paper seal of No. 3 —, the steep cellar stairs under the ground landings); drying lofts with frozen laundry, baskets and a trunk, a junk loft; cellars with numbered, padlocked coal partitions, a bicycle, a sled and potato sacks, preserving jars and an old pram, the corridor doors and Pietsch's door ajar; Pietsch's workshop (shelves of lasts and of shoes waiting with their tags, the tool rack and the hanging lamp, the bench with a boot on the last, nails, glue and a candle stub, the arm sewing machine, his stool, his apron on a nail, the stove, a crate of shoes — the same in every light); the dome of the Great Hall far away in the haze; chimneys, 1964 television aerials, dustbins, snow; 27 windows each with an interior (who is awake at 22.40: Pohl's window dim behind its curtain, as in the courtyard). Two renderings: the overview and the 22.40 lights. Herr Pietsch himself is not shown (C4P2 §5) | procedural: dithered plaster / brick / stone fields, primitives, role-painted interiors (one drawing, three lights: neutral / lit / dark; Pohl's dim window mixes lit and dark) |
+| `assets/ui/puzzle/c4p2_house_anim.png` | two frames each for five lit windows: Lenz turns a page, Herr Schulz rocks the baby, Pohl's curtain opens on a face (dim), Frau Kuhnert turns her head, Herr Kühn slaps a card down | procedural, same window painter |
+| `assets/ui/puzzle/c4p2_house_konrad.png`, `c4p2_house_ilse.png` | the two walking figures, five frames each (standing, a four-frame walk), facing right: Konrad (21 px) in his grey fedora with the brim snapped down, his face under it (ear, eye, nose), dark-blue civilian overcoat, ochre wool scarf, the drafting tube on his back, dark trousers; Ilse (15 px) in her dark-blue knitted cap with a short peak, a light-brown plait, her face, the pale grey wool coat, the brown satchel she never lets go of, grey wool stockings. Three tones per material, lit from the upper left, a dark outline for the board (looks follow the cast sheets `konrad` / `berlin_child`) | hand-placed pixel rows in the generator |
+| `assets/ui/puzzle/c4p2_house_eye.png`, `c4p2_house_lamp.png`, `c4p2_house_hat.png`, `c4p2_house_stop.png` | shape-coded marks: the spy-hole eye (Pohl), the table lamp (the lodge window), the Blockleiter's peaked cap in side view — a wide flat crown, the piping, the narrow band, the peak jutting forward (the passage; id `hat` per the contract) —, the stop sign (a light bar on a red disc) | procedural |
+| `assets/ui/puzzle/c4p2_house_circle.png`, `c4p2_house_ws_lit.png` | Konrad's red pencil ring around the workshop (on the board, under the shop board); the workshop with the candle lit (success; the same objects as by day and by night) | procedural |
+| `assets/ui/puzzle/c4p2_house.json` | board files and size, rows, wings, the 19 rooms (wing, floor, grid cell, rect and the back house's parts right of its stairs, route node, the figures' place on the floor and Konrad's place beside Ilse at the start, label position, kind, windows), the contract's passages and for each the way the figures walk (feet points along the floor or the flights), unsafe rooms with their watcher marks, households, the rooms awake / dim at 22.40, window animations, the figures' frames and feet, the ring's centre (the generator verifies that the only simple path from `s3` to `ws` avoiding the watchers is the solution of `pz_c4_house`, that every room has at most one passage per arrow, the input driver's key sequence, that every place is on its floor with room above Konrad's hat and that every way runs level or along a flight) | written by the generator |
+
+### UI, texts, tests
+| Path | Kind | How it was made |
+|---|---|---|
+| `scenes/ui/JoinPuzzle.tscn`, `scripts/ui/join_puzzle.gd` | join modal on the sand-house table (arrows / WASD / R / Shift+R / Backspace / Enter / Esc, pad D-pad RB LB A X Y Back, mouse drag with snap, wheel / right-click turn; the half is clamped per turn so it never leaves the table; teeth in notches get brackets; the German half's shadow falls on the table while the halves lie side by side; success: the teeth click in, the stamp closes, two soft photo flashes; the success card takes the instruction's place at every text size) | hand-written, key contract of `scripts/ui/route_puzzle.gd` |
+| `scenes/ui/HousePuzzle.tscn`, `scripts/ui/house_puzzle.gd` | house modal (arrows / WASD walk the route, Backspace / R / K / L / Enter / Esc, pad D-pad A Y B X LB RB Back, mouse click / drag / right-click / hover; side panel with the room's nameplate, Kuhnert's card, the window at 22.40 and the passages; the figures stand on the floors — Ilse at the head of the route with a ring on the floor at her feet, Konrad a step behind her — and walk the stairs on the Probegang; the stop mark beside Ilse, clear of both figures, the marks and the writing; Kuhnert's cards in two fixed sizes, long notes wrap, a watched card carries its mark at its edge; success: candle, red ring) | hand-written |
+| `data/locale/de_c4p2_puzzles.json` (the `ui.c4p2.halves.*` / `ui.c4p2.house.*` keys the contract leaves to the UI: states, counts, sideways note, tips, controls, buttons, stamps, the room nameplates, card tags, windows at 22.40, floors, legends) | German texts | hand-written |
+| `tests/test_c4p2_puzzle_ui.gd`, `tests/visual/c4p2_puzzle_shots.gd` + `C4P2PuzzleShots.tscn` | unit tests (32 cases) and the screenshot harness of every state (incl. the half at the table's edge in every turn, the solved states at 100 / 125 / 150 %, the stop at the lodge, the cards at 125 %, the way into the back cellar) | hand-written |
+
+### Review fixes (art director, round 10)
+* The solved „Die Hälften“ fits the 1080-px screen at 100 % (the success card replaces the instruction; tests check
+  every state at 100 / 125 / 150 % and in high contrast).
+* Card lettering: distinct umlauts (round-9 glyphs), a rounded 8, Д and Л that read as themselves, „ПРИНЯТЬ“ in a frame
+  with clear pixels, away from „КАРСК“ and the header.
+* The figures: shaded, with faces, five frames; they stand on floors and walk the flights (never in a slab, never
+  floating), the stop mark never covers them, the head of the route is a ring on the floor.
+* Kuhnert's cards: one size per line kind, wrapping instead of shrinking; the watcher marks hang at the card's edge,
+  never over its writing.
+* The red ring stays on the board; the shop name hangs on the courtyard board where nothing covers it; the half stays on
+  the table at every offset; the closed stamp reads „C-17“; the workshop is furnished in every light; the cap reads as a
+  cap; the back house and Pohl's dim window match the courtyard level.
+
+Sound cues used (existing files of the audio stream, with fallbacks; nothing new recorded): `tick`, `move`, `back`,
+`snap`, `page`, `fail`, `paper`, `step_wood`, `mg_c3p2_card_file`, `mg_relay_click`, `c4cine_stamp_ru` / `stamp_thud`,
+`plaza_shutter`, `door_open`, `cine_finale_pencil`; optional ids `c4p2_steps`, `c4p2_stamp_close`, `c4p2_shutter`,
+`c4p2_door`, `c4p2_pencil`, `ui_knock` are picked up first if the audio stream adds them.
+
+World note: a fictional two-part registry card laid against its other half (not a real form); a fictional depot; a
+fictional Berlin tenement, its fictional households and a fictional card file — no real persons.
+
+---
+<a id="part-c4p2_cast_audio"></a>
+
+## Asset manifest — Chapter 4 part 2: cast and sound (round 10)
+
+Area owner: cast-audio specialist · Date: **2026-11-06, round 10** · Engine target: Godot 4.7.2
+Contract: `documentation/C4P2_DESIGN.md` §5 (cast: Maria Gorelowa, Hanna Adler, Kommissar Wendt, Erwin Kuhnert with
+sheets + living portraits; the life sheets `guard_karsk`, `press_officer`, `stapo_civil`; the optional look
+`alexei_press`) and §8 (audio brief). Extends `c4_cast_audio.md`, `c3p2_cast_audio.md`, `characters_r7.md`,
+`portraits_r7.md`; everything listed there stays valid.
+
+### Provenance & licence (applies to every file below)
+* **Original work, generated procedurally** by the project's own Python scripts (numpy + Pillow; no AI models, no
+  network, no samples, no third-party art or recordings, no image or audio inputs).
+* Characters: drawn on the project's own paper-doll rig (hand-drawn ASCII heads, garment hooks, keyframed poses, a
+  two-link IK for Maria's shovel) and its signed-distance portrait pipeline; every face is designed for the person (no
+  shared head preset).
+* Sound: synthesised (noise shaping, modal impacts, grain clouds, stick-slip creaks, additive instruments, generated
+  impulse responses). Every voice — the crowds, the station announcements in a Russian / a German cadence, the
+  canteen radio, the bandmaster, the card players — is unintelligible by construction (`c3_audio.voice`: prosody
+  profiles over random vowel targets — no words, no language). All music is composed here and quotes only the game's
+  own motifs K (Karsk) and B (Berlin) from `tools/audiogen/music.py` and the bayan breath of `c4_audio.py`. The
+  depot band's „Accord march“ and the dance tune on Lenz's radio are original tunes written for this round (no
+  anthem, no existing march or song, no quotation); the march is a provincial band's, thin and a little out of tune in
+  the cold — no cymbal, nothing triumphant: a diegetic counterpoint, never a celebration.
+* Insignia (TECHNICAL_ARCHITECTURE §12.4): the neutral sheets and all portraits carry none. Only `sheet_hist.png` of
+  `blockwart` (the armband: red band, white disc, one dark pixel — the guard's hist pattern of `chargen_cast.py`) and of
+  `guard_karsk` (the small red star on the ushanka) carry the historical insignia; same size and alpha as the neutral
+  sheet (one normal map), resolved by `Symbols.pick()` only when the player enables historical insignia. Wendt wears
+  no uniform, no badge, no moustache or glasses that quote a historical perpetrator; Kuhnert has no moustache.
+* Licence: project-owned original assets, no attribution needed.
+* Deterministic: verified 2026-11-06 — WAVs and sheets rebuilt and md5-compared (`c4p2_spyhole`, a stair-steps variant,
+  `maria/sheet.png`, `blockwart/sheet_hist.png`: identical); after the review pass a review build (`--out`) and the real
+  build were md5-identical for `hanna/sheet.png`, `wendt/portrait_anim.png`, `maria/portrait.png`,
+  `blockwart/sheet_hist.png`, `guard_karsk/sheet_hist.png`, `alexei_press/sheet.png`, `press_officer/sheet.png`; seeds
+  derive from crc32 of the names.
+
+### Reproduce
+```bash
+py -3 -P tools/pixelgen/characters_c4p2.py --portraits   # 8 ids: sheets, normal maps, hist sheets, 5 living portraits, checks
+py -3 -P tools/pixelgen/characters_c4p2.py --check       # validators only (characters_check + C4P2 contract checks)
+py -3 -P tools/pixelgen/characters_c4p2.py --heads       # review image of the hand-drawn heads (8x)
+py -3 -P tools/audiogen/c4p2_audio.py                    # 24 WAVs + .import + analysis + numeric checks
+py -3 -P tools/audiogen/c4p2_audio.py --list             # names and where each is (to be) wired
+## then the shared, locked import (TECHNICAL_ARCHITECTURE §1)
+```
+Portraits take ~60–70 s per speaker (run ids in parallel processes: one per id). Review images:
+`assets/characters/_preview/c4p2_*` (git-ignored, `.gdignore`); spectrograms `assets/audio/_preview` (git-ignored).
+
+### Characters (`tools/pixelgen/characters_c4p2.py`: sprite specs, heads, hooks, portrait specs, runner)
+Through the existing pipeline: `characters.py` (`build_sheet`, `CAST_HIST`), `characters_check.py` and the part-1
+runner `characters_c4.py` (its install chain) are imported and their tables extended in memory; three scene tints
+(`c4p2_depot` sodium/kerosene light over coal-black blue shadow, `c4p2_station` sodium in steam, `c4p2_court` night
+blue with warm windows), the gestures `press_back`, `find_key`, `note_word`, `tug_cap`, `tug_cap_f`, `one_drag`, `fold_paper` and
+the work loops `shovel`, `cards`, `smoke`, `read_paper` are added in memory; portrait specs are registered in memory in
+`chargen_portrait2_cast.CAST` with five backdrops in `chargen_portrait2_paint.BG` (`c4p2_depot`, `c4p2_window`,
+`c4p2_gate`, `c4p2_lodge`, `c4p2_platform`). No other generator file is changed.
+
+| Directory | Who | Sprite (32 × 56 cells, origin 16/54) | Portrait (112², 4 expressions × 6 states) |
+|---|---|---|---|
+| `assets/characters/maria/` | Maria Gorelowa (34), returnee from Veltrava, Kolonne 4 | straight-backed; the green woollen headscarf tied **under the chin** (it frames the face down to the knot, the back corner falls over the nape; a strip of dark hair under its rolled edge), coal on the cheek; the thin plum-heather Western coat with its lapel and the needle glinting in it, under the issued quilted vest; felt boots a size too big, hands wound in pale linen rags (a rag band above the near hand); gesture: both hands pressed into the small of the back, a breath; **work_side: shovels coal** (scoop, lift, swing, the load thrown up into the tender — the shovel solved by IK between the hands) — plays in the level (`idle_anim`); 44 px, walks 24 px/s | a long, angular face: cheekbones high and sharp over hollow cheeks, a long straight nose with the bump of an old break, a wide thin-lipped mouth, dark deep-set eyes under thick straight brows; the headscarf with its woven check (dark bars, a thin ochre thread) tied under the chin with knot and tails, folds radiating to the knot, a centre parting of dark hair under the edge; coal on brow, cheekbone and jaw; the plum lapels inside the quilted vest, the needle with a red thread; head raised and turned further than the others; the coal stage's sodium dawn |
+| `assets/characters/hanna/` | Hanna Adler (27), teacher, Konrad's sister | upright like her brother, looser and quicker; **dark-blonde** hair pinned up in a round knot high on the crown (a dark pin band under it), a round open face; a knee-length navy swing coat open at the throat over the grey cardigan, a grey-brown tweed skirt below it, dark wool stockings, laced ankle boots; the rust-red scarf thrown on loosely with **both long ends down the front** (they swing); chalk dust on the near cuff and where she wiped her hand on the coat; the key ring in her hand; gesture: the keys come up, a thumb finds the right one; wide talking hands; 46 px (the knot), walks 27 px/s | a round, open face, full cheeks, a short rounded chin, a short straight nose, freckles, a wide ironic mouth, Konrad's blue-grey eyes set wider, a pearl stud; the dark-blonde knot standing high above the crown, strands escaped at temple and nape; the navy coat, grey cardigan, round white collar, the loose rust scarf with both ends down the front, chalk on the sleeve; she faces the viewer more squarely than anyone; her own lit window behind her |
+| `assets/characters/wendt/` | Kommissar Ludwig Wendt (≈ 50), Staatspolizei | heavy, broad and calm (a big chest and belly, thick legs); a **pearl-grey homburg with a black band** (Kessler's is black: inverted on purpose), dark hair grey at the temples, heavy lids, soft jowls and a double chin; the long dark-grey civilian coat with a back vent and a **wide dark-brown fur shawl collar** over the shoulders and down the front edge, a **bottle-green silk foulard** with ivory dots in the opening (no white collar, no tie), black leather gloves; the small black notebook with its pale page edge in the near hand, open when he notes a word (gesture); gestures little with the far hand; 49 px, walks 21 px/s | a heavy, broad, fleshy, clean-shaven face, soft jowls and a double chin over a thick short neck, a fleshy rounded nose, small pale eyes under heavy lids, dark heavy brows, a polite half smile; dark hair oiled back, grey at the temples; the pearl-grey homburg; the dark-brown fur shawl collar, the green foulard; head a little lowered, almost straight at the viewer; the gate passage's cold lamp. No uniform, no badge, no glasses, no moustache |
+| `assets/characters/blockwart/` | Erwin Kuhnert (≈ 60), caretaker and Blockleiter | a little stooped, short quick steps; the flat cap, grey temples, a pinched face; the brown work coat buttoned over the cardigan, a belt with the big key ring (it swings), the reading glasses dangling on their string, felt slippers in galoshes; the beech card box **clamped under the near arm** at his side (idle, walk, talk, glance — never held out); gesture: a nervous tug at the cap with the free hand, a glance down the passage; **work_side: the box held open against his belly, the near hand walks the cards, pulls one and holds it up to the glasses** — plays in the level; 44 px, walks 20 px/s; `sheet_hist.png`: + the armband | a lined, pinched face, deep nose-to-mouth lines, watery pale eyes under bushy grey brows, grey stubble, the reading glasses low on the nose and their cord; the flat cap; the brown work coat over a dark green cardigan; the lodge's yellow lamp |
+| `assets/characters/guard_karsk/` | a young Soviet guard (life sheet) | the long sheepskin coat with fleece at collar, front edge and hem, belted, the sling across the chest, the **rifle slung on the back: the barrel (dark steel with a lit edge and the front sight) stands clear behind the ushanka, the wooden stock runs down behind the back to the hip**; the ushanka with its flaps tied up, cold-red cheeks; gesture: blows into his mittens; **work_side: warms his hands at the barrel fire** — plays in the level; 46 px, walks 25 px/s; `sheet_hist.png`: + the red star on the ushanka | — (life sheet) |
+| `assets/characters/press_officer/` | the Soviet press minder (life sheet) | a good dark-grey double-breasted city coat, a karakul pirozhok, glasses; a **tan leather briefcase clamped under the near arm** (its back half sticks out behind the coat, the brass clasp catches the light), a cigarette in the same hand (a thread of smoke between drags); gesture: one drag; **work_side: smokes** (the ember glows, the smoke breathed out, the ash tapped off) — plays in the level; 46 px, walks 23 px/s | — (life sheet) |
+| `assets/characters/stapo_civil/` | the man at the kiosk (life sheet) | square-built, the black belted leather coat (glossy), the hat with its brim snapped down over the eyes, the newspaper folded in the near hand; gesture: folds it, glances; **work_side: the paper held open, a page turned, a look over its edge** — plays in the level; 48 px, walks 24 px/s | — (life sheet) |
+| `assets/characters/alexei_press/` | look: Alexei for the showcase (KarskB) | `chargen_cast.alexei` made presentable: the **ushanka's flaps tied up on the crown** (ear, cropped dark hair and the clean-shaven jaw show), a **new cream-white wool scarf** with its end lying over the jacket front; Alexei's 15 rows (rows and lengths unchanged, silhouette IoU 0.96) + `carry_side` / `carry_idle_side` with Ekdahl's red guidebook under the near arm (`c4p2.json` carry of KarskB); 47 px, walks 34.5 px/s like Alexei. Shown in game once `c4p2.json` has `"looks": {"L_C4P2_KarskB": {"alexei": "alexei_press"}}` (story's line; integration patch) | Alexei shaved (no stubble), the ushanka's flaps tied up, the new cream wool scarf wound over the quilted jacket instead of the grey roll-neck; the showcase's floodlights |
+
+Rows: the four speakers ship the part-1 NPC rows (`idle_side, walk_side, idle_front, talk_side, blink_side, look_side,
+gesture_side, blink_front, talk_front`), Maria and Kuhnert `work_side` appended; the life sheets `idle_side, walk_side,
+talk_side, blink_side, look_side, gesture_side, work_side` (side rows only, `talk_side` for exploration chats).
+Silhouettes: IoU of idle_side frame 0 ≤ 0.90 against each other and 24 existing figures; faces: > 1200 of 1936 samples
+differ from each other and 15 existing speakers (`tests/test_c4p2_cast_audio.gd`).
+
+#### Round 10 art review (second pass, 2026-11-06) — what changed and why
+The review found twins, unused work loops and costume details that did not read at 1x. Fixed in the generator:
+* **No twins.** Hanna was Elena recoloured (same face, brown centre-parted hair, red scarf at the throat, slim dark
+  coat): now dark-blonde with a high knot, a round freckled face that faces the viewer, a knee-length navy swing coat
+  over a tweed skirt, the rust scarf loose with both ends down the front. Wendt was Kessler with a fur collar: now
+  heavy and broad, a pearl-grey homburg (Kessler's is black), dark hair with grey temples, a wide fur shawl collar and
+  a green silk foulard instead of the white collar and black tie. Maria's portrait used Irina's nape-tied cap shape:
+  now the headscarf is tied under the chin (knot, tails, folds, a woven check, hair under the edge) in portrait and
+  sprite, and her face is long and angular with an old break in the nose. Checked: the sprite head colours of the
+  pairs differ by 107 / 144 / 66 (were 36 / 25 / 57) and the portraits' cell colours by 42 / 48 / 46 (were 26 / 27 /
+  40) — `cast_no_twins_of_the_review` (thresholds 60 / 40).
+* **The work loops play.** `L_C4P2_Karsk.tscn` (MariaCoal, GuardCoal, MinderCanteen) and `L_C4P2_Berlin.tscn`
+  (ShadowKiosk, KuhnertGate) set `idle_anim = "work_side"` (one-line insertions) — `cast_work_loops_play_in_the_levels`.
+* **Details that read.** The minder's briefcase (it was hidden behind the coat) is clamped under his arm; Kuhnert
+  carries the card box under his arm (it was held out like a tray; the work loop holds it against his belly); the
+  guard's rifle stands clear of the ushanka with a lit edge; Maria's needle has its own glint and her rag-wrapped hands
+  are pale linen; Hanna's chalk is a dusty streak drawn over the sleeve (it was hidden under the arm); Wendt's notebook
+  shows its pale page edge. The generator's `check_props()` renders every listed frame with and without the prop's hook
+  and fails if the prop shows fewer pixels than required (or, for the card box, if it reaches out in front of him).
+* **The look reads.** `alexei_press` ties the ushanka's flaps up and wears a cream scarf (39 px of idle_side frame 0
+  differ from Alexei, silhouette IoU 0.96 — the same person); the portrait matches. It appears in game only with the
+  `looks` line in `c4p2.json` (integration patch for the story owner).
+
+### Sound (`tools/audiogen/c4p2_audio.py`; levels: the round-8 windows; loops seamless with `smpl` chunks)
+| File | What | Wiring |
+|---|---|---|
+| `amb/amb_karsk_depot.wav` (60 s loop) | the depot before dawn: Kolonne 4 shovelling in a ragged line (six workers, each with its own rhythm and rests), a standing engine's blower and its safety valve lifting twice, the guard's barrel fire, a yard dog, the canteen radio behind a window, sparrows in the eaves, a fitter's hammer, couplings bumping, a goods train passing behind, boots on frozen cinders | `L_C4P2_Karsk.tscn` ambience; c4p2.json KarskA; LS_C4P2_Depot p1 |
+| `amb/amb_karsk_platform.wav` (60 s loop) | platform 1 in the evening: the depot band rehearsing the Accord march across the tracks (breaks off on a cracked note, two baton taps, the bandmaster's voice, again from the top; later a second strain), the express's air pumps and a steam leak, announcements in a Russian cadence after a two-tone chime, the crowd (officials, press, workers), snow ticking on the iron canopy and two slides of it, steps in the snow, a camera shutter | c4p2.json KarskB; LS_C4P2_Book b4 |
+| `amb/amb_berlin_station.wav` (60 s loop) | the Ostbahnhof under glass at night: the hall's long echo, announcements in a German cadence after a three-tone gong, the express's steam and air pump, two luggage carts, steps on stone, pigeons in the roof, the kiosk's counter bell, cutlery and cups in the dining car, a tram ringing on the forecourt | `L_C4P2_Berlin.tscn` ambience; c4p2.json BerlinA; LS_C4P2_Steam m4 |
+| `amb/amb_berlin_courtyard.wav` (60 s loop) | the courtyard of No. 14 at night: Lenz's radio (an original slow foxtrot through a valve set and the window glass), the Schulz baby fussing for a moment, a card game behind another window, a dog far off, the S-Bahn crossing its viaduct twice, wind whistling in the gate passage, a gutter dripping into the yard (now and then onto the rain barrel), a window shut, a chain in the back house, and under everything the Hall's distant hum | c4p2.json BerlinB; LS_C4P2_Express x4 |
+| `music/mus_c4p2_karsk.wav` (loop, 45 bpm, 64 beats, 85.3 s) | the bayan breath of part 1, slower (four breaths: Dm, Bb colour, Dsus2, an open A–E), over low strings in D Aeolian; K returns augmented in the cellos (the question only); three felt-piano notes; a high harmonic into the loop. Against it in KarskB the band of `amb_karsk_platform` plays in F major — the same notes, the other face of them | level + c4p2.json KarskA/KarskB; LS_C4P2_Depot p2 |
+| `music/mus_c4p2_berlin.wav` (loop, 63 bpm, 64 beats, 61.0 s) | piano and low strings in G Aeolian: the clockwork pulse of part 1 (3+3+2 on a muted piano) softer and slower, the machine tick only on downbeats, low strings instead of the brass, a viola counter-line, B on the piano | level + c4p2.json BerlinA/BerlinB; LS_C4P2_Steam m4 |
+| `music/mus_c4p2_clock.wav` (one-shot cue, 24.5 s; NOT in `LOOPING_MUSIC`) | LS_C4P2_Clock from its first frame: the tick on every second 0–19 s; k1 the clockwork pulse and B on the celesta, k2 the drone under the G pedal, k3 the bayan and K on the felt piano, k4 K's answer and B's close (Eb bent to E) ending on the last tick; k5 (20 s) the tick never comes, a low D–G dyad dies away, silence from 22.6 s. Shot times `CLOCK_SHOTS` = the registered shots (test-checked) | LS_C4P2_Clock (cine stream): `{"t": 0.0, "music": "mus_c4p2_clock"}` |
+| `sfx/c4p2_halves_snap.wav` | the German half slid home against the Russian one, its edge stopping, the palm pressing the card flat | JoinPuzzle: the solving moment (integration patch) |
+| `sfx/c4p2_tooth_1..3.wav` | one tooth seating in its notch: a tiny crisp card click (random variants) | JoinPuzzle `_reveal_click`, five of them 0.14 s apart (integration patch) |
+| `sfx/c4p2_stamp_close.wav` | a soft press, then two brass tones a quarter-tone apart beating slower and slower until they meet in one (one card, two halves) | JoinPuzzle `_reveal_ring` (its fallback chain asks for it) |
+| `sfx/c4p2_shutter.wav` | Ekdahl's rangefinder: the cloth shutter's double tick, the film advanced with the lever (within the 0.6 s between his two photographs) | JoinPuzzle `_photo` (asked for) |
+| `sfx/c4p2_steps_1..3.wav`, `sfx/c4p2_steps_down_1..3.wav` | three careful steps on old wooden stairs at night (soft soles, the treads answering, one creak, the sole scuffing the worn edge), up slower and heavier, down quicker; random variants | HousePuzzle `_walk` sets off (asked for); DOWN moves (integration patch) |
+| `sfx/c4p2_attic_door.wav` | the drying loft's plank door: thumb latch, a long careful hinge squeal, the door against a beam, the cold loft's draught, a pigeon flapping off | HousePuzzle: moves into / along the lofts (integration patch) |
+| `sfx/c4p2_spyhole.wav` | behind Frau Pohl's door the brass spy-hole cover slides aside, a click, a floorboard under her slipper | HousePuzzle: the Probegang stops at `s2` (integration patch) |
+| `sfx/c4p2_door.wav` | they are down: the bolt drawn on Pietsch's cellar door, the heavy door dragged over the stone sill, the cellar's hollow answer | HousePuzzle `_reveal_workshop` (asked for) |
+| `sfx/c4p2_pencil.wav` | Konrad's red pencil ringing the workshop on the plan: the lead dragged round once, the grain following the curve, a tap where it closes | HousePuzzle `_reveal_circle` (asked for) |
+| `sfx/c4p2_knock.wav` | a knuckle against the stairwell wall, softly | HousePuzzle `_no_way` (asked for) |
+
+The SFX ids are the ones the puzzle UIs already ask for in their `Kit.ui_sound_first` fallback chains (round 10's
+`join_puzzle.gd` / `house_puzzle.gd`), so six of them are heard without any patch; the other five are wired by the
+lead (integration notes of the cast-audio stream).
+
+`scripts/core/audio.gd`: `LOOPING_MUSIC` += `mus_c4p2_karsk`, `mus_c4p2_berlin` (one-line edit; the cue stays a
+one-shot so its tick can stop). Tests: `tests/test_c4p2_cast_audio.gd` (15 cases: sheets, rig, living portraits, life
+sheets and hist variants, the look, silhouettes and faces, no twins of the review, the work loops in the level shells,
+names and speakers, WAV format / loops / import, levels and
+seams, registry and variants, the clock cue on the film's registered shots, wiring, a pending report of the puzzle UIs
+and the Clock film that do not call these sounds yet).
+
+---
+<a id="part-explore_c4p2"></a>
+
+## Asset manifest — Chapter 4 part 2 exploration: the Karsk locomotive depot, the Ostbahnhof and Kolonnenstraße 14, „Ein Paket über die Linie“, „Ein Korb für Frau Grabowski“, „Die Drehscheibe“, „Die Gepäckwaage“ (area: explore_c4p2)
+
+Owner: exploration c4p2 specialist · Date: 2026-11-06 · Engine: Godot 4.7.2 · Contract: documentation/C4P2_DESIGN.md
+§4/§6/§7, TECHNICAL_ARCHITECTURE §12.1/§12.3/§12.8/§12.9 (user request this round: a longer game, content, look, feel,
+fun; places lived-in and people placed with intent).
+
+Everything listed here is **original work**, written for this game or generated procedurally by the project scripts
+below on 2026-11-06. No pixel, sample or melody was taken from `documentation/references/` or any other source; no
+downloads, no AI media, no recordings. The two mini-game stages are drawn in code (pixel art in art px, ×3, ×2 for
+larger text) from documented colour constants in their scripts (the depot yard's cinders, snow and tar roof, the brass
+of a decimal scale, the tiled wall of a station hall); no texture file is read. No regime insignia anywhere (§12.4):
+the permits in the texts carry „zwei Stempel“, never an emblem; the enamel signs say what the Corridor allows. Names of
+people in the finds are fictional (Saizew on Irina's duty board, Grigori, Kolja, Frau Grabowski, the tenants Lenz,
+Schulz, Pohl, Mertens, Kühn, Brettschneider of the house puzzle) — no list of real victims, no real person. Historical
+models of the mini-games: the general principle of a locomotive turntable with a locking bolt and of a decimal
+platform scale with sliding weights — no real machine, plan or plate was copied. Licence: original project work.
+
+### Content (text, data)
+
+| File | What |
+|---|---|
+| `data/explore/c4p2_karsk.json` | 24 entries under the level key `L_C4P2_KarskA` (Alexei). Coal stage, scene A (Monday dawn, until `c4e_inspect_notice`): Irina's duty board (seven drivers, passport numbers and registrations, one marked „krank“ in red pencil — card `hist.soviet.propiska`), the canteen hatch and its radio (grain figures, then a waltz), the water crane wrapped in straw (three winters of repairs), the Western shoes beside the issued felt boots, Lena's mitten nailed to a trestle post (secret), the dog „Inspektor“ in the ash pit, the guard at the barrel fire (nineteen, from Kursk, turning a pair of darned gloves), the back of the tarpaulin, a chat with Maria Gorelowa (after `c4e_talk_maria`: the needle, the children's home behind the water tower). Showcase and platform 1, scene B (Tuesday evening): the tarpaulin's front and the shovel handle behind the tear, „А. М. 1949“ at the foot of Alexei's signal (secret), the polished show engine (brass plate 1939), the brass band (Grigori, Irina's husband, on the tuba), caviar and kasha, the press minder (chat; card `hist.soviet.foreign_correspondents`), the turntable (mini-game), a chat with Lev under the lamp (after `c4g_inspect_card`, until `c4g_choose`: papers from Brest, 1940), two clocks over the gate („Korridorzeit“), families at the sleeping car, and the side task „Ein Paket über die Linie“ |
+| `data/explore/c4p2_berlin.json` | 21 entries under the level key `L_C4P2_BerlinA` (Konrad). Ostbahnhof, scene A (Monday evening, until `c4f_inspect_book`): the liaison booth at the barrier (a tea glass and a stamp pad at one desk), the baggage counter's decimal scale (mini-game), the family's permit in cellophane, a chat with Marta (after `c4f_talk_marta`: „mit Koffer?“), the kiosk (one headline; the Swedish paper sold out — card `hist.reich.schriftleitergesetz`), the green car's frosted hatch, the porters No. 14 and No. 31, the station clock at 20.31, a return ticket never used (secret). Courtyard, scene B (Tuesday night): a chat with Kuhnert (until `c4h_solve_house`), a chat with Hanna (after `c4h_talk_hanna`, until `c4h_solve_house`), the frozen laundry (Tuesday is washing day: the drying loft is open), Ilse's house drawn into the frost of the stair door (secret), the cellar hatch and the wartime shelter route under all three wings, the lit windows (card `hist.reich.blockleiter`), the dustbins („HH 3“ empty since October), the carpet-beating rack and the house rules, the cobbler's souterrain (the house's census in shoes), and the side task „Ein Korb für Frau Grabowski“ |
+| `data/explore/c4p2_history_soviet.json`, `c4p2_history_reich.json` | the four real-history cards with their sources (fact-checked 06.11.2026 against ≥ 3 web sources each, see the `doc` of each file; the sources appear only in the credits' source list, never on the cards) |
+| `data/locale/de_explore_c4p2.json`, `de_history_c4p2.json` | all German texts: finds, chats, both tasks, both mini-games, the place labels, the voice from the window (`char.grabowski.name`), the four cards |
+| `assets/environments/karsk_c4p2/explore_hotspots.json`, `berlin_c4p2/explore_hotspots.json` | the exp_* hotspots plus the `info` art contract (stand, focus, what to paint) the two env streams painted to — checked against their layers on 06.11. (the barrel fire and the signal's foot moved onto env-karsk's actors) |
+| `scenes/levels/L_C4P2_Karsk.tscn`, `L_C4P2_Berlin.tscn` | appended Find_* / Chat* / Task_* nodes (script `scripts/ui/minigames/lever_spot.gd`: memory-aware gates, a chat only while its NPC stands there) |
+
+### Side tasks (§12.9; rewards are human beats, no history card)
+
+| Task | Steps (all in one walk area) |
+|---|---|
+| `karsk.task.parcel` „Ein Paket über die Linie“ (scene B) | the grandmother on platform 1 (`exp_task_parcel`, speaker `babushka`) → the sack scale in the sand-drying house (`exp_task_scale`: 5,6 kg, the jar of lime honey is the 600 g too much) → back to her (chain on the same spot: a letter instead of the honey — „Kolja, der Honig wartet auf dich. Komm ihn holen.“ — and Alexei does not tell her what happens at the coal stage to those who come back) → the signal wire left from his January repair (`exp_task_wire`) → the sleeping-car conductor (`exp_task_conductor`, speaker `conductor`): a present for his nephew Kolja; she must not wave, waving is noticed |
+| `berlin.task.basket` „Ein Korb für Frau Grabowski“ (scene B) | a basket on a washing line from the dark kitchen window, front wing, 2nd floor (`exp_task_basket`; Frau Grabowski's coal card is blocked since her son went over the Line; a voice only, the dialogue box shows the silhouette) → two shovels of Hanna's briquettes by the cellar hatch (then a third) (`exp_task_coal`) → she pulls it up and puts her light on: „Im Dunkeln friert man weniger, weil man seinen Atem nicht sieht.“ |
+
+### Mini-game „Die Drehscheibe“ (`scenes/ui/minigames/Turntable.tscn`)
+
+| File | What |
+|---|---|
+| `scripts/ui/minigames/turntable_logic.gd` | the rule, pure and deterministic: a 30-m bridge with the shunting engine („Kukuschka“) on it; a tap sets it ~4 cm (impulse 0.7 °/s), holding drives it up to 18 °/s, released it coasts ~100°, the band brake stops it in ~8°; a pull is refused while it moves, between the tracks, at the entry track, at another stall, or more than 0.2° (≈ 5 cm at the rim) off stall 7; `next_move()` reaches stall 7 from every angle (tested) |
+| `scripts/ui/minigames/turntable_game.gd` | the stage (the yard with a stack of sleepers, the shunters' brazier, a floodlight and its pool of light, footprints, banked snow; the roundhouse roof with numbered plates over stalls 1–9 and stall 7's gate lit; the pit with its scale; the bridge, the operator's empty hut, the engine with steam; the loupe on the rail joint ahead of the chimney end, „fluchtet“ / „… daneben“ / „Stand 7 noch …° entfernt“), side panel (scale, speed), keys (←/→ hold or tap, Space brake, E pull, R), pad (LB/RB or d-pad, A brake, X pull, Y), mouse (drag the rim, right button brakes, wheel nudges, click the loupe), hints after two refusals (Settings `puzzle_hints` 0/1/2), compact ×2 layout, high contrast, reduced motion, `demo_solve()` by synthetic keys (≈ 11 s) |
+| `assets/audio/sfx/mg_c4p2_tt_start.wav`, `_brake`, `_bump`, `_lock`, `_roll` (2-s loop with a RIFF 'smpl' chunk) | `py -3 -P tools/audiogen/mg_audio_c4p2.py` (numpy, deterministic, no samples) |
+
+### Mini-game „Die Gepäckwaage“ (`scenes/ui/minigames/LuggageScale.tscn`)
+
+| File | What |
+|---|---|
+| `scripts/ui/minigames/luggage_logic.gd` | the rule: a big sliding weight in 5-kg notches (0–50 kg), a small one in 0.1-kg steps (0–5 kg); the tongue plays in at the mark when they equal the load (±0.5 kg of free swing); three weighings — the suitcase of presents for the grandmother in Karsk 23,6 kg (over the Corridor's 20 kg; the mother repacks coffee, oranges and a tin of ham), the suitcase again 19,8 kg, the parcel 3,8 kg: the same 23,6 kg in a form the Corridor allows; no dead end from any position (tested) |
+| `scripts/ui/minigames/luggage_game.gd` | the stage (the hall's tiled wall, the enamel signs „Gepäck“ and the Corridor's luggage rule, a timetable, the station clock at 20.31, the platform with the suitcase or the parcel, the column and the swinging beam with its two weights, the tongue in its frame, the clerk in his cap behind the grille whose stamp comes down on each good reading), the slip „Gepäckschein D 303“ in the side panel, keys (←/→, ↑/↓ held to slide, Page Up/Down a kilo, E/Enter/Space read, R), pad (d-pad, LB/RB a kilo, A, Y), mouse (click or drag a weight, wheel over a rail, „Ablesen“), hints, compact layout, high contrast, reduced motion (the beam does not swing), `demo_solve()` by synthetic keys |
+| `assets/audio/sfx/mg_c4p2_poise_coarse.wav`, `mg_c4p2_poise_fine.wav`, `mg_c4p2_beam_knock.wav`, `mg_c4p2_stamp.wav` | `py -3 -P tools/audiogen/mg_audio_c4p2.py` |
+
+### Close-ups (`assets/explore/c4p2/`, 240×150, shown ×3 by the discovery view)
+
+| File | What |
+|---|---|
+| `lena_mitten.png` | `karsk.depot.lena_mitten`: the foot of a coal-stage trestle post at dawn, a rusty horseshoe nail through the cuff of a small grey knitted mitten, darned once, frost on the wool, „Lena“ cross-stitched in red; the coal stage's lamp warming the post's edge |
+| `ilse_frost_house.png` | `berlin.k14.ilse_drawing`: the stair door's pane grown over with frost ferns; drawn into it with a child's finger a five-storey house, every window lit (the cellar too), smoke from the chimney, the door open; melt water running from the strokes; Konrad's breath already clouding one corner |
+| `signal_scratch.png` | `karsk.depot.signal_scratch`: the foot of the restored signal mast — fresh paint with drips down to a hand's width above the ballast, below it the old rust with „А. М.“ and „1949“ scratched to the bare metal; base plate, ballast, snow |
+
+All three: `py -3 -P tools/pixelgen/gen_explore_c4p2.py` (deterministic; colours from `data/chapters/c4p2.json` palettes
+`depot` and `courtyard` plus the documented door green and wool greys in the generator's header; letters drawn stroke by
+stroke, no font file).
+
+### Tests and tools
+
+| File | What |
+|---|---|
+| `tests/test_c4p2_explore.gd` | 20 cases: data, texts and typography, the four cards, Explore validation, placement and spacing against the env manifests and the art contract, gates and memory scenes, both side tasks, the drivers' passes (autoplay and inputplay — a pending note names the passes the drivers still lack), the real Game path on both level files with the live Story, memory cards per walk area, both mini-games (rules, scenes, keys, pad, mouse, hints, full solves by keys, compact layout, hint modes), sounds |
+| `tests/visual/c4p2_explore_shots.gd` | windowed capture of both mini-games through the real UIRoot (`--shots=<dir> [--game=turntable|luggage] [--scale=1.5] [--hc=1]`) |
+| `tools/audiogen/mg_audio_c4p2.py` | the nine sounds above |
+| `tools/pixelgen/gen_explore_c4p2.py` | the three close-ups above |
+
+---
+<a id="part-polish_r10"></a>
+
+## Asset manifest — round 10 polish (NEXT_STEPS §1 „Polish from the round-9 reports“)
+
+Area owner: polish specialist · Date: **2026-11-06, round 10** · Engine target: Godot 4.7.2
+
+### Provenance & licence
+Everything here is original project work, made by the project's own deterministic scripts (numpy / Pillow / stdlib;
+no samples, no network, no third-party art, sound or text, no AI-generated pixels or audio). Project-owned, no
+attribution needed.
+
+### Files
+| File | What | Made by |
+|---|---|---|
+| `assets/audio/sfx/c4_stamp_accept.wav`, `c4_stamp_dispatch.wav`, `c4_card_tear.wav` | re-voiced for LS_C4_Stamp (stamp surfaces over the film's beds; the perforator's tear on the picture's split) | `tools/audiogen/c4_audio.py` — details, levels and the per-beat comparison in `c4_cast_audio.md` („Round 10“) |
+| removed: `sfx/c4_stencil_brush`, `c4_bell_once`, `c4_bell_twice`, `c4_lamp_out` (+ `.import`) | cast cues no picture shows (`c4_cast_audio.md`) | — |
+| `data/locale/de_board_strip.json` | „+{n} weitere“, „Fäden blättern“ — the evidence board's thread pages | by hand |
+| `assets/environments/veltrava_station/provenance.json` | the station generator's record of its own files (106 PNGs + `scene.json`; never `thaw/` or `walkers/`) — what its next run may remove first | `tools/pixelgen/env_veltrava_station.py` (output of a run, byte-identical otherwise) |
+| `tools/pixelgen/env_keep.py` | the shared-folder rules of the three env generators (`--selftest`) | — |
+
+### Generator hazard — the proof (2026-11-06)
+`env_veltrava_hall.py`, `env_veltrava_station.py`, `env_c3p2_quay.py` were run in scratch copies of the worktree
+(`tools/`, `data/`, `scenes/`, `assets/environments`, `assets/ui`, `assets/characters`; the repo itself untouched) and
+every output folder diffed against the repo, byte for byte:
+* **before** (round-9 code): hall lost `walkers/` (9 PNGs) and the `actors` block; station lost `thaw/` + `walkers/`
+  (15 PNGs + 15 `.import`) and 2 of its 14 `actors` (AmbientWalkers, StationThaw); quay lost `walkers/` (10 rigs +
+  10 `.import`) and its `actors` block. The hall's two document JSONs came out with CRLF line ends.
+* **after** (two consecutive runs): every PNG, `.import`, `scene.json`, `provenance.json`, document and locale file
+  byte-identical to the repo; the only new file is the station's `provenance.json` (now in the repo).
+* **injected**, third run: a recorded but no longer produced hall prop is removed (and its row); a hand-made PNG in
+  `props/`, a `walkers_r8.py` provenance row, a hand key in the quay's `scene.json` (kept in place) and a hand actor at
+  index 5 of the station's list (kept at 5) all stay; walkers and thaw stay.
+Guard: `tests/test_env_generators_keep.gd` (sources never sweep PNGs by extension; actors, walker rigs and thaw art
+present; every provenance row real, no generator claims `walkers/` or `thaw/`).
+
+### Reproduce
+```bash
+py -3 -P tools/pixelgen/env_keep.py --selftest
+py -3 -P tools/audiogen/c4_audio.py --only c4_stamp_accept,c4_stamp_dispatch,c4_card_tear --no-analysis
+## then the shared, locked import (TECHNICAL_ARCHITECTURE §1)
+```
 
 ---
 <a id="part-ui"></a>

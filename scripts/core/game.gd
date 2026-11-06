@@ -542,6 +542,7 @@ func _unload_level() -> void:
 
 func _setup_level(spawn: String) -> void:
 	var mode: String = str(level.get("mode")) if level.get("mode") != null else "oblique"
+	_apply_switch_grade(level)
 	_apply_grade(level)
 	if mode == "oblique" or mode == "side":
 		var sp := spawn if spawn != "" else str(ENTRY_SPAWN.get(level.level_id, ext.spawn_for(level.level_id)))
@@ -570,6 +571,28 @@ func _setup_level(spawn: String) -> void:
 	_call(_ui("hud"), "set_memory", [memory_info()])
 	_call(_ui("hud"), "show_hud")
 	_refresh_objective()
+
+
+## Round 10: the "grade" of a chapter switch (data/chapters/*.json "switches") is the grade of its Story scene from
+## the level load on (memories load the level too), as the annex and the tunnels pick theirs per scene -- except in a
+## level that sets its grade itself (grade looks: the registry, the tunnels, the annex) or for a key no grade table has.
+func _apply_switch_grade(lvl: Node) -> void:
+	if lvl == null or lvl.get("level_id") == null or lvl.get("grade_preset") == null:
+		return
+	var g := str(ext.switch_settings(str(lvl.get("level_id"))).get("grade", ""))
+	if g == "" or not grades.has(g) or level_sets_grade(lvl):
+		return
+	lvl.set("grade_preset", g)
+
+
+## True when a level picks its own grade: looks with a "grade" (registry_level.gd and the levels built on it).
+static func level_sets_grade(lvl: Node) -> bool:
+	var lk = lvl.get("looks")
+	if lk is Array:
+		for e in lk:
+			if e is Dictionary and str((e as Dictionary).get("grade", "")) != "":
+				return true
+	return false
 
 
 ## Grade preset of a level / cinematic node (data/grades.json + chapter grades); inside a memory the level is
@@ -611,13 +634,13 @@ func _apply_grade(lvl: Node) -> void:
 			for hexc in ramp:
 				var c := Color(str(hexc))
 				cols.append(Vector3(c.r, c.g, c.b))
-	cols = cols.slice(0, 64)
+	cols = cols.slice(0, 128)
 	var strength := float(g.get("palette_strength", 0.0)) * float(Settings.get_value("pixel_post"))
 	if str(lvl.get("mode")) == "3d":
 		strength = 0.0
 	mat.set_shader_parameter("palette_size", cols.size())
 	if cols.size() > 0:
-		while cols.size() < 64:
+		while cols.size() < 128:
 			cols.append(cols[0])
 		mat.set_shader_parameter("palette", cols)
 	mat.set_shader_parameter("palette_strength", strength if cols.size() > 1 else 0.0)

@@ -1,0 +1,340 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/c4p2/berlin_c4p2_level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/lever_spot.gd" id="c4p2x_spot"]
+
+[node name="L_C4P2_Berlin" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C4P2_BerlinA"
+protagonist = "konrad"
+mode = "side"
+art_manifest = "res://assets/environments/berlin_c4p2/scene.json"
+ambience = "amb_berlin_station"
+music = "mus_c4p2_berlin"
+footstep_surface = "concrete"
+grade_preset = "ostbahnhof"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="MartaBuffet" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "marta"
+hotspot_id = "marta_buffet"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+
+[node name="ShadowKiosk" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "stapo_civil"
+hotspot_id = "shadow_kiosk"
+face_left = true
+look_at_player = false
+idle_anim = "work_side"
+
+[node name="EkdahlWindow" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "journalist"
+hotspot_id = "ekdahl_window"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+
+[node name="KuhnertGate" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "blockwart"
+hotspot_id = "kuhnert_gate"
+face_left = true
+idle_anim = "work_side"
+
+[node name="WendtYard" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "wendt"
+hotspot_id = "wendt_yard"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+show_after = "c4h_solve_house"
+
+[node name="HannaYard" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "hanna"
+hotspot_id = "hanna_yard"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+hide_after = "c4h_solve_house"
+
+[node name="S_c4f_inspect_board" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4f_inspect_board"
+kind = "inspect"
+hotspot_id = "departure_board"
+
+[node name="S_c4f_talk_marta" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4f_talk_marta"
+kind = "dialogue"
+hotspot_id = "marta_buffet"
+npc_id = "marta"
+radius = 38.0
+
+[node name="S_c4f_inspect_courier" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4f_inspect_courier"
+kind = "inspect"
+hotspot_id = "courier_car"
+
+[node name="S_c4f_talk_ekdahl" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4f_talk_ekdahl"
+kind = "dialogue"
+hotspot_id = "ekdahl_window"
+npc_id = "journalist"
+radius = 38.0
+
+[node name="S_c4f_inspect_book" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4f_inspect_book"
+kind = "inspect"
+hotspot_id = "dining_table"
+
+[node name="S_c4h_inspect_gate" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4h_inspect_gate"
+kind = "inspect"
+hotspot_id = "gate_notice"
+
+[node name="S_c4h_talk_hanna" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4h_talk_hanna"
+kind = "dialogue"
+hotspot_id = "hanna_yard"
+npc_id = "hanna"
+radius = 38.0
+
+[node name="S_c4h_inspect_cards" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4h_inspect_cards"
+kind = "inspect"
+hotspot_id = "lodge_window"
+
+[node name="S_c4h_solve_house" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4h_solve_house"
+kind = "puzzle"
+hotspot_id = "yard_pump"
+
+[node name="S_c4h_talk_wendt" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4h_talk_wendt"
+kind = "dialogue"
+hotspot_id = "wendt_yard"
+npc_id = "wendt"
+radius = 38.0
+
+[node name="Find_LiaisonBooth" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_liaison_booth"
+explore_id = "berlin.ost.liaison_booth"
+radius = 24.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_LuggageScale" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_luggage_scale"
+explore_id = "berlin.ost.luggage_scale"
+radius = 24.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_CorridorPermit" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_corridor_permit"
+explore_id = "berlin.ost.corridor_permit"
+radius = 24.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="ChatMarta" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "marta_buffet"
+explore_id = "berlin.ost.chat_marta"
+npc_id = "marta"
+radius = 38.0
+once = true
+after_objective = "c4f_talk_marta"
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_Kiosk" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_kiosk"
+explore_id = "berlin.ost.kiosk"
+radius = 24.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_GreenCar" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_green_car"
+explore_id = "berlin.ost.green_car"
+radius = 26.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_Porters" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_porters"
+explore_id = "berlin.ost.porters"
+radius = 24.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_StationClock" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_station_clock"
+explore_id = "berlin.ost.station_clock"
+radius = 26.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="Find_TicketStub" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_ticket_stub"
+explore_id = "berlin.ost.ticket_stub"
+radius = 18.0
+once = true
+until_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinA")
+
+[node name="ChatKuhnert" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "kuhnert_gate"
+explore_id = "berlin.k14.chat_kuhnert"
+npc_id = "blockwart"
+radius = 34.0
+once = true
+after_objective = "c4f_inspect_book"
+until_objective = "c4h_solve_house"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Task_Basket" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "exp_task_basket"
+explore_id = "berlin.k14.basket_rope"
+explore_chain = PackedStringArray("berlin.k14.basket_rope", "berlin.k14.basket_up")
+radius = 24.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_FrozenLaundry" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_frozen_laundry"
+explore_id = "berlin.k14.frozen_laundry"
+radius = 22.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="ChatHanna" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "hanna_yard"
+explore_id = "berlin.k14.chat_hanna"
+npc_id = "hanna"
+radius = 38.0
+once = true
+after_objective = "c4h_talk_hanna"
+until_objective = "c4h_solve_house"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_IlseDrawing" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_ilse_drawing"
+explore_id = "berlin.k14.ilse_drawing"
+radius = 18.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Task_Coal" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_task_coal"
+explore_id = "berlin.k14.basket_coal"
+radius = 22.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_CellarHatch" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_cellar_hatch"
+explore_id = "berlin.k14.cellar_hatch"
+radius = 22.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_Windows" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_windows"
+explore_id = "berlin.k14.windows"
+radius = 28.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_Dustbins" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_dustbins"
+explore_id = "berlin.k14.dustbins"
+radius = 24.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_CarpetRack" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_carpet_rack"
+explore_id = "berlin.k14.carpet_rack"
+radius = 24.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")
+
+[node name="Find_WorkshopWindow" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_workshop_window"
+explore_id = "berlin.k14.workshop_window"
+radius = 26.0
+once = true
+after_objective = "c4f_inspect_book"
+memory_scenes = PackedStringArray("L_C4P2_BerlinB")

@@ -458,6 +458,18 @@ DOC_CROPS = {
     'ev_c3_seating': ('veltrava_protocol_seating', 90, 101),
     'ev_c3_booth_log': ('veltrava_protocol_booth_log', 26, 107),
     'ev_c3_carbon': ('veltrava_hall_carbon', 108, 49),
+    # round 10 (Chapter 4 part 2): the env streams' inspect close-ups -- the telling line of each
+    'ev_c4_special_order': ('karsk_c4p2_order', 38, 57),            # the violet carbon: the depot's order
+    'ev_c4_work_list': ('karsk_c4p2_work_list', 124, 58),           # Lena, 4, and Miron -- children's home
+    'ev_c4_press_notice': ('karsk_c4p2_press_notice', 30, 112),     # Kolonne 4: back yard (underlined)
+    'ev_c4_guidebook': ('karsk_c4p2_guidebook', 32, 20),            # p. 212 Karsk - bangard och depa
+    'ev_c4_card_ru_original': ('karsk_c4p2_card_ru', 117, 101),     # the accept stamp
+    'ev_c4_card_whole': ('karsk_c4p2_card_whole', 134, 90),         # the round stamp closing over the cut
+    'ev_c4_departures_east': ('berlin_c4p2_departures', 12, 51),    # D 303 Berlin Ost -
+    'ev_c4_courier_seals': ('berlin_c4p2_seals', 62, 110),          # the lead seals C-17
+    'ev_c4_konrad_tracing': ('berlin_c4p2_tracing', 196, 106),      # the bench for fourteen
+    'ev_c4_house_notice': ('berlin_c4p2_house_notice', 244, 156),   # the site plan, signed K. A.
+    'ev_c4_house_cards': ('berlin_c4p2_house_cards', 14, 12),       # SF 3: Adler
 }
 
 

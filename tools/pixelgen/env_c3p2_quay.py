@@ -11,6 +11,9 @@ the story shell) and provenance.json.  Never touches explore_hotspots.json (expl
 Modules: _kit (palette ladders, deferred night bake, light fields, glow), _far (sky, smoke pall, the Line, river +
 bridge, old town), _near (burning wing, promenade, fg, glow, props), _life (figures, lights, smoke strips).
 --preview renders CPU composites (no Godot lighting) at cameras 0/320/640/960/1280 into DIR.
+Shared folder (round 10, env_keep.py): a run removes only the PNGs its previous run recorded in provenance.json and
+merges scene.json / provenance.json over the old ones -- the walker rigs in walkers/ (walkers_r8.py), the hand-added
+"actors" block and rows of other generators stay.
 """
 from __future__ import annotations
 
@@ -31,10 +34,12 @@ import env_c3p2_quay_far as F  # noqa: E402
 import env_c3p2_quay_near as N  # noqa: E402
 import env_c3p2_quay_life as LF  # noqa: E402
 from env_c3p2_quay_kit import ENV_DIR, ROOT, hexc, NI, SL, IR, CR, PA, LA, SK, SN, RD  # noqa: E402
+import env_keep as KEEP  # noqa: E402  (round 10: the folder is shared)
 
 LF_ = chr(10)
 CANVAS_MODULATE = '#BCC3D2'
 PRODUCED: list = []
+FAMILY = 'tools/pixelgen/env_c3p2_quay'   # provenance rows of this generator and its modules (env_keep)
 # story contract (C3P2_DESIGN.md §5.2) -- names and positions are binding
 HOTSPOTS = {'bench': [760, 300], 'konrad_quay': [800, 300], 'typist_quay': [330, 300], 'guard_quay': [1050, 300],
             'kessler_quay': [1180, 300], 'voronova_quay': [1330, 300], 'journalist_quay': [1560, 300]}
@@ -57,14 +62,11 @@ def record(path, gen, desc):
 
 
 def clean_env():
+    """Remove the PNGs this generator wrote last time (its provenance.json rows), nothing else of the shared
+    folder (walkers/ of walkers_r8.py ...); renamed / dropped outputs never linger."""
     if not os.path.isdir(ENV_DIR):
         return
-    for root, _d, files in os.walk(ENV_DIR):
-        if '_preview' in root:
-            continue
-        for f in files:
-            if f.endswith('.png'):
-                os.remove(os.path.join(root, f))
+    KEEP.remove_own_pngs(ENV_DIR, ROOT, FAMILY)
 
 
 def drop_orphan_imports():
@@ -353,8 +355,8 @@ def build():
                  'date': K.DATE, 'area': 'env_c3p2_night', 'palette_ramps': 'data/chapters/c3.json palettes.veltrava'},
     }
     sj = os.path.join(ENV_DIR, 'scene.json')
-    with open(sj, 'w', encoding='utf-8', newline=LF_) as f:
-        json.dump(_plain(scene), f, indent=1, ensure_ascii=False)
+    scene = KEEP.merge_scene(_plain(scene), KEEP.read_json(sj))   # keeps the "actors" block and later keys
+    KEEP.write_json(sj, scene)   # same content as before: the file stays byte for byte
     record(sj, 'env_c3p2_quay.py', 'art manifest (TECHNICAL_ARCHITECTURE §3.1)')
     write_provenance()
     drop_orphan_imports()
@@ -434,12 +436,13 @@ def _plain(o):
 
 def write_provenance():
     files = [{'path': p, 'generator': g, 'content': d} for p, g, d in sorted(PRODUCED)]
+    p = os.path.join(ENV_DIR, 'provenance.json')
+    files = KEEP.merge_rows(files, KEEP.read_json(p), FAMILY, ROOT)   # rows of other generators stay
     out = {'generator': 'tools/pixelgen/env_c3p2_quay.py (+ _kit, _far, _near, _life)', 'date': K.DATE,
            'area': 'env_c3p2_night',
            'licence': 'project-owned original artwork, generated procedurally with fixed seeds; no copied, traced, '
                       'downloaded or AI-generated pixels; fonts from env_veltrava_lib.py',
            'run': 'py -3 -P tools/pixelgen/env_c3p2_quay.py', 'files': files}
-    p = os.path.join(ENV_DIR, 'provenance.json')
     with open(p, 'w', encoding='utf-8', newline=LF_) as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
 

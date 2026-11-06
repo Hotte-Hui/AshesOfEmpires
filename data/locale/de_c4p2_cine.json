@@ -1,0 +1,17 @@
+{
+ "locale": "de-DE",
+ "area": "c4p2_cine",
+ "note": "Kapitel 4, Teil 2 – Titel der Filmsequenzen auf der Erinnerungsseite „Filmsequenzen“ (MemoryView). Owner: cine stream (round 10). Die Untertitel der Filme selbst stehen in de_c4p2_cinematics.json (story stream).",
+ "strings": {
+  "ui.memories.film.LS_C4P2_Depot": "Kolonne 4",
+  "ui.memories.film_sub.LS_C4P2_Depot": "Das Lokdepot von Karsk vor Tagesanbruch",
+  "ui.memories.film.LS_C4P2_Steam": "Ein Strahl Dampf",
+  "ui.memories.film_sub.LS_C4P2_Steam": "Vom Kohlenbansen in die Halle des Ostbahnhofs",
+  "ui.memories.film.LS_C4P2_Book": "Seite zweihundertzwölf",
+  "ui.memories.film_sub.LS_C4P2_Book": "Ein Reiseführer schließt sich in Berlin und öffnet sich in Karsk",
+  "ui.memories.film.LS_C4P2_Express": "Das rote Licht",
+  "ui.memories.film_sub.LS_C4P2_Express": "Der Westexpress fährt, die Baustellenlampe brennt",
+  "ui.memories.film.LS_C4P2_Clock": "23.40 Uhr",
+  "ui.memories.film_sub.LS_C4P2_Clock": "Berlin, Kordon-17 und Karsk auf einer Uhr"
+ }
+}

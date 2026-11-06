@@ -29,6 +29,9 @@ const PENDING_R8: Array = []
 ## Round 9 (documentation/C4_DESIGN.md §10): the Chapter-4 cinematics and puzzle UIs are built by their own streams in
 ## parallel with the story data; reported, not failed, until they exist (then checked like every other scene here).
 const PENDING_R9: Array = []
+## Round 10 (documentation/C4P2_DESIGN.md §10): the Chapter-4-part-2 films and puzzle UIs all exist now and are
+## checked like every other one (the lead's integration emptied the list).
+const PENDING_R10: Array = []
 const DOCS_DIR := "res://assets/ui/documents/"
 const EXPLORE_DIR := "res://data/explore/"
 ## C3_DESIGN §4 — names the content relies on (art ↔ content contract)
@@ -306,8 +309,8 @@ func _cinematics() -> bool:
 	var contexts := _cinematic_contexts()
 	for cid in chapter["cinematics"]:
 		var path := str(chapter["cinematics"][cid])
-		if (PENDING_R8.has(cid) or PENDING_R9.has(cid)) and not ResourceLoader.exists(path):
-			print("      pending (round 9): %s -> %s" % [cid, path])
+		if (PENDING_R8.has(cid) or PENDING_R9.has(cid) or PENDING_R10.has(cid)) and not ResourceLoader.exists(path):
+			print("      pending: %s -> %s" % [cid, path])
 			continue
 		if not kit.ok(ResourceLoader.exists(path), "%s: cinematic scene %s missing" % [cid, path]):
 			continue
@@ -354,8 +357,8 @@ func _cinematic_contexts() -> Array:
 func _puzzle_ui() -> bool:
 	for oid in chapter["puzzles"]:
 		var path := str(chapter["puzzles"][oid])
-		if (PENDING_R8.has(oid) or PENDING_R9.has(oid)) and not ResourceLoader.exists(path):
-			print("      pending (round 9): %s -> %s" % [oid, path])
+		if (PENDING_R8.has(oid) or PENDING_R9.has(oid) or PENDING_R10.has(oid)) and not ResourceLoader.exists(path):
+			print("      pending: %s -> %s" % [oid, path])
 			continue
 		if not kit.ok(ResourceLoader.exists(path), "%s: puzzle UI scene %s missing" % [oid, path]):
 			continue

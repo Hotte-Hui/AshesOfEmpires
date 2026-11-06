@@ -34,7 +34,7 @@ for f in ['de_c4_dialogue', 'de_c4_ui', 'de_c4_cinematics', 'de_c4_characters']:
 g3.CH = CH
 g3.LOC = LOC
 QUESTS = g3.QUESTS
-C4_QUESTS = [q for q in QUESTS if q['title_key'] == 'ui.chapter_c4']
+C4_QUESTS = [q for q in QUESTS if q['title_key'] == 'ui.chapter_c4' and q['scene'].startswith('L_C4_')]   # part 1 only (part 2: gen_quest_db_c4p2.py)
 C4_SCENES = [q['scene'] for q in C4_QUESTS]
 PUZZLE_UI = {'pz_c4_routes': 'ui.c4.routes', 'pz_c4_numbers': 'ui.c4.numbers'}
 t, code, ids, table, when_text, effects_text = g3.t, g3.code, g3.ids, g3.table, g3.when_text, g3.effects_text
@@ -191,8 +191,8 @@ def c4_block():
                                  code('%s = %s' % (o['id'], c['id'])) + ' (%+d)' % spec['delta']])
     out += table(['Flag', 'Type', 'Default', 'Range', 'Changed by'], rows)
     out += ['', 'Events: ' + ids([q['completion_event'] for q in C4_QUESTS]) + ' (before `slice_completed`). No new flag '
-            '(C4_DESIGN §1.1); the planned STORY_BIBLE §7 variables (`witnesses_exposed`, `people_protected`, '
-            '`marta_trust`) are derivable from `choice_history.c4d_choose` later.', '']
+            '(C4_DESIGN §1.1); `witnesses_exposed` and `marta_trust` stay derivable from `choice_history.c4d_choose`, '
+            '`people_protected` became a flag in part 2 after the save migration (§13.7).', '']
     reads = {}
     for node, vs in CH.get('line_variants', {}).items():
         for v in vs:
@@ -224,7 +224,7 @@ def c4_block():
                              t(c['text_key']), effects_text(c.get('effects', {})), '<br>'.join(var) if var else '—',
                              '<br>'.join(rea) if rea else '—'])
     out += table(['Objective', 'Choice id', 'Text (de)', 'Effect', 'Option text variants', 'Reaction'], rows)
-    out += ['', 'The end card lists every decision of the playthrough in story order (seven after Chapter 4 part 1).', '']
+    out += ['', 'The end card lists every decision of the playthrough in story order (seven after Chapter 4 part 1, eight after part 2).', '']
     # 12.9 cinematics
     out += ['### 12.9 Cinematics', '']
     rows = []

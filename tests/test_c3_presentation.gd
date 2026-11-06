@@ -428,7 +428,7 @@ func _palettes_grades() -> bool:
 				for c in cols:
 					kit.ok(c is String and hex.search(c) != null, "palette %s.%s colour %s is #RRGGBB" % [name, ramp, Kit.fmt(c)])
 				count += cols.size()
-		kit.ok(count <= 64, "palette %s fits the 64-colour post shader (%d)" % [name, count])
+		kit.ok(count <= 128, "palette %s fits the 128-colour post shader (%d)" % [name, count])
 	var palettes := {}
 	palettes.merge(base_pal)
 	palettes.merge(ext.palettes)

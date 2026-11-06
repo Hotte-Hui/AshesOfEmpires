@@ -1,0 +1,72 @@
+{
+ "id": "stapo_civil",
+ "cell": [
+  32,
+  56
+ ],
+ "origin": [
+  16,
+  54
+ ],
+ "facing": "right",
+ "anims": {
+  "idle_side": {
+   "row": 0,
+   "frames": 8,
+   "fps": 5,
+   "loop": true,
+   "variants": [
+    "blink_side",
+    "blink_side",
+    "look_side",
+    "gesture_side"
+   ],
+   "variant_gap": [
+    2.2,
+    5.5
+   ]
+  },
+  "walk_side": {
+   "row": 1,
+   "frames": 8,
+   "fps": 10,
+   "loop": true
+  },
+  "talk_side": {
+   "row": 2,
+   "frames": 8,
+   "fps": 7,
+   "loop": true
+  },
+  "blink_side": {
+   "row": 3,
+   "frames": 3,
+   "fps": 9,
+   "loop": false,
+   "variant_of": "idle_side"
+  },
+  "look_side": {
+   "row": 4,
+   "frames": 10,
+   "fps": 6,
+   "loop": false,
+   "variant_of": "idle_side"
+  },
+  "gesture_side": {
+   "row": 5,
+   "frames": 7,
+   "fps": 7,
+   "loop": false,
+   "variant_of": "idle_side"
+  },
+  "work_side": {
+   "row": 6,
+   "frames": 10,
+   "fps": 6,
+   "loop": true
+  }
+ },
+ "ground_speed": {
+  "walk_side": 24.0
+ }
+}

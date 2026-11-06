@@ -1,0 +1,12 @@
+{
+ "locale": "de",
+ "area": "berlin_c4p2",
+ "note": "Bildbeschreibungen der Dokumente aus L_C4P2_Berlin (alt_key in assets/ui/documents/berlin_c4p2_documents.json, erzeugt von tools/pixelgen/env_c4p2_berlin_docs.py; Runde 10, env-berlin).",
+ "strings": {
+  "doc.berlin_c4p2_departures.alt": "Emailletafel am Bahnsteig K: „D 303 Berlin Ost – Kordon-17 – Karsk, 21.10“. Darunter ein frisch gemaltes Brett: Dienstag Sonderzug nach Kordon-17 mit Sonderwagen, ab 15.30 Uhr; Bahnsteig K ab 15 Uhr gesperrt.",
+  "doc.berlin_c4p2_seals.alt": "Zwei Bleiplomben am Draht des Kurierwagens, eine deutsche und eine sowjetische, beide mit „C-17“ geprägt. Daneben auf dem Nachbargleis der grüne Wagen: eine vergitterte Luke, innen beschlagen, und mit Kreide „Di – Kordon“.",
+  "doc.berlin_c4p2_tracing.alt": "Ekdahls Reiseführer, Seite 212, „Karsk – bangård och depå“. Darin, verkehrt herum, die deutsche Hälfte der Karte 0417 und Konrads Pause von Kordon-17: Tür West, Tür Ost, der Schalter, die Bank für vierzehn. Auf der umgeschlagenen Ecke: „MOROZOV – 0417 – DI 23.40 – TÜR OST“.",
+  "doc.berlin_c4p2_house_notice.alt": "Bekanntmachung der Blockleitung: Alle Haushalte halten sich am Dienstag ab 22 Uhr zur Überprüfung der Haushaltskartei bereit. Kinder sind vorzuzeigen. Darüber gepinnt der Lageplan „Bauabschnitt Süd 9 – Kolonnenstraße 12 bis 18“, alle Häuser schraffiert, gez. K. A.",
+  "doc.berlin_c4p2_house_cards.alt": "Kuhnerts Haushaltskartei, sechs Karten aufgefächert: Adler im Seitenflügel 3, Pohl „meldet zuverlässig“, die Loge, das leere Hinterhaus 3, die Durchfahrt ab 22 Uhr, der Dachboden am Waschtag offen. Dazu ein Zettel ohne Haushaltskarte: Schuhmacherei Pietsch, Souterrain."
+ }
+}

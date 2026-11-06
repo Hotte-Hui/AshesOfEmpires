@@ -1,0 +1,25 @@
+{
+ "locale": "de",
+ "area": "c4p2_characters",
+ "strings": {
+  "char.maria.name": "Maria Gorelowa",
+  "char.maria.role": "Rückkehrerin aus Veltrava, Kolonne 4",
+  "char.hanna.name": "Hanna Adler",
+  "char.hanna.role": "Lehrerin, Konrads Schwester",
+  "char.wendt.name": "Kommissar Wendt",
+  "char.wendt.role": "Staatspolizei",
+  "char.blockwart.name": "Erwin Kuhnert",
+  "char.blockwart.role": "Hauswart und Blockleiter, Kolonnenstraße 14",
+  "char.guard_karsk.name": "Posten",
+  "char.press_officer.name": "Pressebegleiter",
+  "char.stapo_civil.name": "Herr am Zeitungsstand",
+  "sys.journal.person.maria.name": "Maria Gorelowa",
+  "sys.journal.person.maria.note": "Kam im Januar in Wagen 24 318 aus Veltrava zurück. Schaufelt Kohle in Kolonne 4, bis die Prüfung fertig ist. Hat „Wir sind vierzehn“ in die Wand geritzt.",
+  "sys.journal.person.hanna.name": "Hanna Adler",
+  "sys.journal.person.hanna.note": "Meine Schwester. Lehrerin, Kolonnenstraße 14, Seitenflügel. Lässt Ilse vor der Stunde in die Klasse und fragt nicht, wer nach ihr sucht.",
+  "sys.journal.person.wendt.name": "Kommissar Ludwig Wendt",
+  "sys.journal.person.wendt.note": "Staatspolizei. Hat den Rohrpostzettel unterschrieben. Spricht leise, vergisst nichts und ist dienstags immer unterwegs.",
+  "sys.journal.person.blockwart.name": "Erwin Kuhnert",
+  "sys.journal.person.blockwart.note": "Hauswart und Blockleiter in Hannas Haus. Führt die Haushaltskartei, eine Karte je Wohnung. Ordnung ist sein Wort für Angst."
+ }
+}

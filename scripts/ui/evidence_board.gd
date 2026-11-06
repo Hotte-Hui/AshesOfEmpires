@@ -19,7 +19,9 @@ extends "res://scripts/ui/ui_modal.gd"
 ## hover focuses, click opens. Text 100/125/150 % (cards, labels and strips grow; the cork pans to the focused
 ## card when the board no longer fits), high contrast (dark cork, black ink, thick bright threads). The detail strip
 ## never cuts a name or a note (its left column widens for a long line, the strip grows only when that is not
-## enough), and the sheet's first visible line is always whole (it stops on lines, also when paging).
+## enough), and the sheet's first visible line is always whole (it stops on lines, also when paging). The strip's
+## threads never trail off either (round 10): they come in pages of whole groups that fit its lines, a page ends in
+## „+n weitere“ while groups follow, the kicker counts the pages, and F / X / a click on the threads turns them.
 
 signal inspect_requested(item_id: String)
 signal card_focused(item_id: String)
@@ -30,6 +32,8 @@ const SCENES_PATH := "res://data/v3/scenes.json"
 const ART := "res://assets/ui/board/"
 const THUMB_DIR := "res://assets/ui/board/thumbs/"
 
+const PAGE_KEY := KEY_F                          # turns the strip's thread pages („Fäden“); pad: PAGE_BUTTON
+const PAGE_BUTTON := JOY_BUTTON_X
 const SCREEN := Vector2(1920, 1080)
 const FRAME_RECT := Rect2(24, 12, 1872, 990)    # wooden frame (outer); the cork starts 30 px inside
 const FRAME_M := 30.0
@@ -43,6 +47,7 @@ const CARD_MIN_W := 180.0
 const CARD_MAX_W := 264.0
 const UNKNOWN_CELL := Vector2(54, 66)
 const UNKNOWN_GAP := 6.0
+const UNKNOWN_MAX_COLS := 2                      # the „?“ block never grows wider (round 10: every chapter adds items)
 const BIG := 1 << 20
 const PIN_SIZE := Vector2(27, 30)
 const PIN_KNOT := Vector2(10.5, 9.0)
@@ -103,6 +108,12 @@ var _d_who: Label
 var _d_threads_kicker: Label
 var _strip_base := 0.0             # left column width at the 1 : 1.4 split
 var _strip_wide := 0.0             # widest left column (64 %) for a card whose line would not fit the base width
+var _d_threads_col: VBoxContainer  # the threads column (kicker + list); takes clicks / the wheel while it pages
+var _thread_card := ""             # the card the thread pages belong to (a new card starts on page 1)
+var _thread_bits: Array = []       # its thread groups, one text each: „caption → partner, partner“
+var _thread_pages: Array = []      # [[first, count, tail], …] into _thread_bits: whole groups that fit the lines
+var _thread_page := 0
+var _hint_pages := false           # the controls row shows „Fäden blättern“ (only while the focused card pages)
 var _note_pad: MarginContainer
 var _controls: Control
 var _head_plate: PanelContainer
@@ -423,6 +434,9 @@ static func compute_layout(m: Dictionary, h: float, card: Vector2, header_h: flo
 			gw = cols * card.x + (cols - 1) * GAP
 		else:
 			var rows2 := maxi(1, int(floor((h - header_h + UNKNOWN_GAP) / (UNKNOWN_CELL.y + UNKNOWN_GAP))))
+			# the pins are no count: at most UNKNOWN_MAX_COLS columns of them (the nearest items ahead), so the
+			# evidence later chapters add never widens the file (100 % keeps Chapters 1-3 without panning)
+			n = mini(n, rows2 * UNKNOWN_MAX_COLS)
 			var cols2 := int(ceil(float(n) / float(rows2)))
 			rows2 = int(ceil(float(n) / float(cols2)))
 			for i in n:
@@ -621,7 +635,10 @@ func _frame_rect_nodes() -> void:
 	var tv := Kit.vbox(3)
 	tv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tv.size_flags_stretch_ratio = 1.4
+	tv.mouse_filter = Control.MOUSE_FILTER_IGNORE    # STOP while the threads page (_show_thread_page)
+	tv.gui_input.connect(_on_threads_input)
 	sh.add_child(tv)
+	_d_threads_col = tv
 	_d_threads_kicker = Kit.label("", "PaperKicker")
 	Kit.scalable(_d_threads_kicker, 19)
 	tv.add_child(_d_threads_kicker)
@@ -629,6 +646,8 @@ func _frame_rect_nodes() -> void:
 	_d_threads.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_d_threads.custom_minimum_size.x = 120
 	_d_threads.max_lines_visible = 2
+	# pages of whole groups fit these lines (thread_pages); the ellipsis is only the safety net for one group that
+	# would not fit a page on its own (none in the file)
 	_d_threads.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	Kit.scalable(_d_threads, 18)
 	tv.add_child(_d_threads)
@@ -1374,6 +1393,11 @@ func _show_detail(id: String) -> void:
 	var s := _slot(id)
 	if s.is_empty():
 		_d_threads.text = ""
+		_thread_card = ""
+		_thread_bits = []
+		_thread_pages = []
+		_thread_page = 0
+		_sync_page_controls()
 		return
 	var by_group := {}
 	var order: Array = []
@@ -1384,15 +1408,131 @@ func _show_detail(id: String) -> void:
 			order.append(g)
 		var os := _slot(str(t["other"]))
 		by_group[g]["others"].append(card_label(str(t["other"]), str(os.get("name_key", ""))))
-	if order.is_empty():
+	var bits: Array = []
+	for g in order:
+		bits.append("%s → %s" % [by_group[g]["caption"], ", ".join(by_group[g]["others"])])
+	if id != _thread_card:
+		_thread_page = 0
+	_thread_card = id
+	_thread_bits = bits
+	var tw := _threads_width(w)
+	var fits := func(text: String) -> bool:
+		return line_count(_d_threads, text, tw) <= _d_threads.max_lines_visible
+	_thread_pages = thread_pages(bits, fits, _more_text)
+	_thread_page = clampi(_thread_page, 0, maxi(0, _thread_pages.size() - 1))
+	_d_threads.add_theme_color_override("font_color", INK)
+	_show_thread_page()
+
+
+## „+n weitere“ at the end of a thread page while groups follow.
+static func _more_text(n: int) -> String:
+	return Kit.t("board.detail.more", {"n": n})
+
+
+## The text of a page of thread groups: the groups, separated by „·“, and „+n weitere“ when `rest` groups follow.
+static func page_text(groups: Array, rest: int, more: Callable) -> String:
+	return "  ·  ".join(groups) + (("  ·  " + str(more.call(rest))) if rest > 0 else "")
+
+
+## Pages of whole thread groups for the detail strip, in order: a page takes the next group while its text -- with
+## „+n weitere“ at its end while groups follow -- passes `fits`. A lone group gets its page in any case: it keeps the
+## „+n weitere“ when that still fits beside it (else the kicker's page count says it), and a group too long for the
+## lines on its own is trimmed by the label -- the only case it ever is. Returns [[first, count, tail], …] (tail: the
+## page ends in „+n weitere“); none for no groups.
+static func thread_pages(bits: Array, fits: Callable, more: Callable) -> Array:
+	var pages: Array = []
+	var n := bits.size()
+	var i := 0
+	while i < n:
+		var k := 1
+		while i + k < n and fits.call(page_text(bits.slice(i, i + k + 1), n - (i + k + 1), more)):
+			k += 1
+		var rest := n - (i + k)
+		pages.append([i, k, rest > 0 and (k > 1 or bool(fits.call(page_text(bits.slice(i, i + 1), rest, more))))])
+		i += k
+	return pages
+
+
+## Lines `text` takes in the wrapping label `l` at the width `width`, uncapped (the Label's own breaking).
+static func line_count(l: Label, text: String, width: float) -> int:
+	if text == "":
+		return 0
+	var sb := l.get_theme_stylebox("normal")
+	var m := sb.get_minimum_size() if sb != null else Vector2.ZERO
+	var p := TextParagraph.new()
+	p.width = maxf(1.0, width - m.x)
+	p.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE | l.autowrap_trim_flags
+	p.add_string(text, l.get_theme_font("font"), l.get_theme_font_size("font_size"))
+	return p.get_line_count()
+
+
+## Width of the threads column beside a left column of width `left_w`: the row splits 1 : 1.4, and a left column whose
+## lines need more keeps that width (_left_width) -- the threads get the rest.
+func _threads_width(left_w: float) -> float:
+	var sb := _strip.get_theme_stylebox("panel")
+	var cm := sb.get_minimum_size() if sb != null else Vector2.ZERO
+	var row := _d_left.get_parent() as BoxContainer
+	var free := (_regions.get("strip", Rect2()) as Rect2).size.x - cm.x - 3.0 - 2.0 * float(row.get_theme_constant("separation"))
+	return maxf(_d_threads.custom_minimum_size.x, free - maxf(left_w, free / 2.4))
+
+
+## The current page of the focused card's threads, its count and page in the kicker („ROTE FÄDEN: 7 · 1/3“).
+func _show_thread_page() -> void:
+	var n := _thread_bits.size()
+	if n == 0:
 		_d_threads.text = Kit.t("board.detail.no_threads")
 	else:
-		var bits: Array = []
-		for g in order:
-			bits.append("%s → %s" % [by_group[g]["caption"], ", ".join(by_group[g]["others"])])
-		_d_threads.text = "  ·  ".join(bits)
-	_d_threads.add_theme_color_override("font_color", INK)
-	_d_threads_kicker.text = (Kit.t("board.detail.threads") + (": %d" % order.size() if not order.is_empty() else "")).to_upper().replace("ß", "SS")
+		var pg: Array = _thread_pages[_thread_page]
+		var first := int(pg[0])
+		var count := int(pg[1])
+		_d_threads.text = page_text(_thread_bits.slice(first, first + count), n - (first + count) if bool(pg[2]) else 0,
+			_more_text)
+	var head := Kit.t("board.detail.threads") + (": %d" % n if n > 0 else "")
+	if _thread_pages.size() > 1:
+		head += "  ·  %d/%d" % [_thread_page + 1, _thread_pages.size()]
+	_d_threads_kicker.text = head.to_upper().replace("ß", "SS")
+	_sync_page_controls()
+
+
+## True when the focused card's threads take more than one page.
+func threads_paged() -> bool:
+	return _thread_pages.size() > 1
+
+
+## Turns the focused card's threads to the next (1) or previous (-1) page, wrapping; false when they fit one page.
+func page_threads(step := 1) -> bool:
+	if not threads_paged():
+		return false
+	_thread_page = posmod(_thread_page + step, _thread_pages.size())
+	_show_thread_page()
+	Kit.ui_sound("page")
+	return true
+
+
+## The threads column takes clicks and the wheel only while it pages (with a hand cursor), and the controls row shows
+## „Fäden blättern“ only then -- never a control that does nothing.
+func _sync_page_controls() -> void:
+	var paged := threads_paged()
+	if _d_threads_col != null:
+		_d_threads_col.mouse_filter = Control.MOUSE_FILTER_STOP if paged else Control.MOUSE_FILTER_IGNORE
+		_d_threads_col.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if paged else Control.CURSOR_ARROW
+	if paged != _hint_pages:
+		_hint_pages = paged
+		if _controls != null:
+			_build_controls()
+
+
+func _on_threads_input(event: InputEvent) -> void:
+	var mb := event as InputEventMouseButton
+	if mb == null or not mb.pressed:
+		return
+	var step := 0
+	if mb.button_index == MOUSE_BUTTON_LEFT or mb.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		step = 1
+	elif mb.button_index == MOUSE_BUTTON_WHEEL_UP:
+		step = -1
+	if step != 0 and page_threads(step):
+		_d_threads_col.accept_event()
 
 
 ## Caption tags on the focused card's threads: a strip of tape on the thread wherever it crosses bare cork (tried
@@ -1493,6 +1633,8 @@ func _build_controls() -> void:
 			Kit.t("board.hint.move")], [Kit.key_name(KEY_ENTER), Kit.t("board.hint.view")],
 			[Kit.key_name(KEY_PAGEUP) + "|" + Kit.key_name(KEY_PAGEDOWN), Kit.t("board.hint.scroll")],
 			[Kit.key_name(KEY_ESCAPE), Kit.t("board.hint.back")]]
+	if _hint_pages:   # only while the focused card's threads take more than one page
+		pairs.insert(pairs.size() - 1, ["X" if pad else Kit.key_name(PAGE_KEY), Kit.t("board.hint.threads")])
 	var row := Kit.controls_row(pairs)
 	row.position = Vector2(0, FRAME_RECT.end.y + 14)
 	row.size = Vector2(SCREEN.x, 50)
@@ -1572,10 +1714,17 @@ func modal_input(event: InputEvent) -> bool:
 		if focused_item != "":
 			inspect(focused_item)
 		return true
+	if event is InputEventJoypadButton and event.pressed and (event as InputEventJoypadButton).button_index == PAGE_BUTTON:
+		page_threads(1)
+		return true
 	if event is InputEventKey and event.pressed:
 		var k := (event as InputEventKey).physical_keycode
 		if k == KEY_PAGEDOWN or k == KEY_PAGEUP:
 			scroll_note(1.0 if k == KEY_PAGEDOWN else -1.0)
+			return true
+		if k == PAGE_KEY:
+			if not event.is_echo():
+				page_threads(1)
 			return true
 	return false
 

@@ -1,0 +1,823 @@
+{
+ "generator": "tools/pixelgen/env_c4p2_karsk.py (+ _kit, _layout, _yard, _show, _far, _people, _life, _fx)",
+ "date": "2026-11-06",
+ "licence": "project-owned original artwork, generated procedurally; no copied, traced, downloaded or AI-generated pixels; bitmap fonts hand-defined (env_veltrava_hall_kit.py, env_c4_tunnels_kit.py, env_c4p2_karsk_kit.py)",
+ "run": "py -3 -P tools/pixelgen/env_c4p2_karsk.py",
+ "files": [
+  {
+   "path": "assets/environments/karsk_c4p2/actors/breath_puff.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "breath puff (6 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/dog.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the yard dog curled up in the ash pit's warmth (KarskCat frame layout, 24 x 12 cells)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/dog_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the dog's eyes in the glow"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/sparrows.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "sparrows (KarskCrows frame layout: idle, look, chirp, preen, hop, take-off, flight; 14 x 12 cells)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/train_loco.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the first goods train of the day on the far embankment: locomotive and tender"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/train_puff.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the train's smoke puffs"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/train_wag_box.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "far goods wagon (box)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/train_wag_flat.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "far goods wagon (flat)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/train_wag_gond.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "far goods wagon (gond)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/actors/train_wag_tank.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "far goods wagon (tank)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/depot_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_yard.py",
+   "content": "Karsk locomotive depot, the back yard and the coal stage, Monday 17 February 1964, 6.10 (dawn): dispatch office, canteen hatch, water crane, coal stage with Kolonne 4's heap, the special run's tender, ash pit, fire barrel, roundhouse back"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/depot_a_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "Karsk locomotive depot, the back yard and the coal stage, Monday 17 February 1964, 6.10 (dawn): dispatch office, canteen hatch, water crane, coal stage with Kolonne 4's heap, the special run's tender, ash pit, fire barrel, roundhouse back -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/depot_a_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "Karsk locomotive depot, the back yard and the coal stage, Monday 17 February 1964, 6.10 (dawn): dispatch office, canteen hatch, water crane, coal stage with Kolonne 4's heap, the special run's tender, ash pit, fire barrel, roundhouse back -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/depot_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_show.py",
+   "content": "Karsk locomotive depot, the showcase and platform 1, Tuesday 18 February 1964, evening floodlight: the painted tarpaulin, the restored signal, the polished engine, the band stage, the press canteen, the turntable, the sand-drying house, the westbound Corridor express"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/depot_b_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "Karsk locomotive depot, the showcase and platform 1, Tuesday 18 February 1964, evening floodlight: the painted tarpaulin, the restored signal, the polished engine, the band stage, the press canteen, the turntable, the sand-drying house, the westbound Corridor express -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/depot_b_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "Karsk locomotive depot, the showcase and platform 1, Tuesday 18 February 1964, evening floodlight: the painted tarpaulin, the restored signal, the polished engine, the band stage, the press canteen, the turntable, the sand-drying house, the westbound Corridor express -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fg_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "foreground silhouettes below the walk band (parallax 1.25)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fg_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "foreground silhouettes below the walk band (parallax 1.25)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/barrel_flames.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the fire barrel's flame tongues (KarskBarrel, 8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/barrel_flames_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the flames -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/barrel_sparks.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "sparks rising from the fire barrel (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/brazier_embers.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the water crane brazier's embers breathing (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/brazier_embers_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the water crane brazier's embers breathing (8 frames) -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/brazier_smoke.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "a thread of smoke over the brazier (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/cabin_smoke.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "smoke from the turntable cabin's stove pipe, lit from below by the yard (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/canteen_vent.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "kitchen steam from the canteen's vent (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/coal_dust_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "coal dust rising from behind the tarpaulin (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/coal_grains.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "coal grains trickling from the chutes' lips (24 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/dispatch_smoke.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "thin smoke from the dispatch office's stove pipe (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/express_steam_0.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "heating steam leaking from under the express (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/express_steam_1.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "heating steam leaking from under the express (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/express_steam_2.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "heating steam leaking from under the express (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/flood_dust.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "coal dust and frost glittering in the floodlight over the stage (32 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/hood_smoke_0.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "smoke and steam from the roundhouse smoke hood 0 (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/hood_smoke_1.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "smoke and steam from the roundhouse smoke hood 1 (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/hood_smoke_2.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "smoke and steam from the roundhouse smoke hood 2 (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/kasha_steam.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "steam over the kasha pot in the hatch (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/kasha_steam_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "steam over the band's kasha behind the curtain (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/lamp_dust_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "dust motes under the green lamp (32 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/samovar_steam.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "steam from the samovar (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/sand_fire.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the sand stove's fire behind its door (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/sand_fire_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "the sand stove's fire behind its door (8 frames) -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/sandhouse_smoke.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "smoke from the sand-drying house chimney catching the floodlight (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/shovels_over.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "behind the tarpaulin: two shovels swing up over its edge in turn, coal flies (12 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/snow_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "snow falling over the yard (48 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/snow_a2.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "snow falling over the stage and the roundhouse (48 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/snow_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "snow falling over the showcase (48 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/snow_b2.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "snow falling over the platform (48 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/fx/stall_steam.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "steam rolling out of the open stall door and up the roundhouse wall (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_drum.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, drum: a tall young stoker in his quilted jacket and ushanka, the bass drum on a sling (8 frames, in time with the others)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_drum_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, drum: a tall young stoker in his quilted jacket and ushanka, the bass drum on a sling (8 frames, in time with the others) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_horn.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, horn: an older man with a grey moustache under the band cap (8 frames, in time with the others)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_horn_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, horn: an older man with a grey moustache under the band cap (8 frames, in time with the others) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_trumpet.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, trumpet: a young fitter, blond, the band cap pushed back, a grey scarf (8 frames, in time with the others)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_trumpet2.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, trumpet2: a woman from the wagon shop in a fur hat and a long coat, a red scarf (8 frames, in time with the others)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_trumpet2_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, trumpet2: a woman from the wagon shop in a fur hat and a long coat, a red scarf (8 frames, in time with the others) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_trumpet_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, trumpet: a young fitter, blond, the band cap pushed back, a grey scarf (8 frames, in time with the others) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_tuba.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, tuba: the turntable man, bare grey head and moustache, his sheepskin, the helicon (8 frames, in time with the others)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/band_tuba_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the railway workers' brass band, tuba: the turntable man, bare grey head and moustache, his sheepskin, the helicon (8 frames, in time with the others) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cat_sand.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the depot cat asleep on the warm dry sand by the stove, ear and tail twitching (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cat_sand_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the depot cat asleep on the warm dry sand by the stove, ear and tail twitching (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/child_sit.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a boy in an ushanka on the edge of the band stage, swinging his felt boots (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/child_sit_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a boy in an ushanka on the edge of the band stage, swinging his felt boots (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/child_watch.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a girl in a red hooded coat on the edge of the band stage (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/child_watch_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a girl in a red hooded coat on the edge of the band stage (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cleaner_engine.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a cleaner in a white headscarf polishing the engine's headlamp for the guest (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cleaner_engine_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a cleaner in a white headscarf polishing the engine's headlamp for the guest (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/conductor.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the sleeping car's conductor: navy uniform, silver cap band, shirt and tie, ticket pouch, a lit lantern (side task, 8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/conductor_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the sleeping car's conductor: navy uniform, silver cap band, shirt and tie, ticket pouch, a lit lantern (side task, 8 frames) -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/conductor_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the sleeping car's conductor: navy uniform, silver cap band, shirt and tie, ticket pouch, a lit lantern (side task, 8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cook_curtain.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the cook beside the curtain stirring the band's kasha on the range (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cook_curtain_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the cook beside the curtain stirring the band's kasha on the range (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cook_hatch.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the cook in the serving hatch ladling kasha, seen through the opening (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/cook_hatch_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the cook in the serving hatch ladling kasha, seen through the opening (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/couple.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a couple saying goodbye at the express (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/couple_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a couple saying goodbye at the express (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/family_kids.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "two children on a suitcase; the boy eats a pirozhok (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/family_kids_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "two children on a suitcase; the boy eats a pirozhok (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/family_parcel.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a man handing a parcel up to a traveller at the sleeping car's window (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/family_parcel_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a man handing a parcel up to a traveller at the sleeping car's window (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/family_permit.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman holding her Corridor permit with two stamps out to the militiaman (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/family_permit_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman holding her Corridor permit with two stamps out to the militiaman (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/fitter_stall.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a fitter in the warm stall door wiping his hands on a rag (10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/fitter_stall_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a fitter in the warm stall door wiping his hands on a rag (10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/granny_parcel.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the grandmother with a parcel tied with string for her son in Veltrava (side task, 10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/granny_parcel_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the grandmother with a parcel tied with string for her son in Veltrava (side task, 10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_bar.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman on the deck breaking frozen coal at the bunker hole with an iron bar (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_bar_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman on the deck breaking frozen coal at the bunker hole with an iron bar (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_barrow.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a young returnee in a thin Western jacket at the barrow, hands in his armpits, stamping (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_barrow_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a young returnee in a thin Western jacket at the barrow, hands in his armpits, stamping (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_bowl.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman in a plum Western coat and a beret at the canteen hatch with her tin bowl (10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_bowl_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman in a plum Western coat and a beret at the canteen hatch with her tin bowl (10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_gondola_0.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "Kolonne 4 in the gondola on the deck, shovelling coal out over the side (12 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_gondola_0_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "Kolonne 4 in the gondola on the deck, shovelling coal out over the side (12 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_gondola_1.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "Kolonne 4 in the gondola on the deck, shovelling coal out over the side (12 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_gondola_1_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "Kolonne 4 in the gondola on the deck, shovelling coal out over the side (12 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_old.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "an old man on a sleeper by the canteen's bottle crates eating bread out of newspaper (10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_old_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "an old man on a sleeper by the canteen's bottle crates eating bread out of newspaper (10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_rags.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman winding rags round her hands in the warmth of the ash pit (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_rags_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman winding rags round her hands in the warmth of the ash pit (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_shovel_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a man shovelling spilled coal into the barrow (12 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_shovel_a_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a man shovelling spilled coal into the barrow (12 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_shovel_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman in a Western coat shovelling coal up toward the tender (12 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_shovel_b_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman in a Western coat shovelling coal up toward the tender (12 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_stair.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman resting on the stair, a basket of coal on her back (8 frames, breathing)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/k4_stair_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman resting on the stair, a basket of coal on her back (8 frames, breathing) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/militia_0.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the older militiaman of the patrol in the gate, hands behind his back (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/militia_0_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the older militiaman of the patrol in the gate, hands behind his back (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/militia_1.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the young militiaman reading a Corridor permit twice, once for each language (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/militia_1_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the young militiaman reading a Corridor permit twice, once for each language (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/mother_window.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a mother lifting her boy to the express window; he waves (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/mother_window_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a mother lifting her boy to the express window; he waves (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/oiler_turntable.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "an old fitter oiling the turntable's running wheel from a long-spouted can (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/oiler_turntable_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "an old fitter oiling the turntable's running wheel from a long-spouted can (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/porter.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a porter in his quilted jacket and white apron with the luggage cart (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/porter_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a porter in his quilted jacket and white apron with the luggage cart (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/sand_door_smoker.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a sand-house man smoking in the doorway, watching the band (10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/sand_door_smoker_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a sand-house man smoking in the doorway, watching the band (10 frames) -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/sand_door_smoker_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a sand-house man smoking in the doorway, watching the band (10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/sand_sieve.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman of the sand house sifting dried sand into a box (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/sand_sieve_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman of the sand house sifting dried sand into a box (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/stoker.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a depot stoker warming his hands over the water crane's brazier (8 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/stoker_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a depot stoker warming his hands over the water crane's brazier (8 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/vendor.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman selling pirozhki from a tray, calling out (10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/vendor_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "a woman selling pirozhki from a tray, calling out (10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/waitress.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the canteen's waitress with a tray of tea glasses (10 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/life/waitress_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_life.py",
+   "content": "the canteen's waitress with a tray of tea glasses (10 frames) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/line_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "the embankment / station side (dawn), parallax 0.55"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/line_a_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "lit windows -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/line_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "the embankment / station side (evening), parallax 0.55"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/line_b_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "lit windows -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/book_taken.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_b with the story change \"book_taken\""
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/book_taken_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_b with the story change \"book_taken\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/card_joined.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_b with the story change \"card_joined\""
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/card_joined_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_b with the story change \"card_joined\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/halves_on_bench.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_b with the story change \"halves_on_bench\""
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/halves_on_bench_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_b with the story change \"halves_on_bench\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_engine.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_engine, fictional emblem (neutral)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_engine_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_engine, fictional emblem (neutral) -- emission mask"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_engine_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_engine, fictional emblem (neutral) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_engine_hist_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_engine, fictional emblem (neutral) -- historical, emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_engine_hist_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_engine, fictional emblem (neutral) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_engine_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_engine, fictional emblem (neutral) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_back.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_back, fictional emblem (neutral)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_back_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_back, fictional emblem (neutral) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_back_hist_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_back, fictional emblem (neutral) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_back_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_back, fictional emblem (neutral) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_front.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_front, fictional emblem (neutral)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_front_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_front, fictional emblem (neutral) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_front_hist_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_front, fictional emblem (neutral) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/insignia_roundhouse_front_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "insignia site insignia_roundhouse_front, fictional emblem (neutral) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/order_taken.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_a with the story change \"order_taken\""
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/order_taken_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_a with the story change \"order_taken\" -- emission mask"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/patches/order_taken_n.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "the depot_a with the story change \"order_taken\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/scene.json",
+   "generator": "tools/pixelgen/env_c4p2_karsk.py",
+   "content": "art manifest (TECHNICAL_ARCHITECTURE 3.1 + registry gates + scene filters)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/sky_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "the sky (dawn), parallax 0.10"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/sky_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "the sky (evening), parallax 0.10"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/town_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "the town of Karsk (dawn), parallax 0.30"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/town_a_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "lit windows -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/town_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "the town of Karsk (evening), parallax 0.30"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/town_b_e.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_far.py",
+   "content": "lit windows -- emission"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/veils_a.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "light cones of the floodlights and lamps in the haze (L_C4P2_KarskA, plain alpha)"
+  },
+  {
+   "path": "assets/environments/karsk_c4p2/veils_b.png",
+   "generator": "tools/pixelgen/env_c4p2_karsk_fx.py",
+   "content": "light cones of the floodlights and lamps in the haze (L_C4P2_KarskB, plain alpha)"
+  }
+ ]
+}

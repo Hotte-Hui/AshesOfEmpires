@@ -166,9 +166,11 @@ func _accessors() -> bool:
 	kit.eq(g.cinematic_def("LS_M1_Hall").get("trigger_objective"), "m1_align_plans", "cinematic_def")
 	kit.eq(g.chapter_key(), "ui.chapter_a1", "chapter a1")
 	var rel: Dictionary = g.relationships()
-	# data order: the slice meters, then the Chapter-3 meters appended to flags.json (C3_DESIGN §2.6)
+	# data order: the slice meters, then the Chapter-3 meters appended to flags.json (C3_DESIGN §2.6), then the
+	# Chapter-4-part-2 meter people_protected (C4P2_DESIGN §2.6, round 10: the first flag after the save migration)
 	kit.eq(rel.keys(), ["irina_trust", "alexei_secrecy", "konrad_evidence", "office_suspicion", "civilian_welfare",
-		"alexei_konrad_trust", "elena_trust", "evidence_chain", "kessler_alerted"], "integer flags")
+		"alexei_konrad_trust", "elena_trust", "evidence_chain", "kessler_alerted", "people_protected"], "integer flags")
+	kit.eq(rel["people_protected"], {"value": 0, "min": 0, "max": 6, "default": 0}, "Chapter-4-part-2 meter shape")
 	kit.eq(rel["irina_trust"], {"value": 0, "min": 0, "max": 3, "default": 0}, "meter shape")
 	kit.eq(rel["alexei_konrad_trust"], {"value": 0, "min": 0, "max": 5, "default": 0}, "Chapter-3 meter shape")
 	kit.eq(g.relationship("c17_confirmed"), 0, "boolean flag is not a meter")

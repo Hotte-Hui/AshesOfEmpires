@@ -12,6 +12,9 @@ Previews: tools/pixelgen/env_veltrava_hall_preview.py (cameras 0 / 640 / 1280, w
 or into the git-ignored _preview/ folder; layers + props only).  The real check is the Forward+ harness
 res://tests/visual/palais_shots.tscn (see its header).
 Flags: --scene-only (keeps the document entries of provenance.json), --docs-only, --preview[=DIR]
+Shared folder (round 10, env_keep.py): a run removes only the PNGs its previous run recorded in provenance.json and
+merges scene.json / provenance.json over the old ones -- walkers/ (walkers_r8.py), the hand-added "actors" block and
+rows of other generators stay.
 """
 from __future__ import annotations
 
@@ -26,6 +29,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import env_veltrava_hall_kit as kit        # noqa: E402  (registers pg.PALETTES['palais'])
 import env_veltrava_hall_layout as L       # noqa: E402
+import env_keep as KEEP                    # noqa: E402  (round 10: the folder is shared)
 import pg                                  # noqa: E402
 
 ROOT = kit.ROOT
@@ -34,6 +38,7 @@ DOC_DIR = os.path.join(ROOT, 'assets', 'ui', 'documents')
 LOCALE = os.path.join(ROOT, 'data', 'locale', 'de_env_veltrava_hall.json')
 
 PRODUCED: list[tuple[str, str, str]] = []
+FAMILY = 'tools/pixelgen/env_veltrava_hall'   # provenance rows of this generator and its modules (env_keep)
 LF = chr(10)          # JSON is written with LF on every platform (byte-identical re-runs, .gitattributes)
 
 LIGHT_COLORS = {'warm': '#E9B46E', 'cold': '#A9C0D0', 'white': '#D3DEE6', 'red': '#A8382E'}
@@ -87,15 +92,11 @@ def save_layer(lay, base: str, normal=True, gen='env_veltrava_hall_room.py', des
 
 
 def clean_env_dir():
-    """Remove previously generated PNGs so renamed / dropped files never linger (imports stay)."""
+    """Remove the PNGs this generator wrote last time (its provenance.json rows) so renamed / dropped files never
+    linger (imports stay); every other file of the shared folder stays (walkers/ of walkers_r8.py ...)."""
     if not os.path.isdir(ENV_DIR):
         return
-    for root, _dirs, files in os.walk(ENV_DIR):
-        if '_preview' in root:
-            continue
-        for f in files:
-            if f.endswith('.png'):
-                os.remove(os.path.join(root, f))
+    KEEP.remove_own_pngs(ENV_DIR, ROOT, FAMILY)
 
 
 # =========================================================================== scene
@@ -223,8 +224,8 @@ def build_scene():
                  'palette_note': "'palais' = c3.json palettes.palais + daylight #D3DEE6 (cold near-white)"},
     }
     sj = os.path.join(ENV_DIR, 'scene.json')
-    with open(sj, 'w', encoding='utf-8', newline=LF) as f:
-        json.dump(scene, f, indent=1, ensure_ascii=False)
+    scene = KEEP.merge_scene(scene, KEEP.read_json(sj))     # keeps the "actors" block and other keys added later
+    KEEP.write_json(sj, scene)   # same content as before: the file stays byte for byte
     record(sj, 'env_veltrava_hall.py', 'art manifest (TECHNICAL_ARCHITECTURE 3.1)')
 
     # ---- checks
@@ -307,6 +308,7 @@ def write_provenance(keep_docs: bool = False):
     documents are not rebuilt then)."""
     files = [{'path': p, 'generator': 'tools/pixelgen/' + g, 'content': d} for p, g, d in sorted(PRODUCED)]
     p = os.path.join(ENV_DIR, 'provenance.json')
+    files = KEEP.merge_rows(files, KEEP.read_json(p), FAMILY, ROOT)   # rows of other generators stay
     if keep_docs and os.path.exists(p):
         try:
             with open(p, encoding='utf-8') as f:
@@ -338,8 +340,10 @@ def main(argv):
     if '--scene-only' not in argv:
         import env_veltrava_hall_docs as ED
         print('[env_veltrava_hall] documents ...')
-        for path, desc in ED.build_all(DOC_DIR, LOCALE):
+        docs = ED.build_all(DOC_DIR, LOCALE)
+        for path, desc in docs:
             record(path, 'env_veltrava_hall_docs.py', desc)
+        KEEP.lf_json([path for path, _desc in docs])   # the repo's LF form on every platform (byte-identical)
     if scene is not None and '--docs-only' not in argv:
         write_provenance(keep_docs='--scene-only' in argv)
     for a in argv:

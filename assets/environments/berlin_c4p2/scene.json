@@ -1,0 +1,2399 @@
+{
+ "id": "berlin_c4p2",
+ "palette": "ostbahnhof",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "camera_zones": {
+  "L_C4P2_BerlinA": [
+   0,
+   0,
+   918,
+   360
+  ],
+  "L_C4P2_BerlinB": [
+   918,
+   0,
+   1002,
+   360
+  ]
+ },
+ "canvas_modulate": "#DED7C9",
+ "layers": [
+  {
+   "name": "yd_sky",
+   "file": "yd_sky.png",
+   "pos": [
+    28,
+    0
+   ],
+   "parallax": [
+    0.03,
+    1.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "yd_dome",
+   "file": "yd_dome.png",
+   "pos": [
+    420,
+    0
+   ],
+   "parallax": [
+    0.08,
+    1.0
+   ],
+   "z": -96,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB",
+   "hist_variant": "yd_dome_hist.png",
+   "note": "the Great Hall; banners on its front: neutral / historical (12.4)"
+  },
+  {
+   "name": "yd_roofs",
+   "file": "yd_roofs.png",
+   "pos": [
+    275,
+    -10
+   ],
+   "parallax": [
+    0.3,
+    1.0
+   ],
+   "z": -92,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.4,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "st_sky",
+   "file": "st_sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.05,
+    1.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "st_city",
+   "file": "st_city.png",
+   "pos": [
+    0,
+    60
+   ],
+   "parallax": [
+    0.15,
+    1.0
+   ],
+   "z": -96,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "st_hall",
+   "file": "st_hall.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.4,
+    1.0
+   ],
+   "z": -90,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "st_track2",
+   "file": "st_track2.png",
+   "pos": [
+    0,
+    136
+   ],
+   "parallax": [
+    0.92,
+    1.0
+   ],
+   "z": -60,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.4,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA",
+   "note": "seen through the uncoupled gap of the D 303 (x 530..622): the green car (exp_green_car)"
+  },
+  {
+   "name": "station",
+   "file": "station.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.6,
+   "lit": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "fg_station",
+   "file": "fg_station.png",
+   "pos": [
+    0,
+    318
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "yard",
+   "file": "yard.png",
+   "pos": [
+    918,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.6,
+   "lit": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "fg_yard",
+   "file": "fg_yard.png",
+   "pos": [
+    1147,
+    318
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB",
+   "note": "pos x = 918 * 1.25: its left edge meets the screen edge at the courtyard's camera stop"
+  }
+ ],
+ "props": [
+  {
+   "name": "counter_front",
+   "file": "props/counter_front.png",
+   "pos": [
+    202,
+    257
+   ],
+   "base_y": 292,
+   "size": [
+    134,
+    35
+   ],
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinA",
+   "note": "the buffet woman (walker, feet y 281) stands behind it; Marta (318, 300) in front"
+  }
+ ],
+ "decals": [
+  {
+   "name": "roster_l3",
+   "file": "patches/roster_l3.png",
+   "pos": [
+    287,
+    252
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinA",
+   "choice": {
+    "c4d_choose": "name_marta"
+   },
+   "fade": 0.0,
+   "note": "C4P2_DESIGN §2.6: Linie 3 on the named route, Linie 74 otherwise"
+  },
+  {
+   "name": "roster_l74",
+   "file": "patches/roster_l74.png",
+   "pos": [
+    287,
+    252
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinA",
+   "choice": {
+    "c4d_choose": "!name_marta"
+   },
+   "fade": 0.0,
+   "note": "C4P2_DESIGN §2.6: Linie 3 on the named route, Linie 74 otherwise"
+  },
+  {
+   "name": "plates_booth",
+   "file": "patches/plates_booth.png",
+   "pos": [
+    5,
+    258
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinA",
+   "hist_variant": "patches/plates_booth_hist.png",
+   "note": "insignia site (12.4)"
+  },
+  {
+   "name": "plate_cab",
+   "file": "patches/plate_cab.png",
+   "pos": [
+    366,
+    194
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinA",
+   "hist_variant": "patches/plate_cab_hist.png",
+   "note": "insignia site (12.4)"
+  },
+  {
+   "name": "stairs_v",
+   "file": "patches/stairs_v.png",
+   "pos": [
+    964,
+    155
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8,
+   "note": "under the life strips (z -47): the sweep's men and the candle play on it"
+  },
+  {
+   "name": "stairs_s",
+   "file": "patches/stairs_s.png",
+   "pos": [
+    1281,
+    155
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8,
+   "note": "under the life strips (z -47): the sweep's men and the candle play on it"
+  },
+  {
+   "name": "stairs_h",
+   "file": "patches/stairs_h.png",
+   "pos": [
+    1706,
+    155
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8,
+   "note": "under the life strips (z -47): the sweep's men and the candle play on it"
+  },
+  {
+   "name": "candle_ws",
+   "file": "patches/candle_ws.png",
+   "pos": [
+    1762,
+    275
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8,
+   "note": "under the life strips (z -47): the sweep's men and the candle play on it"
+  },
+  {
+   "name": "car",
+   "file": "patches/car.png",
+   "pos": [
+    919,
+    264
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8,
+   "note": "under the life strips (z -47): the sweep's men and the candle play on it"
+  },
+  {
+   "name": "headlights",
+   "file": "patches/headlights.png",
+   "pos": [
+    945,
+    295
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8,
+   "note": "under the life strips (z -47): the sweep's men and the candle play on it"
+  },
+  {
+   "name": "notice_k14",
+   "file": "patches/notice_k14.png",
+   "pos": [
+    972,
+    239
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4P2_BerlinB",
+   "hist_variant": "patches/notice_k14_hist.png",
+   "note": "insignia site (12.4): the gate_notice's typed notice"
+  },
+  {
+   "name": "booth_officials",
+   "file": "life/booth_officials.png",
+   "pos": [
+    7,
+    210
+   ],
+   "z": -47,
+   "frames": 24,
+   "fps": 6,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "baggage_clerk",
+   "file": "life/baggage_clerk.png",
+   "pos": [
+    176,
+    230
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 5,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sleeping_boy",
+   "file": "life/sleeping_boy.png",
+   "pos": [
+    228,
+    266
+   ],
+   "z": 0,
+   "frames": 12,
+   "fps": 3,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4P2_BerlinA",
+   "layer": "playfield",
+   "base_y": 294
+  },
+  {
+   "name": "kiosk_woman",
+   "file": "life/kiosk_woman.png",
+   "pos": [
+    390,
+    249
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "loco_crew",
+   "file": "life/loco_crew.png",
+   "pos": [
+    363,
+    177
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "diners",
+   "file": "life/diners.png",
+   "pos": [
+    648,
+    188
+   ],
+   "z": -47,
+   "frames": 48,
+   "fps": 6,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sleeper_passenger",
+   "file": "life/sleeper_passenger.png",
+   "pos": [
+    850,
+    204
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 3,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "v1_schulz",
+   "file": "life/v1_schulz.png",
+   "pos": [
+    1016,
+    196
+   ],
+   "z": -47,
+   "frames": 32,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "v3_lenz",
+   "file": "life/v3_lenz.png",
+   "pos": [
+    1070,
+    116
+   ],
+   "z": -47,
+   "frames": 24,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "s1_mertens",
+   "file": "life/s1_mertens.png",
+   "pos": [
+    1436,
+    196
+   ],
+   "z": -47,
+   "frames": 32,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "s2_pohl",
+   "file": "life/s2_pohl.png",
+   "pos": [
+    1332,
+    156
+   ],
+   "z": -47,
+   "frames": 40,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "s3_ilse",
+   "file": "life/s3_ilse.png",
+   "pos": [
+    1332,
+    116
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "until": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.6
+  },
+  {
+   "name": "s3_hanna",
+   "file": "life/s3_hanna.png",
+   "pos": [
+    1332,
+    116
+   ],
+   "z": -47,
+   "frames": 18,
+   "fps": 3,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "se_kuhnert",
+   "file": "life/se_kuhnert.png",
+   "pos": [
+    1402,
+    244
+   ],
+   "z": -47,
+   "frames": 24,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "h1_kuehn",
+   "file": "life/h1_kuehn.png",
+   "pos": [
+    1756,
+    196
+   ],
+   "z": -47,
+   "frames": 24,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "yard_coal",
+   "file": "life/yard_coal.png",
+   "pos": [
+    1373,
+    244
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4P2_BerlinB",
+   "until": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.6
+  },
+  {
+   "name": "yard_wash",
+   "file": "life/yard_wash.png",
+   "pos": [
+    1488,
+    246
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4P2_BerlinB",
+   "until": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.6
+  },
+  {
+   "name": "sweep_men",
+   "file": "life/sweep_men.png",
+   "pos": [
+    944,
+    244
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 4,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "candle_flame",
+   "file": "life/candle_flame.png",
+   "pos": [
+    1763,
+    276
+   ],
+   "z": -47,
+   "frames": 8,
+   "fps": 6,
+   "lit": true,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "warning_lamp",
+   "file": "life/warning_lamp.png",
+   "pos": [
+    922,
+    257
+   ],
+   "z": -47,
+   "frames": 4,
+   "fps": 2,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4P2_BerlinB"
+  }
+ ],
+ "lights": [
+  {
+   "name": "loco_lamps",
+   "pos": [
+    250.0,
+    224.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.4,
+   "radius": 46,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "firebox",
+   "pos": [
+    372.5,
+    191.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.56,
+   "radius": 54,
+   "flicker": 0.12,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "shunter_lamp",
+   "pos": [
+    566.0,
+    262.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.2,
+   "radius": 20,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "diner_door",
+   "pos": [
+    804.0,
+    214.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.6,
+   "radius": 78,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "diner_win_0",
+   "pos": [
+    660.0,
+    206.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.34,
+   "radius": 64,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "diner_win_2",
+   "pos": [
+    710.0,
+    206.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.34,
+   "radius": 64,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "diner_win_4",
+   "pos": [
+    760.0,
+    206.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.34,
+   "radius": 64,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sleeper_door",
+   "pos": [
+    828.0,
+    196.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.28,
+   "radius": 44,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sleeper_win",
+   "pos": [
+    859.0,
+    205.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.24,
+   "radius": 50,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "booth_lamp",
+   "pos": [
+    33.0,
+    234.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.6,
+   "radius": 70,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "board_lamp",
+   "pos": [
+    117.0,
+    176.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.36,
+   "radius": 44,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "baggage_hatch",
+   "pos": [
+    186.0,
+    240.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.36,
+   "radius": 46,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "buffet_bulb_230",
+   "pos": [
+    230.0,
+    238.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.68,
+   "radius": 72,
+   "flicker": 0.0,
+   "height": 12,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "buffet_bulb_284",
+   "pos": [
+    284.0,
+    238.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.68,
+   "radius": 72,
+   "flicker": 0.0,
+   "height": 12,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "kiosk_inside",
+   "pos": [
+    410.0,
+    259.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.48,
+   "radius": 60,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sodium_0",
+   "pos": [
+    36.0,
+    134.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 0.84,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sodium_1",
+   "pos": [
+    186.0,
+    134.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 0.84,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sodium_2",
+   "pos": [
+    346.0,
+    134.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 0.84,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sodium_3",
+   "pos": [
+    506.0,
+    134.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 0.84,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sodium_4",
+   "pos": [
+    666.0,
+    134.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 0.84,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "sodium_5",
+   "pos": [
+    826.0,
+    134.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 0.84,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 60,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "clock_face",
+   "pos": [
+    740.0,
+    150.0
+   ],
+   "color": "#F0C487",
+   "energy": 0.16,
+   "radius": 30,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "hall_end",
+   "pos": [
+    -30,
+    220
+   ],
+   "color": "#C6CACE",
+   "energy": 0.45,
+   "radius": 220,
+   "flicker": 0.0,
+   "height": 50,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "name": "win_1_1444",
+   "pos": [
+    1444.0,
+    209.0
+   ],
+   "color": "#E8B65A",
+   "energy": 0.36,
+   "radius": 52,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "win_1_1496",
+   "pos": [
+    1496.0,
+    209.0
+   ],
+   "color": "#E8B65A",
+   "energy": 0.36,
+   "radius": 52,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "win_3_1340",
+   "pos": [
+    1340.0,
+    129.0
+   ],
+   "color": "#E8B65A",
+   "energy": 0.36,
+   "radius": 52,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "win_1_1764",
+   "pos": [
+    1764.0,
+    209.0
+   ],
+   "color": "#E8B65A",
+   "energy": 0.36,
+   "radius": 52,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "lodge",
+   "pos": [
+    1421.0,
+    259.0
+   ],
+   "color": "#E8B65A",
+   "energy": 0.45,
+   "radius": 70,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "passage_lamp",
+   "pos": [
+    1022.0,
+    224.0
+   ],
+   "color": "#E2AC4A",
+   "energy": 1.0,
+   "radius": 130,
+   "flicker": 0.03,
+   "height": 16,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "street_lamp",
+   "pos": [
+    926.0,
+    230.0
+   ],
+   "color": "#E8B65A",
+   "energy": 0.3,
+   "radius": 56,
+   "flicker": 0.0,
+   "height": 20,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "name": "headlights",
+   "pos": [
+    930.0,
+    284.0
+   ],
+   "color": "#E8EAEC",
+   "energy": 0.8,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "candle",
+   "pos": [
+    1781.0,
+    290.0
+   ],
+   "color": "#F8DB96",
+   "energy": 0.35,
+   "radius": 40,
+   "flicker": 0.15,
+   "height": 4,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "night_sky",
+   "pos": [
+    1420,
+    40
+   ],
+   "color": "#94A0B2",
+   "energy": 0.3,
+   "radius": 520,
+   "flicker": 0.0,
+   "height": 120,
+   "on_layer": "playfield",
+   "scene": "L_C4P2_BerlinB"
+  }
+ ],
+ "fx": [
+  {
+   "type": "anim_sprite",
+   "name": "steam_valve",
+   "file": "fx/steam_valve.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    328,
+    54
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -44,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "smoke_chimney",
+   "file": "fx/smoke_chimney.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    257,
+    87
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -44,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "steam_cocks",
+   "file": "fx/steam_cocks.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    346,
+    236
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "steam_kitchen",
+   "file": "fx/steam_kitchen.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    623,
+    95
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -44,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "steam_heat_a",
+   "file": "fx/steam_heat_a.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    538,
+    222
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "steam_heat_b",
+   "file": "fx/steam_heat_b.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    802,
+    220
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "steam_urn",
+   "file": "fx/steam_urn.png",
+   "frames": 12,
+   "fps": 6,
+   "pos": [
+    269,
+    202
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -44,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "haze_vault",
+   "file": "fx/haze_vault.png",
+   "frames": 24,
+   "fps": 3,
+   "pos": [
+    190,
+    50
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -40,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "drift_end",
+   "file": "fx/drift_end.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    0,
+    110
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 30,
+   "lit": false,
+   "scene": "L_C4P2_BerlinA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "snow_a",
+   "file": "fx/snow_a.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    918,
+    0
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 30,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "snow_b",
+   "file": "fx/snow_b.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    1419,
+    0
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 30,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "smoke_0",
+   "file": "fx/smoke_0.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    1104,
+    -8
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -48,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "smoke_1",
+   "file": "fx/smoke_1.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    1414,
+    -12
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -48,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "smoke_2",
+   "file": "fx/smoke_2.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    1653,
+    -12
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -48,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "smoke_3",
+   "file": "fx/smoke_3.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    1843,
+    -11
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -48,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "exhaust",
+   "file": "fx/exhaust.png",
+   "frames": 12,
+   "fps": 8,
+   "pos": [
+    920,
+    272
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": "L_C4P2_BerlinB",
+   "after": [
+    "c4h_solve_house"
+   ],
+   "fade": 0.8
+  }
+ ],
+ "actors": [
+  {
+   "scene": "res://scenes/actors/AmbientWalkers.tscn",
+   "pos": [
+    0,
+    0
+   ],
+   "props": {
+    "data": "res://assets/environments/berlin_c4p2/walkers_a.json"
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinA",
+   "note": "the people of the Corridor platform (crowd/ rigs, walkers_a.json)"
+  },
+  {
+   "scene": "res://scenes/levels/c4p2/C4P2StationClock.tscn",
+   "pos": [
+    740,
+    150
+   ],
+   "props": {
+    "radius": 7.0,
+    "start": "20:31:12"
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinA",
+   "note": "exp_station_clock: the hands of the platform clock (dial baked), 20.31 when the level opens"
+  },
+  {
+   "scene": "res://scenes/levels/veltrava_station/StationPigeons.tscn",
+   "pos": [
+    368,
+    292
+   ],
+   "props": {
+    "sprite": "res://assets/environments/veltrava_station/actors/pigeons_sheet.png",
+    "bread": "res://assets/environments/veltrava_station/actors/bread.png",
+    "bread_pos": [
+     366,
+     292
+    ],
+    "spots": [
+     [
+      362,
+      292
+     ],
+     [
+      371,
+      293
+     ],
+     [
+      378,
+      291
+     ],
+     [
+      356,
+      294
+     ]
+    ],
+    "tuggers": 2,
+    "scare_radius": 13.0,
+    "run_radius": 52.0,
+    "roost_y": 118.0
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinA",
+   "note": "pigeons between the buffet and the kiosk tug at a roll from the buffet; they flutter up under the vault"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    318,
+    300
+   ],
+   "props": {
+    "points": [
+     [
+      313,
+      262
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/breath_puff.png",
+    "interval": 4.8
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinA",
+   "note": "Marta's breath in the cold hall"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    698,
+    300
+   ],
+   "props": {
+    "points": [
+     [
+      693,
+      262
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/breath_puff.png",
+    "interval": 5.4
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinA",
+   "note": "Ekdahl's breath"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    1060,
+    300
+   ],
+   "props": {
+    "points": [
+     [
+      1055,
+      262
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/breath_puff.png",
+    "interval": 4.4
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinB",
+   "note": "Kuhnert's breath in the passage"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskCat.tscn",
+   "pos": [
+    1404,
+    276
+   ],
+   "props": {
+    "sprite": "res://assets/environments/karsk_railyard/actors/cat.png",
+    "wake_radius": 42.0
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinB",
+   "note": "a cat asleep on the lodge's warm window sill; it lifts its head when Konrad comes to the card box"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWind.tscn",
+   "pos": [
+    0,
+    0
+   ],
+   "props": {
+    "roofs": [
+     [
+      918,
+      1872,
+      82
+     ],
+     [
+      918,
+      1872,
+      58
+     ],
+     [
+      1872,
+      1920,
+      16
+     ]
+    ],
+    "min_gap": 11.0,
+    "max_gap": 22.0
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinB",
+   "note": "gusts blow snow off the eaves and the ridge into the courtyard"
+  },
+  {
+   "scene": "res://scenes/levels/berlin/BerlinRadio.tscn",
+   "pos": [
+    1432,
+    272
+   ],
+   "props": {
+    "glow_path": "res://assets/environments/berlin_c4p2/actors/radio_glow.png",
+    "glow_offset": [
+     -6,
+     -14
+    ],
+    "loop_path": "res://assets/audio/sfx/berlin_radio_loop.wav"
+   },
+   "gen": "env_c4p2_berlin",
+   "scene_id": "L_C4P2_BerlinB",
+   "note": "„seine Frau hört Radio“: dance music, faint, from the lodge (positional)"
+  }
+ ],
+ "walkable": [
+  [
+   18,
+   296
+  ],
+  [
+   1902,
+   296
+  ],
+  [
+   1902,
+   306
+  ],
+  [
+   18,
+   306
+  ]
+ ],
+ "blockers": [
+  {
+   "name": "platform_end",
+   "rect": [
+    898,
+    270,
+    40,
+    60
+   ],
+   "note": "Ostbahnhof platform K (Monday, scene A) and the courtyard of Kolonnenstraße 14 (Tuesday, scene B) are two places in one file; LS_C4P2_Express carries Konrad there. Painted: the Corridor fence at the end of platform K (A) / the street door of the gate passage (B)."
+  }
+ ],
+ "spawns": {
+  "SP_C4P2_Platform": [
+   60,
+   300
+  ],
+  "SP_C4P2_Gate": [
+   960,
+   300
+  ]
+ },
+ "hotspots": {
+  "departure_board": [
+   110,
+   300
+  ],
+  "marta_buffet": [
+   300,
+   300
+  ],
+  "shadow_kiosk": [
+   410,
+   300
+  ],
+  "courier_car": [
+   500,
+   300
+  ],
+  "ekdahl_window": [
+   680,
+   300
+  ],
+  "dining_table": [
+   800,
+   300
+  ],
+  "gate_notice": [
+   1000,
+   300
+  ],
+  "kuhnert_gate": [
+   1060,
+   300
+  ],
+  "wendt_yard": [
+   1110,
+   300
+  ],
+  "hanna_yard": [
+   1250,
+   300
+  ],
+  "lodge_window": [
+   1420,
+   300
+  ],
+  "yard_pump": [
+   1600,
+   300
+  ]
+ },
+ "zones": {
+  "platform_k": [
+   0,
+   898
+  ],
+  "platform_end": [
+   898,
+   938
+  ],
+  "gate_passage": [
+   938,
+   1100
+  ],
+  "courtyard": [
+   1100,
+   1920
+  ]
+ },
+ "looks": [
+  {
+   "name": "station",
+   "scene": "L_C4P2_BerlinA",
+   "canvas_modulate": "#DED7C9",
+   "grade": "ostbahnhof"
+  },
+  {
+   "name": "courtyard",
+   "scene": "L_C4P2_BerlinB",
+   "canvas_modulate": "#C6CEDF",
+   "grade": "courtyard_night"
+  }
+ ],
+ "hotspot_info": {
+  "departure_board": {
+   "kind": "story",
+   "stand": [
+    110,
+    300
+   ],
+   "focus": [
+    110,
+    250
+   ],
+   "what": "the enamel departure board of platform K on two cast-iron posts: „D 303 BERLIN OST – KORDON-17 · KARSK 21.10“; below it the freshly painted board for Tuesday",
+   "object_x": [
+    62,
+    148
+   ]
+  },
+  "marta_buffet": {
+   "kind": "story",
+   "stand": [
+    300,
+    300
+   ],
+   "focus": [
+    300,
+    250
+   ],
+   "what": "the buffet „Erfrischungen“: Marta Vogel (318) at the counter, her duty roster on it (decal by c4d_choose: „Linie 3“ / „Linie 74“); the buffet woman behind it; through the open stand the engine 01 064 (its drivers in the gap toward the kiosk)",
+   "object_x": [
+    200,
+    338
+   ]
+  },
+  "shadow_kiosk": {
+   "kind": "npc_anchor",
+   "stand": [
+    410,
+    300
+   ],
+   "focus": [
+    410,
+    250
+   ],
+   "what": "the newspaper kiosk, the headline board „Ein Winter des Friedens“; the man in the leather coat (stapo_civil) reads the same page in front of it",
+   "object_x": [
+    380,
+    440
+   ]
+  },
+  "courier_car": {
+   "kind": "story",
+   "stand": [
+    500,
+    300
+   ],
+   "focus": [
+    500,
+    250
+   ],
+   "what": "behind the engine and its tender the two-axle courier van without windows, two lead seals on the wire of its sliding door (x ~500); through the uncoupled gap beside it the green car on the next track",
+   "object_x": [
+    448,
+    530
+   ]
+  },
+  "ekdahl_window": {
+   "kind": "story",
+   "stand": [
+    680,
+    300
+   ],
+   "focus": [
+    680,
+    250
+   ],
+   "what": "the dining car (wine red, „SPEISEWAGEN“, lit windows, white cloths); Nils Ekdahl (698) on the platform before his own empty table (hat, cup, scarf)",
+   "object_x": [
+    624,
+    816
+   ]
+  },
+  "dining_table": {
+   "kind": "story",
+   "stand": [
+    800,
+    300
+   ],
+   "focus": [
+    800,
+    250
+   ],
+   "what": "the dining car's open door: the lit vestibule, the first table with a cloth, a tea glass, the blue linen guidebook with a slip of paper sticking out",
+   "object_x": [
+    794,
+    814
+   ]
+  },
+  "gate_notice": {
+   "kind": "story",
+   "stand": [
+    1000,
+    300
+   ],
+   "focus": [
+    1000,
+    250
+   ],
+   "what": "the cork board in the gate passage: the typed notice of the Blockleitung (emblem only in the _hist patch) and the pinned site plan with the hatched houses",
+   "object_x": [
+    972,
+    1028
+   ]
+  },
+  "kuhnert_gate": {
+   "kind": "npc_anchor",
+   "stand": [
+    1060,
+    300
+   ],
+   "focus": [
+    1060,
+    250
+   ],
+   "what": "Kuhnert (blockwart, 1060) waits in the passage by the letterboxes and the front wing's stair door",
+   "object_x": [
+    1036,
+    1100
+   ]
+  },
+  "wendt_yard": {
+   "kind": "story",
+   "stand": [
+    1110,
+    300
+   ],
+   "focus": [
+    1110,
+    250
+   ],
+   "what": "just outside the passage in the courtyard; Wendt (1128) after the house is solved, the car's lights behind him",
+   "object_x": [
+    1100,
+    1140
+   ]
+  },
+  "hanna_yard": {
+   "kind": "story",
+   "stand": [
+    1250,
+    300
+   ],
+   "focus": [
+    1250,
+    250
+   ],
+   "what": "Hanna (1268) beside the side wing's green stair door „Aufg. B“ (Ilse's frost drawing on its glass)",
+   "object_x": [
+    1236,
+    1300
+   ]
+  },
+  "lodge_window": {
+   "kind": "story",
+   "stand": [
+    1420,
+    300
+   ],
+   "focus": [
+    1420,
+    250
+   ],
+   "what": "the lodge window (Loge Kuhnert, lit): Frau Kuhnert knitting by the radio; the wooden box of household cards on the sill, one red tab; a cat asleep on the warm sill",
+   "object_x": [
+    1402,
+    1440
+   ]
+  },
+  "yard_pump": {
+   "kind": "story",
+   "stand": [
+    1600,
+    300
+   ],
+   "focus": [
+    1600,
+    250
+   ],
+   "what": "the cast-iron courtyard pump with its frozen spout and the ice at its foot; Konrad looks up at the house from here (the house puzzle)",
+   "object_x": [
+    1592,
+    1610
+   ]
+  }
+ },
+ "npcs": {
+  "marta_buffet": {
+   "char": "marta",
+   "feet": [
+    318,
+    300
+   ],
+   "facing": "left"
+  },
+  "shadow_kiosk": {
+   "char": "stapo_civil",
+   "feet": [
+    410,
+    300
+   ],
+   "facing": "left"
+  },
+  "ekdahl_window": {
+   "char": "journalist",
+   "feet": [
+    698,
+    300
+   ],
+   "facing": "left"
+  },
+  "kuhnert_gate": {
+   "char": "blockwart",
+   "feet": [
+    1060,
+    300
+   ],
+   "facing": "left"
+  },
+  "wendt_yard": {
+   "char": "wendt",
+   "feet": [
+    1128,
+    300
+   ],
+   "facing": "left",
+   "show_after": "c4h_solve_house"
+  },
+  "hanna_yard": {
+   "char": "hanna",
+   "feet": [
+    1268,
+    300
+   ],
+   "facing": "left",
+   "hide_after": "c4h_solve_house"
+  }
+ },
+ "households": {
+  "v1": {
+   "wing": "V",
+   "floor": "1",
+   "light": "lit",
+   "axes": [
+    1024,
+    1078
+   ],
+   "what": "Schulz: a mother walks the baby"
+  },
+  "v2": {
+   "wing": "V",
+   "floor": "2",
+   "light": "dark",
+   "axes": [
+    1162
+   ],
+   "what": "Grabowski: the dark kitchen, a basket on a washing line"
+  },
+  "v3": {
+   "wing": "V",
+   "floor": "3",
+   "light": "lit",
+   "axes": [
+    1078,
+    1132
+   ],
+   "what": "Lenz: desk lamp, the radio dial"
+  },
+  "vd": {
+   "wing": "V",
+   "floor": "D",
+   "light": "dark",
+   "axes": [],
+   "what": "Dachboden Vorderhaus: junk"
+  },
+  "s1": {
+   "wing": "S",
+   "floor": "1",
+   "light": "lit",
+   "axes": [
+    1444,
+    1496,
+    1548
+   ],
+   "what": "Mertens: the tram conductor's family at the table"
+  },
+  "s2": {
+   "wing": "S",
+   "floor": "2",
+   "light": "dim",
+   "axes": [
+    1340
+   ],
+   "what": "Pohl: the curtain moves"
+  },
+  "s3": {
+   "wing": "S",
+   "floor": "3",
+   "light": "lit",
+   "axes": [
+    1340,
+    1392
+   ],
+   "what": "Hanna Adler: Ilse draws at the kitchen table"
+  },
+  "se": {
+   "wing": "S",
+   "floor": "E",
+   "light": "lit",
+   "axes": [
+    1420
+   ],
+   "what": "Loge Kuhnert: Frau Kuhnert, the radio, the card box on the sill"
+  },
+  "sd": {
+   "wing": "S",
+   "floor": "D",
+   "light": "dark",
+   "axes": [
+    1444
+   ],
+   "what": "Trockenboden Seitenflügel: washing day, a hatch ajar"
+  },
+  "h1": {
+   "wing": "H",
+   "floor": "1",
+   "light": "lit",
+   "axes": [
+    1764,
+    1816
+   ],
+   "what": "Kühn: the card game"
+  },
+  "h2": {
+   "wing": "H",
+   "floor": "2",
+   "light": "dark",
+   "axes": [
+    1764,
+    1816
+   ],
+   "what": "Brettschneider: night shift at the gasworks"
+  },
+  "h3": {
+   "wing": "H",
+   "floor": "3",
+   "light": "sealed",
+   "axes": [
+    1764,
+    1816,
+    1868
+   ],
+   "what": "empty, sealed with paper strips (umgesetzt 10/63)"
+  },
+  "hd": {
+   "wing": "H",
+   "floor": "D",
+   "light": "dark",
+   "axes": [
+    1816
+   ],
+   "what": "Trockenboden Hinterhaus: the hatch open (Tuesdays)"
+  },
+  "ws": {
+   "wing": "H",
+   "floor": "K",
+   "light": "dim",
+   "axes": [
+    1764,
+    1796,
+    1828,
+    1860
+   ],
+   "what": "Schuhmacherei Pietsch: the souterrain"
+  }
+ },
+ "gates_doc": "Entries with \"after\" (objectives that must be complete), \"until\" (hidden once one of them is complete) or \"choice\" (objective: id | \"!id\") are built by registry_level.gd (base of scripts/levels/c4/annex_level.gd -> scripts/levels/c4p2/berlin_c4p2_level.gd) and shown while the condition holds; \"fade\" = seconds of the live cross-fade. \"scene\" (one id; actors use \"scene_id\") = only built when the level plays that Story scene (decided at load: every part-2 scene starts with a level load).",
+ "notes": [
+  "Two walk areas in one file: L_C4P2_BerlinA (Ostbahnhof, x 18..898) left of the permanent blocker platform_end, L_C4P2_BerlinB (Kolonnenstraße 14, x 938..1902) right of it; the station layers cover x 0..918, the courtyard layers x 918..1920 (camera zones [0, 0, 918, 360] / [918, 0, 1002, 360]).",
+  "Every spawn, hotspot, blocker, camera zone and NPC anchor of the story stream's placeholder is kept name for name and position for position; the exploration stream's finds (explore_hotspots.json) stand at the art their \"info\" asks for.",
+  "The courtyard is unrolled into one elevation like the house puzzle's cutaway: Vorderhaus | Seitenflügel | Hinterhaus; every lit window is a household of §2.7 (\"households\").",
+  "Palettes: data/chapters/c4p2.json ostbahnhof / courtyard + the proposed ramps (wood, brick, enamel, cream / dusk, wood, green) -- see asset_manifest_parts/env_c4p2_berlin.md."
+ ],
+ "meta": {
+  "mode": "side",
+  "feet_y": 300,
+  "generator": "tools/pixelgen/env_c4p2_berlin.py",
+  "date": "2026-11-06",
+  "palette_ostbahnhof": {
+   "night": [
+    "#06080B",
+    "#0C1015",
+    "#141A21",
+    "#1D252E"
+   ],
+   "glass": [
+    "#1C2630",
+    "#2A3846",
+    "#3C4E60",
+    "#56697C",
+    "#76899A"
+   ],
+   "steel": [
+    "#1C2228",
+    "#2A323A",
+    "#3B4650",
+    "#526070",
+    "#6E7D8C"
+   ],
+   "sodium": [
+    "#4A3014",
+    "#7E521E",
+    "#B67E2C",
+    "#E2AC4A",
+    "#F8DB96"
+   ],
+   "steam": [
+    "#5E646C",
+    "#7F868E",
+    "#A2A8AE",
+    "#C6CACE",
+    "#E8EAEC"
+   ],
+   "green": [
+    "#162A22",
+    "#223D31",
+    "#325443",
+    "#486E58"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "wood": [
+    "#2A1B12",
+    "#43291A",
+    "#5E3B24",
+    "#7C5233"
+   ],
+   "brick": [
+    "#2B1A15",
+    "#3F261D",
+    "#573527",
+    "#714734"
+   ],
+   "enamel": [
+    "#101C34",
+    "#1C2E52",
+    "#2E4878"
+   ],
+   "cream": [
+    "#E9DFC4",
+    "#F6F0DE"
+   ]
+  },
+  "palette_courtyard": {
+   "night": [
+    "#05070B",
+    "#0A0F16",
+    "#111822",
+    "#1A2330"
+   ],
+   "plaster": [
+    "#2A2C30",
+    "#3C3F44",
+    "#53575C",
+    "#6E7277",
+    "#8D9195"
+   ],
+   "brick": [
+    "#2B1A15",
+    "#3F261D",
+    "#573527",
+    "#714734"
+   ],
+   "window": [
+    "#5A3A16",
+    "#8C5E26",
+    "#C08A3A",
+    "#E8B65A",
+    "#FBE2A0"
+   ],
+   "snow": [
+    "#6F7A8C",
+    "#94A0B2",
+    "#B9C3D0",
+    "#DCE2EA",
+    "#F2F4F7"
+   ],
+   "laundry": [
+    "#8E8C86",
+    "#B2AFA6",
+    "#D4D0C6"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "dusk": [
+    "#1C2433",
+    "#273248",
+    "#36435C",
+    "#4A5874",
+    "#63718C"
+   ],
+   "wood": [
+    "#2A1B12",
+    "#43291A",
+    "#5E3B24",
+    "#7C5233"
+   ],
+   "green": [
+    "#1B2E28",
+    "#28423A",
+    "#3A5B4F"
+   ]
+  }
+ }
+}

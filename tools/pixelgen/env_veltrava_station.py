@@ -10,6 +10,9 @@ Outputs (area env_veltrava_station):
     assets/ui/documents/veltrava_station_*.png + veltrava_station_documents.json (inspect documents, 1:1 px)
     data/locale/de_env_veltrava_station.json (document alt texts)
 Deterministic: fixed seeds, no network, original procedural art (references are never sampled).
+Shared folder (round 10, env_keep.py): thaw/ (env_veltrava_station_thaw.py), walkers/ (walkers_r8.py), the
+hand-added "actors" entries (AmbientWalkers, StationThaw) and anything else this generator did not write stay; a run
+removes only the PNGs its previous run recorded in provenance.json (written since round 10) and merges scene.json.
 Palette: 'veltrava' (registered into pg.PALETTES by env_veltrava_lib, ramps = data/chapters/c3.json).
 """
 from __future__ import annotations
@@ -28,6 +31,7 @@ from PIL import Image  # noqa: E402
 from env_veltrava_lib import (ENV_DIR, ROOT, Layer, NI, SL, IR, CR, PA, LA, SK, SN, RD, crop_v, crop_box,  # noqa: E402
                               palette_report, hexc, layer_w, WORLD_W, WORLD_H)
 import env_veltrava_station_bg as BG  # noqa: E402
+import env_keep as KEEP  # noqa: E402  (round 10: the folder is shared)
 import env_veltrava_station_tracks as TR  # noqa: E402
 import env_veltrava_station_props as PR  # noqa: E402
 import env_veltrava_station_fx as FX  # noqa: E402
@@ -122,14 +126,48 @@ def _plain(o):
     return o
 
 
+# provenance rows of this generator (env_keep): what its run writes, the record its next run removes first
+FAMILY = ('tools/pixelgen/env_veltrava_station.py', 'tools/pixelgen/env_veltrava_station_life.py')
+
+
 def clean_env():
-    """Remove previous generator PNGs (their Godot .import sidecars stay so UIDs remain stable)."""
+    """Remove the PNGs this generator wrote last time (its provenance.json rows; their Godot .import sidecars stay so
+    UIDs remain stable) -- nothing else of the shared folder: thaw/, walkers/ and hand-made files stay."""
     if not os.path.isdir(ENV_DIR):
         return
-    for root, dirs, files in os.walk(ENV_DIR):
-        for fn in files:
-            if fn.endswith('.png'):
-                os.remove(os.path.join(root, fn))
+    KEEP.remove_own_pngs(ENV_DIR, ROOT, FAMILY)
+
+
+def _content(r: str) -> str:
+    """Provenance line of a written file from its place and name."""
+    name = r.rsplit('/', 1)[-1][:-4]
+    kind = ('ambient actor sprite' if '/actors/' in r else 'prop' if '/props/' in r else 'fx strip' if '/fx/' in r
+            else 'layer')
+    for suf, what in (('_n', 'normal map (OpenGL +Y up)'), ('_e', 'emission mask'),
+                      ('_hist', 'variant with the historical insignia (Symbols.pick)')):
+        if name.endswith(suf):
+            return '%s %s -- %s' % (kind, name[:-len(suf)], what)
+    return '%s %s' % (kind, name)
+
+
+def write_provenance(written: list):
+    """provenance.json (round 10): every file this run wrote -- the record env_keep reads on the next run -- plus the
+    rows other generators or hands added for files that still exist."""
+    rows = []
+    for path in written + [os.path.join(ENV_DIR, 'scene.json')]:
+        r = KEEP.rel(path, ROOT)
+        life = '/actors/' in r
+        rows.append({'path': r, 'generator': FAMILY[1] if life else FAMILY[0],
+                     'content': 'art manifest (TECHNICAL_ARCHITECTURE 3.1)' if r.endswith('.json') else _content(r)})
+    p = os.path.join(ENV_DIR, 'provenance.json')
+    files = KEEP.merge_rows(sorted(rows, key=lambda e: e['path']), KEEP.read_json(p), FAMILY, ROOT)
+    out = {'generator': 'tools/pixelgen/env_veltrava_station.py (+ _bg, _tracks, _props, _fx, _life, env_veltrava_lib)',
+           'date': '2026-11-04', 'area': 'env_veltrava_station',
+           'licence': 'project-owned original artwork, generated procedurally with fixed seeds; no copied, traced, '
+                      'downloaded or AI-generated pixels',
+           'run': 'python3 -P tools/pixelgen/env_veltrava_station.py', 'files': files}
+    with open(p, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(out, f, indent=1, ensure_ascii=False)
 
 
 def drop_orphan_imports():
@@ -143,6 +181,7 @@ def build():
     t0 = time.time()
     os.makedirs(ENV_DIR, exist_ok=True)
     clean_env()
+    stamps = KEEP.png_stamps(ENV_DIR)      # what the run writes changes its stamp (the provenance record)
     layers, props, fx, lights = [], [], [], []
     A = {}
     # ------------------------------------------------------------------ far planes
@@ -471,9 +510,11 @@ def build():
                       '(tools/pixelgen/env_veltrava_station_life.py).',
         },
     }
-    manifest = _plain(manifest)
-    with open(os.path.join(ENV_DIR, 'scene.json'), 'w', encoding='utf-8', newline='\n') as f:
-        json.dump(manifest, f, indent=1, ensure_ascii=False)
+    sj = os.path.join(ENV_DIR, 'scene.json')
+    # keeps the hand-added actors (AmbientWalkers, StationThaw: scenes this generator never writes) and later keys
+    manifest = KEEP.merge_scene(_plain(manifest), KEEP.read_json(sj))
+    KEEP.write_json(sj, manifest)   # same content as before: the file stays byte for byte
+    write_provenance(KEEP.written_since(ENV_DIR, stamps))
     bad = {}
     for root, _, files in os.walk(ENV_DIR):
         for fn in files:

@@ -418,19 +418,25 @@ static func read_container(path: String) -> Dictionary:
 			warnings.append("Unknown container field ignored: " + str(k))
 	# Round 8: a save taken at the end of an older, shorter chain (e.g. the montage after c3b_completed) continues
 	# in the scene that now follows its last completed event instead of failing the replay validation.
+	# Round 10: Story flags added after the save was written are filled with their defaults first.
 	var story_doc: Dictionary = rebase_story(doc["story"])
 	if str(story_doc.get("current_scene")) != str(doc["story"].get("current_scene")):
 		warnings.append("Save re-based to the extended story chain: " + str(story_doc.get("current_scene")))
+	var filled := missing_flags(doc["story"])
+	if not filled.is_empty():
+		warnings.append("Save migrated: Story flags filled with their defaults: " + ", ".join(filled))
 	return {"ok": true, "error": "", "error_key": "", "meta": meta,
 		"story_raw": ENGINE.json_dumps(story_doc, 2), "extra": extra, "warnings": warnings}
 
 
 ## Re-bases a Story state recorded before the scene chain grew (round 8: c3b_completed used to lead to the montage,
 ## now to the registry): current_scene / active_character = the scene after the last completed exit event, as the
-## replay validation computes it. Finished playthroughs (slice_completed) and unknown shapes stay unchanged.
+## replay validation computes it. Finished playthroughs (slice_completed) and unknown shapes keep their scene.
+## Round 10: first fills the Story flags the state lacks with their defaults (fill_flag_defaults) — for every shape
+## with a flags dictionary, finished playthroughs included.
 ## Used for save slots (read_container) and for the profile snapshots of the memories (Memories.snapshot_raw).
 static func rebase_story(story: Dictionary) -> Dictionary:
-	var st: Dictionary = story.duplicate(true)
+	var st: Dictionary = fill_flag_defaults(story)
 	var events = st.get("completed_events", [])
 	if not (events is Array) or (events as Array).has("slice_completed") or not st.has("current_scene"):
 		return st
@@ -450,6 +456,50 @@ static func rebase_story(story: Dictionary) -> Dictionary:
 		st["current_scene"] = cur
 		st["active_character"] = str(scenes[cur].get("protagonist", "none"))
 	return st
+
+
+## Save flag migration (round 10, NEXT_STEPS §1): a Story payload written by an earlier build lacks every Story flag
+## added to data/v3/flags.json since; the replay validation compares the flags dictionary as a whole, so each
+## missing flag gets its default (a deep copy is returned, the input is never modified). Values that are present are
+## never touched — a wrong value or type is still refused by Story.validate_save_json(), and so is a key that
+## flags.json does not know. A payload without a flags dictionary stays as it is (refused as before). New flags are
+## only ever written by objectives of the chapter that introduces them (C4P2_DESIGN §1.1), so for an older save the
+## default is exactly the value its replay computes.
+static func fill_flag_defaults(story: Dictionary) -> Dictionary:
+	var st: Dictionary = story.duplicate(true)
+	var fl = st.get("flags")
+	if not (fl is Dictionary):
+		return st
+	var defaults := flag_defaults()
+	for name in defaults:
+		if not (fl as Dictionary).has(name):
+			fl[name] = defaults[name]
+	return st
+
+
+## Names of the flags.json flags a Story payload lacks, in flags.json order ([] without a flags dictionary).
+static func missing_flags(story: Dictionary) -> Array:
+	var out: Array = []
+	var fl = story.get("flags")
+	if not (fl is Dictionary):
+		return out
+	for name in flag_defaults():
+		if not (fl as Dictionary).has(name):
+			out.append(name)
+	return out
+
+
+## {flag: default} of data/v3/flags.json in data order ({} when the file cannot be read).
+static func flag_defaults() -> Dictionary:
+	var out := {}
+	var p: Dictionary = ENGINE.json_parse(FileAccess.get_file_as_string("res://data/v3/flags.json"))
+	if not p.get("ok", false) or not (p["value"] is Dictionary) or not (p["value"].get("flags") is Dictionary):
+		return out
+	var defs: Dictionary = p["value"]["flags"]
+	for name in defs:
+		if defs[name] is Dictionary and (defs[name] as Dictionary).has("default"):
+			out[str(name)] = defs[name]["default"]
+	return out
 
 
 ## Strict UTF-8 check (no overlongs, no surrogates) so corrupt files are rejected without decoding noise.

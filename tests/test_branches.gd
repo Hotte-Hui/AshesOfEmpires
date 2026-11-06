@@ -1,9 +1,10 @@
 extends RefCounted
 ## All four slice branch combinations × skip × cinematic timing, identical progression gating across branches,
 ## save/load at every step, skip equivalence — over the whole chain A1 → M1 → Chapter 3 (C3a, C3b, part 2 C3c–C3g)
-## → Chapter 4 part 1 (C4a–C4d) → finale. The later options of every combination are the canonical defaults of
-## Kit.play_verified_route (ask_elena / share_protocol / admit_plan / split_by_language / name_marta); every option is
-## covered in tests/test_c3_routes.gd, tests/test_c3p2_routes.gd and tests/test_c4_routes.gd.
+## → Chapter 4 part 1 (C4a–C4d) → part 2 (C4e–C4h) → finale. The later options of every combination are the canonical
+## defaults of Kit.play_verified_route (ask_elena / share_protocol / admit_plan / split_by_language / name_marta /
+## publish_now); every option is covered in tests/test_c3_routes.gd, tests/test_c3p2_routes.gd, tests/test_c4_routes.gd
+## and tests/test_c4p2_routes.gd.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 
@@ -15,11 +16,12 @@ const COMBOS := [
 ]
 ## Effects of the default Chapter-3 options (ask_elena: elena_trust +1, share_protocol: alexei_konrad_trust +1,
 ## part 2 — C3P2_DESIGN §2.4 — admit_plan: alexei_konrad_trust +1, split_by_language: evidence_chain +1; Chapter 4 —
-## C4_DESIGN §2.4 — name_marta: evidence_chain +1).
-const C3_DEFAULT_FLAGS := {"elena_trust": 1, "alexei_konrad_trust": 2, "evidence_chain": 2, "kessler_alerted": 0}
+## C4_DESIGN §2.4 — name_marta: evidence_chain +1; part 2 — C4P2_DESIGN §2.4 — publish_now: evidence_chain +1).
+const C3_DEFAULT_FLAGS := {"elena_trust": 1, "alexei_konrad_trust": 2, "evidence_chain": 3, "kessler_alerted": 0,
+	"people_protected": 0}
 const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "c3c_completed", "c3d_completed",
 	"c3e_completed", "c3f_completed", "c3g_completed", "c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed",
-	"slice_completed"]
+	"c4e_completed", "c4f_completed", "c4g_completed", "c4h_completed", "slice_completed"]
 
 var kit: Kit
 
@@ -52,7 +54,7 @@ func _four_combinations() -> bool:
 		kit.eq(g.completed_events(), EVENTS, label + " events")
 		kit.eq(g.current_scene, "L_X1_Montage", label + " scene")
 		kit.eq(g.active_character, "none", label + " character")
-		kit.eq(g.inventory().size(), 37, label + " evidence (6 slice + 6 Chapter 3 + 10 part 2 + 15 Chapter 4)")
+		kit.eq(g.inventory().size(), 48, label + " evidence (6 slice + 6 Chapter 3 + 10 part 2 + 15 Chapter 4 + 11 part 2)")
 		kit.eq(g.is_finished(), true, label + " finished")
 		kit.eq(g.is_finale_viewed(), true, label + " finale viewed")
 		kit.eq(g.relationship("irina_trust"), combo[2]["irina_trust"], label + " relationship accessor")
@@ -154,6 +156,28 @@ func _gating_trace(a1: String, m1: String) -> Array:
 	advance.call(g.inspect("c4d_inspect_tube"))
 	talk.call("c4d_talk_registrar")
 	advance.call(g.choose("c4d_choose", "protect_marta"))
+	# Chapter 4 part 2 (C4P2_DESIGN §2.3)
+	advance.call(g.inspect("c4e_inspect_list"))
+	advance.call(g.inspect("c4e_inspect_order"))
+	talk.call("c4e_talk_irina")
+	talk.call("c4e_talk_maria")
+	advance.call(g.inspect("c4e_inspect_notice"))
+	advance.call(g.inspect("c4f_inspect_courier"))
+	advance.call(g.inspect("c4f_inspect_board"))
+	talk.call("c4f_talk_marta")
+	talk.call("c4f_talk_ekdahl")
+	advance.call(g.inspect("c4f_inspect_book"))
+	talk.call("c4g_talk_ekdahl")
+	advance.call(g.inspect("c4g_inspect_book"))
+	talk.call("c4g_talk_lev")
+	advance.call(g.solve_puzzle("c4g_solve_halves", Kit.C4_HALVES.duplicate()))
+	advance.call(g.inspect("c4g_inspect_card"))
+	advance.call(g.choose("c4g_choose", "protect_first"))
+	advance.call(g.inspect("c4h_inspect_gate"))
+	talk.call("c4h_talk_hanna")
+	advance.call(g.inspect("c4h_inspect_cards"))
+	advance.call(g.solve_puzzle("c4h_solve_house", Kit.C4_HOUSE.duplicate()))
+	talk.call("c4h_talk_wendt")
 	return trace
 
 
@@ -275,15 +299,36 @@ func _save_load_every_step() -> bool:
 	kit.play_dialogue(g, "c4c_talk_lev")
 	roundtrip.call()   # city change: the annex
 	kit.play_c4d(g, "protect_marta")
+	roundtrip.call()   # Chapter 4 part 2: Karsk depot with LS_C4_Voices + LS_C4P2_Depot queued
+	kit.play_c4e(g)
+	roundtrip.call()   # city change: the Ostbahnhof
+	kit.play_c4f(g)
+	roundtrip.call()   # city change: the depot's showcase
+	kit.play_dialogue(g, "c4g_talk_ekdahl")
+	g.inspect("c4g_inspect_book")
+	kit.play_dialogue(g, "c4g_talk_lev")
+	g.solve_puzzle("c4g_solve_halves", {"rotation_steps": 0, "offset_x": 4, "offset_y": 1})
+	roundtrip.call()   # failed join preserved
+	g.solve_puzzle("c4g_solve_halves", Kit.C4_HALVES.duplicate())
+	g.inspect("c4g_inspect_card")
+	g.choose("c4g_choose", "protect_first")
+	roundtrip.call()   # city change: Kolonnenstraße 14
+	g.inspect("c4h_inspect_gate")
+	kit.play_dialogue(g, "c4h_talk_hanna")
+	g.inspect("c4h_inspect_cards")
+	g.solve_puzzle("c4h_solve_house", ["s3", "s2", "s1", "se", "sk", "hk", "ws"])
+	roundtrip.call()   # failed way through the house preserved
+	g.solve_puzzle("c4h_solve_house", Kit.C4_HOUSE.duplicate())
+	kit.play_dialogue(g, "c4h_talk_wendt")
 	roundtrip.call()   # montage, finale still open
 	g.finale(true)
 	roundtrip.call()
-	kit.ok(checkpoints[0] >= 34, "checkpoints exercised (%d)" % checkpoints[0])
+	kit.ok(checkpoints[0] >= 40, "checkpoints exercised (%d)" % checkpoints[0])
 	return true
 
 
 func _finale_without_cinematics() -> bool:
-	# Python semantics: cinematics are presentation; the finale needs every quest event (A1, M1, C3a … C3g, C4a … C4d).
+	# Python semantics: cinematics are presentation; the finale needs every quest event (A1, M1, C3a … C3g, C4a … C4h).
 	var g := kit.story()
 	kit.play_a1(g, "share_with_irina")
 	kit.is_err(g.finale(), "finale locked after A1 only")
@@ -316,10 +361,15 @@ func _finale_without_cinematics() -> bool:
 				kit.play_c4c(g)
 		kit.is_err(g.finale(), "finale locked after " + stage)
 	kit.play_c4d(g, "protect_marta")
-	var all_fifteen := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close",
+	kit.is_err(g.finale(), "finale locked after c4d (the round-9 end): part 2 is still open")
+	for stage in ["c4e", "c4f", "c4g"]:
+		kit.play_stage(g, stage, {"c4g": "protect_first"})
+		kit.is_err(g.finale(), "finale locked after " + stage)
+	kit.play_c4h(g)
+	var all_twenty := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close",
 		"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves", "LS_C4_Homeward", "LS_C4_Number", "LS_C4_Card",
-		"LS_C4_Stamp", "LS_C4_Voices"]
-	kit.eq(g.pending_cinematics(), all_fifteen, "all fifteen still queued")
+		"LS_C4_Stamp", "LS_C4_Voices", "LS_C4P2_Depot", "LS_C4P2_Steam", "LS_C4P2_Book", "LS_C4P2_Express", "LS_C4P2_Clock"]
+	kit.eq(g.pending_cinematics(), all_twenty, "all twenty still queued")
 	kit.is_ok(g.finale(), "finale reachable")
-	kit.eq(g.pending_cinematics(), all_fifteen, "queue untouched by the finale")
+	kit.eq(g.pending_cinematics(), all_twenty, "queue untouched by the finale")
 	return true

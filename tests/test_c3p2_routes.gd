@@ -20,7 +20,8 @@ const P2_SCENES := ["L_C3_RegistryA", "L_C3_RegistryB", "L_C3_RegistryC", "L_C3_
 const PROTAGONIST := {"L_C3_RegistryA": "alexei", "L_C3_RegistryB": "konrad", "L_C3_RegistryC": "alexei",
 	"L_C3_RegistryD": "konrad", "L_C3_Quay": "alexei", "L_C4_TunnelsA": "alexei"}
 ## Chapter 4 part 1 follows the quay since round 9 (documentation/C4_DESIGN.md §1); tests/test_c4_routes.gd covers it.
-const C4_SCENES := ["L_C4_TunnelsA", "L_C4_AnnexA", "L_C4_TunnelsB", "L_C4_AnnexB"]
+const C4_SCENES := ["L_C4_TunnelsA", "L_C4_AnnexA", "L_C4_TunnelsB", "L_C4_AnnexB", "L_C4P2_KarskA", "L_C4P2_BerlinA",
+	"L_C4P2_KarskB", "L_C4P2_BerlinB"]
 const REGISTRY := "res://scenes/levels/L_C3_Registry.tscn"
 const QUAY := "res://scenes/levels/L_C3_Quay.tscn"
 ## data order = the order in which the canonical route completes them
@@ -32,7 +33,7 @@ const P2_ITEMS := ["ev_c3_cut_seal", "ev_c3_night_book", "ev_c3_intake_book", "e
 	"ev_c3_kordon_plan", "ev_c3_file", "ev_c3_bolt", "ev_c3_cut_hose", "ev_c3_escort_list"]
 const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "c3c_completed", "c3d_completed",
 	"c3e_completed", "c3f_completed", "c3g_completed", "c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed",
-	"slice_completed"]
+	"c4e_completed", "c4f_completed", "c4g_completed", "c4h_completed", "slice_completed"]
 const NIGHT_CINEMATICS := ["LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]
 ## Base lines that a variant always replaces in normal play (every option of an earlier mandatory choice is covered).
 const FALLBACK_ONLY := ["c3c_night_04", "c3c_night_11", "c3d_cmp_04", "c3d_cmp_05"]
@@ -73,13 +74,16 @@ func run() -> Array:
 
 # ------------------------------------------------------------------ helpers
 ## Meters of a finished route (C3_DESIGN §2.4 + C3P2_DESIGN §2.4: every option raises exactly one meter).
-## The Chapter-4 decision is the Kit default (name_marta: evidence_chain +1, C4_DESIGN §2.4).
-static func meters(a1: String, m1: String, c3a: String, c3b: String, c3d: String, c3g: String, c4d := "name_marta") -> Dictionary:
+## The Chapter-4 decisions are the Kit defaults (name_marta: evidence_chain +1, C4_DESIGN §2.4; publish_now:
+## evidence_chain +1, C4P2_DESIGN §2.4).
+static func meters(a1: String, m1: String, c3a: String, c3b: String, c3d: String, c3g: String, c4d := "name_marta",
+		c4g := "publish_now") -> Dictionary:
 	return {"irina_trust": int(a1 == "share_with_irina"), "alexei_secrecy": int(a1 == "keep_private"),
 		"konrad_evidence": int(m1 == "preserve_evidence"), "office_suspicion": int(m1 == "request_explanation"),
 		"elena_trust": int(c3a == "ask_elena") + int(c3b == "search_elena") + int(c3g == "hide_for_elena"),
-		"evidence_chain": int(c3a == "note_alone") + int(c3d == "pocket_plan") + int(c3g == "split_by_language") + int(c4d == "name_marta"),
-		"civilian_welfare": int(c4d == "protect_marta"),
+		"evidence_chain": int(c3a == "note_alone") + int(c3d == "pocket_plan") + int(c3g == "split_by_language") +
+			int(c4d == "name_marta") + int(c4g == "publish_now"),
+		"civilian_welfare": int(c4d == "protect_marta"), "people_protected": int(c4g == "protect_first"),
 		"alexei_konrad_trust": int(c3b == "share_protocol") + int(c3d == "admit_plan") + int(c3g == "swap_halves"),
 		"kessler_alerted": int(c3b == "report_delegation")}
 
@@ -176,7 +180,8 @@ func _all_combinations() -> bool:
 							kit.eq(g.inventory().slice(12, 22), P2_ITEMS, label + " part-2 evidence in order")
 							kit.eq(g.completed_objectives().slice(24, 43), P2_OBJECTIVES, label + " part-2 objectives in data order")
 							kit.eq(g.choice_history(), {"a1_choose": a1, "m1_choose": m1, "c3a_choose": c3a,
-								"c3b_choose": c3b, "c3d_choose": c3d, "c3g_choose": c3g, "c4d_choose": "name_marta"}, label + " choices")
+								"c3b_choose": c3b, "c3d_choose": c3d, "c3g_choose": c3g, "c4d_choose": "name_marta",
+								"c4g_choose": "publish_now"}, label + " choices")
 							kit.eq([g.is_finished(), g.is_finale_viewed(), g.pending_cinematics()], [true, true, []], label + " finished")
 							finals[g.save_json()] = label
 							n += 1
@@ -245,12 +250,10 @@ func _step_by_step() -> bool:
 		_sweep_locked(g, "after " + oid)
 	kit.ok(g.has_item("ev_c3_halves"), "the joint check grants the two halves at its last line")
 	kit.is_err(g.finale(true), "finale locked after c3g: Chapter 4 follows")
-	kit.play_c4a(g)
-	kit.play_c4b(g)
-	kit.play_c4c(g)
-	kit.play_c4d(g)
+	for stage in ["c4a", "c4b", "c4c", "c4d", "c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage)
 	kit.eq([g.current_quest(), g.available()], [{}, []], "montage: no quest, nothing available")
-	kit.is_ok(g.finale(true), "finale open after c4d")
+	kit.is_ok(g.finale(true), "finale open after c4h")
 	kit.eq(g.completed_events(), EVENTS, "events once each, in order")
 	kit.eq(g.choice_history().get("c3d_choose"), "admit_plan", "first option recorded")
 	return true
@@ -368,10 +371,8 @@ func _save_load() -> bool:
 		if oid == "c3d_choose":
 			kit.step(g.consume_cinematic("LS_C3_Fire", true), "fire watched")
 			roundtrip.call("fire consumed, registry C")
-	kit.play_c4a(g)
-	kit.play_c4b(g)
-	kit.play_c4c(g)
-	kit.play_c4d(g)
+	for stage in ["c4a", "c4b", "c4c", "c4d", "c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(g, stage)
 	roundtrip.call("Chapter 4 played, montage")
 	kit.is_ok(g.finale(false), "finale")
 	roundtrip.call("finished")
@@ -401,10 +402,8 @@ func _old_saves() -> bool:
 	kit.play_c3e(c)
 	kit.play_c3f(c)
 	kit.play_c3g(c, "swap_halves")
-	kit.play_c4a(c)
-	kit.play_c4b(c)
-	kit.play_c4c(c)
-	kit.play_c4d(c)
+	for stage in ["c4a", "c4b", "c4c", "c4d", "c4e", "c4f", "c4g", "c4h"]:
+		kit.play_stage(c, stage)
 	for seq in c.pending_cinematics():
 		kit.step(c.consume_cinematic(seq), "cinematic " + seq)
 	kit.is_ok(c.finale(), "finale")
@@ -417,9 +416,10 @@ func _old_saves() -> bool:
 	old["active_character"] = "none"
 	var r: Dictionary = kit.story().validate_save_json(Kit.dumps(old))
 	kit.eq([r.get("ok"), r.get("error")], [false, "Inconsistent save field: current_scene"], "a save claiming the old montage after c3b is rejected")
-	# the round-7 flag table is unchanged: part 2 adds no flag (C3P2_DESIGN §1.1)
+	# the round-7 flag table: part 2 added no flag (C3P2_DESIGN §1.1); round 10 adds people_protected after the save
+	# migration (C4P2_DESIGN §1.1) — older saves get its default when they load
 	var flag_names: Array = Kit.sorted(data["flags"]["flags"])
-	kit.eq(flag_names.size(), 16, "16 flags, as in round 7")
+	kit.eq(flag_names.size(), 17, "16 flags of round 7 + people_protected (round 10)")
 	for e in ["c3c_completed", "c3d_completed", "c3e_completed", "c3f_completed", "c3g_completed"]:
 		kit.ok((data["flags"]["events"] as Array).has(e), "event %s" % e)
 	kit.eq(data["flags"]["events"][-1], "slice_completed", "slice_completed stays the last event")

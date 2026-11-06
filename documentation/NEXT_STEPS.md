@@ -20,18 +20,22 @@ started.
   decision: protecting people vs. speed of publication. One new puzzle type, one in-level switch scene on a shared
   object, new cast only where the story needs it, memories / board / history cards for the new places.
 - **Polish from the round-9 reports:**
-  - seven cast-audio cues (`c4_stencil_brush`, `c4_card_tear`, `c4_stamp_accept`, `c4_stamp_dispatch`,
-    `c4_bell_once`, `c4_bell_twice`, `c4_lamp_out`) are generated but unused — the films use their own `c4cine_*`
-    sounds; wire the better one per beat or drop the rest;
-  - evidence board: the detail strip's thread list ends in „…“ on cards with three or more thread groups (the cork
-    shows them all) — show a count or let the strip page; close-ups for the Chapter-3-part-2 / Chapter-4 items that
-    still open their board picture instead of a document;
-  - generator hazard: `env_veltrava_hall.py`, `env_veltrava_station.py`, `env_c3p2_quay.py` and `env_berlin.py` delete
-    every PNG in their env folder and rewrite `scene.json` — they would drop the round-8/9 walker rigs and the
-    hand-added `actors` blocks; make them preserve both before anyone reruns them;
+  - **done (round 10):** the seven cast-audio cues — `c4_stamp_accept` / `c4_stamp_dispatch` are re-voiced as surface
+    layers over the `c4cine_*` beds and `c4_card_tear` sits on the perforator in LS_C4_Stamp s3b;
+    `c4_stencil_brush`, `c4_bell_once`, `c4_bell_twice` and `c4_lamp_out` are dropped (generator, test, manifest,
+    disk);
+  - **done (round 10):** the evidence board's detail strip pages its threads in whole groups („+n weitere“, kicker
+    „ROTE FÄDEN: 7 · 1/3“; F, pad X, a click or the wheel turn the pages). Still open: close-ups for the
+    Chapter-3-part-2 / Chapter-4 items that still open their board picture instead of a document;
+  - **done (round 10) for hall / station / quay:** the generator hazard — `tools/pixelgen/env_keep.py`: a generator
+    removes only the PNGs its own last run recorded and merges `scene.json` / `provenance.json`. Still open:
+    `env_berlin.py` (it rewrites `berlin_archive/scene.json` and would drop the round-8 AmbientWalkers actor — use
+    `KEEP.merge_scene` / `KEEP.write_json` and keep `walkers/`), and `env_c4_tunnels.py` / `env_c3p2_archive.py`
+    before anyone adds walkers or actors to their folders;
   - films: the stamp fists in LS_C4_Stamp are blocky, Konrad is small in s4 / n4, Fengler appears only as hands;
   - InspectView: the notice and plan captions move into the record card at 150 % (by design, check readability);
-  - Game ignores the `"grade"` key of c4.json switches on a level load (the annex sets its looks itself);
+  - **done (round 10):** Game applies a switch's `"grade"` on a level load (`Game._apply_switch_grade`, unless the
+    level has grade looks);
   - `documentation/screenshots/c4_annex_b_*` predate the counter fix; L_M1_HallReveal / L_M1_Parade have no hi-res
     capture frame.
 
@@ -44,6 +48,9 @@ started.
 - **Listen**: all 13 music cues, 13 ambiences and 259 SFX are synthesized and were only checked numerically — mix against
   dialogue; never heard by a person: the fire and quay sounds, the Chapter-4 music (the synthetic bayan in
   `mus_c4_karsk`), the trains over the Karsk tunnels, the annex fans and tube capsules.
+- Round 10, never heard either: the stamp layers in LS_C4_Stamp (−5 dB over the beds) and the card tear (−6 dB); the
+  band rehearsing the march in `amb_karsk_platform`, the radio level in `amb_berlin_courtyard`, the clock's tick under
+  the drone in LS_C4P2_Clock. Board paging with F / pad X has not been tried on hardware.
 
 ## 3. Known polish items (older reports)
 - Characters: faces share one lighting setup; women's faces still a little angular; `talk_back` only for the two
