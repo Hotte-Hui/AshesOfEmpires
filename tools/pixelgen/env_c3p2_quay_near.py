@@ -530,6 +530,15 @@ def make_fire_engine(lights):
     cv.rect(gx(t0 + 4), gy(by0 + 30), 112, 3, 'snow', 0.6)              # white band
     cv.rect(gx(t0 + 4), gy(by0), 112, 1, 'red', 0.34)
     snow_cap(cv, gx(t0 + 4), gy(by0) - 1, 112, 2, seed=258, tone=0.7)
+    # the equipment locker directly behind the cab (Gerätekasten of the side task „Eine Decke für Frau Brunner“,
+    # hotspot exp_task_blanket): a framed roller shutter -- door gap, horizontal slats, bottom bar + pull handle
+    k0, k1, ky0, ky1 = t0 + 79, t0 + 115, by0 + 3, by0 + 27         # x 337..373, y 243..267
+    cv.rect(gx(k0), gy(ky0), k1 - k0 + 1, ky1 - ky0 + 1, 'red', 0.06, hgt=0.45)
+    cv.rect(gx(k0 + 1), gy(ky0 + 1), k1 - k0 - 1, ky1 - ky0 - 1, 'red', 0.22, hgt=0.55)
+    for yy in range(ky0 + 2, ky1 - 3, 2):
+        cv.rect(gx(k0 + 1), gy(yy), k1 - k0 - 1, 1, 'red', 0.14)
+    cv.rect(gx(k0 + 1), gy(ky1 - 3), k1 - k0 - 1, 2, 'iron', 0.2, hgt=0.65)
+    cv.rect(gx((k0 + k1) // 2 - 2), gy(ky1 - 3), 5, 1, 'iron', 0.62, hgt=0.7)
     # turntable + ladder base
     cv.rect(gx(296), gy(230), 34, 10, 'iron', 0.2, hgt=0.7)
     cv.rect(gx(300), gy(226), 22, 5, 'iron', 0.28)

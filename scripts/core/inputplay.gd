@@ -19,6 +19,10 @@ extends Node
 ## right before each level's final decision (story-gated chats are active by then); a walk repeats, nearest first,
 ## until nothing new is findable (requirements unlock entries, chained hotspots move on to their next entry), and
 ## the last walk of a level checks that every side task of that level is done.
+## Chapter 4 part 1 (documentation/C4_DESIGN.md): Karsk cellar → Berlin tram loop (RoutePuzzle: Enter on the start
+## pose = one wrong attempt, then R, →×3, ↑×2, Enter) → the transfer siding (TracePuzzle: number keys, the tray order
+## first = wrong, then the solution, L once) → the Berlin annex and the decision (number key); optional 7th spec value
+## chooses c4d_choose. „Fortsetzen“ must resume in L_C4_AnnexB before c4d_choose.
 
 const Autoplay := preload("res://scripts/core/autoplay.gd")
 
@@ -36,15 +40,23 @@ const C3D := ["c3d_inspect_intake", "c3d_inspect_drawer", "c3d_talk_compare", "c
 const C3E := ["c3e_take_file", "c3e_try_ramp", "c3e_reach_konrad"]
 const C3F := ["c3f_inspect_hose", "c3f_push_desk", "c3f_climb"]
 const C3G := ["c3g_inspect_halves", "c3g_talk_konrad", "c3g_choose"]
+## Chapter 4 part 1 (C4_DESIGN.md §2.3): Karsk cellar (Alexei) → Berlin tram loop (Konrad) → siding (Alexei) → annex
+const C4A := ["c4a_inspect_shelf", "c4a_talk_lev", "c4a_inspect_book", "c4a_inspect_carbon", "c4a_talk_tunnel",
+	"c4a_open_door"]
+const C4B := ["c4b_inspect_notice", "c4b_talk_marta", "c4b_solve_routes", "c4b_inspect_column", "c4b_talk_ilse",
+	"c4b_inspect_crates"]
+const C4C := ["c4c_inspect_card", "c4c_inspect_stencils", "c4c_solve_numbers", "c4c_inspect_wagon", "c4c_talk_lev"]
+const C4D := ["c4d_inspect_drawer", "c4d_inspect_plan", "c4d_inspect_tube", "c4d_talk_registrar", "c4d_choose"]
 ## Scenes of a shared level whose route does not end the level's exploration: their last walk is not "final" (the
 ## registry's side tasks are checked at the end of B, the last registry scene with finds; C/D have none).
-const NOT_FINAL_WALK := ["L_C3_RegistryA", "L_C3_RegistryC", "L_C3_RegistryD"]
+const NOT_FINAL_WALK := ["L_C3_RegistryA", "L_C3_RegistryC", "L_C3_RegistryD", "L_C4_TunnelsA", "L_C4_AnnexA"]
 ## Choices answered with arrow keys + Enter (the others with number keys).
 const ARROW_CHOICES := ["a1_choose", "c3a_choose", "c3g_choose"]
 const E2E_SAVES := "user://e2e/saves"
 
 var choices := {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence", "c3a_choose": "ask_elena",
-	"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language"}
+	"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language",
+	"c4d_choose": "name_marta"}
 var skip_cine := false
 var shots_dir := ""
 var failures: Array = []
@@ -68,6 +80,8 @@ func configure(spec: String, do_skip: bool, shots: String) -> void:
 		choices["c3d_choose"] = parts[4]
 	if parts.size() >= 6 and parts[5] != "":
 		choices["c3g_choose"] = parts[5]
+	if parts.size() >= 7 and parts[6] != "":
+		choices["c4d_choose"] = parts[6]
 	skip_cine = do_skip
 	shots_dir = shots
 
@@ -91,7 +105,9 @@ func run() -> void:
 			and await _memories_trip() and await _explore_sample() and await _play_route(C3A, "L_C3_Station") \
 			and await _play_route(C3B, "L_C3_Hall") and await _play_route(C3C, "L_C3_RegistryA") \
 			and await _play_route(C3D, "L_C3_RegistryB") and await _play_route(C3E, "L_C3_RegistryC") \
-			and await _play_route(C3F, "L_C3_RegistryD") and await _play_route(C3G, "L_C3_Quay") and await _ending():
+			and await _play_route(C3F, "L_C3_RegistryD") and await _play_route(C3G, "L_C3_Quay") \
+			and await _play_route(C4A, "L_C4_TunnelsA") and await _play_route(C4B, "L_C4_AnnexA") \
+			and await _play_route(C4C, "L_C4_TunnelsB") and await _play_route(C4D, "L_C4_AnnexB") and await _ending():
 		await _continue_from_menu()
 	_finish(t0)
 
@@ -240,6 +256,10 @@ func _play_route(route: Array, level_id: String) -> bool:
 					await _protocol_puzzle()
 				elif oid == "c3d_solve_check":
 					await _check_puzzle()
+				elif oid == "c4b_solve_routes":
+					await _route_puzzle()
+				elif oid == "c4c_solve_numbers":
+					await _trace_puzzle()
 				else:
 					await _blueprint_puzzle()
 		if not await _until(func(): return not Game.busy, 20.0):
@@ -298,9 +318,9 @@ func _continue_from_menu() -> void:
 	if not await _until(func(): return _gameplay_ready(), 30.0):
 		_fail("'Fortsetzen' did not resume play")
 		return
-	if str(Game.level.level_id) != "L_C3_Quay" or Story.objective_state("c3g_choose") != "available":
-		_fail("'Fortsetzen' resumed at %s (c3g_choose %s), expected the last playable autosave" % [
-			Game.level.level_id, Story.objective_state("c3g_choose")])
+	if str(Game.level.level_id) != "L_C4_AnnexB" or Story.objective_state("c4d_choose") != "available":
+		_fail("'Fortsetzen' resumed at %s (c4d_choose %s), expected the last playable autosave" % [
+			Game.level.level_id, Story.objective_state("c4d_choose")])
 	await _wait(0.8)
 	await _shoot("continued")
 
@@ -476,6 +496,70 @@ func _check_puzzle() -> void:
 		_fail("check puzzle did not close after the correct order (state %s)" % Story.objective_state("c3d_solve_check"))
 
 
+## Chapter-4 route overlay (scenes/ui/RoutePuzzle.tscn, C4_DESIGN §2.7 key contract = the blueprint puzzle's):
+## Enter on the start pose {0, 0, 0} is the wrong attempt; then R (one turn), RIGHT ×3, UP ×2 and Enter.
+func _route_puzzle() -> void:
+	var pz: Node = null
+	var t := 0.0
+	while t < 5.0 and (pz == null or not pz.is_open):
+		pz = _ui_child("route_puzzle.gd")
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if pz == null or not pz.is_open:
+		_fail("route puzzle did not open")
+		return
+	await _wait(0.6)
+	await _shoot("routes_start")
+	await _tap(KEY_ENTER)
+	await _wait(0.6)
+	if Story.objective_state("c4b_solve_routes") == "complete":
+		_fail("route puzzle accepted the start pose")
+		return
+	for k in [KEY_R, KEY_RIGHT, KEY_RIGHT, KEY_RIGHT, KEY_UP, KEY_UP]:
+		await _tap(k)
+	await _wait(0.3)
+	await _shoot("routes_aligned")
+	await _tap(KEY_ENTER)
+	if not await _until(func(): return not pz.is_open, 8.0):
+		_fail("route puzzle did not close after aligning (state %s)" % Story.objective_state("c4b_solve_routes"))
+
+
+## Chapter-4 number chain (scenes/ui/TracePuzzle.tscn, C4_DESIGN §2.7 key contract = CheckPuzzle + L): number key n
+## hangs the n-th tray plate on the next post; the tray order is a wrong chain, then the solution; L toggles the lamp.
+func _trace_puzzle() -> void:
+	var pz: Node = null
+	var t := 0.0
+	while t < 5.0 and (pz == null or not pz.is_open):
+		pz = _ui_child("trace_puzzle.gd")
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if pz == null or not pz.is_open:
+		_fail("number chain puzzle did not open")
+		return
+	var data_shown: Array = Story.puzzle_for("c4c_solve_numbers").get("display_symbols", [])
+	var shown: Array = pz.get("symbols") if pz.get("symbols") is Array else data_shown
+	await _wait(0.6)
+	await _shoot("numbers_start")
+	await _tap(KEY_L)                          # the lamp: the numbers under the paint
+	await _wait(0.4)
+	for k in [KEY_1, KEY_2, KEY_3, KEY_4]:     # the tray order is a wrong chain (C4_DESIGN §2.7)
+		await _tap(k)
+	await _tap(KEY_ENTER)
+	await _wait(0.8)
+	if Story.objective_state("c4c_solve_numbers") == "complete":
+		_fail("number chain puzzle accepted a wrong order")
+		return
+	for i in 4:
+		await _tap(KEY_BACKSPACE)
+	for sym in ["n24318", "c1742", "n47702", "c1745"]:
+		await _tap(KEY_1 + shown.find(sym))
+	await _wait(0.3)
+	await _shoot("numbers_solved")
+	await _tap(KEY_ENTER)
+	if not await _until(func(): return not pz.is_open, 10.0):
+		_fail("number chain puzzle did not close after the correct order (state %s)" % Story.objective_state("c4c_solve_numbers"))
+
+
 func _ui_child(script_suffix: String) -> Node:
 	for c in ui.get_children():
 		var sc = c.get_script()
@@ -522,7 +606,7 @@ func _settle(tag: String) -> void:
 		if Game.in_cinematic:
 			await _wait(1.6)
 			await _shoot("cinematic_after_" + tag)
-			if skip_cine:
+			if skip_cine and Game.in_cinematic:     # it may have ended meanwhile: Esc would open the pause menu
 				await _tap(KEY_ESCAPE)
 			var w := 0.0
 			while Game.in_cinematic and w < 60.0:
@@ -535,7 +619,22 @@ func _settle(tag: String) -> void:
 				return
 		await _wait(0.2)
 		t += 0.2
-	_fail("game did not settle after " + tag)
+	_fail("game did not settle after %s (%s)" % [tag, _state_text()])
+
+
+## One line of game state for a failure message (what blocked the settle).
+func _state_text() -> String:
+	var lvl := "none"
+	if Game.level != null and is_instance_valid(Game.level):
+		lvl = str(Game.level.get("level_id"))
+	var who := "none"
+	if Game.player != null and is_instance_valid(Game.player):
+		who = "%s@%s" % [Game.player.get("char_id"), Game.player.position.round()]
+	var top = ui.call("top_modal") if ui != null and ui.has_method("top_modal") else null
+	return "story %s, level %s, player %s, busy %s, cinematic %s, input_locked %s, paused %s, fade %.2f, modal %s, pending %s" % [
+		Game._story_scene(), lvl, who, Game.busy, Game.in_cinematic, Game.input_locked, get_tree().paused,
+		Game._fade.color.a, top.name if top != null else "none",
+		Story.pending_cinematics() if Story.has_method("pending_cinematics") else []]
 
 
 # ------------------------------------------------------------------ side levels (parade plaza)

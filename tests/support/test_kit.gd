@@ -13,13 +13,19 @@ const M1_OVERLAY := {"rotation_steps": 0, "offset_x": 2, "offset_y": -1}
 const C3_PROTOCOL := ["chair", "reich", "secretariat", "soviet"]
 ## pz_c3_check (documentation/C3P2_DESIGN.md §2.7): the registry entry for each row of Alexei's freight chain.
 const C3_CHECK := ["in_c17_44", "out_2340", "par_4", "january"]
+## Chapter 4 part 1 (documentation/C4_DESIGN.md §2.7): pz_c4_routes „Linie 74“ (Marta's route over the site plan) and
+## pz_c4_numbers „Die Nummernkette“ (the plates of wagon 24 318 in the order it wore them).
+const C4_ROUTES := {"rotation_steps": 1, "offset_x": 3, "offset_y": -2}
+const C4_NUMBERS := ["n24318", "c1742", "n47702", "c1745"]
 ## The scene chain and the stages of the canonical route (each stage ends with its quest's last objective; the
-## stages with a decision end with it). Chapter 3 part 2 (C3P2_DESIGN.md): c3c … c3g.
+## stages with a decision end with it). Chapter 3 part 2 (C3P2_DESIGN.md): c3c … c3g. Chapter 4 part 1 (C4_DESIGN.md):
+## c4a (Karsk cellar) … c4d (Berlin annex, the decision).
 const CHAIN := ["L_A1_Railyard", "L_M1_Archive", "L_C3_Station", "L_C3_Hall", "L_C3_RegistryA", "L_C3_RegistryB",
-	"L_C3_RegistryC", "L_C3_RegistryD", "L_C3_Quay", "L_X1_Montage"]
-const STAGES := ["a1", "m1", "c3a", "c3b", "c3c", "c3d", "c3e", "c3f", "c3g"]
+	"L_C3_RegistryC", "L_C3_RegistryD", "L_C3_Quay", "L_C4_TunnelsA", "L_C4_AnnexA", "L_C4_TunnelsB", "L_C4_AnnexB",
+	"L_X1_Montage"]
+const STAGES := ["a1", "m1", "c3a", "c3b", "c3c", "c3d", "c3e", "c3f", "c3g", "c4a", "c4b", "c4c", "c4d"]
 const DEFAULT_CHOICES := {"a1": "share_with_irina", "m1": "preserve_evidence", "c3a": "ask_elena", "c3b": "share_protocol",
-	"c3d": "admit_plan", "c3g": "split_by_language"}
+	"c3d": "admit_plan", "c3g": "split_by_language", "c4d": "name_marta"}
 
 var failures: Array = []
 var context := ""
@@ -205,21 +211,23 @@ func get_to_signal(g: Node) -> void:
 	step(g.inspect("a1_inspect_timetable"), "inspect timetable")
 
 
-## The canonical route through the whole chain A1 → M1 → C3a → C3b → C3c … C3g → finale (the Python counterpart
+## The canonical route through the whole chain A1 → M1 → C3a → C3b → C3c … C3g → C4a … C4d → finale (the Python counterpart
 ## is play_full_route() in tests/reference/make_python_reference.py; story_engine_v4.play_verified_route()
 ## itself ends after M1, where the finale is locked since Chapter 3 was inserted). Authentic dialogue and
 ## puzzle flows, no bypass; every cinematic is consumed at the end, then the finale.
 func play_verified_route(a1 := "share_with_irina", m1 := "preserve_evidence", skip := false,
-		c3a := "ask_elena", c3b := "share_protocol", c3d := "admit_plan", c3g := "split_by_language") -> Node:
+		c3a := "ask_elena", c3b := "share_protocol", c3d := "admit_plan", c3g := "split_by_language",
+		c4d := "name_marta") -> Node:
 	var g := story()
-	play_route_on(g, a1, m1, skip, false, c3a, c3b, c3d, c3g)
+	play_route_on(g, a1, m1, skip, false, c3a, c3b, c3d, c3g, c4d)
 	return g
 
 
 ## Same route on an existing instance. consume_now = consume each cinematic as soon as it is queued
 ## (what the Game director does) instead of all at the end (what the Python helper does).
 func play_route_on(g: Node, a1: String, m1: String, skip: bool, consume_now: bool,
-		c3a := "ask_elena", c3b := "share_protocol", c3d := "admit_plan", c3g := "split_by_language") -> void:
+		c3a := "ask_elena", c3b := "share_protocol", c3d := "admit_plan", c3g := "split_by_language",
+		c4d := "name_marta") -> void:
 	var drain := func() -> void:
 		if consume_now:
 			for seq in g.pending_cinematics():
@@ -240,6 +248,14 @@ func play_route_on(g: Node, a1: String, m1: String, skip: bool, consume_now: boo
 	play_c3f(g)
 	drain.call()
 	play_c3g(g, c3g)
+	drain.call()
+	play_c4a(g)
+	drain.call()
+	play_c4b(g)
+	drain.call()
+	play_c4c(g)
+	drain.call()
+	play_c4d(g, c4d)
 	for seq in g.pending_cinematics():
 		step(g.consume_cinematic(seq, skip), "cinematic " + seq)
 	step(g.finale(skip), "finale")
@@ -323,7 +339,43 @@ func play_c3g(g: Node, c3g := "split_by_language") -> void:
 	step(g.choose("c3g_choose", c3g), "c3g choice")
 
 
-## Plays the canonical route up to and including the last objective of `stage` ("a1" … "c3g"); no cinematic is
+## Chapter 4 part 1 (documentation/C4_DESIGN.md §2.3): Karsk cellar (Alexei), Berlin tram loop (Konrad, the route
+## puzzle), the transfer siding (Alexei, the number puzzle), the registry annex (Konrad, the decision).
+func play_c4a(g: Node) -> void:
+	step(g.inspect("c4a_inspect_shelf"), "inspect the shelf")
+	play_dialogue(g, "c4a_talk_lev")
+	step(g.inspect("c4a_inspect_book"), "inspect the January book")
+	step(g.inspect("c4a_inspect_carbon"), "inspect the carbons")
+	play_dialogue(g, "c4a_talk_tunnel")
+	step(g.inspect("c4a_open_door"), "open the tunnel door")
+
+
+func play_c4b(g: Node) -> void:
+	step(g.inspect("c4b_inspect_notice"), "inspect the notice")
+	play_dialogue(g, "c4b_talk_marta")
+	step(g.solve_puzzle("c4b_solve_routes", C4_ROUTES.duplicate()), "solve the route overlay")
+	step(g.inspect("c4b_inspect_column"), "inspect the column")
+	play_dialogue(g, "c4b_talk_ilse")
+	step(g.inspect("c4b_inspect_crates"), "inspect the crates")
+
+
+func play_c4c(g: Node) -> void:
+	step(g.inspect("c4c_inspect_card"), "inspect the card")
+	step(g.inspect("c4c_inspect_stencils"), "inspect the stencils")
+	step(g.solve_puzzle("c4c_solve_numbers", C4_NUMBERS.duplicate()), "solve the number chain")
+	step(g.inspect("c4c_inspect_wagon"), "inspect the wagon")
+	play_dialogue(g, "c4c_talk_lev")
+
+
+func play_c4d(g: Node, c4d := "name_marta") -> void:
+	step(g.inspect("c4d_inspect_drawer"), "inspect drawer Süd 8")
+	step(g.inspect("c4d_inspect_plan"), "inspect the annex plan")
+	step(g.inspect("c4d_inspect_tube"), "inspect the tube slip")
+	play_dialogue(g, "c4d_talk_registrar")
+	step(g.choose("c4d_choose", c4d), "c4d choice")
+
+
+## Plays the canonical route up to and including the last objective of `stage` ("a1" … "c4d"); no cinematic is
 ## consumed and the finale is not called. choices: {stage: option} overrides DEFAULT_CHOICES.
 func play_until(g: Node, stage: String, choices := {}) -> void:
 	var c := DEFAULT_CHOICES.duplicate()
@@ -352,6 +404,14 @@ func play_until(g: Node, stage: String, choices := {}) -> void:
 				play_c3f(g)
 			"c3g":
 				play_c3g(g, c["c3g"])
+			"c4a":
+				play_c4a(g)
+			"c4b":
+				play_c4b(g)
+			"c4c":
+				play_c4c(g)
+			"c4d":
+				play_c4d(g, c["c4d"])
 
 
 static func parse(text: String) -> Variant:

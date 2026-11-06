@@ -69,6 +69,9 @@ var level: Node = null
 var player: Node = null
 var input_locked := false
 var interact_ready_at := 0
+## When the last interaction ended; „advance“ cannot skip a cinematic within CINE_ADVANCE_GUARD_MS of it.
+var _interact_end_ms := -100000
+const CINE_ADVANCE_GUARD_MS := 700
 var side_level := false         # an optional walkable level outside the Story scene chain (the parade plaza)
 var _plaza_after_hall := false      # ticks (ms); player interact presses before this are ignored
 var busy := false
@@ -322,7 +325,7 @@ func _on_load_slot(slot) -> void:
 	if r is Dictionary and not r.get("ok", false):
 		toast(Loc.t("ui.load_failed") if Loc.has("ui.load_failed") else str(r.get("error", "")))
 		return
-	_on_loaded_slot(slot)
+	await _on_loaded_slot(slot)
 
 
 func _on_loaded_slot(_slot = "") -> void:
@@ -1009,6 +1012,7 @@ func interact(it: Node) -> void:
 	input_locked = false
 	# The key press that closed the last line/panel must not immediately trigger the next interaction.
 	interact_ready_at = Time.get_ticks_msec() + 350
+	_interact_end_ms = Time.get_ticks_msec()
 	await _after_story_change()
 
 
@@ -1656,16 +1660,25 @@ func _show_disclaimer() -> void:
 func _show_end_card() -> void:
 	var lines: Array = [Loc.t("ui.slice_end")]
 	if Story.has_method("choice_history"):
-		var ch: Dictionary = Story.choice_history()
-		for oid in ch:
-			for c in objectives.get(oid, {}).get("choices", []):
-				if c["id"] == ch[oid]:
-					lines.append("• " + Loc.t(c["text_key"]))
+		lines.append_array(end_card_decisions(Story.choice_history()))
 	_title.text = Loc.t("game.title")
 	_title.visible = true
 	_caption.text = "\n".join(lines)
 	_caption.visible = true
 	_caption.modulate.a = 1.0
+
+
+## The end card's decision list (C4_DESIGN §1, round 9): one bullet per recorded decision in STORY order (the
+## objective order of quests.json) — a loaded save's choice_history comes back key-sorted, which put m1 last.
+func end_card_decisions(ch: Dictionary) -> Array:
+	var out: Array = []
+	for oid in objectives:
+		if not ch.has(oid):
+			continue
+		for c in objectives[oid].get("choices", []):
+			if c["id"] == ch[oid]:
+				out.append("• " + Loc.t(c["text_key"]))
+	return out
 
 
 # ------------------------------------------------------------------ overlay: fades, stills, captions
@@ -1864,6 +1877,9 @@ func memory_info() -> Dictionary:
 ## Cards of the MemoryView: one per walkable scene in story order. context "game": unlocked = completed in the
 ## running Story state; "menu": completed at least once (profile). Locked cards carry no names (no spoilers).
 ## The scene the player stands in right now is flagged `current` (not a memory while you are there).
+## found / total: the finds of the scene's level file (ChapterExt.level_key); an entry naming its "scene" counts on
+## that scene's card only (the C4 levels: each card its own walk area), one without (the registry) on every card of
+## the file. "menu" counts the profile's finds, "game" the running Explore state.
 func memory_scenes(context := "game") -> Array:
 	var out: Array = []
 	var menu := context == "menu"
@@ -1875,16 +1891,14 @@ func memory_scenes(context := "game") -> Array:
 		var found := 0
 		var total := 0
 		if open and Explore.has_method("entries_for"):
-			var key := str(ext.level_key(id))     # scenes sharing one level file count that level's finds
-			if menu:
-				for e in Explore.entries_for(key):
-					total += 1
-					if ex_found.has(str(e.get("id", ""))):
-						found += 1
-			else:
-				var c: Dictionary = Explore.counts(key)
-				found = int(c.get("found", 0))
-				total = int(c.get("total", 0))
+			var key := str(ext.level_key(id))     # scenes sharing one level file read that level's finds
+			for e in Explore.entries_for(key):
+				if str(e.get("scene", id)) != id:
+					continue                      # a find of another scene's walk area in the same file
+				total += 1
+				var eid := str(e.get("id", ""))
+				if (ex_found.has(eid) if menu else Explore.is_found(eid)):
+					found += 1
 		out.append({"id": id, "unlocked": open, "current": open and id == here, "side": bool(s["side"]),
 			"place": memories.place(id) if open else "", "date": memories.date_line(id) if open else "",
 			"chapter": memories.chapter_line(id) if open else "", "who": str(s["protagonist"]) if open else "",
@@ -2254,10 +2268,13 @@ func _memory_protagonist() -> String:
 
 ## Inside a memory every story hotspot of the level gets a read-only twin (kind "observe", always active; the
 ## originals stay silent because their objectives are complete). A conversation and the decision taken with the
-## same person become one hotspot that replays both.
+## same person in the same Story scene become one hotspot that replays both. §12.11: in a level file shared by
+## several Story scenes only the objectives of the remembered scene get twins (the cellar memory never replays the
+## siding, Lev's two scenes never merge into one twin).
 func _spawn_memory_hotspots() -> void:
 	if level == null or level.get("playfield") == null:
 		return
+	var own_scene := memory_scene if is_switch_scene(memory_scene) else ""
 	var groups := {}
 	var order: Array = []
 	for it in get_tree().get_nodes_in_group("interactables"):
@@ -2267,8 +2284,11 @@ func _spawn_memory_hotspots() -> void:
 		var oid := str(it.get("objective_id"))
 		if not (k in Memories.STORY_KINDS) or oid == "":
 			continue
+		var sc := str(Story.quest_for(oid).get("scene", ""))
+		if own_scene != "" and sc != own_scene:
+			continue   # another scene of the shared level: not part of this memory
 		var npc := str(it.get("npc_id"))
-		var key := ("npc:" + npc) if npc != "" and k in ["dialogue", "choice"] else ("it:%d" % it.get_instance_id())
+		var key := ("npc:%s@%s" % [npc, sc]) if npc != "" and k in ["dialogue", "choice"] else ("it:%d" % it.get_instance_id())
 		if not groups.has(key):
 			groups[key] = {"node": it, "oids": [], "kinds": []}
 			order.append(key)
@@ -2585,7 +2605,10 @@ func _notification(what: int) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if in_cinematic:
-		if event.is_action_pressed("skip") or event.is_action_pressed("advance"):
+		# „advance“ (Space / Enter / E / pad A) pressed while the last line or panel was closing must not also skip the
+		# film that starts right after it (it is still fading in); the skip key always skips.
+		var stray := Time.get_ticks_msec() - _interact_end_ms < CINE_ADVANCE_GUARD_MS
+		if event.is_action_pressed("skip") or (event.is_action_pressed("advance") and not stray):
 			_skip = true
 			get_viewport().set_input_as_handled()
 		return

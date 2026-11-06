@@ -1,4 +1,4 @@
-# QUEST DATABASE — Vertical Slice (A1 · M1 · X1) and Chapter 3 (C3: opening, registry, fire, quay)
+# QUEST DATABASE — Vertical Slice (A1 · M1 · X1), Chapter 3 (C3: opening, registry, fire, quay) and Chapter 4 part 1 (C4)
 
 Status: AUTHORED 2026-11-04 by the story_engine area from the canonical data `data/v3/*.json` and the preproduction
 narrative (`preproduction/narrative/CHOICE_CONSEQUENCE_MATRIX_V4.md`, `VERTICAL_SLICE_SCRIPT_V3.md`,
@@ -45,12 +45,16 @@ Signals (`Story`): `objective_completed(id)`, `item_granted(id)`, `flag_changed(
 | 6 | `L_C3_RegistryB` | Registratur der Kommission – Sortiertisch | `konrad` | `side_on_2d` | `SP_C3_KonradCards` | `q_c3d_check` | `c3d_completed` | `L_C3_RegistryC` | `rp_veltrava_registry` |
 | 7 | `L_C3_RegistryC` | Registratur der Kommission – Rauch | `alexei` | `side_on_2d` | `SP_C3_AlexeiTable` | `q_c3e_smoke` | `c3e_completed` | `L_C3_RegistryD` | `rp_veltrava_fire` |
 | 8 | `L_C3_RegistryD` | Registratur der Kommission – Kohlenschütte | `konrad` | `side_on_2d` | `SP_C3_KonradBooth` | `q_c3f_chute` | `c3f_completed` | `L_C3_Quay` | `rp_veltrava_fire` |
-| 9 | `L_C3_Quay` | Am Kai hinter dem Palais, Veltrava (fiktiv) | `alexei` | `side_on_2d` | `SP_C3_Quay` | `q_c3g_snow` | `c3g_completed` | `L_X1_Montage` | `rp_veltrava_quay` |
-| 10 | `L_X1_Montage` | Zwei Städte – ein Dokument | `none` | `cinematic` | `none` | — | `slice_completed` | — | `rp_transition` |
+| 9 | `L_C3_Quay` | Am Kai hinter dem Palais, Veltrava (fiktiv) | `alexei` | `side_on_2d` | `SP_C3_Quay` | `q_c3g_snow` | `c3g_completed` | `L_C4_TunnelsA` | `rp_veltrava_quay` |
+| 10 | `L_C4_TunnelsA` | Archivkeller der Güterabfertigung, Karsk (fiktiv) | `alexei` | `side_on_2d` | `SP_C4_Stairs` | `q_c4a_cellar` | `c4a_completed` | `L_C4_AnnexA` | `rp_karsk_cellar` |
+| 11 | `L_C4_AnnexA` | Wendeschleife Süd 8, Berlin (alternative Geschichte) | `konrad` | `side_on_2d` | `SP_C4_Shelter` | `q_c4b_loop` | `c4b_completed` | `L_C4_TunnelsB` | `rp_berlin_dawn` |
+| 12 | `L_C4_TunnelsB` | Umsetzgleis unter dem Güterbahnhof, Karsk | `alexei` | `side_on_2d` | `SP_C4_Office` | `q_c4c_siding` | `c4c_completed` | `L_C4_AnnexB` | `rp_karsk_tunnel` |
+| 13 | `L_C4_AnnexB` | Erfassungsstelle, Nebenstelle Süd – Berlin | `konrad` | `side_on_2d` | `SP_C4_Ladder` | `q_c4d_annex` | `c4d_completed` | `L_X1_Montage` | `rp_berlin_annex` |
+| 14 | `L_X1_Montage` | Zwei Städte – ein Dokument | `none` | `cinematic` | `none` | — | `slice_completed` | — | `rp_transition` |
 
 Start scene: `L_A1_Railyard`. Protagonist switches happen **only** through the completion events (no swap menu).
-Chapter keys for save slots / HUD (quest titles): `ui.chapter_a1` „Das letzte Signal“, `ui.chapter_m1` „Die falsche Zeichnung“, `ui.chapter_c3` „Der eiserne Frieden“; the montage uses its scene title `world.x1.title`.
-The finale needs every event of `slice_end_requires`: `a1_completed`, `m1_completed`, `c3a_completed`, `c3b_completed`, `c3c_completed`, `c3d_completed`, `c3e_completed`, `c3f_completed`, `c3g_completed`.
+Chapter keys for save slots / HUD (quest titles): `ui.chapter_a1` „Das letzte Signal“, `ui.chapter_m1` „Die falsche Zeichnung“, `ui.chapter_c3` „Der eiserne Frieden“, `ui.chapter_c4` „Stimmen unter Beton“; the montage uses its scene title `world.x1.title`.
+The finale needs every event of `slice_end_requires`: `a1_completed`, `m1_completed`, `c3a_completed`, `c3b_completed`, `c3c_completed`, `c3d_completed`, `c3e_completed`, `c3f_completed`, `c3g_completed`, `c4a_completed`, `c4b_completed`, `c4c_completed`, `c4d_completed`.
 <!-- FLOW:END -->
 
 ---
@@ -336,7 +340,7 @@ Binding design: `documentation/C3_DESIGN.md` (opening: station, palais) and `doc
 | `c3d_completed` | `c3d_choose` | `LS_C3_Fire` | `L_C3_RegistryC` (`alexei`) | `q_c3e_smoke` |
 | `c3e_completed` | `c3e_reach_konrad` | — | `L_C3_RegistryD` (`konrad`) | `q_c3f_chute` |
 | `c3f_completed` | `c3f_climb` | `LS_C3_Escape` | `L_C3_Quay` (`alexei`) | `q_c3g_snow` |
-| `c3g_completed` | `c3g_choose` | `LS_C3_Halves` | `L_X1_Montage` (`none`) | finale gate |
+| `c3g_completed` | `c3g_choose` | `LS_C3_Halves`, `LS_C4_Homeward` | `L_C4_TunnelsA` (`alexei`) | `q_c4a_cellar` |
 
 Saves that claim the old demo end (montage / `slice_completed` directly after M1) no longer replay; every save taken before it stays valid (§9).
 
@@ -666,7 +670,7 @@ Granted once, in acquisition order, after the six slice items (the canonical rou
 |---|---|---|---|---|
 | `alexei_konrad_trust` | integer | 0 | 0–5 | `c3b_choose = share_protocol` (+1), `c3d_choose = admit_plan` (+1), `c3g_choose = swap_halves` (+1) |
 | `elena_trust` | integer | 0 | 0–3 | `c3a_choose = ask_elena` (+1), `c3b_choose = search_elena` (+1), `c3g_choose = hide_for_elena` (+1) |
-| `evidence_chain` | integer | 0 | 0–6 | `c3a_choose = note_alone` (+1), `c3d_choose = pocket_plan` (+1), `c3g_choose = split_by_language` (+1) |
+| `evidence_chain` | integer | 0 | 0–6 | `c3a_choose = note_alone` (+1), `c3d_choose = pocket_plan` (+1), `c3g_choose = split_by_language` (+1), `c4d_choose = name_marta` (+1) |
 | `kessler_alerted` | integer | 0 | 0–3 | `c3b_choose = report_delegation` (+1) |
 | `courier_files_seen` | boolean | false | — | `c3a_inspect_weighbill` |
 | `protocol_matched` | boolean | false | — | `c3b_solve_protocol` |
@@ -764,3 +768,305 @@ Queued once in data order (`LS_C3_Trains` right after `LS_X1_Final`, both on `m1
 | `typist` | Frau Brunner | Schreibkraft im Protokollbüro der Kommission | Tippt im Protokollbüro die Sitzungsprotokolle in drei Sprachen. |
 | `journalist` | Nils Ekdahl | Korrespondent einer Stockholmer Zeitung | Schwedischer Korrespondent. Sucht jemanden, der ihm eine Zeichnung zeigt, die nicht stimmt. |
 <!-- C3:END -->
+
+---
+
+<!-- C4:BEGIN (generated by tools/docs/gen_quest_db_c4.py) -->
+## 12. Chapter 4, part 1 — „Stimmen unter Beton“ (Karsk and Berlin: the transport path and the archive path)
+
+Binding design: `documentation/C4_DESIGN.md`. Everything in this section is generated from `data/v3`, `data/chapters/c4.json` and `data/locale/de_c4_*.json` by `tools/docs/gen_quest_db_c4.py`; edit the data, then re-run the script. The engine is unchanged: Chapter 4 part 1 is four more quests in the single scene chain, inserted between `L_C3_Quay` and the montage, alternating between Karsk (Alexei) and Berlin (Konrad). Two level files host two scenes each (`L_C4_Tunnels.tscn`: TunnelsA/B, `L_C4_Annex.tscn`: AnnexA/B); every scene change crosses a city and loads a level, the match-cut cinematics carry the protagonists between them. No new flag; the one decision writes an existing meter and the choice history.
+
+### 12.1 Scene flow and transitions
+
+| Event | Fired by (last objective) | Queues (data order) | Scene → (protagonist) | Unlocks |
+|---|---|---|---|---|
+| `c3g_completed` | `c3g_choose` | `LS_C3_Halves`, `LS_C4_Homeward` | `L_C4_TunnelsA` (`alexei`) | `q_c4a_cellar` |
+| `c4a_completed` | `c4a_open_door` | `LS_C4_Number` | `L_C4_AnnexA` (`konrad`) | `q_c4b_loop` |
+| `c4b_completed` | `c4b_inspect_crates` | `LS_C4_Card` | `L_C4_TunnelsB` (`alexei`) | `q_c4c_siding` |
+| `c4c_completed` | `c4c_talk_lev` | `LS_C4_Stamp` | `L_C4_AnnexB` (`konrad`) | `q_c4d_annex` |
+| `c4d_completed` | `c4d_choose` | `LS_C4_Voices` | `L_X1_Montage` (`none`) | finale gate |
+
+Level file per scene: `L_C4_TunnelsA` → `res://scenes/levels/L_C4_Tunnels.tscn`, `L_C4_AnnexA` → `res://scenes/levels/L_C4_Annex.tscn`, `L_C4_TunnelsB` → `res://scenes/levels/L_C4_Tunnels.tscn`, `L_C4_AnnexB` → `res://scenes/levels/L_C4_Annex.tscn`. Each scene has its own entry spawn (`L_C4_TunnelsA` `SP_C4_Stairs`, `L_C4_AnnexA` `SP_C4_Shelter`, `L_C4_TunnelsB` `SP_C4_Office`, `L_C4_AnnexB` `SP_C4_Ladder`) and its own walk area.
+
+### 12.2 Quests
+
+| Quest | Title (de) | Character | Scene | Gate (`requires_events`) | Completion event |
+|---|---|---|---|---|---|
+| `q_c4a_cellar` | Stimmen unter Beton (`ui.chapter_c4`) | `alexei` | `L_C4_TunnelsA` | `c3g_completed` | `c4a_completed` |
+| `q_c4b_loop` | Stimmen unter Beton (`ui.chapter_c4`) | `konrad` | `L_C4_AnnexA` | `c4a_completed` | `c4b_completed` |
+| `q_c4c_siding` | Stimmen unter Beton (`ui.chapter_c4`) | `alexei` | `L_C4_TunnelsB` | `c4b_completed` | `c4c_completed` |
+| `q_c4d_annex` | Stimmen unter Beton (`ui.chapter_c4`) | `konrad` | `L_C4_AnnexB` | `c4c_completed` | `c4d_completed` |
+
+### 12.3 Objectives
+
+#### 12.3.1 `q_c4a_cellar` — Archivkeller der Güterabfertigung, Karsk (fiktiv) (Alexei)
+
+```
+c4a_inspect_shelf ─> c4a_talk_lev ─> c4a_inspect_book ─> c4a_inspect_carbon ─> c4a_talk_tunnel ─> c4a_open_door ══> c4a_completed
+```
+
+| Objective | Type | Objective text (de) | Requires | Grants | Effects | Details |
+|---|---|---|---|---|---|---|
+| `c4a_inspect_shelf` | inspect | Such im Archivkeller die Frachtbücher vom Januar. | — | `ev_c4_book_gap` | — | hotspot `book_shelf` |
+| `c4a_talk_lev` | dialogue | Sprich mit Lev Sokolov an seinem Tisch. | `c4a_inspect_shelf` | — | — | `dlg_c4a_lev`, 8 nodes; hotspot `lev_cellar` |
+| `c4a_inspect_book` | inspect | Lies im Januarbuch die Spalte ‚Genehmigt‘. | `c4a_talk_lev` | `ev_c4_cut_signatures` | — | hotspot `desk_book` |
+| `c4a_inspect_carbon` | inspect | Halte Levs Durchschläge gegen die Lampe. | `c4a_inspect_book` | `ev_c4_carbon` | — | hotspot `lamp_table` |
+| `c4a_talk_tunnel` | dialogue | Frag Lev, wohin die Wagen gefahren sind. | `c4a_inspect_carbon` | `ev_c4_tunnel_plan` | — | `dlg_c4a_tunnel`, 9 nodes; item at the terminal node; hotspot `lev_cellar` |
+| `c4a_open_door` | inspect | Öffne die Eisentür zum Dienststollen. | `c4a_talk_tunnel` | `ev_c4_fresh_tracks` | — | hotspot `tunnel_door` |
+
+#### 12.3.2 `q_c4b_loop` — Wendeschleife Süd 8, Berlin (alternative Geschichte) (Konrad)
+
+```
+c4b_inspect_notice ─> c4b_talk_marta ─> c4b_solve_routes ─> c4b_inspect_column ─> c4b_talk_ilse ─> c4b_inspect_crates ══> c4b_completed
+```
+
+| Objective | Type | Objective text (de) | Requires | Grants | Effects | Details |
+|---|---|---|---|---|---|---|
+| `c4b_inspect_notice` | inspect | Lies den Bescheid an der Tür von Nummer neun. | — | `ev_c4_notice` | — | hotspot `door_9` |
+| `c4b_talk_marta` | dialogue | Sprich mit der Fahrerin der Linie 74. | `c4b_inspect_notice` | `ev_c4_route_board` | — | `dlg_c4b_marta`, 13 nodes; item at the terminal node; hotspot `marta_tram` |
+| `c4b_solve_routes` | puzzle | Leg Martas Linienplan im Licht des Fahrplankastens auf den Lageplan. | `c4b_talk_marta` | — | — | `pz_c4_routes`; hotspot `timetable_case` |
+| `c4b_inspect_column` | inspect | Sieh dir die Litfaßsäule an der Schleife an. | `c4b_solve_routes` | `ev_c4_shaft` | — | hotspot `column_s2` |
+| `c4b_talk_ilse` | dialogue | Sag Marta, was unter ihrer Schleife liegt. | `c4b_inspect_column` | — | — | `dlg_c4b_ilse`, 12 nodes; hotspot `marta_tram` |
+| `c4b_inspect_crates` | inspect | Sieh dir die Kisten an der Ladeluke an. | `c4b_talk_ilse` | `ev_c4_card_de` | — | hotspot `loading_hatch` |
+
+#### 12.3.3 `q_c4c_siding` — Umsetzgleis unter dem Güterbahnhof, Karsk (Alexei)
+
+```
+c4c_inspect_card + c4c_inspect_stencils ─> c4c_solve_numbers ─> c4c_inspect_wagon ─> c4c_talk_lev ══> c4c_completed
+```
+
+| Objective | Type | Objective text (de) | Requires | Grants | Effects | Details |
+|---|---|---|---|---|---|---|
+| `c4c_inspect_card` | inspect | Lies die Karteikarte auf dem Tisch der Gleisbude. | — | `ev_c4_card_ru` | — | hotspot `office_desk` |
+| `c4c_inspect_stencils` | inspect | Sieh dir den Farbstand mit den Schablonen an. | — | `ev_c4_stencils` | — | hotspot `paint_stand` |
+| `c4c_solve_numbers` | puzzle | Finde heraus, welche Nummern dieser Wagen getragen hat. | `c4c_inspect_card`, `c4c_inspect_stencils` | — | — | `pz_c4_numbers`; hotspot `wagon_side` |
+| `c4c_inspect_wagon` | inspect | Schieb die Tür des Wagens auf. | `c4c_solve_numbers` | `ev_c4_wagon_inside` | — | hotspot `wagon_door` |
+| `c4c_talk_lev` | dialogue | Sprich mit Lev. | `c4c_inspect_wagon` | — | — | `dlg_c4c_lev`, 12 nodes; hotspot `lev_siding` |
+
+#### 12.3.4 `q_c4d_annex` — Erfassungsstelle, Nebenstelle Süd – Berlin (Konrad)
+
+```
+c4d_inspect_drawer + c4d_inspect_plan ─> c4d_inspect_tube ─> c4d_talk_registrar ─> c4d_choose ══> c4d_completed
+```
+
+| Objective | Type | Objective text (de) | Requires | Grants | Effects | Details |
+|---|---|---|---|---|---|---|
+| `c4d_inspect_drawer` | inspect | Such in der Kartei die Schublade Süd 8. | — | `ev_c4_drawer_s8` | — | hotspot `drawer_s8` |
+| `c4d_inspect_plan` | inspect | Sieh dir den Lüftungsplan an der Wand an. | — | `ev_c4_annex_plan` | — | hotspot `plan_wall` |
+| `c4d_inspect_tube` | inspect | Lies, was die Rohrpost gebracht hat. | `c4d_inspect_drawer`, `c4d_inspect_plan` | `ev_c4_tube_slip` | — | hotspot `tube_station` |
+| `c4d_talk_registrar` | dialogue | Frag am Schalter nach der Akte Lindner. | `c4d_inspect_tube` | — | — | `dlg_c4d_counter`, 11 nodes; hotspot `registrar_counter` |
+| `c4d_choose` | choice | Entscheide, ob du Martas Namen nennst. | `c4d_talk_registrar` | — | per choice (§12.8) | `name_marta` / `protect_marta`; hotspot `registrar_counter` |
+
+### 12.4 Dialogues
+
+Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = portrait expression (`line_expr`); *Variants* replace the line text when their condition holds (first match wins); base lines whose variants cover every option of an earlier mandatory choice are *fallback only* (§11.4).
+
+**`dlg_c4a_lev`** (objective `c4a_talk_lev`, entry `c4a_lev_01`)
+
+| Node | Speaker | Expr | Text key | Line (de) | Variants |
+|---|---|---|---|---|---|
+| `c4a_lev_01` | lev | neutral | `dlg.c4.lev_01` | Um diese Zeit kommt keiner ins Archiv, Morozov. Nur wer nicht im Dienstbuch stehen will. | `irina_trust` ≥ 1: „Irina Belova hat gesagt, dass Sie kommen. Und dass man Ihnen trauen kann. Das sagt sie selten.“ (`dlg.c4.lev_01.irina`)<br>`alexei_secrecy` ≥ 1: „Um diese Zeit, Morozov, und allein? Wer allein kommt, will etwas, das nicht im Dienstbuch steht.“ (`dlg.c4.lev_01.secrecy`)<br>*base line = fallback only: every option of `a1_choose` is covered* |
+| `c4a_lev_02` | alexei | neutral | `dlg.c4.lev_02` | Die Frachtbücher vom Januar. Im Regal ist eine Lücke. | — |
+| `c4a_lev_03` | lev | neutral | `dlg.c4.lev_03` | Die Lücke bin ich. Die Bücher liegen unter meinem Ellbogen. Wer sie will, muss an mir vorbei. | — |
+| `c4a_lev_04` | alexei | determined | `dlg.c4.lev_04` | Drei Wagen im Januar, umgebucht ohne Zielbahnhof. In Veltrava kamen sie an – als C-17. Die Liste dazu trage ich bei mir. | `choice.c3g_choose` = swap_halves: „Drei Wagen im Januar, umgebucht ohne Zielbahnhof. In Veltrava hießen sie C-17. Die Liste dazu trägt jetzt ein Deutscher.“ (`dlg.c4.lev_04.swap`)<br>`choice.c3g_choose` = hide_for_elena: „Drei Wagen im Januar, umgebucht ohne Zielbahnhof. In Veltrava hießen sie C-17. Die Liste dazu hängt in einem Mantel, Marke 27.“ (`dlg.c4.lev_04.elena`) |
+| `c4a_lev_05` | lev | concerned | `dlg.c4.lev_05` | Sie waren in Veltrava und sind zurückgekommen. Das schaffen nicht alle, die über die Linie fahren. | — |
+| `c4a_lev_06` | alexei | determined | `dlg.c4.lev_06` | Wer hat die Umbuchungen genehmigt, Lev? | — |
+| `c4a_lev_07` | lev | concerned | `dlg.c4.lev_07` | Spalte ‚Genehmigt‘. Lesen Sie selbst. Ich sage nichts, was man später zitieren kann. | — |
+| `c4a_lev_08` (end) | alexei | determined | `dlg.c4.lev_08` | Dann lese ich, und Sie schweigen. Das können wir beide gut. | — |
+
+**`dlg_c4a_tunnel`** (objective `c4a_talk_tunnel`, entry `c4a_tun_01`; completing it grants `ev_c4_tunnel_plan`)
+
+| Node | Speaker | Expr | Text key | Line (de) | Variants |
+|---|---|---|---|---|---|
+| `c4a_tun_01` | alexei | concerned | `dlg.c4.tun_01` | Archipov. Oberst, Transportabteilung. Dreimal dieselbe Hand. | — |
+| `c4a_tun_02` | lev | neutral | `dlg.c4.tun_02` | Gelesen haben Sie das, nicht ich. Ich hebe nur Durchschläge auf. Einer muss die zweite Ausfertigung behalten. | — |
+| `c4a_tun_03` | alexei | determined | `dlg.c4.tun_03` | Über die Hauptstrecke sind die Wagen nie gefahren. Im Stellwerksbuch fehlen sie, ich habe nachgesehen. | — |
+| `c4a_tun_04` | lev | neutral | `dlg.c4.tun_04` | Weil sie unten fahren. Dienststollen drei, gebaut einundvierzig für den Luftschutz. Er läuft unter dem ganzen Güterbahnhof durch. | — |
+| `c4a_tun_05` | alexei | surprised | `dlg.c4.tun_05` | Und wohin? | — |
+| `c4a_tun_06` | lev | concerned | `dlg.c4.tun_06` | Zu einem Gleis, das in keinem Plan steht. Dort bekommen die Wagen neue Nummern. – Hier, der alte Stollenplan. | — |
+| `c4a_tun_07` | alexei | surprised | `dlg.c4.tun_07` | Warum geben Sie mir das? | — |
+| `c4a_tun_08` | lev | concerned | `dlg.c4.tun_08` | Weil ich alt bin und Sie nicht. Und weil mein Name in keinem Papier stehen wird, Morozov. In keinem. | `alexei_secrecy` ≥ 1: „Weil Sie schweigen können, das sieht man. Und weil mein Name in keinem Papier stehen wird, Morozov. In keinem.“ (`dlg.c4.tun_08.secrecy`) |
+| `c4a_tun_09` (end) | alexei | determined | `dlg.c4.tun_09` | In keinem. Mein Wort darauf. | — |
+
+**`dlg_c4b_marta`** (objective `c4b_talk_marta`, entry `c4b_mar_01`; completing it grants `ev_c4_route_board`)
+
+| Node | Speaker | Expr | Text key | Line (de) | Variants |
+|---|---|---|---|---|---|
+| `c4b_mar_01` | marta | neutral | `dlg.c4.mar_01` | Die 74 fährt erst in sieben Minuten, der Herr. Und warm ist es drinnen auch nicht. | — |
+| `c4b_mar_02` | konrad | neutral | `dlg.c4.mar_02` | Ich will nicht mitfahren. Ich bin Zeichner beim Generalbauamt. Diese Schleife hier ist neu. | `konrad_evidence` ≥ 1: „Ich will nicht mitfahren. Ich bin Zeichner beim Generalbauamt und sammle, was in keinem Bericht steht. Die Schleife ist neu.“ (`dlg.c4.mar_02.evidence`)<br>`office_suspicion` ≥ 1: „Ich will nicht mitfahren. Ich bin Zeichner beim Generalbauamt – heute nicht dienstlich. Diese Schleife hier ist neu.“ (`dlg.c4.mar_02.suspicion`)<br>*base line = fallback only: every option of `m1_choose` is covered* |
+| `c4b_mar_03` | marta | concerned | `dlg.c4.mar_03` | Die dritte seit Oktober. Jedes Mal, wenn ein Block geräumt wird, fahre ich einen neuen Bogen drumherum. | — |
+| `c4b_mar_04` | konrad | neutral | `dlg.c4.mar_04` | Baumaßnahmen. Für die Achse, so steht es im Bescheid. | `choice.c3d_choose` = admit_plan: „Baumaßnahmen, steht im Bescheid. – Nein. Ich habe aufgehört, Bescheide nachzusprechen.“ (`dlg.c4.mar_04.admit`) |
+| `c4b_mar_05` | marta | determined | `dlg.c4.mar_05` | Baumaßnahmen nachts um drei? Mit Lastwagen, die nicht vom Bau sind? Ich fahre die erste Bahn, ich sehe, wer abgeholt wird. | — |
+| `c4b_mar_06` | konrad | concerned | `dlg.c4.mar_06` | Wen? | — |
+| `c4b_mar_07` | marta | concerned | `dlg.c4.mar_07` | Nummer neun. Lindners. Paul war Schlosser bei uns im Depot. Anna kam aus Charkow, zweiundvierzig, mit einem Transport. | — |
+| `c4b_mar_08` | konrad | concerned | `dlg.c4.mar_08` | Ich habe die Familie gesehen. Im Januar, bei der Parade. Sie standen vor ihrer eigenen Tür. | — |
+| `c4b_mar_09` | marta | concerned | `dlg.c4.mar_09` | Am Dritten haben sie Anna geholt. ‚Klärung der Staatsangehörigkeit.‘ Paul haben sie ins Depot nach Stettin versetzt. | — |
+| `c4b_mar_10` | konrad | concerned | `dlg.c4.mar_10` | Und das Kind? | — |
+| `c4b_mar_11` | marta | determined | `dlg.c4.mar_11` | Welches Kind? – Sie fragen viel für einen, der nur zeichnet. | — |
+| `c4b_mar_12` | konrad | determined | `dlg.c4.mar_12` | Ich habe den Lageplan für diese Räumungen gezeichnet. Süd acht. Ich will wissen, wofür. | `choice.c3d_choose` = pocket_plan: „Ich habe den Lageplan für diese Räumungen gezeichnet. Und einen Raum an der Linie. Ich will wissen, wofür.“ (`dlg.c4.mar_12.pocket`) |
+| `c4b_mar_13` (end) | marta | determined | `dlg.c4.mar_13` | Dann nehmen Sie das. Meine Linie, wie sie im Herbst fuhr und wie heute. Machen Sie sich selbst ein Bild, Herr Zeichner. | — |
+
+**`dlg_c4b_ilse`** (objective `c4b_talk_ilse`, entry `c4b_ils_01`)
+
+| Node | Speaker | Expr | Text key | Line (de) | Variants |
+|---|---|---|---|---|---|
+| `c4b_ils_01` | konrad | determined | `dlg.c4.ils_01` | Ihre drei Umleitungen liegen genau über drei Schächten. Unter dieser Schleife ist eine Dienststelle. | — |
+| `c4b_ils_02` | marta | concerned | `dlg.c4.ils_02` | Eine Dienststelle. Und damit die Luft kriegt, haben sie Nummer neun ausgeräumt. | — |
+| `c4b_ils_03` | konrad | concerned | `dlg.c4.ils_03` | Und die Akten der Leute sind mit nach unten gegangen. ‚Vorgang an Nebenstelle Süd‘, steht im Bescheid. | — |
+| `c4b_ils_04` | marta | concerned | `dlg.c4.ils_04` | Dann wissen die da unten, dass Lindners eine Tochter haben. | — |
+| `c4b_ils_05` | konrad | neutral | `dlg.c4.ils_05` | Das Mädchen in Ihrer Bahn. Letzte Bank, den Ranzen auf dem Schoß – sie gibt ihn nicht aus der Hand. | — |
+| `c4b_ils_06` | marta | concerned | `dlg.c4.ils_06` | Ilse. Acht Jahre. Offiziell ist sie bei einer Tante in Stettin. In Wahrheit schläft sie bei mir, und morgens fährt sie mit. | — |
+| `c4b_ils_07` | konrad | neutral | `dlg.c4.ils_07` | Und die Schule? | — |
+| `c4b_ils_08` | marta | neutral | `dlg.c4.ils_08` | Die Lehrerin weiß Bescheid. Ein Fräulein Adler. Sie lässt Ilse vor der Stunde in die Klasse, wegen der Kälte. | — |
+| `c4b_ils_09` | konrad | surprised | `dlg.c4.ils_09` | Hanna. | — |
+| `c4b_ils_10` | marta | surprised | `dlg.c4.ils_10` | Sie kennen sie? | — |
+| `c4b_ils_11` | konrad | concerned | `dlg.c4.ils_11` | Sie ist meine Schwester. | — |
+| `c4b_ils_12` (end) | marta | determined | `dlg.c4.ils_12` | Dann wissen Sie jetzt, was auf dem Spiel steht. Was Sie da unten finden, will ich hören. Meinen Namen hört dort keiner. | — |
+
+**`dlg_c4c_lev`** (objective `c4c_talk_lev`, entry `c4c_sid_01`)
+
+| Node | Speaker | Expr | Text key | Line (de) | Variants |
+|---|---|---|---|---|---|
+| `c4c_sid_01` | lev | concerned | `dlg.c4.sid_01` | Vierzehn, mit einem Nagel geritzt. Damit es einer liest. – Ich kenne solche Bretter, Morozov. | — |
+| `c4c_sid_02` | alexei | neutral | `dlg.c4.sid_02` | Von wo? | — |
+| `c4c_sid_03` | lev | concerned | `dlg.c4.sid_03` | Dreiundfünfzig, nach dem Waffenstillstand. Gefangenenaustausch an der Linie. ‚Heimkehrer‘ stand mit Kreide auf dem Wagen. | — |
+| `c4c_sid_04` | alexei | neutral | `dlg.c4.sid_04` | Sie sind nach Hause gekommen. | — |
+| `c4c_sid_05` | lev | concerned | `dlg.c4.sid_05` | Nach Karsk. Filtrationspunkt, Gleis neun. Wer zwölf Jahre bei den Deutschen war, muss erklären, warum er noch lebt. | — |
+| `c4c_sid_06` | alexei | concerned | `dlg.c4.sid_06` | Auf der Karte steht derselbe Ort. Filtrationspunkt Karsk. Für Anna Kowalenko. | — |
+| `c4c_sid_07` | lev | concerned | `dlg.c4.sid_07` | Die Deutschen haben sie zweiundvierzig geholt. Jetzt holen wir sie zurück – und fragen sie, warum sie mitgegangen ist. | — |
+| `c4c_sid_08` | alexei | determined | `dlg.c4.sid_08` | Am Dienstag. In diesem Wagen. Und Pjotr mit ihr. | `choice.c3g_choose` = split_by_language: „Am Dienstag, in diesem Wagen. Pjotr steht auf derselben Liste – ich trage sie bei mir.“ (`dlg.c4.sid_08.split`)<br>`choice.c3g_choose` = swap_halves: „Am Dienstag, in diesem Wagen. Und Pjotr mit ihr. Seinen Namen trägt jetzt ein Deutscher durch Berlin.“ (`dlg.c4.sid_08.swap`)<br>`choice.c3g_choose` = hide_for_elena: „Am Dienstag, in diesem Wagen. Und Pjotr mit ihr. Seine Liste hängt in Veltrava in einem Mantel.“ (`dlg.c4.sid_08.elena`)<br>*base line = fallback only: every option of `c3g_choose` is covered* |
+| `c4c_sid_09` | lev | concerned | `dlg.c4.sid_09` | Hören Sie auf mit Namen, Morozov. Namen sind das, was die da oben sammeln. | — |
+| `c4c_sid_10` | alexei | determined | `dlg.c4.sid_10` | Dann sammle ich Nummern. Ein Wagen, vier Nummern seit Januar. Das kann man zählen, Lev. | `alexei_konrad_trust` ≥ 2: „Dann sammle ich Nummern. Und in Berlin sammelt einer die Karten dazu. Zusammen kann man das zählen, Lev.“ (`dlg.c4.sid_10.trust`) |
+| `c4c_sid_11` | lev | neutral | `dlg.c4.sid_11` | Zählen. Und wem zeigen Sie es? – Gehen Sie, bevor die Schicht kommt. Sonntags streichen sie ab acht. | — |
+| `c4c_sid_12` (end) | alexei | determined | `dlg.c4.sid_12` | Ich gehe. Und vor Dienstag komme ich wieder. | — |
+
+**`dlg_c4d_counter`** (objective `c4d_talk_registrar`, entry `c4d_cnt_01`)
+
+| Node | Speaker | Expr | Text key | Line (de) | Variants |
+|---|---|---|---|---|---|
+| `c4d_cnt_01` | registrar | neutral | `dlg.c4.cnt_01` | Nebenstelle Süd, Auskunft und Abgleich. Sie sind früh dran, Herr …? | — |
+| `c4d_cnt_02` | konrad | neutral | `dlg.c4.cnt_02` | Adler, Generalbauamt. Bauaufnahme der Lüftung, Blatt drei. Für die Schachtplanung brauche ich eine Haushaltsakte. | — |
+| `c4d_cnt_03` | registrar | neutral | `dlg.c4.cnt_03` | Adler. Lüftung, Blatt drei – Ihr Name steht auf unserem Plan an der Wand. Welche Akte? | `kessler_alerted` ≥ 1: „Adler – Herr Kessler hat Sie dem Amt empfohlen. Zuverlässig, schreibt er. Welche Akte?“ (`dlg.c4.cnt_03.kessler`)<br>`office_suspicion` ≥ 1: „Adler. Nach Ihnen hat Ihr Amt neulich gefragt. Na, Lüftung ist Lüftung. Welche Akte?“ (`dlg.c4.cnt_03.suspicion`) |
+| `c4d_cnt_04` | konrad | neutral | `dlg.c4.cnt_04` | Lindner, Haus Nummer neun, Süd acht. Ich muss wissen, wer dort wohnte. Wegen der Schachtwand. | — |
+| `c4d_cnt_05` | registrar | neutral | `dlg.c4.cnt_05` | Lindner. Rotes Fähnchen, C-17. Die Akte ist vollständig, bis auf das Kind. Ilse, acht Jahre. Verbleib ungeklärt. | — |
+| `c4d_cnt_06` | konrad | neutral | `dlg.c4.cnt_06` | Für die Schachtplanung genügt die Belegung. Wer wann ausgezogen ist. | — |
+| `c4d_cnt_07` | registrar | neutral | `dlg.c4.cnt_07` | Akten mit C-17 gebe ich nur gegen eine Auskunftsperson heraus. Einen Anwohner, der die Belegung bestätigt. | — |
+| `c4d_cnt_08` | konrad | concerned | `dlg.c4.cnt_08` | Ich habe mit einer Anwohnerin gesprochen. | — |
+| `c4d_cnt_09` | registrar | neutral | `dlg.c4.cnt_09` | Dann nennen Sie mir ihren Namen. Wer Ihnen von Lindners erzählt hat, weiß auch, wo das Kind ist. | — |
+| `c4d_cnt_10` | konrad | determined | `dlg.c4.cnt_10` | Das Kind interessiert das Generalbauamt nicht. | — |
+| `c4d_cnt_11` (end) | registrar | neutral | `dlg.c4.cnt_11` | Aber uns, Herr Adler. Name und Anschrift, hier auf das Formular. Ordnung muss sein – auch hier unten. | — |
+
+Journal „Personen“ (new speakers, in the order they are met): `lev` Lev Sokolov, `marta` Marta Vogel, `registrar` Registrator Fengler.
+
+### 12.5 Puzzles
+
+| Puzzle | Objective | Type | Clue items (must be owned) | Shown | Solution | Hint after | Notes |
+|---|---|---|---|---|---|---|---|
+| `pz_c4_routes` | `c4b_solve_routes` | `overlay_alignment` | `ev_c4_notice`, `ev_c4_route_board` | start pose 0/0/0 | `{"rotation_steps": 1, "offset_x": 3, "offset_y": -2}` | 2 failures | Fictional tram route drawn over a fictional site plan of a fictional Berlin district; not a real plan. |
+| `pz_c4_numbers` | `c4c_solve_numbers` | `symbol_order` | `ev_c4_card_ru`, `ev_c4_stencils` | c1745, n47702, n24318, c1742 | `["n24318", "c1742", "n47702", "c1745"]` | 2 failures | Fictional wagon numbers, paint layers and switch posts; not a real railway numbering scheme. |
+
+`pz_c4_routes` title „Linie 74“. Hint (`ui.c4.routes.hint`): „Marta zeichnet in Fahrtrichtung, nicht nach Norden. Dreh das Pauspapier einmal und such für jede Umleitung einen Schacht.“
+Success (`ui.c4.routes.success`): „Drei Umleitungen, drei Schächte. Jede Schleife der Linie 74 führt um ein Haus, unter dem die Nebenstelle Luft holt. Geräumt wurde, wo ich die Schächte eingezeichnet habe.“
+UI scene: `res://scenes/ui/RoutePuzzle.tscn` (`open(obj_id)`, signal `solved`; key contract C4_DESIGN §2.7).
+
+`pz_c4_numbers` plates (face / under the paint): `c1745` „Schablonenschrift „C-17/45“ – Farbe noch nass“ / „Darunter: „47 702““, `n47702` „Pinselschrift „47 702““ / „Darunter: „C-17/42““, `n24318` „Emailleschild „24 318“ – Karsker Wagennummer“ / „Darunter: blankes Blech.“, `c1742` „Schablonenschrift „C-17/42““ / „Darunter: „24 318““.
+`pz_c4_numbers` title „Die Nummernkette“. Hint (`ui.c4.numbers.hint`): „Halt jedes Schild gegen die Lampe: Unter der Farbe steht die Nummer davor. Fang mit dem Schild an, unter dem nur Blech ist – und vergleich die Daten im Weichenbuch.“
+Success (`ui.c4.numbers.success`): „Ein Wagen, vier Nummern. Im Januar fuhr er als C-17/42 nach Veltrava, danach stand er als 47 702 „in Ausbesserung“ in unseren Büchern. Am Dienstag fährt er als C-17/45.“
+UI scene: `res://scenes/ui/TracePuzzle.tscn` (`open(obj_id)`, signal `solved`; key contract C4_DESIGN §2.7).
+
+Engine semantics as in §4: unlimited retries, no penalty; a wrong list / pose counts one attempt, a malformed answer is rejected and not counted.
+
+### 12.6 Evidence
+
+| Item | Name (de) | Description (de) | Category | Scene | Granted by |
+|---|---|---|---|---|---|
+| `ev_c4_book_gap` | Lücke im Regal | Im Regal der Frachtbücher fehlen drei Bände: Januar 1964, erste bis dritte Dekade. Auf dem leeren Brett liegt ein Zettel in Levs Schrift: „Bei L. S. – zur Durchsicht.“ | physical_clue | `L_C4_TunnelsA` | `c4a_inspect_shelf` |
+| `ev_c4_cut_signatures` | Frachtbuch Januar, Spalte „Genehmigt“ | Bei den drei Umbuchungen vom 14., 21. und 28. Januar ist die Unterschrift herausgeschnitten – sauber, mit einer Klinge. Daneben jedes Mal derselbe Vermerk: „Abt. T – mündlich“. | document | `L_C4_TunnelsA` | `c4a_inspect_book` |
+| `ev_c4_carbon` | Durchschläge mit Druckspur | Lev hebt von jedem Frachtbrief den Durchschlag auf. Gegen die Lampe zeichnet sich ab, was oben herausgeschnitten wurde: „Ju. Archipov, Oberst, Transportabteilung“ – dreimal dieselbe Hand. | document | `L_C4_TunnelsA` | `c4a_inspect_carbon` |
+| `ev_c4_tunnel_plan` | Plan Dienststollen 3, 1941 | Ein Luftschutzplan von 1941, auf Leinen gezogen. Der Stollen läuft unter dem ganzen Güterbahnhof durch und endet an einem Gleis ohne Nummer. Jemand hat den Weg mit Bleistift nachgezogen. | document | `L_C4_TunnelsA` | `c4a_talk_tunnel` |
+| `ev_c4_fresh_tracks` | Spuren hinter der Eisentür | Die Schienen im Stollen sind blank gefahren, der Staub daneben ist zertreten. Auf der Schwelle ein Tropfen rotbraune Farbe, noch weich. | physical_clue | `L_C4_TunnelsA` | `c4a_open_door` |
+| `ev_c4_notice` | Räumungsbescheid Nr. 9 mit Lageplan | Der Bescheid vom Januar, darunter ein frischer Nachtrag: „Haushalt aufgelöst. Vorgang an Nebenstelle Süd.“ Angeheftet der Lageplan Süd 8 mit drei Schächten, S 1 bis S 3. Im Schriftfeld: gez. K. A. | document | `L_C4_AnnexA` | `c4b_inspect_notice` |
+| `ev_c4_route_board` | Martas Linienplan, Linie 74 | Auf Pauspapier aus dem Depot: die Linie 74, wie sie im Herbst fuhr, und drei Umleitungen – Oktober, Dezember, Januar. Gezeichnet in Fahrtrichtung, nicht nach Norden. | document | `L_C4_AnnexA` | `c4b_talk_marta` |
+| `ev_c4_shaft` | Litfaßsäule S 2 | Aus dem Gitter am Fuß der Säule steigt warme Luft, mitten im Frost. Hinter den Plakaten eine Stahltür: „Lüftungsbauwerk S 2 – Zutritt nur für Bedienstete der Nebenstelle“. | physical_clue | `L_C4_AnnexA` | `c4b_inspect_column` |
+| `ev_c4_card_de` | Karteikarte Nr. 0417, deutsche Hälfte | Aus einer geplatzten Kiste in den Schnee gefallen: „Lindner, Anna, geb. Kowalenko, * 1926 Charkow. Vermerk C-17: Rückführung Ost. Abgabe Kordon-17, Tür Ost, Kurierwagen C-17/45, Di 18.2., 23.40.“ Darunter: „Kind Ilse, 8 – Verbleib ungeklärt.“ Rechts eine Perforation; die andere Hälfte fehlt. | document | `L_C4_AnnexA` | `c4b_inspect_crates` |
+| `ev_c4_card_ru` | Karteikarte Nr. 0417, russische Hälfte | Im Kasten „C-17/45 – annehmen“ auf dem Tisch der Gleisbude: „Kowalenko, Anna Petrowna, 1926, Charkow. 1942 nach Deutschland verbracht. Rückkehrerin. Weiter: Filtrationspunkt Karsk.“ Links eine Perforation. Alexei schreibt die Karte ab und legt sie zurück. | document | `L_C4_TunnelsB` | `c4c_inspect_card` |
+| `ev_c4_stencils` | Schablonen am Farbstand | Blechschablonen in zwei Alphabeten, nach Läufen sortiert: C-17/41 bis /44, abgegriffen. C-17/45 klebt noch nass am Brett. Daneben ein Kübel Rotbraun, die Farbe aller Güterwagen. | physical_clue | `L_C4_TunnelsB` | `c4c_inspect_stencils` |
+| `ev_c4_wagon_inside` | Wagen 24 318, innen | Zwei Bänke aus rohen Brettern, ein Ofenloch im Dach, ein Eimer. In die Wand geritzt: Namen in zwei Schriften und ein Datum, 21.1. Darunter, kleiner: „Wir sind vierzehn.“ | physical_clue | `L_C4_TunnelsB` | `c4c_inspect_wagon` |
+| `ev_c4_drawer_s8` | Schublade Süd 8 | Eine Karte für jeden geräumten Haushalt im Abschnitt Süd 8 der Linie 74, zusammen 212. Ein rotes Fähnchen – C-17 – tragen 37 davon. Bei allen 37 fehlt die rechte Hälfte. | document | `L_C4_AnnexB` | `c4d_inspect_drawer` |
+| `ev_c4_annex_plan` | Lüftungsplan der Nebenstelle Süd | Gerahmt hinter Glas: Lüftungsplan Nebenstelle Süd, 1961, Blatt 3. Drei Schächte, darüber drei Häuserblocks, mit Bleistift schraffiert: „freizumachen“. Im Schriftfeld: gez. K. Adler. | document | `L_C4_AnnexB` | `c4d_inspect_plan` |
+| `ev_c4_tube_slip` | Rohrpostzettel der Staatspolizei | In der Kapsel ein Zettel. Absender: Staatspolizeistelle, Kommissar Wendt. „Bis Montag: alle C-17-Haushalte Süd 8, Verbleib der Kinder. Auskunftspersonen namentlich.“ | document | `L_C4_AnnexB` | `c4d_inspect_tube` |
+
+Granted once, in acquisition order, after the 22 items of the slice and Chapter 3.
+
+### 12.7 Flags and events
+
+| Flag | Type | Default | Range | Changed by |
+|---|---|---|---|---|
+| `evidence_chain` | integer | 0 | 0–6 | `c4d_choose = name_marta` (+1) |
+| `civilian_welfare` | integer | 0 | 0–3 | `c4d_choose = protect_marta` (+1) |
+
+Events: `c4a_completed`, `c4b_completed`, `c4c_completed`, `c4d_completed` (before `slice_completed`). No new flag (C4_DESIGN §1.1); the planned STORY_BIBLE §7 variables (`witnesses_exposed`, `people_protected`, `marta_trust`) are derivable from `choice_history.c4d_choose` later.
+
+Presentation conditions (`data/chapters/c4.json`, first match wins) — how the earlier decisions reach Chapter 4:
+
+| Condition read | Used by |
+|---|---|
+| `irina_trust` | line `c4a_lev_01` |
+| `alexei_secrecy` | line `c4a_lev_01`, line `c4a_tun_08` |
+| `konrad_evidence` | line `c4b_mar_02` |
+| `office_suspicion` | line `c4b_mar_02`, line `c4d_cnt_03` |
+| `alexei_konrad_trust` | line `c4c_sid_10` |
+| `kessler_alerted` | line `c4d_cnt_03` |
+| `choice.c3b_choose` | option `protect_marta` |
+| `choice.c3d_choose` | line `c4b_mar_04`, line `c4b_mar_12`, option `name_marta` |
+| `choice.c3g_choose` | line `c4a_lev_04`, line `c4c_sid_08` |
+
+### 12.8 Choices and reactions
+
+| Objective | Choice id | Text (de) | Effect | Option text variants | Reaction |
+|---|---|---|---|---|---|
+| `c4d_choose` „Entscheide, ob du Martas Namen nennst.“ | `name_marta` | Marta Vogels Namen nennen – die Akte Lindner wäre ein Beweis mit Unterschriften, noch vor Dienstag | `evidence_chain +1` | `choice.c3d_choose` = pocket_plan: „Marta Vogels Namen nennen – zu Blatt 7 käme die Akte Lindner, ein Beweis mit Unterschriften, noch vor Dienstag“ | registrar (neutral): „Vogel, Marta. Straßenbahn, Linie 74 – das finden wir. Danke, Herr Adler. Die Akte Lindner, bitte sehr.“ (`dlg.c4.react.name_marta`) |
+|  | `protect_marta` | Keinen Namen nennen – ‚Ich habe es auf der Straße gehört.‘ | `civilian_welfare +1` | `choice.c3b_choose` = report_delegation: „Keinen Namen nennen – ‚Ich habe es auf der Straße gehört.‘ In Veltrava hast du schon einmal jemanden gemeldet“ | registrar (neutral): „Auf der Straße. Dann bleibt die Akte im Schrank, Herr Adler. Kommen Sie wieder, wenn die Straße einen Namen hat.“ (`dlg.c4.react.protect_marta`) |
+
+The end card lists every decision of the playthrough in story order (seven after Chapter 4 part 1).
+
+### 12.9 Cinematics
+
+| Sequence | Trigger | Skip policy (data) | Shots | Scene (§12.5) |
+|---|---|---|---|---|
+| `LS_C4_Homeward` | event `c3g_completed` | `visual_only` | w1 Veltrava station at first light: two trains on opposite platforms; Alexei boards the eastbound, Konrad the westbound, each with his half of the file under the coat (5 s), w2 Split windows: Alexei's train crosses the snow plain toward the cooling towers of Karsk, Konrad's passes under the dome of the Great Hall (4 s), w3 Karsk freight yard before dawn, the repaired signal shows green; Alexei walks to the lit cellar window of the freight office (5 s) | `res://scenes/cinematics/ch4_homeward/Ch4Homeward.tscn` |
+| `LS_C4_Number` | event `c4a_completed` | `visual_only` | n1 Service tunnel 3: Alexei's lamp along the planks of a wagon; fresh red-brown paint, a stencil still taped on: C-17/45, a drip runs down; chalk beside it: Tuesday 23.40 (4 s), n2 Extreme close-up of the stencilled 45 (match cut) (1.5 s), n3 Berlin at dawn: the same C-17/45 stencilled on crates at a loading hatch; a truck's tail lights; the stack goes down a shaft (4 s), n4 The tram loop at the cleared block: the first tram of line 74 rings and stops; Konrad at the shelter; control to Konrad (3.5 s) | `res://scenes/cinematics/ch4_number/Ch4Number.tscn` |
+| `LS_C4_Card` | event `c4b_completed` | `visual_only` | c1 Konrad lifts a card from the snow beside a split crate; his thumb along the perforated edge, No. 0417 (3.5 s), c2 Close-up of the perforation (match cut) (1.5 s), c3 Karsk siding office: Alexei's fingers along the other perforated half, the same No. 0417; a kerosene lamp, stencils on the wall (4 s), c4 Alexei looks up at the wagon outside the window; control to Alexei (2 s) | `res://scenes/cinematics/ch4_card/Ch4Card.tscn` |
+| `LS_C4_Stamp` | event `c4c_completed` | `visual_only` | s1 Siding office: Alexei copies the card into his notebook; Lev slides the Russian half back into the box C-17/45 – accept (3.5 s), s2 Close-up: the stamp ACCEPT in Cyrillic beside the box (match cut) (1.5 s), s3 Berlin annex counter: the registrar's stamp comes down, DISPATCH, on another card (4 s), s4 Konrad at the foot of the shaft ladder between the card cabinets, the German half in his coat; control to Konrad (2 s) | `res://scenes/cinematics/ch4_stamp/Ch4Stamp.tscn` |
+| `LS_C4_Voices` | event `c4d_completed` | `visual_only` | v1 Berlin morning: Konrad climbs out of the door in the advertising column, the Lindner file under his coat or empty-handed (per the c4d choice) (5 s), v2 Marta's tram leaves the loop, Ilse at the last window; one ring of the bell, or two and Konrad raises his hand (per the c4d choice) (5 s), v3 Karsk: Alexei and Lev climb out of the cellar into the dark yard under the green signal; Alexei's notebook with four numbers (5 s), v4 The siding: wagon C-17/45 alone under a work lamp; the lamp goes out (5 s), v5 Black; caption: Tuesday, 23.40, wagon C-17/45 (4 s) | `res://scenes/cinematics/ch4_voices/Ch4Voices.tscn` |
+
+Queued once in data order (`LS_C4_Homeward` right after `LS_C3_Halves`, both on `c3g_completed`); skipping has no story effect. Inner lines and captions (`data/locale/de_c4_cinematics.json`):
+
+| Key | Line (de) |
+|---|---|
+| `cin.c4.homeward.place` | Karsk, Sonntag, 16. Februar 1964, 4.40 Uhr. |
+| `cin.c4.homeward.alexei.split` | Die russischen Blätter. Pjotrs Name liegt unter meinem Mantel. |
+| `cin.c4.homeward.alexei.swap` | Die deutschen Blätter. Ich lese sie langsam. Pjotrs Namen trägt er. |
+| `cin.c4.homeward.alexei.elena` | Pjotrs Liste hängt in einem Mantel in Veltrava. Ich habe nur die Zahlen. |
+| `cin.c4.number.karsk` | Karsk, 7.10 Uhr. |
+| `cin.c4.number.berlin` | Berlin, 5.10 Uhr. |
+| `cin.c4.number.alexei` | Fünfundvierzig. Der nächste Lauf. Die Farbe ist noch nass. |
+| `cin.c4.card.konrad` | Lindner, Anna. Die andere Hälfte ist schon unterwegs. |
+| `cin.c4.card.karsk` | Karsk, 7.30 Uhr. |
+| `cin.c4.stamp.lev` | Wenn die Karte fehlt, suchen sie zuerst bei mir. |
+| `cin.c4.stamp.berlin` | Berlin, 6.00 Uhr. |
+| `cin.c4.voices.konrad_name` | Die Akte Lindner, mit allen Unterschriften. Und mit Martas Namen darin. |
+| `cin.c4.voices.konrad_protect` | Keine Akte. Aber morgen früh sitzt Ilse wieder bei Hanna in der Klasse. |
+| `cin.c4.voices.alexei` | Vier Nummern, ein Wagen. Und Levs Name auf keinem Papier, das ich trage. |
+| `cin.c4.voices.tuesday` | Dienstag, 23.40 Uhr. Wagen C-17/45. |
+
+### 12.10 People of the chapter
+
+| Id | Name | Role | Journal note |
+|---|---|---|---|
+| `marta` | Marta Vogel | Straßenbahnfahrerin, Linie 74 | Fährt die erste Bahn der Linie 74 um die geräumten Blöcke. Sieht, wer nachts abgeholt wird – und sagt es nur, wenn sie muss. |
+| `lev` | Lev Sokolov | Archivar der Güterabfertigung Karsk | Archivar der Güterabfertigung Karsk. Hebt Durchschläge auf, auch von Seiten, die es offiziell nicht gibt. Will in keinem Papier stehen. |
+| `registrar` | Registrator Fengler | Auskunft und Abgleich, Nebenstelle Süd | Auskunft und Abgleich in der Nebenstelle Süd. Gibt Akten nur gegen einen Namen heraus. Ordnung muss sein. |
+
+Existing characters in the chapter: `alexei`, `konrad`, `guard` (annex door), `berlin_child` (Ilse, life strip), `clerk` (typists, life strips).
+<!-- C4:END -->

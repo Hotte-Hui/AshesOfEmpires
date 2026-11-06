@@ -18,14 +18,22 @@ extends Node
 ## values choose c3d_choose / c3g_choose (default admit_plan / split_by_language). A third save (slot 3) is taken in
 ## registry B (Konrad playing, Alexei standing in) and reloaded at the end. Every save of the run goes to
 ## user://e2e/saves, never to the player's slots (same machine, same build).
+## Chapter 4 part 1 (documentation/C4_DESIGN.md): the route goes on through Karsk (cellar) → Berlin (tram loop, route
+## overlay) → Karsk (transfer siding, number chain) → Berlin (annex, the decision) — a level load at every city change;
+## an optional 7th spec value chooses c4d_choose (default name_marta). A fourth save (the quicksave slot) is taken at the siding
+## (the second scene of the tunnels file) and reloaded at the end.
 
 ## Objectives before which a level's last exploration pass runs (all its tasks must be done afterwards).
 ## The registry's last pass is before c3d_choose (registry B: the last registry scene with finds; its tasks are filed
 ## under the level key L_C3_RegistryA, ChapterExt.level_key).
-const FINAL_PASS := ["a1_choose", "m1_choose", "c3a_choose", "c3b_choose", "c3d_choose", "c3g_choose"]
+## Chapter 4: the tunnels' last pass is before c4c_talk_lev (siding), the annex's before c4d_choose (C4_DESIGN §9).
+const FINAL_PASS := ["a1_choose", "m1_choose", "c3a_choose", "c3b_choose", "c3d_choose", "c3g_choose", "c4c_talk_lev",
+	"c4d_choose"]
 ## Objectives before which a (non-final) exploration pass runs: level starts and story-gated openings.
 const EXPLORE_AT := ["a1_talk_irina", "m1_inspect_plan_a", "c3a_talk_conductor", "c3b_arrival", "c3b_inspect_booth",
-	"c3c_inspect_crates", "c3c_talk_konrad", "c3d_inspect_intake", "c3g_inspect_halves"]
+	"c3c_inspect_crates", "c3c_talk_konrad", "c3d_inspect_intake", "c3g_inspect_halves",
+	"c4a_inspect_shelf", "c4a_open_door", "c4b_inspect_notice", "c4b_inspect_crates", "c4c_inspect_card",
+	"c4d_inspect_drawer"]
 const E2E_SAVES := "user://e2e/saves"
 
 const ROUTE := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal",
@@ -37,17 +45,23 @@ const ROUTE := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_
 	"c3c_inspect_crates", "c3c_inspect_night_book", "c3c_talk_konrad",
 	"c3d_inspect_intake", "c3d_inspect_drawer", "c3d_talk_compare", "c3d_solve_check", "c3d_inspect_plan",
 	"c3d_talk_partner", "c3d_choose", "c3e_take_file", "c3e_try_ramp", "c3e_reach_konrad",
-	"c3f_inspect_hose", "c3f_push_desk", "c3f_climb", "c3g_inspect_halves", "c3g_talk_konrad", "c3g_choose"]
+	"c3f_inspect_hose", "c3f_push_desk", "c3f_climb", "c3g_inspect_halves", "c3g_talk_konrad", "c3g_choose",
+	"c4a_inspect_shelf", "c4a_talk_lev", "c4a_inspect_book", "c4a_inspect_carbon", "c4a_talk_tunnel", "c4a_open_door",
+	"c4b_inspect_notice", "c4b_talk_marta", "c4b_solve_routes", "c4b_inspect_column", "c4b_talk_ilse", "c4b_inspect_crates",
+	"c4c_inspect_card", "c4c_inspect_stencils", "c4c_solve_numbers", "c4c_inspect_wagon", "c4c_talk_lev",
+	"c4d_inspect_drawer", "c4d_inspect_plan", "c4d_inspect_tube", "c4d_talk_registrar", "c4d_choose"]
 ## flag written by each choice (C3_DESIGN §2.4); used to verify the consequence meters at the end
 const CHOICE_FLAG := {"share_with_irina": "irina_trust", "keep_private": "alexei_secrecy",
 	"preserve_evidence": "konrad_evidence", "request_explanation": "office_suspicion",
 	"ask_elena": "elena_trust", "note_alone": "evidence_chain", "share_protocol": "alexei_konrad_trust",
 	"search_elena": "elena_trust", "report_delegation": "kessler_alerted",
 	"admit_plan": "alexei_konrad_trust", "pocket_plan": "evidence_chain", "split_by_language": "evidence_chain",
-	"swap_halves": "alexei_konrad_trust", "hide_for_elena": "elena_trust"}
+	"swap_halves": "alexei_konrad_trust", "hide_for_elena": "elena_trust",
+	"name_marta": "evidence_chain", "protect_marta": "civilian_welfare"}
 
 var choices := {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence", "c3a_choose": "ask_elena",
-	"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language"}
+	"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language",
+	"c4d_choose": "name_marta"}
 var skip := false
 var shots_dir := ""
 var failures: Array = []
@@ -68,6 +82,8 @@ func configure(spec: String, do_skip: bool, shots: String) -> void:
 		choices["c3d_choose"] = parts[4]
 	if parts.size() >= 6 and parts[5] != "":
 		choices["c3g_choose"] = parts[5]
+	if parts.size() >= 7 and parts[6] != "":
+		choices["c4d_choose"] = parts[6]
 	skip = do_skip
 	shots_dir = shots
 
@@ -87,6 +103,7 @@ func run() -> void:
 	var saved_c3 := ""
 	var saved_switch := ""
 	var saved_switch_pos := Vector2.ZERO
+	var saved_c4 := ""
 	for oid in ROUTE:
 		# cinematics between the scenes play in real time unless skipped (the night: LS_C3_Close + LS_C3_Radio ≈ 41 s)
 		var ok := await _wait_available(oid, 120.0)
@@ -137,6 +154,14 @@ func run() -> void:
 				_fail("save slot 3 failed: " + str(r3))
 			saved_switch = Story.save_json()
 			saved_switch_pos = Game.player.position if Game.player else Vector2.ZERO
+		if oid == "c4c_inspect_card":     # the siding: the SECOND scene of the tunnels file, reached by a level load
+			if Game.level == null or str(Game.level.level_id) != "L_C4_TunnelsB" or Game.player == null \
+					or str(Game.player.get("char_id")) != "alexei":
+				_fail("the siding is not L_C4_TunnelsB played by Alexei (level %s)" % [Game.level.level_id if Game.level else "none"])
+			var r4 = Saves.save("quick")
+			if not (r4 is Dictionary and r4.get("ok", false)):
+				_fail("quicksave at the siding failed: " + str(r4))
+			saved_c4 = Story.save_json()
 	# finale: the director runs LS_C3_Close + the end card after c3b_choose; wait for completion
 	var t := 0.0
 	while not Story.flag("slice_finished") and t < 240.0:
@@ -158,6 +183,9 @@ func run() -> void:
 	for fl in ["courier_files_seen", "protocol_matched", "elena_missing"]:
 		if not bool(Story.flag(fl)):
 			_fail("flag %s should be set after Chapter 3" % fl)
+	for ev in ["c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed"]:
+		if not Story.has_event(ev):
+			_fail("Chapter 4 event %s missing" % ev)
 	_check_variants()
 	# load the mid-game save and verify restoration
 	if saved_snapshot != "":
@@ -178,6 +206,8 @@ func run() -> void:
 			_fail("loaded Chapter-3 save has wrong scene/progress")
 	if saved_switch != "":
 		await _check_switch_save(saved_switch, saved_switch_pos)
+	if saved_c4 != "":
+		await _check_c4_save(saved_c4)
 	if failures.is_empty():
 		print("AUTOPLAY_PASS choices=", choices, " skip=", skip, " playtime=", snapped(Game.playtime, 0.1))
 		get_tree().quit(0)
@@ -218,6 +248,36 @@ func _check_switch_save(saved: String, pos: Vector2) -> void:
 		_fail("slot 3: Alexei does not stand in as the partner")
 	if Story.objective_state("c3d_inspect_drawer") != "available":
 		_fail("slot 3: wrong progress (c3d_inspect_drawer %s)" % Story.objective_state("c3d_inspect_drawer"))
+
+
+## The quicksave of the transfer siding restores the tunnels file as its second scene: Alexei in the siding area, Lev there.
+func _check_c4_save(saved: String) -> void:
+	var w := 0.0
+	while Game.in_cinematic and w < 30.0:
+		await get_tree().process_frame
+		w += get_process_delta_time()
+	await Game._on_load_slot("quick")
+	var t := 0.0
+	while (Game.level == null or Game.player == null or Game.busy) and t < 20.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if Story.save_json() != saved:
+		_fail("loaded siding state differs from saved snapshot")
+	if Game.level == null or str(Game.level.level_id) != "L_C4_TunnelsB" or Game._story_scene() != "L_C4_TunnelsB":
+		_fail("the siding save did not restore the siding (level %s, story %s)" % [Game.level.level_id if Game.level else "none", Game._story_scene()])
+		return
+	if Game.player == null or str(Game.player.get("char_id")) != "alexei":
+		_fail("siding save: Alexei is not the controlled protagonist")
+	elif Game.player.position.x < 720.0:
+		_fail("siding save: Alexei restored in the cellar area (x %.0f), not at the siding" % Game.player.position.x)
+	var lev_here := false
+	for n in get_tree().get_nodes_in_group("npcs"):
+		if str(n.get("char_id")) == "lev" and n.get("visible") != false and (n as Node2D).position.x > 720.0:
+			lev_here = true
+	if not lev_here:
+		_fail("siding save: Lev is not at the siding")
+	if Story.objective_state("c4c_inspect_stencils") != "available":
+		_fail("siding save: wrong progress (c4c_inspect_stencils %s)" % Story.objective_state("c4c_inspect_stencils"))
 
 
 ## Every save of the run goes to a private folder: the player's slots in user://saves are never touched.
@@ -269,6 +329,27 @@ func _check_variants() -> void:
 	keys.append("dlg.c3p2.react.%s%s" % [choices["c3d_choose"],
 		".report" if choices["c3d_choose"] == "admit_plan" and rd == "report_delegation" else ""])
 	keys.append("dlg.c3p2.react." + choices["c3g_choose"])
+	# Chapter 4 part 1 (C4_DESIGN §2.8): the variants every route must hear, and the reaction of the decision
+	keys.append("dlg.c4.lev_01." + ("irina" if choices["a1_choose"] == "share_with_irina" else "secrecy"))
+	if choices["a1_choose"] == "keep_private":
+		keys.append("dlg.c4.tun_08.secrecy")
+	keys.append("dlg.c4.mar_02." + ("evidence" if choices["m1_choose"] == "preserve_evidence" else "suspicion"))
+	keys.append("dlg.c4.mar_04.admit" if choices["c3d_choose"] == "admit_plan" else "dlg.c4.mar_12.pocket")
+	match choices["c3g_choose"]:
+		"split_by_language":
+			keys.append("dlg.c4.sid_08.split")
+		"swap_halves":
+			keys += ["dlg.c4.lev_04.swap", "dlg.c4.sid_08.swap"]
+		"hide_for_elena":
+			keys += ["dlg.c4.lev_04.elena", "dlg.c4.sid_08.elena"]
+	if rd == "report_delegation":
+		keys.append("dlg.c4.cnt_03.kessler")
+	elif choices["m1_choose"] == "request_explanation":
+		keys.append("dlg.c4.cnt_03.suspicion")
+	var trust := int(rd == "share_protocol") + int(choices["c3d_choose"] == "admit_plan") + int(choices["c3g_choose"] == "swap_halves")
+	if trust >= 2:
+		keys.append("dlg.c4.sid_10.trust")
+	keys.append("dlg.c4.react." + choices["c4d_choose"])
 	for k in keys:
 		if not spoken.has(Loc.t(k)):
 			_fail("line variant %s was not spoken on this route" % k)

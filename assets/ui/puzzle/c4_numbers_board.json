@@ -1,0 +1,157 @@
+{
+ "puzzle_id": "pz_c4_numbers",
+ "objective": "c4c_solve_numbers",
+ "display_scale": 3,
+ "coords": "art pixels ([x, y] / [x, y, w, h]); the UI multiplies by 3",
+ "generator": "tools/pixelgen/gen_ui_c4.py",
+ "date": "2026-11-06",
+ "board": {
+  "file": "c4_numbers_board.png",
+  "size": [
+   592,
+   112
+  ],
+  "posts_x": [
+   125,
+   235,
+   345,
+   455
+  ],
+  "plate_y": 12,
+  "track_y": 88,
+  "siding_y": 100,
+  "yard_x": 34,
+  "siding_x": 548,
+  "labels": {
+   "yard": [
+    8,
+    51
+   ],
+   "siding": [
+    522,
+    102
+   ],
+   "tunnel": [
+    150,
+    92
+   ]
+  }
+ },
+ "plate": {
+  "size": [
+   88,
+   25
+  ]
+ },
+ "plates": {
+  "n24318": {
+   "face": "24 318",
+   "kind": "enamel",
+   "under": "",
+   "file": "c4_plate_n24318.png",
+   "lit_file": "c4_plate_n24318_lit.png",
+   "num_file": "c4_num_n24318.png",
+   "face_key": "ui.c4.numbers.face.n24318",
+   "card_key": "ui.c4.numbers.card.n24318",
+   "under_key": "ui.c4.numbers.under.n24318"
+  },
+  "c1742": {
+   "face": "C-17/42",
+   "kind": "stencil",
+   "under": "n24318",
+   "file": "c4_plate_c1742.png",
+   "lit_file": "c4_plate_c1742_lit.png",
+   "num_file": "c4_num_c1742.png",
+   "face_key": "ui.c4.numbers.face.c1742",
+   "card_key": "ui.c4.numbers.card.c1742",
+   "under_key": "ui.c4.numbers.under.c1742"
+  },
+  "n47702": {
+   "face": "47 702",
+   "kind": "brush",
+   "under": "c1742",
+   "file": "c4_plate_n47702.png",
+   "lit_file": "c4_plate_n47702_lit.png",
+   "num_file": "c4_num_n47702.png",
+   "face_key": "ui.c4.numbers.face.n47702",
+   "card_key": "ui.c4.numbers.card.n47702",
+   "under_key": "ui.c4.numbers.under.n47702"
+  },
+  "c1745": {
+   "face": "C-17/45",
+   "kind": "stencil_wet",
+   "under": "n47702",
+   "file": "c4_plate_c1745.png",
+   "lit_file": "c4_plate_c1745_lit.png",
+   "num_file": "c4_num_c1745.png",
+   "face_key": "ui.c4.numbers.face.c1745",
+   "card_key": "ui.c4.numbers.card.c1745",
+   "under_key": "ui.c4.numbers.under.c1745"
+  }
+ },
+ "wagon": {
+  "file": "c4_wagon.png",
+  "size": [
+   66,
+   28
+  ],
+  "number_at": [
+   5,
+   8
+  ],
+  "number_size": [
+   31,
+   7
+  ]
+ },
+ "wire": {
+  "file": "c4_wire.png",
+  "size": [
+   88,
+   9
+  ]
+ },
+ "tick": {
+  "file": "c4_tick.png",
+  "size": [
+   13,
+   11
+  ]
+ },
+ "halt": {
+  "file": "c4_halt.png",
+  "size": [
+   19,
+   19
+  ]
+ },
+ "glow": {
+  "file": "c4_glow.png",
+  "size": [
+   102,
+   37
+  ]
+ },
+ "lamp": {
+  "on": "c4_lamp_on.png",
+  "off": "c4_lamp_off.png",
+  "size": [
+   14,
+   20
+  ]
+ },
+ "surfaces": {
+  "slate": "#24373A",
+  "plate_rust": "#743626"
+ },
+ "chain_check": {
+  "verified_against": "data/v3/puzzles.json pz_c4_numbers",
+  "display_symbols": [
+   "c1745",
+   "n47702",
+   "n24318",
+   "c1742"
+  ]
+ },
+ "world_note": "Fictional wagon numbers, paint layers and switch posts; not a real railway numbering scheme."
+}

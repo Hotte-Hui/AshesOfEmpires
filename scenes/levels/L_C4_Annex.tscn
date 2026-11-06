@@ -1,0 +1,280 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/c4/annex_level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/lever_spot.gd" id="c4x_spot"]
+
+[node name="L_C4_Annex" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C4_AnnexA"
+protagonist = "konrad"
+mode = "side"
+art_manifest = "res://assets/environments/berlin_annex/scene.json"
+ambience = "amb_berlin_loop"
+music = "mus_c4_berlin"
+footstep_surface = "snow"
+grade_preset = "annex_loop"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="MartaTram" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "marta"
+hotspot_id = "marta_tram"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+
+[node name="Registrar" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "registrar"
+hotspot_id = "registrar_counter"
+hotspot_offset = Vector2(18, -24)
+face_left = true
+idle_anim = "work_side"
+
+[node name="GuardAnnex" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "guard"
+hotspot_id = "guard_annex"
+face_left = true
+look_at_player = false
+
+[node name="S_c4b_inspect_notice" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4b_inspect_notice"
+kind = "inspect"
+hotspot_id = "door_9"
+
+[node name="S_c4b_talk_marta" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4b_talk_marta"
+kind = "dialogue"
+hotspot_id = "marta_tram"
+npc_id = "marta"
+radius = 38.0
+
+[node name="S_c4b_solve_routes" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4b_solve_routes"
+kind = "puzzle"
+hotspot_id = "timetable_case"
+
+[node name="S_c4b_inspect_column" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4b_inspect_column"
+kind = "inspect"
+hotspot_id = "column_s2"
+
+[node name="S_c4b_talk_ilse" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4b_talk_ilse"
+kind = "dialogue"
+hotspot_id = "marta_tram"
+npc_id = "marta"
+radius = 38.0
+
+[node name="S_c4b_inspect_crates" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4b_inspect_crates"
+kind = "inspect"
+hotspot_id = "loading_hatch"
+
+[node name="S_c4d_inspect_drawer" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4d_inspect_drawer"
+kind = "inspect"
+hotspot_id = "drawer_s8"
+
+[node name="S_c4d_inspect_plan" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4d_inspect_plan"
+kind = "inspect"
+hotspot_id = "plan_wall"
+
+[node name="S_c4d_inspect_tube" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4d_inspect_tube"
+kind = "inspect"
+hotspot_id = "tube_station"
+
+[node name="S_c4d_talk_registrar" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4d_talk_registrar"
+kind = "dialogue"
+hotspot_id = "registrar_counter"
+npc_id = "registrar"
+radius = 38.0
+
+[node name="S_c4d_choose" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4d_choose"
+kind = "choice"
+hotspot_id = "registrar_counter"
+npc_id = "registrar"
+radius = 38.0
+
+[node name="Task_Cellar" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_task_cellar"
+explore_id = "berlin.annex.doll_cellar"
+radius = 22.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_House11" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_house_11"
+explore_id = "berlin.annex.house_11"
+radius = 22.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_DollShoe" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_doll_shoe"
+explore_id = "berlin.annex.doll_shoe"
+radius = 18.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_Wallpaper" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_wallpaper"
+explore_id = "berlin.annex.wallpaper"
+radius = 22.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_ShelterPoster" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_shelter_poster"
+explore_id = "berlin.annex.shelter_poster"
+radius = 22.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_TramCab" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_tram_cab"
+explore_id = "berlin.annex.tram_cab"
+radius = 22.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="ChatMarta" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "chat"
+hotspot_id = "marta_tram"
+explore_id = "berlin.annex.chat_marta"
+explore_chain = PackedStringArray("berlin.annex.chat_marta", "berlin.annex.doll_ask", "berlin.annex.doll_back")
+npc_id = "marta"
+radius = 38.0
+once = true
+after_objective = "c4b_talk_ilse"
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_TramRear" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_tram_rear"
+explore_id = "berlin.annex.tram_rear"
+radius = 26.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_AxisView" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_axis_view"
+explore_id = "berlin.annex.axis_view"
+radius = 26.0
+once = true
+until_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexA")
+
+[node name="Find_Fans" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_fans"
+explore_id = "berlin.annex.fans"
+radius = 26.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")
+
+[node name="Find_HouseholdIndex" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_household_index"
+explore_id = "berlin.annex.household_index"
+radius = 26.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")
+
+[node name="Find_BrandtCard" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_brandt_card"
+explore_id = "berlin.annex.brandt_card"
+radius = 18.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")
+
+[node name="Find_CardCart" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_card_cart"
+explore_id = "berlin.annex.card_cart"
+radius = 26.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")
+
+[node name="Find_WaitingBench" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_waiting_bench"
+explore_id = "berlin.annex.waiting_bench"
+radius = 24.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")
+
+[node name="Find_Perforator" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_perforator"
+explore_id = "berlin.annex.perforator"
+radius = 22.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")
+
+[node name="ChatGuard" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "chat"
+hotspot_id = "guard_annex"
+explore_id = "berlin.annex.chat_guard"
+npc_id = "guard"
+radius = 34.0
+once = true
+after_objective = "c4b_inspect_crates"
+memory_scenes = PackedStringArray("L_C4_AnnexB")

@@ -1,0 +1,68 @@
+{
+ "side": "soviet",
+ "doc": "documentation/C4_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — two real-history cards of Chapter 4 part 1 (presented outside the fiction as „REALE GESCHICHTE“). Texts: data/locale/de_history_c4.json. hist.soviet.order_270 is unlocked by karsk.tunnels.lev_photo (Lev, a prisoner of war 1941–53, his granddaughter turned down because of a questionnaire line) and complements hist.soviet.filtration (what followed the return) with what came before it. hist.soviet.special_settlements is unlocked by karsk.tunnels.stovepipes (the kit that turns a freight wagon into a wagon for people) and complements hist.soviet.deportations (the deportations themselves) with the settlement regime and the unequal returns after 1955. Topic swap against the brief (C4_DESIGN §6 suggested hist.soviet.volga_germans): the Volga Germans are covered as one group of the special settlements, with the returns the lead asked for. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen je Aussage (Primärtext des Befehls auf Wikisource, bpb/DHM für die Gefangenenzahlen, MSU-Konferenzbeitrag zum Beschluss vom 29.06.1956, Erlass Nr. 63 vom 24.01.1995; bpb zu den Russlanddeutschen, Quaestio Rossica zum Erlass vom 26.11.1948, Wikisource zu den Erlassen vom 09.01.1957, Überblick zur Rückkehr der Krimtataren).",
+ "cards": [
+  {
+   "id": "hist.soviet.order_270",
+   "side": "soviet",
+   "title_key": "hist.soviet.order_270.title",
+   "text_key": "hist.soviet.order_270.text",
+   "year": "1941",
+   "sources": [
+    {
+     "label": "Wikisource (russ.): Приказ Ставки ВГК № 270 от 16.08.1941 – Wortlaut, Unterzeichner, Verlesung in allen Kompanien; Erstveröffentlichung Военно-исторический журнал 1988, Nr. 9",
+     "url": "https://ru.wikisource.org/wiki/%D0%9F%D1%80%D0%B8%D0%BA%D0%B0%D0%B7_%D0%A1%D0%92%D0%93%D0%9A_%D0%A1%D0%A1%D0%A1%D0%A0_%D0%BE%D1%82_16.08.1941_%E2%84%96_270"
+    },
+    {
+     "label": "Wikipedia (engl.): Order No. 270 – Bestimmungen und Folgen",
+     "url": "https://en.wikipedia.org/wiki/Order_No._270"
+    },
+    {
+     "label": "Bundeszentrale für politische Bildung: Dimensionen eines Verbrechens. Sowjetische Kriegsgefangene im Zweiten Weltkrieg (Ausstellungskatalog) – bis zu 5,7 Millionen Gefangene, über drei Millionen Tote",
+     "url": "https://www.bpb.de/shop/buecher/schriftenreihe/519982/dimensionen-eines-verbrechens/"
+    },
+    {
+     "label": "Deutsches Historisches Museum, LeMO: Kriegsgefangenschaft – 5,7 Millionen sowjetische Kriegsgefangene, 3,3 Millionen Tote",
+     "url": "https://www.dhm.de/lemo/kapitel/der-zweite-weltkrieg/kriegsverlauf/kriegsgefangenschaft.html"
+    },
+    {
+     "label": "Lomonossow-Konferenz 2008 (Staatliche Universität Moskau), Bruchowskich: geheimer Beschluss von ZK und Ministerrat vom 29.06.1956 „Об устранении последствий грубых нарушений законности в отношении бывших военнопленных“",
+     "url": "https://conf.msu.ru/archive/Lomonosov_2008/Brukhovskikh.pdf"
+    },
+    {
+     "label": "Erlass des Präsidenten der Russischen Föderation Nr. 63 vom 24.01.1995 über die Wiederherstellung der Rechte ehemaliger sowjetischer Kriegsgefangener und Repatriierter (Wortlaut)",
+     "url": "https://legalacts.ru/doc/ukaz-prezidenta-rf-ot-24011995-n-63/"
+    }
+   ]
+  },
+  {
+   "id": "hist.soviet.special_settlements",
+   "side": "soviet",
+   "title_key": "hist.soviet.special_settlements.title",
+   "text_key": "hist.soviet.special_settlements.text",
+   "year": "1955",
+   "sources": [
+    {
+     "label": "Bundeszentrale für politische Bildung, Dossier Russlanddeutsche: Leben und Kultur der Deutschen in der Kasachischen SSR nach der Deportation – Erlass vom 13.12.1955 ohne Rückkehrrecht und Entschädigung, Erlass vom 29.08.1964, bekannt gemacht im Januar 1965",
+     "url": "https://www.bpb.de/themen/migration-integration/russlanddeutsche/277018/leben-und-kultur-der-deutschen-in-der-kasachischen-ssr-nach-der-deportation/"
+    },
+    {
+     "label": "Quaestio Rossica (Universität Jekaterinburg): Escapes from Special Settlements – Goals, Means, and Sanctions; Erlass vom 26.11.1948 (Verbannung „auf ewig“, 20 Jahre Zwangsarbeit für Flucht)",
+     "url": "https://qr.urfu.ru/ojs/index.php/qr/article/view/qr.612"
+    },
+    {
+     "label": "Wikisource (russ.): Erlass des Präsidiums des Obersten Sowjets vom 09.01.1957 über die Wiederherstellung der Tschetscheno-Inguschischen ASSR",
+     "url": "https://ru.wikisource.org/wiki/%D0%A3%D0%BA%D0%B0%D0%B7_%D0%9F%D1%80%D0%B5%D0%B7%D0%B8%D0%B4%D0%B8%D1%83%D0%BC%D0%B0_%D0%92%D0%A1_%D0%A1%D0%A1%D0%A1%D0%A0_%D0%BE%D1%82_09.01.1957_%D0%BE_%D0%B2%D0%BE%D1%81%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B8_%D0%A7%D0%B5%D1%87%D0%B5%D0%BD%D0%BE-%D0%98%D0%BD%D0%B3%D1%83%D1%88%D1%81%D0%BA%D0%BE%D0%B9_%D0%90%D0%A1%D0%A1%D0%A0_%D0%B2_%D1%81%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%B5_%D0%A0%D0%A1%D0%A4%D0%A1%D0%A0"
+    },
+    {
+     "label": "Wikipedia (engl.): Crimean Tatar repatriation – Entlassung aus der Sondersiedlung 1956 ohne Rückkehrrecht, Erlass von 1967, Rückkehr ab 1989",
+     "url": "https://en.wikipedia.org/wiki/Crimean_Tatar_repatriation"
+    },
+    {
+     "label": "Wikipedia (engl.): Special settlements in the Soviet Union – Regime der Sondersiedlung, Meldepflicht, Aufhebung in den 1950er-Jahren",
+     "url": "https://en.wikipedia.org/wiki/Forced_settlements_in_the_Soviet_Union"
+    }
+   ]
+  }
+ ]
+}

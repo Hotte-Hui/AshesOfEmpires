@@ -276,7 +276,7 @@ func _draw_e3b() -> void:
 			draw_frame(_e3bfx, _smoke, 8, int(age * 4.0), hp2 - Vector2(0, age * 30.0 * k), false, Color(0.9, 0.9, 0.9, 0.6 * (1.0 - age)))
 	# their breath: quick puffs while they cough, slower toward the end
 	if _breath:
-		var pts: Array = layout.get("e3b_breath", [[306, 258], [346, 258]])
+		var pts: Array = layout.get("e3b_breath", [[286, 258], [366, 258]])
 		for j in pts.size():
 			var q: Array = pts[j]
 			var period := 0.7 + j * 0.15

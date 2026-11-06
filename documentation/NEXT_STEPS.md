@@ -1,75 +1,75 @@
 # NEXT STEPS — Ashes of Empires: The Last Winter
 
-State after round 8 (2026-11-06): Chapters 1–3 complete — Chapter 3 now with part 2 (radio night, the joint evidence
-check „Gegenprobe“, the registry fire with the first authored in-level protagonist switches, the night quay where each
-man keeps half of the file). Memories (§12.10), side tasks (§12.9), 10 optional mini-games (§12.8), 116 finds,
-27 chats, 21 history cards. Main path ≈ 35 min, everything ≈ 2 h 50 min for a completionist (estimates from
-`tools/docs/estimate_playtime.py`; no human playtest yet). Open work, in priority order.
+State after round 9 (2026-11-06): Chapters 1–3 complete, Chapter 4 part 1 „Stimmen unter Beton“ playable (Karsk tunnels
+and transfer siding with Lev Sokolov, Berlin tram loop Süd 8 with Marta Vogel and the registry annex „Nebenstelle Süd“,
+decision c4d: name Marta or protect her). New: the evidence board „Die Akte C-17“ in the journal, feel pass 2 (quay
+walkers, the blanket task, distinct umlauts, 150 % text fit). 151 finds, 35 chats, 12 mini-games, 9 tasks, 25 history
+cards, 7 decisions. Main path ≈ 49 min, everything ≈ 3 h 40 min (estimates from `tools/docs/estimate_playtime.py`; no
+human playtest yet). Open work, in priority order. The user asked to stop after round 9; round 10 below is a plan, not
+started.
 
-## 1. Round 9 (planned 2026-11-06): Chapter 4 part 1 „Stimmen unter Beton“ + „Die Akte C-17“ + feel pass 2
-Canon: STORY_BIBLE §6 row 4 and the switch-moment line („Ch4 alternates on shared objects — the same wagon number, the
-same registry card“), `preproduction/narrative/FUTURE_CHAPTER_ARCS.md` „Kapitel 4“ (testimony from residential
-quarters shows C-17 enables surveillance and forced resettlement; an archive path and a transport path must be joined;
-decision: protecting people vs. speed of publication), CHARACTER_BIBLE (Marta Vogel, Lev Sokolov, Ludwig Wendt, …).
-- **Story (contract `documentation/C4_DESIGN.md`, written first):** both men travel home with their half; Alexei follows
-  the sealed wagons through the service tunnels under the Karsk freight yard to a hidden transfer siding where wagon
-  numbers are repainted; Konrad maps the registry annex under the Great Hall district and hears Marta Vogel's
-  testimony about the evictions along her tram route; match cuts on shared objects between the cities; Konrad's
-  decision: give the annex clerk Marta's name for the household records — or protect her. Earlier decisions felt in
-  line variants. A new puzzle type (tracing a wagon through the tunnel switches by its plates / repainted numbers).
-  No new Story flags (saves stay valid; decisions via choice_history and `choice.<objective>` conditions).
-- **Build streams:** Karsk tunnels / transfer siding art, Berlin annex art, Chapter-4 cinematics, the puzzle UI, new
-  cast (Marta Vogel, Lev Sokolov, …) with living portraits + music/ambience, exploration (finds, chats, a side task,
-  a new mini-game, fact-checked history cards: the GBI's evictions of Jewish tenants in Berlin 1939–42 for the
-  Germania plans; the Soviet special settlements and the returns after 1956).
-- **„Die Akte C-17“ (new feature):** a corkboard tab in the journal — every owned evidence item of both men as a pinned
-  card with its document art, red threads between items that prove the same link („derselbe Stempel“, „dieselbe
-  Wagennummer“), a growing summary „Was die Akte bisher zeigt“, no spoilers for unknown items.
-- **Feel pass 2:** walkers and the side task „Eine Decke für Frau Brunner“ on the quay; walkers avoid each other and
-  walk diagonally; toasts keep their time while a menu holds them; the crude figures in LS_C3_Escape / LS_C3_Halves
-  redrawn with the figure pipeline; distinct Ä/Ö/Ü in the small pixel font; 1440p / 4K checks.
-- **Quality gates (new this round):** four review lenses after the build (text & history, code & saves, art & UI,
-  completeness against the contract), every finding verified adversarially by a second agent before an owner fixes it;
-  then the lead integrates and runs every test layer (unit, autoplay, inputplay, exported exe).
-- Workflow script: session scratchpad `r9/round9.js`.
+## 1. Round 10 (proposal): save migration, Chapter 4 part 2, polish from the round-9 reports
+- **Save migration first (prerequisite for every later chapter):** v3 payloads fill missing Story flags with their
+  defaults before `validate_save_json`, with tests on saves of every earlier shape (round 7 / 8 / 9 forms, finished
+  playthroughs, memory snapshots) and on the user's real saves (copies). Only then add the STORY_BIBLE §7 flags
+  (`alexei_konrad_trust`, `marta_trust`, `people_protected`, …).
+- **Chapter 4 part 2 (STORY_BIBLE §6 row 4, `preproduction/narrative/FUTURE_CHAPTER_ARCS.md` „Kapitel 4“), contract
+  `documentation/C4P2_DESIGN.md` written first:** the archive path and the transport path are joined — the two halves of
+  card 0417 and the run „C-17/45, Tuesday 23.40“ (the chalk „ВТ 23.40“ on wagon 24 318) meet; the witness decision
+  has consequences (named: Wendt's questioning, Marta's route; protected: the deadline, Konrad under suspicion);
+  decision: protecting people vs. speed of publication. One new puzzle type, one in-level switch scene on a shared
+  object, new cast only where the story needs it, memories / board / history cards for the new places.
+- **Polish from the round-9 reports:**
+  - seven cast-audio cues (`c4_stencil_brush`, `c4_card_tear`, `c4_stamp_accept`, `c4_stamp_dispatch`,
+    `c4_bell_once`, `c4_bell_twice`, `c4_lamp_out`) are generated but unused — the films use their own `c4cine_*`
+    sounds; wire the better one per beat or drop the rest;
+  - evidence board: the detail strip's thread list ends in „…“ on cards with three or more thread groups (the cork
+    shows them all) — show a count or let the strip page; close-ups for the Chapter-3-part-2 / Chapter-4 items that
+    still open their board picture instead of a document;
+  - generator hazard: `env_veltrava_hall.py`, `env_veltrava_station.py`, `env_c3p2_quay.py` and `env_berlin.py` delete
+    every PNG in their env folder and rewrite `scene.json` — they would drop the round-8/9 walker rigs and the
+    hand-added `actors` blocks; make them preserve both before anyone reruns them;
+  - films: the stamp fists in LS_C4_Stamp are blocky, Konrad is small in s4 / n4, Fengler appears only as hands;
+  - InspectView: the notice and plan captions move into the record card at 150 % (by design, check readability);
+  - Game ignores the `"grade"` key of c4.json switches on a level load (the annex sets its looks itself);
+  - `documentation/screenshots/c4_annex_b_*` predate the counter fix; L_M1_HallReveal / L_M1_Parade have no hi-res
+    capture frame.
 
 ## 2. Human playtest and listening pass (cannot be automated)
-- Play the exported build with keyboard and a physical controller (pad A now confirms in menus — round 8 fix; never
-  tried on hardware).
-- Judge camera feel (including the ≈ 1.2 s switch glide in the registry), walk speed, pacing of the cinematics,
-  readability of hidden finds, puzzle and mini-game difficulty (Relaispult round 3 may be hectic; „Gegenprobe“ at
-  150 % text is tight), text speed.
-- **Listen**: all music, ambience and ~230 SFX are synthesized and were only checked numerically (levels, loops,
-  onsets) — mix against dialogue; the fire ambience (crackle density, muffled bell), the quay and the two round-8
-  music cues were never heard by a person.
+- Play the exported build with keyboard and a physical controller (pad A confirms in menus since round 8; never tried
+  on hardware).
+- Judge camera feel (the ≈ 1.2 s switch glide in the registry), walk speed, pacing of the cinematics, readability of
+  hidden finds, puzzle and mini-game difficulty (Relaispult round 3, „Gegenprobe“ at 150 %, the new „Linie 74“ and
+  „Die Nummernkette“, the Hebelrahmen and the Lüftungsklappen), text speed, the evidence board at 150 %.
+- **Listen**: all 13 music cues, 13 ambiences and 259 SFX are synthesized and were only checked numerically — mix against
+  dialogue; never heard by a person: the fire and quay sounds, the Chapter-4 music (the synthetic bayan in
+  `mus_c4_karsk`), the trains over the Karsk tunnels, the annex fans and tube capsules.
 
-## 3. Known polish items (from the round-7/8 reports, not yet in round 9)
+## 3. Known polish items (older reports)
 - Characters: faces share one lighting setup; women's faces still a little angular; `talk_back` only for the two
-  protagonists; Kessler's rimless glasses are drawn with thin rims; Berlin mother's hair looks helmet-like.
+  protagonists; Kessler's rimless glasses have thin rims; the Berlin mother's hair looks helmet-like; Fengler's
+  portrait came out leaner than „well fed“.
 - Station: island walkers are simple procedural figures; pigeons vanish under the canopy.
-- Registry: the torch beam in scene A is a fixed veil at Konrad's partner spot; heat shimmer is subtle; flaked
-  limewash patches are generic. A save taken while the stand-in walks restores him at the end of his walk.
-- Mini-games: Morse/Rohrpost switch to ×2 pixel art at 125/150 % text; the cloakroom rack shows five coats, the
+- Registry: the torch beam in scene A is a fixed veil; heat shimmer is subtle; a save taken while the stand-in walks
+  restores him at the end of his walk.
+- Mini-games: Morse / Rohrpost switch to ×2 pixel art at 125 / 150 % text; the cloakroom rack shows five coats, the
   hall counter six.
-- 3D hall: near objects can still crawl during the crane/push; parade tribune officials are tiny (~14 px).
-- Old memory prints of the Berlin archive and plaza were captured with Alexei instead of Konrad (harness bug fixed in
-  round 8; prints re-captured in the round-8 integration — check).
+- 3D hall: near objects can crawl during the crane / push; parade tribune officials are tiny (~14 px).
 
 ## 4. Content for the full game (STORY_BIBLE §6)
-- **Chapter 4 part 2:** the archive path and the transport path joined; consequences of the witness decision.
 - **Chapters 5–6** and the assembled endings (§8: Öffentliche Akte, Stille Sicherungen, Brüchige Reform, Getrennte
-  Wege, Gebrochenes Vertrauen) with epilogues. Before a round adds Story flags (STORY_BIBLE §7: `alexei_konrad_trust`,
-  `marta_trust`, `evidence_chain`, `people_protected` …), saves must fill missing flags with their defaults in v3
-  payloads before `validate_save_json` (otherwise every existing save breaks).
+  Wege, Gebrochenes Vertrauen) with epilogues — after the save migration (§1).
+- Story hooks to carry forward: the „Hanna“ thread in Berlin (house number 14, the porter's message; Ilse sits beside
+  Hanna in class — c4d protect line) sets up the Chapter-5 decision about the neighbours' file; Lev's fourteen names
+  „in two papers“; Elena's disappearance after the radio night.
 - English localisation (Loc supports more files; add a language setting); mouse click-to-walk.
-- Story hook to carry forward: the "Hanna" thread in Berlin (house number 14, the porter's message) sets up the
-  Chapter-5 decision about the neighbours' file.
 
 ## 5. Process
-- Keep all test layers green after every change: `tests/run_all.gd`, `--autoplay` (routes × play/skip,
-  `--autoplay-explore`, `--autoplay-memories`), `--inputplay` (`--inputplay-explore`, `--inputplay-memories`).
-  Re-export and run the exe before calling anything done. The drivers keep their saves in `user://e2e/saves`, but
-  memories still write `user://profile.json` — back up the game's user folder first and restore it afterwards (the
-  user plays the same build).
-- Token budget: one big round per workflow, tight briefs, filtered output, review lenses with adversarial verification
-  instead of repeated full passes.
+- Keep all test layers green after every change: `tests/run_all.gd`, `--autoplay` (7 choices per route since round 9;
+  play / skip, `--autoplay-explore`, `--autoplay-memories`), `--inputplay` (`--inputplay-explore`,
+  `--inputplay-memories`). Re-export and run the exe before calling anything done. The drivers keep their saves in
+  `user://e2e/saves`; back up the game's user folder first anyway and restore it afterwards (the user plays the same
+  build).
+- Round recipe that worked in rounds 8–9: contract document first, parallel build streams with one owner per file,
+  four review lenses with adversarial verification, a small integration fix pass with its own review, then the lead's
+  full test layers. Briefs stay tight, outputs filtered.

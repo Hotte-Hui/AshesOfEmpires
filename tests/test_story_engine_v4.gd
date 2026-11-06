@@ -92,19 +92,22 @@ func _test_puzzle_payload_is_typed() -> bool:
 
 
 ## The verified route now runs through Chapter 3 (default options ask_elena / share_protocol, part 2 admit_plan /
-## split_by_language — C3P2_DESIGN.md) before the finale: 10 events, 22 items, 43 objectives, 6 choices.
+## split_by_language — C3P2_DESIGN.md; name_marta — C4_DESIGN.md) before the finale: 14 events, 37 items, 65 objectives,
+## 7 choices.
 func _test_valid_branch_combinations() -> bool:
 	for a in ["share_with_irina", "keep_private"]:
 		for m in ["preserve_evidence", "request_explanation"]:
 			var label := "%s/%s" % [a, m]
 			var r := kit.play_verified_route(a, m)
 			kit.eq(r.state["completed_events"], ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed",
-				"c3c_completed", "c3d_completed", "c3e_completed", "c3f_completed", "c3g_completed", "slice_completed"], label + " events")
-			kit.eq(r.state["inventory"].size(), 22, label + " inventory")
-			kit.eq(r.state["completed_objectives"].size(), 43, label + " objectives")
+				"c3c_completed", "c3d_completed", "c3e_completed", "c3f_completed", "c3g_completed", "c4a_completed",
+				"c4b_completed", "c4c_completed", "c4d_completed", "slice_completed"], label + " events")
+			kit.eq(r.state["inventory"].size(), 37, label + " inventory")
+			kit.eq(r.state["completed_objectives"].size(), 65, label + " objectives")
 			kit.eq(r.state["flags"]["slice_finished"], true, label + " slice_finished")
 			kit.eq(r.state["choice_history"], {"a1_choose": a, "m1_choose": m, "c3a_choose": "ask_elena",
-				"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language"}, label + " choices")
+				"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language",
+				"c4d_choose": "name_marta"}, label + " choices")
 			kit.eq(r.pending_cinematics(), [], label + " cinematics consumed")
 			var reload := kit.story()
 			kit.eq(reload.load_json(r.save_json()).get("state"), r.snapshot(), label + " reload equals snapshot")

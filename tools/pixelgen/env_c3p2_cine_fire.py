@@ -736,60 +736,14 @@ def e3a_bg():
     return p.L.c
 
 
-def _hand(p, x, y, ang, s=1.0, spread=0.0, curl=0.0):
-    """A big stylised hand: palm + four fingers + thumb, pointing along `ang` (degrees, 0 = up)."""
-    a = math.radians(ang)
-    ux, uy = math.sin(a), -math.cos(a)                 # finger direction
-    vx, vy = -uy, ux                                   # across the hand
-    m = p.ell(x, y, 15 * s, 15 * s)
-    for i, off in enumerate((-9.0, -3.0, 3.0, 9.0)):
-        fan = (i - 1.5) * spread
-        bx, by = x + vx * off * s + ux * 10 * s, y + vy * off * s + uy * 10 * s
-        L = (16 + (2 if 0 < i < 3 else 0)) * s * (1 - curl * 0.45)
-        dx, dy = ux + vx * fan * 0.06, uy + vy * fan * 0.06
-        m |= p.line([(bx, by), (bx + dx * L, by + dy * L)], r=3.4 * s)
-    tb = (x - vx * 14 * s, y - vy * 14 * s)
-    m |= p.line([tb, (tb[0] + (ux - vx * 0.8) * 13 * s, tb[1] + (uy - vy * 0.8) * 13 * s)], r=3.6 * s)
-    return m
-
 
 def e3a_hands():
     """0 Alexei's hand rises out of the smoke, 1 it reaches (fingers open), 2 Konrad's hand from above takes it,
-    3 both a little higher: he pulls."""
-    x0, y0, w, h = 120, 0, 520, 360
-    R = C.ramps(**KR)
-    frames = []
-    for fr in range(4):
-        p = C.Paint(w, h, R, 'hands', ox=x0, oy=y0)
-        up = (0, -10, -14, -58)[fr]
-        ax, ay = 300, 188 + up
-        sleeve = p.poly([(ax - 34, 360), (ax + 30, 360), (ax + 20, ay + 34), (ax - 22, ay + 36)])
-        p.put(sleeve, 'A', 1.2)
-        p.put(sleeve & (np.mod(p.yy + (p.xx - ax) * 0.15, 13) < 1.2), 'A', 0.4)
-        p.put(sleeve & C.rim(sleeve, -1, 0, 2), 'L', 1.6)
-        p.put(sleeve & C.rim(sleeve, 1, 0, 2), 'F', 2.6)
-        cuff = p.rr(ax - 24, ay + 22, ax + 22, ay + 38, 4)
-        p.put(cuff, 'A', 2.4)
-        hand = _hand(p, ax, ay, -6, 1.15, spread=(2.0 if fr == 1 else 0.6), curl=(0.5 if fr >= 2 else 0.0))
-        p.put(hand, 'Z', 1.8)
-        p.put(hand & C.rim(hand, 1, -1, 2), 'Z', 3.6)
-        p.put(hand & C.rim(hand, -1, 1), 'F', 3.0)
-        if fr >= 2:
-            kx, ky = ax + 10, ay - 2
-            ksl = p.poly([(kx + 150, -10), (kx + 206, 14), (kx + 40, ky + 4), (kx + 16, ky - 22)])
-            p.put(ksl, 'K', 1.4)
-            folds = ksl & (np.mod((p.xx - kx) * 0.6 + (p.yy - ky), 26) < 2.5)
-            p.put(folds, 'K', 0.6)
-            p.put(ksl & C.rim(ksl, 0, -1, 3), 'L', 2.2)
-            p.put(ksl & C.rim(ksl, -1, 1, 2), 'F', 2.0)
-            kc = p.rr(kx + 14, ky - 26, kx + 40, ky - 4, 4)
-            p.put(kc, 'P', 3.2)                                                       # his shirt cuff
-            kh = _hand(p, kx, ky + 8, 200, 1.1, spread=0.3, curl=0.55)
-            p.put(kh, 'Z', 2.2)
-            p.put(kh & C.rim(kh, 1, -1, 2), 'Z', 4.0)
-        p.resolve(band=2.0)
-        frames.append(p.L.c)
-    LE['e3_hands'] = [x0, y0]
+    3 both a little higher: he pulls.  Round 9: sculpted and lit by the portrait pipeline
+    (env_c3p2_cine_hands.e3a_frame -- the quilted sleeve, the sooty hands, Konrad's navy sleeve and shirt cuff)."""
+    import env_c3p2_cine_hands as H
+    frames = [H.e3a_frame(fr) for fr in range(4)]
+    LE['e3_hands'] = list(H.E3A_ORIGIN)
     return Q.sheet(frames)
 
 
@@ -844,55 +798,28 @@ def e3b_hatch():
 
 
 def e3b_men():
-    """Both on their backs in the snow, heads toward each other near the middle (Konrad left, Alexei right): soft
-    silhouettes (a spine stroke with chest, hips, one knee up, an arm flung out), the lamp rim on top; 2 frames
-    (chests heaving)."""
-    x0, y0, w, h = 40, 220, 560, 96
+    """Both on their backs in the snow, heads toward each other near the middle (Konrad left, his hat beside him,
+    Alexei right in the ushanka), one knee up, an arm flung out; the yard lamp from the upper right; 2 frames
+    (chests heaving).  Round 9: the men are sculpted by the portrait pipeline (env_c3p2_cine_hands.lying_men);
+    the tied file lies in the snow between them (painted here)."""
+    import env_c3p2_cine_hands as H
+    x0, y0 = H.E3B_ORIGIN
+    w, h = H.E3B_SIZE
     R = C.ramps(**KR)
     frames = []
-
-    def man(p, side, b):
-        sg = -1 if side == 'k' else 1                     # k lies to the left of his head, a to the right
-        hx = 306 if side == 'k' else 346
-        hy = 270
-        X = lambda d: hx + sg * d                          # noqa: E731 - distance from the head along the body
-        parts = []
-        parts.append(('skin', p.ell(hx, hy, 8.5, 9.0)))
-        if side == 'a':
-            parts.append(('hat', p.ell(hx + 3, hy - 3, 12, 10)))
-        torso = p.line([(X(12), hy + 4), (X(40), hy + 2 + b), (X(74), hy + 6), (X(104), hy + 10)], r=12.0)
-        chest = p.ell(X(42), hy - 2 + b, 22, 10)
-        leg1 = p.line([(X(104), hy + 12), (X(150), hy + 14), (X(196), hy + 14)], r=7.0)
-        leg2 = p.line([(X(104), hy + 10), (X(140), hy - 14), (X(172), hy + 14)], r=6.6)
-        arm = p.line([(X(30), hy - 4 + b), (X(14), hy - 26), (X(-6), hy - 34)], r=5.0) if side == 'a' else \
-            p.line([(X(34), hy + 2 + b), (X(58), hy + 16), (X(84), hy + 20)], r=5.0)
-        parts += [('body', torso | chest), ('legs', leg1 | leg2), ('arm', arm)]
-        sil = np.zeros((p.h, p.w), bool)
-        for _, m in parts:
-            sil |= m
-        return sil, parts
-
     for fr in range(2):
+        img = H.lying_men(fr).copy()
         p = C.Paint(w, h, R, 'e3bm', ox=x0, oy=y0)
-        b = 0 if fr == 0 else -2
-        sk, pk = man(p, 'k', b)
-        sa, pa = man(p, 'a', b)
-        _shade_fig(p, sk, 'K', pk, warm_dir=(0.5, -1.0), hot_dir=(0.0, 1.0))
-        _shade_fig(p, sa, 'A', pa, warm_dir=(0.5, -1.0), hot_dir=(0.0, 1.0))
-        # undo the fire rim from below: the hatch is shut, only the snow light remains
-        for sil in (sk, sa):
-            low = sil & ~C.shift(sil, 0, 1)
-            p.put(low, 'K' if sil is sk else 'A', 0.6)
-        hat_k = p.ell(326, 290, 13, 4.5) | p.rr(318, 280, 334, 290, 3)            # his hat, fallen in the snow
-        p.put(hat_k, 'H', 1.4)
-        p.put(hat_k & C.rim(hat_k, 1, -1), 'L', 2.2)
-        fl = p.poly([(312, 296), (346, 293), (348, 302), (314, 304)])
+        fl = p.poly([(318, 298), (352, 295), (354, 304), (320, 306)])           # the file, thrown into the snow
         p.put(fl, 'P', 2.6)
         p.put(fl & C.rim(fl, 0, -1), 'P', 4.0)
         p.resolve(band=2.0)
-        frames.append(p.L.c)
+        lay = p.L.c
+        m = lay[..., 3] > 0
+        img[m] = lay[m]
+        frames.append(img)
     LE['e3b_men'] = [x0, y0]
-    LE['e3b_breath'] = [[306, 258], [346, 258]]
+    LE['e3b_breath'] = H.E3B_BREATH
     return Q.sheet(frames)
 
 

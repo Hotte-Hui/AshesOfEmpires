@@ -1,0 +1,318 @@
+{
+ "generator": "tools/pixelgen/env_c4_tunnels.py (+ _kit, _layout, _room, _siding, _fx)",
+ "date": "2026-11-06",
+ "licence": "project-owned original artwork, generated procedurally; no copied, traced, downloaded or AI-generated pixels; bitmap fonts hand-defined (env_veltrava_hall_kit.py + env_c4_tunnels_kit.py)",
+ "run": "py -3 -P tools/pixelgen/env_c4_tunnels.py",
+ "files": [
+  {
+   "path": "assets/environments/karsk_tunnels/fg_frame.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "foreground silhouettes (crates, sack, cable drum, buffer stop, sleepers), parallax 1.25"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/booth_smoke.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "thin smoke from the siding office's stove pipe"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/brazier_embers.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the embers of the workers' brazier glowing and dimming (12 frames, emission)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/brazier_embers_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the embers of the workers' brazier glowing and dimming (12 frames, emission) -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/bulb_wagon.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the single bulb over the wagon on its cord, 7 swing frames"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/bulb_wagon_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the single bulb over the wagon on its cord, 7 swing frames -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/clock_pendulum.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the wall clock's pendulum, one beat per second"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/drip_0.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "water dripping from the vault into a puddle (30 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/drip_1.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "water dripping from the vault into a puddle (36 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/drip_2.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "water dripping from the vault into a puddle (42 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/drip_3.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "water dripping from the vault into a puddle (30 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/drip_4.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "water dripping from the vault into a puddle (36 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_bulb.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "dust and paint mist in the light of the bulb"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_0.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_1.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_2.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_3.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_4.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_5.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_6.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_fall_7.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "grit and dust shaken from the vault by a train overhead (16 frames, played once per train)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_hang.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "dust motes under the hanging lamp"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_lamp.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "dust motes in the green lamp light"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/dust_work.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "dust in the work lamp cone"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/feet_win.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the night shift passing the cellar window: felt boots in the snow (96 frames, 8 fps)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/hang_lamp.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "enamel shade on its cord from the cellar vault, 7 swing frames"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/hang_lamp_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "enamel shade on its cord from the cellar vault, 7 swing frames -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/kerosene_flame.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the kerosene lamp's flame in the siding office (8 frames, emission)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/kerosene_flame_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the kerosene lamp's flame in the siding office (8 frames, emission) -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/samovar_steam.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "steam from the samovar chimney (16 frames)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/snow_gate.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "snow blowing in under the shut portal gate"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/snow_win_0.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "snow falling in the yard behind cellar window 0"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/snow_win_1.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "snow falling in the yard behind cellar window 1"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/steam_flange.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "steam hissing from the leaking flange of the pipe"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/stove_vents.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the fire breathing behind the stove's vent slits (8 frames, emission)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/stove_vents_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the fire breathing behind the stove's vent slits (8 frames, emission) -- emission strip"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/fx/train_top.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the underframes of a freight train rolling over the yard above the tunnel (section, event)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/outside.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "the freight yard at night behind the high cellar windows: snow heaped at the glass, the yard lamp"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/door_open.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"door_open\""
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/door_open_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"door_open\" -- emission mask"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/door_open_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"door_open\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_calendar.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_calendar, fictional emblem (neutral)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_calendar_hist.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_calendar, fictional emblem (neutral) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_calendar_hist_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_calendar, fictional emblem (neutral) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_calendar_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_calendar, fictional emblem (neutral) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_lever_plate.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_lever_plate, fictional emblem (neutral)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_lever_plate_hist.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_lever_plate, fictional emblem (neutral) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_lever_plate_hist_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_lever_plate, fictional emblem (neutral) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_lever_plate_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_lever_plate, fictional emblem (neutral) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_wagon.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_wagon, fictional emblem (neutral)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_wagon_hist.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_wagon, fictional emblem (neutral) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_wagon_hist_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_wagon, fictional emblem (neutral) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/insignia_wagon_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "insignia site insignia_wagon, fictional emblem (neutral) -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/plan_taken.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"plan_taken\""
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/plan_taken_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"plan_taken\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/wagon_open.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"wagon_open\""
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/patches/wagon_open_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "the room with the story change \"wagon_open\" -- normal map"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/room.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_room.py",
+   "content": "Karsk, 16 February 1964: the Archivkeller of the freight office (Lev's desk under the green lamp), the iron door of 1941, Dienststollen 3, the Umsetzgleis with wagon 24 318"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/room_e.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_room.py",
+   "content": "Karsk, 16 February 1964: the Archivkeller of the freight office (Lev's desk under the green lamp), the iron door of 1941, Dienststollen 3, the Umsetzgleis with wagon 24 318 -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/room_n.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_room.py",
+   "content": "Karsk, 16 February 1964: the Archivkeller of the freight office (Lev's desk under the green lamp), the iron door of 1941, Dienststollen 3, the Umsetzgleis with wagon 24 318 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/scene.json",
+   "generator": "tools/pixelgen/env_c4_tunnels.py",
+   "content": "art manifest (TECHNICAL_ARCHITECTURE 3.1 + registry gates + tunnels extensions)"
+  },
+  {
+   "path": "assets/environments/karsk_tunnels/veils.png",
+   "generator": "tools/pixelgen/env_c4_tunnels_fx.py",
+   "content": "soft light cones under the lamps and the faint paint haze of the siding (plain alpha)"
+  }
+ ]
+}

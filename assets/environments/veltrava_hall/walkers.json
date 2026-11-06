@@ -1,10 +1,11 @@
 {
- "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Palais: lane y 295 = in front of every prop (base_y <= 294), behind the walk band (>= 296) and the speaking NPCs (300); no pause near a speaker or a story hotspot.",
+ "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Palais: lane y 295 = in front of every prop (base_y <= 294), behind the walk band (>= 296) and the speaking NPCs (300); no pause near a speaker or a story hotspot. Round 9 (feel pass 2): every walker also has its own rig (walkers/<name>_rig.json/.png/_n.png: the source rows plus walk_front / idle_back / walk_back, used instead of \"sheet\"), walkers step aside for each other and keep their distance.",
  "walkers": [
   {
    "id": "hall_pressman",
    "char": "journalist",
    "sheet": "walkers/pressman.png",
+   "rig": "walkers/pressman_rig.json",
    "path": [
     [
      96,
@@ -48,6 +49,7 @@
    "id": "hall_secretary",
    "char": "typist",
    "sheet": "walkers/secretary.png",
+   "rig": "walkers/secretary_rig.json",
    "path": [
     [
      1196,
@@ -90,6 +92,7 @@
    "id": "hall_delegate",
    "char": "clerk",
    "sheet": "walkers/delegate.png",
+   "rig": "walkers/delegate_rig.json",
    "path": [
     [
      1296,

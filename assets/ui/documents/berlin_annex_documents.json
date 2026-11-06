@@ -1,0 +1,567 @@
+{
+ "scene": "L_C4_AnnexA / L_C4_AnnexB",
+ "palette": "annex",
+ "generator": "tools/pixelgen/env_c4_annex_docs.py",
+ "date": "2026-11-06",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Story-critical words are legible 3x5 capitals; the rest is print / handwriting scribble under the UI caption. Rects are [x, y, w, h] in document pixels. The route board close-up (ev_c4_route_board, InspectView / evidence board) is drawn here (round-9 fix compl-04); the route puzzle keeps its own overlay berlin_c4_routes_trace.png (puzzle stream, berlin_c4_routes.json).",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/berlin_annex_notice.png",
+   "size": [
+    320,
+    210
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_notice",
+   "item_id": "ev_c4_notice",
+   "objective": "c4b_inspect_notice",
+   "hotspot": "door_9",
+   "title_key": "item.c4_notice.name",
+   "description_key": "item.c4_notice.description",
+   "describes": "the eviction notice of house No. 9: typed notice, the fresh addendum \"Haushalt aufgelöst. Vorgang an Nebenstelle Süd.\", the attached Lageplan Süd 8 with the shafts S1-S3 and \"gez. K. A.\"",
+   "marks": {
+    "title": {
+     "rect": [
+      66,
+      14,
+      62,
+      10
+     ],
+     "text": "BESCHEID"
+    },
+    "house": {
+     "rect": [
+      62,
+      30,
+      71,
+      5
+     ],
+     "text": "RÄUMUNG HAUS NR. 9"
+    },
+    "reason": {
+     "rect": [
+      18,
+      82,
+      91,
+      5
+     ],
+     "text": "BAUMASSNAHMEN ACHSE SÜD"
+    },
+    "addendum_1": {
+     "rect": [
+      18,
+      166,
+      75,
+      5
+     ],
+     "text": "HAUSHALT AUFGELÖST."
+    },
+    "addendum_2": {
+     "rect": [
+      18,
+      175,
+      103,
+      5
+     ],
+     "text": "VORGANG AN NEBENSTELLE SÜD"
+    },
+    "shaft_1": {
+     "rect": [
+      248,
+      62,
+      7,
+      5
+     ],
+     "text": "S1"
+    },
+    "shaft_2": {
+     "rect": [
+      220,
+      90,
+      7,
+      5
+     ],
+     "text": "S2"
+    },
+    "shaft_3": {
+     "rect": [
+      241,
+      111,
+      7,
+      5
+     ],
+     "text": "S3"
+    },
+    "lageplan": {
+     "rect": [
+      179,
+      127,
+      55,
+      5
+     ],
+     "text": "LAGEPLAN SÜD 8"
+    },
+    "sign_ka": {
+     "rect": [
+      237,
+      127,
+      39,
+      5
+     ],
+     "text": "GEZ. K. A."
+    }
+   },
+   "alt_key": "doc.berlin_annex_notice.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_annex_shaft.png",
+   "size": [
+    260,
+    170
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_shaft",
+   "item_id": "ev_c4_shaft",
+   "objective": "c4b_inspect_column",
+   "hotspot": "column_s2",
+   "title_key": "item.c4_shaft.name",
+   "description_key": "item.c4_shaft.description",
+   "describes": "the steel door behind the posters of S 2: \"Lüftungsbauwerk S 2 - Zutritt nur für Bedienstete\", warm air at the grate",
+   "marks": {
+    "plate_1": {
+     "rect": [
+      100,
+      40,
+      59,
+      5
+     ],
+     "text": "LÜFTUNGSBAUWERK"
+    },
+    "plate_s2": {
+     "rect": [
+      119,
+      49,
+      22,
+      10
+     ],
+     "text": "S 2"
+    },
+    "plate_2": {
+     "rect": [
+      100,
+      63,
+      59,
+      5
+     ],
+     "text": "ZUTRITT NUR FÜR"
+    },
+    "plate_3": {
+     "rect": [
+      108,
+      70,
+      43,
+      5
+     ],
+     "text": "BEDIENSTETE"
+    }
+   },
+   "alt_key": "doc.berlin_annex_shaft.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_annex_card_de.png",
+   "size": [
+    220,
+    150
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_card_de",
+   "item_id": "ev_c4_card_de",
+   "objective": "c4b_inspect_crates",
+   "hotspot": "loading_hatch",
+   "title_key": "item.c4_card_de.name",
+   "description_key": "item.c4_card_de.description",
+   "describes": "card No. 0417, the German half: Lindner, Anna, geb. Kowalenko, Rückführung Ost, C-17/45, Di 18.2., 23.40; \"Kind Ilse, 8 - Verbleib ungeklärt\"; perforated right edge",
+   "marks": {
+    "tab": {
+     "rect": [
+      170,
+      5,
+      15,
+      5
+     ],
+     "text": "C-17"
+    },
+    "number": {
+     "rect": [
+      14,
+      14,
+      62,
+      10
+     ],
+     "text": "NR. 0417"
+    },
+    "name": {
+     "rect": [
+      14,
+      34,
+      51,
+      5
+     ],
+     "text": "LINDNER, ANNA"
+    },
+    "born": {
+     "rect": [
+      14,
+      45,
+      55,
+      5
+     ],
+     "text": "GEB. KOWALENKO"
+    },
+    "birth": {
+     "rect": [
+      14,
+      56,
+      55,
+      5
+     ],
+     "text": "  1926 CHARKOW"
+    },
+    "note": {
+     "rect": [
+      14,
+      67,
+      115,
+      5
+     ],
+     "text": "VERMERK C-17: RÜCKFÜHRUNG OST"
+    },
+    "handover": {
+     "rect": [
+      14,
+      78,
+      99,
+      5
+     ],
+     "text": "ABGABE KORDON-17, TÜR OST"
+    },
+    "wagon": {
+     "rect": [
+      14,
+      89,
+      75,
+      5
+     ],
+     "text": "KURIERWAGEN C-17/45"
+    },
+    "time": {
+     "rect": [
+      14,
+      100,
+      59,
+      5
+     ],
+     "text": "DI 18.2., 23.40"
+    },
+    "child": {
+     "rect": [
+      14,
+      123,
+      131,
+      5
+     ],
+     "text": "KIND ILSE, 8 - VERBLEIB UNGEKLÄRT"
+    }
+   },
+   "alt_key": "doc.berlin_annex_card_de.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_annex_drawer.png",
+   "size": [
+    320,
+    170
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_drawer",
+   "item_id": "ev_c4_drawer_s8",
+   "objective": "c4d_inspect_drawer",
+   "hotspot": "drawer_s8",
+   "title_key": "item.c4_drawer_s8.name",
+   "description_key": "item.c4_drawer_s8.description",
+   "describes": "drawer Süd 8 from above: 212 cards, 37 with a red C-17 tab",
+   "marks": {
+    "label": {
+     "rect": [
+      141,
+      2,
+      38,
+      10
+     ],
+     "text": "SÜD 8"
+    },
+    "count": {
+     "rect": [
+      26,
+      160,
+      11,
+      5
+     ],
+     "text": "212"
+    },
+    "tabs": {
+     "rect": [
+      242,
+      160,
+      35,
+      5
+     ],
+     "text": "37 X C-17"
+    }
+   },
+   "alt_key": "doc.berlin_annex_drawer.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_annex_plan.png",
+   "size": [
+    320,
+    220
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_plan",
+   "item_id": "ev_c4_annex_plan",
+   "objective": "c4d_inspect_plan",
+   "hotspot": "plan_wall",
+   "title_key": "item.c4_annex_plan.name",
+   "description_key": "item.c4_annex_plan.description",
+   "describes": "Lüftungsplan Nebenstelle Süd, 1961, Blatt 3: three shafts under three blocks hatched \"freizumachen\", gez. K. Adler",
+   "marks": {
+    "title": {
+     "rect": [
+      18,
+      16,
+      111,
+      5
+     ],
+     "text": "LÜFTUNGSPLAN NEBENSTELLE SÜD"
+    },
+    "sheet": {
+     "rect": [
+      18,
+      24,
+      55,
+      5
+     ],
+     "text": "1961   BLATT 3"
+    },
+    "shaft_1": {
+     "rect": [
+      66,
+      118,
+      7,
+      5
+     ],
+     "text": "S1"
+    },
+    "shaft_2": {
+     "rect": [
+      156,
+      118,
+      7,
+      5
+     ],
+     "text": "S2"
+    },
+    "shaft_3": {
+     "rect": [
+      246,
+      118,
+      7,
+      5
+     ],
+     "text": "S3"
+    },
+    "clear": {
+     "rect": [
+      136,
+      86,
+      47,
+      5
+     ],
+     "text": "FREIZUMACHEN"
+    },
+    "signed": {
+     "rect": [
+      220,
+      192,
+      51,
+      5
+     ],
+     "text": "GEZ. K. ADLER"
+    }
+   },
+   "alt_key": "doc.berlin_annex_plan.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_annex_tube_slip.png",
+   "size": [
+    250,
+    130
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_tube_slip",
+   "item_id": "ev_c4_tube_slip",
+   "objective": "c4d_inspect_tube",
+   "hotspot": "tube_station",
+   "title_key": "item.c4_tube_slip.name",
+   "description_key": "item.c4_tube_slip.description",
+   "describes": "the tube slip of the Staatspolizeistelle, Kommissar Wendt: all C-17 households Süd 8, where the children are, informants by name",
+   "marks": {
+    "sender": {
+     "rect": [
+      12,
+      12,
+      75,
+      5
+     ],
+     "text": "STAATSPOLIZEISTELLE"
+    },
+    "wendt": {
+     "rect": [
+      12,
+      20,
+      59,
+      5
+     ],
+     "text": "KOMMISSAR WENDT"
+    },
+    "order_1": {
+     "rect": [
+      12,
+      36,
+      123,
+      5
+     ],
+     "text": "BIS MONTAG: ALLE C-17-HAUSHALTE"
+    },
+    "order_2": {
+     "rect": [
+      12,
+      46,
+      107,
+      5
+     ],
+     "text": "SÜD 8, VERBLEIB DER KINDER."
+    },
+    "order_3": {
+     "rect": [
+      12,
+      56,
+      115,
+      5
+     ],
+     "text": "AUSKUNFTSPERSONEN NAMENTLICH."
+    },
+    "urgent": {
+     "rect": [
+      195,
+      100,
+      30,
+      10
+     ],
+     "text": "EILT"
+    }
+   },
+   "alt_key": "doc.berlin_annex_tube_slip.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_annex_route_board.png",
+   "size": [
+    320,
+    210
+   ],
+   "display_scale": 3,
+   "id": "berlin_annex_route_board",
+   "item_id": "ev_c4_route_board",
+   "objective": "c4b_talk_marta",
+   "hotspot": "marta_tram",
+   "title_key": "item.c4_route_board.name",
+   "description_key": "item.c4_route_board.description",
+   "describes": "Marta's route board: tracing paper from the depot, line 74 in pencil with its stops and the turning loop Süd 8, three dashed detours dated Okt. / Dez. / Jan. with hollow diamonds, drawn in driving direction (the north arrow points left)",
+   "marks": {
+    "title": {
+     "rect": [
+      22,
+      20,
+      62,
+      10
+     ],
+     "text": "LINIE 74"
+    },
+    "detours": {
+     "rect": [
+      22,
+      34,
+      43,
+      5
+     ],
+     "text": "UMLEITUNGEN"
+    },
+    "north": {
+     "rect": [
+      264,
+      28,
+      3,
+      5
+     ],
+     "text": "N"
+    },
+    "okt": {
+     "rect": [
+      46,
+      92,
+      15,
+      5
+     ],
+     "text": "OKT."
+    },
+    "dez": {
+     "rect": [
+      128,
+      128,
+      15,
+      5
+     ],
+     "text": "DEZ."
+    },
+    "jan": {
+     "rect": [
+      206,
+      60,
+      15,
+      5
+     ],
+     "text": "JAN."
+    },
+    "direction": {
+     "rect": [
+      206,
+      128,
+      51,
+      5
+     ],
+     "text": "FAHRTRICHTUNG"
+    },
+    "loop": {
+     "rect": [
+      222,
+      150,
+      75,
+      5
+     ],
+     "text": "WENDESCHLEIFE SÜD 8"
+    }
+   },
+   "alt_key": "doc.berlin_annex_route_board.alt"
+  }
+ ]
+}

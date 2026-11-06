@@ -290,8 +290,10 @@ F35 = {
     'U': ["#.#", "#.#", "#.#", "#.#", "###"], 'V': ["#.#", "#.#", "#.#", "#.#", ".#."],
     'W': ["#.#", "#.#", "###", "###", "#.#"], 'X': ["#.#", "#.#", ".#.", "#.#", "#.#"],
     'Y': ["#.#", "#.#", ".#.", ".#.", ".#."], 'Z': ["###", "..#", ".#.", "#..", "###"],
-    'Ä': ["#.#", ".#.", "#.#", "###", "#.#"], 'Ö': ["#.#", "...", "###", "#.#", "###"],
-    'Ü': ["#.#", "...", "#.#", "#.#", "###"],
+    # round 9 (tools/pixelgen/pixfont_umlauts.py, boxy like this font): 6 rows -- the dots one row above the cap
+    # line, a blank row, the letter one row shorter (draw_text puts taller glyphs above y)
+    'Ä': ["#.#", "...", "###", "#.#", "###", "#.#"], 'Ö': ["#.#", "...", "###", "#.#", "#.#", "###"],
+    'Ü': ["#.#", "...", "#.#", "#.#", "#.#", "###"],
     '0': ["###", "#.#", "#.#", "#.#", "###"], '1': [".#", "##", ".#", ".#", ".#"],
     '2': ["##.", "..#", ".#.", "#..", "###"], '3': ["##.", "..#", ".#.", "..#", "##."],
     '4': ["#.#", "#.#", "###", "..#", "..#"], '5': ["###", "#..", "##.", "..#", "##."],
@@ -320,11 +322,13 @@ def draw_text(c: Canvas, x: int, y: int, s: str, col, font=F57, spacing: int = 1
     """pixel text; returns the x after the text. wear drops pixels (pencil / worn print); bold widens strokes."""
     cx = x
     space = 3 if font is F57 else 2
+    fh = len(font.get('A', font.get('?')))
     for ch in s:
         if ch == ' ':
             cx += space + spacing
             continue
         g = font.get(ch, font.get('?'))
+        top = min(0, fh - len(g))                  # taller glyphs (umlauts) reach above the cap line
         for ry, row in enumerate(g):
             for rx, v in enumerate(row):
                 if v != '#':
@@ -333,8 +337,8 @@ def draw_text(c: Canvas, x: int, y: int, s: str, col, font=F57, spacing: int = 1
                     continue
                 for bx in range(2 if bold else 1):
                     if shadow is not None:
-                        c.px(cx + rx + bx + 1, y + ry + 1, shadow)
-                    c.px(cx + rx + bx, y + ry, col)
+                        c.px(cx + rx + bx + 1, y + ry + top + 1, shadow)
+                    c.px(cx + rx + bx, y + ry + top, col)
         cx += len(g[0]) + spacing + (1 if bold else 0)
     return cx
 

@@ -64,6 +64,15 @@ edit the part of the owning area and re-run the script.
 - [c3p2_cast_audio](#part-c3p2_cast_audio)
 - [explore_c3p2](#part-explore_c3p2)
 - [feel_r8](#part-feel_r8)
+- [c4_story](#part-c4_story)
+- [env_c4_tunnels](#part-env_c4_tunnels)
+- [env_c4_annex](#part-env_c4_annex)
+- [c4_cine](#part-c4_cine)
+- [c4_puzzle](#part-c4_puzzle)
+- [c4_cast_audio](#part-c4_cast_audio)
+- [explore_c4](#part-explore_c4)
+- [board](#part-board)
+- [feel_r9](#part-feel_r9)
 - [ui](#part-ui)
 - [explore_system](#part-explore_system)
 - [photo_mode](#part-photo_mode)
@@ -2259,9 +2268,18 @@ Contract: `documentation/TECHNICAL_ARCHITECTURE.md` §12.10.
 | `assets/ui/memories/L_M1_Plaza.png` | 320×180 RGB | same, `src/raw_L_M1_Plaza.png` | crop (214,92): dome, plain eagle (neutral twin), ranks. |
 | `assets/ui/memories/L_C3_Station.png` | 320×180 RGB | same, `src/raw_L_C3_Station.png` | crop (120,56): clock tower, arch window, departures board. |
 | `assets/ui/memories/L_C3_Hall.png` | 320×180 RGB | same, `src/raw_L_C3_Hall.png` | crop (150,50): staircase, chandelier, gallery door. |
+| `assets/ui/memories/L_C3_RegistryA.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryA.png` | crop (150,124): Alexei in the snowy yard at night, yard lamp, cart with crates (round 8). |
+| `assets/ui/memories/L_C3_RegistryB.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryB.png` | crop (236,124): Konrad and Alexei at the sorting table under the green lamp (round 8). |
+| `assets/ui/memories/L_C3_RegistryC.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryC.png` | crop (320,124): Alexei (soot look) by the card cabinet, the fire front (round 8). |
+| `assets/ui/memories/L_C3_RegistryD.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryD.png` | crop (100,124): Konrad before the lit porter's booth, fire to the right (round 8). |
+| `assets/ui/memories/L_C3_Quay.png` | 320×180 RGB | same, `src/raw_L_C3_Quay.png` | crop (225,124): the burning wing, fire engine, Alexei under a lantern by the river (round 8). |
+| `assets/ui/memories/L_C4_TunnelsA.png` | 320×180 RGB | same, `src/raw_L_C4_TunnelsA.png` | crop (260,128): the archive cellar, Alexei and Lev at the desk under the green-shaded lamp, samovar and stove (round 9 fix, camera 40 inside camera_zones `L_C4_TunnelsA`). |
+| `assets/ui/memories/L_C4_AnnexA.png` | 320×180 RGB | same, `src/raw_L_C4_AnnexA.png` | crop (130,128): the tram loop Süd 8 at dawn, the lit timetable case, Konrad and Marta at tram 74 (round 9 fix, camera 120). |
+| `assets/ui/memories/L_C4_TunnelsB.png` | 320×180 RGB | same, `src/raw_L_C4_TunnelsB.png` | crop (218,128): the transfer siding, wagon 24 318 with the fresh stencil C-17/45, Alexei at x 1712 facing Lev at his siding post (round 9 fix, camera 1280; the harness loads each scene as a memory of itself). |
+| `assets/ui/memories/L_C4_AnnexB.png` | 320×180 RGB | same, `src/raw_L_C4_AnnexB.png` | crop (262,128): Nebenstelle Süd, the tube station, the bench „Warten bis zum Aufruf“ under the number 17, the counter „Auskunft · Abgleich“ with Fengler behind it, Konrad (round 9 fix, camera 1200). |
 | `assets/ui/memories/icon_memory.png` | 39×39 RGBA (13×13 drawn ×3) | same | Pocket watch at nine o'clock, amber arc + arrow tip on the rim (time running back). UI kit palette. |
 | `assets/ui/memories/manifest.json` | JSON | same | Files, sizes, crops, sources. |
-| `assets/ui/memories/src/raw_<scene>.png` (5) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
+| `assets/ui/memories/src/raw_<scene>.png` (14) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
 | `assets/audio/sfx/mem_rewind.wav` | 2.9 s, 44.1 kHz 16-bit stereo | `tools/audiogen/memories_audio.py` | Pocket-clock ticks time-reversed and speeding up (winding back), reversed airy swell with a soft release, faint tape-wow drone sinking 196→176 Hz, hushed low settle. Peak −5 dBFS, RMS −26 dBFS. No chime, no fanfare. |
 | `assets/audio/sfx/mem_return.wav` | 2.6 s, same format | same | The same clock forward, fast at first, settling into tick-tock; the swell from its peak fading out; drone rising back. Peak −5 dBFS, RMS −31 dBFS. |
 
@@ -2535,7 +2553,7 @@ hand-defined Veltrava fonts of `env_veltrava_lib.py`.
 | `promenade.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the quay: snow, hydrant and hose lines, tyre tracks, footprints of two men from the hatch to the bench, the balustrade with six lanterns, two snowed-in benches, the bridgehead pylon with the great lantern and the city arms, the ramp wall, tram stop (lines 7 / 12) and shelter with a commission poster, catenary poles and wire |
 | `glow_air.png` | env_c3p2_quay_near.py | soft additive halos (lanterns, fire windows, headlight), alpha in dithered steps |
 | `fg.png` | env_c3p2_quay_near.py | low dark snow banks and bollards along the bottom edge (p 1.25, below y 318) |
-| `props/fire_engine.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, FEUERWEHR lettering, the city arms on the door |
+| `props/fire_engine.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, FEUERWEHR lettering, the city arms on the door; a framed roller-shutter equipment locker behind the cab (round 9: the blanket task) |
 | `props/car_reich.png`, `props/car_reich_hist.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the German delegation car with its fender pennant (neutral / historical) |
 | `props/car_ussr.png`, `props/car_ussr_hist.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the Soviet delegation car with its fender pennant (neutral / historical) |
 | `props/bench_file.png` (+ `_n`) | env_c3p2_quay_near.py | the bench at x 760: the file burst open, two fans of sheets, the red C-17 tag and its string, sheets in the snow, soot smudges |
@@ -2911,6 +2929,555 @@ The glass opening is untouched (t2 match cut), timing unchanged (25.5 s).
 ### 6. Text
 `data/locale/de_feel_r8.json`: the two reasons a main-menu memory cannot be opened (no recorded state / incomplete
 record); the save-check reasons come from `de_system.json` (`sys.save.err.*`).
+
+---
+<a id="part-c4_story"></a>
+
+## Asset manifest part — Chapter 4, part 1 „Stimmen unter Beton“ (Karsk tunnels, Berlin annex) — story stream, round 9
+
+Date for all entries: **2026-11-06**. Everything below is original work for this project, written by hand or produced by
+deterministic scripts in this repository; no downloaded images, sounds or samples, no AI image services. Licence:
+project-owned, same as the game. Binding design: `documentation/C4_DESIGN.md`.
+
+### Story, presentation and code
+| Path | Kind | How it was made |
+|---|---|---|
+| `documentation/C4_DESIGN.md` | design contract | hand-written; its tables are filled from the same one-off content table that wrote the JSON below (identical texts) |
+| `data/v3/*.json` (Chapter-4 entries: 4 scenes, 4 quests, 22 objectives, 15 items, 6 conversations, `pz_c4_routes`, `pz_c4_numbers`, 5 cinematics, 4 events; `L_C3_Quay.next_scene` re-linked), `data/v3/locale_de.json` (`ui.chapter_c4`, `world.c4a`–`c4d`, `obj.c4*`, `choice.c4d.*`, `item.c4_*`, `dlg.c4.*`) | story data, German texts | hand-written; applied to the JSON files by a one-off formatting script (byte-identical round trip of the existing records) |
+| `data/chapters/c4.json` (levels, entry spawns, chapter cards, `switches`, palettes `tunnels` / `annex`, grades `tunnels` / `tunnels_siding` / `annex_loop` / `annex`, line expressions/variants, option texts, reactions, puzzle UI and cinematic registry) | presentation rules | hand-written (palette ramps are placeholders for the env streams) |
+| `data/locale/de_c4_dialogue.json`, `de_c4_cinematics.json`, `de_c4_ui.json`, `de_c4_characters.json` | German texts (variants, reactions, cinematic lines, both puzzle UIs, memory and task places, new people and journal notes) | hand-written |
+| `scripts/story/story_engine.gd` (`LOCKED_CINEMATICS` += 5 ids — validator list only) | GDScript | hand-written one-line extension |
+| `scripts/core/game.gd` (`end_card_decisions()`: the end card lists the decisions in story order) | GDScript | hand-written small extension |
+| `scenes/levels/L_C4_Tunnels.tscn`, `L_C4_Annex.tscn` | level shells (story interactables, NPC nodes on named hotspots) | hand-written via the content table |
+| `assets/environments/karsk_tunnels/scene.json`, `assets/environments/berlin_annex/scene.json` | **placeholder** art manifests (no images: spawns, hotspots, walk band, blockers, zones, NPC anchors) — replaced by the env-tunnels / env-annex streams, which keep every name | hand-written |
+| `assets/environments/karsk_tunnels/explore_hotspots.json`, `assets/environments/berlin_annex/explore_hotspots.json` | empty append-only targets for the exploration stream | hand-written |
+| `scripts/core/autoplay.gd`, `scripts/core/inputplay.gd` (Chapter-4 routes, both new puzzles by keys, 7-value choice spec, siding quicksave check, „Fortsetzen“ in the annex) | E2E drivers | hand-written extensions |
+| `tests/test_c4_routes.gd`, edits of the chain tests, `tests/support/test_kit.gd`, `tests/test_save_rebase_r8.gd` | tests | hand-written |
+| `tests/reference/make_python_reference.py` → `tests/reference/python_reference.json.gz` | parity fixture | generator extended by hand; fixture generated from the unmodified preproduction reference engine on `data/v3` (576 routes) |
+| `tools/docs/gen_quest_db_c4.py` → `documentation/QUEST_DATABASE.md` §12 | documentation generator | written by hand (reuses the helpers of `gen_quest_db_c3.py`) |
+
+No image, sound or music file was produced by this stream; prints, art, cinematics, puzzle UIs, characters and
+audio of Chapter 4 belong to the streams listed in C4_DESIGN §10.
+
+---
+<a id="part-env_c4_tunnels"></a>
+
+## Asset manifest part -- env_c4_tunnels (Chapter 4 part 1, Alexei's Karsk: Archivkeller, Dienststollen 3, Umsetzgleis, L_C4_Tunnels)
+
+All files below are **original works generated procedurally** by the scripts in `tools/pixelgen/`
+(`env_c4_tunnels.py` drives `env_c4_tunnels_room.py` (cellar, door wall, floors), `env_c4_tunnels_siding.py`
+(earth section, tunnel, siding hall, wagon 24 318), `env_c4_tunnels_fx.py` (outside, veils, strips, swing lamps,
+event strips); `env_c4_tunnels_docs.py` (inspect documents); helpers `env_c4_tunnels_kit.py`,
+`env_c4_tunnels_layout.py`, and -- read-only -- `pg.py`, the tone-space painter / light bake / bitmap fonts of
+`env_veltrava_hall_kit.py`, the masonry / wood painters of `env_c3p2_archive_kit.py` and the hand-pixelled emblem
+masks of `env_karsk_emblems.py`).  No pixels were copied, traced, sampled, downloaded or AI-generated; no third-party
+assets, fonts or textures are embedded.  References (Soviet two-axle covered wagons, 1941 air-raid shelters, lever
+frames, freight-office ledgers) were studied only, never copied.
+
+* Licence / rights: project-owned original artwork, freely redistributable with the game.  Provenance: deterministic
+  generators (two consecutive runs reproduce all 72 files byte-for-byte, checked 2026-11-06); re-run with
+  `py -3 -P tools/pixelgen/env_c4_tunnels.py [--preview=DIR]` and `py -3 -P tools/pixelgen/env_c4_tunnels_docs.py`,
+  then the shared `--import`.  Machine-readable list: `assets/environments/karsk_tunnels/provenance.json` (62 files).
+* Date: 2026-11-06 (round 9).  Owner: env-tunnels stream.
+* Palette `tunnels` = data/chapters/c4.json `palettes.tunnels` (night, brick, iron, lamp, wagon, paper, snow, red,
+  skin -- kept unchanged) plus two ramps taken from Chapter 1's Karsk palette so Karsk stays one city:
+  **`green`** `#1B3033 #26403F #36534D #4A675C #6C7A62 #9DAF91` (oil-paint dado, Lev's lamp shade, the iron door) and
+  **`concrete`** `#2A2D2C #3B3F3B #4F534C #666A60 #7F8275 #9A9B8B` (the 1941 tube, the siding hall).  Every room layer,
+  patch and document is palette-pure in it (`tests/test_c4_tunnels_art.gd`); scene.json `meta.palette_ramps` lists it.
+
+| Path (assets/environments/karsk_tunnels/ unless noted) | Content |
+|---|---|
+| `room.png` (+ `_n`, `_e`) | the whole level, baked once (1920 x 360): **Archivkeller** (scene A, ~4.40) -- four brick barrel vaults on lunettes, two barred windows, the stair from the office (door ajar, warm), the freight-book shelves 1963 / 1964 / АРХИВ with the January gap and Lev's slip, stamp rack, card cabinet, wall clock (4.40), 1964 calendar, railway schematic „СХЕМА / КАРСК“, Lev's desk (green lamp, open January book, abacus, photo, tea), samovar table, the light box made of a signal lamp, the stove with felt boots, the 1941 iron door with „Бомбоубежище · Служебный тоннель №3“; the **door wall** in section; **Dienststollen 3** (scene C) -- earth section with the freight yard above, concrete tube, cage lamps, old and new cables, heating pipe with the leaking flange, phone niche, „← К укрытию“, lever frame (8 levers, diagram board) and point „СТР 2“, the sealed gallery „ЗАКРЫТО“, boards with a scratched house; the **Umsetzgleis** -- vaulted hall, the siding office „ДЕЖУРНЫЙ“ with the card box „C-17/45 / ПРИНЯТЬ“ and the stamp, the painters' crate and roster post, the paint stand (C-17/41 … /45, two alphabets, the bucket), fire shield, plate heap, wagon 24 318 (C-17/45 stencil still taped over 47 702 over the ghost of C-17/42, enamel plate 24 318, chalk „ВТ 23.40“, marks „РЕВ 11.62 / ДЕП КАРСК“), the kit pile, the brazier, the shut portal with padlock and dawn in the cracks |
+| `patches/plan_taken`, `door_open`, `wagon_open` (+ maps) | opaque crops of a bake with one story change: the tunnel plan handed over (after `c4a_talk_tunnel`), the iron door open (after `c4a_open_door`), the wagon door slid open (after `c4c_inspect_wagon`) |
+| `patches/insignia_calendar`, `insignia_lever_plate`, `insignia_wagon` (+ `_hist`, maps) | the three insignia sites: fictional gear-and-wheat emblem of Chapter 1 / hammer and sickle in the `_hist` twin (TECHNICAL_ARCHITECTURE §12.4, Symbols.pick) |
+| `outside.png` | the yard at night behind the cellar windows (snow at the glass, the yard lamp, a wagon) |
+| `veils.png` | soft light cones (bulb over the wagon, work lamps, the enamel lamp, Lev's lamp) and the faint paint haze |
+| `fg_frame.png` | dark foreground silhouettes, parallax 1.25 (crates, sack, cable drum, buffer stop, sleepers) |
+| `fx/snow_win_0/1`, `feet_win`, `samovar_steam`, `stove_vents` (+`_e`), `clock_pendulum`, `dust_lamp`, `dust_hang` | life of scene A: snow behind the windows, the night shift's felt boots passing, steam, the fire breathing, the pendulum, dust in the lamplight |
+| `fx/drip_0..4`, `steam_flange`, `booth_smoke`, `kerosene_flame` (+`_e`), `dust_bulb`, `dust_work`, `brazier_embers` (+`_e`), `snow_gate` | life of scene C: drops falling into puddles, steam at the flange, smoke from the booth's pipe, the kerosene flame, dust in the bulb and work-lamp light, embers, snow blown under the gate |
+| `fx/hang_lamp`, `fx/bulb_wagon` (+`_e`) | 7-frame swing strips of the two hanging lamps (driven by the level script) |
+| `fx/dust_fall_0..7`, `fx/train_top` | event strips: grit shaken from the vault, the underframes of a train crossing the yard above |
+| `scene.json`, `provenance.json` | art manifest (story contract kept: spawns, hotspots, npcs, the blocker `cellar_door`) + file list |
+| `assets/ui/documents/karsk_tunnels_book_gap`, `_freight_book`, `_carbon`, `_plan`, `_tracks`, `_card_ru`, `_stencils`, `_wagon_inside` (.png) + `karsk_tunnels_documents.json` | inspect close-ups of the eight Karsk items of C4_DESIGN §2.5 (weighbill style, legible only the story figures; the card's perforation contract pitch 6 / hole 3 / first 8 px / 15 holes is shared with the German half) |
+| `data/locale/de_env_karsk_tunnels.json` | German caption lines (alt texts) of the eight documents |
+
+Code and tests of this stream (hand-written): `scripts/levels/c4/tunnels_level.gd` (extends the registry level:
+scene filters, camera zones, looks, swinging lamps, the passing train), the root script line of
+`scenes/levels/L_C4_Tunnels.tscn`, `tests/test_c4_tunnels_art.gd`, `tests/visual/c4_tunnels_shots.gd` / `.tscn`,
+screenshots `documentation/screenshots/c4_tunnels_*.png` (captures of the real renderer + the contact sheet).
+
+---
+<a id="part-env_c4_annex"></a>
+
+## Asset manifest part -- env_c4_annex (Chapter 4 part 1, Konrad's Berlin: the tram loop and the registry annex, L_C4_Annex)
+
+All files below are **original works generated procedurally** by the scripts in `tools/pixelgen/`
+(`env_c4_annex.py` drives `env_c4_annex_loop.py` (street), `env_c4_annex_hall.py` (annex), `env_c4_annex_fx.py`
+(strips), `env_c4_annex_docs.py` (inspect documents); helpers `env_c4_annex_kit.py`, `env_c4_annex_layout.py`, and
+-- read-only -- `pg.py`, the tone-space painter / light bake / bitmap fonts of `env_veltrava_hall_kit.py`, the generic
+painters of `env_c3p2_archive_kit.py` and the insignia drawings of `env_berlin_insignia.py`).  No pixels were copied,
+traced, sampled, downloaded or AI-generated; no third-party assets, fonts or textures are embedded.
+
+* Licence / rights: project-owned original artwork (generated for this project), freely redistributable with the
+  game.  Provenance: deterministic generator (a re-run reproduces every file byte-for-byte, scene.json included;
+  checked 2026-11-06), re-run with `py -3 -P tools/pixelgen/env_c4_annex.py [--preview=DIR]`, then the shared
+  `--import`.  Machine-readable list: `assets/environments/berlin_annex/provenance.json` (66 files).
+* Date: 2026-11-06 (round 9).  Owner: env-annex stream.
+* Palette: `annex` of data/chapters/c4.json (night, concrete, steel, fluor, dawn, paper, snow, red, skin) plus the
+  proposed ramp **`lamp`** `#4A3016 #83561E #BC862C #E6B44C #FAE3A2` (sodium light at the loop, the lit windows,
+  tram 74, the counter lamp -- Berlin's only warm accents; C4_DESIGN 3 lets the env streams refine the placeholder
+  ramps).  Every layer, patch and document is palette-pure in it (tests/test_c4_annex_art.gd); scene.json
+  `meta.palette_ramps` lists the full palette.
+* **Scene A -- Wendeschleife Süd 8** (L_C4_AnnexA, Berlin, 16 Feb 1964, ~5.10, x 0..846): house No. 11, still lived
+  in (Marta's window: a lamp left on behind the lace, a plant; the stairwell transom; a coal shop's shutter), house
+  No. 9 gutted down to its ground floor -- the boarded double door with the red seal strip and the notice, the
+  bricked-up windows, a child's sled -- and above it the exposed wall with three storeys of wallpaper, two rooms each
+  (the paler ghosts of a wardrobe, a picture, the kitchen dresser, a mirror; a child's height marks on a door frame;
+  a tiled stove still clinging to the wall; the stair's zig-zag), the rubble edge of the cleared lot, the tram
+  shelter with the name fascia „WENDESCHLEIFE SÜD 8“ and the lit timetable case (Konrad's light table), the H sign,
+  the sodium lamp under the span wire, tram 74 (two-axle motor car, lantern roof, bow collector at the contact wire,
+  handwritten route board, warm interior, the open front door, fogged rear window), the lone street tree, the
+  advertising column S 2 (posters, an official notice, the warm-air grate at its foot), the freight hatch under a
+  hoist with the crates stencilled C-17/45, the split crate and card No. 0417 in the snow, the lorry backed up to it
+  (tail lights, engine running), the site hoarding of the axis „BAUSTELLE · BETRETEN VERBOTEN“ with a red blinker;
+  the wet setts of the loop with both sides of the track, slush and the lamps mirrored.  Behind: the cleared blocks
+  (mid), the axis under construction with tower cranes (far), the Great Hall in the dawn haze (dome), the sky.
+* **Scene B -- Nebenstelle Süd** (L_C4_AnnexB, ~6.00, x 846..1920): the cut wall of the shaft (poché with the
+  draughtsman's hatch) and the ladder niche with a caged bulkhead lamp and the stencil „S 2“, the machine room
+  behind an expanded-metal grille with the two fans the column breathes through, the card hall (steel card cabinets
+  to the ceiling, sliding ladders, the drawer bank „HAUSHALTSKARTEI SÜD“ 1-12 with the red tab of Süd 8; Süd 3 stands a finger's width open with
+  Brandt's card up — round-9 fix), the
+  framed ventilation plan (Blatt 3, three shafts, three blocks hatched, „K.ADLER“), the wall clock at 6.00, the
+  pneumatic-tube station „ROHRPOST“ with the capsule in the tray, the waiting bench under „WARTEN BIS ZUM AUFRUF“
+  and the call number 17, the counter „AUSKUNFT · ABGLEICH“ under the plate „NEBENSTELLE SÜD“ (stamp carousel,
+  stamp pad, forms, the goose-neck lamp -- the one warm light -- and the card perforator), the typists' room behind
+  the glazed partition, the steel door „STAATSPOLIZEI“ with its red lamp, a fire extinguisher; air duct, tubes with
+  a glass inspection length, cable tray and eight fluorescent fixtures under the slab; linoleum with the tubes'
+  sheen.
+* Story patches (exact crops of a layer baked with the change; gated in scene.json, applied by
+  scripts/levels/c4/annex_level.gd on the registry's gate system): Konrad's tracing sheets on the timetable case
+  (after c4b_solve_routes), the poster of S 2 torn back from the steel door (after c4b_inspect_column), drawer
+  Süd 8 pulled out with the red C-17 tabs (after c4d_inspect_drawer), the capsule opened (after c4d_inspect_tube),
+  the form on the counter (after c4d_talk_registrar).
+* Insignia (TECHNICAL_ARCHITECTURE 12.4): `dome.png` (banners on the Great Hall: dark with the white pillar),
+  `patches/notice_s2.png` (official notice on the column), `patches/plate_counter.png` and `patches/plate_stapo.png`
+  are the neutral defaults with the fictional Reichssiegel; their `*_hist.png` twins carry the red banners and the
+  state eagle with the wreath (drawn by env_berlin_insignia.py) as in-world iconography of the regime's offices,
+  chosen at runtime by `Symbols.pick()` -- never decoration of the player's side.  The inspect documents carry no
+  emblem.
+* Round-9 art fixes (same generators, same palette, original and deterministic, no insignia):
+  `patches/notice_9.png` (+ `_n`) -- the notice read at door_9: a typed sheet with the round red Bezirksamt stamp
+  and the site plan stapled under it, pasted over the planks of the left leaf (ungated decal, scene A; the seal strip
+  and the „9“ plate stay visible; painted by `env_c4_annex_loop.Street.notice9`, cfg `notice9`);
+  the poster „Berlin baut“ on the shelter's right side wall (12×18 in `loop.png` at x 316–327: red title band, crane,
+  dome, sun, three workers in open white shirts, the torn corner, the pencil line on the margin -- the find
+  exp_shelter_poster; `Street.shelter_poster`); `props/counter_front.png` (+ `_n`) -- the counter „Auskunft ·
+  Abgleich“ and what stands on it, an exact cut of `annex.png` (the pixels `Hall.counter()` paints, y ≥ 228, the form
+  patch left open), a y-sorted prop with base_y 292: Fengler (feet y 276) stands behind it, the player in front.
+* FX and life (looping strips, every one seamless): snow in two depths (two halves for the texture limit), warm air
+  steaming out of the grate of S 2, the lorry's exhaust, chimney smoke of No. 11, the aviation lights of three cranes
+  and the hoarding's blinker (1 Hz), Ilse on the last bench of tram 74 (looks out, breathes on the glass, wipes a
+  peephole with her red mitten; with its own emission map), the two fans turning behind the grille, dust in their
+  draught and under the tubes, a capsule shooting through the glass length of the tube every 6 s, a failing tube
+  (drops out twice in 3 s), two typists behind the glass.  Ambient actors reuse existing project scenes and sprites
+  by reference only: `KarskCrows` with `assets/environments/karsk_railyard/actors/crows.png` (hooded crows on the
+  contact wire that lift when Konrad comes to the hatch) and `KarskBreath` with `.../breath_puff.png` (Marta's
+  breath in the frost).
+* Inspect documents (`assets/ui/documents/berlin_annex_*.png` + `berlin_annex_documents.json`, shown at 3x): the
+  eviction notice of No. 9 with the addendum and the attached Lageplan Süd 8 (the grid and shafts of the route
+  puzzle's plan), the steel door of S 2 with its enamel plate, card No. 0417 (German half, perforated edge, red
+  C-17 tab), drawer Süd 8 from above (212 cards, 37 red tabs), the Lüftungsplan Blatt 3 signed „GEZ. K. ADLER“,
+  the tube slip of the Staatspolizeistelle.  Story-critical words are legible pixel capitals; the rest is print /
+  handwriting scribble under the UI caption; every close-up carries an alt text
+  (`doc.berlin_annex_*.alt` in `data/locale/de_env_berlin_annex.json`, written by the generator; round-9 fix).  Added in the round-9 fix (compl-04, same generator
+  `tools/pixelgen/env_c4_annex_docs.py`, palette `annex`): `berlin_annex_route_board.png` (320×210) — Marta's route
+  board, tracing paper clipped to the cab's hardboard: line 74 in pencil with its stops and the turning loop Süd 8, the
+  three dashed detours „OKT.“ „DEZ.“ „JAN.“ with hollow diamonds (the geometry of the route puzzle's trace), the depot
+  stamp, the north arrow pointing left (drawn in driving direction); alt text `doc.berlin_annex_route_board.alt` in
+  `data/locale/de_env_berlin_annex.json`. Original, deterministic, no insignia.
+* Level script: `scripts/levels/c4/annex_level.gd` (extends the registry's gated-art script; per-scene filter
+  `"scene"` / `"scene_id"`, `camera_zones` so the street never shows underground and the annex never shows the sky,
+  looks with the c4.json grades `annex_loop` / `annex`, no porter radio).  Capture harness:
+  `scripts/levels/c4/annex_shots.tscn` (fresh level load per scene, `--as-shots`, `--as-done`, `--symbols`).
+* Screenshots: documentation/screenshots/c4_annex_contact.png (both scenes, neutral / historical symbols, story
+  states), `c4_annex_a_loop_cam0000/0206.png`, `c4_annex_a_states_cam0206.png`, `c4_annex_b_annex_cam0846/1066/1280.png`,
+  `c4_annex_b_states_cam1066.png`, `c4_annex_symbols_neutral_vs_hist.png`, `c4_annex_documents.png`.
+* Tests: tests/test_c4_annex_art.gd (contract, files / maps / strips, insignia pairs, palette purity, hotspots at
+  their objects, foreground frames clear, scene filter + camera zones + looks, story patches, memory, documents).
+
+---
+<a id="part-c4_cine"></a>
+
+## Asset manifest part — c4_cine (Chapter-4 cinematics LS_C4_Homeward, _Number, _Card, _Stamp, _Voices)
+
+* **Date:** 2026-11-06 (round 9)
+* **Area owner:** cine stream (C4_DESIGN.md §2.9, §10)
+* **Scenes / code:** `scenes/cinematics/ch4_homeward/` (`Ch4Homeward.tscn`, `ch4_homeward.gd`), `ch4_number/`,
+  `ch4_card/`, `ch4_stamp/`, `ch4_voices/`, shared `scenes/cinematics/c4_common/c4_cinematic.gd` (extends the C3P2
+  base `c3p2_common/c3p2_cinematic.gd` and through it the §12.5 contract of `ch3_common/c3_cinematic.gd`: textures from
+  `assets/cinematics/c4/`, `line_dur()` keeps every subtitle under 19 characters per second, the game's character
+  sheets drawn by named frame ranges, the in-game stride so feet never slide, `optional_music()`). Registered in
+  `data/chapters/c4.json` → `cinematics`, played by `ChapterExt.play_cinematic()`. Lengths = the registered shot
+  sheets of `data/v3/cinematics.json`: 14 / 13 / 11 / 11 / 24 s.
+* **Match cuts (hard cuts on shared objects, the cities in their own palettes):** the stencilled 45 of wagon C-17/45
+  (cream on red-brown in Karsk → black on pine in Berlin, same shapes at the same place: one stencil generator, one
+  layout entry `number.macro`); the torn perforation of card No. 0417 (German half, paper left of the edge → Russian
+  half, paper right of it: one perforation geometry, mirrored); the rubber stamp (ПРИНЯТЬ violet → ABGANG red, same
+  frame at the same contact point).
+* **Generators:** `py -3 -P tools/pixelgen/env_c4_cine.py [--only places,homeward,number,card,stamp,voices]` writes
+  every texture and `assets/cinematics/c4/layout.json` (anchors shared with the runtimes; `tests/test_c4_cinematics.gd`
+  checks them). Modules: `env_c4_cine_kit.py` (palettes, stencil letters, perforation, stamps, re-lighting of the game
+  sheets with their normal maps), `env_c4_cine_places.py` (Karsk freight yard, Berlin tram loop in dawn and morning
+  light, the tram of line 74, the siding hall lit / dark), `env_c4_cine_{homeward,number,card,stamp,voices}.py`,
+  `env_c4_cine_figs.py` (hands and the two men from behind). Sound: `py -3 -P tools/audiogen/c4_cine_audio.py` →
+  `assets/audio/sfx/c4cine_*.wav` (21 files; the picture-synced times are constants checked by the test).
+* **Figures:** close-ups (Konrad's gloves on the card, Alexei's hand on the desk, the pencil hand, Lev's hand with the
+  missing fingertip, both stamp hands, Fengler's hands, Alexei over the shoulder, Konrad from behind waving) are
+  sculpted and lit with the signed-distance pipeline of the dialogue portraits (`chargen_portrait2_*`,
+  `env_c3p2_cine_hands`, `env_veltrava_cine_figs`; all imported read-only). Wide shots use the game's own sheets
+  (`assets/characters/{alexei,konrad,lev}/sheet.png` + `sheet_n.png`, 32 x 56 cells) re-lit per shot from their
+  normal maps, so the cinematic figures are the figures the player walks with. A character without a delivered
+  sheet would be drawn from a declared stand-in and listed in `layout.json` → `standins` (currently empty).
+  Renders are memoised on disk (keyed by the pipeline sources + this stream's sources + arguments).
+* **Determinism:** fixed seeds everywhere; two full builds are byte-identical (md5 over all PNG/JSON outputs and all
+  WAVs, checked 2026-11-06).
+* **Licence / provenance (all files below):** original procedural pixel art and synthesized audio made for ASHES OF
+  EMPIRES: THE LAST WINTER by these generators (AI-authored code, project-owned, same licence as the game). No
+  downloaded, copied or traced images, fonts or samples. The only image inputs are the project's own character
+  sheets (above). No insignia anywhere (the stamps, signs, cap badge „74“ and forms are plain text), so there are no
+  `_hist` variants. The Great Hall's dome appears only as a far silhouette in the haze.
+* **Texts:** memory film titles `ui.memories.film.LS_C4_*` / `film_sub.*` in `data/locale/de_c4_cine.json` (this
+  stream); the films' subtitles are the story stream's `data/locale/de_c4_cinematics.json`.
+
+| path | what |
+|---|---|
+| `assets/cinematics/c4/layout.json` | anchors for the five runtimes (sections places, homeward, number, card, stamp, voices, standins) |
+| `assets/cinematics/c4/places/yard.png`, `yard_parapet.png`, `yard_green.png`, `yard_warm.png` | Karsk freight yard before dawn (Homeward w3, Voices v3): signal, wagons, cooling towers, freight office with the lit cellar window and the outside stair |
+| `assets/cinematics/c4/places/loop_dawn.png`, `loop_morning.png`, `loop_glow_*.png` | the tram loop Süd 8, 1000 px (Number n4, Voices v1/v2): house No. 9 sealed, the wallpaper of the demolished neighbour, No. 11 with Marta's window, the shelter, the column S 2 as the level paints it (rounded cap with finial, „KONZERT“ / „KINO“ posters, the notice with a neutral seal ring; morning: the poster torn back from the steel door „S 2“), the C-17/45 crates |
+| `assets/cinematics/c4/places/tram_left.png`, `tram_right.png` | the two-axle car of line 74, No. 3518, in the level's livery (cream body, dark belt rail at the sill, red pinstripe above the skirt, lantern roof with lit clerestory and bow collector; Marta in the cab, Ilse at the last window; right-facing sheet with/without her hand on the glass, line board and fleet number never mirrored) |
+| `assets/cinematics/c4/places/siding_lit.png`, `siding_dark.png`, `siding_glow.png` | the siding hall with wagon 24 318 / C-17/45 under its work lamp (Voices v4) |
+| `assets/cinematics/c4/places/breath.png`, `steam.png` | dithered puff sheets |
+| `assets/cinematics/c4/homeward/w1_*.png` | Veltrava station at first light, the two trains (BERLIN / КАРСК), Konrad and Alexei re-lit (walk back / side) |
+| `assets/cinematics/c4/homeward/w2_*.png` | split windows: carriage interiors, sky + far + tiled near strips (the dome of the Great Hall; the snow plain and the cooling towers of Karsk) |
+| `assets/cinematics/c4/homeward/w3_alexei.png` | Alexei re-lit for the night yard |
+| `assets/cinematics/c4/number/n1_*.png` | the wagon side (1100 px pan): fresh paint over old layers, the painted-over enamel plate „24 318“, the tin stencil with the wet C-17/45, chalk „ВТ 23.40“; lamp darkness + glow |
+| `assets/cinematics/c4/number/n2_macro.png`, `n2_glints.png` | macro: the 45 through the tin, wet glints |
+| `assets/cinematics/c4/number/n3a_macro.png`, `flakes.png` | macro: the same 45 black on a pine crate, macro snowflakes |
+| `assets/cinematics/c4/number/n3b_*.png`, `exhaust.png` | the loading hatch at dawn: lorry, hoist, the stack of crates, tail-light glow |
+| `assets/cinematics/c4/number/n4_konrad.png` | Konrad re-lit for the dawn loop |
+| `assets/cinematics/c4/card/card_de.png`, `c1_*.png` | the German half of card No. 0417 (typed, red C-17 tab), the snow by the split crate, Konrad's gloved hands (the right coat sleeve runs on past the frame edge / under the letterbox) |
+| `assets/cinematics/c4/card/c2_macro.png`, `c3a_macro.png`, `shadow.png` | the two macros of the perforation (mirrored), the moving fingertip shadow |
+| `assets/cinematics/c4/card/c3b_desk.png`, `card_ru.png`, `c3_hand.png`, `flame.png`, `lamp_glow.png` | the siding office desk: the Russian half, Alexei's hand, the kerosene lamp, the stencils C-17/41–44 on the wall |
+| `assets/cinematics/c4/card/c4_bg.png`, `c4_alexei.png` | over Alexei's shoulder to the wagon beyond the booth window (head down / up) |
+| `assets/cinematics/c4/stamp/s1_*.png` | the desk from above: notebook (pencil lines revealed at runtime), the card box „C-17/45 – ПРИНЯТЬ“, Lev's hand, the pencil hand, the small card |
+| `assets/cinematics/c4/stamp/s2_slip.png`, `s3a_card.png`, `imp_ru.png`, `imp_de.png`, `stamp_ru.png`, `stamp_de.png`, `hand_ru.png`, `hand_de.png` | the overhead stamp inserts (same frame, same point) |
+| `assets/cinematics/c4/stamp/s3b_*.png`, `lever.png`, `split.png` | the annex counter: Fengler leaning over it (his chest in grey dust coat, shirt and tie, the lapel badge without insignia; the upper arms of `s3b_hands.png` run up into the letterbox to his shoulders), the perforating machine and its lever, the split card, cabinets, typists behind glass |
+| `assets/cinematics/c4/stamp/s4_ladder.png`, `s4_konrad.png` | the foot of the shaft ladder between the card cabinets, Konrad re-lit (fluorescent) |
+| `assets/cinematics/c4/voices/v1_*.png` | the column's open service door, the Lindner file corner, Konrad re-lit (morning) |
+| `assets/cinematics/c4/voices/v2_konrad.png` | Konrad from behind: arm down / half / raised |
+| `assets/cinematics/c4/voices/v3_*.png`, `lantern.png` | Alexei and Lev re-lit for the green signal, the notebook insert with the four numbers, Lev's lantern glow |
+| `assets/audio/sfx/c4cine_station.wav`, `_rails`, `_yard` | Homeward beds (doors at 3.75 / 4.05 s) |
+| `assets/audio/sfx/c4cine_tunnel.wav`, `_drip`, `_hatch`, `_tram` | Number beds (tram bell at 11.4 s) |
+| `assets/audio/sfx/c4cine_card_snow.wav`, `_perf`, `_perf_ru`, `_office` | Card beds (perforation ticks 3.6–4.85 s; a train over the vault) |
+| `assets/audio/sfx/c4cine_desk.wav`, `_stamp_ru`, `_stamp_de`, `_annex` | Stamp beds (contacts at 3.86 / 5.36 s, perforator at 7.42 s) |
+| `assets/audio/sfx/c4cine_column.wav`, `_tram_leave`, `_bell`, `_yard_night`, `_lamp_out`, `_tuesday` | Voices beds and the tram bell (rung once or twice by the picture; lamp flicks at 18.2 / 18.45 / 18.9 s) |
+| `data/locale/de_c4_cine.json` | memory film titles and subtitles of the five films |
+
+---
+<a id="part-c4_puzzle"></a>
+
+## Asset manifest part — Chapter 4 part 1, puzzle UIs „Die Nummernkette“ and „Linie 74“ (puzzle UI stream, round 9)
+
+Date for all entries: **2026-11-06**. Everything below is original work for this project, produced by a deterministic
+generator in this repository or written by hand; no downloaded images, fonts or sounds, no AI image services, no tracing
+of references. Licence: project-owned, same as the game. Contract: `documentation/C4_DESIGN.md` §2.5 (document
+descriptions), §2.7 (puzzle contracts), §10.
+
+### Puzzle art — `tools/pixelgen/gen_ui_c4.py` (`py -3 -P tools/pixelgen/gen_ui_c4.py [--preview=DIR]`)
+Drawn 1:1, shown at x3 with nearest filtering (every digit stroke ≥ 3 screen px). Words are set in HD by the UI from Loc
+keys; the only painted characters are the wagon numbers and Marta's pencil dates, in two pixel types designed in the
+generator (plate type 7×11 with stencil bridges / brush jitter, mini type 3×5). Palette: the UI / archive ramps (paper,
+ink, red, wall, amber) plus wood, rust-brown („die Farbe aller Güterwagen“), enamel blue, iron and chalk. Fixed seeds,
+identical output on every run. The generator verifies the puzzle data against `data/v3/puzzles.json` before writing.
+
+| Path | Kind | How it was made |
+|---|---|---|
+| `assets/ui/puzzle/c4_numbers_board.png` | slate in the siding hut: Service Tunnel 3 in chalk (freight yard fan, four switch posts with iron hooks, dashed tunnel walls, siding with buffer stop) | procedural: wood frame, dithered slate, wiped-chalk smudges, jittered chalk strokes |
+| `assets/ui/puzzle/c4_plate_n24318.png`, `…_c1742.png`, `…_n47702.png`, `…_c1745.png` | the four paint layers of wagon 24 318 as number plates (enamel / old stencil / brush / wet stencil) | procedural plates, numbers in the generator's own plate type |
+| `assets/ui/puzzle/c4_plate_<id>_lit.png` | the same plates held against the hand lamp (Gegenlicht): face as a ghost, the older number dark underneath (bare metal under 24 318) | procedural, from the same masks |
+| `assets/ui/puzzle/c4_num_<id>.png` | mini numbers for the wagon token's number window | procedural, mini type |
+| `assets/ui/puzzle/c4_wagon.png` | painted wooden token of the goods wagon (planks, sliding door, number window, wheels) | procedural |
+| `assets/ui/puzzle/c4_wire.png`, `c4_tick.png`, `c4_halt.png`, `c4_glow.png`, `c4_lamp_on.png`, `c4_lamp_off.png` | hanging wire, chalk tick, red chalk stop mark (ring + cross, shape-coded), banded lamp glow, hand lamp on/off | procedural |
+| `assets/ui/puzzle/c4_numbers_board.json` | sizes, post / track / wagon positions, plate faces + under-layers (paint-layer chain, self-checked), measured surface colours | written by the generator |
+| `assets/ui/documents/berlin_c4_routes_plan.png` | site plan Süd 8 from the eviction notice (north up, streets, hatched blocks, tram tracks on street 7, shafts S 1–S 3 as rings, north arrow, empty title block) | procedural, original layout |
+| `assets/ui/documents/berlin_c4_routes_trace.png` | Marta's tracing paper: line 74 (autumn route) and the detours Okt. / Dez. / Jan. with diamonds, drawn in driving direction | procedural translucent paper, pencil strokes, mini type |
+| `assets/ui/puzzle/c4_route_snap.png`, `c4_route_match.png`, `c4_route_underline.png` | corner brackets (diamond on ring), red pencil loop around a matched pair, red underline of „gez. K. A.“ | procedural |
+| `assets/ui/documents/berlin_c4_routes.json` | cell size, files, rings, loops, landmarks, start pose, board, title-block rects (no answer; the generator verifies that exactly one pose aligns all three pairs and that it is the solution of `pz_c4_routes`) | written by the generator |
+
+### UI, texts, tests
+| Path | Kind | How it was made |
+|---|---|---|
+| `scenes/ui/TracePuzzle.tscn`, `scripts/ui/trace_puzzle.gd` | number-chain modal (keys 1–4 / Backspace / R / L / Enter / Esc, pad ←/→ A B X Y Back, mouse click-plate-then-post, drag and drop, right-click, hover = layer under the paint; trial run of the wagon token, stop reason in words, success run into the siding) | hand-written, follows `scripts/ui/check_puzzle.gd` |
+| `scenes/ui/RoutePuzzle.tscn`, `scripts/ui/route_puzzle.gd` | overlay modal on a light table (arrows / WASD / R / Shift+R / Backspace / Enter / Esc, pad D-pad RB LB A X Y B Back, mouse drag with snap, wheel / right-click turn; success: red pencil on the three pairs, „gez. K. A.“ underlined) | hand-written, key contract of `scripts/ui/blueprint_puzzle.gd` |
+| `data/locale/de_c4_ui.json` (the `ui.c4.numbers.*` / `ui.c4.routes.*` keys the design leaves to the UI: faces, plate types, post ids, board labels, states, tips, lamp list, reasons, stamp, error, continue, controls, plan words, match labels) | German texts | hand-written |
+| `tests/test_c4_puzzle_ui.gd`, `tests/visual/c4_puzzle_shots.gd` + `C4PuzzleShots.tscn` | unit tests (29 cases) and the screenshot harness of every state | hand-written |
+
+World note: fictional wagon numbers, paint layers and switch posts; a fictional tram route over a fictional site plan of a
+fictional Berlin district — not a real railway numbering scheme and not a real plan.
+
+---
+<a id="part-c4_cast_audio"></a>
+
+## Asset manifest — Chapter 4 part 1: cast and sound (round 9)
+
+Area owner: cast-audio specialist · Date: **2026-11-06, round 9** · Engine target: Godot 4.7.2
+Contract: `documentation/C4_DESIGN.md` §5 (cast: Lev Sokolov, Marta Vogel, Registrator Fengler; sheet with the side rows
+of the other side-level NPCs + portrait with the four expressions) and §8 (audio brief). Extends `characters_r7.md`,
+`portraits_r7.md`, `c3p2_cast_audio.md`; everything listed there stays valid. `c4.json` asks for no looks / carry rows.
+
+### Provenance & licence (applies to every file below)
+* **Original work, generated procedurally** by the project's own Python scripts (numpy + Pillow; no AI models, no
+  network, no samples, no third-party art or recordings, no image or audio inputs).
+* Characters: drawn on the project's own paper-doll rig (hand-drawn ASCII heads, garment hooks, keyframed poses) and
+  its signed-distance portrait pipeline; every face is designed for the person (no shared head preset).
+* Sound: synthesised (noise shaping, modal impacts, stick-slip creaks, additive instruments, generated impulse
+  responses). The murmur at the tram shelter is unintelligible by construction (prosody profile over random vowel
+  targets — no words, no language). All music is composed here; it quotes only the game's own motifs K (Karsk) and
+  B (Berlin) from `tools/audiogen/music.py`. The bayan is a free-reed tone synthesised in `c4_audio.py` and plays
+  breaths and chords only (the contract's „bayan breath“) — no folk melody, no augmented-second scale, no cliché.
+* No insignia on any new sprite or portrait: Marta's cap carries only the line number „74“, Fengler's lapel pin is a
+  plain round pin. Licence: project-owned original assets, no attribution needed.
+* Deterministic: verified 2026-11-06 — all 15 WAVs rebuilt and md5-compared (identical); all 18 character files
+  (3 × sheet.png, sheet_n.png, sheet.json, portrait.png, portrait_anim.png, portrait.json) rebuilt into a scratch
+  directory and byte-compared (identical).
+
+### Reproduce
+```bash
+py -3 -P tools/pixelgen/characters_c4.py --portraits   # 3 speakers: sheets, normal maps, living portraits, checks
+py -3 -P tools/pixelgen/characters_c4.py --check       # validators only (characters_check + C4 contract checks)
+py -3 -P tools/pixelgen/characters_c4.py --heads       # review image of the hand-drawn heads (8x)
+py -3 -P tools/audiogen/c4_audio.py                    # 15 WAVs + .import + analysis + numeric checks
+py -3 -P tools/audiogen/c4_audio.py --list             # names and where each is (to be) wired
+## then the shared, locked import (TECHNICAL_ARCHITECTURE §1)
+```
+Portraits take ~30–50 s per speaker. Review images: `assets/characters/_preview/c4_*` (git-ignored, `.gdignore`).
+
+### Characters (`tools/pixelgen/characters_c4.py`: sprite specs, heads, hooks, portrait specs, runner)
+Through the existing pipeline: `characters.py` (`build_sheet`) and `characters_check.py` are imported and their tables
+extended in memory; three scene tints (`c4_cellar` kerosene amber / cold window, `c4_dawn` blue dawn, `c4_annex`
+fluorescent green) and two gestures (`tap_stamp`, `look_down_line`) are added in memory; portrait specs are registered
+in memory in `chargen_portrait2_cast.CAST` with three backdrops in `chargen_portrait2_paint.BG` (`c4_cellar`,
+`c4_loop`, `c4_annex`). No other generator file is changed.
+
+| Directory | Who | Sprite (32 × 56 cells, origin 16/54) | Portrait (112², 4 expressions × 6 states) |
+|---|---|---|---|
+| `assets/characters/lev/` | Lev Sokolov (54), archive clerk, Karsk | thin, a little stooped, bareheaded; iron-grey thinning hair, round steel glasses with sticking plaster on the hinge, a pencil behind the ear, grey stubble; grey quilted vest over the darned brown cardigan (darn at the elbow), black sleeve protectors, felt boots with galoshes; a glass of tea in its nickel holder held at the chest; gesture: pushes the glasses up; 44 px, walks 21 px/s | a long gaunt face, high cheekbones, hollow cheeks, deep-set tired eyes, thin lips; the plaster on the near hinge, the pencil over the ear, two darns on the cardigan, the vest's stitched channels; the cellar's kerosene glow |
+| `assets/characters/marta/` | Marta Vogel (34), tram driver, line 74 | dark-blue driver's coat (brass buttons, belt), uniform cap with a brass number plate, short dark-blond hair, red cheeks, knitted grey scarf (one end swings), fingerless grey gloves (hands drawn here), the leather money satchel on its strap (bounces when she walks), lace-up boots; gesture: rubs her hands and blows into them (breath clouds); 44 px, walks 26 px/s | a round open face, full red cheeks, short straight nose, wide warm mouth (smiles at rest), quick eyes; „74“ in brass on the cap; Berlin dawn |
+| `assets/characters/registrar/` | Registrator Fengler (≈ 50), Nebenstelle Süd | light-grey dust coat buttoned to the collar over a dark suit, white collar and dark tie, black sleeve protectors, rimless glasses, dark hair with grey temples combed from a precise side parting, a rubber stamp in the near hand, a plain round lapel pin; gesture: taps the stamp; extra row `work_side` (stamping cards — for `idle_anim`); 47 px, walks 23 px/s | a smooth, well-fed face, a soft double chin, small mouth, hooded bored eyes behind rimless glasses (only the lens edges catch the light), the parting, grey temples, dust coat over suit; fluorescent green |
+
+Rows (all three): `idle_side, walk_side, idle_front, talk_side, blink_side, look_side, gesture_side, blink_front,
+talk_front` (+ `work_side` for the registrar); 8-frame idle / talk / talk_front, blink / glance / gesture as non-looping
+idle variants (TECHNICAL_ARCHITECTURE §4 contract). Silhouettes checked against each other and 14 existing figures
+(IoU ≤ 0.90); portraits checked to differ from each other and from the existing speakers.
+Speaker ids = sheet ids = the contract's `lev`, `marta`, `registrar` (names: `data/locale/de_c4_characters.json`).
+
+### Sound (`tools/audiogen/c4_audio.py`) — 44.1 kHz / 16-bit PCM, lossless import, loops carry a `smpl` chunk
+Measured on the delivered files (RMS / sample peak in dBFS; seam = level step over the loop point in 50 ms):
+
+| File | Content | Length | RMS / peak | Wired |
+|---|---|---|---|---|
+| `amb/amb_karsk_cellar.wav` | the freight office's archive cellar before dawn: the vault's close room tone, the stove (low fire, the iron ticking), the samovar simmering and once singing, the wall clock, two trains crossing over the vault (rumble, rail joints, dust, the lamp chain), wind and snow at the barred window, the night shift's boots above, pages at Lev's desk | 60 s loop, stereo | −26.2 / −3.0 (seam −0.6 dB) | `L_C4_Tunnels.tscn` ambience; `c4.json` switch `L_C4_TunnelsA` |
+| `amb/amb_karsk_tunnel.wav` | Service Tunnel 3 and the siding: the concrete tube's long echo, a draught, water dripping (one steady drip, others at random), a fan in an air shaft, shunting overhead through the ground, the work lamps' hum and one flicker, a train deep above, a plank of the converted wagon settling | 60 s loop, stereo | −25.0 / −3.0 (−1.1 dB) | `c4.json` switch `L_C4_TunnelsB` |
+| `amb/amb_berlin_loop.wav` | the tram loop Süd 8 at dawn: cold air, a little snow, the city waking far off, the trolley wire humming and singing in the gusts, tram 74's air compressor (twice), warm air breathing from the advertising column, the first lorry idling at the hatch (tailgate, crates), crane chains of the axis far off, another line's bell far away, early-shift workers crunching past, a murmur at the shelter | 60 s loop, stereo | −24.0 / −3.3 (+1.0 dB) | `L_C4_Annex.tscn` ambience; switch `L_C4_AnnexA` |
+| `amb/amb_berlin_annex.wav` | the registry annex: two huge fans behind the grille (blade tones of 31 / 33 Hz beating slowly — the column's breath), fluorescent ballast hum and one flickering tube, tube capsules landing (twice), typewriters muffled behind glass, a card drawer, a sliding ladder, a stamp at the counter, a tram on the street above | 60 s loop, stereo | −25.0 / −3.0 (+0.4 dB) | switch `L_C4_AnnexB` |
+| `music/mus_c4_karsk.wav` | sparse low strings in D Aeolian, a cello line descending D–C–Bb–A, the bayan breathing three times (Dm, Dsus2, an open fifth into the loop), soft low plucks, K once on the felt piano | 71.1 s loop (54 bpm, 64 beats) | −22.0 / −5.5 (+0.7 dB) | `L_C4_Tunnels.tscn` music; switches `L_C4_TunnelsA` / `B` |
+| `music/mus_c4_berlin.wav` | cool and mechanical in G Aeolian: a muted-piano pulse in 3+3+2, a card machine's dry tick (a heavier feed every two bars), brass chords over the G pedal, a cold harmonic line, B on the celesta, B low on the piano | 53.3 s loop (72 bpm, 64 beats) | −21.0 / −2.3 (−1.9 dB) | `L_C4_Annex.tscn` music; switches `L_C4_AnnexA` / `B` |
+| `music/mus_c4_voices.wav` | the closing: a clock on every beat; the Karsk drone and K on the piano, then B on the celesta over the G pedal, then K_B and B together (B's Eb bent to E where they meet), the clock alone again. The first 24 s are a full arc for LS_C4_Voices (≈ 24 s); the loop serves longer scenes | 48.0 s loop (60 bpm, 48 beats) | −21.0 / −1.0 (−1.9 dB) | LS_C4_Voices `{"music": "mus_c4_voices"}` (cine stream) |
+| `sfx/c4_stencil_brush.wav` | a stippling brush dabbed through a stencil on wagon planks, wiped on the tin's rim | 5.0 s | −35.3 / −9.0 | LS_C4_Number n1 |
+| `sfx/c4_card_tear.wav` | a stiff registry card torn along its perforation (the tear runs 0.20–0.66 s) | 1.4 s | −39.9 / −10.0 | LS_C4_Card c1 → c2 |
+| `sfx/c4_stamp_accept.wav` | Karsk „ПРИНЯТЬ“: ink pad at 0.00 s, the stroke at 0.36 s on the siding office's wooden desk (small wooden booth) | 2.0 s | −31.5 / −6.0 | LS_C4_Stamp s1 / s2 |
+| `sfx/c4_stamp_dispatch.wav` | Berlin „ABGANG“: same timing, on the annex counter (linoleum over steel, concrete hall) — the match cut lands on the stroke | 2.4 s | −33.9 / −6.0 | LS_C4_Stamp s3 |
+| `sfx/c4_bell_once.wav`, `c4_bell_twice.wav` | Marta's foot gong in the open loop (slap off the bare party wall), one ring / two | 4.6 s | −27.4 / −7.0, −25.4 / −7.0 | LS_C4_Voices v2 (name_marta / protect_marta) |
+| `sfx/c4_train_overhead.wav` | a goods train crossing above a vault: rumble, wheelsets over a rail joint along the train, the vault's low modes, dust trickling, the lamp chain rattling | 13.0 s | −25.3 / −6.0 | LS_C4_Homeward w3 (optional); a tunnels level script (see note) |
+| `sfx/c4_lamp_out.wav` | the work lamp switched off: hum and ballast buzz, the switch (at 0.62 s), the filament ticking as it cools | 3.6 s | −26.3 / −9.0 | LS_C4_Voices v4 |
+
+Level windows enforced by the generator (`c3p2_audio.check_rows`) and `tests/test_c4_cast_audio.gd`: ambiences −28…−21
+dBFS RMS, peak ≤ −2.5; music −25…−19, peak ≤ −0.8; one-shots −45…−9, peak ≤ −2.5, ending in silence. Loops: `smpl`
+loop = whole file (imported as `LOOP_FORWARD`, checked), |Δ RMS over 50 ms| ≤ 3 dB and the seam step an ordinary step
+(music loop points sit between pulses / ticks). Spectral balance matched to the existing mix by band shares: the
+Karsk pair was de-rumbled (energy below 120 Hz 55 % / 68 % → 36 % / 38 %, like `amb_berlin_archive` 41 %); loudness
+(LUFS≈ −21.4 … −23.8) sits between `amb_berlin_archive` (−23.0) and `amb_karsk_yard` (−21.1). The one-shots sit at
+the levels of their relatives (`tram_bell` −27.7 RMS, `stamp_thud` −35.8 / −6 peak). SFX ids never end in `_<n>`
+(Audio.sfx would treat them as random variants). Spectrograms + `c4_analysis.json`: `assets/audio/_preview/`.
+
+### Tests
+`tests/test_c4_cast_audio.gd` — sheets (rows, 8-frame rhythm, variants, ground speed, size, normal map, feet on the
+origin), the rig (every row loads and plays), living portraits (contract, the mouth opens and the eyes close in every
+expression, expressions differ, opaque), individual silhouettes (IoU vs each other and 16 existing figures) and faces,
+names and speakers (every speaker of the C4 dialogues and every `char_id` of the two level shells has a sheet and a
+portrait), every WAV's format, loop chunk, import loop mode and length, levels and seams on the PCM, wiring (shell
+ambience / music ids, the four switch ambiences of `c4.json`, every c4 sound a C4 cinematic cue names).
+
+---
+<a id="part-explore_c4"></a>
+
+## Asset manifest — Chapter 4 part 1 exploration: finds under the Karsk freight yard and at the tram loop Süd 8, „Ilses Puppe“, „Der Hebelrahmen“ (area: explore_c4)
+
+Owner: exploration c4 specialist · Date: 2026-11-06 · Engine: Godot 4.7.2 · Contract: documentation/C4_DESIGN.md §4/§6/§7,
+TECHNICAL_ARCHITECTURE §12.1/§12.3/§12.8/§12.9 (user request this round: Chapter 4 part 1, content, look, feel, fun).
+
+Everything listed here is **original work**, written for this game or generated procedurally by the project scripts
+below on 2026-11-06. No pixel, sample or melody was taken from `documentation/references/` or any other source; no
+downloads, no AI media, no recordings. Colours come from `data/chapters/c4.json` palettes `tunnels` (lever frame) and
+`annex` (Ilse's drawing) plus documented extras: the enamel green of the track diagram (`BOARD` #0E1914 / #15241C /
+##1E3226 / #2A4434 in `gen_mg_c4_lever.py`), the moon-white route light #EEF2F5 and the signal green #6FD08C (drawn by
+`lever_game.gd`), and a child's five wax crayons (`CRAYON` yellow #E8C04A, blue #34508C, brown #7A5230, black #24262B,
+green #4F7A3A in `gen_explore_c4.py`). Pixel fonts: the hand-made bitmaps of `tools/pixelgen/mg_r7_v_kit.py` (SMALL 5×7
+with the Cyrillic letters used, TINY 3×5 digits) — no font file is read or traced; Ilse's signature is drawn stroke by
+stroke. No regime insignia anywhere (§12.4). Historical model of the mini-game: the general principle of mechanical
+interlocking (points, route and signal levers held by locking bars, a locking table) — the frame itself, its track
+diagram and its lever set are fictional, no real frame type, plan or plate was copied. Licence: original project work
+(same terms as the rest of the game).
+
+### Content (text, data)
+
+| File | What |
+|---|---|
+| `data/explore/c4_tunnels.json` | 17 entries under the level key `L_C4_TunnelsA` (Alexei). Archive cellar, scene A: a mouse at the sugar (secret), the stamp box („Отдел Т“ hook empty), the personnel card index (Gerassimow, „fragte nach Wagen 24 318“), Lev's photo (his granddaughter turned down, card `hist.soviet.order_270`), the samovar's second glass, the stove (blank repatriation questionnaires), the 1941 air-raid sign, a chat with Lev (after `c4a_talk_tunnel`). Tunnel and siding, scene C: the live 1941 field telephone, new cables on old hooks, the lever frame (mini-game), a house scratched into a bench board (secret), the conversion kit (card `hist.soviet.special_settlements`), the painters' corner („Arbeitskolonne 7“), the heap of number plates, the wagon's maintenance marks („ausgemustert 03.1963“), the exit portal |
+| `data/explore/c4_annex.json` | 18 entries under the level key `L_C4_AnnexA` (Konrad). Tram loop, scene B: house No. 11 (Marta's window, hatched „freizumachen“ on his own plan), a doll's shoe (secret), three storeys of wallpaper on the party wall with Anna's embroidered towel (card `hist.reich.ostarbeiter`), the „Berlin baut“ poster, Marta's cab, Ilse at the last window, the view through the hoarding, a chat with Marta (after `c4b_talk_ilse`) and the side task „Ilses Puppe“ (Marta asks → the 1941 cellar breakthrough from No. 11 into No. 9, the doll without an inventory number and Ilse's drawing → back to the tram). Annex, scene D: the fans of „Blatt 3“, Brandt's card in drawer Süd 3 (secret, „Auskunftsperson: Kollege“), the label „Haushaltskartei Süd“ („Kinder auf Beiblatt“), the card trolley (Tuesday 18th „Abgabe Kordon“, a birthday cake), the waiting bench under the number display 17, the perforating machine („links Reich, rechts Gegenstelle“), a chat with the guard |
+| `data/explore/c4_history_soviet.json`, `c4_history_reich.json` | the four real-history cards with their sources (fact-checked 06.11.2026, ≥ 3 web sources each; the sources appear only in the credits' source list, never on the cards); the fourth, `hist.reich.denunciation` (Gellately 1990, Mallmann/Paul 1991), at the annex's waiting bench |
+| `data/locale/de_explore_c4.json`, `de_history_c4.json` | all German texts (finds, chats, task, mini-game, place labels; the three cards) |
+| `assets/environments/karsk_tunnels/explore_hotspots.json`, `berlin_annex/explore_hotspots.json` | the exp_* hotspots plus the `info` art contract (stand, focus, what to paint) for the env streams |
+| `scenes/levels/L_C4_Tunnels.tscn`, `L_C4_Annex.tscn` | appended Find_* / Chat* / Task_* nodes (script `scripts/ui/minigames/lever_spot.gd`) |
+
+### Mini-game „Der Hebelrahmen“ (`scenes/ui/minigames/LeverFrame.tscn`)
+
+| Asset | Generator | What |
+|---|---|---|
+| `assets/ui/minigames/lever/lever_back.png` (400×148) | `py -3 -P tools/pixelgen/gen_mg_c4_lever.py` | the tunnel niche: formwork concrete in cage-lamp light, the enamel track diagram (tunnel 3, points 1–3, track 1 with wagon 24 318, track 2, main line, the taped-over track 0), the route indicator box, signal lamp sockets, the cast-iron frame of 1941 with slots, brass plates 1–8 and lock pip sockets, the night shift's route book, the painted locking table |
+| `assets/ui/minigames/lever/lever_indicator.png` (3 × 64×9) | same | lit indicator texts „ПУТЬ 1“, „ГЛАВН.“, „КОРДОН 17“ |
+| `assets/ui/minigames/lever/lever_closeup.png` (200×120) | same | the find's close-up: „КОРДОН 17“ lit over track 0, the tape peeled from „ПУТЬ 0“, the bright-worn handle of lever 6 |
+| `assets/ui/minigames/lever/lever_layout.json` | same | every coordinate the game draws over the art |
+| `assets/audio/sfx/mg_c4_lever_pull.wav`, `mg_c4_lever_back.wav`, `mg_c4_lever_locked.wav`, `mg_c4_route_set.wav` | `py -3 -P tools/audiogen/mg_audio_c4.py` | synthesized: lever pulled over / put back (catch, quadrant slide, thump, locking bar), a refused lever (hard stop, never a buzzer), an order carried out (signal wire, far arm, one bell stroke) |
+| `scripts/ui/minigames/lever_logic.gd`, `lever_game.gd`, `lever_spot.gd` | hand-written | the rule (pure), the UI (keyboard, pad, mouse, demo_solve), the exploration spot of every C4 find |
+
+### Mini-game „Die Lüftungsklappen“ (`scenes/ui/minigames/VentFlaps.tscn`, round-9 fix compl-01)
+
+| Asset | Generator | What |
+|---|---|---|
+| (no image file) | drawn at run time by `scripts/ui/minigames/vent_game.gd` | the machine room of Nebenstelle Süd in pixel art (art px ×3 / ×2): two turning fans in their housing, the plenum, three ducts with butterfly flaps and notched handles, rising air, three dials with the green band of Blatt 3, the duct lamps, the fault bell and lamp, Konrad's sheet pinned on the wall; colours: steel ramp #15191C … #98A4AC, wall #1C2321 / #232D2A, paper #E6E1CF, the lamp red #E0483A and green #6FD08C, brass #C9A35A / #E6C27A / #8A6A30, air #D4EBE4 |
+| `assets/audio/sfx/mg_c4_flap_open.wav`, `mg_c4_flap_close.wav`, `mg_c4_alarm_bell.wav`, `mg_c4_air_settled.wav` | `py -3 -P tools/audiogen/mg_audio_c4.py mg_c4_flap_open mg_c4_flap_close mg_c4_alarm_bell mg_c4_air_settled` | synthesized (numpy, deterministic): a flap handle one notch open / shut with the air in the duct, the electric fault bell (striker on a small steel gong), the fault acknowledged (relay, last gong tap, the fans settling) |
+| `scripts/ui/minigames/vent_logic.gd`, `vent_game.gd` | hand-written | the rule (pure: fan curve, coupled ducts, one balance among 125 positions, no dead end), the UI (keyboard, pad, mouse, demo_solve by synthetic keys, auto mode, hints, text scale, high contrast) |
+
+Historical model: the general principle of balancing a ventilation system with butterfly dampers (every damper changes
+the pressure and so the flow in the other branches; a longer duct needs a wider damper) — the plant, its numbers and the
+sheet are fictional.
+
+### Side task close-up
+
+| Asset | Generator | What |
+|---|---|---|
+| `assets/explore/c4/ilse_drawing.png` (240×150) | `py -3 -P tools/pixelgen/gen_explore_c4.py` | Ilse's wax-crayon drawing on squared exercise-book paper: house No. 9 at night with every window lit, three small figures in one window, tram 74, a moon, signed ILSE |
+
+The tunnels' side task „Wir sind vierzehn“ (round-9 fix compl-02: four Task_* spots on wagon 24 318, the hand-in chat
+with Lev) and the fourth card `hist.reich.denunciation` (compl-05, at the waiting bench) are text and data only — no new
+image or sound.
+
+### Checks
+
+`tests/test_c4_explore.gd` (data, cards, placement and spacing, gates, memory/NPC rule of the spot, the side task, the
+drivers' loop, the real Game path with the live Story at every C4 exploration pass, memory card counts, the mini-game
+rule and scene, art/layout/sounds; since the fix round also „Wir sind vierzehn“ and the `vent_*` cases of „Die
+Lüftungsklappen“). Windowed capture: `godot --path . --script res://tests/visual/c4_explore_shots.gd
+-- --shots=<dir> [--scale=1.5] [--hc=1]` (UIRoot, synthetic keys, demo_solve; writes no saves); the flaps:
+`tests/visual/c4_vent_shots.gd -- --shots=<absolute dir>`.
+
+---
+<a id="part-board"></a>
+
+## Asset manifest — Evidence board „Die Akte C-17“ (area: board)
+
+Owner: board specialist · Date: 2026-11-06 · Engine: Godot 4.7.2. Everything below is **original work** made by a
+project script (no downloads, no traced or sampled reference material, no AI image models). The card pictures of
+twelve items are 1:1 crops of the game's own inspect close-ups (`assets/ui/documents/*`, environment artists, rounds
+1–7) — the same pixels the InspectView shows, never resampled. Contract: `documentation/TECHNICAL_ARCHITECTURE.md`
+§12.12. Generator: `tools/pixelgen/gen_ui_board.py` (`py -3 -P tools/pixelgen/gen_ui_board.py`; deterministic, seeds =
+crc32 of asset names). Every file is listed with its 1:1 size, scale and source in `assets/ui/board/manifest.json`;
+1:1 sources in `assets/ui/board/src_1x/` (`.gdignore`, never imported). No emblem or insignia of any kind (the crops
+avoid the stamps of the `_hist` close-ups; the generator writes a `_hist` crop only if a crop region differs).
+
+### 1. Assets
+| File | Size / format | Notes |
+|---|---|---|
+| `assets/ui/board/cork.png`, `cork_hc.png` | 192×192 RGBA (64×64 ×3) | tileable cork (periodic noise + granules); high-contrast twin dark and flat |
+| `assets/ui/board/frame.png` | 90×90 (30×30 ×3), 9-patch margin 30 | archive-wood frame, mitred corners, transparent centre |
+| `assets/ui/board/pin_alexei.png`, `pin_konrad.png`, `pin_red.png` | 27×30 (9×10 ×3) | push pins: steel = Alexei's finds, brass = Konrad's, red = the summary sheet |
+| `assets/ui/board/card_paper.png`, `card_photo.png`, `card_burned.png` | 45×45 (15×15 ×3), 9-patch margin 15 | index card (documents), photo print (physical clues), scorched card (Blatt 7 after `admit_plan`) |
+| `assets/ui/board/tag.png`, `note.png`, `ghost.png`, `focus.png`, `focus_hc.png` | 9-patches | thread caption tape, typed summary sheet (red margin rule), reserved place of an unfound item, focus rings |
+| `assets/ui/board/unknown.png` | 54×66 (18×22 ×3) | empty pin with a blank „?“ tag (no spoiler) |
+| `assets/ui/board/folder.png` | 372×258 (124×86 ×3) | closed manila file folder with the red C-17 stamp — the journal's cover page |
+| `assets/ui/board/vtab_normal/hover/pressed/focus.png` | 33×48 | the round-1 paper tab `assets/ui/frames/ptab_*.png` turned 90° clockwise (exact): the journal divider „Akte“ |
+| `assets/ui/board/thumbs/<item>.png` (12) | 162×72 (54×24 ×3) | detail crops of the inspect close-ups: Karsk seal / timetable / ledger, Berlin plans A/B, Emil's note, Veltrava weighbill / departures / travel order / seating / booth log / carbon (crop rects in `DOC_CROPS`) |
+| `assets/ui/board/thumbs/<item>.png` (25) | 162×72 | original drawings for items without a close-up: Chapter 3 part 2 (cut seal, night book, intake book, Elena's scarf, the two halves, Blatt 7 + `_burned`, the file, bolted ramp door, cut hose, escort list) and Chapter 4 part 1 (book gap, cut signatures, carbons, tunnel plan, fresh tracks, eviction notice + site plan, Marta's route board, advertising column S 2, card 0417 both halves, stencils, wagon interior, drawer Süd 8, annex plan, tube slip) |
+| `assets/ui/board/thumbs/_document.png`, `_physical_clue.png` | 162×72 | fallback pictures for a future item without a picture |
+
+### 2. Palette
+UI kit (`gen_ui.py` / `gen_ui_explore.py`): paper, ink, archive wood, steel and brass ramps, one red ramp for C-17
+and the threads; the cork ramp is a muted brown so the red thread reads on it (and a dark flat cork in high contrast).
+
+---
+<a id="part-feel_r9"></a>
+
+## Asset manifest — Feel & polish pass 2, round 9 (area: feel_r9)
+
+Owner: feel_r9 specialist · Date: 2026-11-06 · Engine: Godot 4.7.2. Everything below is **original work** made by
+project scripts from the game's own art pipelines (no downloads, no traced or sampled material, no AI image/audio
+models). All generators are deterministic (fixed seeds / pure colour and geometry rules) and rewrite byte-identical
+files; a re-run of a changed generator was diffed against the previous output — only the files listed here changed.
+No asset of this round carries an insignia.
+
+### 1. Walker rigs (front / back walks) and the quay walkers
+| File | Size / format | Generator | Notes |
+|---|---|---|---|
+| `assets/environments/<env>/walkers/<name>_rig.png` + `_rig_n.png` + `_rig.json` (13 × 3) | 320×672 / 320×728 RGBA (the source's rows + 3) | `tools/pixelgen/walkers_r8.py` | Own sheet per walker: the source character's rows (same order, frames, timing, silhouette — checked) plus `walk_front`, `idle_back`, `walk_back` from the same body pipeline; own normal map. Back heads are derived from the front head bitmap (`back_head()`: hair or headscarf down to the nose row, the nape below). |
+| `assets/environments/veltrava_quay/walkers/fireman_rig.*` | (sheet of `worker_b`) | same | Veltrava fire brigade: dark tunic, glossy grey helmet with a brass comb, leather gloves. |
+| `assets/environments/veltrava_quay/walkers/resident_rig.*` | (sheet of `worker_a`) | same | A man from the old town woken by the fire: brown coat over pyjama trousers, grey hair; points at the fire. |
+| `assets/environments/veltrava_quay/walkers/clerk_files_rig.*` | (sheet of `clerk`) | same | Commission clerk carrying rescued folders: dark coat, grey hair. |
+| `assets/environments/veltrava_quay/walkers/old_woman_rig.*` | (sheet of `babushka`) | same | Old woman, red-brown headscarf, blue-grey coat. |
+| `assets/environments/veltrava_quay/walkers/policeman_rig.*` | (sheet of `conductor`) | same | City policeman: green-grey uniform and cap, silver buttons (not the commission's blue). |
+| `assets/environments/veltrava_quay/walkers.json` | JSON | hand-written data | Five walkers in the lane y 295 (x 446–700, 846–1022, 1452–1880), clear of the engine, the bench, Konrad, the trestle, the cars and every story spot. |
+
+The round-8 diffuse variants (`walkers/<name>.png`) stay byte-identical and are still referenced as `"sheet"` (fallback).
+
+### 2. Cinematic figures (LS_C3_Escape e3a / e3b, LS_C3_Halves h1)
+| File | Size / format | Generator | Notes |
+|---|---|---|---|
+| `assets/cinematics/c3p2/escape/e3a_hands.png` | 2080×360 RGBA (4 frames 520×360) | `tools/pixelgen/env_c3p2_cine_hands.py` (`e3a_frame`) via `env_c3p2_cine_fire.py` | Alexei's sooty hand out of the coal hatch (quilted green sleeve, stitched channels), Konrad's navy sleeve and shirt cuff, his hand taking the wrist; lit from below by the hatch glow (local light falloff), the cold lamp as rim. |
+| `assets/cinematics/c3p2/escape/e3b_men.png` | 1120×96 (2 frames) | `env_c3p2_cine_hands.py` (`lying_men`) + the file painted in `env_c3p2_cine_fire.py` | Both men on their backs in the snow: the cast heads of the portrait specs (Alexei's ushanka, Konrad's hair, his fedora beside him), coats, trousers, boots, one knee up, chest heave; a trodden contact shadow. |
+| `assets/cinematics/c3p2/halves/arms.png` | 660×220 (3×2 frames 220×110) | `env_c3p2_cine_hands.py` (`arm_frame`) via `env_c3p2_cine_quay.py` | Reaching arms from the bench figures' shoulders (measured on their silhouettes) to the near / far stacks and back to the lap, in the bench figures' fire light. |
+| `assets/cinematics/c3p2/halves/glyphs.png` | flap atlas | `env_c3p2_cine_quay.py` | Ä / Ö / Ü flaps keep their dots (pixfont_umlauts). |
+| `assets/cinematics/c3p2/layout.json` | JSON | `env_c3p2_cine.py` | `escape.e3b_breath` moved to the new faces. |
+
+Method: signed-distance sculpting and the material / light / outline / rim painting of the dialogue portraits
+(`chargen_portrait2_*`, imported read-only); hands are built from a palm, two-segment fingers and a thumb (curl, spread,
+grip); renders are memoised in the system temp dir (`ashes_c3cine_cache`, key = pipeline sources + call).
+
+### 3. Distinct umlauts in the small pixel capitals
+`tools/pixelgen/pixfont_umlauts.py` (new; `--preview=DIR` writes an old/new contact sheet): Ä / Ö / Ü use one row above
+the cap line for the dots, a blank row, the letter one row shorter. Installed (opt-in, `overhang=True`) in
+`explore_berlin.py` (`Canvas.text`, every Berlin and plaza close-up), `env_berlin_kit.py` (`text_mask(..., overhang)`,
+used by `env_berlin_docs.label`), `gen_ui_c3.py` (protocol documents), `mg_r7_kb_lib.py` (`draw_text`, Rohrpost) and the
+LS_C3_Halves flap atlas. Re-generated (only the umlaut pixels changed, 4–40 px per image):
+`assets/explore/berlin/{lib_hidden, lib_shelf_3, lib_shelf_4, lib_shelf_5, master_plan(_hist), mouse, notice, photo,
+pneumatic_tube, poster_aufbau(_hist), radio}.png`, `assets/explore/plaza/{family_door(_hist), tram_stop}.png`,
+`assets/ui/documents/berlin_plan_{a,a_hist,a_lines,a_lines_hist,b,b_hist,b_lines}.png`,
+`assets/ui/documents/veltrava_protocol_{seating,booth_log}.png`, `assets/ui/minigames/rohrpost/find_capsules.png`.
+World backgrounds with umlaut signs (Berlin hall „PFÖRTNER“, palais „PROTOKOLLBÜRO“, station „BÜRO FÜR RÜCKFÜHRUNG“)
+were not re-generated (their generators keep the old glyphs unless they pass `overhang=True`).
+
+### 4. Data
+`data/explore/quay_tasks.json` + `data/locale/de_quay_tasks.json` — side task „Eine Decke für Frau Brunner“ (hand-written
+text, German typography checked by `tests/test_feel_r9.gd`).
 
 ---
 <a id="part-ui"></a>

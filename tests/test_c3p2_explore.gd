@@ -261,7 +261,7 @@ func _validation() -> bool:
 	for cid in cards:
 		kit.ok(real.has_card(cid), "Explore loaded card %s" % cid)
 	kit.eq(real.counts("L_C3_RegistryA")["total"], 18, "counts(level key) sees every registry find")
-	kit.eq(real.counts("L_C3_Quay")["total"], 10, "counts(quay)")
+	kit.eq(real.counts("L_C3_Quay")["total"], 13, "counts(quay): 10 + the 3 steps of the round-9 side task (quay_tasks.json)")
 	kit.eq(real.tasks_for("L_C3_RegistryA").map(func(t): return str(t["id"])), [TASK], "the registry's one side task")
 	return true
 
@@ -324,6 +324,8 @@ func _placement() -> bool:
 			var chain: Array = Array(p.get("explore_chain", PackedStringArray()))
 			var ids: Array = chain if not chain.is_empty() else [str(p.get("explore_id", ""))]
 			for id in ids:
+				if str(id).begins_with("veltrava.task."):
+					continue    # round-9 side task (data/explore/quay_tasks.json, checked by tests/test_feel_r9.gd)
 				count[str(id)] = (count.get(str(id), []) as Array) + [who]
 				if kit.ok(entries.has(str(id)), "%s: entry %s exists" % [who, id]):
 					kit.eq(str(entries[str(id)]["level"]), lid, "%s: %s belongs to this level key" % [who, id])
@@ -350,6 +352,8 @@ func _placement() -> bool:
 				kit.ok(str(p.get("npc_id", "")) != "", "%s: a chat on an NPC anchor turns that NPC" % who)
 				var npc := str(p.get("npc_id", ""))
 				for id in ids:
+					if str(id).begins_with("veltrava.task."):
+						continue
 					var sps: Array = (entries.get(str(id), {}).get("lines", []) as Array).map(func(l): return str(l.get("speaker", "")))
 					kit.ok(npc in sps, "%s: npc %s speaks in %s" % [who, npc, id])
 			for o in finds:
@@ -498,7 +502,7 @@ func _task() -> bool:
 			kit.ok(all_found.has(id), "%s is reached in its scene" % id)
 	var mq := MockEx.new()
 	var q_order := _drive(_explore_nodes("L_C3_Quay"), mq, {})
-	kit.eq(q_order.size(), 10, "quay: the loop reaches every find and chat")
+	kit.eq(q_order.filter(func(x): return not str(x).begins_with("veltrava.task.")).size(), 10, "quay: the loop reaches every find and chat")
 	return true
 
 

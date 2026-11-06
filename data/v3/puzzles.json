@@ -91,6 +91,49 @@
       "retry_unlimited": true,
       "hint_after_attempts": 2,
       "world_note": "Fictional registry intake book checked against a fictional freight chain; not real documents."
+    },
+    {
+      "id": "pz_c4_routes",
+      "type": "overlay_alignment",
+      "scene": "L_C4_AnnexA",
+      "clue_item_ids": [
+        "ev_c4_notice",
+        "ev_c4_route_board"
+      ],
+      "solution": {
+        "rotation_steps": 1,
+        "offset_x": 3,
+        "offset_y": -2
+      },
+      "snap_tolerance": 0,
+      "retry_unlimited": true,
+      "hint_after_attempts": 2,
+      "world_note": "Fictional tram route drawn over a fictional site plan of a fictional Berlin district; not a real plan."
+    },
+    {
+      "id": "pz_c4_numbers",
+      "type": "symbol_order",
+      "scene": "L_C4_TunnelsB",
+      "clue_item_ids": [
+        "ev_c4_card_ru",
+        "ev_c4_stencils"
+      ],
+      "solution": [
+        "n24318",
+        "c1742",
+        "n47702",
+        "c1745"
+      ],
+      "display_symbols": [
+        "c1745",
+        "n47702",
+        "n24318",
+        "c1742"
+      ],
+      "max_penalty": 0,
+      "retry_unlimited": true,
+      "hint_after_attempts": 2,
+      "world_note": "Fictional wagon numbers, paint layers and switch posts; not a real railway numbering scheme."
     }
   ]
 }

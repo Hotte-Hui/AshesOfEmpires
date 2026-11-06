@@ -1,0 +1,17 @@
+{
+ "locale": "de-DE",
+ "area": "c4_cine",
+ "note": "Kapitel 4, Teil 1 – Titel der Filmsequenzen auf der Erinnerungsseite „Filmsequenzen“ (MemoryView). Owner: cine stream (round 9). Die Untertitel der Filme selbst stehen in de_c4_cinematics.json (story stream).",
+ "strings": {
+  "ui.memories.film.LS_C4_Homeward": "Heimwärts",
+  "ui.memories.film_sub.LS_C4_Homeward": "Zwei Züge, jeder mit seiner Hälfte",
+  "ui.memories.film.LS_C4_Number": "Fünfundvierzig",
+  "ui.memories.film_sub.LS_C4_Number": "Dieselbe Nummer in Karsk und in Berlin",
+  "ui.memories.film.LS_C4_Card": "Karte Nr. 0417",
+  "ui.memories.film_sub.LS_C4_Card": "Zwei Hälften, eine Perforation",
+  "ui.memories.film.LS_C4_Stamp": "Zwei Stempel",
+  "ui.memories.film_sub.LS_C4_Stamp": "Annehmen in Karsk, Abgang in Berlin",
+  "ui.memories.film.LS_C4_Voices": "Stimmen unter Beton",
+  "ui.memories.film_sub.LS_C4_Voices": "Dienstag, 23.40 Uhr, Wagen C-17/45"
+ }
+}

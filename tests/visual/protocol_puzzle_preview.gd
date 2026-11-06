@@ -226,12 +226,13 @@ func _run() -> void:
 	ui.inspect.open("ev_c3_seating")
 	await wait(0.7)
 	check(ui.inspect._doc_rect.visible and ui.inspect._doc_rect.texture != null, "InspectView shows the seating document")
-	check(ui.inspect._caption.text == Kit.t("doc.c3.seating.alt"), "seating alt text from the documents json")
+	# the caption sits under the document, or (125 / 150 % text, long caption) in the record card
+	check(ui.inspect._caption.text + ui.inspect._card_alt.text == Kit.t("doc.c3.seating.alt"), "seating alt text from the documents json")
 	await shot("inspect_seating")
 	ui.inspect.close()
 	ui.inspect.open("ev_c3_booth_log")
 	await wait(0.7)
-	check(ui.inspect._doc_rect.texture != null and ui.inspect._caption.text == Kit.t("doc.c3.booth_log.alt"),
+	check(ui.inspect._doc_rect.texture != null and ui.inspect._caption.text + ui.inspect._card_alt.text == Kit.t("doc.c3.booth_log.alt"),
 		"InspectView shows the booth log with its alt text")
 	await shot("inspect_booth_log")
 	ui.inspect.close()

@@ -24,7 +24,13 @@ const EXPECTED := [["L_A1_Railyard", "a1_completed", "alexei", 1, false],
 	# its own protagonist, TECHNICAL_ARCHITECTURE §12.11) and the quay
 	["L_C3_RegistryA", "c3c_completed", "alexei", 3, false], ["L_C3_RegistryB", "c3d_completed", "konrad", 3, false],
 	["L_C3_RegistryC", "c3e_completed", "alexei", 3, false], ["L_C3_RegistryD", "c3f_completed", "konrad", 3, false],
-	["L_C3_Quay", "c3g_completed", "alexei", 3, false]]
+	["L_C3_Quay", "c3g_completed", "alexei", 3, false],
+	# Chapter 4 part 1 (C4_DESIGN.md §7): two level files, two scenes each, alternating between Karsk and Berlin
+	["L_C4_TunnelsA", "c4a_completed", "alexei", 4, false], ["L_C4_AnnexA", "c4b_completed", "konrad", 4, false],
+	["L_C4_TunnelsB", "c4c_completed", "alexei", 4, false], ["L_C4_AnnexB", "c4d_completed", "konrad", 4, false]]
+## Round 9: the memory prints of Chapter 4 are made by the lead after the art lands (C4_DESIGN §7) — reported, not
+## failed, while missing.
+const PENDING_PRINTS: Array = []
 
 
 class MockGame extends Node:
@@ -97,6 +103,7 @@ func run() -> Array:
 	kit.run_case("film_look_stops_with_the_memory", _film_look_stops)
 	kit.run_case("a_new_present_never_keeps_the_side_level_flag", _side_level_reset)
 	kit.run_case("game_memory_scenes_cards", _game_cards)
+	kit.run_case("memory_cards_count_their_own_scene", _scene_counts)
 	kit.run_case("memory_view_builds_and_navigates", _view)
 	kit.run_case("hud_badge", _hud_badge)
 	kit.run_case("pause_menu_entry", _pause_entry)
@@ -135,7 +142,10 @@ func _scene_table() -> bool:
 		kit.eq(int(s[i]["chapter_no"]), e[3], "%s chapter number" % e[0])
 		kit.eq(bool(s[i]["side"]), e[4], "%s side-level flag" % e[0])
 		var thumb := str(s[i]["thumb"])
-		kit.ok(ResourceLoader.exists(thumb), "%s print exists (%s)" % [e[0], thumb])
+		if PENDING_PRINTS.has(e[0]) and not ResourceLoader.exists(thumb):
+			print("      pending (round 9): memory print %s" % thumb)
+		else:
+			kit.ok(ResourceLoader.exists(thumb), "%s print exists (%s)" % [e[0], thumb])
 		var tex = load(thumb) if ResourceLoader.exists(thumb) else null
 		if tex is Texture2D:
 			kit.eq((tex as Texture2D).get_size(), Vector2(320, 180), "%s print is 320x180" % e[0])
@@ -266,8 +276,8 @@ func _echo_plans() -> bool:
 	var m = MEM.new(TMP + "/unused.json")
 	var g := kit.story()
 	g.new_game()
-	kit.play_until(g, "c3g", {"a1": "keep_private", "c3a": "note_alone", "c3b": "report_delegation", "c3d": "pocket_plan",
-		"c3g": "hide_for_elena"})
+	kit.play_until(g, "c4d", {"a1": "keep_private", "c3a": "note_alone", "c3b": "report_delegation", "c3d": "pocket_plan",
+		"c3g": "hide_for_elena", "c4d": "protect_marta"})
 	var before: String = g.save_json()
 	var live_before: String = Story.save_json()
 	var game_script = load("res://scripts/core/game.gd")
@@ -670,6 +680,73 @@ func _game_cards() -> bool:
 		kit.ok(MEM.has_text("ui.memories.film." + str(f["id"])), "film %s has a title" % f["id"])
 	_restore_story(keep_story)
 	return true
+
+
+## Round 9: a card counts the finds of its own scene (Game.memory_scenes). In a level file shared by several Story
+## scenes an Explore entry naming its "scene" counts on that scene's card only (the C4 tunnels and annex: each card
+## its own walk area, not the file's 22 / 18); entries without one (the registry) count on every card of the file —
+## in the running game (Explore state) and from the main menu (the profile's finds) alike.
+func _scene_counts() -> bool:
+	var game := _game()
+	if game == null or not game.has_method("memory_scenes"):
+		return true
+	var keep_story: String = Story.save_json()
+	var keep_explore: Dictionary = Explore.state()
+	var keep_notify: bool = Explore.notify_tasks
+	var keep_data: Dictionary = (game.memories.data as Dictionary).duplicate(true)
+	Explore.notify_tasks = false
+	Story.new_game()
+	kit.play_until(Story, "c4d")
+	# what each card should count, straight from the Explore data: the two scenes of each C4 file
+	var files := {"L_C4_TunnelsA": ["L_C4_TunnelsA", "L_C4_TunnelsB"], "L_C4_AnnexA": ["L_C4_AnnexA", "L_C4_AnnexB"]}
+	var mine := {}
+	for key in files:
+		kit.eq(str(game.ext.level_key(str(files[key][1]))), key, "%s counts under the level key %s" % [files[key][1], key])
+		var all: Array = Explore.entries_for(key)
+		for sid in files[key]:
+			mine[sid] = []
+			for e in all:
+				if str(e.get("scene", "")) == sid:
+					mine[sid].append(str(e["id"]))
+			kit.ok((mine[sid] as Array).size() >= 2, "%s has finds of its own (%d)" % [sid, (mine[sid] as Array).size()])
+		kit.eq((mine[files[key][0]] as Array).size() + (mine[files[key][1]] as Array).size(), all.size(),
+			"%s: every find names one of the file's two scenes" % key)
+	var reg_key := str(game.ext.level_key("L_C3_RegistryD"))
+	var reg: Array = Explore.entries_for(reg_key)
+	kit.ok(not reg.is_empty() and not (reg[0] as Dictionary).has("scene"), "the registry's finds name no scene (%d)" % reg.size())
+	# one find in the cellar, two at the siding, one at the tram loop, none in the annex, one in the registry
+	var found: Array = [mine["L_C4_TunnelsA"][0], mine["L_C4_TunnelsB"][0], mine["L_C4_TunnelsB"][1],
+		mine["L_C4_AnnexA"][0], str(reg[0]["id"]) if not reg.is_empty() else ""]
+	var want := {"L_C4_TunnelsA": [1, (mine["L_C4_TunnelsA"] as Array).size()],
+		"L_C4_TunnelsB": [2, (mine["L_C4_TunnelsB"] as Array).size()],
+		"L_C4_AnnexA": [1, (mine["L_C4_AnnexA"] as Array).size()], "L_C4_AnnexB": [0, (mine["L_C4_AnnexB"] as Array).size()]}
+	for sid in ["L_C3_RegistryA", "L_C3_RegistryB", "L_C3_RegistryC", "L_C3_RegistryD"]:
+		want[sid] = [1, reg.size()]       # the whole file on every card, as before
+	Explore.restore({"found": found, "cards": []})
+	_check_counts(game.memory_scenes("game"), want, "game")
+	# the main menu: every scene completed once, the profile's finds (the running Explore state is not read)
+	var prof := {"version": 1, "completed": {}, "explore": {"found": found.duplicate(), "cards": []}}
+	for sid in want:
+		prof["completed"][sid] = {"t": 0.0, "story": {}}
+	game.memories.data = prof
+	Explore.restore({"found": [], "cards": []})
+	_check_counts(game.memory_scenes("menu"), want, "menu")
+	game.memories.data = keep_data
+	_restore_story(keep_story)
+	Explore.restore(keep_explore)
+	Explore.notify_tasks = keep_notify
+	return true
+
+
+func _check_counts(cards: Array, want: Dictionary, ctx: String) -> void:
+	var got := {}
+	for c in cards:
+		got[str(c.get("id", ""))] = c
+	for sid in want:
+		var c: Dictionary = got.get(sid, {})
+		if not kit.ok(bool(c.get("unlocked", false)), "%s card unlocked (%s)" % [sid, ctx]):
+			continue
+		kit.eq([int(c.get("found", -1)), int(c.get("total", -1))], want[sid], "%s card (%s): found / total of its scene" % [sid, ctx])
 
 
 # ------------------------------------------------------------------ UI built headless

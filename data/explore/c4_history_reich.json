@@ -1,0 +1,81 @@
+{
+ "side": "reich",
+ "doc": "documentation/C4_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — real-history card of Chapter 4 part 1 (presented outside the fiction as „REALE GESCHICHTE“). Text: data/locale/de_history_c4.json. Unlocked by berlin.annex.wallpaper (the Lindner flat in section on the party wall; Anna came from Kharkiv in 1942 with a transport). Complements hist.reich.forced_labor (forced labour as a whole and the late compensation) with the special law for the civilians deported from the Soviet Union; what awaited them after their return is hist.soviet.filtration. The GBI evictions the lead named as an example topic are already hist.reich.evictions (Berlin archive), so this card takes the Ostarbeiter decrees instead. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen je Aussage (Bildungsportal NS-Zwangsarbeit, dekoder, bpb, USHMM, Forschungsüberblick zu den „Ausländerkinder-Pflegestätten“). Second card (round-9 fix compl-05): hist.reich.denunciation at the counter area of scene D (berlin.annex.waiting_bench), the Gestapo's dependence on reports from the population after Gellately 1990 and Mallmann/Paul 1991 — the decision at the counter asks Konrad for exactly such a name.",
+ "cards": [
+  {
+   "id": "hist.reich.ostarbeiter",
+   "side": "reich",
+   "title_key": "hist.reich.ostarbeiter.title",
+   "text_key": "hist.reich.ostarbeiter.text",
+   "year": "1942",
+   "sources": [
+    {
+     "label": "Bildungsportal NS-Zwangsarbeit (Stiftung EVZ), Glossar: „Ostarbeitererlasse“ vom 20.02.1942 – Abzeichen OST, umzäunte Lager, Sondersteuer, weniger Lebensmittel, Kontaktverbot",
+     "url": "https://www.bildung-ns-zwangsarbeit.de/en/education/glossary/term/ostarbeitererlasse/"
+    },
+    {
+     "label": "dekoder, Gnose „Ostarbeiter“ – fast drei Millionen sowjetische Zivilarbeitskräfte, Zwangsrekrutierungen, Sonderrecht, Strafen, Säuglingssterben",
+     "url": "https://www.dekoder.org/de/gnose/ostarbeiter-zwangsarbeit-zeitzeugen/"
+    },
+    {
+     "label": "Bundeszentrale für politische Bildung: 20. Februar 1942 – die Ostarbeiter-Erlasse",
+     "url": "https://www.bpb.de/mediathek/video/227595/20-februar-1942-die-ostarbeiter-erlasse/"
+    },
+    {
+     "label": "United States Holocaust Memorial Museum: „Ostarbeiter“ (eastern workers) – überwiegend Frauen",
+     "url": "https://encyclopedia.ushmm.org/content/en/photo/ostarbeiter-eastern-workers"
+    },
+    {
+     "label": "Wikipedia (engl.): Nazi birthing centres for foreign workers – erzwungene Abtreibungen, „Ausländerkinder-Pflegestätten“ (Erlass 1943), Zehntausende tote Säuglinge",
+     "url": "https://en.wikipedia.org/wiki/Nazi_birthing_centres_for_foreign_workers"
+    }
+   ]
+  },
+  {
+   "id": "hist.reich.denunciation",
+   "side": "reich",
+   "title_key": "hist.reich.denunciation.title",
+   "text_key": "hist.reich.denunciation.text",
+   "year": "1990",
+   "note": "C4_DESIGN §6: at the counter area of scene D — unlocked by berlin.annex.waiting_bench (x 1612, the bench „Warten bis zum Aufruf“ beside the counter x 1650–1760 and the door to the Staatspolizei corridor), the spot where Konrad is asked for a name. Faktengeprüft am 06.11.2026, jede Aussage gegen mindestens zwei Quellen: kleine Gestapo, Würzburg rund zwanzig Beamte für Unterfranken (Jüdische Allgemeine: 20 hauptamtliche Mitarbeiter; Ferguson 2006 nach Gellately: 22 Beamte); mehr als die Hälfte der Würzburger „Rassenschande“-Verfahren nach Anzeigen (Ferguson nach Gellately: 45 von 84; Rezensionen nennen 57 %; UCSB-Aufsatz: „a large number, if not the majority“); Mallmann/Paul 1991 Saarland ähnlich (ZZF/Marszolek 2002; Rezensionen: weit mehr als die Hälfte der Ermittlungen nach Hinweisen); Heimtückegesetz, Nürnberger Gesetze als Anlässe (Marszolek 2002; Historical Association 2018); Polen/Zwangsarbeiter: Anzeigen als wichtigste Quelle (Luebke nach Gellately); Abhörverbot 1. 9. 1939 (GHI-Dokument; Wikisource); private Motive – Streit, Ehekonflikte, Groll (Marszolek 2002; UCSB-Aufsatz; Rezensionen: „spite, personal animosity“); Gegenposition Johnson 1999 / Evans 2007 (Historical Association 2018).",
+   "sources": [
+    {
+     "label": "Robert Gellately: The Gestapo and German Society. Enforcing Racial Policy 1933–1945, Oxford 1990 (dt. Die Gestapo und die deutsche Gesellschaft, Paderborn 1993) – Würzburger Gestapo-Akten",
+     "url": ""
+    },
+    {
+     "label": "Klaus-Michael Mallmann, Gerhard Paul: Herrschaft und Alltag. Ein Industrierevier im Dritten Reich, Bonn 1991; dies.: „Allwissend, allmächtig, allgegenwärtig? Gestapo, Gesellschaft und Widerstand“, Zeitschrift für Geschichtswissenschaft 41 (1993)",
+     "url": ""
+    },
+    {
+     "label": "Jüdische Allgemeine: „Der Fall Schuster – was die Akten erzählen“ – die Würzburger Gestapo mit nur 20 hauptamtlichen Mitarbeitern, ohne Denunzianten weit weniger „erfolgreich“",
+     "url": "https://www.juedische-allgemeine.de/kultur/der-fall-schuster-was-die-akten-erzaehlen"
+    },
+    {
+     "label": "Claire M. Hubbard-Hall: „Policing in Nazi Germany“, Teaching History 171 (Historical Association, 2018) – vom Bild der allwissenden Gestapo zu Gellatelys „self-policing society“, die Einwände von Johnson und Evans",
+     "url": "https://www.history.org.uk/files/download/19950/1530094349/TH_171_PolyChronicon_PolicingNaziGermany.pdf"
+    },
+    {
+     "label": "Inge Marszolek: Denunziation im 20. Jahrhundert, Potsdamer Bulletin für Zeithistorische Studien 25 (2002) – Gellately und Mallmann/Paul, Heimtückegesetz und Nürnberger Gesetze als „Denunziationsangebote“, private Motive",
+     "url": "https://www.zzf-potsdam.de/sites/default/files/publikation/Bulletin/marszolek_25.pdf"
+    },
+    {
+     "label": "Niall Ferguson: The War of the World, 2006, nach Gellately (Auszug): 22 Gestapobeamte in Würzburg für ganz Unterfranken; 45 von 84 Verfahren wegen „Rassenschande“ begannen mit einer Anzeige",
+     "url": "https://faroutliers.blogspot.com/2009/04/denunciations-aid-understaffed-police.html"
+    },
+    {
+     "label": "University of Oregon (D. Luebke), Kursmaterial „Poles“: freiwillige Anzeigen als wichtigste Quelle der Gestapo über Kontakte zu polnischen Zwangsarbeitern (nach Gellately)",
+     "url": "https://pages.uoregon.edu/dluebke/NaziGermany443/Poles.html"
+    },
+    {
+     "label": "UC Santa Barbara, Kursprojekt zu Gellately 1990: viele, wenn nicht die meisten Verfahren von gewöhnlichen Bürgern angestoßen; Groll und wirtschaftlicher Vorteil als Motive",
+     "url": "https://marcuse.faculty.history.ucsb.edu/classes/133b/07Projects/Gellately1990JessicaWong073.htm"
+    },
+    {
+     "label": "German History in Documents and Images (GHI): Verordnung über außerordentliche Rundfunkmaßnahmen vom 1. September 1939 – das Abhören ausländischer Sender als „Rundfunkverbrechen“",
+     "url": "https://germanhistorydocs.org/de/deutschland-nationalsozialismus-1933-1945/verordnung-des-ministerrates-fuer-die-reichsverteidigung-ueber-ausserordentliche-rundfunkmassnahmen-datiert-auf-den-1-september-1939-und-veroeffentlicht-am-7-september-1939"
+    }
+   ]
+  }
+ ]
+}

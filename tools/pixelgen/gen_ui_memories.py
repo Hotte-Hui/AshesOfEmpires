@@ -46,6 +46,14 @@ CROPS = {
     'L_C3_RegistryC': (320, 124),
     'L_C3_RegistryD': (100, 124),
     'L_C3_Quay': (225, 124),
+    # Chapter 4 part 1 (two level files, two scenes each; round-9 fix compl-03): A Lev's desk under the green lamp
+    # with the samovar, B the tram loop at dawn with tram 74 and Marta, C the siding: wagon 24 318 (C-17/45), the
+    # heap of number plates and Alexei facing Lev at his siding post (art-13), D the whole counter „Auskunft ·
+    # Abgleich“ with Fengler behind it, the waiting bench and Konrad at the tube station
+    'L_C4_TunnelsA': (260, 128),
+    'L_C4_AnnexA': (130, 128),
+    'L_C4_TunnelsB': (218, 128),
+    'L_C4_AnnexB': (262, 128),
 }
 ## warm silver-gelatine ramp: lifted black -> umber -> sepia -> cream highlight (sRGB)
 RAMP = [(0.00, (30, 22, 16)), (0.18, (58, 42, 30)), (0.40, (104, 79, 56)), (0.62, (156, 126, 92)),

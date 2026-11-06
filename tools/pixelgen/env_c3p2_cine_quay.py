@@ -140,42 +140,12 @@ def stacks():
 def arms():
     """Reaching arms (seen from behind and above): rows = Alexei (green quilted sleeve) / Konrad (dark blue
     sleeve, shirt cuff); columns = reach to the near stack, reach across to the far stack, the hand drawn back
-    holding pages against the body.  Each frame 220 x 110, top-left (110, 176)."""
-    fw, fh, ox, oy = 220, 110, 210, 170
-    R = C.ramps(A=['#020504', '#071009', '#0E1A14', '#16261D', '#20342A', '#2E4636'], K=K_COAT, P=PAPER,
-                Z=['#140C0C', '#2A1A18', '#46302A', '#6A4A3C', '#8A644E', '#A8806A'], F=EMBERGLOW, S=SNOW)
-    rows = []
-    for who in ('a', 'k'):
-        frames = []
-        for mode in ('near', 'far', 'hold'):
-            p = C.Paint(fw, fh, R, 'arm_' + who, ox=ox, oy=oy)
-            if who == 'a':
-                sh = (238.0, 206.0)
-                tgt = {'near': (STACK_RU[0] - 4, STACK_RU[1] - 8), 'far': (STACK_DE[0] - 6, STACK_DE[1] - 8),
-                       'hold': (250.0, 238.0)}[mode]
-                coat, cuff = 'A', 'A'
-            else:
-                sh = (404.0, 204.0)
-                tgt = {'near': (STACK_DE[0] + 4, STACK_DE[1] - 8), 'far': (STACK_RU[0] + 6, STACK_RU[1] - 8),
-                       'hold': (392.0, 236.0)}[mode]
-                coat, cuff = 'K', 'P'
-            el = ((sh[0] + tgt[0]) / 2 + (6 if who == 'a' else -6), max(sh[1], tgt[1]) - 4)
-            sleeve = p.line([sh, el, (tgt[0] + (-8 if who == 'a' else 8), tgt[1] - 2)], r=6.4)
-            p.put(sleeve, coat, 1.2)
-            if who == 'a':
-                p.put(sleeve & (np.mod(p.yy + p.xx * 0.3, 9) < 1.2), coat, 0.4)
-            # fire light from the left: the left edges glow, the right edges catch the cold sky
-            p.put(sleeve & C.rim(sleeve, -1, 0, 2), 'F', 2.4)
-            p.put(sleeve & C.rim(sleeve, 0, -1, 1), 'S', 1.6)
-            c = p.line([(tgt[0] + (-10 if who == 'a' else 10), tgt[1] - 2), (tgt[0] + (-6 if who == 'a' else 6), tgt[1] - 1)], r=4.0)
-            p.put(c, cuff, 2.6)
-            hand = p.ell(tgt[0], tgt[1], 5.4, 4.2) | p.line([(tgt[0], tgt[1]), (tgt[0] + (4 if who == 'a' else -4), tgt[1] + 4)], r=1.6)
-            p.put(hand, 'Z', 2.4)
-            p.put(hand & C.rim(hand, -1, -1), 'Z', 4.4)
-            p.resolve(band=2.0)
-            frames.append(p.L.c)
-        rows.append(np.concatenate(frames, axis=1))
-    L['arms_at'] = [ox, oy]
+    holding pages against the body.  Each frame 220 x 110 at layout halves.arms_at.  Round 9: sculpted and lit like
+    the bench figures (env_c3p2_cine_hands.arm_frame), leaving the bodies at their shoulders."""
+    import env_c3p2_cine_hands as H
+    rows = [np.concatenate([H.arm_frame(who, mode) for mode in ('near', 'far', 'hold')], axis=1)
+            for who in ('a', 'k')]
+    L['arms_at'] = list(H.ARMS_ORIGIN)
     return np.concatenate(rows, axis=0)
 
 
@@ -428,8 +398,13 @@ def _glyph_cell(ch, flap=False):
     a[:h // 2] = np.array([26, 26, 30], np.float32)
     a[h // 2] = np.array([6, 6, 8], np.float32)
     if ch != ' ':
-        m = K.vtext(ch, 'l', 1)
-        m = m[2:9, 1:-1] if m.shape[0] >= 9 else m
+        import pixfont_umlauts as UML
+        if ch in UML.UML_57:
+            # round 9: Ä / Ö / Ü keep their dots on the flap (dots, a blank row, the letter one row shorter)
+            m = np.array([[c == '#' for c in row] for row in UML.UML_57[ch]], bool)
+        else:
+            m = K.vtext(ch, 'l', 1)
+            m = m[2:9, 1:-1] if m.shape[0] >= 9 else m
         m = np.repeat(np.repeat(m, 2, 0), 2, 1)
         gy, gx = (h - m.shape[0]) // 2, (w - m.shape[1]) // 2
         sub = a[gy:gy + m.shape[0], gx:gx + m.shape[1]]

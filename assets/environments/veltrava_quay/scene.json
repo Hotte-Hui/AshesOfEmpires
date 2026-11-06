@@ -201,7 +201,7 @@
     240,
     182
    ],
-   "note": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door"
+   "note": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door, the roller-shutter equipment locker behind the cab"
   },
   {
    "name": "car_reich",
@@ -1412,6 +1412,14 @@
    "facing": "left"
   }
  },
+ "actors": [
+  {
+   "scene": "res://scenes/actors/AmbientWalkers.tscn",
+   "pos": [0, 0],
+   "props": {"data": "res://assets/environments/veltrava_quay/walkers.json"},
+   "note": "round 9 ambient walkers (feel pass 2): a fireman, a woken resident, a commission clerk with rescued files, an old woman, a city policeman"
+  }
+ ],
  "explore_sites": {
   "exp_fire_engine": {
    "stand": [
@@ -1504,14 +1512,14 @@
   },
   "blanket_source": {
    "stand": [
-    430,
+    360,
     300
    ],
    "focus": [
-    300,
-    262
+    355,
+    255
    ],
-   "what": "the fire engine's lockers (side task „Eine Decke für Frau Brunner“)"
+   "what": "the equipment locker directly behind the cab (front shutter bay of the body, x 337-373; side task „Eine Decke für Frau Brunner“)"
   }
  },
  "notes": [

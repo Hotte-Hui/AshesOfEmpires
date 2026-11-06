@@ -2,7 +2,8 @@
  "doc": "Exploration hotspots (Level._merge_explore_hotspots; scene.json wins on name clashes). Append-only: one block per contributing area. Keep >= 24 px from the story hotspots of C3P2_DESIGN.md §5.",
  "hotspots": {
   "exp_soot_print": [168, 300], "exp_fire_engine": [280, 300], "exp_lantern": [470, 300], "exp_ice": [640, 300],
-  "exp_searchlights": [930, 300], "exp_cars": [1276, 300], "exp_bridge_arms": [1690, 300]
+  "exp_searchlights": [930, 300], "exp_cars": [1276, 300], "exp_bridge_arms": [1690, 300],
+  "exp_task_blanket": [360, 300]
  },
  "spawns": {}
 }

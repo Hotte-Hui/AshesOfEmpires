@@ -14,7 +14,8 @@ ORDER = ["render-camera", "env_karsk", "karsk_skyline", "explore_karsk", "miniga
          "characters", "portraits", "characters_r7", "portraits_r7", "great_hall", "parade", "env_plaza", "explore_plaza", "plaza_polish",
          "trans_a1m1", "trans_finale", "c3", "env_veltrava_station", "env_veltrava_hall", "c3_cine", "minigames_r7_v", "minigames_r7_relay",
          "tasks", "memories", "c3p2_story", "env_c3p2_archive", "env_c3p2_night", "c3p2_cine", "c3p2_puzzle",
-         "c3p2_cast_audio", "explore_c3p2", "feel_r8", "ui", "explore_system", "photo_mode", "credits", "audio", "story"]
+         "c3p2_cast_audio", "explore_c3p2", "feel_r8", "c4_story", "env_c4_tunnels",
+         "env_c4_annex", "c4_cine", "c4_puzzle", "c4_cast_audio", "explore_c4", "board", "feel_r9", "ui", "explore_system", "photo_mode", "credits", "audio", "story"]
 
 HEADER = """# ASSET MANIFEST — Ashes of Empires: The Last Winter
 

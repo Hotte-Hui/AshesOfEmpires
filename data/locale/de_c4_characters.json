@@ -1,0 +1,18 @@
+{
+ "locale": "de",
+ "area": "c4_characters",
+ "strings": {
+  "char.marta.name": "Marta Vogel",
+  "char.marta.role": "Straßenbahnfahrerin, Linie 74",
+  "char.lev.name": "Lev Sokolov",
+  "char.lev.role": "Archivar der Güterabfertigung Karsk",
+  "char.registrar.name": "Registrator Fengler",
+  "char.registrar.role": "Auskunft und Abgleich, Nebenstelle Süd",
+  "sys.journal.person.lev.name": "Lev Sokolov",
+  "sys.journal.person.lev.note": "Archivar der Güterabfertigung Karsk. Hebt Durchschläge auf, auch von Seiten, die es offiziell nicht gibt. Will in keinem Papier stehen.",
+  "sys.journal.person.marta.name": "Marta Vogel",
+  "sys.journal.person.marta.note": "Fährt die erste Bahn der Linie 74 um die geräumten Blöcke. Sieht, wer nachts abgeholt wird – und sagt es nur, wenn sie muss.",
+  "sys.journal.person.registrar.name": "Registrator Fengler",
+  "sys.journal.person.registrar.note": "Auskunft und Abgleich in der Nebenstelle Süd. Gibt Akten nur gegen einen Namen heraus. Ordnung muss sein."
+ }
+}

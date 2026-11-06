@@ -1,0 +1,21 @@
+{
+ "locale": "de",
+ "area": "c4_cinematics",
+ "strings": {
+  "cin.c4.homeward.place": "Karsk, Sonntag, 16. Februar 1964, 4.40 Uhr.",
+  "cin.c4.homeward.alexei.split": "Die russischen Blätter. Pjotrs Name liegt unter meinem Mantel.",
+  "cin.c4.homeward.alexei.swap": "Die deutschen Blätter. Ich lese sie langsam. Pjotrs Namen trägt er.",
+  "cin.c4.homeward.alexei.elena": "Pjotrs Liste hängt in einem Mantel in Veltrava. Ich habe nur die Zahlen.",
+  "cin.c4.number.karsk": "Karsk, 7.10 Uhr.",
+  "cin.c4.number.berlin": "Berlin, 5.10 Uhr.",
+  "cin.c4.number.alexei": "Fünfundvierzig. Der nächste Lauf. Die Farbe ist noch nass.",
+  "cin.c4.card.konrad": "Lindner, Anna. Die andere Hälfte ist schon unterwegs.",
+  "cin.c4.card.karsk": "Karsk, 7.30 Uhr.",
+  "cin.c4.stamp.lev": "Wenn die Karte fehlt, suchen sie zuerst bei mir.",
+  "cin.c4.stamp.berlin": "Berlin, 6.00 Uhr.",
+  "cin.c4.voices.konrad_name": "Die Akte Lindner, mit allen Unterschriften. Und mit Martas Namen darin.",
+  "cin.c4.voices.konrad_protect": "Keine Akte. Aber morgen früh sitzt Ilse wieder bei Hanna in der Klasse.",
+  "cin.c4.voices.alexei": "Vier Nummern, ein Wagen. Und Levs Name auf keinem Papier, das ich trage.",
+  "cin.c4.voices.tuesday": "Dienstag, 23.40 Uhr. Wagen C-17/45."
+ }
+}

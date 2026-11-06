@@ -1,0 +1,364 @@
+{
+ "environment": "berlin_annex",
+ "level": "scenes/levels/L_C4_Annex.tscn",
+ "generator": "tools/pixelgen/env_c4_annex.py",
+ "date": "2026-11-06",
+ "license": "original work, generated deterministically by the project tools (no third-party images, no traced references)",
+ "files": [
+  {
+   "path": "assets/environments/berlin_annex/loop.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "Wendeschleife Sued 8 at dawn: houses No. 11 / No. 9, shelter, tram 74, column S 2, freight hatch, hoarding, the street (x 0..846)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/loop_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "Wendeschleife Sued 8 at dawn: houses No. 11 / No. 9, shelter, tram 74, column S 2, freight hatch, hoarding, the street (x 0..846) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/loop_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "Wendeschleife Sued 8 at dawn: houses No. 11 / No. 9, shelter, tram 74, column S 2, freight hatch, hoarding, the street (x 0..846) -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/routes_case.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "Konrad's tracing sheets taped over the lit timetable case: Marta's line and three detours"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/routes_case_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "Konrad's tracing sheets taped over the lit timetable case: Marta's line and three detours -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/routes_case_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "Konrad's tracing sheets taped over the lit timetable case: Marta's line and three detours -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/column_bared.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the poster of S 2 torn back: the steel door of the ventilation structure"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/column_bared_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the poster of S 2 torn back: the steel door of the ventilation structure -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/notice_s2.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the official notice on S 2: the emblem above the small print"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/notice_s2_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the official notice on S 2: the emblem above the small print -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/notice_s2_hist.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the official notice on S 2: the emblem above the small print -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/notice_s2_hist_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the official notice on S 2: the emblem above the small print -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/notice_9.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the notice on the boarded door of No. 9: typed sheet, red Bezirksamt stamp, the site plan stapled under it (no insignia)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/notice_9_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the notice on the boarded door of No. 9: typed sheet, red Bezirksamt stamp, the site plan stapled under it (no insignia) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/sky.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "dawn sky over the clearance zone: night -> lavender band, low stratus, the last stars"
+  },
+  {
+   "path": "assets/environments/berlin_annex/dome.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the Great Hall far away in the dawn haze, neutral banners (Reichssiegel)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/dome_hist.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the Great Hall far away, historical banners (Symbols.pick, 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/far.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "the north-south axis under construction: shells in scaffolding, tower cranes"
+  },
+  {
+   "path": "assets/environments/berlin_annex/far_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "far layer -- emission (site lights)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/mid.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "cleared blocks: the last tenements, site huts, an excavator"
+  },
+  {
+   "path": "assets/environments/berlin_annex/mid_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "mid layer -- emission (lit windows, site lamps)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fg_loop.png",
+   "generator": "tools/pixelgen/env_c4_annex_loop.py",
+   "description": "near-black snow banks and bollards (foreground frame of the street)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/annex.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "Nebenstelle Sued: shaft and ladder, machine room, card hall, plan, tube station, counter, typists, Staatspolizei door (x 846..1920)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/annex_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "Nebenstelle Sued: shaft and ladder, machine room, card hall, plan, tube station, counter, typists, Staatspolizei door (x 846..1920) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/annex_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "Nebenstelle Sued: shaft and ladder, machine room, card hall, plan, tube station, counter, typists, Staatspolizei door (x 846..1920) -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/drawer_s8_open.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "drawer Sued 8 pulled out: 212 cards, the red C-17 tabs"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/drawer_s8_open_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "drawer Sued 8 pulled out: 212 cards, the red C-17 tabs -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/capsule_open.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the capsule opened, the slip taken"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/capsule_open_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the capsule opened, the slip taken -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/form_counter.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the form laid out on the counter: name and address"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/form_counter_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the form laid out on the counter: name and address -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_counter.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the plate above the counter: emblem, NEBENSTELLE SUED"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_counter_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the plate above the counter: emblem, NEBENSTELLE SUED -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_counter_hist.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the plate above the counter: emblem, NEBENSTELLE SUED -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_counter_hist_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the plate above the counter: emblem, NEBENSTELLE SUED -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_stapo.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the emblem above the Staatspolizei door"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_stapo_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the emblem above the Staatspolizei door -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_stapo_hist.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the emblem above the Staatspolizei door -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/patches/plate_stapo_hist_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the emblem above the Staatspolizei door -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/props/counter_front.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the counter „Auskunft · Abgleich“ and what stands on it, cut from annex.png (y-sorted prop: Fengler behind it, the player in front)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/props/counter_front_n.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "the counter „Auskunft · Abgleich“ and what stands on it, cut from annex.png (y-sorted prop: Fengler behind it, the player in front) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fg_annex.png",
+   "generator": "tools/pixelgen/env_c4_annex_hall.py",
+   "description": "near-black foreground of the annex: chairs, a cable reel, a trolley"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/snow_a.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "light snowfall over the loop, two depths (left half)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/snow_b.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "light snowfall over the loop, two depths (right half)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/steam_s2.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "warm air steaming out of the grate at the foot of S 2"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/exhaust.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "the lorry's engine runs: exhaust in the frost"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/chimney_11.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "morning smoke from the chimney of No. 11"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/crane_light_0.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "aviation light on a tower crane of the axis (1 Hz)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/crane_light_1.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "aviation light on a tower crane of the axis (1 Hz)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/crane_light_2.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "aviation light on a tower crane of the axis (1 Hz)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/fence_blinker.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "red blinker on the site hoarding (1 Hz)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/fence_blinker_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "red blinker on the site hoarding (1 Hz) -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/ilse.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "Ilse on the last bench of tram 74: looks out, breathes on the glass, wipes a peephole (life strip)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/ilse_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "Ilse on the last bench of tram 74: looks out, breathes on the glass, wipes a peephole (life strip) -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/fan_a.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "axial fan A behind the grille, turning (6 frames = a quarter turn of the 4 blades)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/fan_b.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "axial fan B behind the grille, turning (6 frames = a quarter turn of the 4 blades)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/dust_fans.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "dust in the draught of the fans"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/dust_hall.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "dust under the tubes of the card hall"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/capsule_glass.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "a capsule shooting through the glass length of the tube (every 6 s)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/tube_flicker.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "a failing fluorescent tube (drops out twice in 3 s)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/fx/tube_flicker_e.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "a failing fluorescent tube (drops out twice in 3 s) -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/typist_a.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "a typist behind the glass of the counter (life strip)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/life/typist_b.png",
+   "generator": "tools/pixelgen/env_c4_annex_fx.py",
+   "description": "a typist behind the glass of the counter (life strip)"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_notice.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "the eviction notice of house No. 9: typed notice, the fresh addendum \"Haushalt aufgelöst. Vorgang an Nebenstelle Süd.\", the attached Lageplan Süd 8 with the shafts S1-S3 and \"gez. K. A.\""
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_shaft.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "the steel door behind the posters of S 2: \"Lüftungsbauwerk S 2 - Zutritt nur für Bedienstete\", warm air at the grate"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_card_de.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "card No. 0417, the German half: Lindner, Anna, geb. Kowalenko, Rückführung Ost, C-17/45, Di 18.2., 23.40; \"Kind Ilse, 8 - Verbleib ungeklärt\"; perforated right edge"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_drawer.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "drawer Süd 8 from above: 212 cards, 37 with a red C-17 tab"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_plan.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "Lüftungsplan Nebenstelle Süd, 1961, Blatt 3: three shafts under three blocks hatched \"freizumachen\", gez. K. Adler"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_tube_slip.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "the tube slip of the Staatspolizeistelle, Kommissar Wendt: all C-17 households Süd 8, where the children are, informants by name"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_route_board.png",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "Marta's route board: tracing paper from the depot, line 74 in pencil with its stops and the turning loop Süd 8, three dashed detours dated Okt. / Dez. / Jan. with hollow diamonds, drawn in driving direction (the north arrow points left)"
+  },
+  {
+   "path": "assets/ui/documents/berlin_annex_documents.json",
+   "generator": "tools/pixelgen/env_c4_annex_docs.py",
+   "description": "document metadata (item -> image, key marks)"
+  }
+ ]
+}

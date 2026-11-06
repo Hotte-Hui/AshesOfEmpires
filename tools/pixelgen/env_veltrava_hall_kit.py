@@ -289,11 +289,12 @@ class TLayer(pg.Layer):
         kw.setdefault('flat', False)
         self.put(np.ones((int(h), int(w)), bool), x, y, ramp, t, **kw)
 
-    def text(self, s, x, y, ramp, tone, font='35', spacing=1, **kw):
-        m = text_mask(s, font, spacing)
+    def text(self, s, x, y, ramp, tone, font='35', spacing=1, overhang=False, **kw):
+        """y = cap line; overhang=True draws the distinct umlauts, their dots one row above y."""
+        m = text_mask(s, font, spacing, overhang=overhang)
         kw.setdefault('flat', True)
         kw.setdefault('crisp', True)
-        self.put(m, x, y, ramp, tone, **kw)
+        self.put(m, x, y - (m.shape[0] - (5 if font == '35' else 7)), ramp, tone, **kw)
         return m.shape[1]
 
     def erase(self, x, y, w, h):
@@ -649,25 +650,40 @@ F35.update({
 })
 
 
+import pixfont_umlauts as _UML  # noqa: E402
+# distinct Ä / Ö / Ü (round 9, tools/pixelgen/pixfont_umlauts.py): the dots take one row ABOVE the cap line, a blank
+# row, then the letter one row shorter.  Opt-in (overhang=True) so every other user of these fonts stays unchanged.
+F35_UML = _UML.install(dict(F35), 5)
+F57_UML = _UML.install(dict(F57), 7)
+
+
 def _glyph(f, ch):
     return f.get(ch, f.get(ch.upper(), f[' ']))
 
 
-def text_mask(s: str, font: str = '35', spacing: int = 1) -> np.ndarray:
-    f = F35 if font == '35' else F57
+def text_mask(s: str, font: str = '35', spacing: int = 1, overhang: bool = False) -> np.ndarray:
+    """overhang=True: the distinct umlauts; the mask then has that row more at the TOP (TLayer.text draws it
+    above the given cap line)."""
+    if overhang:
+        f = F35_UML if font == '35' else F57_UML
+    else:
+        f = F35 if font == '35' else F57
     gh = 5 if font == '35' else 7
     s = s.upper()
     if not s:
         return np.zeros((gh, 0), bool)
+    extra = _UML.overhang(f, s, gh)
     widths = [max(len(r) for r in _glyph(f, ch)) for ch in s]
     w = sum(widths) + spacing * (len(s) - 1)
-    m = np.zeros((gh, w), bool)
+    m = np.zeros((gh + extra, w), bool)
     x = 0
     for ch, gw in zip(s, widths):
-        for yy, row in enumerate(_glyph(f, ch)):
+        g = _glyph(f, ch)
+        top = extra - (len(g) - gh)
+        for yy, row in enumerate(g):
             for xx, c in enumerate(row):
                 if c == '#':
-                    m[yy, x + xx] = True
+                    m[top + yy, x + xx] = True
         x += gw + spacing
     return m
 

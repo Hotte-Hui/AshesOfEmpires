@@ -220,8 +220,8 @@ def hatch_rect(sh, x0, y0, x1, y1, step=4, tone=4.6):
 
 
 def label(sh, text, x, y, tone=3.4, font='35'):
-    m = kit.text_mask(text, font)
-    sh.ink_mask(m, int(x), int(y), 'B', tone)
+    m = kit.text_mask(text, font, overhang=True)          # round 9: umlaut dots one row above the cap line
+    sh.ink_mask(m, int(x), int(y) - (m.shape[0] - (5 if font == '35' else 7)), 'B', tone)
     return m.shape[1]
 
 

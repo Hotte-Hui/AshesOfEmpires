@@ -11,8 +11,8 @@ Runs the ORIGINAL, unmodified reference implementation of the preproduction pack
   * preproduction/tools/story_engine_v4.py runs DIRECTLY on this project's data/v3 (only its module-level DATA
     path is monkeypatched). The project data already uses the protagonist id `konrad`, so engine runs need no
     id mapping. This covers the whole chain L_A1_Railyard -> L_M1_Archive -> L_C3_Station -> L_C3_Hall ->
-    L_C3_RegistryA -> … -> L_C3_RegistryD -> L_C3_Quay -> L_X1_Montage (documentation/C3_DESIGN.md §1,
-    C3P2_DESIGN.md §1).
+    L_C3_RegistryA -> … -> L_C3_RegistryD -> L_C3_Quay -> L_C4_TunnelsA -> L_C4_AnnexA -> L_C4_TunnelsB ->
+    L_C4_AnnexB -> L_X1_Montage (documentation/C3_DESIGN.md §1, C3P2_DESIGN.md §1, C4_DESIGN.md §1).
   * preproduction/tools/simulate_slice.py (the v0.3 runtime) runs twice: on preproduction/data/v3 (authentic
     save_version 2 files of the old slice, written with the pre-rename protagonist id and mapped to this
     project's id space exactly as before) and on the project data (byte reference for the GDScript port
@@ -21,7 +21,8 @@ Runs the ORIGINAL, unmodified reference implementation of the preproduction pack
     so the recorded verdicts are the same whichever OS generates the fixture.
 Recorded sections (all in this project's id space):
   * routes      - save_json() of the full route for every slice combination (a1 x m1) x every Chapter-3 option
-                  (c3a x c3b x c3d x c3g) x skip/play; the finale is only reachable after c3g
+                  (c3a x c3b x c3d x c3g) x the Chapter-4 decision (c4d) x skip/play; the finale is only reachable
+                  after c4d
   * legacy      - v0.3 saves (authentic + port) and the reference VERDICT of StoryEngine.load_json() on them:
                   the migrated state, or the exact StoryError message (saves that claim the old demo end
                   directly after M1 are rejected now; saves taken before it still migrate)
@@ -158,12 +159,16 @@ C3A = options('c3a_choose')        # ask_elena, note_alone
 C3B = options('c3b_choose')        # share_protocol, search_elena, report_delegation
 C3D = options('c3d_choose')        # admit_plan, pocket_plan  (Chapter 3 part 2, C3P2_DESIGN.md §2.4)
 C3G = options('c3g_choose')        # split_by_language, swap_halves, hide_for_elena
+C4D = options('c4d_choose')        # name_marta, protect_marta  (Chapter 4 part 1, C4_DESIGN.md §2.4)
 SYMBOLS = solution('a1_solve_signal')
 OVERLAY = solution('m1_align_plans')
 PROTOCOL = solution('c3b_solve_protocol')
 PROTOCOL_SHOWN = display('c3b_solve_protocol')
 CHECK = solution('c3d_solve_check')
 CHECK_SHOWN = display('c3d_solve_check')
+ROUTES_C4 = solution('c4b_solve_routes')       # overlay {rotation_steps, offset_x, offset_y} (C4_DESIGN §2.7)
+NUMBERS = solution('c4c_solve_numbers')        # symbol order of the number chain
+NUMBERS_SHOWN = display('c4c_solve_numbers')
 
 
 # ------------------------------------------------------------------------------------- id mapping (legacy only)
@@ -321,7 +326,41 @@ def play_c3g(g, c3g):
     g.choose('c3g_choose', c3g)
 
 
-def play_full_route(a1, m1, c3a, c3b, c3d='admit_plan', c3g='split_by_language', skip=False):
+def play_c4a(g):
+    g.inspect('c4a_inspect_shelf')
+    play_dialogue(g, 'c4a_talk_lev')
+    g.inspect('c4a_inspect_book')
+    g.inspect('c4a_inspect_carbon')
+    play_dialogue(g, 'c4a_talk_tunnel')
+    g.inspect('c4a_open_door')
+
+
+def play_c4b(g):
+    g.inspect('c4b_inspect_notice')
+    play_dialogue(g, 'c4b_talk_marta')
+    g.solve_puzzle('c4b_solve_routes', copy.deepcopy(ROUTES_C4))
+    g.inspect('c4b_inspect_column')
+    play_dialogue(g, 'c4b_talk_ilse')
+    g.inspect('c4b_inspect_crates')
+
+
+def play_c4c(g):
+    g.inspect('c4c_inspect_card')
+    g.inspect('c4c_inspect_stencils')
+    g.solve_puzzle('c4c_solve_numbers', copy.deepcopy(NUMBERS))
+    g.inspect('c4c_inspect_wagon')
+    play_dialogue(g, 'c4c_talk_lev')
+
+
+def play_c4d(g, c4d):
+    g.inspect('c4d_inspect_drawer')
+    g.inspect('c4d_inspect_plan')
+    g.inspect('c4d_inspect_tube')
+    play_dialogue(g, 'c4d_talk_registrar')
+    g.choose('c4d_choose', c4d)
+
+
+def play_full_route(a1, m1, c3a, c3b, c3d='admit_plan', c3g='split_by_language', c4d='name_marta', skip=False):
     """story_engine_v4.play_verified_route() extended to the whole chain (GDScript: Kit.play_verified_route):
     authentic dialogue and puzzle flows, every cinematic consumed at the end, then the finale."""
     g = StoryEngine()
@@ -334,14 +373,18 @@ def play_full_route(a1, m1, c3a, c3b, c3d='admit_plan', c3g='split_by_language',
     play_c3e(g)
     play_c3f(g)
     play_c3g(g, c3g)
+    play_c4a(g)
+    play_c4b(g)
+    play_c4c(g)
+    play_c4d(g, c4d)
     for seq in list(g.pending_cinematics()):
         g.consume_cinematic(seq, skipped=skip)
     g.finale(skipped=skip)
     return g
 
 
-def route_key(a1, m1, c3a, c3b, c3d, c3g, skip):
-    return '|'.join([a1, m1, c3a, c3b, c3d, c3g, 'skip' if skip else 'play'])
+def route_key(a1, m1, c3a, c3b, c3d, c3g, c4d, skip):
+    return '|'.join([a1, m1, c3a, c3b, c3d, c3g, c4d, 'skip' if skip else 'play'])
 
 
 def routes():
@@ -352,8 +395,9 @@ def routes():
     except StoryError as e:
         assert str(e) == 'Finale locked', e
     out = {}
-    for a1, m1, c3a, c3b, c3d, c3g, skip in itertools.product(A1, M1, C3A, C3B, C3D, C3G, (False, True)):
-        out[route_key(a1, m1, c3a, c3b, c3d, c3g, skip)] = play_full_route(a1, m1, c3a, c3b, c3d, c3g, skip).save_json()
+    for a1, m1, c3a, c3b, c3d, c3g, c4d, skip in itertools.product(A1, M1, C3A, C3B, C3D, C3G, C4D, (False, True)):
+        out[route_key(a1, m1, c3a, c3b, c3d, c3g, c4d, skip)] = play_full_route(
+            a1, m1, c3a, c3b, c3d, c3g, c4d, skip).save_json()
     return out
 
 
@@ -427,6 +471,22 @@ def _slice_route(a1, m1):
         ['solve_puzzle', 'a1_solve_signal', SYMBOLS], ['inspect', 'a1_inspect_ledger'], ['choose', 'a1_choose', a1],
         ['inspect', 'm1_inspect_plan_a'], ['inspect', 'm1_inspect_plan_b'],
         ['solve_puzzle', 'm1_align_plans', OVERLAY]] + _dialogue('m1_talk_emil', 5) + [['choose', 'm1_choose', m1]])
+
+
+def _c3_route(a1, m1):
+    """Actions of the whole route A1 ... C3g (dialogues node by node, defaults of Kit, no cinematic consumed)."""
+    return (_slice_route(a1, m1) + _dialogue('c3a_talk_conductor', 7) + [
+        ['inspect', 'c3a_inspect_weighbill'], ['inspect', 'c3a_inspect_departures']] + _dialogue('c3a_pass_control', 8) +
+        _dialogue('c3a_talk_elena', 9) + [['choose', 'c3a_choose', 'ask_elena']] + _dialogue('c3b_arrival', 9) + [
+        ['inspect', 'c3b_inspect_seating'], ['inspect', 'c3b_inspect_log'], ['solve_puzzle', 'c3b_solve_protocol', PROTOCOL],
+        ['inspect', 'c3b_inspect_booth']] + _dialogue('c3b_talk_alexei', 12) + [
+        ['choose', 'c3b_choose', 'share_protocol'], ['inspect', 'c3c_inspect_crates'], ['inspect', 'c3c_inspect_night_book']] +
+        _dialogue('c3c_talk_konrad', 13) + [['inspect', 'c3d_inspect_intake'], ['inspect', 'c3d_inspect_drawer']] +
+        _dialogue('c3d_talk_compare', 7) + [['solve_puzzle', 'c3d_solve_check', CHECK], ['inspect', 'c3d_inspect_plan']] +
+        _dialogue('c3d_talk_partner', 12) + [['choose', 'c3d_choose', 'admit_plan'], ['inspect', 'c3e_take_file'],
+        ['inspect', 'c3e_try_ramp']] + _dialogue('c3e_reach_konrad', 6) + [['inspect', 'c3f_inspect_hose']] +
+        _dialogue('c3f_push_desk', 4) + _dialogue('c3f_climb', 5) + [['inspect', 'c3g_inspect_halves']] +
+        _dialogue('c3g_talk_konrad', 12) + [['choose', 'c3g_choose', 'split_by_language']])
 
 
 TRACES = {
@@ -503,6 +563,21 @@ TRACES = {
         ['consume', 'LS_C3_Escape', False], ['finale', False], ['inspect', 'c3g_inspect_halves']] +
         _dialogue('c3g_talk_konrad', 12) + [
         ['choose', 'c3g_choose', 'swap_halves'], ['consume', 'LS_C3_Halves', False], ['finale', False],
+        ['save_load'], ['available'], ['pending'],
+        # Chapter 4 part 1 (C4_DESIGN.md): Karsk cellar -> Berlin loop -> the siding -> the annex
+        ['consume', 'LS_C4_Homeward', False], ['inspect', 'c4a_inspect_shelf']] + _dialogue('c4a_talk_lev', 8) + [
+        ['inspect', 'c4a_inspect_book'], ['inspect', 'c4a_inspect_carbon']] + _dialogue('c4a_talk_tunnel', 9) + [
+        ['inspect', 'c4a_open_door'], ['consume', 'LS_C4_Number', False], ['finale', False],
+        ['inspect', 'c4b_inspect_notice']] + _dialogue('c4b_talk_marta', 13) + [
+        ['solve_puzzle', 'c4b_solve_routes', ROUTES_C4], ['inspect', 'c4b_inspect_column']] +
+        _dialogue('c4b_talk_ilse', 12) + [
+        ['inspect', 'c4b_inspect_crates'], ['consume', 'LS_C4_Card', False], ['save_load'], ['available'],
+        ['inspect', 'c4c_inspect_stencils'], ['inspect', 'c4c_inspect_card'],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS], ['inspect', 'c4c_inspect_wagon']] +
+        _dialogue('c4c_talk_lev', 12) + [
+        ['consume', 'LS_C4_Stamp', False], ['inspect', 'c4d_inspect_plan'], ['inspect', 'c4d_inspect_drawer'],
+        ['inspect', 'c4d_inspect_tube']] + _dialogue('c4d_talk_registrar', 11) + [
+        ['choose', 'c4d_choose', 'protect_marta'], ['consume', 'LS_C4_Voices', False], ['finale', False],
         ['save_load'], ['available'], ['pending'],
     ],
     # Chapter 3 with noise: locked/foreign objectives, the finale before c3b, C3 cinematics out of order,
@@ -613,6 +688,53 @@ TRACES = {
         ['choose', 'c3g_choose', 'admit_plan'], ['choose', 'c3g_choose', 'hide_for_elena'], ['pending'],
         ['save_load'], ['consume', 'LS_C3_Escape', True], ['consume', 'LS_C3_Halves', True], ['finale', True],
         ['finale', False], ['available'], ['pending'], ['save_load'],
+    ],
+    # Chapter 4 part 1 with noise: locked objectives of both cities, both puzzles with every kind of payload, the
+    # decision with invalid ids, the finale before c4d, reloads in every C4 scene, cinematics out of order.
+    'chapter4_with_noise': _c3_route('share_with_irina', 'request_explanation') + [
+        ['available'], ['pending'], ['finale', False], ['inspect', 'c4b_inspect_notice'],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS], ['choose', 'c4d_choose', 'name_marta'],
+        ['start_dialogue', 'c4a_talk_tunnel'], ['inspect', 'c4a_inspect_book'], ['inspect', 'c4a_inspect_shelf'],
+        ['inspect', 'c4a_inspect_shelf'], ['start_dialogue', 'c4a_talk_lev'], ['advance_dialogue', 'c4a_talk_lev'],
+        ['save_load'], ['current_line', 'c4a_talk_lev']] + [['advance_dialogue', 'c4a_talk_lev']] * 7 + [
+        ['inspect', 'c4a_inspect_carbon'], ['inspect', 'c4a_inspect_book'], ['inspect', 'c4a_inspect_carbon']] +
+        _dialogue('c4a_talk_tunnel', 9) + [
+        ['consume', 'LS_C4_Number', False], ['inspect', 'c4a_open_door'], ['pending'], ['save_load'], ['available'],
+        ['consume', 'LS_C4_Card', False], ['inspect', 'c4c_inspect_card'],
+        ['solve_puzzle', 'c4b_solve_routes', ROUTES_C4], ['inspect', 'c4b_inspect_notice'],
+        ['hint', 'c4b_solve_routes']] + _dialogue('c4b_talk_marta', 13) + [
+        ['hint', 'c4b_solve_routes'], ['solve_puzzle', 'c4b_solve_routes', {'rotation_steps': 0, 'offset_x': 0, 'offset_y': 0}],
+        ['solve_puzzle', 'c4b_solve_routes', {'rotation_steps': 1, 'offset_x': 3}],
+        ['solve_puzzle', 'c4b_solve_routes', {'rotation_steps': 1, 'offset_x': 3, 'offset_y': -2.0}],
+        ['solve_puzzle', 'c4b_solve_routes', {'rotation_steps': True, 'offset_x': 3, 'offset_y': -2}],
+        ['solve_puzzle', 'c4b_solve_routes', [1, 3, -2]], ['hint', 'c4b_solve_routes'], ['save_load'],
+        ['solve_puzzle', 'c4b_solve_routes', {'rotation_steps': 1, 'offset_x': 3, 'offset_y': -2, 'z': 0}],
+        ['solve_puzzle', 'c4b_solve_routes', {'rotation_steps': 5, 'offset_x': 3, 'offset_y': -2}],
+        ['hint', 'c4b_solve_routes'], ['solve_puzzle', 'c4b_solve_routes', ROUTES_C4],
+        ['solve_puzzle', 'c4b_solve_routes', ROUTES_C4], ['inspect', 'c4b_inspect_crates'],
+        ['inspect', 'c4b_inspect_column'], ['start_dialogue', 'c4b_talk_ilse'], ['advance_dialogue', 'c4b_talk_ilse'],
+        ['save_load'], ['current_line', 'c4b_talk_ilse']] + [['advance_dialogue', 'c4b_talk_ilse']] * 11 + [
+        ['inspect', 'c4b_inspect_crates'], ['finale', True], ['pending'], ['save_load'],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS], ['inspect', 'c4c_inspect_stencils'],
+        ['hint', 'c4c_solve_numbers'], ['solve_puzzle', 'c4c_solve_numbers', NUMBERS], ['inspect', 'c4c_inspect_card'],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS_SHOWN], ['hint', 'c4c_solve_numbers'],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS[:3]], ['hint', 'c4c_solve_numbers'],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS + [NUMBERS[0]]],
+        ['solve_puzzle', 'c4c_solve_numbers', [NUMBERS[0], 3] + NUMBERS[2:]],
+        ['solve_puzzle', 'c4c_solve_numbers', ','.join(NUMBERS)], ['solve_puzzle', 'c4c_solve_numbers', None],
+        ['solve_puzzle', 'c4c_solve_numbers', ROUTES_C4], ['save_load'], ['hint', 'c4c_solve_numbers'],
+        ['solve_puzzle', 'c4c_solve_numbers', list(reversed(NUMBERS))], ['solve_puzzle', 'c4c_solve_numbers', NUMBERS],
+        ['solve_puzzle', 'c4c_solve_numbers', NUMBERS], ['inspect', 'c4c_inspect_wagon']] +
+        _dialogue('c4c_talk_lev', 12) + [
+        ['consume', 'LS_C4_Voices', False], ['consume', 'LS_C4_Stamp', True], ['inspect', 'c4d_inspect_tube'],
+        ['inspect', 'c4d_inspect_drawer'], ['save_load'], ['inspect', 'c4d_inspect_tube'], ['inspect', 'c4d_inspect_plan'],
+        ['inspect', 'c4d_inspect_tube'], ['choose', 'c4d_choose', 'protect_marta']] +
+        _dialogue('c4d_talk_registrar', 11) + [
+        ['choose', 'c4d_choose', 'swap_halves'], ['choose', 'c4d_choose', ''], ['choose', 'c4d_choose', 'Name_Marta'],
+        ['choose', 'c4d_choose', None], ['choose', 'c4d_choose', ['protect_marta']], ['finale', False],
+        ['choose', 'c4d_choose', 'protect_marta'], ['choose', 'c4d_choose', 'name_marta'], ['pending'], ['save_load'],
+        ['consume', 'LS_C4_Voices', True], ['consume', 'LS_C4_Homeward', False], ['finale', True], ['finale', False],
+        ['available'], ['pending'], ['save_load'],
     ],
 }
 
@@ -751,10 +873,34 @@ def base_saves():
     play_dialogue(g, 'c3g_talk_konrad')
     g.choose('c3g_choose', 'hide_for_elena')
     b['c3g_done_unconsumed'] = g.save_json()
+    # Chapter 4 part 1 checkpoints (a level load into another city at every scene change)
+    play_c4a(g)
+    g.inspect('c4b_inspect_notice')
+    play_dialogue(g, 'c4b_talk_marta')
+    g.solve_puzzle('c4b_solve_routes', {'rotation_steps': 0, 'offset_x': 0, 'offset_y': 0})
+    b['mid_c4b'] = g.save_json()
+    g.solve_puzzle('c4b_solve_routes', copy.deepcopy(ROUTES_C4))
+    g.inspect('c4b_inspect_column')
+    play_dialogue(g, 'c4b_talk_ilse')
+    g.inspect('c4b_inspect_crates')
+    g.consume_cinematic('LS_C4_Card', True)
+    g.inspect('c4c_inspect_stencils')
+    g.inspect('c4c_inspect_card')
+    g.solve_puzzle('c4c_solve_numbers', copy.deepcopy(NUMBERS_SHOWN))
+    b['mid_c4c'] = g.save_json()
+    g.solve_puzzle('c4c_solve_numbers', copy.deepcopy(NUMBERS))
+    g.inspect('c4c_inspect_wagon')
+    g.start_dialogue('c4c_talk_lev')
+    g.advance_dialogue('c4c_talk_lev')
+    b['mid_c4c_dialogue'] = g.save_json()
+    while 'c4c_talk_lev' in g.state['dialogue_progress']:
+        g.advance_dialogue('c4c_talk_lev')
+    play_c4d(g, 'protect_marta')
+    b['c4d_done_unconsumed'] = g.save_json()
     g.finale()
     b['finished_unconsumed'] = g.save_json()
     b['finished'] = play_full_route('keep_private', 'request_explanation', 'ask_elena', 'search_elena',
-                                    'pocket_plan', 'swap_halves').save_json()
+                                    'pocket_plan', 'swap_halves', 'protect_marta').save_json()
     # authentic v0.3 saves (simulate_slice on the preproduction data, mapped to this project's ids)
     with legacy_data(PRE_DATA):
         b['legacy_v2_finished'] = to_project(legacy_mod.play_route('share_with_irina', 'preserve_evidence').save_json())
@@ -771,7 +917,7 @@ DIALOGUE_NODES = {o['id']: _CONV[o['dialogue_id']] for o in OBJECTIVES.values() 
 PUZZLE_OBJECTIVES = [o['id'] for o in OBJECTIVES.values() if o['type'] == 'puzzle']
 CHOICE_IDS = [c for o in OBJECTIVES.values() if o['type'] == 'choice' for c in options(o['id'])]
 SCENES = [s['id'] for s in load(PROJECT_DATA / 'scenes.json')['scenes']]
-RICH = {'after_fail', 'mid_m1', 'm1_done_unconsumed', 'mid_c3b', 'mid_c3d', 'finished'}
+RICH = {'after_fail', 'mid_m1', 'm1_done_unconsumed', 'mid_c3b', 'mid_c3d', 'mid_c4c', 'finished'}
 
 
 def mutations(name, text):
@@ -1024,7 +1170,7 @@ def main():
         'legacy_data_sha256': {stem: sha256(PRE_DATA / (stem + '.json')) for stem in LEGACY_DATA_FILES},
         'preproduction_delta': preproduction_delta(),
         'choices': {'a1_choose': A1, 'm1_choose': M1, 'c3a_choose': C3A, 'c3b_choose': C3B, 'c3d_choose': C3D,
-                    'c3g_choose': C3G},
+                    'c3g_choose': C3G, 'c4d_choose': C4D},
         'routes': routes(),
         'legacy': legacy(),
         'traces': {k: {'actions': v, 'expected': run_trace(v)} for k, v in TRACES.items()},

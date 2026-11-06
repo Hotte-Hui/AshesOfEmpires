@@ -1,0 +1,144 @@
+{
+ "card": {
+  "c1_lhand_at": [113, 22],
+  "c1_rhand_tip": [102, 76],
+  "c3_hand_at": [128, 100],
+  "c3_lamp": [548, 92],
+  "c4_alexei_at": [16, 96],
+  "c4_win": [250, 70, 600, 254],
+  "card_at": [230, 104],
+  "card_size": [176, 118],
+  "edge_x": 330,
+  "macro_holes": [6, 30, 54, 78, 102, 126, 150, 174, 198, 222, 246, 270, 294, 318, 342, 366],
+  "macro_k": 4,
+  "macro_y0": -6,
+  "ru_at": [300, 150]
+ },
+ "homeward": {
+  "door_a": [392, 266],
+  "door_k": [248, 266],
+  "strip_w": 780,
+  "vp": [320, 148],
+  "w1_alexei": {
+   "walk_back": [0, 8],
+   "walk_side": [8, 8]
+  },
+  "w1_konrad": {
+   "walk_back": [0, 8],
+   "walk_side_l": [8, 8]
+  },
+  "w1_steam": [
+   [262, 150],
+   [378, 150]
+  ],
+  "w3_alexei": {
+   "idle_side": [8, 8],
+   "look_side": [16, 10],
+   "walk_side": [0, 8]
+  },
+  "w3_walk": [230, 466],
+  "win_a": [340, 70, 604, 290],
+  "win_k": [36, 70, 300, 290]
+ },
+ "number": {
+  "macro": [192, 92, 180],
+  "macro_drip": [372, 266.6],
+  "n1_drip": [852.2, 184.5],
+  "n1_stencil": [640, 136, 50],
+  "n1_tin": [624, 124, 1000, 198],
+  "n1_w": 1100,
+  "n3_chain": [441, 122],
+  "n3_exhaust": [232, 262],
+  "n3_hatch": [360, 276, 520, 292],
+  "n3_stack": [382, 160],
+  "n3_tail": [
+   [57, 235],
+   [215, 235]
+  ],
+  "n4_konrad": {
+   "idle_side": [0, 8]
+  }
+ },
+ "places": {
+  "feet": 300,
+  "loop_case": [292, 238, 312, 262],
+  "loop_column": [622, 670],
+  "loop_door": [632, 236, 658, 300],
+  "loop_lamp": [344, 128],
+  "loop_shelter": [250, 330],
+  "loop_w": 1000,
+  "marta_window": [222, 158, 236, 174],
+  "siding_lamp": [330, 96],
+  "siding_wagon": [196, 150, 456, 278],
+  "tram_size": [248, 96],
+  "yard_lamps": [
+   [262, 104],
+   [612, 96]
+  ],
+  "yard_signal": [152, 158],
+  "yard_stair": [414, 500],
+  "yard_towers": [
+   [88, 196],
+   [172, 196]
+  ],
+  "yard_window": [520, 280, 560, 297]
+ },
+ "stamp": {
+  "box": [300, 50, 448, 156],
+  "box_slot": [370, 86],
+  "hand_knob": [100, 150],
+  "imp_size": [232, 84],
+  "lev_tip": [103, 114],
+  "lever_pivot": [12, 12],
+  "note_lines": [
+   [70, 206],
+   [70, 226],
+   [70, 246],
+   [70, 266]
+  ],
+  "note_spans": [
+   [72, 204, 147, 224],
+   [73, 224, 142, 244],
+   [80, 244, 150, 264],
+   [72, 264, 158, 284]
+  ],
+  "pencil_tip": [60, 62],
+  "s3_perf": [96, 120],
+  "s3_split": [78, 214],
+  "s3b_hands_at": [170, 30],
+  "s4_konrad": {
+   "idle_side": [0, 8],
+   "inspect_side": [8, 6]
+  },
+  "s4_konrad_x": 214,
+  "s4_ladder": [150, 196],
+  "stamp_c": [320, 188],
+  "stamp_frame": [212, 64],
+  "stamp_size": [236, 88]
+ },
+ "standins": {},
+ "voices": {
+  "numbers": [
+   "24 318",
+   "C-17/42",
+   "47 702",
+   "C-17/45"
+  ],
+  "v1_konrad": {
+   "idle_side_l": [8, 8],
+   "walk_side_l": [0, 8]
+  },
+  "v1_off": -330,
+  "v1_walk": [644, 482],
+  "v2_konrad_at": [14, 98],
+  "v2_off": -150,
+  "v3_alexei": {
+   "idle_side_l": [8, 8],
+   "walk_side_l": [0, 8]
+  },
+  "v3_lev": {
+   "idle_side_l": [8, 8],
+   "walk_side_l": [0, 8]
+  }
+ }
+}

@@ -24,13 +24,19 @@ const C3_ITEMS := ["ev_c3_weighbill", "ev_c3_departures", "ev_c3_travel_order", 
 const C3_FLAGS := ["alexei_konrad_trust", "elena_trust", "evidence_chain", "kessler_alerted", "courier_files_seen",
 	"protocol_matched", "elena_missing"]
 const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "c3c_completed", "c3d_completed",
-	"c3e_completed", "c3f_completed", "c3g_completed", "slice_completed"]
+	"c3e_completed", "c3f_completed", "c3g_completed", "c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed",
+	"slice_completed"]
 const ALL_CINEMATICS := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close",
-	"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]
+	"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves", "LS_C4_Homeward", "LS_C4_Number", "LS_C4_Card",
+	"LS_C4_Stamp", "LS_C4_Voices"]
 ## Part 2 with the Kit defaults (C3P2_DESIGN §2.3/§2.5): items in acquisition order, meters added on top of C3a/C3b.
 const P2_ITEMS := ["ev_c3_cut_seal", "ev_c3_night_book", "ev_c3_intake_book", "ev_c3_scarf", "ev_c3_halves",
 	"ev_c3_kordon_plan", "ev_c3_file", "ev_c3_bolt", "ev_c3_cut_hose", "ev_c3_escort_list"]
-const P2_DEFAULT_DELTA := {"alexei_konrad_trust": 1, "evidence_chain": 1}
+## Chapter 4 part 1 with the Kit defaults (C4_DESIGN §2.3/§2.5); name_marta adds evidence_chain +1 on top of part 2.
+const C4_ITEMS := ["ev_c4_book_gap", "ev_c4_cut_signatures", "ev_c4_carbon", "ev_c4_tunnel_plan", "ev_c4_fresh_tracks",
+	"ev_c4_notice", "ev_c4_route_board", "ev_c4_shaft", "ev_c4_card_de", "ev_c4_card_ru", "ev_c4_stencils",
+	"ev_c4_wagon_inside", "ev_c4_drawer_s8", "ev_c4_annex_plan", "ev_c4_tube_slip"]
+const P2_DEFAULT_DELTA := {"alexei_konrad_trust": 1, "evidence_chain": 2}
 
 var kit: Kit
 
@@ -115,9 +121,17 @@ func c3_trace(g: Node, c3a: String, c3b: String) -> Array:
 	return trace
 
 
-## One part-2 stage with the Kit defaults (C3P2_DESIGN §2.3).
+## One part-2 / Chapter-4 stage with the Kit defaults (C3P2_DESIGN §2.3, C4_DESIGN §2.3).
 func _play_stage(g: Node, stage: String) -> void:
 	match stage:
+		"c4a":
+			kit.play_c4a(g)
+		"c4b":
+			kit.play_c4b(g)
+		"c4c":
+			kit.play_c4c(g)
+		"c4d":
+			kit.play_c4d(g)
 		"c3c":
 			kit.play_c3c(g)
 		"c3d":
@@ -156,9 +170,9 @@ func _all_combinations() -> bool:
 					kit.eq([f["konrad_evidence"], f["office_suspicion"]], [int(m1 == "preserve_evidence"), int(m1 == "request_explanation")], label + " M1 meters kept")
 					kit.eq(g.completed_events(), EVENTS, label + " events")
 					kit.eq([g.current_scene, g.active_character], ["L_X1_Montage", "none"], label + " montage, no protagonist")
-					kit.eq(g.inventory(), SLICE_ITEMS + C3_ITEMS + P2_ITEMS, label + " inventory order")
+					kit.eq(g.inventory(), SLICE_ITEMS + C3_ITEMS + P2_ITEMS + C4_ITEMS, label + " inventory order")
 					kit.eq(g.choice_history(), {"a1_choose": a1, "m1_choose": m1, "c3a_choose": c3a, "c3b_choose": c3b,
-						"c3d_choose": "admit_plan", "c3g_choose": "split_by_language"}, label + " choices")
+						"c3d_choose": "admit_plan", "c3g_choose": "split_by_language", "c4d_choose": "name_marta"}, label + " choices")
 					kit.eq(g.completed_objectives().slice(11, 24), C3_OBJECTIVES, label + " Chapter-3 objectives in order")
 					kit.eq([g.is_finished(), g.is_finale_viewed(), f["slice_finished"]], [true, true, true], label + " finished")
 					kit.eq(g.pending_cinematics(), [], label + " every cinematic consumed")
@@ -291,15 +305,21 @@ func _step_by_step() -> bool:
 	kit.play_c3e(g)
 	kit.play_c3f(g)
 	kit.play_c3g(g)
+	kit.eq([g.current_scene, g.active_character, g.chapter_key()], ["L_C4_TunnelsA", "alexei", "ui.chapter_c4"], "Chapter 4: Alexei in Karsk")
+	kit.is_err(g.finale(true), "finale locked after c3g (Chapter 4 is open)")
+	for stage in ["c4a", "c4b", "c4c", "c4d"]:
+		_play_stage(g, stage)
 	kit.eq([g.current_scene, g.active_character, g.chapter_key()], ["L_X1_Montage", "none", "world.x1.title"], "montage")
 	kit.eq([g.current_quest(), g.available()], [{}, []], "no quest, nothing available")
 	var fin: Dictionary = g.finale(true)
-	kit.is_ok(fin, "finale open after c3g")
+	kit.is_ok(fin, "finale open after c4d")
 	kit.eq([fin["changes"]["events"], fin["changes"]["flags"]], [["slice_completed"], {"slice_finished": true}], "finale changes")
 	kit.is_ok(g.finale(false), "finale idempotent")
 	kit.eq(g.completed_events(), EVENTS, "events once each, in order")
-	kit.eq(g.pending_cinematics(), ["LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"], "the finale does not consume the night's cinematics")
-	for cid in ["LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]:
+	var later := ["LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves", "LS_C4_Homeward",
+		"LS_C4_Number", "LS_C4_Card", "LS_C4_Stamp", "LS_C4_Voices"]
+	kit.eq(g.pending_cinematics(), later, "the finale does not consume the night's (and Chapter 4's) cinematics")
+	for cid in later:
 		kit.is_ok(g.consume_cinematic(cid, false), "consume " + cid)
 	kit.eq(g.state["cinematics_seen"], ALL_CINEMATICS, "every cinematic seen once, data order")
 	return true
@@ -429,7 +449,7 @@ func _continue_old_saves() -> bool:
 		kit.eq([g.current_scene, g.active_character, g.available()], ["L_C3_Station", "alexei", ["c3a_talk_conductor"]], label + ": into Chapter 3")
 		kit.play_c3a(g, "note_alone")
 		kit.play_c3b(g, "report_delegation")
-		for stage in ["c3c", "c3d", "c3e", "c3f", "c3g"]:
+		for stage in ["c3c", "c3d", "c3e", "c3f", "c3g", "c4a", "c4b", "c4c", "c4d"]:
 			_play_stage(g, stage)
 		for seq in g.pending_cinematics():
 			kit.step(g.consume_cinematic(seq), label + " cinematic " + seq)

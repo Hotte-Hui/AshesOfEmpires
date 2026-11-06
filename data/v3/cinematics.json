@@ -286,6 +286,161 @@
           "camera": "macro_locked"
         }
       ]
+    },
+    {
+      "id": "LS_C4_Homeward",
+      "trigger_event": "c3g_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "w1",
+          "duration_s": 5,
+          "camera": "establishing",
+          "shot": "Veltrava station at first light: two trains on opposite platforms; Alexei boards the eastbound, Konrad the westbound, each with his half of the file under the coat"
+        },
+        {
+          "id": "w2",
+          "duration_s": 4,
+          "camera": "parallel_windows",
+          "shot": "Split windows: Alexei's train crosses the snow plain toward the cooling towers of Karsk, Konrad's passes under the dome of the Great Hall"
+        },
+        {
+          "id": "w3",
+          "duration_s": 5,
+          "camera": "tracking",
+          "shot": "Karsk freight yard before dawn, the repaired signal shows green; Alexei walks to the lit cellar window of the freight office"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4_Number",
+      "trigger_event": "c4a_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "n1",
+          "duration_s": 4,
+          "camera": "close_tracking",
+          "shot": "Service tunnel 3: Alexei's lamp along the planks of a wagon; fresh red-brown paint, a stencil still taped on: C-17/45, a drip runs down; chalk beside it: Tuesday 23.40"
+        },
+        {
+          "id": "n2",
+          "duration_s": 1.5,
+          "camera": "macro_locked",
+          "shot": "Extreme close-up of the stencilled 45 (match cut)"
+        },
+        {
+          "id": "n3",
+          "duration_s": 4,
+          "camera": "macro_to_medium",
+          "shot": "Berlin at dawn: the same C-17/45 stencilled on crates at a loading hatch; a truck's tail lights; the stack goes down a shaft"
+        },
+        {
+          "id": "n4",
+          "duration_s": 3.5,
+          "camera": "establishing",
+          "shot": "The tram loop at the cleared block: the first tram of line 74 rings and stops; Konrad at the shelter; control to Konrad"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4_Card",
+      "trigger_event": "c4b_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "c1",
+          "duration_s": 3.5,
+          "camera": "close",
+          "shot": "Konrad lifts a card from the snow beside a split crate; his thumb along the perforated edge, No. 0417"
+        },
+        {
+          "id": "c2",
+          "duration_s": 1.5,
+          "camera": "macro_locked",
+          "shot": "Close-up of the perforation (match cut)"
+        },
+        {
+          "id": "c3",
+          "duration_s": 4,
+          "camera": "close",
+          "shot": "Karsk siding office: Alexei's fingers along the other perforated half, the same No. 0417; a kerosene lamp, stencils on the wall"
+        },
+        {
+          "id": "c4",
+          "duration_s": 2,
+          "camera": "over_shoulder",
+          "shot": "Alexei looks up at the wagon outside the window; control to Alexei"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4_Stamp",
+      "trigger_event": "c4c_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "s1",
+          "duration_s": 3.5,
+          "camera": "close",
+          "shot": "Siding office: Alexei copies the card into his notebook; Lev slides the Russian half back into the box C-17/45 – accept"
+        },
+        {
+          "id": "s2",
+          "duration_s": 1.5,
+          "camera": "macro_locked",
+          "shot": "Close-up: the stamp ACCEPT in Cyrillic beside the box (match cut)"
+        },
+        {
+          "id": "s3",
+          "duration_s": 4,
+          "camera": "macro_to_medium",
+          "shot": "Berlin annex counter: the registrar's stamp comes down, DISPATCH, on another card"
+        },
+        {
+          "id": "s4",
+          "duration_s": 2,
+          "camera": "side_on",
+          "shot": "Konrad at the foot of the shaft ladder between the card cabinets, the German half in his coat; control to Konrad"
+        }
+      ]
+    },
+    {
+      "id": "LS_C4_Voices",
+      "trigger_event": "c4d_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "v1",
+          "duration_s": 5,
+          "camera": "side_on",
+          "shot": "Berlin morning: Konrad climbs out of the door in the advertising column, the Lindner file under his coat or empty-handed (per the c4d choice)"
+        },
+        {
+          "id": "v2",
+          "duration_s": 5,
+          "camera": "tracking",
+          "shot": "Marta's tram leaves the loop, Ilse at the last window; one ring of the bell, or two and Konrad raises his hand (per the c4d choice)"
+        },
+        {
+          "id": "v3",
+          "duration_s": 5,
+          "camera": "side_on",
+          "shot": "Karsk: Alexei and Lev climb out of the cellar into the dark yard under the green signal; Alexei's notebook with four numbers"
+        },
+        {
+          "id": "v4",
+          "duration_s": 5,
+          "camera": "fixed",
+          "shot": "The siding: wagon C-17/45 alone under a work lamp; the lamp goes out"
+        },
+        {
+          "id": "v5",
+          "duration_s": 4,
+          "camera": "title",
+          "shot": "Black; caption: Tuesday, 23.40, wagon C-17/45"
+        }
+      ]
     }
   ]
 }

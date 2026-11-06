@@ -1,0 +1,14 @@
+{
+ "locale": "de",
+ "area": "berlin_annex",
+ "note": "Bildbeschreibungen der Dokumente aus L_C4_Annex (alt_key in assets/ui/documents/berlin_annex_documents.json, erzeugt von tools/pixelgen/env_c4_annex_docs.py). Korrekturrunde 9: compl-04 Martas Linienplan, compl-10 die sechs übrigen Dokumente.",
+ "strings": {
+  "doc.berlin_annex_notice.alt": "Räumungsbescheid Haus Nr. 9, „Baumaßnahmen Achse Süd“, Stempel des Bezirksamts. Darunter frisch, in anderer Hand: „Haushalt aufgelöst. Vorgang an Nebenstelle Süd.“ Angeheftet der Lageplan Süd 8, Schächte S 1 bis S 3, im Schriftfeld „gez. K. A.“",
+  "doc.berlin_annex_shaft.alt": "Hinter den zerrissenen Plakaten der Litfaßsäule S 2 eine graue Stahltür mit Emailschild: „Lüftungsbauwerk S 2 – Zutritt nur für Bedienstete“. Durch das Gitter an ihrem Fuß schimmert es warm: Dort steigt mitten im Frost warme Luft auf.",
+  "doc.berlin_annex_card_de.alt": "Karteikarte Nr. 0417, deutsche Hälfte, roter Reiter „C-17“: „Lindner, Anna, geb. Kowalenko, * 1926 Charkow“, rot „Vermerk C-17: Rückführung Ost“, „Abgabe Kordon-17, Tür Ost, Kurierwagen C-17/45, Di 18.2., 23.40“, blau „Kind Ilse, 8 – Verbleib ungeklärt.“ Rechts die Perforation.",
+  "doc.berlin_annex_drawer.alt": "Schublade Süd 8 von oben: Karte an Karte in vier Reihen, unten links die Zahl „212“. Aus 37 Karten ragt ein rotes Fähnchen, unten rechts in Rot: „37 × C-17“.",
+  "doc.berlin_annex_plan.alt": "Gerahmter Plan in blauen Linien: „Lüftungsplan Nebenstelle Süd, 1961, Blatt 3“. Drei Häuserblocks, rot schraffiert: „freizumachen“. Von jedem führt ein Schacht, S 1 bis S 3, hinab in einen langen Kasten, „Kartei“. Im Schriftfeld: „gez. K. Adler“.",
+  "doc.berlin_annex_tube_slip.alt": "Ein Rohrpostzettel mit rot gepunktetem Rand. Absender: „Staatspolizeistelle, Kommissar Wendt“. Getippt: „Bis Montag: alle C-17-Haushalte Süd 8, Verbleib der Kinder. Auskunftspersonen namentlich.“ Unten rechts, groß und rot: „Eilt“.",
+  "doc.berlin_annex_route_board.alt": "Martas Linienplan auf Pauspapier, an das Brett im Führerstand geklemmt: die Linie 74 als dicker Bleistiftstrich mit vier Haltestellen und der Wendeschleife Süd 8 am Ende, drei gestrichelte Umleitungen mit einer Raute in der Mitte – „Okt.“, „Dez.“, „Jan.“. Gezeichnet in Fahrtrichtung, nicht genordet: Der kleine Nordpfeil zeigt nach links."
+ }
+}

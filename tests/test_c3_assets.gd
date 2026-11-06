@@ -26,6 +26,9 @@ const P2_LEVELS := {"L_C3_RegistryA": "registry", "L_C3_Quay": "quay"}
 ## Scenes registered for a round whose streams have not delivered yet are listed here: reported, not failed, until they
 ## exist (round 8 delivered all of LS_C3_Radio/Fire/Escape/Halves and c3d_solve_check, so the list is empty again).
 const PENDING_R8: Array = []
+## Round 9 (documentation/C4_DESIGN.md §10): the Chapter-4 cinematics and puzzle UIs are built by their own streams in
+## parallel with the story data; reported, not failed, until they exist (then checked like every other scene here).
+const PENDING_R9: Array = []
 const DOCS_DIR := "res://assets/ui/documents/"
 const EXPLORE_DIR := "res://data/explore/"
 ## C3_DESIGN §4 — names the content relies on (art ↔ content contract)
@@ -170,6 +173,8 @@ func _c3_speakers() -> Dictionary:
 						if not out.has(n["speaker"]):
 							out[n["speaker"]] = "dialogue " + conv["id"]
 	for oid in chapter["reactions"]:
+		if str(oid).begins_with("c4"):     # Chapter 4 speakers belong to the C4 streams' own tests (C4_DESIGN §5)
+			continue
 		for cid in chapter["reactions"][oid]:
 			for v in chapter["reactions"][oid][cid]:
 				if not out.has(str(v.get("speaker"))):
@@ -301,8 +306,8 @@ func _cinematics() -> bool:
 	var contexts := _cinematic_contexts()
 	for cid in chapter["cinematics"]:
 		var path := str(chapter["cinematics"][cid])
-		if PENDING_R8.has(cid) and not ResourceLoader.exists(path):
-			print("      pending (round 8): %s -> %s" % [cid, path])
+		if (PENDING_R8.has(cid) or PENDING_R9.has(cid)) and not ResourceLoader.exists(path):
+			print("      pending (round 9): %s -> %s" % [cid, path])
 			continue
 		if not kit.ok(ResourceLoader.exists(path), "%s: cinematic scene %s missing" % [cid, path]):
 			continue
@@ -349,8 +354,8 @@ func _cinematic_contexts() -> Array:
 func _puzzle_ui() -> bool:
 	for oid in chapter["puzzles"]:
 		var path := str(chapter["puzzles"][oid])
-		if PENDING_R8.has(oid) and not ResourceLoader.exists(path):
-			print("      pending (round 8): %s -> %s" % [oid, path])
+		if (PENDING_R8.has(oid) or PENDING_R9.has(oid)) and not ResourceLoader.exists(path):
+			print("      pending (round 9): %s -> %s" % [oid, path])
 			continue
 		if not kit.ok(ResourceLoader.exists(path), "%s: puzzle UI scene %s missing" % [oid, path]):
 			continue

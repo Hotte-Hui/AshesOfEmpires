@@ -209,8 +209,8 @@ def build():
     # ---------------------------------------------------------------- props
     L, tr = N.make_fire_engine(lights)
     props.append(prop_entry(L, 'fire_engine', N.TRUCK['ground'], 'ladder truck of the Veltrava fire brigade, '
-                            'turntable ladder at a first-floor window, the city arms on the cab door',
-                            origin=tr['origin']))
+                            'turntable ladder at a first-floor window, the city arms on the cab door, the '
+                            'roller-shutter equipment locker behind the cab', origin=tr['origin']))
     for kind in ('reich', 'ussr'):
         L, Lh, ci = N._car(lights, kind)
         props.append(prop_entry(L, 'car_' + kind, 293, 'black delegation car (%s) with its fender pennant (neutral; '
@@ -411,8 +411,10 @@ def explore_sites(tr):
                             'waves, VELTRAVA'},
         'exp_tram_stop': {'stand': [1700, 300], 'focus': [1701, 212], 'what': 'tram stop, lines 7 and 12; the '
                           'shelter with a commission poster'},
-        'blanket_source': {'stand': [430, 300], 'focus': [300, 262], 'what': 'the fire engine\'s lockers (side task '
-                           '„Eine Decke für Frau Brunner“)'},
+        # round 9 fix: the locker of the task text („im Gerätekasten hinter dem Führerhaus“) is the front shutter bay
+        # of the body (TRUCK x0 + 79..115, the cab starts at x0 + 116), not the bumper at x 430; >= 24 px from typist_quay
+        'blanket_source': {'stand': [360, 300], 'focus': [355, 255], 'what': 'the equipment locker directly behind '
+                           'the cab (front shutter bay of the body, x 337-373; side task „Eine Decke für Frau Brunner“)'},
     }
 
 

@@ -1,0 +1,186 @@
+{
+ "version": 1,
+ "note": "Die Akte C-17 (round 9, owner: board): red threads between evidence items (data/v3/items.json) that prove the same link. A group draws a chain through its OWNED items in the order listed (threads never touch an item the player does not have). Optional \"when\" uses the board conditions of c17_board.json (items / any_items / objectives / events / choice.<objective>). caption_key: one line in data/locale/de_board.json.",
+ "groups": [
+  {
+   "id": "mark_c17",
+   "caption_key": "board.link.mark_c17",
+   "items": ["ev_damaged_seal", "ev_ledger", "ev_plan_b", "ev_emil_note", "ev_c4_drawer_s8"]
+  },
+  {
+   "id": "no_destination",
+   "caption_key": "board.link.no_destination",
+   "items": ["ev_timetable", "ev_ledger"]
+  },
+  {
+   "id": "corridor",
+   "caption_key": "board.link.corridor",
+   "items": ["ev_plan_a", "ev_plan_b"]
+  },
+  {
+   "id": "trains_without_goal",
+   "caption_key": "board.link.trains_without_goal",
+   "items": ["ev_timetable", "ev_c3_departures"]
+  },
+  {
+   "id": "wagon_4",
+   "caption_key": "board.link.wagon_4",
+   "items": ["ev_c3_travel_order", "ev_c3_weighbill"]
+  },
+  {
+   "id": "seal_44",
+   "caption_key": "board.link.seal_44",
+   "items": ["ev_c3_weighbill", "ev_c3_cut_seal", "ev_c3_intake_book"]
+  },
+  {
+   "id": "two_languages",
+   "caption_key": "board.link.two_languages",
+   "items": ["ev_c3_travel_order", "ev_c3_booth_log", "ev_c3_intake_book"]
+  },
+  {
+   "id": "secretariat",
+   "caption_key": "board.link.secretariat",
+   "items": ["ev_c3_weighbill", "ev_c3_seating", "ev_c3_carbon"]
+  },
+  {
+   "id": "elena",
+   "caption_key": "board.link.elena",
+   "items": ["ev_c3_booth_log", "ev_c3_carbon", "ev_c3_night_book", "ev_c3_scarf"]
+  },
+  {
+   "id": "kordon",
+   "caption_key": "board.link.kordon",
+   "items": ["ev_c3_departures", "ev_c3_kordon_plan", "ev_c4_card_de"]
+  },
+  {
+   "id": "departure_2340",
+   "caption_key": "board.link.departure_2340",
+   "items": ["ev_c3_departures", "ev_c3_intake_book", "ev_c3_escort_list"]
+  },
+  {
+   "id": "fourteen",
+   "caption_key": "board.link.fourteen",
+   "items": ["ev_c3_intake_book", "ev_c3_kordon_plan", "ev_c4_wagon_inside"]
+  },
+  {
+   "id": "cross_check",
+   "caption_key": "board.link.cross_check",
+   "items": ["ev_c3_halves", "ev_c3_intake_book"],
+   "when": {
+    "objectives": [
+     "c3d_solve_check"
+    ]
+   }
+  },
+  {
+   "id": "january",
+   "caption_key": "board.link.january",
+   "items": ["ev_c4_cut_signatures", "ev_c3_intake_book", "ev_timetable"],
+   "when": {
+    "objectives": [
+     "c3d_solve_check"
+    ]
+   }
+  },
+  {
+   "id": "cut_clean",
+   "caption_key": "board.link.cut_clean",
+   "items": ["ev_c3_cut_seal", "ev_c3_cut_hose"]
+  },
+  {
+   "id": "fire_set",
+   "caption_key": "board.link.fire_set",
+   "items": ["ev_c3_bolt", "ev_c3_cut_hose"]
+  },
+  {
+   "id": "same_file",
+   "caption_key": "board.link.same_file",
+   "items": ["ev_c3_file", "ev_c3_escort_list"]
+  },
+  {
+   "id": "next_tuesday",
+   "caption_key": "board.link.next_tuesday",
+   "items": ["ev_c3_escort_list", "ev_c4_card_de"]
+  },
+  {
+   "id": "january_wagons",
+   "caption_key": "board.link.january_wagons",
+   "items": ["ev_timetable", "ev_c4_book_gap", "ev_c4_cut_signatures"]
+  },
+  {
+   "id": "signature_cut",
+   "caption_key": "board.link.signature_cut",
+   "items": ["ev_c4_cut_signatures", "ev_c4_carbon"]
+  },
+  {
+   "id": "tunnel_used",
+   "caption_key": "board.link.tunnel_used",
+   "items": ["ev_c4_tunnel_plan", "ev_c4_fresh_tracks"]
+  },
+  {
+   "id": "wet_paint",
+   "caption_key": "board.link.wet_paint",
+   "items": ["ev_c4_fresh_tracks", "ev_c4_stencils"]
+  },
+  {
+   "id": "run_numbers",
+   "caption_key": "board.link.run_numbers",
+   "items": ["ev_c3_intake_book", "ev_c4_stencils"]
+  },
+  {
+   "id": "wagon_45",
+   "caption_key": "board.link.wagon_45",
+   "items": ["ev_c4_stencils", "ev_c4_card_de"]
+  },
+  {
+   "id": "card_0417",
+   "caption_key": "board.link.card_0417",
+   "items": ["ev_c4_card_de", "ev_c4_card_ru"]
+  },
+  {
+   "id": "date_21",
+   "caption_key": "board.link.date_21",
+   "items": ["ev_c4_cut_signatures", "ev_c4_wagon_inside"]
+  },
+  {
+   "id": "signed_ka",
+   "caption_key": "board.link.signed_ka",
+   "items": ["ev_c4_notice", "ev_c4_annex_plan", "ev_c3_kordon_plan"]
+  },
+  {
+   "id": "shafts",
+   "caption_key": "board.link.shafts",
+   "items": ["ev_c4_notice", "ev_c4_shaft", "ev_c4_annex_plan"]
+  },
+  {
+   "id": "line_74",
+   "caption_key": "board.link.line_74",
+   "items": ["ev_c4_route_board", "ev_c4_drawer_s8"]
+  },
+  {
+   "id": "detours",
+   "caption_key": "board.link.detours",
+   "items": ["ev_c4_route_board", "ev_c4_shaft"],
+   "when": {
+    "objectives": [
+     "c4b_solve_routes"
+    ]
+   }
+  },
+  {
+   "id": "split_cards",
+   "caption_key": "board.link.split_cards",
+   "items": ["ev_c4_drawer_s8", "ev_c4_card_de"]
+  },
+  {
+   "id": "children",
+   "caption_key": "board.link.children",
+   "items": ["ev_c4_card_de", "ev_c4_tube_slip"]
+  },
+  {
+   "id": "households",
+   "caption_key": "board.link.households",
+   "items": ["ev_c4_drawer_s8", "ev_c4_tube_slip"]
+  }
+ ]
+}

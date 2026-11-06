@@ -117,8 +117,10 @@ F35 = {
     ':': ['...', '.#.', '...', '.#.', '...'], '/': ['..#', '..#', '.#.', '#..', '#..'],
     ',': ['...', '...', '...', '.#.', '#..'], '(': ['.#.', '#..', '#..', '#..', '.#.'],
     ')': ['.#.', '..#', '..#', '..#', '.#.'], ' ': ['...', '...', '...', '...', '...'],
-    'Ä': ['#.#', '.#.', '#.#', '###', '#.#'], 'Ö': ['#.#', '...', '###', '#.#', '###'],
-    'Ü': ['#.#', '...', '#.#', '#.#', '###'],
+    # round 9 (tools/pixelgen/pixfont_umlauts.py): 6 rows -- the dots one row above the line, a blank row, the
+    # letter one row shorter, so Ä / Ö / Ü never read as A / O / U at 1x
+    'Ä': ['#.#', '...', '.#.', '#.#', '###', '#.#'], 'Ö': ['#.#', '...', '.#.', '#.#', '#.#', '.#.'],
+    'Ü': ['#.#', '...', '#.#', '#.#', '#.#', '###'],
     '!': ['.#.', '.#.', '.#.', '...', '.#.'], '·': ['...', '...', '.#.', '...', '...'],
     # section sign: 7 rows (one above, one below the 5-row line) so it never reads as "5"
     '§': ['.##.', '#...', '.##.', '#..#', '.##.', '...#', '.##.'],
@@ -149,7 +151,8 @@ F57 = {
 
 def text_mask(s: str, big=False, spacing=1) -> np.ndarray:
     """Bool mask of the lettering.  Small glyphs are 5 rows; 7-row glyphs (section sign) reach one
-    row above and below, so the mask of small text is 7 rows high with the line at rows 1..5."""
+    row above and below, 6-row glyphs (the umlauts) one row above, so the mask of small text is 7 rows high
+    with the line at rows 1..5."""
     f = F57 if big else F35
     gh = 7
     off = 0 if big else 1
@@ -158,7 +161,7 @@ def text_mask(s: str, big=False, spacing=1) -> np.ndarray:
     m = np.zeros((gh, max(0, w)), bool)
     x = 0
     for g in glyphs:
-        top = 0 if len(g) == 7 else off
+        top = 0 if len(g) >= 6 else off
         for yy, row in enumerate(g):
             for xx, ch in enumerate(row):
                 if ch == '#':

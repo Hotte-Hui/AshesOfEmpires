@@ -1,0 +1,1415 @@
+{
+ "id": "berlin_annex",
+ "palette": "annex",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "camera_zones": {
+  "L_C4_AnnexA": [
+   0,
+   0,
+   846,
+   360
+  ],
+  "L_C4_AnnexB": [
+   846,
+   0,
+   1074,
+   360
+  ]
+ },
+ "canvas_modulate": "#C2C9D8",
+ "layers": [
+  {
+   "name": "sky",
+   "file": "sky.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    0.03,
+    1.0
+   ],
+   "z": -100,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "dome",
+   "file": "dome.png",
+   "pos": [
+    430,
+    54
+   ],
+   "parallax": [
+    0.08,
+    1.0
+   ],
+   "z": -96,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4_AnnexA",
+   "hist_variant": "dome_hist.png",
+   "note": "the Great Hall; banners on its front: neutral / historical (12.4)"
+  },
+  {
+   "name": "far",
+   "file": "far.png",
+   "pos": [
+    0,
+    62
+   ],
+   "parallax": [
+    0.2,
+    1.0
+   ],
+   "z": -92,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "mid",
+   "file": "mid.png",
+   "pos": [
+    0,
+    150
+   ],
+   "parallax": [
+    0.5,
+    1.0
+   ],
+   "z": -80,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "loop",
+   "file": "loop.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.6,
+   "lit": true
+  },
+  {
+   "name": "fg_loop",
+   "file": "fg_loop.png",
+   "pos": [
+    0,
+    318
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "annex",
+   "file": "annex.png",
+   "pos": [
+    846,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.55,
+   "lit": true
+  },
+  {
+   "name": "fg_annex",
+   "file": "fg_annex.png",
+   "pos": [
+    1058,
+    318
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "scene": "L_C4_AnnexB",
+   "note": "pos x = 846 * 1.25: its left edge meets the screen edge at the annex camera stop"
+  }
+ ],
+ "props": [
+  {
+   "name": "counter_front",
+   "file": "props/counter_front.png",
+   "pos": [
+    1650,
+    228
+   ],
+   "base_y": 292,
+   "size": [
+    124,
+    60
+   ],
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4_AnnexB",
+   "note": "Fengler (registrar_counter, feet y 276) stands behind it, the walk band (y 296..306) in front of it"
+  }
+ ],
+ "decals": [
+  {
+   "name": "routes_case",
+   "file": "patches/routes_case.png",
+   "pos": [
+    278,
+    230
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "fade": 0.4,
+   "scene": "L_C4_AnnexA",
+   "after": [
+    "c4b_solve_routes"
+   ]
+  },
+  {
+   "name": "column_bared",
+   "file": "patches/column_bared.png",
+   "pos": [
+    629,
+    222
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "fade": 0.5,
+   "scene": "L_C4_AnnexA",
+   "after": [
+    "c4b_inspect_column"
+   ]
+  },
+  {
+   "name": "notice_s2",
+   "file": "patches/notice_s2.png",
+   "pos": [
+    635,
+    255
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4_AnnexA",
+   "hist_variant": "patches/notice_s2_hist.png",
+   "note": "insignia site (12.4): neutral Reichssiegel / historical state eagle"
+  },
+  {
+   "name": "notice_9",
+   "file": "patches/notice_9.png",
+   "pos": [
+    102,
+    250
+   ],
+   "z": -47,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4_AnnexA",
+   "note": "the notice read at door_9 (c4b_inspect_notice); the seal strip and the 9 plate stay visible"
+  },
+  {
+   "name": "drawer_s8_open",
+   "file": "patches/drawer_s8_open.png",
+   "pos": [
+    1222,
+    223
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "fade": 0.3,
+   "scene": "L_C4_AnnexB",
+   "after": [
+    "c4d_inspect_drawer"
+   ]
+  },
+  {
+   "name": "capsule_open",
+   "file": "patches/capsule_open.png",
+   "pos": [
+    1535,
+    231
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "fade": 0.3,
+   "scene": "L_C4_AnnexB",
+   "after": [
+    "c4d_inspect_tube"
+   ]
+  },
+  {
+   "name": "form_counter",
+   "file": "patches/form_counter.png",
+   "pos": [
+    1694,
+    242
+   ],
+   "z": -46,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "fade": 0.3,
+   "scene": "L_C4_AnnexB",
+   "after": [
+    "c4d_talk_registrar"
+   ]
+  },
+  {
+   "name": "plate_counter",
+   "file": "patches/plate_counter.png",
+   "pos": [
+    1699,
+    101
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4_AnnexB",
+   "hist_variant": "patches/plate_counter_hist.png",
+   "note": "insignia site (12.4): neutral Reichssiegel / historical state eagle"
+  },
+  {
+   "name": "plate_stapo",
+   "file": "patches/plate_stapo.png",
+   "pos": [
+    1856,
+    197
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "scene": "L_C4_AnnexB",
+   "hist_variant": "patches/plate_stapo_hist.png",
+   "note": "insignia site (12.4): neutral Reichssiegel / historical state eagle"
+  },
+  {
+   "name": "fence_blinker",
+   "file": "life/fence_blinker.png",
+   "pos": [
+    836,
+    192
+   ],
+   "z": -47,
+   "frames": 4,
+   "fps": 2,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "ilse",
+   "file": "life/ilse.png",
+   "pos": [
+    544,
+    232
+   ],
+   "z": -47,
+   "frames": 48,
+   "fps": 6,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "fan_a",
+   "file": "life/fan_a.png",
+   "pos": [
+    931,
+    117
+   ],
+   "z": -47,
+   "frames": 6,
+   "fps": 12,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "fan_b",
+   "file": "life/fan_b.png",
+   "pos": [
+    995,
+    117
+   ],
+   "z": -47,
+   "frames": 6,
+   "fps": 12,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "capsule_glass",
+   "file": "fx/capsule_glass.png",
+   "pos": [
+    1698,
+    54
+   ],
+   "z": -47,
+   "frames": 72,
+   "fps": 12,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_flicker",
+   "file": "fx/tube_flicker.png",
+   "pos": [
+    1580,
+    76
+   ],
+   "z": -47,
+   "frames": 24,
+   "fps": 8,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "typist_a",
+   "file": "life/typist_a.png",
+   "pos": [
+    1656,
+    210
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 6,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "typist_b",
+   "file": "life/typist_b.png",
+   "pos": [
+    1770,
+    210
+   ],
+   "z": -47,
+   "frames": 16,
+   "fps": 6,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "scene": "L_C4_AnnexB"
+  }
+ ],
+ "lights": [
+  {
+   "name": "sodium_loop",
+   "pos": [
+    344,
+    156
+   ],
+   "color": "#F2C46A",
+   "energy": 1.0,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "tram_inside",
+   "pos": [
+    482,
+    246
+   ],
+   "color": "#F0C487",
+   "energy": 0.6,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 14,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "tram_headlamp",
+   "pos": [
+    364,
+    268
+   ],
+   "color": "#FAE3A2",
+   "energy": 0.35,
+   "radius": 50,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "marta_window",
+   "pos": [
+    60,
+    215
+   ],
+   "color": "#F0C487",
+   "energy": 0.35,
+   "radius": 50,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "timetable_case",
+   "pos": [
+    292,
+    246
+   ],
+   "color": "#DDE6EA",
+   "energy": 0.6,
+   "radius": 60,
+   "flicker": 0.0,
+   "height": 8,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "column_grate",
+   "pos": [
+    646,
+    284
+   ],
+   "color": "#E6B44C",
+   "energy": 0.25,
+   "radius": 26,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "lorry_tail_l",
+   "pos": [
+    718,
+    263
+   ],
+   "color": "#C8503C",
+   "energy": 0.35,
+   "radius": 30,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "lorry_tail_r",
+   "pos": [
+    786,
+    263
+   ],
+   "color": "#C8503C",
+   "energy": 0.35,
+   "radius": 30,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "fence_blinker",
+   "pos": [
+    838,
+    194
+   ],
+   "color": "#C8503C",
+   "energy": 0.25,
+   "radius": 30,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "stair_11",
+   "pos": [
+    66,
+    238
+   ],
+   "color": "#F0C487",
+   "energy": 0.2,
+   "radius": 26,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "name": "tube_0",
+   "pos": [
+    1000,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_1",
+   "pos": [
+    1120,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_2",
+   "pos": [
+    1240,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_3",
+   "pos": [
+    1360,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_4",
+   "pos": [
+    1480,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_5",
+   "pos": [
+    1600,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.05,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_6",
+   "pos": [
+    1720,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_7",
+   "pos": [
+    1840,
+    82
+   ],
+   "color": "#C4D8C4",
+   "energy": 0.45,
+   "radius": 170,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "shaft_bulkhead",
+   "pos": [
+    911,
+    118
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 80,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "machine_lamp",
+   "pos": [
+    995,
+    96
+   ],
+   "color": "#B8CCC0",
+   "energy": 0.35,
+   "radius": 100,
+   "flicker": 0.0,
+   "height": 20,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "counter_lamp",
+   "pos": [
+    1743,
+    228
+   ],
+   "color": "#F0C487",
+   "energy": 0.8,
+   "radius": 110,
+   "flicker": 0.0,
+   "height": 14,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "stapo_lamp",
+   "pos": [
+    1894,
+    236
+   ],
+   "color": "#C8503C",
+   "energy": 0.3,
+   "radius": 30,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "name": "tube_station",
+   "pos": [
+    1548,
+    202
+   ],
+   "color": "#86A28A",
+   "energy": 0.2,
+   "radius": 30,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield",
+   "scene": "L_C4_AnnexB"
+  }
+ ],
+ "fx": [
+  {
+   "type": "anim_sprite",
+   "name": "snow_a",
+   "file": "fx/snow_a.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 30,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "snow_b",
+   "file": "fx/snow_b.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    423,
+    0
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 30,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "steam_s2",
+   "file": "fx/steam_s2.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    626,
+    206
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -40,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "exhaust",
+   "file": "fx/exhaust.png",
+   "frames": 12,
+   "fps": 8,
+   "pos": [
+    784,
+    238
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "chimney_11",
+   "file": "fx/chimney_11.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    6,
+    -30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "crane_light_0",
+   "file": "fx/crane_light_0.png",
+   "frames": 4,
+   "fps": 2,
+   "pos": [
+    121,
+    82
+   ],
+   "parallax": [
+    0.2,
+    1.0
+   ],
+   "z": -91,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "crane_light_1",
+   "file": "fx/crane_light_1.png",
+   "frames": 4,
+   "fps": 2,
+   "pos": [
+    381,
+    64
+   ],
+   "parallax": [
+    0.2,
+    1.0
+   ],
+   "z": -91,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "crane_light_2",
+   "file": "fx/crane_light_2.png",
+   "frames": 4,
+   "fps": 2,
+   "pos": [
+    611,
+    92
+   ],
+   "parallax": [
+    0.2,
+    1.0
+   ],
+   "z": -91,
+   "lit": false,
+   "scene": "L_C4_AnnexA"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "dust_fans",
+   "file": "fx/dust_fans.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    934,
+    74
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false,
+   "scene": "L_C4_AnnexB"
+  },
+  {
+   "type": "anim_sprite",
+   "name": "dust_hall",
+   "file": "fx/dust_hall.png",
+   "frames": 32,
+   "fps": 4,
+   "pos": [
+    1060,
+    80
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false,
+   "scene": "L_C4_AnnexB"
+  }
+ ],
+ "actors": [
+  {
+   "scene": "res://scenes/levels/karsk/KarskCrows.tscn",
+   "pos": [
+    700,
+    300
+   ],
+   "props": {
+    "perches": [
+     [
+      676,
+      176
+     ],
+     [
+      690,
+      176
+     ],
+     [
+      705,
+      176
+     ],
+     [
+      722,
+      176
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/crows.png",
+    "scare_radius": 34.0,
+    "nervous_radius": 80.0
+   },
+   "gen": "env_c4_annex",
+   "scene_id": "L_C4_AnnexA",
+   "note": "hooded crows on the contact wire over the loop; they lift when Konrad comes to the hatch"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    422,
+    301
+   ],
+   "props": {
+    "points": [
+     [
+      417,
+      262
+     ]
+    ],
+    "sprite": "res://assets/environments/karsk_railyard/actors/breath_puff.png",
+    "interval": 4.4
+   },
+   "gen": "env_c4_annex",
+   "scene_id": "L_C4_AnnexA",
+   "note": "Marta's breath in the frost"
+  }
+ ],
+ "walkable": [
+  [
+   18,
+   296
+  ],
+  [
+   1902,
+   296
+  ],
+  [
+   1902,
+   306
+  ],
+  [
+   18,
+   306
+  ]
+ ],
+ "blockers": [
+  {
+   "name": "shaft_wall",
+   "rect": [
+    822,
+    270,
+    24,
+    60
+   ],
+   "note": "street and annex are two walk areas; LS_C4_Card carries Konrad down the shaft"
+  }
+ ],
+ "spawns": {
+  "SP_C4_Shelter": [
+   236,
+   300
+  ],
+  "SP_C4_Ladder": [
+   902,
+   300
+  ]
+ },
+ "hotspots": {
+  "door_9": [
+   118,
+   300
+  ],
+  "timetable_case": [
+   292,
+   300
+  ],
+  "marta_tram": [
+   404,
+   300
+  ],
+  "column_s2": [
+   646,
+   300
+  ],
+  "loading_hatch": [
+   762,
+   300
+  ],
+  "drawer_s8": [
+   1232,
+   300
+  ],
+  "plan_wall": [
+   1376,
+   300
+  ],
+  "tube_station": [
+   1548,
+   300
+  ],
+  "registrar_counter": [
+   1716,
+   300
+  ],
+  "guard_annex": [
+   1868,
+   300
+  ]
+ },
+ "zones": {
+  "loop": [
+   0,
+   820
+  ],
+  "shaft": [
+   820,
+   880
+  ],
+  "machine_room": [
+   880,
+   1060
+  ],
+  "card_hall": [
+   1060,
+   1500
+  ],
+  "tube": [
+   1500,
+   1620
+  ],
+  "counter": [
+   1620,
+   1800
+  ],
+  "corridor": [
+   1800,
+   1920
+  ]
+ },
+ "looks": [
+  {
+   "name": "loop",
+   "scene": "L_C4_AnnexA",
+   "canvas_modulate": "#C2C9D8",
+   "grade": "annex_loop"
+  },
+  {
+   "name": "annex",
+   "scene": "L_C4_AnnexB",
+   "canvas_modulate": "#D2DCD2",
+   "grade": "annex"
+  }
+ ],
+ "hotspot_info": {
+  "door_9": {
+   "kind": "story",
+   "stand": [
+    118,
+    300
+   ],
+   "focus": [
+    118,
+    270
+   ],
+   "what": "house No. 9 of the half-cleared block: boarded double door, red seal strip, the notice; above it the exposed wall with three storeys of wallpaper",
+   "object_x": [
+    100,
+    136
+   ]
+  },
+  "timetable_case": {
+   "kind": "story",
+   "stand": [
+    292,
+    300
+   ],
+   "focus": [
+    292,
+    270
+   ],
+   "what": "the shelter's lit timetable case — Konrad's light table (his tracing sheets after the puzzle)",
+   "object_x": [
+    280,
+    304
+   ]
+  },
+  "marta_tram": {
+   "kind": "story",
+   "stand": [
+    404,
+    300
+   ],
+   "focus": [
+    404,
+    270
+   ],
+   "what": "Marta Vogel (x 422) beside the open front door of tram 74; Ilse (life strip) at the last window",
+   "object_x": [
+    362,
+    430
+   ]
+  },
+  "column_s2": {
+   "kind": "story",
+   "stand": [
+    646,
+    300
+   ],
+   "focus": [
+    646,
+    270
+   ],
+   "what": "the advertising column S 2: warm air steaming from the grate at its foot; after the inspect the poster is torn back from the steel door",
+   "object_x": [
+    630,
+    662
+   ]
+  },
+  "loading_hatch": {
+   "kind": "story",
+   "stand": [
+    762,
+    300
+   ],
+   "focus": [
+    762,
+    270
+   ],
+   "what": "the freight hatch under the hoist: crates stencilled C-17/45, one split, a card in the snow, the lorry backed up to it",
+   "object_x": [
+    712,
+    778
+   ]
+  },
+  "drawer_s8": {
+   "kind": "story",
+   "stand": [
+    1232,
+    300
+   ],
+   "focus": [
+    1232,
+    270
+   ],
+   "what": "the drawer bank „Süd 1 … Süd 12“; Süd 8 shows a red tab, after the inspect it is pulled out (Süd 3 stands a finger's width open all along, a card up: the hidden find exp_brandt_card)",
+   "object_x": [
+    1225,
+    1239
+   ]
+  },
+  "plan_wall": {
+   "kind": "story",
+   "stand": [
+    1376,
+    300
+   ],
+   "focus": [
+    1376,
+    270
+   ],
+   "what": "the framed ventilation plan of the annex, Blatt 3, three shafts, gez. K. Adler",
+   "object_x": [
+    1340,
+    1412
+   ]
+  },
+  "tube_station": {
+   "kind": "story",
+   "stand": [
+    1548,
+    300
+   ],
+   "focus": [
+    1548,
+    270
+   ],
+   "what": "the pneumatic-tube station, the capsule from the Staatspolizei in the tray",
+   "object_x": [
+    1526,
+    1570
+   ]
+  },
+  "registrar_counter": {
+   "kind": "story",
+   "stand": [
+    1716,
+    300
+   ],
+   "focus": [
+    1716,
+    270
+   ],
+   "what": "the counter „Auskunft · Abgleich“, Registrator Fengler (x 1734, feet y 276) behind it (prop counter_front, base_y 292, hides his legs); stamps, forms, the perforator, the lamp",
+   "object_x": [
+    1650,
+    1772
+   ]
+  },
+  "guard_annex": {
+   "kind": "npc_anchor",
+   "stand": [
+    1868,
+    300
+   ],
+   "focus": [
+    1868,
+    270
+   ],
+   "what": "a guard (existing `guard`) at the steel door to the Staatspolizei corridor; never talks",
+   "object_x": [
+    1850,
+    1886
+   ]
+  }
+ },
+ "npcs": {
+  "marta_tram": {
+   "char": "marta",
+   "feet": [
+    422,
+    300
+   ],
+   "facing": "left"
+  },
+  "registrar_counter": {
+   "char": "registrar",
+   "feet": [
+    1734,
+    276
+   ],
+   "facing": "left"
+  },
+  "guard_annex": {
+   "char": "guard",
+   "feet": [
+    1868,
+    300
+   ],
+   "facing": "left"
+  }
+ },
+ "gates_doc": "Entries with \"after\" (objectives that must be complete), \"until\" (hidden once one of them is complete) or \"choice\" are built by registry_level.gd (base of scripts/levels/c4/annex_level.gd) and shown while the condition holds; \"fade\" = seconds of the live cross-fade. \"scene\" (one id or a list; actors use \"scene_id\") = only built when the level plays that Story scene (decided at load: every C4 scene starts with a level load). camera_zones clamp the camera to the walk area of the scene played (the street never shows underground, the annex never the sky).",
+ "notes": [
+  "Two walk areas in one file: L_C4_AnnexA (street, x 18..822) left of the permanent blocker shaft_wall, L_C4_AnnexB (annex, x 846..1902) right of it; the camera seam is x 846.",
+  "Every spawn, hotspot and NPC anchor name and position of C4_DESIGN 4.2 is kept (story placeholder).",
+  "Palette: data/chapters/c4.json palettes.annex + the proposed ramp \"lamp\" (sodium light, lit windows, the counter lamp) -- see asset_manifest_parts/env_c4_annex.md."
+ ],
+ "meta": {
+  "mode": "side",
+  "feet_y": 300,
+  "generator": "tools/pixelgen/env_c4_annex.py",
+  "date": "2026-11-06",
+  "palette_ramps": {
+   "night": [
+    "#06080C",
+    "#0B1016",
+    "#121A22",
+    "#1A242E"
+   ],
+   "concrete": [
+    "#2A2C2E",
+    "#3C3F42",
+    "#525659",
+    "#6B7073",
+    "#8A8F91",
+    "#A9AEAF"
+   ],
+   "steel": [
+    "#1C2228",
+    "#2A323A",
+    "#3B4650",
+    "#526070",
+    "#6E7D8C"
+   ],
+   "fluor": [
+    "#2A3A30",
+    "#3E5444",
+    "#5A7660",
+    "#86A28A",
+    "#C4D8C4"
+   ],
+   "dawn": [
+    "#3A4256",
+    "#56607A",
+    "#7A829C",
+    "#A3A8BC",
+    "#D0CED8"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "lamp": [
+    "#4A3016",
+    "#83561E",
+    "#BC862C",
+    "#E6B44C",
+    "#FAE3A2"
+   ]
+  }
+ }
+}

@@ -1,0 +1,33 @@
+{
+ "locale": "de-DE",
+ "area": "quay_tasks",
+ "strings": {
+  "task.veltrava.blanket.title": "Eine Decke für Frau Brunner",
+  "task.veltrava.blanket.summary": "Frau Brunner ist im Nachthemd zum Brand gelaufen und friert am Löschzug. Um etwas bitten würde sie nie.",
+  "task.veltrava.blanket.hint.ask": "Sprich noch einmal mit Frau Brunner am Löschzug.",
+  "task.veltrava.blanket.hint.locker": "Am Löschzug gibt es Decken – im Gerätekasten hinter dem Führerhaus.",
+  "task.veltrava.blanket.hint.return": "Bring Frau Brunner die Decke.",
+  "explore.veltrava.task.blanket.ask.title": "Die Hausschuhe",
+  "explore.veltrava.task.blanket.ask.prompt": "Mit Frau Brunner sprechen",
+  "explore.veltrava.task.blanket.ask.text": "Frau Brunner friert im Mantel über dem Nachthemd und will der Feuerwehr nichts wegnehmen. Am Löschzug liegen Decken.",
+  "explore.veltrava.task.blanket.ask.l1": "Es geht schon. Das ist nur der Schreck. Und die Hausschuhe.",
+  "explore.veltrava.task.blanket.ask.l2": "Ihre Hände sind blau, Frau Brunner.",
+  "explore.veltrava.task.blanket.ask.l3": "Die Feuerwehr braucht heute Nacht alles, was sie hat. Ich will niemandem etwas wegnehmen.",
+  "explore.veltrava.task.blanket.ask.l4": "Am Löschzug liegen Decken. Die frieren dort auch, nur ohne Grund.",
+  "explore.veltrava.task.blanket.ask.l5": "Und Sie? Sie sind ja schwarz bis an die Augen.",
+  "explore.veltrava.task.blanket.ask.l6": "Ruß wärmt nicht. Ich bin gleich zurück.",
+  "explore.veltrava.task.blanket.locker.title": "Der Gerätekasten",
+  "explore.veltrava.task.blanket.locker.prompt": "Gerätekasten öffnen",
+  "explore.veltrava.task.blanket.locker.text": "Im Gerätekasten hinter dem Führerhaus: Strahlrohre, Kupplungen, ein Beil und obenauf, ordentlich gefaltet, sechs graue Wolldecken mit dem Stempel ‚FW Veltrava‘. Innen am Rahmen eine Liste: ‚Entnahme nur gegen Unterschrift‘. Ich schreibe: eine Wolldecke, 2.25 Uhr, Morozov, für Frau Brunner. Der Maschinist an der Pumpe sieht herüber, nickt und dreht weiter am Ventil.",
+  "explore.veltrava.task.blanket.return.title": "Für Frau Brunner",
+  "explore.veltrava.task.blanket.return.prompt": "Frau Brunner die Decke geben",
+  "explore.veltrava.task.blanket.return.text": "Frau Brunner hat eine Decke der Feuerwehr um die Schultern, quittiert auf Morozov. Sie bleibt, bis gelöscht ist.",
+  "explore.veltrava.task.blanket.return.l1": "Eine Decke? Für mich? Herr Morozov, die gehört doch der Feuerwehr.",
+  "explore.veltrava.task.blanket.return.l2": "Ich habe unterschrieben. Eine Wolldecke, zwei Uhr fünfundzwanzig. Sie bekommen sie zurück.",
+  "explore.veltrava.task.blanket.return.l3": "Sie haben eine Quittung geschrieben. Für eine Decke. In dieser Nacht.",
+  "explore.veltrava.task.blanket.return.l4": "Bei uns fährt nichts ohne Frachtbrief. Nicht einmal eine Decke.",
+  "explore.veltrava.task.blanket.return.l5": "Dreißig Jahre habe ich Listen getippt. Namen, Wagen, Kisten. Auf keiner stand je ‚für Frau Brunner‘.",
+  "explore.veltrava.task.blanket.return.l6": "Jetzt steht es auf einer. Bei der Feuerwehr. Die zählt auch.",
+  "explore.veltrava.task.blanket.return.l7": "Dann bleibe ich, bis sie gelöscht haben. Irgendwer muss aufschreiben, was übrig ist."
+ }
+}

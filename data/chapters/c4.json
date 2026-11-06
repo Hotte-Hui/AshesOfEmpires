@@ -1,0 +1,546 @@
+{
+ "chapter": "c4",
+ "doc": "documentation/C4_DESIGN.md §3 — presentation rules for Chapter 4 part 1 (no Story state). Variant texts: data/locale/de_c4_dialogue.json. Conditions may name flags or \"choice.<objective>\" (the recorded choice id).",
+ "levels": {
+  "L_C4_TunnelsA": "res://scenes/levels/L_C4_Tunnels.tscn",
+  "L_C4_AnnexA": "res://scenes/levels/L_C4_Annex.tscn",
+  "L_C4_TunnelsB": "res://scenes/levels/L_C4_Tunnels.tscn",
+  "L_C4_AnnexB": "res://scenes/levels/L_C4_Annex.tscn"
+ },
+ "entry_spawn": {
+  "L_C4_TunnelsA": "SP_C4_Stairs",
+  "L_C4_AnnexA": "SP_C4_Shelter",
+  "L_C4_TunnelsB": "SP_C4_Office",
+  "L_C4_AnnexB": "SP_C4_Ladder"
+ },
+ "chapter_cards": {
+  "L_C4_TunnelsA": [
+   "ui.chapter_c4",
+   "world.c4a.title"
+  ],
+  "L_C4_AnnexA": [
+   "ui.chapter_c4",
+   "world.c4b.title"
+  ],
+  "L_C4_TunnelsB": [
+   "ui.chapter_c4",
+   "world.c4c.title"
+  ],
+  "L_C4_AnnexB": [
+   "ui.chapter_c4",
+   "world.c4d.title"
+  ]
+ },
+ "palettes": {
+  "tunnels": {
+   "night": [
+    "#07080B",
+    "#0D0F13",
+    "#15171C",
+    "#1E2128"
+   ],
+   "brick": [
+    "#2A1712",
+    "#3E2219",
+    "#563124",
+    "#704332",
+    "#8C5A45"
+   ],
+   "iron": [
+    "#15171C",
+    "#22262D",
+    "#323840",
+    "#464D55",
+    "#5E666E"
+   ],
+   "lamp": [
+    "#5A3216",
+    "#8C5426",
+    "#BA7A3A",
+    "#E0A85A",
+    "#F8D898"
+   ],
+   "wagon": [
+    "#2E140E",
+    "#4A2016",
+    "#68301F",
+    "#86422C",
+    "#A3583C"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "green": [
+    "#1B3033",
+    "#26403F",
+    "#36534D",
+    "#4A675C",
+    "#6C7A62",
+    "#9DAF91"
+   ],
+   "concrete": [
+    "#2A2D2C",
+    "#3B3F3B",
+    "#4F534C",
+    "#666A60",
+    "#7F8275",
+    "#9A9B8B"
+   ]
+  },
+  "annex": {
+   "night": [
+    "#06080C",
+    "#0B1016",
+    "#121A22",
+    "#1A242E"
+   ],
+   "concrete": [
+    "#2A2C2E",
+    "#3C3F42",
+    "#525659",
+    "#6B7073",
+    "#8A8F91",
+    "#A9AEAF"
+   ],
+   "steel": [
+    "#1C2228",
+    "#2A323A",
+    "#3B4650",
+    "#526070",
+    "#6E7D8C"
+   ],
+   "fluor": [
+    "#2A3A30",
+    "#3E5444",
+    "#5A7660",
+    "#86A28A",
+    "#C4D8C4"
+   ],
+   "dawn": [
+    "#3A4256",
+    "#56607A",
+    "#7A829C",
+    "#A3A8BC",
+    "#D0CED8"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "lamp": [
+    "#4A3016",
+    "#83561E",
+    "#BC862C",
+    "#E6B44C",
+    "#FAE3A2"
+   ]
+  }
+ },
+ "grades": {
+  "tunnels": {
+   "lift": [
+    0.014,
+    0.01,
+    0.008
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.02,
+    0.99,
+    0.95
+   ],
+   "saturation": 0.88,
+   "tint": [
+    1.03,
+    0.99,
+    0.94
+   ],
+   "vignette": 0.4,
+   "grain": 0.022,
+   "palette_strength": 0.5,
+   "palette": "tunnels"
+  },
+  "tunnels_siding": {
+   "lift": [
+    0.01,
+    0.01,
+    0.012
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.0,
+    0.98,
+    0.96
+   ],
+   "saturation": 0.84,
+   "tint": [
+    1.0,
+    0.98,
+    0.97
+   ],
+   "vignette": 0.44,
+   "grain": 0.024,
+   "palette_strength": 0.5,
+   "palette": "tunnels"
+  },
+  "annex_loop": {
+   "lift": [
+    0.012,
+    0.014,
+    0.024
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    0.98,
+    1.0,
+    1.04
+   ],
+   "saturation": 0.86,
+   "tint": [
+    0.97,
+    0.99,
+    1.05
+   ],
+   "vignette": 0.3,
+   "grain": 0.018,
+   "palette_strength": 0.5,
+   "palette": "annex"
+  },
+  "annex": {
+   "lift": [
+    0.008,
+    0.012,
+    0.01
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    0.98,
+    1.02,
+    0.99
+   ],
+   "saturation": 0.8,
+   "tint": [
+    0.97,
+    1.03,
+    0.99
+   ],
+   "vignette": 0.36,
+   "grain": 0.02,
+   "palette_strength": 0.5,
+   "palette": "annex"
+  }
+ },
+ "line_expr": {
+  "c4a_lev_01": "neutral",
+  "c4a_lev_02": "neutral",
+  "c4a_lev_03": "neutral",
+  "c4a_lev_04": "determined",
+  "c4a_lev_05": "concerned",
+  "c4a_lev_06": "determined",
+  "c4a_lev_07": "concerned",
+  "c4a_lev_08": "determined",
+  "c4a_tun_01": "concerned",
+  "c4a_tun_02": "neutral",
+  "c4a_tun_03": "determined",
+  "c4a_tun_04": "neutral",
+  "c4a_tun_05": "surprised",
+  "c4a_tun_06": "concerned",
+  "c4a_tun_07": "surprised",
+  "c4a_tun_08": "concerned",
+  "c4a_tun_09": "determined",
+  "c4b_mar_01": "neutral",
+  "c4b_mar_02": "neutral",
+  "c4b_mar_03": "concerned",
+  "c4b_mar_04": "neutral",
+  "c4b_mar_05": "determined",
+  "c4b_mar_06": "concerned",
+  "c4b_mar_07": "concerned",
+  "c4b_mar_08": "concerned",
+  "c4b_mar_09": "concerned",
+  "c4b_mar_10": "concerned",
+  "c4b_mar_11": "determined",
+  "c4b_mar_12": "determined",
+  "c4b_mar_13": "determined",
+  "c4b_ils_01": "determined",
+  "c4b_ils_02": "concerned",
+  "c4b_ils_03": "concerned",
+  "c4b_ils_04": "concerned",
+  "c4b_ils_05": "neutral",
+  "c4b_ils_06": "concerned",
+  "c4b_ils_07": "neutral",
+  "c4b_ils_08": "neutral",
+  "c4b_ils_09": "surprised",
+  "c4b_ils_10": "surprised",
+  "c4b_ils_11": "concerned",
+  "c4b_ils_12": "determined",
+  "c4c_sid_01": "concerned",
+  "c4c_sid_02": "neutral",
+  "c4c_sid_03": "concerned",
+  "c4c_sid_04": "neutral",
+  "c4c_sid_05": "concerned",
+  "c4c_sid_06": "concerned",
+  "c4c_sid_07": "concerned",
+  "c4c_sid_08": "determined",
+  "c4c_sid_09": "concerned",
+  "c4c_sid_10": "determined",
+  "c4c_sid_11": "neutral",
+  "c4c_sid_12": "determined",
+  "c4d_cnt_01": "neutral",
+  "c4d_cnt_02": "neutral",
+  "c4d_cnt_03": "neutral",
+  "c4d_cnt_04": "neutral",
+  "c4d_cnt_05": "neutral",
+  "c4d_cnt_06": "neutral",
+  "c4d_cnt_07": "neutral",
+  "c4d_cnt_08": "concerned",
+  "c4d_cnt_09": "neutral",
+  "c4d_cnt_10": "determined",
+  "c4d_cnt_11": "neutral"
+ },
+ "line_variants": {
+  "c4a_lev_01": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c4.lev_01.irina"
+   },
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c4.lev_01.secrecy"
+   }
+  ],
+  "c4a_lev_04": [
+   {
+    "when": {
+     "choice.c3g_choose": "swap_halves"
+    },
+    "key": "dlg.c4.lev_04.swap"
+   },
+   {
+    "when": {
+     "choice.c3g_choose": "hide_for_elena"
+    },
+    "key": "dlg.c4.lev_04.elena"
+   }
+  ],
+  "c4a_tun_08": [
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c4.tun_08.secrecy"
+   }
+  ],
+  "c4b_mar_02": [
+   {
+    "when": {
+     "konrad_evidence": ">=1"
+    },
+    "key": "dlg.c4.mar_02.evidence"
+   },
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c4.mar_02.suspicion"
+   }
+  ],
+  "c4b_mar_04": [
+   {
+    "when": {
+     "choice.c3d_choose": "admit_plan"
+    },
+    "key": "dlg.c4.mar_04.admit"
+   }
+  ],
+  "c4b_mar_12": [
+   {
+    "when": {
+     "choice.c3d_choose": "pocket_plan"
+    },
+    "key": "dlg.c4.mar_12.pocket"
+   }
+  ],
+  "c4c_sid_08": [
+   {
+    "when": {
+     "choice.c3g_choose": "split_by_language"
+    },
+    "key": "dlg.c4.sid_08.split"
+   },
+   {
+    "when": {
+     "choice.c3g_choose": "swap_halves"
+    },
+    "key": "dlg.c4.sid_08.swap"
+   },
+   {
+    "when": {
+     "choice.c3g_choose": "hide_for_elena"
+    },
+    "key": "dlg.c4.sid_08.elena"
+   }
+  ],
+  "c4c_sid_10": [
+   {
+    "when": {
+     "alexei_konrad_trust": ">=2"
+    },
+    "key": "dlg.c4.sid_10.trust"
+   }
+  ],
+  "c4d_cnt_03": [
+   {
+    "when": {
+     "kessler_alerted": ">=1"
+    },
+    "key": "dlg.c4.cnt_03.kessler"
+   },
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c4.cnt_03.suspicion"
+   }
+  ]
+ },
+ "choice_text": {
+  "c4d_choose": {
+   "name_marta": [
+    {
+     "when": {
+      "choice.c3d_choose": "pocket_plan"
+     },
+     "key": "choice.c4d.name_marta.pocket"
+    }
+   ],
+   "protect_marta": [
+    {
+     "when": {
+      "choice.c3b_choose": "report_delegation"
+     },
+     "key": "choice.c4d.protect_marta.report"
+    }
+   ]
+  }
+ },
+ "reactions": {
+  "c4d_choose": {
+   "name_marta": [
+    {
+     "speaker": "registrar",
+     "key": "dlg.c4.react.name_marta",
+     "expr": "neutral"
+    }
+   ],
+   "protect_marta": [
+    {
+     "speaker": "registrar",
+     "key": "dlg.c4.react.protect_marta",
+     "expr": "neutral"
+    }
+   ]
+  }
+ },
+ "puzzles": {
+  "c4b_solve_routes": "res://scenes/ui/RoutePuzzle.tscn",
+  "c4c_solve_numbers": "res://scenes/ui/TracePuzzle.tscn"
+ },
+ "cinematics": {
+  "LS_C4_Homeward": "res://scenes/cinematics/ch4_homeward/Ch4Homeward.tscn",
+  "LS_C4_Number": "res://scenes/cinematics/ch4_number/Ch4Number.tscn",
+  "LS_C4_Card": "res://scenes/cinematics/ch4_card/Ch4Card.tscn",
+  "LS_C4_Stamp": "res://scenes/cinematics/ch4_stamp/Ch4Stamp.tscn",
+  "LS_C4_Voices": "res://scenes/cinematics/ch4_voices/Ch4Voices.tscn"
+ },
+ "switches": {
+  "L_C4_TunnelsA": {
+   "partner": "none",
+   "ambience": "amb_karsk_cellar",
+   "music": "mus_c4_karsk",
+   "grade": "tunnels"
+  },
+  "L_C4_AnnexA": {
+   "partner": "none",
+   "ambience": "amb_berlin_loop",
+   "music": "mus_c4_berlin",
+   "grade": "annex_loop"
+  },
+  "L_C4_TunnelsB": {
+   "partner": "none",
+   "ambience": "amb_karsk_tunnel",
+   "music": "mus_c4_karsk",
+   "grade": "tunnels_siding"
+  },
+  "L_C4_AnnexB": {
+   "partner": "none",
+   "ambience": "amb_berlin_annex",
+   "music": "mus_c4_berlin",
+   "grade": "annex"
+  }
+ },
+ "looks": {},
+ "carry": {}
+}

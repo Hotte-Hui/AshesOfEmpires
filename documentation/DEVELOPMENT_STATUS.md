@@ -5,6 +5,24 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 9 (2026-11-06) — Chapter 4 part 1 „Stimmen unter Beton“, the evidence board „Die Akte C-17“, feel pass 2
+Planned before the user went to sleep. Built by 9 parallel specialists from the contract `documentation/C4_DESIGN.md`;
+then four review lenses (text & history, code & saves, art & UI, completeness) found 42 issues, each checked by a second
+agent before an owner fixed it (2 refuted); the remaining low ones were fixed in an integration pass with its own
+review. Integrated and tested by the lead (evidence: TEST_REPORT.md §13).
+| Area | Now |
+|---|---|
+| Story (C4_DESIGN) | both men travel home with their half. Karsk: Lev Sokolov's archive cellar under the freight yard (cut signatures, Archipov's carbon, the January gap in the freight books), then Service Tunnel 3 to the hidden transfer siding where wagon 24 318 is repainted „C-17/45“. Berlin: Marta Vogel's tram loop Süd 8 at dawn (the gutted No. 9, the shafts S 1–S 3 drawn by K. Adler), then the registry annex „Nebenstelle Süd“ under the Great Hall district (drawer Süd 8: 212 cleared households, 37 flagged C-17, card No. 0417 torn in two). Decision c4d: give registrar Fengler Marta's name for the household records — or protect her. Match cuts on shared objects (the 45, card 0417, the stamps); 9 line and 2 option variants react to earlier decisions; 7 decisions on the end card (story order, also after a reload) |
+| New places | Karsk tunnels level (archive cellar at 4.40, Dienststollen 3, the siding hall with the stencil board and wagon 24 318; trains overhead shake dust and lamps) and Berlin annex level (Wendeschleife Süd 8 with tram 74 and the cleared blocks under the dome; the underground card hall with drawer bank Süd 1–12, tube station and the counter „Auskunft · Abgleich“) — story-state art, insignia twins, one camera zone per scene |
+| Cinematics | LS_C4_Homeward, LS_C4_Number, LS_C4_Card, LS_C4_Stamp, LS_C4_Voices (14 / 13 / 11 / 11 / 24 s) with choice variants from c3g and c4d |
+| Puzzles | „Linie 74“ (RoutePuzzle: lay Marta's tracing paper of detours over the site plan — every detour sits on a shaft) and „Die Nummernkette“ (TracePuzzle: follow one wagon through four switch posts by the paint layers of its number plates, with a back-light lamp) |
+| Cast / sound | Lev Sokolov, Marta Vogel, Registrator Fengler (sheets, living portraits; Fengler stamps cards at the counter); 4 ambiences, 3 music cues (Karsk, Berlin, „Voices“), synced cinematic sounds |
+| „Die Akte C-17“ (new) | journal tab „Akte“: a cork wall with every owned evidence item of both men (picture cards, steel / brass pins by finder), 33 thread groups (red threads only between owned items), a growing summary „Was die Akte bisher zeigt“ (35 milestones incl. decisions), unknown items as „?“, memories show the file as it was then |
+| Exploration | 35 Chapter-4 entries (finds, chats with Lev, Marta and the guard), side tasks „Wir sind vierzehn“ (tunnels) and „Ilses Puppe“ (annex), mini-games „Der Hebelrahmen“ (tunnels) and „Die Lüftungsklappen“ (annex), 4 history cards (Order No. 270, special settlements, „Ostarbeiter“, denunciation) |
+| Feel pass 2 | quay walkers (fireman, a man in his coat over pyjamas, a clerk with rescued files, an old woman, a policeman) that give way to each other; side task „Eine Decke für Frau Brunner“; toasts keep their time while a menu holds them; redrawn hands and figures in LS_C3_Escape / Halves; distinct Ä/Ö/Ü in the pixel font and on the world signs; InspectView and journal fit 150 % text (scrolling record card, pinned buttons) |
+| Fixed in review / integration | memories: story NPCs in shared levels follow the remembered state (Lev in his cellar after the chapter), each memory card counts its own walk area, memory twins per scene; route-board close-up and board pictures as close-up fallback; the annex mini-game, the tunnels task and the denunciation card added to meet the contract; texts (the Sunday timeline, Alexei's closing line, Süd 8 counts, Tepluschka); evidence-board strip and summary at 150 %; palette ramps; train sounds no longer pile up; drawer Süd 3 painted ajar; alt texts for the annex close-ups; the quay blanket locker painted behind the cab. Found by the lead's E2E runs: a Space / Enter / E press that closed the last dialogue line also skipped the film starting right after it (players who press twice lost the cinematic) → „advance“ cannot skip a film within 0.7 s of an interaction (Esc still can); loading a slot from inside a level returned before the level was loaded (`_on_load_slot` now awaits it) |
+| Playtime (estimate) | main path ≈ 49 min; everything ≈ 3 h 40 min (151 finds, 35 chats, 12 mini-games, 9 tasks, 25 history cards; `tools/docs/estimate_playtime.py`, not measured with a human) |
+
 ## Round 8 (2026-11-06) — Chapter 3 part 2: the joint evidence check, the registry fire, the first co-op scene
 Planned with the user before they went to sleep („arbeite weiter … schaff neue Pläne“). Built by 9 parallel specialists
 from the contract `documentation/C3P2_DESIGN.md`, integrated and tested by the lead (evidence: TEST_REPORT.md §12).
@@ -102,8 +120,8 @@ of quality content first. Delivered by 16 parallel specialists + integration (ev
 | Content safety | fictional-history disclaimer at new game; fictional insignia only (no real party symbols); no glorification | disclaimer seen in the real-input run; content rules given to every asset generator; spot checks of screens and strings (no full editorial review yet) |
 
 ## Windows build
-`builds/windows/AshesOfEmpires.exe` (109 MB Godot runtime, icon embedded) + `AshesOfEmpires.pck` (110 MB, mostly
-lossless audio) + `AshesOfEmpires.console.exe` (log output). Rebuild:
+`builds/windows/AshesOfEmpires.exe` (109 MB Godot runtime, icon embedded) + `AshesOfEmpires.pck` (409 MB after
+round 9, mostly lossless audio and art) + `AshesOfEmpires.console.exe` (log output). Rebuild:
 `godot --headless --path . --export-release "Windows Desktop" builds/windows/AshesOfEmpires.exe`. Start with
 `Spiel starten.cmd` in the project root.
 
@@ -117,12 +135,10 @@ lossless audio) + `AshesOfEmpires.console.exe` (log output). Rebuild:
   chain two interactions; duplicate NPCs over baked prop figures in Karsk.
 
 ## Not done (honest list — see NEXT_STEPS.md)
-- Only the slice: Chapters 3–6 and the full ending matrix exist as design documents, not as playable content.
-- No human has played, listened to or rated the slice yet; all judgements are automated or screenshot-based.
-- Controller mapping exists but was not tested with a physical controller; no click-to-walk in the world.
+- Playable: Chapters 1–3 and Chapter 4 part 1. Chapter 4 part 2, Chapters 5–6 and the ending matrix exist only as
+  design documents (STORY_BIBLE §6–8); new Story flags (trust, people protected …) need a save migration first.
+- No human has played or listened to the game yet; all judgements are automated, numeric (audio) or screenshot-based.
+- Controller input is tested only synthetically (pad A confirms in menus since round 8), never with a physical
+  controller; no click-to-walk in the world.
 - German only; no English localisation yet.
-- **The slice is shorter than the 20–30 min target.** Not measured with a human; estimated from the data
-  (14 dialogue lines / ~800 characters, 7 observations, 6 documents, ~5300 px of walking at 45 px/s, 2 puzzles,
-  ~1 min of cinematics): **about 10–15 minutes** for a first playthrough. The canonical slice script is thin on
-  dialogue; see NEXT_STEPS §2a.
-- Build ships uncompressed WAV audio (~120 MB).
+- The build ships lossless WAV audio on purpose (size is not a goal right now).

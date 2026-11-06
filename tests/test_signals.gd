@@ -90,9 +90,36 @@ func _full_stream() -> bool:
 		["item_granted", "ev_c3_escort_list"], ["objective_completed", "c3g_inspect_halves"],
 		["objective_completed", "c3g_talk_konrad"],
 		["flag_changed", "evidence_chain", 1], ["objective_completed", "c3g_choose"], ["event_fired", "c3g_completed"],
-		["cinematic_queued", "LS_C3_Halves"], ["scene_changed", "L_X1_Montage"],
+		["cinematic_queued", "LS_C3_Halves"], ["cinematic_queued", "LS_C4_Homeward"], ["scene_changed", "L_C4_TunnelsA"],
+		# Chapter 4 part 1 (C4_DESIGN.md): Karsk cellar → Berlin tram loop → the siding → the annex, a level load each
+		["item_granted", "ev_c4_book_gap"], ["objective_completed", "c4a_inspect_shelf"],
+		["objective_completed", "c4a_talk_lev"],
+		["item_granted", "ev_c4_cut_signatures"], ["objective_completed", "c4a_inspect_book"],
+		["item_granted", "ev_c4_carbon"], ["objective_completed", "c4a_inspect_carbon"],
+		["item_granted", "ev_c4_tunnel_plan"], ["objective_completed", "c4a_talk_tunnel"],
+		["item_granted", "ev_c4_fresh_tracks"], ["objective_completed", "c4a_open_door"], ["event_fired", "c4a_completed"],
+		["cinematic_queued", "LS_C4_Number"], ["scene_changed", "L_C4_AnnexA"],
+		["item_granted", "ev_c4_notice"], ["objective_completed", "c4b_inspect_notice"],
+		["item_granted", "ev_c4_route_board"], ["objective_completed", "c4b_talk_marta"],
+		["objective_completed", "c4b_solve_routes"],
+		["item_granted", "ev_c4_shaft"], ["objective_completed", "c4b_inspect_column"],
+		["objective_completed", "c4b_talk_ilse"],
+		["item_granted", "ev_c4_card_de"], ["objective_completed", "c4b_inspect_crates"], ["event_fired", "c4b_completed"],
+		["cinematic_queued", "LS_C4_Card"], ["scene_changed", "L_C4_TunnelsB"],
+		["item_granted", "ev_c4_card_ru"], ["objective_completed", "c4c_inspect_card"],
+		["item_granted", "ev_c4_stencils"], ["objective_completed", "c4c_inspect_stencils"],
+		["objective_completed", "c4c_solve_numbers"],
+		["item_granted", "ev_c4_wagon_inside"], ["objective_completed", "c4c_inspect_wagon"],
+		["objective_completed", "c4c_talk_lev"], ["event_fired", "c4c_completed"],
+		["cinematic_queued", "LS_C4_Stamp"], ["scene_changed", "L_C4_AnnexB"],
+		["item_granted", "ev_c4_drawer_s8"], ["objective_completed", "c4d_inspect_drawer"],
+		["item_granted", "ev_c4_annex_plan"], ["objective_completed", "c4d_inspect_plan"],
+		["item_granted", "ev_c4_tube_slip"], ["objective_completed", "c4d_inspect_tube"],
+		["objective_completed", "c4d_talk_registrar"],
+		["flag_changed", "evidence_chain", 2], ["objective_completed", "c4d_choose"], ["event_fired", "c4d_completed"],
+		["cinematic_queued", "LS_C4_Voices"], ["scene_changed", "L_X1_Montage"],
 		["flag_changed", "slice_finished", true], ["event_fired", "slice_completed"],
-	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol / admit_plan / split_by_language)")
+	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol / admit_plan / split_by_language / name_marta)")
 	return true
 
 

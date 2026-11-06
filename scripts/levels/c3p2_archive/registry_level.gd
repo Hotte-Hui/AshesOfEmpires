@@ -15,7 +15,8 @@ extends Level
 ## When is an objective complete for the art? An objective of a Story scene BEFORE the one this level plays
 ## (level_id) always counts (fresh loads, captures, memories); inside a memory only those count. Otherwise the live
 ## Story decides — except c3d_choose: the fire starts in LS_C3_Fire, so its look waits until the cinematic hides
-## the level (or the scene is C). Nothing here changes Story state.
+## the level (or the scene is C). The Story NPCs of the level (show_after / hide_after, scripts/actors/story_npc.gd)
+## read the same rule inside a memory (in_memory() + objective_done()). Nothing here changes Story state.
 
 const LayerStackScript := preload("res://scripts/levels/layer_stack.gd")
 const FlickerLightScript := preload("res://scripts/levels/flicker_light.gd")
@@ -44,6 +45,7 @@ var looks: Array = []
 var look_name := ""
 var _obj_scene: Dictionary = {}  # objective -> scene id
 var _scene_idx: Dictionary = {}  # scene id -> chain index
+var _chain_loaded := false       # read once, on first use (the Story NPCs ask before this level's _ready)
 var _last_scene := ""
 var _poll := 0.0
 var _t := 0.0
@@ -125,6 +127,9 @@ func _split_gated() -> void:
 
 # ------------------------------------------------------------------ chain (which objectives a scene implies)
 func _load_chain() -> void:
+	if _chain_loaded:
+		return
+	_chain_loaded = true
 	var sd = JSON.parse_string(FileAccess.get_file_as_string(SCENES_FILE)) if FileAccess.file_exists(SCENES_FILE) else null
 	var qd = JSON.parse_string(FileAccess.get_file_as_string(QUESTS_FILE)) if FileAccess.file_exists(QUESTS_FILE) else null
 	if not (sd is Dictionary) or not (qd is Dictionary):
@@ -145,6 +150,7 @@ func _load_chain() -> void:
 
 ## True when objective `obj` belongs to a Story scene that comes before the scene this level plays.
 func implied(obj: String) -> bool:
+	_load_chain()
 	var s := str(_obj_scene.get(obj, ""))
 	var here := str(level_id)
 	if s == "" or not _scene_idx.has(s) or not _scene_idx.has(here):
@@ -157,6 +163,12 @@ func _in_memory() -> bool:
 	if memory_override != null:
 		return bool(memory_override)
 	return Game != null and Game.get("memory_mode") == true
+
+
+## True while the level is seen as a memory (§12.10): objective_done() then counts only the objectives of scenes
+## before the remembered one (level_id). The Story NPCs of the level read their show_after / hide_after through it.
+func in_memory() -> bool:
+	return _in_memory()
 
 
 func _hidden_now() -> bool:

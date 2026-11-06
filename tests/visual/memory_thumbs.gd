@@ -4,6 +4,9 @@ extends Node
 ## protagonist and the camera at a characteristic spot and saves the graded 640x360 world image
 ## (PixelView.capture_world_image, one sample per texel) as raw_<scene>.png. tools/pixelgen/gen_ui_memories.py
 ## then turns the raw frames into the sepia prints assets/ui/memories/<scene>.png (deterministic step).
+## Each scene is loaded as a memory of itself (Game.memory_mode / memory_scene during the load), so the print shows
+## the memory's cast — the Story NPCs read the remembered scene, not the capture's new game (StoryNPC: the siding's
+## Lev stands at the siding) — and is then seen with the level's own grade again (the sepia is the generator's job).
 ##   godot --path . res://tests/visual/memory_thumbs.tscn -- --scene=L_A1_Railyard \
 ##         --capture=<dir>/boot.png --frames=100000 --mt-out=<dir> [--mt-survey=1] [--mt-only=L_A1_Railyard,…]
 ## --mt-survey=1 captures a camera sweep per level (survey_<scene>_<x>.png) to choose the spots below.
@@ -25,6 +28,13 @@ const SHOTS := {
 	"L_C3_RegistryC": [640, 0, 1208, 300, false],
 	"L_C3_RegistryD": [320, 0, 604, 300, true],
 	"L_C3_Quay": [0, 0, 452, 300, true],
+	# Chapter 4 part 1: two level files, two Story scenes each, every camera inside its scene's camera_zones rect
+	# (scene.json): the cellar with Lev at his desk, the siding with Alexei at wagon 24 318 (C-17/45) facing Lev at
+	# his siding post (x 1790), the tram loop with Marta at tram 74, the annex counter with Fengler
+	"L_C4_TunnelsA": [40, 0, 360, 300, false],
+	"L_C4_TunnelsB": [1280, 0, 1712, 300, false],
+	"L_C4_AnnexA": [120, 0, 330, 300, false],
+	"L_C4_AnnexB": [1200, 0, 1580, 300, false],
 }
 
 var out_dir := ""
@@ -95,9 +105,20 @@ func _goto(id: String) -> bool:
 		and (who == "" or str(Game.player.get("char_id")) == who)
 	if not here:
 		# every scene loads afresh, like a memory (Game.travel_to_memory): another Story scene of the level file that
-		# is already loaded (L_C3_RegistryA–D) would otherwise be handed over in place (§12.11, Game.switch_now)
+		# is already loaded (L_C3_RegistryA–D) would otherwise be handed over in place (§12.11, Game.switch_now).
+		# Loaded as a memory of itself (the Story NPCs take the memory's cast while the level enters the tree), then
+		# memory mode ends and the level's own grade comes back (no memory overlay in the raw frame).
 		Game.set("_force_reload", true)
+		Game.memory_mode = true
+		Game.memory_scene = id
 		await Game.goto_level(id, "", false)
+		Game.memory_mode = false
+		Game.memory_scene = ""
+		if Game.level != null:
+			Game._apply_grade(Game.level)
+		var hud = Game.ui.get("hud") if Game.ui else null
+		if hud and hud.has_method("set_memory"):
+			hud.set_memory({})
 	var guard := 0
 	while (Game.level == null or Game.player == null) and guard < 600:
 		guard += 1

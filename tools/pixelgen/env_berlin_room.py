@@ -445,9 +445,9 @@ class Room:
                 bevel_box(lay, lx + 4, py, half - 8, ph, 'D', 2.8, hi=4.0, lo=1.2, hgt=0.35)
         # mirrored lettering on the frosted glass (seen from inside the office)
         if glass_text and lit:
-            m = kit.text_mask(glass_text, '35')[:, ::-1]
+            m = kit.text_mask(glass_text, '35', overhang=True)[:, ::-1]     # distinct umlauts (pixfont_umlauts)
             tw = m.shape[1]
-            lay.put(m, x0 + (w - tw) // 2, top + 14, 'A', 1.0, emis=True, flat=True)
+            lay.put(m, x0 + (w - tw) // 2, top + 14 - (m.shape[0] - 5), 'A', 1.0, emis=True, flat=True)
         # brass handles
         lay.rect(x0 + half - 4, top + 52, 2, 6, 'A', 4.0, hgt=0.8, flat=True)
         lay.rect(x0 + half + 2, top + 52, 2, 6, 'A', 4.0, hgt=0.8, flat=True)

@@ -1,0 +1,26 @@
+{
+ "doc": "Exploration hotspots (Level._merge_explore_hotspots; scene.json wins on name clashes). Owner: exploration stream (documentation/C4_DESIGN.md §6). Every spot keeps >= 24 px from the story hotspots of C4_DESIGN.md §4.2 and lies in the walk area of the scene part that reaches it: x 30-810 = scene B (tram loop Süd 8, Konrad, open until c4b_inspect_crates), x 890-1900 = scene D (Nebenstelle Süd, Konrad, open after c4b_inspect_crates). `info` is the art contract for env-annex: stand = where Konrad stands (feet line y 300), focus = where the thing is painted (world px), what = what must be visible there. Positions follow the env-annex art of 06.11. (house No. 11 with its cellar door, the cut-open No. 9, the shelter, tram 74 with Ilse at the last window, the hoarding „Baustelle – Betreten verboten“; the fan room, drawer bank „Haushaltskartei Süd“, the card trolley, the waiting bench with the number display, the counter). The engine reads only `hotspots` / `spawns`.",
+ "hotspots": {
+  "exp_task_cellar": [34, 300], "exp_house_11": [70, 300], "exp_doll_shoe": [152, 300], "exp_wallpaper": [188, 300],
+  "exp_shelter_poster": [322, 300], "exp_tram_cab": [366, 300], "exp_tram_rear": [556, 300], "exp_axis_view": [796, 300],
+  "exp_fans": [992, 300], "exp_brandt_card": [1162, 300], "exp_household_index": [1180, 300], "exp_card_cart": [1440, 300],
+  "exp_waiting_bench": [1612, 300], "exp_perforator": [1668, 300]
+ },
+ "spawns": {},
+ "info": {
+  "exp_task_cellar": {"stand": [34, 300], "focus": [24, 282], "what": "side task: house No. 11, the low cellar door left of the house door (painted: the dark door at x 5-40); optionally an old white 1941 arrow „LSR“ on the façade pointing toward No. 9"},
+  "exp_house_11": {"stand": [70, 300], "focus": [60, 170], "what": "house No. 11, still lived in: Marta's lit window (painted: the window with the lamp and the flower pot at x ~60)"},
+  "exp_doll_shoe": {"stand": [152, 300], "focus": [154, 294], "what": "hidden: in the snow beside the step of No. 9, a tiny red doll's shoe (2-3 px, optional)"},
+  "exp_wallpaper": {"stand": [188, 300], "focus": [170, 150], "what": "the cut-open No. 9: three storeys of wallpaper (painted); on the middle storey an embroidered towel (white, red cross-stitch) still nailed up (optional detail)"},
+  "exp_shelter_poster": {"stand": [322, 300], "focus": [322, 246], "what": "the right side wall of the tram shelter: a poster „Berlin baut“ (a crane, the dome, workers), corner torn, a pencil line under it (painted: 12x18 at x 316-327, y 237-254, env_c4_annex_loop.shelter_poster)"},
+  "exp_tram_cab": {"stand": [366, 300], "focus": [372, 250], "what": "the front cab of tram 74 (painted: the left end with the line board): the controller, a thermos, a child's mitten on the dashboard (optional detail)"},
+  "exp_tram_rear": {"stand": [556, 300], "focus": [552, 245], "what": "Ilse at the last window of tram 74 (painted life strip at x ~547-560): a small house drawn with a finger on the fogged glass (optional detail)"},
+  "exp_axis_view": {"stand": [796, 300], "focus": [815, 230], "what": "the hoarding „Baustelle – Betreten verboten“ (painted at x 795-845), a gap between two boards; behind it the cleared ground, cranes and the dome"},
+  "exp_fans": {"stand": [992, 300], "focus": [990, 230], "what": "the machine room behind the grille: two huge fans, the sign „Lüftung“ (painted)"},
+  "exp_brandt_card": {"stand": [1162, 300], "focus": [1162, 236], "what": "hidden: drawer „Süd 3“ of the drawer bank (x 1155-1169) stands a finger's width open, one card (Brandt's) pulled up out of the slit over the bank's top (painted: env_c4_annex_hall.ajar_drawer, round-9 fix art-11)"},
+  "exp_household_index": {"stand": [1180, 300], "focus": [1212, 214], "what": "the enamel label „Haushaltskartei Süd“ over the drawer bank (painted); small print under it: the sort order"},
+  "exp_card_cart": {"stand": [1440, 300], "focus": [1446, 268], "what": "the card trolley on rubber wheels in front of the cabinets (painted at x ~1420-1470), bundles with rubber bands and routing slips"},
+  "exp_waiting_bench": {"stand": [1612, 300], "focus": [1612, 230], "what": "the sign „Warten bis zum Aufruf“, the number display showing 17 and the bench (painted at x ~1595-1640)"},
+  "exp_perforator": {"stand": [1668, 300], "focus": [1688, 262], "what": "the left end of the counter: the cast-iron perforating machine with its lamp (painted), a half card in its jaws"}
+ }
+}

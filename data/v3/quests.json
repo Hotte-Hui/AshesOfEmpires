@@ -9,7 +9,11 @@
     "c3d_completed",
     "c3e_completed",
     "c3f_completed",
-    "c3g_completed"
+    "c3g_completed",
+    "c4a_completed",
+    "c4b_completed",
+    "c4c_completed",
+    "c4d_completed"
   ],
   "quests": [
     {
@@ -645,6 +649,263 @@
               "text_key": "choice.c3g.hide_for_elena",
               "effects": {
                 "elena_trust": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_c4a_cellar",
+      "title_key": "ui.chapter_c4",
+      "character": "alexei",
+      "scene": "L_C4_TunnelsA",
+      "requires_events": [
+        "c3g_completed"
+      ],
+      "completion_event": "c4a_completed",
+      "objectives": [
+        {
+          "id": "c4a_inspect_shelf",
+          "type": "inspect",
+          "text_key": "obj.c4a_shelf",
+          "requires": [],
+          "grant_item": "ev_c4_book_gap"
+        },
+        {
+          "id": "c4a_talk_lev",
+          "type": "dialogue",
+          "text_key": "obj.c4a_lev",
+          "requires": [
+            "c4a_inspect_shelf"
+          ],
+          "dialogue_id": "dlg_c4a_lev"
+        },
+        {
+          "id": "c4a_inspect_book",
+          "type": "inspect",
+          "text_key": "obj.c4a_book",
+          "requires": [
+            "c4a_talk_lev"
+          ],
+          "grant_item": "ev_c4_cut_signatures"
+        },
+        {
+          "id": "c4a_inspect_carbon",
+          "type": "inspect",
+          "text_key": "obj.c4a_carbon",
+          "requires": [
+            "c4a_inspect_book"
+          ],
+          "grant_item": "ev_c4_carbon"
+        },
+        {
+          "id": "c4a_talk_tunnel",
+          "type": "dialogue",
+          "text_key": "obj.c4a_tunnel",
+          "requires": [
+            "c4a_inspect_carbon"
+          ],
+          "dialogue_id": "dlg_c4a_tunnel",
+          "grant_item": "ev_c4_tunnel_plan"
+        },
+        {
+          "id": "c4a_open_door",
+          "type": "inspect",
+          "text_key": "obj.c4a_door",
+          "requires": [
+            "c4a_talk_tunnel"
+          ],
+          "grant_item": "ev_c4_fresh_tracks"
+        }
+      ]
+    },
+    {
+      "id": "q_c4b_loop",
+      "title_key": "ui.chapter_c4",
+      "character": "konrad",
+      "scene": "L_C4_AnnexA",
+      "requires_events": [
+        "c4a_completed"
+      ],
+      "completion_event": "c4b_completed",
+      "objectives": [
+        {
+          "id": "c4b_inspect_notice",
+          "type": "inspect",
+          "text_key": "obj.c4b_notice",
+          "requires": [],
+          "grant_item": "ev_c4_notice"
+        },
+        {
+          "id": "c4b_talk_marta",
+          "type": "dialogue",
+          "text_key": "obj.c4b_marta",
+          "requires": [
+            "c4b_inspect_notice"
+          ],
+          "dialogue_id": "dlg_c4b_marta",
+          "grant_item": "ev_c4_route_board"
+        },
+        {
+          "id": "c4b_solve_routes",
+          "type": "puzzle",
+          "text_key": "obj.c4b_routes",
+          "requires": [
+            "c4b_talk_marta"
+          ],
+          "puzzle_id": "pz_c4_routes"
+        },
+        {
+          "id": "c4b_inspect_column",
+          "type": "inspect",
+          "text_key": "obj.c4b_column",
+          "requires": [
+            "c4b_solve_routes"
+          ],
+          "grant_item": "ev_c4_shaft"
+        },
+        {
+          "id": "c4b_talk_ilse",
+          "type": "dialogue",
+          "text_key": "obj.c4b_ilse",
+          "requires": [
+            "c4b_inspect_column"
+          ],
+          "dialogue_id": "dlg_c4b_ilse"
+        },
+        {
+          "id": "c4b_inspect_crates",
+          "type": "inspect",
+          "text_key": "obj.c4b_crates",
+          "requires": [
+            "c4b_talk_ilse"
+          ],
+          "grant_item": "ev_c4_card_de"
+        }
+      ]
+    },
+    {
+      "id": "q_c4c_siding",
+      "title_key": "ui.chapter_c4",
+      "character": "alexei",
+      "scene": "L_C4_TunnelsB",
+      "requires_events": [
+        "c4b_completed"
+      ],
+      "completion_event": "c4c_completed",
+      "objectives": [
+        {
+          "id": "c4c_inspect_card",
+          "type": "inspect",
+          "text_key": "obj.c4c_card",
+          "requires": [],
+          "grant_item": "ev_c4_card_ru"
+        },
+        {
+          "id": "c4c_inspect_stencils",
+          "type": "inspect",
+          "text_key": "obj.c4c_stencils",
+          "requires": [],
+          "grant_item": "ev_c4_stencils"
+        },
+        {
+          "id": "c4c_solve_numbers",
+          "type": "puzzle",
+          "text_key": "obj.c4c_numbers",
+          "requires": [
+            "c4c_inspect_card",
+            "c4c_inspect_stencils"
+          ],
+          "puzzle_id": "pz_c4_numbers"
+        },
+        {
+          "id": "c4c_inspect_wagon",
+          "type": "inspect",
+          "text_key": "obj.c4c_wagon",
+          "requires": [
+            "c4c_solve_numbers"
+          ],
+          "grant_item": "ev_c4_wagon_inside"
+        },
+        {
+          "id": "c4c_talk_lev",
+          "type": "dialogue",
+          "text_key": "obj.c4c_lev",
+          "requires": [
+            "c4c_inspect_wagon"
+          ],
+          "dialogue_id": "dlg_c4c_lev"
+        }
+      ]
+    },
+    {
+      "id": "q_c4d_annex",
+      "title_key": "ui.chapter_c4",
+      "character": "konrad",
+      "scene": "L_C4_AnnexB",
+      "requires_events": [
+        "c4c_completed"
+      ],
+      "completion_event": "c4d_completed",
+      "objectives": [
+        {
+          "id": "c4d_inspect_drawer",
+          "type": "inspect",
+          "text_key": "obj.c4d_drawer",
+          "requires": [],
+          "grant_item": "ev_c4_drawer_s8"
+        },
+        {
+          "id": "c4d_inspect_plan",
+          "type": "inspect",
+          "text_key": "obj.c4d_plan",
+          "requires": [],
+          "grant_item": "ev_c4_annex_plan"
+        },
+        {
+          "id": "c4d_inspect_tube",
+          "type": "inspect",
+          "text_key": "obj.c4d_tube",
+          "requires": [
+            "c4d_inspect_drawer",
+            "c4d_inspect_plan"
+          ],
+          "grant_item": "ev_c4_tube_slip"
+        },
+        {
+          "id": "c4d_talk_registrar",
+          "type": "dialogue",
+          "text_key": "obj.c4d_registrar",
+          "requires": [
+            "c4d_inspect_tube"
+          ],
+          "dialogue_id": "dlg_c4d_counter"
+        },
+        {
+          "id": "c4d_choose",
+          "type": "choice",
+          "text_key": "obj.c4d_choice",
+          "requires": [
+            "c4d_talk_registrar"
+          ],
+          "choices": [
+            {
+              "id": "name_marta",
+              "text_key": "choice.c4d.name_marta",
+              "effects": {
+                "evidence_chain": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "protect_marta",
+              "text_key": "choice.c4d.protect_marta",
+              "effects": {
+                "civilian_welfare": {
                   "delta": 1
                 }
               }

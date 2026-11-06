@@ -127,6 +127,54 @@
     180
    ],
    "source": "src/raw_L_C3_Quay.png"
+  },
+  {
+   "crop": [
+    260,
+    128
+   ],
+   "file": "L_C4_TunnelsA.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4_TunnelsA.png"
+  },
+  {
+   "crop": [
+    130,
+    128
+   ],
+   "file": "L_C4_AnnexA.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4_AnnexA.png"
+  },
+  {
+   "crop": [
+    218,
+    128
+   ],
+   "file": "L_C4_TunnelsB.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4_TunnelsB.png"
+  },
+  {
+   "crop": [
+    262,
+    128
+   ],
+   "file": "L_C4_AnnexB.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4_AnnexB.png"
   }
  ],
  "generator": "tools/pixelgen/gen_ui_memories.py"

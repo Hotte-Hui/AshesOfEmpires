@@ -387,9 +387,12 @@ def porter_lodge(Prop):
     lay.rect(0, 0, w, 7, 'D', 2.6, hgt=0.7, flat=True)
     lay.rect(0, 0, w, 1, 'D', 4.6, hgt=0.75, flat=True)
     lay.rect(0, 6, w, 1, 'D', 1.0, hgt=0.6, flat=True)
-    m = kit.text_mask('PFÖRTNER', '35')
-    lay.rect((w - m.shape[1]) // 2 - 3, 1, m.shape[1] + 6, 5, 'D', 1.2, hgt=0.72, flat=True)
-    lay.put(m, (w - m.shape[1]) // 2, 1, 'A', 4.4, flat=True)
+    # distinct Ö (pixfont_umlauts, round 9): the dots take the row above the cap line, so the plate reaches the
+    # fascia's top edge there; the letters keep their rows 1-5
+    m = kit.text_mask('PFÖRTNER', '35', overhang=True)
+    up = m.shape[0] - 5
+    lay.rect((w - m.shape[1]) // 2 - 3, 1 - up, m.shape[1] + 6, 5 + up, 'D', 1.2, hgt=0.72, flat=True)
+    lay.put(m, (w - m.shape[1]) // 2, 1 - up, 'A', 4.4, flat=True)
     # glazing frame: posts + transom; the panes themselves stay transparent
     lay.rect(0, 7, 3, gy1 - 7, 'D', 3.0, hgt=0.6, flat=True)
     lay.rect(0, 7, 1, gy1 - 7, 'D', 4.6, hgt=0.62, flat=True)

@@ -1,0 +1,644 @@
+{
+ "generator": "tools/pixelgen/gen_ui_board.py",
+ "scale": 3,
+ "thumb_1x": [
+  54,
+  24
+ ],
+ "files": [
+  {
+   "path": "assets/ui/board/cork.png",
+   "size_1x": [
+    64,
+    64
+   ],
+   "scale": 3,
+   "note": "tileable cork (TextureRect STRETCH_TILE)"
+  },
+  {
+   "path": "assets/ui/board/cork_hc.png",
+   "size_1x": [
+    64,
+    64
+   ],
+   "scale": 3,
+   "note": "tileable cork (TextureRect STRETCH_TILE)"
+  },
+  {
+   "path": "assets/ui/board/frame.png",
+   "size_1x": [
+    30,
+    30
+   ],
+   "scale": 3,
+   "note": "board frame 9-patch, centre transparent",
+   "margins_1x": [
+    10,
+    10,
+    10,
+    10
+   ]
+  },
+  {
+   "path": "assets/ui/board/pin_alexei.png",
+   "size_1x": [
+    9,
+    10
+   ],
+   "scale": 3,
+   "note": "push pin; the thread knot sits at (3.5, 3) x3 from the top-left"
+  },
+  {
+   "path": "assets/ui/board/pin_konrad.png",
+   "size_1x": [
+    9,
+    10
+   ],
+   "scale": 3,
+   "note": "push pin; the thread knot sits at (3.5, 3) x3 from the top-left"
+  },
+  {
+   "path": "assets/ui/board/pin_red.png",
+   "size_1x": [
+    9,
+    10
+   ],
+   "scale": 3,
+   "note": "push pin; the thread knot sits at (3.5, 3) x3 from the top-left"
+  },
+  {
+   "path": "assets/ui/board/card_paper.png",
+   "size_1x": [
+    15,
+    15
+   ],
+   "scale": 3,
+   "note": "index card (documents), 9-patch",
+   "margins_1x": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  {
+   "path": "assets/ui/board/card_photo.png",
+   "size_1x": [
+    15,
+    15
+   ],
+   "scale": 3,
+   "note": "photo print (physical clues), 9-patch",
+   "margins_1x": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  {
+   "path": "assets/ui/board/card_burned.png",
+   "size_1x": [
+    15,
+    15
+   ],
+   "scale": 3,
+   "note": "scorched card, 9-patch",
+   "margins_1x": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  {
+   "path": "assets/ui/board/tag.png",
+   "size_1x": [
+    9,
+    9
+   ],
+   "scale": 3,
+   "note": "masking-tape label for thread captions, 9-patch",
+   "margins_1x": [
+    3,
+    3,
+    3,
+    3
+   ]
+  },
+  {
+   "path": "assets/ui/board/note.png",
+   "size_1x": [
+    24,
+    24
+   ],
+   "scale": 3,
+   "note": "typed summary sheet, 9-patch",
+   "margins_1x": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  {
+   "path": "assets/ui/board/ghost.png",
+   "size_1x": [
+    12,
+    12
+   ],
+   "scale": 3,
+   "note": "reserved place of an item not yet found, 9-patch",
+   "margins_1x": [
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  {
+   "path": "assets/ui/board/focus.png",
+   "size_1x": [
+    8,
+    8
+   ],
+   "scale": 3,
+   "note": "focus ring around a card, 9-patch",
+   "margins_1x": [
+    3,
+    3,
+    3,
+    3
+   ]
+  },
+  {
+   "path": "assets/ui/board/focus_hc.png",
+   "size_1x": [
+    8,
+    8
+   ],
+   "scale": 3,
+   "note": "focus ring, high contrast",
+   "margins_1x": [
+    3,
+    3,
+    3,
+    3
+   ]
+  },
+  {
+   "path": "assets/ui/board/unknown.png",
+   "size_1x": [
+    18,
+    22
+   ],
+   "scale": 3,
+   "note": "empty pin + „?“ tag for items not yet in the file"
+  },
+  {
+   "path": "assets/ui/board/folder.png",
+   "size_1x": [
+    124,
+    86
+   ],
+   "scale": 3,
+   "note": "journal cover: closed file folder with the C-17 stamp"
+  },
+  {
+   "path": "assets/ui/board/vtab_normal.png",
+   "size_1x": [
+    11,
+    16
+   ],
+   "scale": 3,
+   "note": "vertical journal tab „Akte“ (turned copy of assets/ui/frames/ptab_normal.png)",
+   "margins_x3": [
+    6,
+    12,
+    12,
+    12
+   ],
+   "source": "assets/ui/frames/ptab_normal.png"
+  },
+  {
+   "path": "assets/ui/board/vtab_hover.png",
+   "size_1x": [
+    11,
+    16
+   ],
+   "scale": 3,
+   "note": "vertical journal tab „Akte“ (turned copy of assets/ui/frames/ptab_hover.png)",
+   "margins_x3": [
+    6,
+    12,
+    12,
+    12
+   ],
+   "source": "assets/ui/frames/ptab_hover.png"
+  },
+  {
+   "path": "assets/ui/board/vtab_pressed.png",
+   "size_1x": [
+    11,
+    16
+   ],
+   "scale": 3,
+   "note": "vertical journal tab „Akte“ (turned copy of assets/ui/frames/ptab_pressed.png)",
+   "margins_x3": [
+    6,
+    12,
+    12,
+    12
+   ],
+   "source": "assets/ui/frames/ptab_pressed.png"
+  },
+  {
+   "path": "assets/ui/board/vtab_focus.png",
+   "size_1x": [
+    11,
+    16
+   ],
+   "scale": 3,
+   "note": "vertical journal tab „Akte“ (turned copy of assets/ui/frames/ptab_focus.png)",
+   "margins_x3": [
+    6,
+    12,
+    12,
+    12
+   ],
+   "source": "assets/ui/frames/ptab_focus.png"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_damaged_seal.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_seal.png @ 77,83"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_timetable.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_timetable.png @ 10,84"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_ledger.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_ledger.png @ 101,161"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_plan_a.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_plan_a.png @ 196,61"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_plan_b.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_plan_b.png @ 216,105"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_emil_note.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_emil_note.png @ 52,41"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_weighbill.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/veltrava_station_weighbill.png @ 136,97"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_departures.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/veltrava_station_departures.png @ 55,109"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_travel_order.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/veltrava_station_travel_order.png @ 22,113"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_seating.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/veltrava_protocol_seating.png @ 90,101"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_booth_log.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/veltrava_protocol_booth_log.png @ 26,107"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_carbon.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/veltrava_hall_carbon.png @ 108,49"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_cut_seal.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_night_book.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_intake_book.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_scarf.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_halves.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_kordon_plan.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_file.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_bolt.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_cut_hose.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_escort_list.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_book_gap.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_cut_signatures.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_carbon.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_tunnel_plan.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_fresh_tracks.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_notice.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_route_board.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_shaft.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_card_de.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_card_ru.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_stencils.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_wagon_inside.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_drawer_s8.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_annex_plan.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_tube_slip.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "original drawing (no inspect close-up exists)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c3_kordon_plan_burned.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "Blatt 7 after the fire (choice c3d_choose = admit_plan: the sheet stayed on the wall)"
+  },
+  {
+   "path": "assets/ui/board/thumbs/_document.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "fallback picture for a document"
+  },
+  {
+   "path": "assets/ui/board/thumbs/_physical_clue.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "fallback picture for a physical clue"
+  }
+ ]
+}

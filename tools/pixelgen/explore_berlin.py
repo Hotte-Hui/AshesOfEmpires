@@ -214,23 +214,42 @@ F57 = {
 }
 
 
-def text_mask(s: str, font: str = '35', spacing: int = 1, scale: int = 1) -> np.ndarray:
-    f = F35 if font == '35' else F57
+# round 9 (feel pass 2, tools/pixelgen/pixfont_umlauts.py): distinct Ä / Ö / Ü -- the dots one row ABOVE the cap
+# line, a blank row, the letter one row shorter.  Used by Canvas.text and every caller passing overhang=True.
+import pixfont_umlauts as _UML  # noqa: E402
+F35_UML = _UML.install(dict(F35), 5)
+F57_UML = _UML.install(dict(F57), 7)
+
+
+def text_mask(s: str, font: str = '35', spacing: int = 1, scale: int = 1, overhang: bool = False) -> np.ndarray:
+    """Bool mask of the capitals.  overhang=True: the distinct umlauts -- the mask then has `extra` more rows at
+    the TOP (text_overhang()), so the caller draws it that many rows (x scale) above the cap line."""
+    if overhang:
+        f = F35_UML if font == '35' else F57_UML
+    else:
+        f = F35 if font == '35' else F57
     gw, gh = (3, 5) if font == '35' else (5, 7)
     s = s.upper()
     if not s:
         return np.zeros((gh * scale, 0), bool)
+    extra = _UML.overhang(f, s, gh)
     w = len(s) * (gw + spacing) - spacing
-    m = np.zeros((gh, w), bool)
+    m = np.zeros((gh + extra, w), bool)
     for i, ch in enumerate(s):
         g = f.get(ch, f[' '])
+        top = extra - (len(g) - gh)
         for yy, row in enumerate(g):
             for xx, c in enumerate(row):
                 if c == '#':
-                    m[yy, i * (gw + spacing) + xx] = True
+                    m[top + yy, i * (gw + spacing) + xx] = True
     if scale > 1:
         m = np.repeat(np.repeat(m, scale, 0), scale, 1)
     return m
+
+
+def text_overhang(s: str, font: str = '35') -> int:
+    """Rows (unscaled) the overhang mask of `s` reaches above the cap line."""
+    return _UML.overhang(F35_UML if font == '35' else F57_UML, s, 5 if font == '35' else 7)
 
 
 def text_w(s: str, font: str = '35', spacing: int = 1, scale: int = 1) -> int:
@@ -345,12 +364,12 @@ class Canvas:
         return m
 
     def text(self, x, y, s, ramp, tone, font='35', spacing=1, scale=1, flat=True, align='left'):
-        m = text_mask(s, font, spacing, scale)
+        m = text_mask(s, font, spacing, scale, overhang=True)
         if align == 'center':
             x = x - m.shape[1] // 2
         elif align == 'right':
             x = x - m.shape[1]
-        self.put(m, int(x), int(y), ramp, tone, flat)
+        self.put(m, int(x), int(y) - text_overhang(s, font) * scale, ramp, tone, flat)   # umlaut dots above y
         return m.shape[1]
 
     # ---- tone adjustments (never on flat pixels)
@@ -1112,12 +1131,13 @@ def s_photo(cv: Canvas, hist=False):
     cv.adjust(-((np.abs(xx - 120) / 78.0) ** 3 + (np.abs(yy - 62) / 52.0) ** 3) * 1.6, ph_m)
 
     def emboss(text, y0):
-        m = text_mask(text)
+        m = text_mask(text, overhang=True)
+        e = m.shape[0] - 5                                  # umlaut dots above the cap line
         w_ = m.shape[1]
         x0 = 120 - w_ // 2
         hi = np.zeros((H, W), bool); lo = np.zeros((H, W), bool)
-        hi[y0:y0 + 5, x0:x0 + w_] = m
-        lo[y0 + 1:y0 + 6, x0 + 1:x0 + 1 + w_] = m
+        hi[y0 - e:y0 + 5, x0:x0 + w_] = m
+        lo[y0 + 1 - e:y0 + 6, x0 + 1:x0 + 1 + w_] = m
         cv.adjust(-1.4, lo & ~hi & mount)
         cv.adjust(1.2, hi & mount)
     emboss('ABTEILUNG ACHSE SÜD', 119)

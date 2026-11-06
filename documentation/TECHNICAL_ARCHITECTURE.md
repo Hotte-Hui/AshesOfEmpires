@@ -174,7 +174,9 @@ routes through `Game.interact(interactable)` → Story API → UI. Nothing else 
 All UI is Control-based at 1920×1080, uses `assets/ui/theme.tres`, all text via `Loc.t`. Scenes:
 `HUD` (objective tracker, interaction prompt `show_prompt(ui_pos, text)` / `hide_prompt()`, toast),
 `DialogueBox` (`show_line(speaker_id, text, expression)`, `show_choices([{id, text}])` → `signal chosen(id)`,
-`signal advanced`, history log), `InspectView` (`open(item_id)`), `SignalPuzzle` / `BlueprintPuzzle`
+`signal advanced`, history log), `InspectView` (`open(item_id)`; at 125 / 150 % text the record card widens
+beside the document, scrolls inside when still too tall and takes over a caption too long for the room under the
+document — tests/test_inspect_fit.gd), `SignalPuzzle` / `BlueprintPuzzle`
 (`open(obj_id)`; submit via Story), `Journal`, `PauseMenu`, `MainMenu`, `SettingsMenu`, `SaveLoadMenu`,
 `Credits`, `Subtitles`, `Fade` (`fade_out(t)`, `fade_in(t)`, letterbox). `scenes/ui/UIRoot.tscn` aggregates them
 and is instanced by Main under `UI`.
@@ -299,6 +301,10 @@ look at the thing, inside the walkable area); content owners rely on exactly the
 | `hist.reich.nuremberg_interpreters` | Simultaneous interpreting at the Nuremberg IMT trial 1945–46 | Veltrava palais `exp_headsets` (Chapter 3, `c3_history_reich.json`) |
 | `hist.reich.census_1939` | The census of 17 May 1939 and its „Ergänzungskarte“ on descent (≈ 277 500 people of Jewish descent registered; Aly/Roth 1984; the surviving cards in the Bundesarchiv) | Registry `exp_card_konrad` — Konrad's own index card (Chapter 3 part 2, `c3p2_history_reich.json`) |
 | `hist.soviet.filtration` | NKVD checking-and-filtration of returning POWs and „Ostarbeiter“ 1945–46: presumption of guilt, army/labour battalions, > 200 000 handed to the NKVD, unrecognised until 1991 | Registry `exp_card_alexei` — Alexei filed as „Begleitperson“ (Chapter 3 part 2, `c3p2_history_soviet.json`) |
+| `hist.soviet.order_270` | Order No. 270 of 16 Aug 1941: captured officers as deserters, families arrested or without support; read to every company, published 1988; ≈ 3 of up to 5.7 million Red Army POWs died in German captivity; secret resolution of 29 Jun 1956, decree of 24 Jan 1995 | Tunnels `exp_lev_photo` — Lev's granddaughter turned down (Chapter 4 part 1, `c4_history_soviet.json`) |
+| `hist.soviet.special_settlements` | The special-settlement regime (decree of 26 Nov 1948: exile „forever“, 20 years for escape) and the unequal returns: Soviet Germans released 13 Dec 1955 without return or compensation, five peoples' autonomies restored 9 Jan 1957, Volga Germans exonerated 29 Aug 1964 (made known Jan 1965), Crimean Tatars back only from 1989 | Tunnels `exp_stovepipes` — the kit that turns a freight wagon into a wagon for people (Chapter 4 part 1) |
+| `hist.reich.ostarbeiter` | The „Ostarbeiter“ decrees of 20 Feb 1942: almost three million Soviet civilians, raids, the OST badge, fenced camps, special tax, contact ban, death penalty for intimacy, forced abortions and the „Ausländerkinder-Pflegestätten“ | Annex `exp_wallpaper` — Anna's embroidered towel on the party wall (Chapter 4 part 1, `c4_history_reich.json`) |
+| `hist.reich.denunciation` | Denunciation: the small Gestapo (Würzburg: about twenty officials for all of Lower Franconia) depended on reports from the population — Gellately 1990 (more than half of the Würzburg „Rassenschande“ cases began with one), Mallmann/Paul 1991 (Saarland); the Heimtücke law, the Nuremberg laws, the radio ban and the contact ban as occasions; private motives; the objections of Johnson / Evans | Annex `exp_waiting_bench` — the bench „Warten bis zum Aufruf“ beside the counter where Konrad is asked for a name (Chapter 4 part 1, `c4_history_reich.json`) |
 Cards are real-world history, presented OUTSIDE the fiction ("REALE GESCHICHTE"), sober, sourced, 450–800
 characters, never celebrated (no fanfare, no "achievement" language; neutral paper sound).
 
@@ -324,6 +330,13 @@ exactly once). Rendered in the world viewport under `Game.level_root`; camera vi
   `c3_dissolve*.gdshader` (one Bayer cell per world pixel, `px_scale` = `Game.view.world_scale`). Art and anchors come
   from `py -3 -P tools/pixelgen/env_veltrava_cine.py` (`assets/cinematics/ch3/**`, `layout.json`), sound from
   `tools/audiogen/c3_cine_audio.py`; review harness `tests/visual/c3cine_harness.tscn` (`--c3-mode=shots|seq|run`).
+- **Chapter-4 cinematics** (`LS_C4_Homeward` 14 s, `_Number` 13 s, `_Card` 11 s, `_Stamp` 11 s, `_Voices` 24 s; owner:
+  cine stream, round 9) extend `scenes/cinematics/c4_common/c4_cinematic.gd` (on top of the C3P2 base): lengths = the
+  registered shot sheets, hard match cuts on shared objects (the stencilled 45, the mirrored perforation of card 0417,
+  the stamp frame), subtitles timed by `line_dur()` (≤ 19 chars/s), wide-shot figures = the game's own sheets re-lit
+  from their normal maps (`env_c4_cine_kit.relight`), close-ups from the portrait SDF pipeline; `optional_music()` cues a
+  track only when it exists. Art: `py -3 -P tools/pixelgen/env_c4_cine.py` (`assets/cinematics/c4/**`, `layout.json`),
+  sound: `tools/audiogen/c4_cine_audio.py` (`c4cine_*`); same harness (`--c3-id=LS_C4_…`).
 
 ### 12.6 New characters (ids)
 `librarian` (Berlin), `porter` (Berlin doorman), `vendor` (Karsk tea stall), `worker_b` (Karsk). Chat speakers
@@ -376,6 +389,34 @@ gap is refused with the rule it breaks, the card stays in the hand; the side pan
 across the Line since 1953). Open in scene B (after `c3c_talk_konrad`, until `c3d_choose`). Every registry find uses
 `scripts/ui/minigames/kartei_spot.gd` (gated_interactable + `memory_scenes`: inside a memory the remembered scene, not
 the objective gates, decides — A: Alexei's yard/Annahme finds, B: Konrad's card hall/Planarchiv/Magazin finds).
+
+Tunnel lever frame (round 9, owner exploration c4; entry `karsk.tunnels.lever_frame` in `data/explore/c4_tunnels.json`,
+strings `data/locale/de_explore_c4.json` `mg.lever.*`, tests `tests/test_c4_explore.gd`, art
+`tools/pixelgen/gen_mg_c4_lever.py`, sounds `tools/audiogen/mg_audio_c4.py`, capture `tests/visual/c4_explore_shots.gd`):
+`LeverFrame.tscn` „Der Hebelrahmen“ at `exp_lever_frame` (1064, 300) in Service Tunnel 3 — Alexei carries out the three
+orders of the night shift's route book on a fictional 1941 mechanical frame (`lever_logic.gd`: points w1–w3, route
+levers a/b/c, signals s1/s2; a route needs its points and holds them, b and c exclude each other, a signal needs its
+route and holds it, signals always go back; 3 + 7 + 5 moves, no dead end from any of the 256 positions): entry to
+track 1, exit to the main line (flank protection: points 1 reversed), then lever 6 without a plate — its route lights
+the indicator „КОРДОН 17“ (why the wagons are missing from the signal-box book). Refusals name the lock; hints after two
+(Settings `puzzle_hints`); keys ←/→ select, ↑/↓/E toggle, 1–8 direct, R restart; pad; mouse; x3 art, x2 + table in
+the side column for larger text. Open in scene C (after `c4a_open_door`) and in its memory. Every Chapter-4 find uses
+`scripts/ui/minigames/lever_spot.gd` (kartei_spot's gates + a chat on an NPC's spot only while that NPC is present).
+
+Annex ventilation flaps (round-9 fix compl-01, owner exploration c4; entry `berlin.annex.fans` in
+`data/explore/c4_annex.json`, strings `de_explore_c4.json` `mg.vent.*`, tests `tests/test_c4_explore.gd` (`vent_*` cases),
+sounds `mg_c4_flap_open` / `mg_c4_flap_close` / `mg_c4_alarm_bell` / `mg_c4_air_settled` from
+`tools/audiogen/mg_audio_c4.py`, capture `tests/visual/c4_vent_shots.gd`): `VentFlaps.tscn` „Die Lüftungsklappen“ at
+`exp_fans` (992, 300) in the machine room of Nebenstelle Süd (scene D, after `c4b_inspect_crates`, and in its memory) —
+the fault bell rings; two fans feed one plenum, three ducts leave it (card hall, typists' room, the corridor of the
+Staatspolizei), each with a butterfly flap of five positions. `vent_logic.gd`: flow_i = 30 · g_i / (Σg + 2) with
+g_i = conductance · position, the corridor duct twice as long (conductance 0.5), so every flap moves all three needles;
+Konrad's own Blatt 3 gives 12 000 / 6 000 / 6 000 m³/h ± 1 000; exactly one of the 125 positions balances them (4/2/4),
+the night shift left 4/4/0, no dead end. Acknowledging („Störung quittieren“, E/Enter/pad A) out of balance is a refusal
+naming the worst duct; hints after two (Settings `puzzle_hints`), the second names the next flap step. Keys ←/→ choose,
+↑/↓ open/close a step, 1–3 direct, R restart; pad; mouse (click above / below a flap, wheel, right click closes, the
+button acknowledges). The stage is drawn in code (pixel art ×3, ×2 + side sheet for larger text). The reveal: the third
+duct's line on Blatt 3 reads „Gang – Warteraum, 14 Plätze“ in Konrad's own hand.
 
 ### 12.9 Side tasks („Aufgaben“, round 7, owner: tasks)
 A small optional-task layer on top of §12.1 — backward compatible, **no save data beyond `Explore.state()`**
@@ -431,6 +472,23 @@ A small optional-task layer on top of §12.1 — backward compatible, **no save 
   secretariat“, he left the money — so whoever wrote Elena's „ab“ at 23.25 was not the porter. An investigation, no
   NPC (the porter is never seen): starts and ends with a find, texts in `de_explore_c3p2.json`, checked by
   `tests/test_c3p2_explore.gd` (test_tasks.gd keeps its round-7 rules for its five levels).
+- **Chapter 4 part 1 (round 9, owner exploration c4).** Tram loop „Ilses Puppe“ (`berlin.task.doll`, level key
+  `L_C4_AnnexA`, Konrad, scene B only, `data/explore/c4_annex.json`): Marta asks after her loop chat (chain on
+  `ChatMarta`: chat → ask → back, after `c4b_talk_ilse` until `c4b_inspect_crates`) → the cellar of No. 11 and its 1941
+  wall breakthrough into the sealed No. 9, Ilse's doll on the kitchen bench without an inventory number (one red shoe
+  missing -- the hidden find at the step of No. 9), her drawing on the wall (`exp_task_cellar`, close-up
+  `assets/explore/c4/ilse_drawing.png`, `tools/pixelgen/gen_explore_c4.py`) → back to Marta: „Was keine Nummer hat, holt
+  keiner ab.“ A doll, not the satchel C4_DESIGN §6 names: in `dlg_c4b_ilse` Ilse already holds her satchel. The drivers
+  complete it in their pass before `c4b_inspect_crates`; checked by `tests/test_c4_explore.gd`. Transfer siding „Wir sind
+  vierzehn“ (`karsk.task.fourteen`, level key `L_C4_TunnelsA`, Alexei, scene C only, `data/explore/c4_tunnels.json`): the
+  names in wagon 24 318, read left to right along it — the roof beam through the air hatch (`exp_task_beam`, 1560),
+  behind the stove pipe (`exp_task_pipe`, 1616), under the bench through the half-open door (`exp_task_bench`, 1644),
+  at the door rail (`exp_task_rail`, 1708): 3 + 4 + 4 + 3 names in two scripts, no real persons — each a `Task_*` node
+  after `c4a_open_door`, each step requiring the one before → the hand-in chat with Lev (`ChatLevSiding` on `lev_siding`,
+  after `c4a_open_door` until `c4c_talk_lev`): „Vierzehn. Jetzt stehen sie in zwei Papieren.“ The chat node stands
+  before `S_c4c_talk_lev` in the level file, so when both are open (names read, wagon inspected) the player's focus rule
+  (nearest, then tree order) offers the hand-in first and the story talk right after. The drivers complete it in the
+  siding's first pass (before `c4c_inspect_card`); the final pass before `c4c_talk_lev` requires it done.
 
 ### 12.10 Memories („Erinnerungen“, round 7, owner: memories)
 Revisit a completed scene, look at everything again, return to the present — only completed scenes.
@@ -475,8 +533,9 @@ Revisit a completed scene, look at everything again, return to the present — o
   path is blocked: `interact()` routes story hotspots to `_do_memory_echo`; `_do_inspect/_do_dialogue/_do_puzzle/
   _do_choice` return at a guard; `_after_story_change()`, `_play_cinematic_by_id()` and the finale do nothing.
   Each story hotspot gets a read-only twin (`interactable.gd`, kind `observe`, meta `memory_objectives`/`memory_kind`;
-  a conversation and the decision taken with the same NPC share one twin; a twin steps 24 px aside when an active
-  optional hotspot stands on it): inspect → the document again (InspectView); dialogue → the lines replayed from
+  a conversation and the decision taken with the same NPC in the same Story scene share one twin; in a level file
+  shared by several scenes (§12.11) only the objectives of the remembered scene get twins; a twin steps 24 px aside
+  when an active optional hotspot stands on it): inspect → the document again (InspectView); dialogue → the lines replayed from
   `data/v3/dialogue.json` with the flag variants of that playthrough (`Memories.memory_flags`: the profile snapshot
   when its decisions match, else the live flags); choice → „Hier habe ich …“ (`ui.memories.decided.<choice>`) + the
   reaction that followed; puzzle → one remembered line (`ui.memories.echo.<objective>`). Exploration (discover,
@@ -497,7 +556,15 @@ Revisit a completed scene, look at everything again, return to the present — o
 - **Assets.** Prints: `tests/visual/memory_thumbs.tscn` (capture, `--symbols=0`: no real insignia in a menu) →
   `assets/ui/memories/src/raw_*.png` → `tools/pixelgen/gen_ui_memories.py` (deterministic crop + sepia tone +
   16-tone Bayer print, badge icon). Sounds: `tools/audiogen/memories_audio.py` → `assets/audio/sfx/mem_rewind.wav`,
-  `mem_return.wav`. Provenance: `documentation/asset_manifest_parts/memories.md`.
+  `mem_return.wav`. Provenance: `documentation/asset_manifest_parts/memories.md`. Chapter 4 (round-9 fix compl-03):
+  `SHOTS` / `CROPS` for `L_C4_TunnelsA`, `L_C4_AnnexA`, `L_C4_TunnelsB`, `L_C4_AnnexB` (camera inside each scene's
+  `camera_zones` rect); re-capture with `memory_thumbs.tscn -- --scene=L_C4_TunnelsA --char=alexei --symbols=0
+  --capture=<dir>/boot.png --frames=100000 --mt-out=<dir> --mt-only=L_C4_TunnelsA,L_C4_AnnexA,L_C4_TunnelsB,L_C4_AnnexB`,
+  copy the raws to `src/`, run the generator, import. The harness loads each scene as a memory of itself, so story NPCs
+  follow the remembered state (Lev at his siding post in the TunnelsB print). Story NPCs of the shared levels
+  (registry, tunnels, annex) evaluate `show_after` / `hide_after` inside a memory through the level's
+  `objective_done` rule (only objectives of scenes before the memory scene count; `StoryNPC._done`); single-scene levels
+  keep the live Story, because their conversation twins stand at the NPC spots.
 - **Tests / checks.** `tests/test_memories.gd` (unlocks, profile, echo plans for every objective, round trip on the
   live autoloads byte-identical, save guard, view/HUD/pause/save screen headless). GPU check run without touching
   the player's files: `godot --path . -- --memory-demo=all|game|c3|menu|films|view [--memory-shots=DIR]`
@@ -575,20 +642,75 @@ Control passes between Alexei and Konrad inside ONE level, at an authored story 
   Sound of the registry (lead integration): in the night looks the porter's radio plays `c3p2_radio_waltz` as an
   SFX loop whose level follows the player's distance to the `porter_booth` hotspot (−10 … −32 dB); in the fire looks
   roof creaks / bursting glass every 6–15 s; `c3e_try_ramp` → `c3p2_bolt`, `c3f_push_desk` → `c3p2_desk_push`.
+- **Two places in one level file (round 9, C4 annex).** `L_C4_Annex.tscn` runs `scripts/levels/c4/annex_level.gd`
+  (extends the registry script, no porter radio): entries of `layers` / `props` / `decals` / `fx` / `lights` / `looks`
+  with `"scene": id | [ids]` (actors: `"scene_id"`) are only built when the level plays that Story scene — decided at
+  load (every C4 scene starts with a level load, C4_DESIGN §1; memories load too); `"camera_zones": {scene id: [x, y,
+  w, h]}` clamp `get_camera_bounds()` to the walk area of the scene played (the street never shows underground);
+  one look per scene carries its c4.json grade. Test `tests/test_c4_annex_art.gd`; shots
+  `res://scripts/levels/c4/annex_shots.tscn` (fresh level load per scene, `--as-shots=A:0,B:846 …`, `--as-done=…`).
+  `L_C4_Tunnels.tscn` runs `scripts/levels/c4/tunnels_level.gd` on the same conventions (`"scene"` filters of
+  layers / props / decals / fx / lights, `camera_zones`, one look + grade per scene; every light carries an empty gate
+  so it is named and its slow flicker runs) plus the passing trains of Karsk (scene C: the level's own train every 20–40 s at −8 dB, never while the
+  tunnel ambience's train is audible or due; scene A: the dust / lamp beat follows the cellar ambience's own trains at
+  10.5 s and 39 s; not headless, not behind a cinematic): `"swing"` = 7-frame lamp strips (frame `rest` hangs still, ≤ 3 px at the shade ≈ 2°, reduced motion
+  a third) moved with their named light, `"event_fx"` = dust strips played once (`delay` s), `"train"` = underframes
+  rolling over the yard above the tunnel (scene C), lights dip ≤ 10 % at ≈ 2.4 Hz, sfx `c4_train_overhead`.
+  Test `tests/test_c4_tunnels_art.gd`; shots `res://tests/visual/c4_tunnels_shots.tscn` (header: `--ts-cams`,
+  `--ts-done`, `--ts-train=1`, `--symbols=0|1`).
 - **Looks and carry (round 8, C3P2 §6).** `c3.json` `"looks"`: scene → {character id: sheet dir} (soot looks in
   registry C/D and on the quay, `typist_night`); Game sets the static `SpriteRig.looks` on every level load and switch
   (cleared on unload and before the finale montage), so players, stand-ins, NPCs and dialogue portraits
   (`dialogue_box._portrait_entry`) of that scene use the look while ids, speakers and saves keep the base id.
   `"carry"`: scene → {character id: item}; once the item is owned the player's rig plays `carry_idle_side` /
   `carry_side` instead of the side idle/walk rows (Game `_update_carry` on load, switch and `Story.item_granted`).
+- **Cinematic skip guard (round 9).** In a cinematic, „skip“ (Esc / pad Y) always skips; „advance“ (Space / Enter /
+  E / pad A) skips only when more than `CINE_ADVANCE_GUARD_MS` (0.7 s) have passed since the last interaction ended
+  (`Game._interact_end_ms`, set next to `interact_ready_at`) — the press that closed a dialogue's last line never
+  skips the film the line triggers. `Game._on_load_slot` awaits the whole load (level included).
 - **Saves from a shorter chain (round 8).** `SaveSystem.rebase_story()` (used by `read_container` and
   `Memories.snapshot_raw`): a Story state whose `current_scene` no longer follows from its completed events (a
   round-7 save in the montage after `c3b_completed`) continues in the scene after its last exit event; valid states,
   finished playthroughs (`slice_completed`) and unknown shapes are untouched; the load reports a warning.
-  Test: `tests/test_save_rebase_r8.gd`.
+  Round 9 grew the chain again behind `c3g_completed` (the round-8 montage form continues in `L_C4_TunnelsA` with
+  Alexei). Test: `tests/test_save_rebase_r8.gd` (both generations, container path and memory snapshots).
 - **Pad A in menus.** `Settings._build_input_map()` adds `JOY_BUTTON_A` to `ui_accept` (Godot 4.7's built-in action
   has Enter / Kp Enter / Space only), so the A button presses the focused button in every menu; modals that read
   `interact` / `advance` as well treat both as one press.
+
+### 12.12 Evidence board „Die Akte C-17“ (round 9, owner: board)
+A cork board of the whole investigation; it only ever READS Story (`inventory`, `completed_objectives`, `has_event`,
+`choice_history`, `current_scene`) — no flags, no saves of its own.
+- **Code.** `scripts/ui/evidence_board.gd` + `scenes/ui/EvidenceBoard.tscn` (modal, pauses). Pure statics for tests:
+  `data_context()`, `snapshot(story, memory_scene)`, `holds(when, …)`, `build_model()`, `compute_layout()`,
+  `neighbor()`, `thread_points()`, `live_model()`.
+- **Opening.** Journal tab „Akte“ (`journal.gd` TABS gains `board`; it is a vertical file divider on the sheet's right
+  edge, NOT in the flow row — `ROW_TABS` keep the seven index tabs at 24 px). Its page = cover (folder, counters,
+  „Was die Akte bisher zeigt“, „Pinnwand öffnen“). The board is instanced once by the journal under UIRoot
+  (`journal.board_node()`); no UIRoot change. J closes board + journal, Esc/B the board.
+- **Data.** `data/board/c17_links.json` groups `{id, caption_key, items[], when?}`: a chain through the OWNED items in
+  list order (a missing middle item is skipped; no pin pair in two groups). `data/board/c17_board.json`: `places`
+  (columns in story order; Chapter 4: `karsk_c4`, `berlin_c4`), `spots` (scene → line in the detail strip), `looks`
+  (item → `look` „burned“ / `note_key`, e.g. Blatt 7 after `admit_plan`, the escort list per `c3g_choose`), `summary`
+  milestones (`slot` = alternatives). Conditions: `items`, `any_items`, `objectives`, `events`, `choice.<objective>`
+  (`!id` negates). Texts `data/locale/de_board.json` (`board.short.<item>` = card title ≤ 22 chars, every item has one).
+- **Board.** Cards (54×24 art px at ×3: detail crop of the inspect close-up, else an original drawing,
+  `tools/pixelgen/gen_ui_board.py` → `assets/ui/board/`), steel pin = Alexei, brass = Konrad + initials chip;
+  unowned items in a reached place = reserved place with an empty „?“ pin; places not reached = ONE compact „?“
+  column (no names, no pictures, no count of places). Focus: arrows/WASD/D-pad/stick (spatial `neighbor()`),
+  Enter/Space/A = InspectView (read-only), mouse hover/click; the focused card's threads light up, their captions
+  hang on bare cork only (never over a card), all of them in the detail strip. PgUp/PgDn or the right stick scroll the
+  summary sheet (opens on its newest line). 100 % shows Chapters 1–3 without panning (4 rows); larger text grows cards
+  and strips and the cork pans to the focus. High contrast: dark cork, black ink, bright focus, 6-px threads.
+  Cards pinned since the last opening in this session carry „Neu“ and the focus starts on the newest (session only;
+  `Story.state_replaced` — new game / load — resets it; a memory never marks anything).
+- **Memories.** Decision: the board stays available and shows the file AS IT WAS in the remembered scene — only items,
+  objectives, events and choices of scenes up to the memory's scene (chain rank) count; stamp „Erinnerung · place ·
+  month“, subtitle „So stand die Akte damals.“ (also on the cover). Menu memories read their snapshot the same way.
+- **Tests / shots.** `tests/test_evidence_board.gd` (data ↔ data/v3, house style, owned-only threads on every stage,
+  milestones per decision, memory cut-off, navigation, read-only, sizes 100/125/150 %, contrast, journal tab, art).
+  Windowed: `godot --path . --script res://tests/visual/evidence_board_shots.gd -- --scene=L_C3_Quay --char=alexei
+  --capture=<dir>/_unused.png --frames=999999 --shots=<dir>` (mock Settings, no saves).
 
 ## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
 Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.
@@ -614,8 +736,8 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   `scripts/actors/gated_interactable.gd` (extends interactable.gd): optional hotspots with `after_objective` /
   `until_objective`, so an optional chat never competes with a story interaction at the same spot.
 - **Insignia.** `LayerStack.tex()` resolves every texture through `Symbols.pick()` (§12.4).
-- **Drivers.** `--autoplay=<a1>,<m1>[,<c3a>[,<c3b>[,<c3d>[,<c3g>]]]]` and `--inputplay=…` (same spec) play the whole
-  chain; their saves go to `user://e2e/saves` (round 8), never to the player's slots.
+- **Drivers.** `--autoplay=<a1>,<m1>[,<c3a>[,<c3b>[,<c3d>[,<c3g>[,<c4d>]]]]]]` and `--inputplay=…` (same spec) play the
+  whole chain; their saves go to `user://e2e/saves` (round 8), never to the player's slots.
 - **Chapter 3, part 2 (round 8, story stream; contract `documentation/C3P2_DESIGN.md`).** Five scenes between `L_C3_Hall`
   and the montage: `L_C3_RegistryA`–`D` share `scenes/levels/L_C3_Registry.tscn` (in-level switches, §12.11; settings in
   c3.json `switches`, plus `grade` per scene) and `L_C3_Quay`. No new flags (a v3 save is compared flag by flag on load);
@@ -623,6 +745,25 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   (the recorded option id; explicit key in the flags dictionary, else the live `Story.choice_history()`).
   `ChapterExt.level_key(scene)` = the first scene id of a shared level file — Explore entries of the registry use
   `"level": "L_C3_RegistryA"`; `same_level(a, b)`, `scenes_of_level(path)`. Tests `tests/test_c3p2_routes.gd`.
+- **Chapter 4, part 1 (round 9, story stream; contract `documentation/C4_DESIGN.md`).** Four scenes between `L_C3_Quay`
+  and the montage, alternating cities: `L_C4_TunnelsA` / `L_C4_TunnelsB` (Alexei, Karsk) share
+  `scenes/levels/L_C4_Tunnels.tscn`, `L_C4_AnnexA` / `L_C4_AnnexB` (Konrad, Berlin) share `L_C4_Annex.tscn`; consecutive
+  scenes never share a file, so every change is a level load (match-cut cinematics `LS_C4_Number` / `Card` / `Stamp`),
+  `scene_partner()` is "" and c4.json `switches` carry only `"partner": "none"` + per-scene ambience / music / grade. Each
+  file has two walk areas split by a permanent `blockers` entry (gated-art level script of the env streams). Puzzles:
+  `pz_c4_routes` (`overlay_alignment`, `RoutePuzzle.tscn`, BlueprintPuzzle keys) and `pz_c4_numbers` (`symbol_order`,
+  new `TracePuzzle.tscn`: CheckPuzzle keys + L = lamp). One decision `c4d_choose` (name_marta → `evidence_chain`,
+  protect_marta → `civilian_welfare`); no new flag. `Game.end_card_decisions(choice_history)` lists every decision in
+  story order. Tests `tests/test_c4_routes.gd`; QUEST_DATABASE §12 by `tools/docs/gen_quest_db_c4.py`.
+- **Chapter-4 puzzle UIs (round 9, puzzle stream).** `scripts/ui/trace_puzzle.gd` („Die Nummernkette“): slate board with
+  four posts; `slots` (post order) is the answer; the paint-layer table (`assets/ui/puzzle/c4_numbers_board.json`
+  `plates.*.under`) drives the lamp (Gegenlicht, presentation only) and the words of a stopped trial run
+  (`chain_break()`), never the verdict — that is `Story.solve_puzzle`. Pad: ←/→ LB/RB choose a plate, A hang, B undo,
+  X lamp, Y check, Back close. `scripts/ui/route_puzzle.gd` („Linie 74“): light-table inner class `RouteBoard`
+  (quarter turns around the trace centre, whole-cell offsets, layout `assets/ui/documents/berlin_c4_routes.json`);
+  „wrong_turned“ is derived from the marks' geometry (`rotation_fits`), not from the answer. Art
+  `tools/pixelgen/gen_ui_c4.py` (verifies both against `data/v3/puzzles.json`); tests `tests/test_c4_puzzle_ui.gd`,
+  screenshots `res://tests/visual/C4PuzzleShots.tscn -- --out=<dir>`.
 - **Palais ambient life (art, round 7).** `veltrava_hall/scene.json` `decals` with `frames`/`fps` are looping strips
   (`assets/environments/veltrava_hall/life/`, `tools/pixelgen/env_veltrava_hall_life.py`): figures on `"layer":
   "playfield"` keep `base_y` < 296 (actors always pass in front), figures behind glass or a balustrade sit on the `room`
@@ -648,3 +789,17 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   a peephole and waves, the frost recedes; art `veltrava_station/thaw/`). Tests `tests/test_feel_r8.gd`; Forward+ harness
   `res://tests/visual/feel_r8_shots.tscn` (`--fr-shots=label:camx:px:py:seconds[:thaw|thawed|memview150|membroken|
   journal_late|dlg=<speaker>;<key>;<expr>]`). Provenance `documentation/asset_manifest_parts/feel_r8.md`.
+- **Feel pass 2 (round 9, owner feel_r9).** *Walkers*: a spec may name its own `"rig"` (`walkers/<name>_rig.json` + `.png` +
+  `_n.png`, `walkers_r8.py`: the source rows + `walk_front` / `idle_back` / `walk_back`; `"sheet"` stays the fallback);
+  steep path segments (|dy| > 1.2 |dx|) walk toward / away from the camera; pauses really show their pose. Walkers give
+  way to each other: head-on in one lane the lower rank (name hash) steps aside (`"pass"`, default 0.5 px back on side
+  lanes = they pass one behind the other; `dodge` on oblique floors), without room the other one does, without room for
+  either the lower rank waits ≤ 1.2 s and turns back; followers keep ≥ 18 px. Quay: five walkers (`veltrava_quay/
+  walkers.json`). *Side task* „Eine Decke für Frau Brunner“ (`data/explore/quay_tasks.json`, texts `de_quay_tasks.json`;
+  chain on `ChatTypistQuay` after her chat, locker `TaskBlanketLocker` at `exp_task_blanket` = explore site
+  `blanket_source`). *HUD*: toasts on screen when a modal (or `hide_hud`) holds them pause their timer and slide back in
+  afterwards (`hud.toasts_held()`). *Cinematics*: e3a / e3b / h1 figures from `tools/pixelgen/env_c3p2_cine_hands.py`
+  (portrait SDF pipeline). *Umlauts*: `tools/pixelgen/pixfont_umlauts.py` (dots one row above the cap line, opt-in
+  `overhang=True` in the close-up / document / mini-game text renderers). Tests `tests/test_feel_r9.gd`; Forward+ harness
+  `res://tests/visual/feel_r9_shots.tscn` (`--f9-shots=label:camx|-:px|-:py:seconds[:hud|task|journal|toast_modal|
+  toast_back|disc=<id>@<scale>|insp=<item>@<scale>|walker=<id>@<seg>]`, `--f9-sizes=2560x1440;3840x2160`).

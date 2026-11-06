@@ -561,22 +561,34 @@ F57 = {
 }
 
 
-def text_mask(s: str, font: str = '35', spacing: int = 1) -> np.ndarray:
-    f = F35 if font == '35' else F57
+def text_mask(s: str, font: str = '35', spacing: int = 1, overhang: bool = False) -> np.ndarray:
+    """overhang=True (round 9, tools/pixelgen/pixfont_umlauts.py): the distinct umlauts -- dots one row above the
+    cap line; the mask then has that row more at the TOP, the caller draws it one row higher."""
+    if overhang:
+        f = F35_UML if font == '35' else F57_UML
+    else:
+        f = F35 if font == '35' else F57
     gw = 3 if font == '35' else 5
     gh = 5 if font == '35' else 7
     s = s.upper()
     if not s:
         return np.zeros((gh, 0), bool)
+    extra = _UML.overhang(f, s, gh)
     w = len(s) * (gw + spacing) - spacing
-    m = np.zeros((gh, w), bool)
+    m = np.zeros((gh + extra, w), bool)
     for i, ch in enumerate(s):
         g = f.get(ch, f.get(' '))
+        top = extra - (len(g) - gh)
         for yy, row in enumerate(g):
             for xx, c in enumerate(row):
                 if c == '#':
-                    m[yy, i * (gw + spacing) + xx] = True
+                    m[top + yy, i * (gw + spacing) + xx] = True
     return m
+
+
+import pixfont_umlauts as _UML  # noqa: E402
+F35_UML = _UML.install(dict(F35), 5)
+F57_UML = _UML.install(dict(F57), 7)
 
 
 def text_width(s: str, font: str = '35', spacing: int = 1) -> int:

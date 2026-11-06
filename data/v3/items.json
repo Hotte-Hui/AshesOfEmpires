@@ -154,6 +154,111 @@
       "description_key": "item.c3_escort_list.description",
       "scene": "L_C3_Quay",
       "category": "document"
+    },
+    {
+      "id": "ev_c4_book_gap",
+      "name_key": "item.c4_book_gap.name",
+      "description_key": "item.c4_book_gap.description",
+      "scene": "L_C4_TunnelsA",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_cut_signatures",
+      "name_key": "item.c4_cut_signatures.name",
+      "description_key": "item.c4_cut_signatures.description",
+      "scene": "L_C4_TunnelsA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_carbon",
+      "name_key": "item.c4_carbon.name",
+      "description_key": "item.c4_carbon.description",
+      "scene": "L_C4_TunnelsA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_tunnel_plan",
+      "name_key": "item.c4_tunnel_plan.name",
+      "description_key": "item.c4_tunnel_plan.description",
+      "scene": "L_C4_TunnelsA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_fresh_tracks",
+      "name_key": "item.c4_fresh_tracks.name",
+      "description_key": "item.c4_fresh_tracks.description",
+      "scene": "L_C4_TunnelsA",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_notice",
+      "name_key": "item.c4_notice.name",
+      "description_key": "item.c4_notice.description",
+      "scene": "L_C4_AnnexA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_route_board",
+      "name_key": "item.c4_route_board.name",
+      "description_key": "item.c4_route_board.description",
+      "scene": "L_C4_AnnexA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_shaft",
+      "name_key": "item.c4_shaft.name",
+      "description_key": "item.c4_shaft.description",
+      "scene": "L_C4_AnnexA",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_card_de",
+      "name_key": "item.c4_card_de.name",
+      "description_key": "item.c4_card_de.description",
+      "scene": "L_C4_AnnexA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_card_ru",
+      "name_key": "item.c4_card_ru.name",
+      "description_key": "item.c4_card_ru.description",
+      "scene": "L_C4_TunnelsB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_stencils",
+      "name_key": "item.c4_stencils.name",
+      "description_key": "item.c4_stencils.description",
+      "scene": "L_C4_TunnelsB",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_wagon_inside",
+      "name_key": "item.c4_wagon_inside.name",
+      "description_key": "item.c4_wagon_inside.description",
+      "scene": "L_C4_TunnelsB",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_drawer_s8",
+      "name_key": "item.c4_drawer_s8.name",
+      "description_key": "item.c4_drawer_s8.description",
+      "scene": "L_C4_AnnexB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_annex_plan",
+      "name_key": "item.c4_annex_plan.name",
+      "description_key": "item.c4_annex_plan.description",
+      "scene": "L_C4_AnnexB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_tube_slip",
+      "name_key": "item.c4_tube_slip.name",
+      "description_key": "item.c4_tube_slip.description",
+      "scene": "L_C4_AnnexB",
+      "category": "document"
     }
   ]
 }

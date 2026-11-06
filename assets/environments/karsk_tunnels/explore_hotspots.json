@@ -1,0 +1,34 @@
+{
+ "doc": "Exploration hotspots (Level._merge_explore_hotspots; scene.json wins on name clashes). Owner: exploration stream (documentation/C4_DESIGN.md §6). Every spot keeps >= 24 px from the story hotspots of C4_DESIGN.md §4.1 and lies in the walk area of the scene part that reaches it: x 60-690 = scene A (archive cellar, Alexei, open until c4a_open_door), x 730-1900 = scene C (Dienststollen 3 + Umsetzgleis, Alexei, open after c4a_open_door). `info` is the art contract for env-tunnels: stand = where Alexei stands (feet line y 300), focus = where the thing is painted (world px), what = what must be visible there. The engine reads only `hotspots` / `spawns`.",
+ "hotspots": {
+  "exp_sugar_mouse": [112, 300], "exp_stamps": [292, 300], "exp_card_index": [334, 300], "exp_lev_photo": [400, 300],
+  "exp_samovar": [474, 300], "exp_stove": [584, 300], "exp_air_raid_sign": [632, 300],
+  "exp_field_phone": [792, 300], "exp_cables": [926, 300], "exp_lever_frame": [1064, 300], "exp_child_drawing": [1222, 300],
+  "exp_stovepipes": [1262, 300], "exp_painters_corner": [1404, 300], "exp_plate_heap": [1530, 300],
+  "exp_task_beam": [1560, 300], "exp_task_pipe": [1616, 300], "exp_task_bench": [1644, 300], "exp_task_rail": [1708, 300],
+  "exp_wagon_marks": [1726, 300], "exp_exit_portal": [1868, 300]
+ },
+ "spawns": {},
+ "info": {
+  "exp_sugar_mouse": {"stand": [112, 300], "focus": [116, 292], "what": "hidden: under the lowest shelf board, a field mouse at a lump of sugar (small, at floor level, easy to miss)"},
+  "exp_stamps": {"stand": [292, 300], "focus": [292, 252], "what": "right end of the book shelves: a wooden stamp rack with hooks, rubber stamps hanging, one hook empty"},
+  "exp_card_index": {"stand": [334, 300], "focus": [334, 262], "what": "left end of Lev's desk: the freight office's personnel card index, a small oak cabinet with brass label frames"},
+  "exp_lev_photo": {"stand": [400, 300], "focus": [400, 246], "what": "on the desk under the green lamp: a small framed photo leaning against the lamp foot (a young woman holding a leaflet)"},
+  "exp_samovar": {"stand": [474, 300], "focus": [474, 262], "what": "a side table right of Lev: a brass samovar, two tea glasses in metal holders, one full"},
+  "exp_stove": {"stand": [584, 300], "focus": [584, 258], "what": "the cast-iron stove with its pipe up through the vault, a kettle, a pair of felt boots drying"},
+  "exp_air_raid_sign": {"stand": [632, 300], "focus": [630, 236], "what": "an enamel/painted 1941 sign on the wall left of the iron door: „Бомбоубежище – Служебный тоннель №3“ with a painted arrow"},
+  "exp_field_phone": {"stand": [792, 300], "focus": [792, 258], "what": "a niche in the tunnel wall: a 1941 field telephone in a wooden case, the handset on a hook, its cable along the wall"},
+  "exp_cables": {"stand": [926, 300], "focus": [926, 214], "what": "cable runs along the tunnel vault: old cloth-wrapped cables on 1941 hooks and, clamped beside them, a new black rubber cable"},
+  "exp_lever_frame": {"stand": [1064, 300], "focus": [1064, 262], "what": "mini-game spot: a waist-high 1941 mechanical lever frame (eight levers, handles black/blue/red, brass number plates) beside switch W2; a small track diagram board above it"},
+  "exp_child_drawing": {"stand": [1222, 300], "focus": [1224, 286], "what": "hidden: at the tunnel mouth a low stack of rough bench boards (taken out of a wagon); a small house scratched into the top board"},
+  "exp_stovepipes": {"stand": [1262, 300], "focus": [1262, 270], "what": "the conversion kit: a heap of stove-pipe elbows, a small iron stove, zinc buckets, bench brackets"},
+  "exp_painters_corner": {"stand": [1404, 300], "focus": [1404, 262], "what": "between the siding office and the paint stand: a crate as table, tea glasses, a folded newspaper, a duty roster nailed to the post"},
+  "exp_plate_heap": {"stand": [1530, 300], "focus": [1530, 284], "what": "left of the wagon: a heap of enamel wagon number plates, a dozen numbers, some freshly overpainted"},
+  "exp_task_beam": {"stand": [1560, 300], "focus": [1566, 196], "what": "side task „Wir sind vierzehn“ (1/4): the small air hatch at the left end of wagon 24 318 (painted, x ~1560-1572, y ~192-200); inside, unseen, three names written in stove soot on the roof beam"},
+  "exp_task_pipe": {"stand": [1616, 300], "focus": [1613, 162], "what": "side task (2/4): the stove pipe through the wagon roof (painted, x ~1612, y ~150-180) with its sooty collar; behind it inside, four names scratched with a nail"},
+  "exp_task_bench": {"stand": [1644, 300], "focus": [1664, 236], "what": "side task (3/4): through the half-open sliding door the dark interior and the front plank bench (painted, x ~1652-1676, y ~230-240); under it four names, seven tally strokes"},
+  "exp_task_rail": {"stand": [1708, 300], "focus": [1712, 192], "what": "side task (4/4): the running rail of the sliding door right of the opening (painted, x ~1650-1757, y ~191), the paint scratched to the iron where the door stops: three names and „21.1.“"},
+  "exp_wagon_marks": {"stand": [1726, 300], "focus": [1726, 262], "what": "the right end of wagon 24 318: stencilled maintenance marks on the frame (revision dates, depot code), one line painted over"},
+  "exp_exit_portal": {"stand": [1868, 300], "focus": [1872, 236], "what": "the exit portal to the main line, gate shut, a padlock; daylight lines through the gaps"}
+ }
+}

@@ -348,7 +348,8 @@ def border_map():
     lay.rect(cx0, cy0, cw, ch, 'S', 10.6, flat=True)
     lay.put(kit.edge_of(np.ones((ch, cw), bool)), cx0, cy0, 'S', 2.0, flat=True)
     lay.put(kit.text_mask('SCHEMA', '57'), cx0 + 6, cy0 + 5, 'S', 1.6, flat=True)
-    lay.put(kit.text_mask('NICHT MASSSTÄBLICH', '35'), cx0 + 6, cy0 + 15, 'S', 3.0, flat=True)
+    nm = kit.text_mask('NICHT MASSSTÄBLICH', '35', overhang=True)        # distinct Ä (pixfont_umlauts)
+    lay.put(nm, cx0 + 6, cy0 + 15 - (nm.shape[0] - 5), 'S', 3.0, flat=True)
     legend = [('BAHN', 'rail'), ('GRENZE', 'border'), ('KORRIDOR', 'corr'), ('ROUTE C-17', 'route')]
     for i, (txt, kind) in enumerate(legend):
         ly = cy0 + 28 + i * 12

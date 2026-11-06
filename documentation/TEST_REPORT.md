@@ -182,3 +182,26 @@ chain failed the replay validation after the chain grew → `SaveSystem.rebase_s
 cards of the shared registry level counted 0/0 finds → counted by the level key; the old memory prints of the Berlin
 archive and plaza showed Alexei (capture harness used the Story's protagonist) → harness fixed, prints re-captured.
 Not covered: a human playtest and listening pass (§6), a physical controller.
+
+## 13. Round 9 (2026-11-06) — Chapter 4 part 1, the evidence board, feel pass 2
+All runs on this machine (RTX 4090, Forward+, windowed 1080p unless noted). Seven choices per route now
+(a1 / m1 / c3a / c3b / c3d / c3g / c4d); the drivers keep their saves in `user://e2e/saves`.
+| Layer | Result |
+|---|---|
+| Unit (`tests/run_all.gd`) | **60 files, 626 cases, 74,935 checks — all passed** in 77 s (new: test_c4_routes, test_c4_annex_art, test_c4_tunnels_art, test_c4_cinematics, test_c4_puzzle_ui, test_c4_cast_audio, test_c4_explore, test_evidence_board, test_feel_r9, test_inspect_fit, test_journal_fit_r9, test_memory_twins, test_memory_npcs; round-8 saves → Chapter 4 in test_save_rebase_r8) |
+| Autoplay, played in full (share_with_irina / preserve_evidence / ask_elena / share_protocol / admit_plan / split_by_language / name_marta) | **PASS** 480 s, every cinematic watched incl. LS_C4_Homeward / Number / Card / Stamp / Voices; slot 3 (registry B) and the quicksave at the transfer siding reloaded through the game (Alexei at the siding, Lev there) |
+| Autoplay, skip (keep_private / request_explanation / note_alone / search_elena / pocket_plan / swap_halves / protect_marta) | **PASS** 98 s |
+| Autoplay, skip + exploration (… report_delegation / admit_plan / hide_for_elena / protect_marta) | **PASS** 222 s — tunnels 22/22, annex 18/18, history 25/25 |
+| Autoplay, skip + memories | **PASS** 104 s |
+| Real input, skip (share_with_irina / preserve_evidence / ask_elena / share_protocol / pocket_plan / hide_for_elena / name_marta) | **INPUTPLAY_PASS** 567 s — „Linie 74“ and „Die Nummernkette“ solved by keys (one wrong attempt each first), main menu „Fortsetzen“ resumes in the annex before the last decision |
+| Real input, skip + exploration + memories (keep_private / request_explanation / note_alone / search_elena / admit_plan / swap_halves / protect_marta) | **INPUTPLAY_PASS** 1669 s — 186/186 finds and chats (Karsk 26, archive 29, plaza 21, station 21, Palais 18, registry 18, quay 13, tunnels 22, annex 18) incl. 12 mini-games by synthetic keys, 9/9 tasks, 25/25 history cards, memory trips by keys only |
+| All E2E logs | 0 script errors, 0 warnings |
+| The user's own saves (copies: 1, 2, auto) | load in the new build (A1, Station, A1) |
+| Exported .exe (409 MB pack, lossless audio), real input, skip + memories (share_with_irina / request_explanation / ask_elena / report_delegation / admit_plan / split_by_language / name_marta) | **INPUTPLAY_PASS** 589 s, 0 errors, 0 warnings |
+Found and fixed in the integration: the first E2E batch failed in every route at the transfer siding. (1) A Space press
+that closed Lev's last line also skipped LS_C4_Stamp starting right after it (in a cinematic „advance“ skipped
+immediately) — players who press twice lost the film; now „advance“ cannot skip within 0.7 s of an interaction, Esc
+still can. The real-input driver then pressed Esc after the film had ended and opened the pause menu; it now checks that
+the film is still running. (2) `Game._on_load_slot` returned before the level was loaded, so the autoplay's siding
+check saw the previous level; it now awaits the load. The review lenses' own fixes are listed in DEVELOPMENT_STATUS.
+Not covered: a human playtest and listening pass (NEXT_STEPS §2), a physical controller.

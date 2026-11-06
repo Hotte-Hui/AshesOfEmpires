@@ -1,0 +1,332 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/c4/tunnels_level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/lever_spot.gd" id="c4x_spot"]
+
+[node name="L_C4_Tunnels" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C4_TunnelsA"
+protagonist = "alexei"
+mode = "side"
+art_manifest = "res://assets/environments/karsk_tunnels/scene.json"
+ambience = "amb_karsk_cellar"
+music = "mus_c4_karsk"
+footstep_surface = "concrete"
+grade_preset = "tunnels"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="LevCellar" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "lev"
+hotspot_id = "lev_cellar"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+hide_after = "c4c_inspect_card"
+
+[node name="LevSiding" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "lev"
+hotspot_id = "lev_siding"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+show_after = "c4a_open_door"
+
+[node name="ChatLevSiding" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "chat"
+hotspot_id = "lev_siding"
+explore_id = "karsk.tunnels.names_lev"
+npc_id = "lev"
+radius = 38.0
+once = true
+after_objective = "c4a_open_door"
+until_objective = "c4c_talk_lev"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="S_c4a_inspect_shelf" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4a_inspect_shelf"
+kind = "inspect"
+hotspot_id = "book_shelf"
+
+[node name="S_c4a_talk_lev" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4a_talk_lev"
+kind = "dialogue"
+hotspot_id = "lev_cellar"
+npc_id = "lev"
+radius = 38.0
+
+[node name="S_c4a_inspect_book" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4a_inspect_book"
+kind = "inspect"
+hotspot_id = "desk_book"
+
+[node name="S_c4a_inspect_carbon" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4a_inspect_carbon"
+kind = "inspect"
+hotspot_id = "lamp_table"
+
+[node name="S_c4a_talk_tunnel" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4a_talk_tunnel"
+kind = "dialogue"
+hotspot_id = "lev_cellar"
+npc_id = "lev"
+radius = 38.0
+
+[node name="S_c4a_open_door" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4a_open_door"
+kind = "inspect"
+hotspot_id = "tunnel_door"
+
+[node name="S_c4c_inspect_card" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4c_inspect_card"
+kind = "inspect"
+hotspot_id = "office_desk"
+
+[node name="S_c4c_inspect_stencils" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4c_inspect_stencils"
+kind = "inspect"
+hotspot_id = "paint_stand"
+
+[node name="S_c4c_solve_numbers" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4c_solve_numbers"
+kind = "puzzle"
+hotspot_id = "wagon_side"
+
+[node name="S_c4c_inspect_wagon" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4c_inspect_wagon"
+kind = "inspect"
+hotspot_id = "wagon_door"
+
+[node name="S_c4c_talk_lev" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4c_talk_lev"
+kind = "dialogue"
+hotspot_id = "lev_siding"
+npc_id = "lev"
+radius = 38.0
+
+[node name="Find_SugarMouse" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_sugar_mouse"
+explore_id = "karsk.tunnels.sugar_mouse"
+radius = 18.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_Stamps" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_stamps"
+explore_id = "karsk.tunnels.stamps"
+radius = 22.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_CardIndex" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_card_index"
+explore_id = "karsk.tunnels.card_index"
+radius = 22.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_LevPhoto" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_lev_photo"
+explore_id = "karsk.tunnels.lev_photo"
+radius = 20.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="ChatLevCellar" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "chat"
+hotspot_id = "lev_cellar"
+explore_id = "karsk.tunnels.chat_lev"
+npc_id = "lev"
+radius = 38.0
+once = true
+after_objective = "c4a_talk_tunnel"
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_Samovar" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_samovar"
+explore_id = "karsk.tunnels.samovar"
+radius = 22.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_Stove" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_stove"
+explore_id = "karsk.tunnels.stove"
+radius = 24.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_AirRaidSign" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_air_raid_sign"
+explore_id = "karsk.tunnels.air_raid_sign"
+radius = 22.0
+once = true
+until_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsA")
+
+[node name="Find_FieldPhone" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_field_phone"
+explore_id = "karsk.tunnels.field_phone"
+radius = 26.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_Cables" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_cables"
+explore_id = "karsk.tunnels.cables"
+radius = 26.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_LeverFrame" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_lever_frame"
+explore_id = "karsk.tunnels.lever_frame"
+radius = 26.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_ChildDrawing" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_child_drawing"
+explore_id = "karsk.tunnels.child_drawing"
+radius = 18.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_Stovepipes" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_stovepipes"
+explore_id = "karsk.tunnels.stovepipes"
+radius = 22.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_PaintersCorner" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_painters_corner"
+explore_id = "karsk.tunnels.painters_corner"
+radius = 26.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_PlateHeap" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_plate_heap"
+explore_id = "karsk.tunnels.plate_heap"
+radius = 24.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_WagonMarks" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_wagon_marks"
+explore_id = "karsk.tunnels.wagon_marks"
+radius = 24.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Find_ExitPortal" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_exit_portal"
+explore_id = "karsk.tunnels.exit_portal"
+radius = 26.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Task_Beam" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_task_beam"
+explore_id = "karsk.tunnels.names_beam"
+radius = 20.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Task_Pipe" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_task_pipe"
+explore_id = "karsk.tunnels.names_pipe"
+radius = 20.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Task_Bench" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_task_bench"
+explore_id = "karsk.tunnels.names_bench"
+radius = 20.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")
+
+[node name="Task_Rail" type="Node2D" parent="Playfield"]
+script = ExtResource("c4x_spot")
+kind = "discover"
+hotspot_id = "exp_task_rail"
+explore_id = "karsk.tunnels.names_rail"
+radius = 20.0
+once = true
+after_objective = "c4a_open_door"
+memory_scenes = PackedStringArray("L_C4_TunnelsB")

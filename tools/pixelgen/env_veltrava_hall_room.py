@@ -1319,8 +1319,9 @@ class Room:
         sx = px1 + 6
         lay.rect(sx, 104, sw, 16, 'D', 2.0, hgt=0.6)
         lay.rect(sx, 104, sw, 1, 'D', 4.2, hgt=0.65)
-        lay.text('PROTOKOLLBÜRO', sx + 4, 106, 'B', 4.6)
-        lay.text('PROTOCOLE', sx + 4, 113, 'B', 3.0)
+        # both lines one row lower than before: the distinct Ü's dots (row 106) keep a row off the plate's top edge
+        lay.text('PROTOKOLLBÜRO', sx + 4, 107, 'B', 4.6, overhang=True)
+        lay.text('PROTOCOLE', sx + 4, 114, 'B', 3.0)
         # calendar + framed photo of the commission over the typist desk
         lay.rect(1120, 160, 14, 20, 'P', 6.0, hgt=0.3)
         lay.rect(1120, 160, 14, 5, 'R', 2.6, hgt=0.3)
@@ -1364,7 +1365,7 @@ class Room:
                     lay.rect(xx + 1, sy - 6, bw - 2, 2, 'P', 5.0, hgt=0.55)
                     xx += bw + 1
         lay.rect(mx0 - 20, 178, kit.text_width('VERVIELFÄLTIGUNG') + 4, 9, 'D', 2.0, hgt=0.6)
-        lay.text('VERVIELFÄLTIGUNG', mx0 - 18, 180, 'P', 5.0)
+        lay.text('VERVIELFÄLTIGUNG', mx0 - 18, 180, 'P', 5.0, overhang=True)
         # filing cabinet + coat stand at the far end
         fx0 = 1368
         lay.rect(fx0, 238, 20, L.FLOOR - 238, 'W', 5.4, hgt=0.5)
@@ -1679,10 +1680,10 @@ class Room:
         for yy in range(y + 1, y + h - 1, 2):                                # felt grooves
             lay.rect(x + 1, yy, w - 2, 1, 'I', 1.2, hgt=0.38)
         for i, r in enumerate(rows):
-            ty = y + 3 + i * 7
-            lay.text(r, x + 4, ty, 'P', 6.0 if i else 5.2)
+            ty = y + 3 + i * 7 + (2 if i else 0)        # items 2 px lower: the distinct Ö's dots stay clear of the rule
+            lay.text(r, x + 4, ty, 'P', 6.0 if i else 5.2, overhang=True)
         lay.rect(x + 4, y + 9, w - 8, 1, 'P', 3.6)                            # rule under the heading
-        lay.px(x + w - 6, y + 3 + 4 * 7 + 1, 'R', 3.0)                        # a red pin at Anlage C (TOP 4)
+        lay.px(x + w - 6, y + 5 + 4 * 7 + 1, 'R', 3.0)                        # a red pin at Anlage C (TOP 4)
 
     def etched_transom(self, x, y, w, h, idx):
         """Frosted Jugendstil transom between the corridor and the Grosser Saal (emissive cold glow)."""
@@ -1740,7 +1741,7 @@ class Room:
         lay.rect(x0, top, w, 2, 'D', 4.6, hgt=0.7)
         lay.rect(x0, bot - 2, w, 2, 'D', 1.4, hgt=0.5)
         lay.rect(x0 + w, top + 1, 1, bot - top, 'W', 2.6)
-        lay.text('KOPFHÖRER', x0 + (w - kit.text_width('KOPFHÖRER')) // 2, top - 8, 'B', 4.4)
+        lay.text('KOPFHÖRER', x0 + (w - kit.text_width('KOPFHÖRER')) // 2, top - 8, 'B', 4.4, overhang=True)
         for r in range(3):
             for c in range(4):
                 cx = x0 + 3 + c * 12

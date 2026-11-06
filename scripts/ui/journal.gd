@@ -10,8 +10,17 @@ extends "res://scripts/ui/ui_modal.gd"
 ## finished ones — each with its place, summary and the steps done so far (re-readable in the DiscoveryView).
 ## Tasks nobody has asked for yet stay hidden; only the current place says that someone here still needs help.
 ## Q / E (LB / RB) switch tabs, J / Tab / Esc close. "Ansehen" opens the InspectView on top.
+## Round 9 (owner: board, §12.12): the eighth tab „Akte“ is a file divider standing out of the sheet's right edge
+## (the round-1 paper tab turned by 90°; outside the flow row, so the seven index tabs keep their size). Its page is
+## the cover of „Die Akte C-17“: the folder, the counters, „Was die Akte bisher zeigt“ and „Pinnwand öffnen“, which
+## opens the EvidenceBoard (scenes/ui/EvidenceBoard.tscn) on top. Inside a memory both show the file as it was then.
 
-const TABS := ["objectives", "tasks", "evidence", "people", "decisions", "discoveries", "history"]
+const TABS := ["objectives", "tasks", "evidence", "people", "decisions", "discoveries", "history", "board"]
+## The index tabs of the flow row (the board tab is the vertical divider on the sheet's right edge).
+const ROW_TABS := ["objectives", "tasks", "evidence", "people", "decisions", "discoveries", "history"]
+const BOARD_SCENE := "res://scenes/ui/EvidenceBoard.tscn"
+const BOARD_SCRIPT := "res://scripts/ui/evidence_board.gd"
+const VTAB_DIR := "res://assets/ui/board/"
 
 var suppress_toasts := true
 var current_tab := "objectives"
@@ -23,6 +32,8 @@ var _progress: Label
 var _data: Dictionary = {}
 var _group := ButtonGroup.new()
 var _tab_counts: Dictionary = {}    # tab id -> counter shown on the index tab (0 = none)
+var board: Control = null           # EvidenceBoard, instanced on first use under UIRoot (or beside the journal)
+var _vtab_label: Label
 
 
 func _ready() -> void:
@@ -59,7 +70,7 @@ func _ready() -> void:
 	pad.custom_minimum_size.x = 30
 	tabs.add_child(pad)
 	root.add_child(tabs)
-	for id in TABS:
+	for id in ROW_TABS:
 		var b := Kit.button("", "PaperTabButton")
 		b.toggle_mode = true
 		b.button_group = _group
@@ -70,6 +81,8 @@ func _ready() -> void:
 	_sheet.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_sheet.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_sheet)
+	_tab_buttons["board"] = _make_board_tab()
+	_sheet.item_rect_changed.connect(_place_board_tab)
 	root.add_child(Kit.rule(Color(0, 0, 0, 0), 12))
 	root.add_child(Kit.controls_row([["Q|E", Kit.t("ui.hint.tabs")],
 		[Kit.action_key_text("journal") + "|" + Kit.key_name(KEY_ESCAPE), Kit.t("ui.hint.close")]]))
@@ -95,6 +108,8 @@ func open(tab := "") -> void:
 	_progress.visible = _progress.text != ""
 	open_modal()
 	show_tab(current_tab)
+	_vtab_style()
+	_place_board_tab.call_deferred()
 
 
 func _update_tab_titles() -> void:
@@ -132,10 +147,10 @@ func _fit_tabs() -> void:
 	elif row is BoxContainer:
 		sep = float(row.get_theme_constant("separation"))
 	for variant in [["   ", 30.0, [24, 22, 21, TAB_MIN_FS]], ["  ", 12.0, [TAB_MIN_FS]]]:
-		var avail: float = 1500.0 - float(variant[1]) - sep * float(TABS.size())
+		var avail: float = 1500.0 - float(variant[1]) - sep * float(ROW_TABS.size())
 		for fs in variant[2]:
 			var total := 0.0
-			for id in TABS:
+			for id in ROW_TABS:
 				var b: Button = _tab_buttons[id]
 				var n := int(_tab_counts.get(id, 0))
 				b.text = Kit.t("ui.journal.tab." + id).to_upper().replace("ß", "SS") + ((str(variant[0]) + str(n)) if n > 0 else "")
@@ -192,6 +207,8 @@ func show_tab(id: String) -> void:
 			_body = _build_discoveries()
 		"history":
 			_body = _build_history()
+		"board":
+			_body = _build_board_cover()
 		_:
 			_body = _build_decisions()
 	_sheet.add_child(_body)
@@ -401,21 +418,13 @@ func _build_list_detail(kind: String) -> Control:
 	var entries: Array = _data.get(kind, [])
 	if entries.is_empty():
 		return _empty("ui.journal.empty." + kind)
-	var h := Kit.hbox(40)
-	var left_scroll := _scroll()
-	left_scroll.custom_minimum_size.x = 470
-	h.add_child(left_scroll)
-	var list := Kit.vbox(4)
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_scroll.add_child(list)
-	var vsep := ColorRect.new()
-	vsep.color = Color("b0aa93")
-	vsep.custom_minimum_size.x = 3
-	vsep.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	h.add_child(vsep)
-	var detail := Kit.vbox(16)
-	detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	h.add_child(detail)
+	# list | scrolling detail with the „Ansehen“ row pinned below it (_list_split): a long record (Lindner's card,
+	# the tube slip) scrolls inside the sheet instead of pushing the sheet off the screen, also at 150 % text
+	var parts := _list_split(470.0)
+	var h: HBoxContainer = parts[0]
+	var list: VBoxContainer = parts[1]
+	var detail: VBoxContainer = parts[2]
+	detail.add_theme_constant_override("separation", 16)
 	var first: Button = null
 	for e in entries:
 		var b := Kit.button(str(e["name"]), "PaperListButton")
@@ -438,12 +447,20 @@ func _build_list_detail(kind: String) -> Control:
 func _show_detail(detail: VBoxContainer, kind: String, e: Dictionary) -> void:
 	for c in detail.get_children():
 		c.queue_free()
+	var act := _actions_of(detail)
+	var sc := detail.get_parent() as ScrollContainer
+	if sc != null:
+		sc.scroll_vertical = 0
 	if kind == "evidence":
 		var doc := Kit.doc_for_item(str(e["id"]))
 		var t2 := Kit.optional_tex(Kit.DOCS_DIR + doc + ".png") if doc != "" else null
+		if t2 == null:
+			t2 = Kit.optional_tex("res://assets/ui/board/thumbs/%s.png" % str(e["id"]))   # a clue without a document
 		if t2 != null:
+			# x2 while it fits; at 125 / 150 % text a tall picture drops to x1 so the text starts on the first screen
 			var s := 2
-			while s > 1 and (t2.get_width() * s > 640 or t2.get_height() * s > 330):
+			while s > 1 and (t2.get_width() * s > 640 or t2.get_height() * s > 330
+					or (Kit.text_scale() > 1.01 and t2.get_height() * s > 240)):
 				s -= 1
 			var img := Kit.pixel_image(t2, s)
 			img.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -465,7 +482,10 @@ func _show_detail(detail: VBoxContainer, kind: String, e: Dictionary) -> void:
 		var b := Kit.button(Kit.t("ui.journal.view"), "", 220)
 		b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 		b.pressed.connect(_inspect.bind(str(e["id"])))
-		detail.add_child(b)
+		if act != null:
+			act.add_child(b)
+		else:
+			detail.add_child(b)
 	else:
 		var row := Kit.hbox(28)
 		detail.add_child(row)
@@ -620,10 +640,11 @@ func _sides_in_story_order() -> Array:
 	return out
 
 
-func _list_split() -> Array:
+func _list_split(list_w := 560.0) -> Array:
 	var h := Kit.hbox(40)
+	h.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var left_scroll := _scroll()
-	left_scroll.custom_minimum_size.x = 560
+	left_scroll.custom_minimum_size.x = list_w
 	h.add_child(left_scroll)
 	var list := Kit.vbox(4)
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1127,6 +1148,197 @@ func _show_card_detail(detail: VBoxContainer, c: Dictionary) -> void:
 func _read_card(card_id: String) -> void:
 	if ui_root != null and ui_root.get("discovery") != null:
 		ui_root.discovery.open_cards([card_id])
+
+
+# ================================================================ „Akte“ (round 9, §12.12)
+## The eighth tab: the round-1 paper tab turned 90° (assets/ui/board/vtab_*.png), standing out of the sheet's
+## right edge, its label reading upwards like a file spine.
+func _make_board_tab() -> Button:
+	var b := Button.new()
+	b.name = "BoardTab"
+	b.toggle_mode = true
+	b.button_group = _group
+	b.focus_mode = Control.FOCUS_ALL
+	b.mouse_filter = Control.MOUSE_FILTER_STOP
+	var styles := {"normal": "normal", "hover": "hover", "pressed": "pressed", "hover_pressed": "pressed",
+		"focus": "focus", "disabled": "normal"}
+	for st in styles:
+		var sb := StyleBoxTexture.new()
+		sb.texture = Kit.optional_tex(VTAB_DIR + "vtab_%s.png" % styles[st])
+		sb.texture_margin_left = 6
+		sb.texture_margin_top = 12
+		sb.texture_margin_right = 12
+		sb.texture_margin_bottom = 12
+		b.add_theme_stylebox_override(st, sb)
+	b.pressed.connect(show_tab.bind("board"))
+	add_child(b)
+	# the label borrows the paper tab's font and colours (theme type PaperTabButton), turned to read upwards
+	_vtab_label = Kit.label(Kit.t("ui.journal.tab.board").to_upper().replace("ß", "SS"), "PaperTabButton")
+	_vtab_label.add_theme_stylebox_override("normal", StyleBoxEmpty.new())   # not the tab frame a second time
+	_vtab_label.rotation = -PI * 0.5
+	b.add_child(_vtab_label)
+	b.toggled.connect(_vtab_style.unbind(1))
+	for sig in [b.mouse_entered, b.mouse_exited, b.focus_entered, b.focus_exited]:
+		sig.connect(_vtab_style)
+	return b
+
+
+func _vtab_style() -> void:
+	var b: Button = _tab_buttons.get("board")
+	if b == null or _vtab_label == null:
+		return
+	var col := "font_color"
+	if b.button_pressed:
+		col = "font_pressed_color"
+	elif b.has_focus() or b.is_hovered():
+		col = "font_hover_color"
+	_vtab_label.add_theme_color_override("font_color", b.get_theme_color(col, "PaperTabButton"))
+	var ts := _vtab_label.get_combined_minimum_size()
+	b.custom_minimum_size = Vector2(ceilf(ts.y) + 27.0, ceilf(ts.x) + 60.0)
+	b.size = b.custom_minimum_size
+	_vtab_label.position = Vector2(12.0, ceilf(ts.x) + 30.0)
+
+
+## Keeps the divider on the sheet's right edge (3 px over the paper), a little below its top.
+func _place_board_tab() -> void:
+	var b: Button = _tab_buttons.get("board")
+	if b == null or _sheet == null or not _sheet.is_inside_tree():
+		return
+	var r := _sheet.get_global_rect()
+	var me := get_global_rect().position
+	b.position = Vector2(r.end.x - 3.0, r.position.y + 36.0) - me
+
+
+## Cover page of the file: folder with the places, counters, „Pinnwand öffnen“; the running summary on the right.
+func _build_board_cover() -> Control:
+	var script: Script = load(BOARD_SCRIPT)
+	var m: Dictionary = script.live_model()
+	var h := Kit.hbox(54)
+	var left := Kit.vbox(18)
+	left.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	h.add_child(left)
+	var fold := Control.new()
+	fold.custom_minimum_size = Vector2(372, 258)
+	fold.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var ft := TextureRect.new()
+	ft.texture = Kit.optional_tex(VTAB_DIR + "folder.png")
+	ft.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	ft.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fold.add_child(ft)
+	var ftitle := Kit.label(Kit.t("board.title"), "DimLabel", 22)
+	ftitle.add_theme_color_override("font_color", Kit.C_INK)
+	ftitle.position = Vector2(39, 72)
+	fold.add_child(ftitle)
+	# the cities on the folder's label strip, each once („Karsk · Güterbahnhof“ and „Karsk“ are one city), clipped
+	# with an ellipsis to the strip (clip_text before size: else the label keeps the text's own width)
+	var fplaces := Kit.label(" · ".join(board_cities(m)), "DimLabel", 17)
+	fplaces.add_theme_color_override("font_color", Kit.C_INK_B)
+	fplaces.clip_text = true
+	fplaces.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	fplaces.position = Vector2(39, 105)
+	fplaces.size = Vector2(210, 24)
+	fold.add_child(fplaces)
+	left.add_child(fold)
+	var threads: int = (m.get("threads", []) as Array).size()
+	var cnt := Kit.wrap_label(Kit.t("board.count.items", {"n": m.get("owned", 0), "total": m.get("total", 0)}) + "\n"
+		+ Kit.t("board.count.threads", {"k": threads}), "TypeDim")
+	cnt.custom_minimum_size.x = 372
+	Kit.scalable(cnt, 23)
+	left.add_child(cnt)
+	var b := Kit.button(Kit.t("board.open"), "", 300)
+	b.name = "OpenBoard"
+	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	b.pressed.connect(open_board)
+	left.add_child(b)
+	if is_open:
+		b.grab_focus.call_deferred()
+	var right := Kit.vbox(12)
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	h.add_child(right)
+	right.add_child(Kit.label(Kit.t("board.summary.title").to_upper().replace("ß", "SS"), "PaperKicker"))
+	var mem: String = str(m.get("memory_scene", ""))
+	if mem != "":
+		var stamp := Kit.wrap_label(_board_memory_line(mem).to_upper().replace("ß", "SS"), "StampLabel")
+		Kit.scalable(stamp, 21)
+		right.add_child(stamp)
+		var then := Kit.wrap_label(Kit.t("board.memory.note"), "DimLabel")
+		Kit.scalable(then, 22)
+		then.add_theme_color_override("font_color", Kit.C_INK_DIM)
+		right.add_child(then)
+	var s := _scroll()
+	right.add_child(s)
+	var v := Kit.vbox(14)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	s.add_child(v)
+	# the cover opens on the newest lines of the summary (mouse wheel / the board's sheet for the older ones)
+	var vb := s.get_v_scroll_bar()
+	vb.changed.connect(func() -> void: s.scroll_vertical = int(vb.max_value))
+	var entries: Array = m.get("summary", [])
+	if entries.is_empty():
+		var e := Kit.wrap_label(Kit.t("board.cover.empty") + " " + Kit.t("board.summary.empty"), "TypeDim")
+		Kit.scalable(e, 25)
+		v.add_child(e)
+	for i in entries.size():
+		var row := Kit.hbox(14)
+		var num := Kit.label("%d." % (i + 1), "TypeDim")
+		Kit.scalable(num, 24)
+		num.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		if i == entries.size() - 1:
+			num.add_theme_color_override("font_color", Kit.C_STAMP)
+		row.add_child(num)
+		var l := Kit.wrap_label(Kit.t(str(entries[i]["text_key"])), "TypeLabel")
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		Kit.scalable(l, 25)
+		row.add_child(l)
+		v.add_child(row)
+	return h
+
+
+## The known places of the board model as cities, each once, in board order: the part of a place title before
+## " · " („Karsk · Güterbahnhof“ → „Karsk“).
+static func board_cities(model: Dictionary) -> Array:
+	var out: Array = []
+	for g in model.get("places", []):
+		if not (g is Dictionary) or not g.get("known", false) or str(g.get("title_key", "")) == "":
+			continue
+		var city := Kit.t(str(g["title_key"])).split(" · ")[0].strip_edges()
+		if city != "" and not out.has(city):
+			out.append(city)
+	return out
+
+
+func _board_memory_line(scene: String) -> String:
+	var g := Kit.svc("Game")
+	var info = g.memory_info() if g != null and g.has_method("memory_info") else {}
+	var place := str(info.get("place", "")) if info is Dictionary else ""
+	var date := str(info.get("date", "")) if info is Dictionary else ""
+	if place == "":
+		place = Kit.t("ui.memories.place." + scene) if Kit.has_key("ui.memories.place." + scene) else scene
+	if date == "" and Kit.has_key("ui.memories.date." + scene):
+		date = Kit.t("ui.memories.date." + scene)
+	return Kit.t("board.memory.stamp", {"place": place, "date": date})
+
+
+## The EvidenceBoard, instanced once: under UIRoot when there is one (its modal stack moves it), else beside the
+## journal (tests, previews).
+func board_node() -> Control:
+	if board != null and is_instance_valid(board):
+		return board
+	board = (load(BOARD_SCENE) as PackedScene).instantiate() as Control
+	board.name = "EvidenceBoard"
+	var host: Node = ui_root if ui_root != null else get_parent()
+	if host == null:
+		host = self
+	host.add_child(board)
+	if ui_root != null and ui_root.get("toast_layer") != null:
+		ui_root.move_child(board, (ui_root.toast_layer as Node).get_index())
+	board.set("ui_root", ui_root)
+	return board
+
+
+func open_board() -> void:
+	Kit.ui_sound("confirm")
+	board_node().open()
 
 
 # ================================================================ input

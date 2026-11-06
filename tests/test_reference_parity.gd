@@ -86,7 +86,8 @@ func _fixture_current() -> bool:
 	return true
 
 
-## Every slice combination (a1 × m1) × every Chapter-3 option (c3a × c3b × c3d × c3g) × skip/play.
+## Every slice combination (a1 × m1) × every Chapter-3 option (c3a × c3b × c3d × c3g) × the Chapter-4 decision (c4d)
+## × skip/play.
 func _routes() -> bool:
 	var g0 := kit.story()
 	var expected := {}
@@ -96,12 +97,13 @@ func _routes() -> bool:
 				for b in g0.choices_for("c3b_choose"):
 					for d in g0.choices_for("c3d_choose"):
 						for q in g0.choices_for("c3g_choose"):
-							for mode in ["play", "skip"]:
-								expected["|".join([a["id"], m["id"], c["id"], b["id"], d["id"], q["id"], mode])] = true
+							for k in g0.choices_for("c4d_choose"):
+								for mode in ["play", "skip"]:
+									expected["|".join([a["id"], m["id"], c["id"], b["id"], d["id"], q["id"], k["id"], mode])] = true
 	kit.eq(_sorted_keys(fx["routes"]), _sorted_keys(expected), "route keys cover every option of every choice × skip/play (%d)" % expected.size())
 	for key in fx["routes"]:
 		var p: PackedStringArray = (key as String).split("|")
-		var g := kit.play_verified_route(p[0], p[1], p[6] == "skip", p[2], p[3], p[4], p[5])
+		var g := kit.play_verified_route(p[0], p[1], p[7] == "skip", p[2], p[3], p[4], p[5], p[6])
 		kit.eq(g.save_json(), fx["routes"][key], "route %s" % key)
 		g.free()
 	return true

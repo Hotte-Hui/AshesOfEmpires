@@ -1,0 +1,393 @@
+{
+ "scene": "L_C4_TunnelsA / L_C4_TunnelsB",
+ "palette": "tunnels",
+ "generator": "tools/pixelgen/env_c4_tunnels_docs.py",
+ "date": "2026-11-06",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Only the story-critical figures are legible; the UI shows the item name/description as HD text and the alt text (data/locale/de_env_karsk_tunnels.json) as the German caption line. All rects are [x, y, w, h] in document pixels. The card perforation (pitch 6, hole 3, first hole 8 px below the top edge, 15 holes) is the shared contract of both halves of card No. 0417 (German half: berlin_annex, mirrored on its right edge).",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_book_gap.png",
+   "size": [
+    240,
+    160
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_book_gap",
+   "alt_key": "doc.karsk_tunnels_book_gap.alt",
+   "item_id": "ev_c4_book_gap",
+   "objective": "c4a_inspect_shelf",
+   "hotspot": "book_shelf",
+   "title_key": "item.c4_book_gap.name",
+   "description_key": "item.c4_book_gap.description",
+   "describes": "The freight book shelf: three volumes missing (January 1964, decades I–III); the board is clean where they stood, the neighbour leans into the gap; on the board a slip in Lev's hand, У Л. С. – на просмотр.",
+   "marks": {
+    "gap": {
+     "rect": [
+      92,
+      92,
+      60,
+      58
+     ],
+     "text": "drei Bände fehlen: Januar 1964, I–III"
+    },
+    "slip": {
+     "rect": [
+      102,
+      134,
+      44,
+      14
+     ],
+     "text": "Bei L. S. – zur Durchsicht."
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_freight_book.png",
+   "size": [
+    320,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_freight_book",
+   "alt_key": "doc.karsk_tunnels_freight_book.alt",
+   "item_id": "ev_c4_cut_signatures",
+   "objective": "c4a_inspect_book",
+   "hotspot": "desk_book",
+   "title_key": "item.c4_cut_signatures.name",
+   "description_key": "item.c4_cut_signatures.description",
+   "describes": "Lev's January freight book open on the desk: columns date, wagon, destination, approved by, remark. In the rows 14.01 (C-17/41), 21.01 (C-17/42) and 28.01 (C-17/43), destination Kordon-17, the signature in the column РАЗРЕШИЛ is cut out with a blade; beside each the same remark ОТД. Т – УСТНО.",
+   "marks": {
+    "cut_14": {
+     "rect": [
+      168,
+      62,
+      50,
+      11
+     ],
+     "text": "14.01 – C-17/41 – Unterschrift herausgeschnitten"
+    },
+    "note_14": {
+     "rect": [
+      228,
+      64,
+      68,
+      7
+     ],
+     "text": "Abt. T – mündlich"
+    },
+    "cut_21": {
+     "rect": [
+      168,
+      107,
+      50,
+      11
+     ],
+     "text": "21.01 – C-17/42 – Unterschrift herausgeschnitten"
+    },
+    "note_21": {
+     "rect": [
+      228,
+      109,
+      68,
+      7
+     ],
+     "text": "Abt. T – mündlich"
+    },
+    "cut_28": {
+     "rect": [
+      168,
+      152,
+      50,
+      11
+     ],
+     "text": "28.01 – C-17/43 – Unterschrift herausgeschnitten"
+    },
+    "note_28": {
+     "rect": [
+      228,
+      154,
+      68,
+      7
+     ],
+     "text": "Abt. T – mündlich"
+    },
+    "column": {
+     "rect": [
+      162,
+      14,
+      62,
+      12
+     ],
+     "text": "Spalte „Genehmigt“ (РАЗРЕШИЛ)"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_carbon.png",
+   "size": [
+    300,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_carbon",
+   "alt_key": "doc.karsk_tunnels_carbon.alt",
+   "item_id": "ev_c4_carbon",
+   "objective": "c4a_inspect_carbon",
+   "hotspot": "lamp_table",
+   "title_key": "item.c4_carbon.name",
+   "description_key": "item.c4_carbon.description",
+   "describes": "Three carbon copies of freight bills fanned on the glowing glass of the light box. Where the signature was cut out of the original, the carbon keeps the pressure of the pen: light against the lamp, three times the same hand, Ю. АРХИПОВ, полковник, transport department.",
+   "marks": {
+    "signature": {
+     "rect": [
+      122,
+      136,
+      108,
+      26
+     ],
+     "text": "Ju. Archipov, Oberst, Transportabteilung (Druckspur)"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_plan.png",
+   "size": [
+    320,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_plan",
+   "alt_key": "doc.karsk_tunnels_plan.alt",
+   "item_id": "ev_c4_tunnel_plan",
+   "objective": "c4a_talk_tunnel",
+   "hotspot": "lev_cellar",
+   "title_key": "item.c4_tunnel_plan.name",
+   "description_key": "item.c4_tunnel_plan.description",
+   "describes": "An air-raid plan of 1941 on linen: service tunnel No. 3 runs from the freight office cellar (shelter) under the whole freight yard and ends at a track without a number; someone has traced the route in pencil and circled the end.",
+   "marks": {
+    "route": {
+     "rect": [
+      64,
+      108,
+      216,
+      44
+     ],
+     "text": "Dienststollen 3, mit Bleistift nachgezogen"
+    },
+    "end": {
+     "rect": [
+      256,
+      132,
+      54,
+      30
+     ],
+     "text": "Gleis ohne Nummer"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_tracks.png",
+   "size": [
+    240,
+    160
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_tracks",
+   "alt_key": "doc.karsk_tunnels_tracks.alt",
+   "item_id": "ev_c4_fresh_tracks",
+   "objective": "c4a_open_door",
+   "hotspot": "tunnel_door",
+   "title_key": "item.c4_fresh_tracks.name",
+   "description_key": "item.c4_fresh_tracks.description",
+   "describes": "Behind the iron door: the rails of the tunnel run into the dark, their tops polished bright; the dust beside them is trodden by many boots; on the steel threshold a drop of red-brown paint, still soft.",
+   "marks": {
+    "rails": {
+     "rect": [
+      40,
+      40,
+      160,
+      120
+     ],
+     "text": "blank gefahrene Schienen"
+    },
+    "paint": {
+     "rect": [
+      146,
+      149,
+      10,
+      7
+     ],
+     "text": "ein Tropfen rotbraune Farbe, noch weich"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_card_ru.png",
+   "size": [
+    240,
+    160
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_card_ru",
+   "alt_key": "doc.karsk_tunnels_card_ru.alt",
+   "item_id": "ev_c4_card_ru",
+   "objective": "c4c_inspect_card",
+   "hotspot": "office_desk",
+   "title_key": "item.c4_card_ru.name",
+   "description_key": "item.c4_card_ru.description",
+   "describes": "The Russian half of registry card No. 0417, perforated along its left edge: Kovalenko, Anna Petrovna, 1926, Kharkov; 1942 taken to Germany; returnee; next: filtration point Karsk. Run C-17/45, the stamp ПРИНЯТЬ in red.",
+   "marks": {
+    "number": {
+     "rect": [
+      156,
+      28,
+      36,
+      9
+     ],
+     "text": "Nr. 0417"
+    },
+    "name": {
+     "rect": [
+      94,
+      42,
+      100,
+      30
+     ],
+     "text": "Kowalenko, Anna Petrowna, 1926, Charkow"
+    },
+    "next": {
+     "rect": [
+      94,
+      97,
+      100,
+      9
+     ],
+     "text": "Weiter: Filtrationspunkt Karsk"
+    },
+    "stamp": {
+     "rect": [
+      120,
+      108,
+      66,
+      18
+     ],
+     "text": "Stempel „ПРИНЯТЬ“"
+    },
+    "run": {
+     "rect": [
+      56,
+      114,
+      30,
+      9
+     ],
+     "text": "C-17/45"
+    }
+   },
+   "card": {
+    "rect": [
+     46,
+     24,
+     152,
+     104
+    ],
+    "perforation": {
+     "pitch": 6,
+     "hole": 3,
+     "first_y": 8,
+     "count": 15,
+     "edge": "left"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_stencils.png",
+   "size": [
+    240,
+    160
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_stencils",
+   "alt_key": "doc.karsk_tunnels_stencils.alt",
+   "item_id": "ev_c4_stencils",
+   "objective": "c4c_inspect_stencils",
+   "hotspot": "paint_stand",
+   "title_key": "item.c4_stencils.name",
+   "description_key": "item.c4_stencils.description",
+   "describes": "Tin stencils on the paint stand, sorted by run: C-17/41 to /44 worn and crusted, C-17/45 still wet; letter stencils in two alphabets; a bucket of red-brown.",
+   "marks": {
+    "wet": {
+     "rect": [
+      12,
+      122,
+      132,
+      22
+     ],
+     "text": "C-17/45, noch nass"
+    },
+    "runs": {
+     "rect": [
+      12,
+      10,
+      132,
+      106
+     ],
+     "text": "C-17/41 bis /44, abgegriffen"
+    },
+    "alphabets": {
+     "rect": [
+      156,
+      12,
+      75,
+      43
+     ],
+     "text": "Schablonen in zwei Alphabeten"
+    },
+    "bucket": {
+     "rect": [
+      156,
+      108,
+      68,
+      52
+     ],
+     "text": "Rotbraun, die Farbe aller Güterwagen"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_tunnels_wagon_inside.png",
+   "size": [
+    300,
+    180
+   ],
+   "display_scale": 3,
+   "id": "karsk_tunnels_wagon_inside",
+   "alt_key": "doc.karsk_tunnels_wagon_inside.alt",
+   "item_id": "ev_c4_wagon_inside",
+   "objective": "c4c_inspect_wagon",
+   "hotspot": "wagon_door",
+   "title_key": "item.c4_wagon_inside.name",
+   "description_key": "item.c4_wagon_inside.description",
+   "describes": "Inside wagon 24 318: two benches of raw boards, a stove hole in the roof with grey light falling in, a bucket. Scratched into the planks: names in two scripts (illegible here), a date 21.1., and below, smaller: WIR SIND 14 / НАС 14.",
+   "marks": {
+    "date": {
+     "rect": [
+      234,
+      82,
+      30,
+      12
+     ],
+     "text": "21.1."
+    },
+    "fourteen": {
+     "rect": [
+      60,
+      90,
+      50,
+      16
+     ],
+     "text": "Wir sind vierzehn."
+    }
+   }
+  }
+ ]
+}

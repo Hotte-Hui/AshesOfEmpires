@@ -1,10 +1,11 @@
 {
- "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Station: open platform (walkable y 262..350): the walkers give way to the player (look-ahead 30 px, side step up to 14 px inside bounds, else they wait and after 3 s turn back), pass the speaking NPCs in front (y >= 318) and pause only away from them.",
+ "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Station: open platform (walkable y 262..350): the walkers give way to the player (look-ahead 30 px, side step up to 14 px inside bounds, else they wait and after 3 s turn back), pass the speaking NPCs in front (y >= 318) and pause only away from them. Round 9 (feel pass 2): every walker also has its own rig (walkers/<name>_rig.json/.png/_n.png: the source rows plus walk_front / idle_back / walk_back, used instead of \"sheet\"), walkers step aside for each other and keep their distance.",
  "walkers": [
   {
    "id": "station_traveller_woman",
    "char": "berlin_mother",
    "sheet": "walkers/traveller_woman.png",
+   "rig": "walkers/traveller_woman_rig.json",
    "path": [
     [
      60,
@@ -59,6 +60,7 @@
    "id": "station_traveller_man",
    "char": "berlin_father",
    "sheet": "walkers/traveller_man.png",
+   "rig": "walkers/traveller_man_rig.json",
    "path": [
     [
      1580,
@@ -109,6 +111,7 @@
    "id": "station_porter",
    "char": "porter",
    "sheet": "walkers/porter.png",
+   "rig": "walkers/porter_rig.json",
    "path": [
     [
      452,
@@ -125,6 +128,14 @@
     [
      980,
      306
+    ],
+    [
+     1002,
+     340
+    ],
+    [
+     1150,
+     344
     ]
    ],
    "speed": 21,
@@ -137,6 +148,10 @@
     ],
     "3": [
      2.0,
+     4.5
+    ],
+    "5": [
+     2.5,
      4.5
     ]
    },
@@ -153,7 +168,7 @@
     348
    ],
    "pause_clear": 40,
-   "note": "Veltrava station porter between the luggage cart and the kiosk"
+   "note": "Veltrava station porter between the luggage cart and the kiosk; round 9: crosses the platform toward the front at the kiosk (walk_front / walk_back) to the luggage at the platform edge"
   }
  ]
 }

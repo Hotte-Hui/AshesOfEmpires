@@ -403,17 +403,17 @@
   {
    "path": "assets/environments/veltrava_quay/props/fire_engine.png",
    "generator": "tools/pixelgen/env_c3p2_quay_near.py",
-   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door"
+   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door, the roller-shutter equipment locker behind the cab"
   },
   {
    "path": "assets/environments/veltrava_quay/props/fire_engine_e.png",
    "generator": "tools/pixelgen/env_c3p2_quay_near.py",
-   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door -- emission mask (added unshaded)"
+   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door, the roller-shutter equipment locker behind the cab -- emission mask (added unshaded)"
   },
   {
    "path": "assets/environments/veltrava_quay/props/fire_engine_n.png",
    "generator": "tools/pixelgen/env_c3p2_quay_near.py",
-   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door -- normal map (OpenGL +Y up)"
+   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door, the roller-shutter equipment locker behind the cab -- normal map (OpenGL +Y up)"
   },
   {
    "path": "assets/environments/veltrava_quay/props/trestle.png",

@@ -1,0 +1,25 @@
+{
+ "locale": "de",
+ "area": "c4_dialogue",
+ "strings": {
+  "dlg.c4.lev_01.irina": "Irina Belova hat gesagt, dass Sie kommen. Und dass man Ihnen trauen kann. Das sagt sie selten.",
+  "dlg.c4.lev_01.secrecy": "Um diese Zeit, Morozov, und allein? Wer allein kommt, will etwas, das nicht im Dienstbuch steht.",
+  "dlg.c4.lev_04.swap": "Drei Wagen im Januar, umgebucht ohne Zielbahnhof. In Veltrava hießen sie C-17. Die Liste dazu trägt jetzt ein Deutscher.",
+  "dlg.c4.lev_04.elena": "Drei Wagen im Januar, umgebucht ohne Zielbahnhof. In Veltrava hießen sie C-17. Die Liste dazu hängt in einem Mantel, Marke 27.",
+  "dlg.c4.tun_08.secrecy": "Weil Sie schweigen können, das sieht man. Und weil mein Name in keinem Papier stehen wird, Morozov. In keinem.",
+  "dlg.c4.mar_02.evidence": "Ich will nicht mitfahren. Ich bin Zeichner beim Generalbauamt und sammle, was in keinem Bericht steht. Die Schleife ist neu.",
+  "dlg.c4.mar_02.suspicion": "Ich will nicht mitfahren. Ich bin Zeichner beim Generalbauamt – heute nicht dienstlich. Diese Schleife hier ist neu.",
+  "dlg.c4.mar_04.admit": "Baumaßnahmen, steht im Bescheid. – Nein. Ich habe aufgehört, Bescheide nachzusprechen.",
+  "dlg.c4.mar_12.pocket": "Ich habe den Lageplan für diese Räumungen gezeichnet. Und einen Raum an der Linie. Ich will wissen, wofür.",
+  "dlg.c4.sid_08.split": "Am Dienstag, in diesem Wagen. Pjotr steht auf derselben Liste – ich trage sie bei mir.",
+  "dlg.c4.sid_08.swap": "Am Dienstag, in diesem Wagen. Und Pjotr mit ihr. Seinen Namen trägt jetzt ein Deutscher durch Berlin.",
+  "dlg.c4.sid_08.elena": "Am Dienstag, in diesem Wagen. Und Pjotr mit ihr. Seine Liste hängt in Veltrava in einem Mantel.",
+  "dlg.c4.sid_10.trust": "Dann sammle ich Nummern. Und in Berlin sammelt einer die Karten dazu. Zusammen kann man das zählen, Lev.",
+  "dlg.c4.cnt_03.kessler": "Adler – Herr Kessler hat Sie dem Amt empfohlen. Zuverlässig, schreibt er. Welche Akte?",
+  "dlg.c4.cnt_03.suspicion": "Adler. Nach Ihnen hat Ihr Amt neulich gefragt. Na, Lüftung ist Lüftung. Welche Akte?",
+  "choice.c4d.name_marta.pocket": "Marta Vogels Namen nennen – zu Blatt 7 käme die Akte Lindner, ein Beweis mit Unterschriften, noch vor Dienstag",
+  "choice.c4d.protect_marta.report": "Keinen Namen nennen – ‚Ich habe es auf der Straße gehört.‘ In Veltrava hast du schon einmal jemanden gemeldet",
+  "dlg.c4.react.name_marta": "Vogel, Marta. Straßenbahn, Linie 74 – das finden wir. Danke, Herr Adler. Die Akte Lindner, bitte sehr.",
+  "dlg.c4.react.protect_marta": "Auf der Straße. Dann bleibt die Akte im Schrank, Herr Adler. Kommen Sie wieder, wenn die Straße einen Namen hat."
+ }
+}

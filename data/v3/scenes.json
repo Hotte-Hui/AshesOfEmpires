@@ -98,8 +98,52 @@
       "entry_spawn": "SP_C3_Quay",
       "associated_quest": "q_c3g_snow",
       "exit_on_event": "c3g_completed",
-      "next_scene": "L_X1_Montage",
+      "next_scene": "L_C4_TunnelsA",
       "render_profile": "rp_veltrava_quay"
+    },
+    {
+      "id": "L_C4_TunnelsA",
+      "title_key": "world.c4a.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4_Stairs",
+      "associated_quest": "q_c4a_cellar",
+      "exit_on_event": "c4a_completed",
+      "next_scene": "L_C4_AnnexA",
+      "render_profile": "rp_karsk_cellar"
+    },
+    {
+      "id": "L_C4_AnnexA",
+      "title_key": "world.c4b.title",
+      "protagonist": "konrad",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4_Shelter",
+      "associated_quest": "q_c4b_loop",
+      "exit_on_event": "c4b_completed",
+      "next_scene": "L_C4_TunnelsB",
+      "render_profile": "rp_berlin_dawn"
+    },
+    {
+      "id": "L_C4_TunnelsB",
+      "title_key": "world.c4c.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4_Office",
+      "associated_quest": "q_c4c_siding",
+      "exit_on_event": "c4c_completed",
+      "next_scene": "L_C4_AnnexB",
+      "render_profile": "rp_karsk_tunnel"
+    },
+    {
+      "id": "L_C4_AnnexB",
+      "title_key": "world.c4d.title",
+      "protagonist": "konrad",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C4_Ladder",
+      "associated_quest": "q_c4d_annex",
+      "exit_on_event": "c4d_completed",
+      "next_scene": "L_X1_Montage",
+      "render_profile": "rp_berlin_annex"
     },
     {
       "id": "L_X1_Montage",

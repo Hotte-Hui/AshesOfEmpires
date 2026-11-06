@@ -1,0 +1,14 @@
+{
+ "locale": "de",
+ "area": "karsk_tunnels",
+ "strings": {
+  "doc.karsk_tunnels_book_gap.alt": "Das Regal der Frachtbücher: drei Bände fehlen – Januar 1964, erste bis dritte Dekade. Auf dem leeren Brett ein Zettel in Levs Schrift: „У Л. С. – на просмотр“ (Bei L. S. – zur Durchsicht).",
+  "doc.karsk_tunnels_freight_book.alt": "Das Frachtbuch Januar 1964. Am 14., 21. und 28. Januar – C-17/41, /42, /43 nach Kordon-17 – ist in der Spalte „Разрешил“ (Genehmigt) die Unterschrift sauber herausgeschnitten. Daneben jedes Mal: „Отд. Т – устно“ (Abt. T – mündlich).",
+  "doc.karsk_tunnels_carbon.alt": "Drei Durchschläge gegen die Lampe. Wo oben die Unterschrift fehlt, hat der Stift sich durchgedrückt: „Ю. Архипов, полковник“ – Ju. Archipov, Oberst, Transportabteilung. Dreimal dieselbe Hand.",
+  "doc.karsk_tunnels_plan.alt": "Luftschutzplan von 1941, auf Leinen: Dienststollen 3 führt vom Keller der Güterabfertigung unter dem ganzen Güterbahnhof hindurch und endet an einem Gleis ohne Nummer. Jemand hat den Weg mit Bleistift nachgezogen.",
+  "doc.karsk_tunnels_tracks.alt": "Hinter der Eisentür: Die Schienen sind blank gefahren, der Staub daneben ist zertreten. Auf der Schwelle ein Tropfen rotbraune Farbe, noch weich.",
+  "doc.karsk_tunnels_card_ru.alt": "Karteikarte Nr. 0417, russische Hälfte: „Коваленко Анна Петровна, 1926, Харьков“ – 1942 nach Deutschland verbracht, Rückkehrerin, weiter: Filtrationspunkt Karsk. Stempel „Принять“ (annehmen). Links die Perforation.",
+  "doc.karsk_tunnels_stencils.alt": "Blechschablonen nach Läufen sortiert: C-17/41 bis /44 abgegriffen, C-17/45 noch nass. Daneben Buchstaben in zwei Alphabeten und ein Kübel Rotbraun.",
+  "doc.karsk_tunnels_wagon_inside.alt": "Im Wagen 24 318: zwei Bänke aus rohen Brettern, ein Ofenloch im Dach, ein Eimer. In die Bretter geritzt Namen in zwei Schriften, ein Datum – 21.1. Darunter, kleiner: „Wir sind vierzehn.“"
+ }
+}

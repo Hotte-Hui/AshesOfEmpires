@@ -1,0 +1,66 @@
+{
+ "doc": "Ambient walkers of the night quay (round 9, feel pass 2): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Own rig sheets in walkers/ from tools/pixelgen/walkers_r8.py (colour variants of worker_b, worker_a, clerk, babushka and the conductor -- none of them stands or speaks on the quay; side, front and back walk rows). Side level: every lane is y 295, between the props (base_y <= 294) and the walk band (296-306), so the player and every NPC pass in front. Lanes keep clear of the fire engine (x 258-432), the bench with the file (733-788) and Konrad (800-818), the trestle (1060-1104) and the cars (1106-1422); nobody pauses on a story spot. Two walkers share each of the west promenade and the bridge approach: head-on, the lower rank steps half a pixel back (they pass one behind the other), followers keep their distance.",
+ "walkers": [
+  {
+   "id": "quay_fireman",
+   "char": "worker_b",
+   "rig": "walkers/fireman_rig.json",
+   "path": [[446, 295.0], [560, 295.0], [700, 295.0]],
+   "speed": 17,
+   "start": 0.15,
+   "dir": 1,
+   "pauses": {"0": [2.5, 4.5], "2": [2.0, 3.5]},
+   "end_pause": [2.0, 3.5],
+   "pause_rows": ["look_side", "idle_front"],
+   "note": "a fireman of the Veltrava brigade walks the hose line from the engine toward the lanterns and back"
+  },
+  {
+   "id": "quay_resident",
+   "char": "worker_a",
+   "rig": "walkers/resident_rig.json",
+   "path": [[470, 295.0], [604, 295.0], [690, 295.0]],
+   "speed": 14,
+   "start": 0.85,
+   "dir": -1,
+   "pauses": {"1": [3.0, 5.0]},
+   "pause_rows": ["look_side", "gesture_side", "idle_front"],
+   "note": "a man from the old town in his coat over pyjama trousers, woken by the fire; stops and points at it"
+  },
+  {
+   "id": "quay_clerk",
+   "char": "clerk",
+   "rig": "walkers/clerk_files_rig.json",
+   "path": [[846, 295.0], [936, 295.0], [1022, 295.0]],
+   "speed": 20,
+   "start": 0.4,
+   "dir": 1,
+   "pauses": {"2": [1.5, 3.0]},
+   "pause_rows": ["look_side", "idle_front"],
+   "note": "a commission clerk carrying an armful of rescued folders toward the cars and back for the next"
+  },
+  {
+   "id": "quay_old_woman",
+   "char": "babushka",
+   "rig": "walkers/old_woman_rig.json",
+   "path": [[1452, 295.0], [1640, 295.0], [1860, 295.0]],
+   "speed": 12,
+   "start": 0.1,
+   "dir": 1,
+   "pauses": {"1": [4.0, 6.5]},
+   "pause_rows": ["look_side", "idle_front"],
+   "note": "an old woman in her headscarf on the bridge approach; stops to look back at the fire"
+  },
+  {
+   "id": "quay_policeman",
+   "char": "conductor",
+   "rig": "walkers/policeman_rig.json",
+   "path": [[1466, 295.0], [1700, 295.0], [1880, 295.0]],
+   "speed": 16,
+   "start": 0.9,
+   "dir": -1,
+   "end_pause": [2.0, 4.0],
+   "pause_rows": ["look_side", "idle_front"],
+   "note": "a city policeman (green-grey, not the commission's blue) paces the bridge approach"
+  }
+ ]
+}

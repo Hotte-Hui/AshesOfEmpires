@@ -2,6 +2,11 @@ extends "res://scripts/actors/npc.gd"
 ## NPC whose presence follows the story (Chapter 3+): visible only after `show_after` is complete and until
 ## `hide_after` is complete (objective ids; empty = no limit). Presentation only — the Story engine never
 ## asks NPCs anything. A hidden NPC leaves the "npcs" group so it neither talks nor affects dialogue docking.
+## Inside a memory (§12.10) of a level file shared by several Story scenes (the levels built on
+## scripts/levels/c3p2_archive/registry_level.gd) the live Story does not decide: the NPC reads the level's gated-art
+## rule (objective_done) — only objectives of scenes BEFORE the remembered one count, its own and later ones do not
+## (the cellar memory has Lev at his desk after the whole chapter, the siding memory has him at the siding). A level
+## of one Story scene keeps the live Story (the memory is of a completed scene: who stood there at its end).
 ## §12.11 in-level protagonist switch: Game makes the protagonist who is not controlled a StoryNPC with
 ## `stand_in = true` (idles, turns to the new player, talks when his lines come). walk_to() lets him walk to his
 ## post after the hand-over (walk cycle at the protagonists' 45 px/s, feet planted; a conversation pauses the walk);
@@ -36,8 +41,22 @@ func is_present() -> bool:
 
 
 func _done(oid: String) -> bool:
+	var lvl := _rule_level()
+	if lvl != null and bool(lvl.in_memory()):
+		return bool(lvl.objective_done(oid, false))
 	var st := get_node_or_null("/root/Story")
 	return st != null and st.has_method("objective_state") and str(st.objective_state(oid)) == "complete"
+
+
+## The level this NPC stands in when it carries the gated-art rule (registry_level.gd: in_memory + objective_done),
+## else null. Asked before the level's own _ready (children first): the rule reads its scene chain on first use.
+func _rule_level() -> Node:
+	var n := get_parent()
+	while n != null:
+		if n.has_method("in_memory") and n.has_method("objective_done"):
+			return n
+		n = n.get_parent()
+	return null
 
 
 func _refresh() -> void:

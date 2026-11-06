@@ -57,7 +57,8 @@ DIALOGUES = {d['id']: d for d in V3['dialogue']['conversations']}
 SEQUENCES = V3['cinematics']['sequences']
 FLAGS = V3['flags']['flags']
 PROTAGONISTS = V3['flags']['protagonists']
-C3_QUESTS = [q for q in QUESTS if q['scene'] not in SLICE_SCENES]
+# Chapter 3 only (opening + part 2); Chapter 4 has its own block (tools/docs/gen_quest_db_c4.py, §12)
+C3_QUESTS = [q for q in QUESTS if q['scene'] not in SLICE_SCENES and q['title_key'] == 'ui.chapter_c3']
 C3_SCENES = [q['scene'] for q in C3_QUESTS]
 
 

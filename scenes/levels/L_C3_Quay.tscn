@@ -103,9 +103,18 @@ script = ExtResource("2")
 kind = "chat"
 hotspot_id = "typist_quay"
 explore_id = "veltrava.quay.chat_typist"
+explore_chain = PackedStringArray("veltrava.quay.chat_typist", "veltrava.task.blanket.ask", "veltrava.task.blanket.return")
 npc_id = "typist"
 once = true
 radius = 34.0
+
+[node name="TaskBlanketLocker" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_task_blanket"
+explore_id = "veltrava.task.blanket.locker"
+once = true
+radius = 20.0
 
 [node name="Find_Lantern" type="Node2D" parent="Playfield"]
 script = ExtResource("2")

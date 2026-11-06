@@ -1,10 +1,11 @@
 {
- "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Berlin archive reading room: lane y 295.5 = in front of the furniture (base_y <= 295), behind the walk band (>= 296); the librarian stays behind her desk.",
+ "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Berlin archive reading room: lane y 295.5 = in front of the furniture (base_y <= 295), behind the walk band (>= 296); the librarian stays behind her desk. Round 9 (feel pass 2): every walker also has its own rig (walkers/<name>_rig.json/.png/_n.png: the source rows plus walk_front / idle_back / walk_back, used instead of \"sheet\"), walkers step aside for each other and keep their distance.",
  "walkers": [
   {
    "id": "archive_reader",
    "char": "clerk",
    "sheet": "walkers/reader.png",
+   "rig": "walkers/reader_rig.json",
    "path": [
     [
      572,
@@ -47,6 +48,7 @@
    "id": "archive_student",
    "char": "typist",
    "sheet": "walkers/student.png",
+   "rig": "walkers/student_rig.json",
    "path": [
     [
      650,

@@ -1,0 +1,1487 @@
+{
+ "id": "karsk_tunnels",
+ "palette": "tunnels",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "camera_zones": {
+  "L_C4_TunnelsA": [
+   0,
+   0,
+   720,
+   360
+  ],
+  "L_C4_TunnelsB": [
+   700,
+   0,
+   1220,
+   360
+  ]
+ },
+ "canvas_modulate": "#CFC8BE",
+ "layers": [
+  {
+   "name": "outside",
+   "file": "outside.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "room",
+   "file": "room.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": true
+  },
+  {
+   "name": "veils",
+   "file": "veils.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 10,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "fg_frame",
+   "file": "fg_frame.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "props": [],
+ "decals": [
+  {
+   "name": "plan_taken",
+   "file": "patches/plan_taken.png",
+   "pos": [
+    429,
+    241
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "emission_strength": 0.5,
+   "fade": 0.45,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "after": [
+    "c4a_talk_tunnel"
+   ]
+  },
+  {
+   "name": "door_open",
+   "file": "patches/door_open.png",
+   "pos": [
+    604,
+    222
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.5,
+   "fade": 0.45,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "after": [
+    "c4a_open_door"
+   ]
+  },
+  {
+   "name": "wagon_open",
+   "file": "patches/wagon_open.png",
+   "pos": [
+    1652,
+    190
+   ],
+   "z": -48,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "emission_strength": 0.5,
+   "fade": 0.45,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "after": [
+    "c4c_inspect_wagon"
+   ]
+  },
+  {
+   "name": "insignia_calendar",
+   "file": "patches/insignia_calendar.png",
+   "pos": [
+    337,
+    148
+   ],
+   "z": -49,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "hist_variant": "patches/insignia_calendar_hist.png",
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "insignia_lever_plate",
+   "file": "patches/insignia_lever_plate.png",
+   "pos": [
+    1068,
+    275
+   ],
+   "z": -49,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "hist_variant": "patches/insignia_lever_plate_hist.png",
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "insignia_wagon",
+   "file": "patches/insignia_wagon.png",
+   "pos": [
+    1629,
+    225
+   ],
+   "z": -49,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "hist_variant": "patches/insignia_wagon_hist.png",
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "snow_win_0",
+   "file": "fx/snow_win_0.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    248,
+    84
+   ],
+   "z": -55,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "normal": false
+  },
+  {
+   "name": "snow_win_1",
+   "file": "fx/snow_win_1.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    424,
+    84
+   ],
+   "z": -55,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "normal": false
+  },
+  {
+   "name": "feet_win",
+   "file": "fx/feet_win.png",
+   "frames": 96,
+   "fps": 8,
+   "pos": [
+    424,
+    84
+   ],
+   "z": -56,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "normal": false
+  },
+  {
+   "name": "stove_vents",
+   "file": "fx/stove_vents.png",
+   "frames": 8,
+   "fps": 5,
+   "pos": [
+    570,
+    259
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "emission": true,
+   "emission_strength": 0.6,
+   "normal": false
+  },
+  {
+   "name": "clock_pendulum",
+   "file": "fx/clock_pendulum.png",
+   "frames": 12,
+   "fps": 6,
+   "pos": [
+    314,
+    173
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "normal": false
+  },
+  {
+   "name": "kerosene_flame",
+   "file": "fx/kerosene_flame.png",
+   "frames": 8,
+   "fps": 6,
+   "pos": [
+    1337,
+    240
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "emission": true,
+   "emission_strength": 0.6,
+   "normal": false
+  },
+  {
+   "name": "brazier_embers",
+   "file": "fx/brazier_embers.png",
+   "frames": 12,
+   "fps": 5,
+   "pos": [
+    1816,
+    262
+   ],
+   "z": -45,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "emission": true,
+   "emission_strength": 0.6,
+   "normal": false
+  }
+ ],
+ "lights": [
+  {
+   "name": "office_door",
+   "pos": [
+    10,
+    204
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 120,
+   "height": 14,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "green_lamp",
+   "pos": [
+    374,
+    242
+   ],
+   "color": "#F0C487",
+   "energy": 0.55,
+   "radius": 120,
+   "height": 10,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "green_shade",
+   "pos": [
+    374,
+    232
+   ],
+   "color": "#B8D49A",
+   "energy": 0.2,
+   "radius": 40,
+   "height": 4,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "lightbox",
+   "pos": [
+    521,
+    250
+   ],
+   "color": "#E8E4DA",
+   "energy": 0.45,
+   "radius": 70,
+   "height": 4,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "lightbox_lens",
+   "pos": [
+    521,
+    260
+   ],
+   "color": "#F0C487",
+   "energy": 0.2,
+   "radius": 40,
+   "height": 6,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "stove",
+   "pos": [
+    581,
+    264
+   ],
+   "color": "#F2B060",
+   "energy": 0.5,
+   "radius": 100,
+   "height": 6,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "flicker_slow": 0.18,
+   "flicker_hz": 1.3
+  },
+  {
+   "name": "cage_782",
+   "pos": [
+    782,
+    169
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 110,
+   "height": 12,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "cage_902",
+   "pos": [
+    902,
+    169
+   ],
+   "color": "#F0C487",
+   "energy": 0.5,
+   "radius": 110,
+   "height": 12,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "cage_1142",
+   "pos": [
+    1142,
+    169
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 110,
+   "height": 12,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "flicker_slow": 0.32,
+   "flicker_hz": 0.8
+  },
+  {
+   "name": "airlock_warm",
+   "pos": [
+    730,
+    250
+   ],
+   "color": "#F0C487",
+   "energy": 0.35,
+   "radius": 90,
+   "height": 8,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "work_left",
+   "pos": [
+    1432,
+    136
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.4,
+   "radius": 200,
+   "height": 30,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "work_right",
+   "pos": [
+    1812,
+    136
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 180,
+   "height": 30,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "kerosene",
+   "pos": [
+    1339,
+    244
+   ],
+   "color": "#F2B060",
+   "energy": 0.6,
+   "radius": 90,
+   "height": 10,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "flicker_slow": 0.12,
+   "flicker_hz": 1.6
+  },
+  {
+   "name": "portal_dawn",
+   "pos": [
+    1903,
+    230
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.4,
+   "radius": 130,
+   "height": 4,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "shunt_blue",
+   "pos": [
+    1858,
+    274
+   ],
+   "color": "#8FA8C8",
+   "energy": 0.25,
+   "radius": 36,
+   "height": 4,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "brazier",
+   "pos": [
+    1826,
+    262
+   ],
+   "color": "#F2B060",
+   "energy": 0.35,
+   "radius": 70,
+   "height": 10,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "flicker_slow": 0.2,
+   "flicker_hz": 1.1
+  },
+  {
+   "name": "hang_lamp",
+   "pos": [
+    196,
+    153
+   ],
+   "color": "#F0C487",
+   "energy": 0.3,
+   "radius": 110,
+   "height": 18,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "bulb_wagon",
+   "pos": [
+    1646,
+    153
+   ],
+   "color": "#E8E4DA",
+   "energy": 0.45,
+   "radius": 150,
+   "height": 26,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [],
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "door_cold",
+   "pos": [
+    668,
+    282
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.3,
+   "radius": 70,
+   "height": 6,
+   "flicker": 0.0,
+   "on_layer": "playfield",
+   "after": [
+    "c4a_open_door"
+   ],
+   "fade": 0.6,
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  }
+ ],
+ "fx": [
+  {
+   "name": "samovar_steam",
+   "file": "fx/samovar_steam.png",
+   "frames": 16,
+   "fps": 6,
+   "pos": [
+    464,
+    201
+   ],
+   "z": -20,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "dust_lamp",
+   "file": "fx/dust_lamp.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    344,
+    240
+   ],
+   "z": 12,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "dust_hang",
+   "file": "fx/dust_hang.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    161,
+    158
+   ],
+   "z": 12,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "drip_0",
+   "file": "fx/drip_0.png",
+   "frames": 30,
+   "fps": 10,
+   "pos": [
+    841,
+    148
+   ],
+   "z": -30,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "drip_1",
+   "file": "fx/drip_1.png",
+   "frames": 36,
+   "fps": 10,
+   "pos": [
+    963,
+    148
+   ],
+   "z": -30,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "drip_2",
+   "file": "fx/drip_2.png",
+   "frames": 42,
+   "fps": 10,
+   "pos": [
+    1157,
+    148
+   ],
+   "z": -30,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "drip_3",
+   "file": "fx/drip_3.png",
+   "frames": 30,
+   "fps": 10,
+   "pos": [
+    1413,
+    86
+   ],
+   "z": -30,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "drip_4",
+   "file": "fx/drip_4.png",
+   "frames": 36,
+   "fps": 10,
+   "pos": [
+    1755,
+    86
+   ],
+   "z": -30,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "steam_flange",
+   "file": "fx/steam_flange.png",
+   "frames": 16,
+   "fps": 7,
+   "pos": [
+    1178,
+    152
+   ],
+   "z": -20,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "booth_smoke",
+   "file": "fx/booth_smoke.png",
+   "frames": 16,
+   "fps": 5,
+   "pos": [
+    1372,
+    122
+   ],
+   "z": -20,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "dust_bulb",
+   "file": "fx/dust_bulb.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    1601,
+    160
+   ],
+   "z": 12,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "dust_work",
+   "file": "fx/dust_work.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    1412,
+    140
+   ],
+   "z": 12,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "snow_gate",
+   "file": "fx/snow_gate.png",
+   "frames": 24,
+   "fps": 10,
+   "pos": [
+    1836,
+    266
+   ],
+   "z": -20,
+   "lit": false,
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "type": "anim_sprite",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  }
+ ],
+ "swing": [
+  {
+   "name": "hang_lamp",
+   "file": "fx/hang_lamp.png",
+   "frames": 7,
+   "rest": 3,
+   "pos": [
+    188,
+    46
+   ],
+   "z": -30,
+   "emission": true,
+   "emission_strength": 0.7,
+   "light": "hang_lamp",
+   "max_px": 3,
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "bulb_wagon",
+   "file": "fx/bulb_wagon.png",
+   "frames": 7,
+   "rest": 3,
+   "pos": [
+    1639,
+    38
+   ],
+   "z": -30,
+   "emission": true,
+   "emission_strength": 0.7,
+   "light": "bulb_wagon",
+   "max_px": 3,
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  }
+ ],
+ "event_fx": [
+  {
+   "name": "dust_fall_0",
+   "file": "fx/dust_fall_0.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    140,
+    0
+   ],
+   "z": 14,
+   "delay": 0.0,
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "dust_fall_1",
+   "file": "fx/dust_fall_1.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    430,
+    0
+   ],
+   "z": 14,
+   "delay": 0.35,
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "dust_fall_2",
+   "file": "fx/dust_fall_2.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    610,
+    0
+   ],
+   "z": 14,
+   "delay": 0.7,
+   "scene": [
+    "L_C4_TunnelsA"
+   ]
+  },
+  {
+   "name": "dust_fall_3",
+   "file": "fx/dust_fall_3.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    790,
+    116
+   ],
+   "z": 14,
+   "delay": 0.0,
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "dust_fall_4",
+   "file": "fx/dust_fall_4.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    1010,
+    116
+   ],
+   "z": 14,
+   "delay": 0.35,
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "dust_fall_5",
+   "file": "fx/dust_fall_5.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    1370,
+    30
+   ],
+   "z": 14,
+   "delay": 0.7,
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "dust_fall_6",
+   "file": "fx/dust_fall_6.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    1540,
+    30
+   ],
+   "z": 14,
+   "delay": 0.0,
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  },
+  {
+   "name": "dust_fall_7",
+   "file": "fx/dust_fall_7.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    1720,
+    30
+   ],
+   "z": 14,
+   "delay": 0.35,
+   "scene": [
+    "L_C4_TunnelsB"
+   ]
+  }
+ ],
+ "train": {
+  "file": "fx/train_top.png",
+  "y": -10,
+  "z": -45,
+  "from_x": 1940,
+  "to_x": -44,
+  "seconds": 7.0,
+  "scene": [
+   "L_C4_TunnelsB"
+  ]
+ },
+ "walkable": [
+  [
+   18,
+   296
+  ],
+  [
+   1902,
+   296
+  ],
+  [
+   1902,
+   306
+  ],
+  [
+   18,
+   306
+  ]
+ ],
+ "blockers": [
+  {
+   "name": "cellar_door",
+   "rect": [
+    700,
+    270,
+    20,
+    60
+   ],
+   "note": "the iron tunnel door wall: always shut for walking; LS_C4_Number carries Alexei through"
+  }
+ ],
+ "spawns": {
+  "SP_C4_Stairs": [
+   48,
+   300
+  ],
+  "SP_C4_Office": [
+   1322,
+   300
+  ]
+ },
+ "hotspots": {
+  "book_shelf": [
+   184,
+   300
+  ],
+  "desk_book": [
+   372,
+   300
+  ],
+  "lev_cellar": [
+   428,
+   300
+  ],
+  "lamp_table": [
+   520,
+   300
+  ],
+  "tunnel_door": [
+   664,
+   300
+  ],
+  "office_desk": [
+   1346,
+   300
+  ],
+  "paint_stand": [
+   1468,
+   300
+  ],
+  "wagon_side": [
+   1590,
+   300
+  ],
+  "wagon_door": [
+   1680,
+   300
+  ],
+  "lev_siding": [
+   1772,
+   300
+  ]
+ },
+ "zones": {
+  "cellar": [
+   0,
+   700
+  ],
+  "door": [
+   700,
+   720
+  ],
+  "tunnel": [
+   720,
+   1240
+  ],
+  "siding": [
+   1240,
+   1920
+  ]
+ },
+ "npcs": {
+  "lev_cellar": {
+   "char": "lev",
+   "feet": [
+    446,
+    300
+   ],
+   "facing": "left",
+   "hide_after": "c4c_inspect_card"
+  },
+  "lev_siding": {
+   "char": "lev",
+   "feet": [
+    1790,
+    300
+   ],
+   "facing": "left",
+   "show_after": "c4a_open_door"
+  }
+ },
+ "looks": [
+  {
+   "name": "cellar",
+   "scene": [
+    "L_C4_TunnelsA"
+   ],
+   "canvas_modulate": "#CFC8BE",
+   "grade": "tunnels"
+  },
+  {
+   "name": "siding",
+   "scene": [
+    "L_C4_TunnelsB"
+   ],
+   "canvas_modulate": "#BCC3C8",
+   "grade": "tunnels_siding"
+  }
+ ],
+ "hotspot_info": {
+  "book_shelf": {
+   "kind": "story",
+   "stand": [
+    184,
+    300
+   ],
+   "focus": [
+    184,
+    270
+   ],
+   "what": "shelves of freight books; the three January volumes missing, Lev's slip on the empty board",
+   "span": [
+    168,
+    201
+   ]
+  },
+  "desk_book": {
+   "kind": "story",
+   "stand": [
+    372,
+    300
+   ],
+   "focus": [
+    372,
+    270
+   ],
+   "what": "Lev's desk under the green-shaded lamp: the January book open at the column \"Genehmigt\"",
+   "span": [
+    350,
+    394
+   ]
+  },
+  "lev_cellar": {
+   "kind": "story",
+   "stand": [
+    428,
+    300
+   ],
+   "focus": [
+    428,
+    270
+   ],
+   "what": "Lev Sokolov (x 446) at the end of his desk: samovar, two tea glasses, the card index",
+   "span": [
+    342,
+    460
+   ]
+  },
+  "lamp_table": {
+   "kind": "story",
+   "stand": [
+    520,
+    300
+   ],
+   "focus": [
+    520,
+    270
+   ],
+   "what": "the light box made from an old signal lamp, carbon copies on the frosted glass",
+   "span": [
+    500,
+    542
+   ]
+  },
+  "tunnel_door": {
+   "kind": "story",
+   "stand": [
+    664,
+    300
+   ],
+   "focus": [
+    664,
+    270
+   ],
+   "what": "the iron door, sign \"Бомбоубежище - Служебный тоннель №3\" (1941)",
+   "span": [
+    642,
+    696
+   ]
+  },
+  "office_desk": {
+   "kind": "story",
+   "stand": [
+    1346,
+    300
+   ],
+   "focus": [
+    1346,
+    270
+   ],
+   "what": "the siding office counter: card box \"C-17/45 - принять\", the stamp, the kerosene lamp",
+   "span": [
+    1314,
+    1374
+   ]
+  },
+  "paint_stand": {
+   "kind": "story",
+   "stand": [
+    1468,
+    300
+   ],
+   "focus": [
+    1468,
+    270
+   ],
+   "what": "the paint stand: stencils in two alphabets, C-17/41 .. /45, the bucket of red-brown",
+   "span": [
+    1442,
+    1500
+   ]
+  },
+  "wagon_side": {
+   "kind": "story",
+   "stand": [
+    1590,
+    300
+   ],
+   "focus": [
+    1590,
+    270
+   ],
+   "what": "wagon 24 318, left side: the paint layers, the fresh stencil C-17/45 still taped on",
+   "span": [
+    1556,
+    1652
+   ]
+  },
+  "wagon_door": {
+   "kind": "story",
+   "stand": [
+    1680,
+    300
+   ],
+   "focus": [
+    1680,
+    270
+   ],
+   "what": "the sliding door of the wagon, half open: benches, the stove hole in the roof inside",
+   "span": [
+    1652,
+    1706
+   ]
+  },
+  "lev_siding": {
+   "kind": "story",
+   "stand": [
+    1772,
+    300
+   ],
+   "focus": [
+    1772,
+    270
+   ],
+   "what": "Lev (x 1790) at the end of the wagon, keeping watch toward the exit portal",
+   "span": [
+    1736,
+    1800
+   ]
+  }
+ },
+ "gates_doc": "scripts/levels/c4/tunnels_level.gd (extends the registry level): an entry with \"scene\" is built only when the level plays one of those Story scenes (level_id, set before _ready); \"after\" / \"until\" / \"choice\" / \"fade\" are the registry gates (objectives of earlier scenes count as complete). Lights carry an empty \"after\" so they are named and their slow flicker runs. \"swing\" = 7-frame lamp strips (frame \"rest\" at rest) the train event swings, with the named light; \"event_fx\" = strips played once per train (after \"delay\" s); \"train\" = the freight train rolling over the yard above (scene C). camera_zones = the camera window per scene (the walk area of the other scene stays off screen); looks = canvas modulate + grade per scene.",
+ "notes": [
+  "Side view like the registry: feet line y 300, walk band 296-306, x 18-1902; the door wall 700-720 is the permanent blocker cellar_door between scene A (cellar) and scene C (tunnel + siding).",
+  "Readable story figures: wagon side C-17/45 (fresh stencil, still taped) over 47 702 (brushed) over the ghost of C-17/42, enamel plate 24 318 on the solebar, chalk \"ВТ 23.40\" on the door; card box \"C-17/45 / ПРИНЯТЬ\" and the stamp on the siding office counter; stencils C-17/41 .. /45 on the paint stand; the January gap on the 1964 shelf; sign \"Бомбоубежище - Служебный тоннель №3\" over the door.",
+  "Insignia: patches/insignia_*.png (wall calendar, lever-frame plate, wagon stencil) show the fictional gear-and-wheat emblem of Chapter 1; their *_hist twins the hammer and sickle (Symbols.pick).",
+  "No story character is painted into the art; Lev stands at the npcs anchors (cast stream sheet).",
+  "Palette: data/chapters/c4.json palettes.tunnels + the ramps green and concrete of TUN (env_c4_tunnels_kit.py) -- integration note of the env-tunnels stream."
+ ],
+ "meta": {
+  "mode": "side",
+  "feet_y": 300,
+  "generator": "tools/pixelgen/env_c4_tunnels.py",
+  "date": "2026-11-06",
+  "palette_ramps": {
+   "night": [
+    "#07080B",
+    "#0D0F13",
+    "#15171C",
+    "#1E2128"
+   ],
+   "brick": [
+    "#2A1712",
+    "#3E2219",
+    "#563124",
+    "#704332",
+    "#8C5A45"
+   ],
+   "iron": [
+    "#15171C",
+    "#22262D",
+    "#323840",
+    "#464D55",
+    "#5E666E"
+   ],
+   "lamp": [
+    "#5A3216",
+    "#8C5426",
+    "#BA7A3A",
+    "#E0A85A",
+    "#F8D898"
+   ],
+   "wagon": [
+    "#2E140E",
+    "#4A2016",
+    "#68301F",
+    "#86422C",
+    "#A3583C"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "green": [
+    "#1B3033",
+    "#26403F",
+    "#36534D",
+    "#4A675C",
+    "#6C7A62",
+    "#9DAF91"
+   ],
+   "concrete": [
+    "#2A2D2C",
+    "#3B3F3B",
+    "#4F534C",
+    "#666A60",
+    "#7F8275",
+    "#9A9B8B"
+   ]
+  }
+ }
+}

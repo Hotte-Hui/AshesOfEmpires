@@ -45,7 +45,7 @@ hand-defined Veltrava fonts of `env_veltrava_lib.py`.
 | `promenade.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the quay: snow, hydrant and hose lines, tyre tracks, footprints of two men from the hatch to the bench, the balustrade with six lanterns, two snowed-in benches, the bridgehead pylon with the great lantern and the city arms, the ramp wall, tram stop (lines 7 / 12) and shelter with a commission poster, catenary poles and wire |
 | `glow_air.png` | env_c3p2_quay_near.py | soft additive halos (lanterns, fire windows, headlight), alpha in dithered steps |
 | `fg.png` | env_c3p2_quay_near.py | low dark snow banks and bollards along the bottom edge (p 1.25, below y 318) |
-| `props/fire_engine.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, FEUERWEHR lettering, the city arms on the door |
+| `props/fire_engine.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, FEUERWEHR lettering, the city arms on the door; a framed roller-shutter equipment locker behind the cab (round 9: the blanket task) |
 | `props/car_reich.png`, `props/car_reich_hist.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the German delegation car with its fender pennant (neutral / historical) |
 | `props/car_ussr.png`, `props/car_ussr_hist.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the Soviet delegation car with its fender pennant (neutral / historical) |
 | `props/bench_file.png` (+ `_n`) | env_c3p2_quay_near.py | the bench at x 760: the file burst open, two fans of sheets, the red C-17 tag and its string, sheets in the snow, soot smudges |

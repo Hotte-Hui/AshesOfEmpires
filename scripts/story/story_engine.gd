@@ -36,7 +36,8 @@ const DATA_FILES := ["flags", "quests", "items", "scenes", "dialogue", "puzzles"
 	"reference_manifest"]
 const OBJECTIVE_TYPES := ["inspect", "dialogue", "puzzle", "choice"]
 const LOCKED_CINEMATICS := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close",
-	"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]
+	"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves",
+	"LS_C4_Homeward", "LS_C4_Number", "LS_C4_Card", "LS_C4_Stamp", "LS_C4_Voices"]   # Chapter 4 part 1 (C4_DESIGN §2.9)
 ## Hard-coded in the Python reference as well (finale()).
 const FINALE_SCENE := "L_X1_Montage"
 const FINALE_EVENT := "slice_completed"

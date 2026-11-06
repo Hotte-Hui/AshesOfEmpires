@@ -662,12 +662,15 @@ def make_concourse(E):
     L.rect(nx - 2, ny - 2, 76, 46, CR[0], hgt=0.75)
     L.rect(nx, ny, 72, 42, NI[3], hgt=0.7)
     L.rect(nx + 2, ny + 2, 48, 38, SN[3], hgt=0.68)            # the notice
-    L.rect(nx + 2, ny + 2, 48, 5, SL[2])
-    text(L, nx + 4, ny + 3, 'BÜRO FÜR', SN[4])
-    text(L, nx + 4, ny + 9, 'RÜCKFÜHRUNG', NI[2])
-    text(L, nx + 4, ny + 15, 'БЮРО ВОЗВР.', SL[1])
-    text(L, nx + 4, ny + 21, 'ZIMMER 4', RD[1])
-    for yy in range(ny + 28, ny + 38, 2):
+    # round 9: the umlaut dots sit two rows above the cap line (text()); the lines are spaced so every Ü keeps its
+    # dots on its own line (before, the dots of RÜCKFÜHRUNG landed in the bottom row of BÜRO FÜR) and the header
+    # strip holds its whole line
+    L.rect(nx + 2, ny + 2, 48, 9, SL[2])
+    text(L, nx + 4, ny + 5, 'BÜRO FÜR', SN[4])
+    text(L, nx + 4, ny + 14, 'RÜCKFÜHRUNG', NI[2])
+    text(L, nx + 4, ny + 20, 'БЮРО ВОЗВР.', SL[1])
+    text(L, nx + 4, ny + 26, 'ZIMMER 4', RD[1])
+    for yy in range(ny + 33, ny + 38, 2):
         L.hline(nx + 4, yy, 30 - (yy % 4) * 2, SL[4])
     L.rect(nx + 38, ny + 31, 7, 7, RD[1])                       # official stamp
     L.px(nx + 40, ny + 33, RD[2]); L.px(nx + 42, ny + 35, RD[2])

@@ -1,0 +1,41 @@
+{
+ "area": "veltrava",
+ "doc": "Side task (Aufgaben, TECHNICAL_ARCHITECTURE §12.9) of L_C3_Quay, round 9 (owner: feel_r9): „Eine Decke für Frau Brunner“ (C3P2_DESIGN §7). Frau Brunner after her quay chat (chain on ChatTypistQuay: veltrava.quay.chat_typist -> ask -> return), the fire engine's equipment locker (new hotspot exp_task_blanket at the scene.json explore site blanket_source, node TaskBlanketLocker), back to her. Texts: data/locale/de_quay_tasks.json; tests: tests/test_feel_r9.gd. File name deliberately not tasks_*.json (tests/test_tasks.gd checks the round-7 tasks of those files against their five levels).",
+ "entries": [
+  {"id": "veltrava.task.blanket.ask", "kind": "chat", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.task.blanket.ask.title", "text_key": "explore.veltrava.task.blanket.ask.text",
+   "prompt_key": "explore.veltrava.task.blanket.ask.prompt", "requires": ["veltrava.quay.chat_typist"],
+   "lines": [
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.ask.l1", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.blanket.ask.l2", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.ask.l3", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.blanket.ask.l4", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.ask.l5", "expr": "surprised"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.blanket.ask.l6", "expr": "neutral"}
+   ]},
+  {"id": "veltrava.task.blanket.locker", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.task.blanket.locker.title", "text_key": "explore.veltrava.task.blanket.locker.text",
+   "prompt_key": "explore.veltrava.task.blanket.locker.prompt", "requires": ["veltrava.task.blanket.ask"]},
+  {"id": "veltrava.task.blanket.return", "kind": "chat", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.task.blanket.return.title", "text_key": "explore.veltrava.task.blanket.return.text",
+   "prompt_key": "explore.veltrava.task.blanket.return.prompt", "requires": ["veltrava.task.blanket.locker"],
+   "lines": [
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.return.l1", "expr": "surprised"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.blanket.return.l2", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.return.l3", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.blanket.return.l4", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.return.l5", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.blanket.return.l6", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.blanket.return.l7", "expr": "determined"}
+   ]}
+ ],
+ "tasks": [
+  {"id": "veltrava.task.blanket", "level": "L_C3_Quay",
+   "title_key": "task.veltrava.blanket.title", "summary_key": "task.veltrava.blanket.summary",
+   "steps": [
+    {"explore_id": "veltrava.task.blanket.ask", "hint_key": "task.veltrava.blanket.hint.ask"},
+    {"explore_id": "veltrava.task.blanket.locker", "hint_key": "task.veltrava.blanket.hint.locker"},
+    {"explore_id": "veltrava.task.blanket.return", "hint_key": "task.veltrava.blanket.hint.return"}
+   ]}
+ ]
+}

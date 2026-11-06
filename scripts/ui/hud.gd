@@ -10,6 +10,8 @@ extends Control
 ## with the hint how to return (pause key → „In die Gegenwart zurückkehren“); set_memory({}) removes it.
 ## In-level protagonist switch (§12.11): show_protagonist(char_id) — a quiet name plate at the top centre („KONRAD
 ## ADLER“ between copper rules) while the camera glides over; never a chapter card. Instant with reduced motion.
+## Toasts (round 9): one that is on screen when a modal holds the toasts keeps its remaining time (its timer pauses
+## while the box is hidden) and slides back in when the modal closes; new ones wait in the queue meanwhile.
 
 const Kit := preload("res://scripts/ui/ui_kit.gd")
 
@@ -44,6 +46,7 @@ var _chapter_tween: Tween
 var _toast_layer: Control = null
 var _toast_box: VBoxContainer
 var _toast_queue: Array = []
+var _toasts_held := false     # round 9: toasts on screen pause their timers while the box is hidden
 var _memory: Dictionary = {}
 var _memory_box: PanelContainer
 var _memory_kicker: Label
@@ -448,6 +451,7 @@ func set_toast_layer(layer: Control) -> void:
 	_toast_box.offset_bottom = 600
 	_toast_box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	layer.add_child(_toast_box)
+	_toasts_held = false
 
 
 ## kind: evidence | journal | person | decision | save | discovery | history | info
@@ -568,6 +572,9 @@ func _spawn_toast(text: String, kind: String) -> void:
 	tw.tween_callback(func():
 		holder.queue_free()
 		_pump_toasts.call_deferred())
+	holder.set_meta("toast_tween", tw)
+	if _toasts_held:
+		tw.pause()
 
 
 # ================================================================ visibility
@@ -614,6 +621,32 @@ func _update_visibility() -> void:
 		_chapter.visible = false
 	if _toast_box != null:
 		_toast_box.visible = (_enabled or (ui_root != null and ui_root.has_method("is_modal_open") and ui_root.is_modal_open())) 			and not _blocked_by_modal()
+		_hold_toasts(not _toast_box.visible)
+
+
+## Round 9: a toast that is on screen when a modal (or a hidden HUD) covers it keeps its remaining time -- its
+## timer pauses while the box is hidden -- and slides back in when the box shows again.
+func _hold_toasts(hold: bool) -> void:
+	if _toast_box == null or hold == _toasts_held:
+		return
+	_toasts_held = hold
+	for holder in _toast_box.get_children():
+		var tw = holder.get_meta("toast_tween") if holder.has_meta("toast_tween") else null
+		if tw is Tween and (tw as Tween).is_valid():
+			if hold:
+				(tw as Tween).pause()
+			else:
+				(tw as Tween).play()
+		if not hold and holder.get_child_count() > 0 and holder.is_inside_tree():
+			var p := holder.get_child(0) as Control
+			if p != null:
+				p.position = Vector2.ZERO
+				Kit.appear(p, 0.2, Vector2(24, 0))
+
+
+## Toasts currently held (tests / tools): the box is hidden and their timers stand still.
+func toasts_held() -> bool:
+	return _toasts_held
 
 
 ## Round 8: toasts wait while ANY modal is open and come out when it closes. A modal that wants them on top
