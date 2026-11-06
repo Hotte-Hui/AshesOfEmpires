@@ -32,7 +32,6 @@
   "ui.explore.hint.read": "lesen",
 
   "ui.history.kicker": "Reale Geschichte",
-  "ui.history.note": "Diese Karte beschreibt reale Geschichte. Sie ist nicht Teil der fiktiven Handlung des Spiels.",
   "ui.history.sources": "Quellen",
   "ui.history.filed": "Im Tagebuch unter „Geschichte“ abgelegt.",
   "ui.history.count": "{n} von {total} Karten zur realen Geschichte gefunden",

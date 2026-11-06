@@ -1686,13 +1686,74 @@ faces east, Alexei's west — they "look at each other" across the cuts), the sa
 city to the other, a clock tick answered by telegraph clicks, two lamps over one border map, the red C-17 route
 drawn from Karsk west to Berlin, and both lamps going out until only the line is left.
 
+**Rework 06.11. (cinematics quality pass, user feedback „Arme komisch, Sequenzen leer“).** Same beats, shot
+order, framings and subtitles; what changed:
+* **Close-ups over the shoulder** (`cine_finale_figure.py`): Konrad (bareheaded: brown hair, ears, cream wool
+  scarf, navy overcoat) and Alexei (ushanka, grey knit collar, green quilted jacket) sit in the foreground at the
+  bottom of the frame; every arm is one chain shoulder → upper arm → elbow → forearm → wrist → hand, solved per
+  frame by a two-bone IK whose screen bone lengths follow the reach (foreshortening), elbows outward or — when a
+  hand crosses the body — dropped in front of the chest; the upper body leans in for far reaches. Sleeves are
+  tapered tubes with elbow creases, folds, quilting (Alexei), shirt / knit cuffs; hands have a narrowing wrist,
+  knuckles, four three-joint fingers with nails and creases, a two-joint thumb, skin ramps sampled from the
+  portraits, and cast a dithered shadow on the desk. Irina's arm reaches in from the open door (shoulder off
+  frame). Staging: the evidence branch is done by the left hand (fold, packet into the slit) while the right
+  holds up the soft lined coat panel; the request branch pulls the sheet only as far as it comes free and the
+  hand returns to the desk; keep_private uses a right pedestal drawer with the camera tilting down to it.
+* **Desks** (`cine_finale_props.py`): Berlin — Konrad's grey felt hat, a coffee cup with steam, rolled plans, a
+  pencil cup; Karsk — a green blotter under the ledger, an abacus, inkwell and dip pen, stamp pad and stamp, a
+  bakelite telephone, a lit signal lantern (the ledger stamp moved clear of Alexei's head).
+* **Wide shots** (`cine_finale_wide.py`): Berlin — cornice, herringbone parquet and rug, a second drawing, wall
+  calendar, the dome model in a glass case, basket of rolled plans, waste-paper basket; animated pendulum (its
+  extremes on the tick/tock), searchlights sweeping behind the dome, the tram's blue spark at the tram bell,
+  cigarette smoke on the sill. Karsk — illuminated track diagram with blinking lamps, binders shelf, clock by the
+  stove pipe, blanket and mug, coal scuttle and firewood, hanging lantern, ceiling lamp; animated freight train
+  in the yard (loco mid-window on the far horn), stove firelight, kettle steam.
+* **Window inserts**: searchlight sweep (Berlin); a signalman's lantern and a shunting engine's headlamp (Karsk).
+* **Map** (`cine_finale_mapdetail.py`): forests, lakes, railway network with stations, roads, grid letters /
+  numbers, legend, scale bar, north arrow, a pencil circle round Veltrava, kilometre ticks, a coffee ring and a
+  tea-glass ring, torn corner and tape, Konrad's pencil and eraser crumbs / Alexei's pencil stub in the two lamp
+  pools, the window light across the dark map; the camera drifts with the pen from Karsk to Berlin.
+* Runtime: `pos_lin` (constant-speed `pos_keys`) in `finale_montage.gd`; harness `--fin-mode=endcard` renders
+  the end card (title + seven decisions in story order) for any decision combination: 8 lines, no wrap, bottom
+  of the caption at 840 px for the longest and the shortest texts.
+
+**Second pass 06.11. (art-director review of the rework).** Same beats, shot order and subtitles; what changed:
+* **3D arm rig** (`cine_finale_figure.py`, rewritten): arms are real 3D chains (upper arm 29 cm, forearm 26 cm,
+  hand with palm, three-joint fingers and a two-joint thumb) solved by a 3D two-bone IK (elbow pole down and out,
+  or in front of the chest) and projected through a perspective camera fitted to the sets (`Cam3`: 1.7 m above,
+  0.4 m behind the shoulders) — the foreshortening comes from the camera, so a reaching forearm gets shorter, a
+  hanging upper arm is short, hands on the desk are seen from above with the curled fingers dropping out of
+  sight; beyond 86 % of the reach the upper body leans in (rotation about the hips) instead of the arm
+  stretching. The old screen-space bone table (forearms growing to 172 px) is gone. Hands are z-buffered and
+  smaller (in proportion to the heads); relaxed hands curl and turn inwards, no open palm points up-screen.
+  The upper arms are drawn in the body layer under the back, so each sleeve runs unbroken from the shoulder
+  seam over the elbow to the cuff (no elbow discs); one lamp model (set pool + 3D direction) lights both.
+* **Request**: the carriage-return lever now reaches forward-left to the typist (paddle tip); the right hand
+  takes the finished sheet by its corner (the camera tilts up with it), draws it towards him and lays it into
+  an AUSGANG tray at the front right (the old back-left tray is now EINGANG).
+* **Evidence**: the coat panel is cloth rendered per frame (12 fps): pulled up over the edge of the desk from
+  under his left arm, wine-red striped satin lining with sheen and folds from the hinge, navy facing with two
+  buttonholes, tailor's label, inner pocket welt with its slit; the packet is pushed into the slit (cut along
+  the slit line) by the left hand, patted flat, the panel falls back. One hand does it; the right one rests.
+* **Keep**: the ledger closes with a continuous page-block turn (7 frames); the pedestal drawer (widened to fit
+  the book) is pulled wide open with the camera tilting down to it; the book slides across the blotter, over
+  the desk edge and drops into the drawer (cut at the desk edge once inside), then rides into the desk as the
+  drawer is pushed shut; sounds at the slide, the drop, the drawer and the key. Alexei's idle hand goes to his lap.
+* **Share**: Irina leans in from the door (shoulder just off frame, coat shoulder at the edge): a full arm
+  with upper arm, elbow and a tapering sleeve lays the note; it enters and leaves with the forearm in frame.
+* **Split**: each half is framed on its sitter (`shift` per shot in `finale_montage.gd`: the set moves inside
+  its fixed clip), both heads clear of the divider for all four decision combinations.
+* **b_wide** continuity: Konrad now sits, bareheaded, at the same typewriter desk under the framed rendering
+  (architect's lamp at its left end, his hat lying on it, the sheet in the typewriter), back to us — the close-up
+  pushes in over his shoulder; he breathes, looks out at the dome and turns back to the machine.
+
 | t (s) | shot | content |
 |---|---|---|
-| 0.0 | `b_wide` | Konrad (runtime sprite `assets/characters/konrad`) at his drafting table, the floodlit Great Hall in the east window, pendulum clock; caption "Berlin, 23:47 Uhr" |
-| 4.6 | `b_close` | branch `m1_choose`: **request_explanation** — he types a request on office letterhead (red ribbon for "C-17"), returns the carriage, stops, hesitates, pulls the sheet and lays it in the AUSGANG tray · **preserve_evidence** — he slides his tracing-paper copy off the stamped original, folds it twice, lifts his coat's front panel and slips it through a slit in the lining |
+| 0.0 | `b_wide` | Konrad seated at his typewriter desk under the framed rendering, back to us (bareheaded, hat on the desk), the floodlit Great Hall in the east window, pendulum clock; caption "Berlin, 23:47 Uhr" |
+| 4.6 | `b_close` | branch `m1_choose`: **request_explanation** — he types a request on office letterhead (red ribbon for "C-17"), returns the carriage, stops, hesitates, pulls the sheet and lays it in the AUSGANG tray · **preserve_evidence** — he slides his tracing-paper copy off the stamped original, folds it twice, pulls his coat's front panel up over the edge of the desk and slips it through the slit of the inner pocket |
 | 12.6 | `b_window` → `veil` → `k_window` | snow against the glass and the dome; the snow thickens into a dithered veil and becomes the snow over the Karsk yard; caption "Karsk, 1:47 Uhr Moskauer Zeit – dieselbe Minute" |
 | 16.2 | `k_wide` | the signal box: Alexei (runtime sprite `assets/characters/alexei`, facing west) at his desk, lever frame, block instruments, stove |
-| 20.4 | `k_close` | branch `a1_choose`: **share_with_irina** — a knock, the door opens (cold light wedge, the tea steam bends in the draught), Irina's hand lays a note on the ledger, he covers it with his hand · **keep_private** — he finishes the entry, closes the ledger, opens the drawer, slides the book in, locks it and pockets the key |
+| 20.4 | `k_close` | branch `a1_choose`: **share_with_irina** — a knock, the door opens (cold light wedge, the tea steam bends in the draught), Irina leans in from the door and lays a note on the ledger, he covers it with his hand · **keep_private** — he finishes the entry, closes the ledger, pulls the drawer wide open, slides the book over the desk edge into it, pushes it shut, locks it and pockets the key |
 | 28.4 | rhyme | Berlin desk / Karsk desk (each hand lifts a finger on the tick / the telegraph click), Berlin window / Karsk window, then both desks side by side (split at the seam that becomes the line on the map) |
 | 33.6 | `map` | both desk lamps (same screen positions as in the close-ups) over one schematic map; the route draws itself Karsk → Veltrava → Berlin ("Zwei fremde Orte. Dieselbe Kennung."); the Karsk lamp clicks off, then the Berlin lamp ("Ein Frieden, dessen Akten nicht übereinstimmen."); the red line fades last |
 
@@ -2004,6 +2065,31 @@ assets, fonts or textures are embedded; the bitmap fonts are hand-defined in `en
   `alexei()` supply heads, hats, hair and coat materials, so the cinematic figures follow the portraits. Renders are
   memoised on disk (`%TEMP%/ashes_c3cine_cache`, keyed by the pipeline sources + arguments, results byte-identical;
   `ASHES_NO_CACHE=1` disables it).
+* **Figures, round 10 (figures stream):** the round-7 busts had two capsules per arm with the forearms hidden behind
+  the back and a hand painted separately into the room, so arms read as stumps growing out of the chest. New modules:
+  `env_veltrava_cine_rig.py` (one continuous chain per arm: shoulder, upper arm, elbow with the sleeve's folds and
+  the point of the elbow, forearm, shirt cuff, wrist, a hand of palm, knuckles, three phalanges per finger and a
+  two-joint thumb; limbs modelled in view space with radii tapering toward the window, which fakes the room's
+  perspective; point lights — reading lamp, tea glass, chandelier — added to the painter; split finger materials
+  for the dark gaps between fingers), `env_veltrava_cine_heroes.py` (seated Konrad: left forearm along the table, the
+  hand holding the cup by its handle, thumb on top, the right elbow out, the buttoned club chair hiding his hips;
+  seated Alexei: the right hand at the holder's handle, quilted sleeves with stitched rings, the satchel strap on
+  the outer coat; breath frames lift only head and shoulders, hand and chair stay put; Konrad walking under the
+  palais clock as an 8-frame cycle; the contact shadows of the arms on the tables) and
+  `env_veltrava_cine_people.py` (full-body extras from the same rig — legs with knees and shoes, coats that open
+  with the stride, 17 kinds from travellers to the police of the Free City, walk / stand / sit poses, dawn / day /
+  palais / night light presets; `person_sheet()` is the API the places builder calls; the passengers behind the lit
+  windows of the dawn trains, Konrad and Alexei at one window each; the two hotel-window silhouettes as hand-set
+  pixel templates). `env_veltrava_cine_figs.py` is unchanged (the other film families import it).
+* **Figures, round 10b (art-director pass):** the hands at the cup and the tea glass are drawn at the scale of
+  the cup and the glass (~1.85 px/cm; round 10's were 14 x 11 and 18 x 16 px mittens): hook grips with the first
+  phalanges straight out of the knuckles (`rig.hand(joints=...)`), the thumb on top, and `finger_marks` drawing
+  the gaps between the four fingers along their projected axes (`rig.hand_axes`); Alexei's fist closes round the
+  holder's handle, whose bar the sprite repeats in lit nickel silver. Konrad's hat: a real ribbon band
+  (`hat_band`) and a crown that ends at the brim (`fedora_cut`; the portrait crown's felt strip under the brim made
+  the dashed line round the crown). The walking Konrad is a whole man (see `k2_konrad`), his rims drawn along the
+  outline (`contour_rim`). The extras got profile faces (`face_marks`: eye, brow, closed mouth, ear; heads carried
+  forward), straight-hanging men's coats, and cases / lanterns hanging from the fist by their handles.
 * **Determinism:** fixed seeds everywhere (`np.random.default_rng(n)`, `zlib.crc32(name)` for audio); two full builds
   are byte-identical (checked with md5 over all PNG/WAV outputs).
 * **Licence / provenance (all files below):** original procedural pixel art and synthesized audio made for ASHES OF
@@ -2013,32 +2099,43 @@ assets, fonts or textures are embedded; the bitmap fonts are hand-defined in `en
 * **Palettes:** `veltrava` and `palais` ramps of `data/chapters/c3.json` (registered by `env_veltrava_lib`) plus the
   protagonists' material ramps of the portrait pipeline; grade `c3_cine` (no palette snap, light vignette and grain).
 
-### Art — `assets/cinematics/ch3/trains/` (LS_C3_Trains, 25.5 s)
+### Art — `assets/cinematics/ch3/trains/` (LS_C3_Trains, 36 s; round 10 rework: t3b new, t4 a crane shot)
 | File | Use |
 |---|---|
-| `ext_sky`, `ext_far_de`, `ext_far_su`, `ext_mid`, `ext_near` | the night plain behind the glass: overcast sky lit from the Line, the floodlit double fence with masts and watchtowers (seen from the west / from the east), the snow plain with birches and a cleared farm, the embankment streaks; tileable 640 px strips scrolled per layer |
+| `ext_sky`, `ext_far_de`, `ext_far_su`, `ext_near` | the night plain behind the glass: overcast sky lit from the Line, the floodlit double fence with masts and watchtowers (seen from the west / from the east), the embankment streaks; tileable 640 px strips scrolled per layer |
+| `ext_mid_de`, `ext_mid_su` | (round 10, `env_veltrava_cine_journey.py`; AD round 2: placed at `trains.mid_y0` = row 150, they had sat 32 px low behind the embankment) the land between train and Line: in the west farmland, a village of half-timbered houses round its slate steeple (lit clock), a farm road (the runtime drives a car's lamps along it), a barn, birches; in the east log houses with carved window frames and smoking chimneys (runtime smoke), the wooden onion-dome church, a well sweep, the kolkhoz barn and a haystack |
+| `pass_station` | (round 10) the halt „Erlengrund" that the saloon car rushes through without a stop: platform with its white edge and three lamps (their light sweeps through the car), station house with lit office window and name board, canopy, bench, parcel cart, signal box; the station master with his lantern under a lamp (its warm pool round his boots) and a porter at the parcel cart (figures-stream sheets stamped in; AD round 2: stamped at canvas rows -- the first version passed world rows and the station master was clipped away) |
+| `pass_river`, `pass_river_obj` (4 cells) | (AD round 2 rework) the frozen river seen from the truss bridge in perspective: a ground image painted with the river's centre under the glass (scoured dark ice, snow tongues running down the river, an open lead with sea smoke and frost on its rims, white fracture lines, a trodden path and a sled track across, fishing holes, the snowy banks with reeds frozen in, the bend where the river turns away between two clumps of pollard willows and a fisherman's hut with a lit window). The runtime scrolls every row at the speed of its own depth (`layout.json` `trains.river`: vanishing row, bend, bottom-row speed), so the valley swings past like a wiper and slides in from the window's edge; the lateral ends fade into the plain. `pass_river_obj` = upright things on the ice drawn at the depth of their foot: an ice-fishing tent with its lantern, a fisher at the hole (figures stream), a rowing boat frozen in by the bank, a marker pole. The bridge is world-locked (portals pass the glass at 11.7 / 13.7 s, 13 bays, inclined end posts); over it the embankment strip and the car's window light on the snow give way to the drop |
 | `pole` | telegraph pole with crossarms and insulators (the runtime strings the sagging wires between poles) |
-| `int_konrad`, `fig_konrad` (4 frames: 2 head poses × breath), `refl_konrad`, `glow_lamp`, `patch_warm` | the German delegation's saloon car: mahogany panels, velvet curtains, the drafting tube on the rack, the reading lamp, the coffee cup with Konrad's hand on it; Konrad from behind; his lamp-lit face and the lamp mirrored in the glass; the light thrown onto the snow outside |
-| `int_alexei`, `fig_alexei` (4 frames), `refl_alexei`, `glow_tea`, `steam_tea` (6), `spoon` (2), `patch_cold` | the Soviet compartment: laminate walls, upper berths, the wall lamp, the tea glass in its holder with Alexei's hand at the handle, the spoon that tips with every rail joint, frost in the glass corners |
-| `sweep`, `flare`, `roomflare_k`, `roomflare_a` | the floodlit level crossing of the match cut (light band, the glass flooded, the room and the sitter's rim lit); `roomflare_*` also carries the weak flash of the passing lineside lamp |
-| `bridge_bg`, `bridge_fg`, `dawn_glow`, `fg_glow` | dawn over Veltrava: castle hill, cathedral, the patinated palais dome, onion church, town hall; the three-arch stone bridge (the commission's arms) with its lanterns; the half-frozen river with ice sheets, floes, cracks and the dawn in the open channel; the near bank promenade with fence, bench and a bare willow |
+| `int_konrad`, `fig_konrad` (4 frames), `refl_konrad`, `glow_lamp`, `patch_warm` | the German delegation's saloon car (figures: `env_veltrava_cine_heroes`, figures stream); the runtime adds the coffee's steam and the curtain tassels swinging with the joints |
+| `int_alexei`, `fig_alexei` (4 frames), `refl_alexei`, `glow_tea`, `steam_tea` (6), `spoon` (2), `patch_cold` | the Soviet compartment (figures: `env_veltrava_cine_heroes`); the runtime adds the towel on the berth rail swinging with the joints |
+| `sweep`, `flare`, `roomflare_k`, `roomflare_a` | the floodlit level crossing of the match cut (light band, the glass flooded, the room and the sitter's rim lit); `roomflare_*` also carries the flash of the passing lamps; the runtime adds the crossing's blinking red lamps and cross sign, two green signals |
+| `l3_bg`, `l3_fg`, `l3_glow` | (round 10, `env_veltrava_cine_line.py`, t3b) the Line before dawn from high above in one-point perspective: night sky with the low cloud lit by the fence and by the city, the eastern horizon paling, the Free City glowing at the vanishing point; the snow plain, the raked control strip and patrol road between the double fence, light pools of the masts, both tracks on their embankments with telegraph poles and wires, villages with a steeple and an onion dome; `l3_fg` = fence posts, floodlight masts and watchtowers in front of the trains; `l3_glow` = mast halos and the city glow. The runtime draws both trains in the same projection (`line.proj`): lit windows on the inner sides, Konrad's salon car, Alexei's sealed wagon 4, red tail lamps, the plumes lit by the fireboxes, the towers' searchlights, snow |
+| `d4_sky`, `d4_sun_glow` | (round 10, `env_veltrava_cine_city.py`, t4 crane plane „sky", travel 40 px) winter dawn: slate overhead, rose-cream low in the east, stratus banks with lit undersides, the low sun (it climbs out of the station roof while the camera rises) and its additive warmth |
+| `d4_city`, `d4_dome_glow` | (plane „city", travel 105 px) Veltrava from the river: the castle hill (AD round 2: a crag of rock buttresses with snow on the ledges, spruce stands and birches on the flanks, the road zig-zagging up between retaining walls and lamps to the gatehouse; the castle with curtain wall, merlons and arrow slits, two round towers with conical roofs, the keep with its corbelled timber gallery and steep roof under a plain pennant, the palas with dormers, chimneys and lit windows, a chapel with its ridge turret, the stair tower's copper cap -- dawn on the east faces), the cathedral with two spires, the palais of the Commission (portico, pilasters, drum and the patinated dome catching the first sun), the onion church, the town hall with its copper spire and lit clock, the station's arched glass hall and tower, the old town (gables, mansards, stepped gables, brick and stucco, snow on every roof, lit windows), the quay rank with shopfronts, tram rails, wire poles and lamps, the quay wall and the water beyond the bridge with floating ice; `d4_dome_glow` = first sun on the dome and the station roof |
+| `d4_bridge`, `d4_parapet`, `d4_lamp_glow` | (plane „bridge", travel 140 px) the three-arch stone bridge (far railing, deck, far track, signal posts, spandrel, voussoirs, icicles; the arches open so the far quay shows through with parallax), the river in front (dark water, short dawn streaks, the arches mirrored, ice sheets with pressure ridges and a wet rim, floes, a fishing hole and its wind screen, a sled track); the near parapet with its seven lanterns (in front of the trains) and their halos |
+| `d4_bank` | (plane „bank", travel 225 px) the near bank of the low start: the promenade path, the iron fence along the crest, a bench, a dark lamp, reeds, snow-laden bushes, a rowing boat frozen in, the bollard, footprints, the willow leaning over the river with its hanging twigs |
+| `d4_tram` (2 frames), `d4_gull` (4 frames), `d4_chimney_smoke` (6 frames) | the cream-and-red tram on the quay (trolley spark), gulls / crows over the city, thin chimney smoke |
 | `train_de`, `train_su` (2 frames: pennants) | Konrad's train (grey-blue saloon cars, a salon car, pennants, engine running east) and Alexei's (green carriages, the sealed courier wagon 4 at its tail, engine running west) |
-| `smoke` (8 frames) | steam puffs (2×2 block dither), used for both plumes and the town's chimneys |
-| `walker` (6 frames) | a woman in a red-brown headscarf pulling a sled with a milk can along the bank |
+| `smoke` (8 frames) | (round 10) locomotive steam as clean pixel-art cauliflower puffs (lobes in 6 tones lit from the east, dithered only on tone borders and when it thins). AD round 2: the runtime varies growth, drift and frame per puff and fades each out; after the meeting the drivers shut off and coast in, the plumes thin to a wisp, so the final frame shows both trains and the old town |
+| `pp_d4_*` | (round 10, `env_veltrava_cine_cast.py` -> `env_veltrava_cine_people.person_sheet`, figures stream) the extras of t4 by plane: the woman pulling her milk sled and a street sweeper on the bank, two ice fishers at their hole, four people on the quay; listed in `layout.json` `trains.people` (plane, place, speed) |
 
 ### Art — `assets/cinematics/ch3/tohall/` (LS_C3_ToHall, 6 s)
 | File | Use |
 |---|---|
-| `k1_bg`, `k1_clock`, `k1_glass`, `steam_puffs` (4) | the cast-iron platform clock under the glazed canopy (lattice girder, frosted panes with drifted snow, fretwork valance), the green carriage and the misty old town beyond; the crystal's glare (additive); drifting steam |
+| `k1_bg`, `k1_clock`, `k1_glass`, `steam_puffs` (8; AD round 2: one cloud at eight ages, cross-faded by the runtime, every puff living its own life -- no snapping back) (round 10: lit compartments with half-curtains, the route board МОСКВА · KORDON-17 · VELTRAVA, the conductor's door, the stove chimney (runtime smoke), two more hanging lamps; soft drifting steam; the runtime adds pigeons starting up at the minute's clack) | the cast-iron platform clock under the glazed canopy (lattice girder, frosted panes with drifted snow, fretwork valance), the green carriage and the misty old town beyond; the crystal's glare (additive); drifting steam |
 | `k2_bg`, `k2_clock`, `k2_glass`, `pendulum` (8) | the gilded Jugendstil clock of the palais on its verde-antico panel between marble pilasters, the same dial geometry and index angles as the station clock (the match cut), its lyre pendulum |
-| `k2_konrad` (2 frames) | Konrad's silhouette walking in under the clock (warm chandelier rim, cold window rim, the drafting tube) |
+| `k2_konrad` (8 frames, round 10b) | Konrad walking in under the clock: a whole man of ~112 px (hat to soles, inside the letterbox — round 10's 150 px bust was cut off at the chest) in profile, navy coat, taupe fedora with its ribbon band, camel scarf, the drafting tube on its strap. Legs by two-bone IK on a gait table (heel strike, flat foot, heel off, toe off, the swing with the knee folding; the planted foot slides back exactly one stride per cycle), the coat opening over the forward thigh, the arms swinging against the legs; lit by the chandelier with a continuous cold rim on his back and a warm rim along the hat and shoulders (drawn along the outline), a soft contact shadow on the marble under his feet. `layout.json` `tohall.konrad_path` (soles, he walks from the left edge at the cut to under the clock at 6 s), `konrad_anchor`, `konrad_stride` (88 px per cycle = 1.1 s, phased on the footstep sounds), `konrad_frames` |
+| `ex_k1_*`, `ex_k2_*` (round 10, figures stream) | the extras (`env_veltrava_cine_people.EXTRAS['tohall']`, drawn by `scenes/cinematics/ch3_common/c3_people.gd` from `layout.json` `tohall.extras`): under the station clock a porter, a woman with her suitcase, the station master with his signal disc, a policeman of the Free City and a waiting man on the far platform; in the palais an usher at the door to the hall, two delegates talking by the wainscot, a secretary hurrying ahead of Konrad toward the hall, her briefcase hanging from her hand by its handle. Round 10b: every extra has a profile face (eye, brow, closed mouth, the ear; the head carried forward, never tipped back) and cases and lanterns hang from the fist |
 Hands are drawn at runtime (1 px Bresenham) from the shown time 9:39:57 → 9:40:00.
 
-### Art — `assets/cinematics/ch3/close/` (LS_C3_Close, 12 s)
+### Art — `assets/cinematics/ch3/close/` (LS_C3_Close, 12 s; round 10: richer platform and square)
 | File | Use |
 |---|---|
-| `n1_bg`, `n1_mid`, `n1_fg`, `board` (4 frames), `steam` (4) | platform 5 at 23:40 in one-point perspective (the pinhole `proj` the runtime uses to draw the departing special train as shrinking polygons): canopy, columns, lamps mirrored in the wet snow, the dual-gauge track, a goods train on the next track, the yard and the city at the vanishing point; the platform sign „5“ and a small clock at 23:40; the split-flap indicator (trilingual header) whose row clears after the departure |
-| `n2_bg`, `n2_win_konrad` (3), `n2_win_alexei` (3), `n2_lamp_glow` | the station square at night: Hotel Europa (mansard, balconies) and Hotel Nord (flat roof), snow on every ledge, the street into the old town with the palais dome, the lime trees and a parked car with someone smoking in it (runtime ember); the two lit windows where Konrad and Alexei step to the glass and turn toward the whistle |
+| `n1_bg`, `n1_mid`, `n1_fg`, `board` (4 frames), `steam` (8, cross-faded) | platform 5 at 23:40 in one-point perspective (the pinhole `proj` the runtime uses to draw the departing special train as shrinking polygons): canopy, columns, lamps mirrored in the wet snow, the dual-gauge track, a goods train on the next track, the yard and the city at the vanishing point; the platform sign „5“ and a small clock at 23:40; the split-flap indicator (trilingual header) whose row clears after the departure |
+| `n1_glow` | (round 10) additive light of platform 5: the canopy lamps' cones falling through the snow, their halos, the far signal at green (the special has a clear road) |
+| `n2_bg`, `n2_win_konrad` (6), `n2_win_alexei` (6), `n2_lamp_glow` | the station square at night: Hotel Europa (mansard, balconies) and Hotel Nord (flat roof), snow on every ledge, the street into the old town with the palais dome, the lime trees and a parked car with someone smoking in it (runtime ember); the two lit windows where Konrad and Alexei step to the glass and turn toward the whistle. Round 10: more lit rooms in both hotels, lamps down the street into the old town, the kiosk with its shutters down, an advertising column, a telephone box, the tram stop, a taxi waiting at the Europa (runtime exhaust), the lobbies' light spilling onto the snow, footprint trails, bollards with their chain; the runtime raises a plume of steam over the roofs as the one whistle sounds. On platform 5 the goods train got real wagons (box cars with planks, straps and doors, tank wagons, a tarpaulin load; the end facing us with its brake wheel and tail board), a luggage trolley with mail sacks, crates, footprints; the engine's steam is soft drifting cloud. AD round 2: the right third is no longer an empty field under a straight horizon -- platform 6 under its own canopy (every other lamp lit, pools on the trodden snow, columns, the sign „6", a bench, a mail barrow), a sleeping-car train standing on track 8 with two lit compartments, the goods shed's snowy roof, the water tower and a floodlight mast of the yard over the goods train, a signal gantry, a water crane with its fire pot glowing, a plank crossing over tracks 5 and 6; the luggage barrow drawn as an oak barrow with canvas mail sacks tied at the neck, a parcel in string, a wicker hamper, the drawbar lowered; wooden crates instead of dark boxes |
+| `ex_n1_*`, `ex_n2_*` (round 10, figures stream) | the extras of `EXTRAS['close']` (`layout.json` `close.extras`, placed in the platform's pinhole projection): a railwayman with his lantern at the platform edge, two men in long coats watching the special go, a policeman of the Free City by the near pillar; on the square a policeman walking his beat under the lamps, the Europa's doorman, a late traveller crossing from the station. The window silhouettes (`n2_win_*`) are hand-set pixel templates: head and jaw, neck, sloping shoulders, the turned profile with nose and chin, Alexei's tea glass at his chest, the room lamp's rim. Round 10b: six states shown on `close.win_seq` (each man comes in at the back of the room as a dim figure under the ceiling lamp, steps to the glass past the curtain, stands at the glass, turns his head halfway and then into profile after the whistle) instead of popping from an empty window to a silhouette |
 
 ### Sound — `assets/audio/sfx/` (`tools/audiogen/c3_cine_audio.py`, 44.1 kHz / 16-bit stereo)
 | File | Content |
@@ -2047,7 +2144,11 @@ Hands are drawn at runtime (1 px Bresenham) from the shown time 9:39:57 → 9:40
 | `c3cine_ride_su.wav` (9.4 s) | the Soviet car: harder joints every 1.8 s, loose fittings rattling, the spoon clinking in the tea glass on every knock |
 | `c3cine_pass.wav` (1.2 s) | a lineside lamp post rushing past |
 | `c3cine_crossing.wav` (2.4 s) | the level crossing at speed: its bell swells and drops in pitch, the rush of air |
-| `c3cine_bridge.wav` (8.5 s) | two engines on the stone bridge at dawn: exhaust beats from both sides slowing, the hollow rumble of the arches, wheel clatter, the river valley echo |
+| `c3cine_bridge.wav` (13.2 s) | two engines on the stone bridge at dawn: exhaust beats from both sides slowing, the hollow rumble of the arches, wheel clatter, the river valley echo (round 10: re-cut to the 12.5 s crane, the meeting 5.0 s in) |
+| `c3cine_station_rush.wav` (2.8 s) | (round 10) the halt rushing past the saloon car: the platform wall throwing the rumble back, its bell dropping in pitch, three lamps whipping past |
+| `c3cine_truss.wav` (3.0 s) | (round 10; AD round 2 re-cut to the 2 s bridge, bed at 11.55 s) the truss bridge over the frozen river: hollow steel drumming, a beat on every one of its 13 bays, the gorge's echo |
+| `c3cine_line_night.wav` (7.2 s) | (round 10) the Line before dawn: wind over the snow, the hum of the floodlight masts, the two trains far off left and right |
+| `c3cine_city_morning.wav` (5.8 s) | (round 10) the waking city: two church bells far apart, a tram's double ring, crows, the murmur of the streets |
 | `c3cine_whistle_de.wav` (3.0 s) | Konrad's engine answering across the river, lower than the Karsk whistle |
 | `c3cine_clock_tick.wav`, `c3cine_clock_clack.wav` | the seconds of the platform clock and the minute hand jumping to 9:40 |
 | `c3cine_palais_chime.wav` (3.0 s) | one soft strike of the palais clock's gong spring |
@@ -2059,12 +2160,17 @@ the one whistle over the night square: „Derselbe Pfiff“), `wind_gust`, `amb_
 `amb_transition`, `mus_veltrava` (starts at dawn and carries on into the station level).
 
 ### Checks
-`tests/test_c3_cinematics.gd` (17 cases): registration, contract (`finished` once for skip/skip, skip before play,
+`tests/test_c3_cinematics.gd` (17 cases; round 10: 36 s Trains with shots t1 t2 t3 t3b t4, the layout keys of the
+journey / Line / crane planes, both dissolves, the crane's plane offsets and its reduced-motion hold): registration, contract (`finished` once for skip/skip, skip before play,
 natural end then skip, coarse fast-forward, replay), line variants for every flag combination, subtitles spoken in
 order and localised, no cues after skip, reduced motion (no knocks, no roll), shot order, every texture and every cue
 sound present, layout sync (glass/exterior box, clock centre, projection, runtime anchors), rail joints of the picture
 == joints cut into the bed sounds, the dawn dissolve completes. Visual review: `tests/visual/c3cine_harness.tscn`
 (`--c3-mode=shots|seq|run`).
+`tests/test_c3_figures.gd` (5 cases, round 10 figures stream): the seated sheets have 4 frames and boxes that reach
+the cup / the holder's handle, the palais walk has 8 frames, every extra has its sheet, an anchor inside the frame
+and a time-ordered path, `c3_people.gd` interpolates paths and steps walk cycles by the distance walked, ToHall and
+Close mount one people drawer per shot and follow the timeline.
 
 ---
 <a id="part-minigames_r7_v"></a>
@@ -2582,8 +2688,9 @@ Screenshots (Forward+, real GPU, `res://tests/visual/c3_station_shots.tscn -- --
 
 ## Asset manifest part — c3p2_cine (Chapter 3 part 2: LS_C3_Radio, LS_C3_Fire, LS_C3_Escape, LS_C3_Halves)
 
-* **Date:** 2026-11-06 (round 8)
-* **Area owner:** cinematics stream (C3P2_DESIGN.md §2.9)
+* **Date:** 2026-11-06 (round 8; places and motion reworked in round 10, see the section below)
+* **Area owner:** cinematics stream (C3P2_DESIGN.md §2.9); round 10: places stream (places, light, motion) and
+  figures stream (every person: `env_c3p2_cine_figs` / `_hero` / `_people` / `_body`)
 * **Scenes / code:** `scenes/cinematics/ch3_radio/` (`Ch3Radio.tscn`, `ch3_radio.gd`), `ch3_fire/`, `ch3_escape/`,
   `ch3_halves/` (the paths registered by the story stream in `data/chapters/c3.json` → `cinematics`) on the shared
   base `scenes/cinematics/c3p2_common/c3p2_cinematic.gd`, which extends the unchanged round-6 runtime
@@ -2622,40 +2729,155 @@ Screenshots (Forward+, real GPU, `res://tests/visual/c3_station_shots.tscn -- --
 * **Names:** the German delegation's hotel is labelled „Hotel Europa“ as in the station level and LS_C3_Close (the
   design table says „Bellevue“; kept Europa for continuity — see the round-8 open issues).
 
+### Round 10 — places, light and motion (user feedback: the films felt empty)
+Same shots, order, lengths and lines; every place repainted as lit colour (albedo × light field + emission, snapped
+to a scene palette with the kit's ordered dither) by new place modules, called from the round-8 build functions:
+`env_c3p2_cine_life.py` (the float-RGB painter `Cv`, vectorised capsules, value noise at any coordinate, props:
+bare lime trees, lamp posts, a snowed-in 1950s saloon, crates, barrels, railings, wires; sheets: steam lit from
+below, fire smoke, living flame masses `flame_mass`, burning paper, crows, pigeons, the café cat),
+`env_c3p2_cine_square.py` (r1/r6), `_rooms.py` (r2/r3), `_cafe.py` (r4/r5), `_registry.py` (f1–f4; the card hall is
+ray-cast as a vaulted cellar), `_yard.py` (e1–e4), `_river.py` (h1–h4). People only through the figures stream's
+API (`env_c3p2_cine_figs`: the hero figures, the drop-ins `walker`, `window_listener`, `doorway_figure`,
+`fire_alexei`, `quay_walk`, `arm_alexei`/`hand_konrad`/`chute_file`/`hatch_konrad` when present, and the extras
+`person_sheet`, `onlookers`, `firemen`); the h1 bench is drawn in their bench camera so the men sit on it.
+* **Radio:** the square is layered (`square_bg` 664 × 380 at (−12, −10) with margins, `square_near` = the station
+  roof's parapet with an urn and a lantern, `near_glow`): r1 cranes down onto it, r6 trucks right after the men
+  (`square_camera(t)`); hotels with lit lobbies, balconies, brass and roof signs, random lit windows; tram wires and
+  poles, a shelter, the clock post at 0.10, a kiosk, cars at the kerb, a taxi rank, ripples and tracks in the snow;
+  steam of the 23.40 rises from behind the parapet (`steam` 6 × 150 × 96), a taxi drives the far street (`taxi`), a
+  late couple crosses the near square (`couple_man`/`couple_woman`). Rooms: bed, print, radiator, frost flowers,
+  curtains, newspaper (Nord); damask, wainscot, sconce, velvet curtains with tie-backs, net curtain, inkstand,
+  folder, coffee cup with steam, the lamp's reflection (Europa); the chairs in front of the men (`chair_*`); a car's
+  headlights sweep Alexei's ceiling. Doors: plaster/damask, chain, house rules, brass kick plate, rag rug, carpet,
+  the keys with their fobs „214“/„317“ (`keyfob`, they shiver when the note pushes in), the courier's soles in the
+  gaps; the note on the boards in the gap light with both folds. Café: front window with the reversed lettering
+  and the closed sign, the station opposite with its name and lit clock (a running red second hand), lamp post,
+  tram stop, pendant lamps, newspaper holders, coat stand with a forgotten umbrella, the bar with the espresso
+  machine and night light, the cat on the bar (`cat`), bentwood chairs upside down, Elena's table in front
+  (`cafe_fg`, parallax drift). Subtitles: the two broadcasts 7.0 / 6.5 s, the shared-note line 4.5 s, the note
+  line 2.6 s — every line ≤ 19 characters per second (`tests/test_c3p2_cinematics.gd` now checks 19).
+* **Fire:** f1/f4 ray-cast card hall (cabinets on three walls, segmental brick vault with tie rods, the barred
+  window's snow light shaft, the ladder, the table with both halves, the red thread, magnifier, drawer C-17, ink,
+  stamp, the chair with Elena's scarf); f2 aisle with caged lamps, pipes, ladder, book trolley, papers, the door's
+  light wedge and the figure's long shadow down the aisle, smoke rolling along the vault (`smoke_hot`); f3 door
+  with latch, hinges, crates, hand truck, fire bucket, lantern, the RAMPE sign, smoke creeping in; f4 with the
+  ember band revealed behind the fire front (`fire_band`), new flame masses (`flame*.png`, `flame_tall`) on
+  regenerated anchors, burning paper (`paper`) and a rolling smoke layer.
+* **Escape:** chute with coal on the slide, soot, a pipe, the fire's glow from below and snow falling in; yard with
+  the glowing souterrain window, drainpipe, coal heap, barrels, handcart, the gate and the lane's lamp; the lid
+  sheds its snow; the hatch seen from above as a deep shaft with the glow below and sparks; the east wing with
+  light wells, neighbouring houses, lime trees, a lamp post, a snowed-in car, flames licking out of the burst
+  windows, glass glinting into the snow, onlookers (`onlooker_*`), two firemen running in (`fireman_*`) and a slow
+  blue beacon as the bells come close.
+* **Halves:** h1 far bank with the Line (double fence, barbed wire, towers, houses, lit windows), ice with drifts,
+  ridges, cracks and the fire mirrored in streaks, the searchlights' pools wandering over the ice, the granite
+  bench; h2 lime trees, globe lanterns, the bench and a bin, a parallax foreground (`h2_near`), lantern shadows
+  under the walkers; h3 the palais with drum, dome and dormers, the burning east wing, the bridge with its lamps
+  and the Line's barrier, a leaning smoke column with sparks, crows crossing the dawn (`crow`); h4 the station hall
+  (glass roof at first light, chains, wall lamps), pigeons on the board (`pigeon`), steam (`steam`), two travellers
+  looking up (`traveller_*`).
+* **Checks:** the c3p2 suites pass (7 files, 86 cases); insignia on/off give identical frames in all four films
+  (no insignia; the scripts never read `symbols`).
+
+### Round 11 — art-director pass (fire that reads as fire, soft smoke, readable beats)
+Same shots, order, lengths and story; new effect generators in `env_c3p2_cine_life.py`: `soft_puff_sheet` (soft
+volumetric puffs — little lit spheres, alpha in a few levels, frayed rims — instead of the ordered-dither puffs that
+read as checkerboard blotches), `soft_plume` (a whole smoke column as one soft image), `fire_sheet` (licking tongues
+from a burning bed, domain-warped turbulence that only eats into the fire, flicks; colour bands from a translucent
+red fringe to a white-hot core — no dark rim, the core is the brightest pixel), `fire_halo` (additive bloom).
+* **Fire:** f4's hall is darker (`f4_bg` = the hall before the fire reaches it); the fire's light is `f4_lit`
+  (burning hall minus unlit hall, additive) revealed behind the running front with a soft edge; the table is a
+  layer in front (`f4_table`), so the clusters (`fire_mid`/`fire_big`/`fire_wide`/`fire_small`, anchors and kinds in
+  layout `fire.f4_fire` / `f4_kinds`) rise behind its far edge, merge into one wall of uneven height, catch small and
+  grow; no flames float alone over the cornices; halos bloom around them; soft smoke (`smoke_hot`) rolls along the
+  vault toward the camera. f2: the aisle is dark before the fire (`f2_glow` = the fire's light, faded in from the
+  catch), the boxes burn with `f2_fire_s/_m/_l` and halos, soft smoke rolls along the aisle's vault. f3: the gap
+  light varies along its length (the yard lamp, snowflakes passing) and spills cold light on the jamb and the floor;
+  the snow blown in is cold white. f1: soft lamp-lit wisps.
+* **Radio:** the steam of the 23.40 is soft (`steam`, 6 × 150 × 110) and billows up from behind the parapet in
+  beats; the lamp pools are lamp light on snow (pale warm greys, sparkle) plus soft additive pools; r6 pushes in
+  toward the dark east wing, the men step out at a readable size (`walker_*`, 21/20 px, rigged through
+  `env_c3p2_cine_people.person`) with their door-light shadows, then a dissolve (`LATER`) to a minute on: two
+  trodden furrows with footprints (layout `trail_*`, `prints_*`, `path_*` over the whole way, `walk_*` metres)
+  converge across the snow and the men, small (`walker_far_*`), reach the wing; the headlight sweep lands on the
+  walls and the ceiling's edge, never on the glass; the folded note reads as a folded sheet; the café has a worn
+  low-contrast floor with the window's light and sheen, a second row of tables, a mop bucket, a mat, a chair in
+  front, readable bentwood chairs, a lever espresso machine, a passing car's light, and a visible parallax drift.
+  Subtitles: the broadcasts are condensed excerpts (72 characters, 3.8 s each, same meaning: Anlage C, „begleitete
+  Personen“ vs. „Begleitgut … ohne Halt“) so every line plays over its own picture (`LINE_AT`; checked by
+  `radio_lines_over_their_pictures`).
+* **Escape:** the lid is opaque cast iron (`e2_hatch`: tread plate under melting snow with the cast date; lifting
+  with its thick edge; open with its ribbed underside, hinge knuckles, soot); the lane gets columns of soft smoke
+  from every burst window merging into a mass under the cornice (snow falls in front), flames licking out
+  (`flame_out`), halos, glass shards that glint and stay twinkling in the snow, onlookers who react (take sequences
+  in layout `escape.e4_people[].seq`: flinch, hands to the face, a step back, pointing, walking to the engine) and
+  the fire engine nosing in (`engine`) with its turning blue beacon (`beacon`, `beacon_wash`).
+* **Halves:** h3's smoke column is the soft `h3_plume` (no flat sheet, no holes) drifting east; the dawn is visible
+  (`h3_dawn`: the sky lifts, a pale band and a rose-grey line on the right horizon; horizon ≈ RGB 13,17,26 → 80,86,112);
+  soft `smoke`, `steam`, `breath`; window fires from `fire_sheet`.
+
+### Round 11 — figures (art-director pass: anatomy, no paper dolls)
+Figures stream (`env_c3p2_cine_body` / `_hero` / `_people` / `_figs` / `_hands`).  Rig: a short, strong neck (the
+head sits 6 units lower, the neck ~0.7 of the head's width, the trapezius high and flat — no bottle shoulders),
+collars resized to it; skin ramps per scene light with warm shadows (`skin_ramp`, no lilac / mauve); cropped hair
+with strands from the crown and a soft hairline at the nape (`pass_hair_strands`, `hair_fade`); anatomical sleeves
+(deltoid / biceps mass, a slim elbow, the forearm tapering to the cuff, folds only in the bend); a larger palm;
+the close shots trace a deeper volume (a hand far up a desk was cut away by the old ±90 px one).  An arm that moves
+is never also part of its body sprite: its sheet holds it in every frame and is drawn under the body.
+* **Radio:** `arm_alexei` 6 frames (resting on the table, lifting, on the way × 2, on the knob, turning; runtime
+  `ARM_KEYS`), Alexei leans toward the set; `hand_konrad` 18 frames — Konrad writes with his LEFT hand and a pencil
+  (the pad lies at his front-left): 6 positions × 2 strokes, then the 6 positions with the pencil lifted; the
+  runtime picks the position the growing line has passed and shifts the sprite the rest of the way
+  (`_apply_pencil_hand`), the line itself (`pad_line`, from `env_c3p2_cine_figs.PAD_LINE`) runs on the part of the
+  notepad the radio does not cover.
+* **Fire:** `f1_konrad` 4 frames (head bowed, lifting, up, turned toward the smoke; runtime `LOOK_KEYS`), the whole
+  seated man on an archive chair down to the frame's bottom, the overcoat a dark slate navy under the green lamp.
+* **Escape:** `e1_file` — the forearms come in from the lower corners, the hands lie flat on the file's back with
+  spread fingers and thumbs; `e2_konrad` 6 frames (shoulders, waist, a knee on the rim, on all fours beside the
+  hatch, two crawl steps — no jump; runtime `KONRAD`); `e3a_hands` 7 frames (the hand rises, opens, Konrad's open
+  hand comes in, closes round the wrist, the pull in three steps; runtime `HANDS`); `e3b_men` from a low camera
+  (profiles, lying in the snow with an uneven lip, no rim outline).
+* **Halves:** `fig_alexei` / `fig_konrad` 4 frames (breath × 2, leaning over half / fully for the far stack);
+  `arms` 2 rows × `arm_cols` (14) cells of 248 × 132 at `arms_at`: reach in three steps near / far, the pull with the
+  pages (two cells each; the runtime shifts the sprite with the sliding stack), the hold, Konrad's list in his hand
+  beside his hip (3 cells; the fold is drawn at layout `list_fold_at`); runtime `_apply_arms`.
+
 ### Art — `assets/cinematics/c3p2/radio/` (LS_C3_Radio, 30.8 s)
 | File | Use |
 |---|---|
 | `square_bg`, `square_glow`, `win_konrad`, `win_alexei`, `steam` (6) | r1/r6: the station square from the station roof (pinhole projection, supersampled facades re-quantised): Hotel Europa (mansard, arches, sign) and Hotel Nord (flat roof, roof letters) facing each other, tram rails, lamp pools, the advertising column, lime trees, the palais with its dome and dark east wing (one dim window high up); the two lit windows with a man at his radio; steam of the 23.40 |
-| `door_konrad`, `door_alexei`, `walker_konrad`, `walker_alexei` (4) | r6: both hotel doors open at once, warm light on the snow; the two men walking out (paths and footprints in layout.json converge on the east wing) |
+| `door_konrad`, `door_alexei`, `walker_konrad`, `walker_alexei` (6), `walker_far_konrad`, `walker_far_alexei` (4) | r6: both hotel doors open at once, warm light on the snow; the two men walking out, and small far off at the wing after the dissolve (paths, trodden furrows and footprints over the whole way in layout.json converge on the east wing) |
 | `room_alexei`, `room_konrad`, `radio`, `dial_glow`, `lamp_glow`, `magic_eye` (3) | r2/r3: the two rooms around one window/table geometry — Hotel Nord (painted plaster, cotton curtains, doily, the tea glass in its holder, the quilted coat and ushanka on the hook, Hotel Europa across with Konrad's lit window) and Hotel Europa (damask, wainscot, velvet curtains, brass desk lamp, notepad, his hat, coat and scarf on the stand, Hotel Nord across with Alexei's lit window); the same Bakelite set („Komet“, round dial with the two Veltrava marks, cloth grille, piano keys) at the same place — the needle is drawn at runtime and sweeps across the cut |
-| `fig_alexei`, `fig_konrad` (2 frames: breath), `arm_alexei` (4), `hand_konrad` (5), `steam_tea` (6) | the men from behind without hats (roll-neck / jacket); Alexei's arm to the tuning knob; Konrad's pencil hand (4 writing frames + stopped) |
+| `fig_alexei`, `fig_konrad` (2 frames: breath), `arm_alexei` (6), `hand_konrad` (18), `steam_tea` (6) | the men from behind without hats (roll-neck / jacket), each without the arm that moves; Alexei's right arm from the table to the tuning knob; Konrad's left arm writing with a pencil (6 positions × 2 strokes + lifted) |
 | `doors`, `note_fold`, `note_close` | r4: split screen at floor level — room 214 (oxblood, plain) and room 317 (cream panels, brass kick plate), the corridor light in both gaps; the folded note; the note unfolded in pencil block letters, Russian above German (text copied from `de_c3p2_cinematics.json`) |
 | `cafe`, `cafe_glow` | r5: Café „Korridor“ after closing — chairs upside down on the marble tables, Elena's table with an untouched glass of tea, reversed gold lettering, the station clock across the square (hands at runtime: 0.10) |
 
 ### Art — `assets/cinematics/c3p2/fire/` (LS_C3_Fire, 12 s)
 | File | Use |
 |---|---|
-| `f1_bg`, `lamp_cone`, `f1_konrad` (2: head down / looks up) | the card hall under the brick vault: oak card cabinets with brass label holders, the high barred window, the sorting table with the two halves laid side by side and the red thread of the check, drawer C-17 and Elena's wine-red scarf; the green-shaded lamp's cone (flickers at runtime); Konrad from behind |
+| `f1_bg`, `lamp_cone`, `f1_konrad` (4: head down / lifting / up / turned) | the card hall under the brick vault: oak card cabinets with brass label holders, the high barred window, the sorting table with the two halves laid side by side and the red thread of the check, drawer C-17 and Elena's wine-red scarf; the green-shaded lamp's cone (flickers at runtime); Konrad from behind |
 | `f2_bg`, `f2_door` (4), `f2_glow` | the Magazin aisle in one-point perspective, archive boxes and the red C-17 tags; the service door: the figure in the lit doorway, half through, the empty doorway, shut |
 | `f3_bg`, `f3_warm` | the iron-clad ramp door from inside (planks, straps, rivets, lock box), snow blown in under it; the runtime draws the cold gap light, the passing shadow and the bolt's shadow |
-| `f4_bg`, `f4_glow`, `f4_alexei` (2) | the same hall burning (smoke under the vault, scorched drawer fronts); Alexei from behind against the fire (ushanka, fur collar, quilted coat, satchel strap) |
-| `flame`, `flame_s`, `flame_big`, `flame_wide`, `smoke`, `ember` (8/8/8/8/8/4 frames) | fire sheets (palette `fire`), dithered smoke puffs, embers |
+| `f4_bg`, `f4_lit`, `f4_table`, `f4_glow`, `fire_band`, `f4_alexei` (2) | the same hall before the fire reaches it (smoke under the vault, scorched drawer fronts); the fire's light on it (additive, revealed behind the front); the table as a layer in front of the flames; Alexei from behind against the fire (ushanka, fur collar, quilted coat, satchel strap) |
+| `fire_mid`, `fire_big`, `fire_wide`, `fire_small`, `f2_fire_s`, `f2_fire_m`, `f2_fire_l` (8 frames each), `fire_halo` | round 11: fire clusters (licking tongues, white-hot cores, translucent red fringe) for the burning cabinets and the C-17 boxes; their additive bloom |
+| `smoke`, `smoke_hot` (8), `ember` (4), `paper` (6) | soft lamp-lit and fire-lit smoke puffs (soft alpha), embers, burning paper |
 
 ### Art — `assets/cinematics/c3p2/escape/` (LS_C3_Escape, 16 s)
 | File | Use |
 |---|---|
 | `e1_bg`, `e1_light`, `e1_file` (2) | up the brick coal chute with its steel slide toward the square of snow light; Konrad's sooty hands shoving the tied file |
-| `e2_bg`, `e2_lamp`, `e2_hatch` (3), `e2_konrad` (4) | the yard: rusticated base of the east wing, a souterrain window glowing, the bracket lamp, the iron hatch frame in the snow; the lid closed / lifting / open with „1909“; Konrad out to the shoulders, to the waist, on hands and knees (two steps) |
-| `e3a_bg`, `e3a_glow`, `e3a_hands` (4) | looking down into the hatch: Alexei's hand out of the smoke, Konrad's hand takes it, the pull |
+| `e2_bg`, `e2_lamp`, `e2_hatch` (3), `e2_konrad` (4) | the yard: rusticated base of the east wing, a souterrain window glowing, the bracket lamp, the iron hatch frame in the snow; the lid closed / lifting / open with „1909“; Konrad out to the shoulders, to the waist, a knee on the rim, on hands and knees beside the hatch, two crawl steps (6 frames) |
+| `e3a_bg`, `e3a_glow`, `e3a_hands` (7) | looking down into the hatch: Alexei's hand out of the smoke, Konrad's hand reaches in and takes it, the pull in three steps |
 | `e3b_bg`, `e3b_hatch` (2), `e3b_men` (2) | low at the snow: the lid slammed, both men on their backs, heads together, the file between them, Konrad's hat in the snow |
-| `e4_bg`, `e4_window` (3), `e4_glow`, `smoke`, `breath` (6) | the east wing from the lane (pilasters, pediments, mansard, the one lit window high up, the yard gate); a souterrain window dark / bursting / burning; smoke lit from below; breath clouds |
+| `e4_bg`, `e4_window` (3), `e4_glow`, `smoke`, `breath` (6) | the east wing from the lane (pilasters, pediments, mansard, the one lit window high up, the yard gate); a souterrain window dark / bursting / burning; soft smoke lit from below; breath clouds |
+| `flame_s`, `flame_out` (8), `fire_halo`, `engine` (2), `beacon`, `beacon_wash`, `onlooker_N` / `onlooker_N_r1`, `fireman_N` | round 11: fire inside and licking out of the burst windows and its bloom; the fire engine's nose with its blue beacon (glow and the wash it throws); the onlookers' two takes (watching, reacting) and the firemen running in |
 
 ### Art — `assets/cinematics/c3p2/halves/` (LS_C3_Halves, 21 s)
 | File | Use |
 |---|---|
-| `h1_bg`, `h1_glow`, `fig_alexei`, `fig_konrad` (2 each), `stacks` (3), `arms` (2×3), `list_fold` (4) | the quay bench from behind: the balustrade, the frozen river with the fire's glow, the Line with fence and two watchtowers (searchlight beams at runtime); the men; the Russian pages (with the list of names), the German pages, the list; arms reaching near / across / holding; the list folded into Konrad's coat |
+| `h1_bg`, `h1_glow`, `fig_alexei`, `fig_konrad` (4 each), `stacks` (3), `arms` (2×14), `list_fold` (4) | the quay bench from behind: the balustrade, the frozen river with the fire's glow, the Line with fence and two watchtowers (searchlight beams at runtime); the men; the Russian pages (with the list of names), the German pages, the list; arms reaching near / across / holding; the list folded into Konrad's coat |
 | `h2_bg`, `h2_glow`, `walk_alexei`, `walk_konrad` (6 each) | the promenade with its lanterns and their bench; the two walking apart (Konrad mirrored at runtime) |
-| `h3_bg`, `h3_glow`, `h3_dawn`, `flame_s`, `smoke` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the first grey of dawn (faded in at runtime) |
+| `h3_bg`, `h3_glow`, `h3_dawn`, `h3_plume`, `flame_s`, `smoke` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the soft smoke column leaning east; the first grey of dawn (faded in at runtime) |
 | `board_bg`, `board_glow`, `glyphs` | the departures board (trilingual header, four standing rows) and the split-flap glyph atlas (glyphs + mid-flap) from which the runtime flips „DIENSTAG · 23.40 · KORDON-17 · GLEIS 5“ in |
 
 ### Sound — `assets/audio/sfx/` (`tools/audiogen/c3p2_cine_audio.py`, 44.1 kHz / 16-bit stereo)
@@ -2672,10 +2894,10 @@ Screenshots (Forward+, real GPU, `res://tests/visual/c3_station_shots.tscn -- --
 Re-used (unchanged): `wind_gust`, `paper_rustle_1..3`.
 
 ### Checks
-`tests/test_c3p2_cinematics.gd` (20 cases, ~1100 checks): registration; contract and planned lengths; `finished`
+`tests/test_c3p2_cinematics.gd` (21 cases, ~1190 checks): registration; contract and planned lengths; `finished`
 exactly once (skip/skip, skip before play, natural end, fast-forward, replay); inner lines for every c3a×c3b and
-c3d×c3g combination, spoken in order, non-overlapping, inside the film, ≤ 22.5 characters per second, German text
-present; skip stops the cues; reduced/full motion; shot order; no missing texture and layout keys in sync with the
+c3d×c3g combination, spoken in order, non-overlapping, inside the film, ≤ 19 characters per second, German text
+present, every radio line over its own picture (round 11); skip stops the cues; reduced/full motion; shot order; no missing texture and layout keys in sync with the
 scripts (dial = match cut); every cued sound exists and every loop is stopped; sound/picture timings shared with the
 audio generator (lamp dips, chute shoves, window bursts); frames a pure function of t (seek away and back); the match
 cut on the dial; who takes which pages per c3g; reduced motion halves the travel; fire light never strobes (≤ 3 Hz,
@@ -3110,72 +3332,85 @@ traced, sampled, downloaded or AI-generated; no third-party assets, fonts or tex
 
 ## Asset manifest part — c4_cine (Chapter-4 cinematics LS_C4_Homeward, _Number, _Card, _Stamp, _Voices)
 
-* **Date:** 2026-11-06 (round 9)
+* **Date:** 2026-11-06 (round 9; places-and-motion polish pass the same evening)
 * **Area owner:** cine stream (C4_DESIGN.md §2.9, §10)
 * **Scenes / code:** `scenes/cinematics/ch4_homeward/` (`Ch4Homeward.tscn`, `ch4_homeward.gd`), `ch4_number/`,
   `ch4_card/`, `ch4_stamp/`, `ch4_voices/`, shared `scenes/cinematics/c4_common/c4_cinematic.gd` (extends the C3P2
   base `c3p2_common/c3p2_cinematic.gd` and through it the §12.5 contract of `ch3_common/c3_cinematic.gd`: textures from
   `assets/cinematics/c4/`, `line_dur()` keeps every subtitle under 19 characters per second, the game's character
-  sheets drawn by named frame ranges, the in-game stride so feet never slide, `optional_music()`). Registered in
-  `data/chapters/c4.json` → `cinematics`, played by `ChapterExt.play_cinematic()`. Lengths = the registered shot
-  sheets of `data/v3/cinematics.json`: 14 / 13 / 11 / 11 / 24 s.
+  sheets drawn by named frame ranges, the in-game stride so feet never slide, `optional_music()`; the polish pass only
+  ADDED helpers: `loop_frame()` / `fx_sprite()` for the levels' fx strips, `draw_puffs()`, `draw_motes()`,
+  `draw_drips()`, `draw_lit_snow()`, `par_pos()` for parallax stacks, `h01()`). Registered in `data/chapters/c4.json`
+  → `cinematics`, played by `ChapterExt.play_cinematic()`. Lengths = the registered shot sheets of
+  `data/v3/cinematics.json`: 14 / 13 / 11 / 11 / 24 s (unchanged).
 * **Match cuts (hard cuts on shared objects, the cities in their own palettes):** the stencilled 45 of wagon C-17/45
   (cream on red-brown in Karsk → black on pine in Berlin, same shapes at the same place: one stencil generator, one
   layout entry `number.macro`); the torn perforation of card No. 0417 (German half, paper left of the edge → Russian
   half, paper right of it: one perforation geometry, mirrored); the rubber stamp (ПРИНЯТЬ violet → ABGANG red, same
-  frame at the same contact point).
+  frame at the same contact point; each landing now jolts the frame by 2 px, the impressions stay put).
 * **Generators:** `py -3 -P tools/pixelgen/env_c4_cine.py [--only places,homeward,number,card,stamp,voices]` writes
   every texture and `assets/cinematics/c4/layout.json` (anchors shared with the runtimes; `tests/test_c4_cinematics.gd`
   checks them). Modules: `env_c4_cine_kit.py` (palettes, stencil letters, perforation, stamps, re-lighting of the game
-  sheets with their normal maps), `env_c4_cine_places.py` (Karsk freight yard, Berlin tram loop in dawn and morning
-  light, the tram of line 74, the siding hall lit / dark), `env_c4_cine_{homeward,number,card,stamp,voices}.py`,
-  `env_c4_cine_figs.py` (hands and the two men from behind). Sound: `py -3 -P tools/audiogen/c4_cine_audio.py` →
-  `assets/audio/sfx/c4cine_*.wav` (21 files; the picture-synced times are constants checked by the test).
-* **Figures:** close-ups (Konrad's gloves on the card, Alexei's hand on the desk, the pencil hand, Lev's hand with the
-  missing fingertip, both stamp hands, Fengler's hands, Alexei over the shoulder, Konrad from behind waving) are
-  sculpted and lit with the signed-distance pipeline of the dialogue portraits (`chargen_portrait2_*`,
-  `env_c3p2_cine_hands`, `env_veltrava_cine_figs`; all imported read-only). Wide shots use the game's own sheets
-  (`assets/characters/{alexei,konrad,lev}/sheet.png` + `sheet_n.png`, 32 x 56 cells) re-lit per shot from their
-  normal maps, so the cinematic figures are the figures the player walks with. A character without a delivered
-  sheet would be drawn from a declared stand-in and listed in `layout.json` → `standins` (currently empty).
-  Renders are memoised on disk (keyed by the pipeline sources + this stream's sources + arguments).
-* **Determinism:** fixed seeds everywhere; two full builds are byte-identical (md5 over all PNG/JSON outputs and all
-  WAVs, checked 2026-11-06).
+  sheets with their normal maps), `env_c4_cine_places.py` (build of the shared places; the round-9 painters stay for
+  reference), place modules of the polish pass: `env_c4_cine_levelart.py` (reads the levels' layers and normal /
+  emission maps and re-lights them like the runtime's point lights; re-bakes the street of `env_c4_annex_loop` without
+  its tram), `env_c4_cine_levelplates.py` (the tram loop Süd 8 as parallax layers for dawn / morning, the level's fx
+  strips, tram 3518 in both directions, the siding hall of L_C4_TunnelsB lit / dark, the booth-window view, the annex
+  card hall), `env_c4_cine_yard.py` (the Karsk freight yard in parallax layers: sky, the railyard level's skyline
+  re-lit for the night with the cooling towers, the far sidings, the near yard and the freight office, parapet,
+  glows), `env_c4_cine_station.py` (Veltrava platform 5, ray-cast so the 56 px figures stand at their true size);
+  `env_c4_cine_{homeward,number,card,stamp,voices}.py`, `env_c4_cine_figs.py` (hands and close figures; the figures
+  stream). Sound: `py -3 -P tools/audiogen/c4_cine_audio.py` → `assets/audio/sfx/c4cine_*.wav` (21 files; the
+  picture-synced times are constants checked by the test).
+* **Figures:** close-ups (Konrad's gloves on the card, Alexei's hand on the desk, the pencil hand, Lev's hand, both
+  stamp hands, Fengler at the counter, Alexei over the shoulder, Konrad from behind waving) come from the figures
+  stream's `env_c4_cine_figs.py`. Every person in the wide shots is a game sheet re-lit per shot
+  (`assets/characters/<id>/sheet.png` + `sheet_n.png`, 32 x 56 cells, `env_c4_cine_kit.fig_sheet`): Konrad, Alexei, Lev,
+  Marta (in the tram's cab) and the platform's and the loop's people (conductor, porter, worker_a / worker_b,
+  berlin_mother, berlin_child, babushka); Ilse at the tram's last window and the annex typists are the levels' own life
+  strips. A character without a delivered sheet would be drawn from a declared stand-in and listed in `layout.json` →
+  `standins` (currently empty).
+* **Determinism:** fixed seeds everywhere; no time or global random state (level layers are read, never written).
 * **Licence / provenance (all files below):** original procedural pixel art and synthesized audio made for ASHES OF
   EMPIRES: THE LAST WINTER by these generators (AI-authored code, project-owned, same licence as the game). No
-  downloaded, copied or traced images, fonts or samples. The only image inputs are the project's own character
-  sheets (above). No insignia anywhere (the stamps, signs, cap badge „74“ and forms are plain text), so there are no
-  `_hist` variants. The Great Hall's dome appears only as a far silhouette in the haze.
+  downloaded, copied or traced images, fonts or samples. Image inputs are only the project's own art: the character
+  sheets and the level layers / fx strips of `assets/environments/{berlin_annex,karsk_tunnels,karsk_railyard}` (neutral
+  variants only). No insignia anywhere in these films (stamps, signs, the cap badge „74“ and the forms are plain text;
+  the column's notice carries the level's neutral seal), so there are no `_hist` variants and the films look the same
+  with symbols on or off.
 * **Texts:** memory film titles `ui.memories.film.LS_C4_*` / `film_sub.*` in `data/locale/de_c4_cine.json` (this
-  stream); the films' subtitles are the story stream's `data/locale/de_c4_cinematics.json`.
+  stream); the films' subtitles are the story stream's `data/locale/de_c4_cinematics.json`. No disclaimers in the films.
 
 | path | what |
 |---|---|
 | `assets/cinematics/c4/layout.json` | anchors for the five runtimes (sections places, homeward, number, card, stamp, voices, standins) |
-| `assets/cinematics/c4/places/yard.png`, `yard_parapet.png`, `yard_green.png`, `yard_warm.png` | Karsk freight yard before dawn (Homeward w3, Voices v3): signal, wagons, cooling towers, freight office with the lit cellar window and the outside stair |
-| `assets/cinematics/c4/places/loop_dawn.png`, `loop_morning.png`, `loop_glow_*.png` | the tram loop Süd 8, 1000 px (Number n4, Voices v1/v2): house No. 9 sealed, the wallpaper of the demolished neighbour, No. 11 with Marta's window, the shelter, the column S 2 as the level paints it (rounded cap with finial, „KONZERT“ / „KINO“ posters, the notice with a neutral seal ring; morning: the poster torn back from the steel door „S 2“), the C-17/45 crates |
-| `assets/cinematics/c4/places/tram_left.png`, `tram_right.png` | the two-axle car of line 74, No. 3518, in the level's livery (cream body, dark belt rail at the sill, red pinstripe above the skirt, lantern roof with lit clerestory and bow collector; Marta in the cab, Ilse at the last window; right-facing sheet with/without her hand on the glass, line board and fleet number never mirrored) |
-| `assets/cinematics/c4/places/siding_lit.png`, `siding_dark.png`, `siding_glow.png` | the siding hall with wagon 24 318 / C-17/45 under its work lamp (Voices v4) |
-| `assets/cinematics/c4/places/breath.png`, `steam.png` | dithered puff sheets |
-| `assets/cinematics/c4/homeward/w1_*.png` | Veltrava station at first light, the two trains (BERLIN / КАРСК), Konrad and Alexei re-lit (walk back / side) |
-| `assets/cinematics/c4/homeward/w2_*.png` | split windows: carriage interiors, sky + far + tiled near strips (the dome of the Great Hall; the snow plain and the cooling towers of Karsk) |
+| `assets/cinematics/c4/places/yard_l_{sky,far,mid,main,parapet,green,warm}.png` | the Karsk yard before dawn in parallax layers (Homeward w3 tracks Alexei across them; Voices v3 at rest): low snow clouds, the skyline with lit windows and blinking red lamps (runtime), the cooling towers and their plumes, the rake of wagons, the water tower and gantry, the repaired signal, the freight office with its lit window, gutter, sign, door, the stair down to the cellar and the lit cellar window |
+| `assets/cinematics/c4/places/yard.png`, `yard_parapet.png`, `yard_green.png`, `yard_warm.png` | the same yard composited at camera 0 (legacy single plates) |
+| `assets/cinematics/c4/places/loop_{dawn,morning}_{sky,dome,far,mid,street,fg,glow}.png` | the tram loop Süd 8 from L_C4_AnnexA's own layers, re-baked without the tram for dawn (Number n4) and morning with the poster of S 2 torn back (Voices v1/v2); `glow` = the street lights' pools |
+| `assets/cinematics/c4/places/loop_dawn.png`, `loop_morning.png`, `loop_glow_*.png` | the loop composited at camera 0 (legacy) |
+| `assets/cinematics/c4/places/fx_{steam_s2,chimney_11,crane_light_0..2,exhaust,fence_blinker,crows}.png` | the levels' fx strips (column steam, chimney, crane lamps, exhaust, hoarding blinker, crows) |
+| `assets/cinematics/c4/places/tram_left.png`, `tram_right.png` | tram 74 No. 3518 as the level paints it: arriving (front left, Marta in the cab, Ilse at the last window); leaving (front right, line board and fleet number unmirrored; Ilse without / with her red mitten on the glass) |
+| `assets/cinematics/c4/places/siding_lit.png`, `siding_dark.png`, `siding_glow.png` | the siding hall of L_C4_TunnelsB around wagon C-17/45, lit by its single work lamp / lamp out (the dawn at the portal, the booth's kerosene) |
+| `assets/cinematics/c4/places/breath.png`, `steam.png`, `steam_light.png`, `steam_warm.png`, `smoke.png`, `smoke_light.png`, `motes.png` | dithered puff sheets and dust specks |
+| `assets/cinematics/c4/homeward/w1_station.png`, `w1_glow.png`, `w1_door_{k,a}.png` | Veltrava platform 5 at first light (ray-cast: shed vault, globes, clock, the two trains with lit compartments and destination boards, benches, trolley, kiosk, the dawn in the opening); the two doors open / shut |
+| `assets/cinematics/c4/homeward/w1_{konrad,alexei,conductor_k,conductor_a,porter,mother,child,babushka}.png` | the walkers and the platform's people (game sheets, re-lit) |
+| `assets/cinematics/c4/homeward/w2_frames.png`, `w2_{sky,far,mid,near}_{berlin,karsk}.png`, `w2_streaks.png` | the two compartments (walnut / brass, reading lamp, suitcase; green panels, lace curtain, tea glass, bundle) and three depths of landscape per window, snow streaks |
 | `assets/cinematics/c4/homeward/w3_alexei.png` | Alexei re-lit for the night yard |
 | `assets/cinematics/c4/number/n1_*.png` | the wagon side (1100 px pan): fresh paint over old layers, the painted-over enamel plate „24 318“, the tin stencil with the wet C-17/45, chalk „ВТ 23.40“; lamp darkness + glow |
-| `assets/cinematics/c4/number/n2_macro.png`, `n2_glints.png` | macro: the 45 through the tin, wet glints |
-| `assets/cinematics/c4/number/n3a_macro.png`, `flakes.png` | macro: the same 45 black on a pine crate, macro snowflakes |
-| `assets/cinematics/c4/number/n3b_*.png`, `exhaust.png` | the loading hatch at dawn: lorry, hoist, the stack of crates, tail-light glow |
-| `assets/cinematics/c4/number/n4_konrad.png` | Konrad re-lit for the dawn loop |
-| `assets/cinematics/c4/card/card_de.png`, `c1_*.png` | the German half of card No. 0417 (typed, red C-17 tab), the snow by the split crate, Konrad's gloved hands (the right coat sleeve runs on past the frame edge / under the letterbox) |
+| `assets/cinematics/c4/number/n2_macro.png`, `n2_glints.png`, `n3a_macro.png`, `flakes.png` | the macros of the 45 (wagon / crate) |
+| `assets/cinematics/c4/number/n3b_hatch.png`, `n3b_lip.png`, `n3b_stack.png`, `n3b_tail.png`, `n3b_shaft.png`, `exhaust.png` | the loading hatch at dawn: the loop's distant layers behind, the lorry with its tilt and tail lights, the A-frame hoist, the open shaft lit from below, the hoarding „BAUSTELLE / BETRETEN VERBOTEN“ |
+| `assets/cinematics/c4/number/n4_{konrad,mother,child,worker}.png` | Konrad at the stop and the people waiting for the first tram |
+| `assets/cinematics/c4/card/card_de.png`, `c1_bg.png`, `c1_*hand*.png` | the German half of card No. 0417, the snow by the split crate (tyre track, boot prints, fanned cards, a dropped chain), Konrad's gloved hands (figures stream) |
 | `assets/cinematics/c4/card/c2_macro.png`, `c3a_macro.png`, `shadow.png` | the two macros of the perforation (mirrored), the moving fingertip shadow |
-| `assets/cinematics/c4/card/c3b_desk.png`, `card_ru.png`, `c3_hand.png`, `flame.png`, `lamp_glow.png` | the siding office desk: the Russian half, Alexei's hand, the kerosene lamp, the stencils C-17/41–44 on the wall |
-| `assets/cinematics/c4/card/c4_bg.png`, `c4_alexei.png` | over Alexei's shoulder to the wagon beyond the booth window (head down / up) |
-| `assets/cinematics/c4/stamp/s1_*.png` | the desk from above: notebook (pencil lines revealed at runtime), the card box „C-17/45 – ПРИНЯТЬ“, Lev's hand, the pencil hand, the small card |
+| `assets/cinematics/c4/card/c3b_desk.png`, `card_ru.png`, `c3_hand.png`, `flame.png`, `lamp_glow.png` | the siding booth's desk: stencils C-17/41–44, calendar February 1964, abacus, tea glass, pencil jar, stamp pad, freight ledger, the card box, the kerosene lamp; the Russian half; Alexei's hand |
+| `assets/cinematics/c4/card/c4_bg.png`, `c4_lampglow.png`, `c4_alexei.png` | over Alexei's shoulder through the booth window onto the level's siding hall (dirty glass, frost in the corners, the lamp's reflection) |
+| `assets/cinematics/c4/stamp/s1_*.png` | the desk from above: forms, notebook (pencil lines revealed at runtime), the card box „C-17/45 – ПРИНЯТЬ“, stamp and ink pad, tea glass, ashtray with Lev's cigarette, ruler, pencil shavings, the lamp's base; Lev's hand, the pencil hand, the small card |
 | `assets/cinematics/c4/stamp/s2_slip.png`, `s3a_card.png`, `imp_ru.png`, `imp_de.png`, `stamp_ru.png`, `stamp_de.png`, `hand_ru.png`, `hand_de.png` | the overhead stamp inserts (same frame, same point) |
-| `assets/cinematics/c4/stamp/s3b_*.png`, `lever.png`, `split.png` | the annex counter: Fengler leaning over it (his chest in grey dust coat, shirt and tie, the lapel badge without insignia; the upper arms of `s3b_hands.png` run up into the letterbox to his shoulders), the perforating machine and its lever, the split card, cabinets, typists behind glass |
-| `assets/cinematics/c4/stamp/s4_ladder.png`, `s4_konrad.png` | the foot of the shaft ladder between the card cabinets, Konrad re-lit (fluorescent) |
-| `assets/cinematics/c4/voices/v1_*.png` | the column's open service door, the Lindner file corner, Konrad re-lit (morning) |
-| `assets/cinematics/c4/voices/v2_konrad.png` | Konrad from behind: arm down / half / raised |
-| `assets/cinematics/c4/voices/v3_*.png`, `lantern.png` | Alexei and Lev re-lit for the green signal, the notebook insert with the four numbers, Lev's lantern glow |
+| `assets/cinematics/c4/stamp/s3b_back.png`, `s3b_counter.png`, `typist_{a,b}.png`, `s3b_hands.png`, `lever.png`, `split.png` | the counter close-up in front of the annex's card hall (level art, hazed), the frosted glazing with the level's typists at work, Fengler (figures stream), the perforating machine and the split card |
+| `assets/cinematics/c4/stamp/s4_ladder.png`, `s4_konrad.png` | the foot of the shaft ladder in the annex (the level's ladder niche, fans, card cabinets), Konrad re-lit (idle / hand to the coat / looking up) |
+| `assets/cinematics/c4/voices/v1_door.png`, `v1_file.png`, `v1_konrad.png` | the open steel door of S 2 (ladder rungs, warm air), the corner of the Lindner file, Konrad re-lit (morning) |
+| `assets/cinematics/c4/voices/v2_konrad.png` | Konrad from behind: arm down / half / raised (figures stream) |
+| `assets/cinematics/c4/voices/v3_*.png`, `lantern.png` | Alexei and Lev re-lit for the green signal, the squared notebook page with the four numbers, Lev's lantern glow |
 | `assets/audio/sfx/c4cine_station.wav`, `_rails`, `_yard` | Homeward beds (doors at 3.75 / 4.05 s) |
 | `assets/audio/sfx/c4cine_tunnel.wav`, `_drip`, `_hatch`, `_tram` | Number beds (tram bell at 11.4 s) |
 | `assets/audio/sfx/c4cine_card_snow.wav`, `_perf`, `_perf_ru`, `_office` | Card beds (perforation ticks 3.6–4.85 s; a train over the vault) |

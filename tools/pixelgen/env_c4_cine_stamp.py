@@ -349,9 +349,286 @@ def s4_ladder():
     return p.L.c
 
 
+# ======================================================================================= polish pass
+def s1_desk2():
+    """The siding-office desk from above in the kerosene light: worn oak with its grain and old ink rings, the
+    open notebook (lines 1-2 written; 3-4 appear at runtime), the card box C-17/45 - ПРИНЯТЬ with the cards
+    standing in it, the wooden stamp and the violet ink pad, a glass of tea in its holder seen from above, an
+    ashtray with Lev's cigarette (its smoke at runtime), a ruler, a pencil stub and shavings, a stack of forms,
+    the base of the lamp in the corner."""
+    R = Q.ramps(W=OAKK, A=AMBER, P=CREAM, K=KNIGHT, I=IRONK, G=['#1A1E22', '#2A3036', '#3E464E', '#56606A'],
+                V=VIOLET, B=['#2A1D0B', '#4A3415', '#73531F', '#9C7630', '#C49A48', '#E8C779'],
+                T=['#1A1C20', '#2C2F34', '#40444A', '#585C62', '#74787C'],
+                F=['#2A241A', '#463C2C', '#665840', '#887654', '#A89470', '#C8B48E', '#E2D0AA'],
+                E=['#1A0A08', '#3A140E', '#6A2418', '#9A3A22', '#C8603A'])
+    p = C.Paint(VW, VH, R, 's1b')
+    yy, xx = p.yy, p.xx
+    nz = Q.noise(VW, VH, 10, 7121)
+    grain = np.sin(yy * 0.6 + Q.noise(VW, VH, 8, 7123) * 7.0) * 0.5 + 0.5
+    lamp = Q.lightfield(VW, VH, [(120, -40, 560, 1.0, 1.15)])
+    p.put(yy >= 0, 'W', 2.2 + nz * 0.7 + grain * 0.7 + lamp * 3.2)
+    p.put(np.mod(yy + np.floor(xx / 200) * 5, 24) < 1, 'W', 1.4 + lamp[np.mod(yy + np.floor(xx / 200) * 5, 24) < 1])
+    for (rx, ry, rr) in ((470, 250, 16), (560, 210, 12), (150, 120, 14)):          # old glass rings
+        ring = ell(rx, ry, rr, rr * 0.8) & ~ell(rx, ry, rr - 2, rr * 0.8 - 2)
+        p.put(ring, 'W', 1.6 + lamp[ring] * 2.0)
+    # the stack of forms at the top left, slightly fanned
+    for k in range(4):
+        fm = Q.place(Q.rotate_mask(np.ones((60, 90), bool), -6 + k * 4, (74, 100)), VW, VH, 30 + k * 3, 20 + k * 2)
+        p.put(fm, 'F', 4.2 + k * 0.4 + lamp[fm] * 1.2)
+        p.put(fm & C.rim(fm, 0, -1), 'F', 6.0)
+        p.put(fm & (np.mod(yy, 6) == 2) & (np.mod(xx, 11) < 8) & ~C.rim(fm, 0, 0, 2), 'G', 2.6)
+    # the open notebook: two pages, ruled, the spine; the pencil writing is revealed at runtime
+    nb = box(40, 180, 340, 300)
+    p.put(nb, 'P', 4.4 + nz[nb] * 0.4 + lamp[nb] * 1.4)
+    p.put(nb & (np.mod(yy - 180, 20) == 19), 'G', 3.0)
+    p.put(box(188, 180, 192, 300), 'P', 2.6)
+    p.put(box(40, 298, 340, 302), 'W', 1.2)
+    p.put(box(36, 178, 344, 180), 'W', 1.4)
+    p.put(nb & C.rim(nb, 0, -1), 'P', 6.0)
+    old = [(210, 206, '24 318'), (210, 226, 'C-17/42'), (210, 246, '47 702')]
+    for (x, y, s) in old:
+        p.put(Q.place(Q.hand_text_k(s, 1, 0.2, 7105), VW, VH, x, y), 'G', 1.2)
+    # the ruler, a pencil stub with shavings
+    rul = box(352, 210, 362, 330)
+    p.put(rul, 'B', 3.4 + lamp[rul] * 1.0)
+    p.put(rul & (np.mod(yy, 5) == 0) & (xx < 356), 'W', 1.0)
+    p.put(p.line([(380, 300), (408, 288)], r=1.6), 'E', 2.6)
+    p.put(p.line([(406, 289), (412, 287)], r=1.0), 'W', 4.0)
+    for k in range(5):
+        p.put(ell(392 + k * 7, 312 + (k % 2) * 4, 3, 2), 'B', 2.4 + (k % 3) * 0.6)
+    # the card box: open top with the cards standing in it, the front with the label
+    x0, y0, x1, y1 = BOX
+    top = box(x0, y0, x1, y0 + 40)
+    p.put(top, 'W', 1.2 + lamp[top] * 1.4)
+    for i in range(10):
+        cy_ = y0 + 4 + i * 3
+        p.put(box(x0 + 6, cy_, x1 - 6, cy_ + 2), 'P', 3.0 + (i % 3) * 0.4 + lamp[cy_, x0 + 40] * 1.0)
+        if i % 4 == 1:
+            p.put(box(x0 + 10 + i * 9, cy_ - 2, x0 + 22 + i * 9, cy_), 'E', 3.2)          # index tabs
+    p.put(box(x0 + 6, y0 + 34, x1 - 6, y0 + 38), 'K', 0.8)
+    p.put(box(x0, y0 + 40, x1, y1), 'W', 3.4 + lamp[y0 + 40:y1, x0:x1].mean() * 2.0)
+    p.put(box(x0, y0 + 40, x1, y0 + 42), 'W', 5.0)
+    lab = box(x0 + 22, y0 + 54, x1 - 22, y0 + 76)
+    p.put(lab, 'P', 5.0)
+    p.put(Q.text_at('C-17/45 – ПРИНЯТЬ', VW, VH, x0 + 26, y0 + 61, 's'), 'K', 0.8)
+    # the wooden stamp lying by the box, the violet ink pad in its tin
+    p.put(box(470, 96, 500, 124), 'W', 2.2)
+    p.put(ell(485, 92, 9, 9), 'W', 4.0)
+    p.put(ell(485, 92, 9, 9) & C.rim(ell(485, 92, 9, 9), -1, -1), 'W', 5.4)
+    p.put(box(510, 92, 580, 132), 'I', 2.0)
+    p.put(box(510, 92, 580, 93), 'I', 4.0)
+    p.put(box(514, 96, 576, 128), 'V', 2.6 + nz[96:128, 514:576].mean())
+    # the tea glass in its holder from above: brass rim, the dark tea, the spoon
+    tx, ty = 470, 250
+    p.put(ell(tx, ty, 18, 16), 'B', 3.2 + lamp[ty, tx] * 1.0)
+    p.put(ell(tx, ty, 18, 16) & C.rim(ell(tx, ty, 18, 16), -1, -1, 2), 'B', 5.2)
+    p.put(ell(tx, ty, 14, 12), 'A', 1.4)
+    p.put(ell(tx - 4, ty - 4, 4, 3), 'A', 3.8)                                    # the lamp in the tea
+    p.put(p.line([(tx + 4, ty + 2), (tx + 22, ty - 10)], r=1.0), 'T', 4.2)
+    p.put(box(tx + 18, ty - 4, tx + 26, ty + 2), 'B', 3.0)                        # handle
+    # the ashtray with the cigarette resting on its rim
+    ax, ay = 586, 300
+    p.put(ell(ax, ay, 22, 18), 'T', 2.4)
+    p.put(ell(ax, ay, 16, 12), 'T', 1.2)
+    for (ex, ey) in ((580, 298), (590, 304), (584, 306)):
+        p.put(ell(ex, ey, 3, 2), 'T', 3.4)                                        # ash and a stub
+    p.put(p.line([(566, 290), (548, 282)], r=1.2), 'P', 5.4)
+    p.put(ell(566, 290, 1.6, 1.4), 'E', 4.6)                                      # the ember
+    # the lamp's base in the top-right corner, its shadow
+    p.put(ell(610, 30, 40, 32), 'B', 2.8 + lamp[30, 610] * 1.0)
+    p.put(ell(610, 30, 26, 20), 'B', 4.0)
+    p.resolve(band=2.0)
+    L['box'] = list(BOX)
+    L['box_slot'] = list(BOX_SLOT)
+    L['note_lines'] = [[x, y] for (x, y, _) in NOTE_LINES]
+    L['s1_ember'] = [566, 289]
+    L['s1_tea'] = [tx - 4, ty - 6]
+    return p.L.c
+
+
+S3_TYPISTS = [(452, 92, 'a'), (548, 96, 'b')]   # top-left of the level's typist strips behind the glass
+
+
+def s3b_back():
+    """Behind the counter: the card hall of the annex as the level paints it (cabinets 'Haushaltskartei Süd',
+    the sliding ladder, the tubes), re-lit and pushed back into the fluorescent haze."""
+    import env_c4_cine_levelart as LA
+    import env_c4_cine_levelplates as LP
+    Ld = LA.layer('berlin_annex', 'annex', (150, 40, 790, 400 - 40))
+    fl = LA.hexf('#E8F0E4')
+    lights = [{'pos': (LP.ANNEX_X + x, 78), 'height': 30, 'rgb': fl, 'energy': 0.55, 'radius': 170}
+              for x in (154, 274, 394, 514, 634)]
+    a = LA.relight(Ld, (0.46, 0.50, 0.48), lights, origin=(LP.ANNEX_X + 150, 40), emis_k=1.0)
+    a = LA.grade(a, mul=(0.86, 0.92, 0.88), add=(0.05, 0.07, 0.06), sat=0.8)        # the haze of depth
+    out = np.zeros((VH, VW, 4), np.float32)
+    out[..., 3] = 1.0
+    out[..., :3] = np.asarray([0.10, 0.12, 0.11])
+    LA.over(out, a, 0, -10)
+    return LA.to8(LA.dither_quant(out, 36, seed=9))
+
+
+def s3b_front():
+    """The counter close-up drawn over the hall: the glazed partition of the typists' room (frosted, dithered so
+    the hall and the typists show through), Fengler's chest between the arms of s3b_hands, the counter top, the
+    stamp, the forms, the perforating machine."""
+    full = s3b_counter()
+    out = full.copy()
+    # the old painted hall and the blob typists go: the band above the counter shows the level's hall
+    out[:150, :, 3] = 0
+    # keep Fengler's chest (painted in s3b_counter between his shoulders)
+    import env_c4_cine_figs as G
+    (lsx, _ly), (rsx, _ry) = G.S3M_SHOULDERS
+    yy, xx = np.mgrid[0:VH, 0:VW]
+    chest = poly([(lsx - 22, 30), (rsx + 22, 30), (rsx + 8, 100), (rsx - 4, 150), (lsx + 4, 150), (lsx - 10, 100)])
+    keep = chest & (yy < 150)
+    out[keep] = full[keep]
+    # the frosted glass partition at the right: a dithered veil, mullions, the transom bar
+    gl = box(400, 46, 640, 150)
+    th = pg.bayer(VW, VH, 2, 1)
+    veil = gl & (th > 0.62) & ~keep
+    out[veil, :3] = np.array([150, 170, 156], np.uint8)
+    out[veil, 3] = 255
+    frame = (box(400, 46, 405, 150) | box(400, 96, 640, 99) | box(520, 46, 523, 150)) & ~keep
+    out[frame, :3] = np.array([60, 70, 66], np.uint8)
+    out[frame, 3] = 255
+    L['s3_typists'] = [[x, y, k] for (x, y, k) in S3_TYPISTS]
+    return out
+
+
+def life_strip(name):
+    from PIL import Image
+    import env_c4_cine_levelart as LA
+    import os
+    p = os.path.join(LA.ENV, 'berlin_annex', 'life', name + '.png')
+    return np.asarray(Image.open(p).convert('RGBA')).copy()
+
+
+def s4_ladder2():
+    """The foot of the shaft ladder in the card hall: the level's annex (shaft niche, ladder, the fans behind
+    their grille, the card cabinets with the sliding ladders, the plan and the clock) re-lit by its tubes and the
+    daylight falling down the shaft; a strip of the near-black cut pier at the left."""
+    import env_c4_cine_levelart as LA
+    import env_c4_cine_levelplates as LP
+    off = 32                                   # (round 10: the cut pier only a narrow edge, not an 80 px band)
+    room = LP.annex_ladder().astype(np.float32) / 255.0
+    out = np.zeros((VH, VW, 4), np.float32)
+    out[..., 3] = 1.0
+    nz = Q.noise(VW, VH, 8, 7611)
+    pier = np.clip(0.07 + nz[..., None] * 0.05, 0, 1) * np.asarray([1.0, 1.05, 1.1])
+    out[:, :off + 26, :3] = pier[:, :off + 26]
+    LA.over(out, room[:, :VW - off], off, 0)
+    out[:, :off, :3] *= np.clip((np.arange(off)[None, :, None] / off) * 0.5 + 0.5, 0, 1)
+    L['s4_ladder'] = [off + 38, off + 58]
+    L['s4_konrad_x'] = off + 56
+    L['s4_shaft_light'] = [off + 48, 46]
+    return LA.to8(LA.dither_quant(out, 40, seed=11))
+
+
+# ======================================================================================= s4 medium (round 10)
+S4M_W = 660                            # both layers are a little wider than the frame: the camera drifts
+S4M_AT = (186, 44)                     # top-left of Konrad's medium figure (figures stream, S4M_SIZE 230 x 300)
+S4M_LADDER = (64, 152)                 # the ladder's stiles (outer x of the left one, inner x of the right one)
+
+
+def s4_medium():
+    """The medium shot of s4 (round 10; before the game-scale ending): the foot of the shaft ladder, close.
+    hall  (far, opaque)  the card hall out of focus -- the cabinets' drawer fronts and handles softened, the tubes'
+          long bright smears under the ceiling, a pale cold wash where the daylight from the shaft spills out
+    niche (near, alpha)  the shaft niche at the left: the concrete back wall brightening toward the daylight above,
+          the steel ladder in focus -- stiles, round rungs lit from above with snow on the top ones, the wall
+          brackets -- a conduit, „SCHACHT 2“ stencilled and faded, the pier's edge catching the tubes' green
+    Konrad (s4_konrad_medium) stands between them at S4M_AT, turned to the ladder, looking up."""
+    W = S4M_W
+    R = Q.ramps(H=['#080C0A', '#0E1612', '#16201A', '#1E2C24', '#283A30', '#344A3E', '#425C4E', '#546E60',
+                   '#6C8678', '#8AA294', '#B0C4B8'],
+                Y=['#5A6A5E', '#8A9C8E', '#BACCBC', '#E4F2E4', '#F8FFF6'],
+                C=['#07090B', '#0C0F12', '#12161A', '#191E23', '#21272D', '#2B323A', '#38404A', '#48525C',
+                   '#5C6670', '#768088', '#96A0A8'],
+                T=STEEL, D=['#2A3648', '#3E4C62', '#56667E', '#74849A', '#98A8BA', '#C0CCD8', '#E4ECF2'],
+                S=['#7E8B96', '#A4AEB6', '#CED6DC', '#EEF2F4'], K=KNIGHT, X=CREAM)
+    # ---- the hall, out of focus
+    h = C.Paint(W, VH, R, 's4m_hall')
+    yy, xx = h.yy, h.xx
+    nz = Q.noise(W, VH, 30, 7801, octaves=2)
+    tubes = Q.lightfield(W, VH, [(x, 70, 150, 1.0, 1.25) for x in (300, 470, 640)])
+    sharp = np.zeros((VH, W), np.float32)
+    cab = (yy > 96) & (yy < 330)
+    dx_ = np.mod(xx - 230, 24)
+    dy_ = np.mod(yy - 100, 14)
+    sharp += cab * (1.0 - ((dx_ < 2) | (dy_ < 2)) * 0.9)                       # drawer fronts and their gaps
+    sharp += cab * ((np.abs(dx_ - 12) < 3) & (np.abs(dy_ - 7) < 1.5)) * 0.9    # the handles
+    sharp += ((yy > 86) & (yy < 96)) * 1.3                                     # the cornice over the cabinets
+    sharp -= (np.mod(xx - 230, 168) < 6) * cab * 0.8                           # the sliding ladders' rails
+    soft = C.blur(C.blur(sharp, 3), 2)
+    base = 2.0 + nz * 0.6 + tubes * 3.4 + soft * (1.0 + tubes * 1.4) + np.clip((yy - 260) / 100.0, 0, 1) * -0.8
+    h.put(yy >= 0, 'H', base)
+    for x0 in (230, 400, 570):                                                 # the tubes, smeared
+        tube = (np.abs(yy - 66) < 2.5) & (xx > x0) & (xx < x0 + 120)
+        h.put(tube, 'Y', 2.6 + (np.abs(yy - 66) < 1.2)[tube] * 1.4)
+        halo = (np.abs(yy - 66) < 6) & (xx > x0 - 6) & (xx < x0 + 126) & ~tube
+        h.put(halo, 'H', 8.0 + nz[halo] * 0.6)
+    day = np.clip(1.0 - np.hypot((xx - 210) / 120.0, (yy - 60) / 160.0), 0, 1)
+    dm = day > 0.2
+    h.put(dm, 'H', base[dm] + day[dm] * 1.6)
+    h.resolve(band=2.0)
+    hall = h.L.c.copy()
+    hall[..., 3] = 255
+    # ---- the niche and the ladder (in focus)
+    p = C.Paint(W, VH, R, 's4m_niche')
+    yy, xx = p.yy, p.xx
+    nz = Q.noise(W, VH, 9, 7803)
+    fine = Q.noise(W, VH, 2, 7805)
+    sky = np.clip(1.0 - (yy - 40) / 250.0, 0, 1) ** 1.6                       # daylight falling down the shaft
+    beam = np.clip(1.0 - np.abs(xx - 108) / 120.0, 0, 1) * sky                 # brightest down its middle
+    niche = xx < 232
+    p.put(niche, 'C', 2.0 + nz[niche] * 0.8 + fine[niche] * 0.3 + sky[niche] * 3.6 + beam[niche] * 3.2)
+    p.put(niche & (np.mod(yy + 7, 58) < 1), 'C', 1.4 + sky[niche & (np.mod(yy + 7, 58) < 1)] * 3.0)   # shuttering
+    stain = niche & (Q.noise(W, VH, 5, 7807) > 0.68) & (yy > 120)
+    p.put(stain, 'C', 1.6 + sky[stain] * 3.0)                                  # damp streaks
+    side = xx < 26                                                             # the niche's own side wall
+    p.put(side, 'C', 1.2 + nz[side] * 0.5 + sky[side] * 2.4)
+    pier = (xx >= 206) & (xx < 232)
+    p.put(pier, 'C', 2.0 + nz[pier] * 0.5 + sky[pier] * 2.0)
+    p.put(pier & (xx >= 228), 'H', 6.6)                                        # its edge catches the tubes
+    p.put(box(198, 40, 204, VH, W), 'T', 2.6 + sky[40:VH, 198:204].mean() * 2.0)  # the conduit
+    p.put(box(198, 40, 199, VH, W), 'T', 4.4)
+    for cy in range(60, VH, 64):
+        p.put(box(196, cy, 206, cy + 3, W), 'T', 3.6)
+    sign = box(155, 214, 195, 228, W)                                          # an enamel sign beside the ladder
+    p.put(sign, 'X', 3.6 + sky[sign] * 1.4)
+    p.put(sign & C.rim(sign, 0, 0, 1), 'K', 2.0)
+    p.put(Q.text_at('SCHACHT 2', W, VH, 158, 217, 's') & sign, 'K', 0.6)
+    p.put(box(157, 228, 194, 231, W) & (fine > 0.4), 'C', 1.0)                 # a rust run under it
+    lx0, lx1 = S4M_LADDER
+    for (a, b) in ((lx0, lx0 + 7), (lx1 - 7, lx1)):                         # the stiles
+        stile = box(a, 40, b, VH, W)
+        p.put(stile, 'T', 2.4 + sky[stile] * 3.6 + nz[stile] * 0.3)
+        p.put(box(a, 40, a + 1, VH, W), 'D', 1.0 + sky * 5.0)
+        p.put(box(b - 1, 40, b, VH, W), 'T', 1.2)
+    for k, ry in enumerate(range(52, VH, 24)):                                 # the rungs
+        rung = box(lx0 + 7, ry, lx1 - 7, ry + 4, W)
+        p.put(rung, 'T', 2.2 + sky[ry, 100] * 3.4)
+        p.put(box(lx0 + 7, ry, lx1 - 7, ry + 1, W), 'D', 1.4 + sky[ry, 100] * 5.0)
+        p.put(box(lx0 + 7, ry + 3, lx1 - 7, ry + 4, W), 'T', 0.8)
+        p.put(box(lx0 + 7, ry + 4, lx1 - 7, ry + 6, W) & (fine > 0.2), 'C', 1.0)   # its shadow on the wall
+        if ry < 150:
+            snow = box(lx0 + 7, ry - 1, lx1 - 7, ry, W) & (fine > 0.35 + k * 0.08)
+            p.put(snow, 'S', 2.6 - k * 0.3)
+    for by in range(88, VH, 72):                                               # wall brackets
+        for (bx0, bx1) in ((lx0 - 10, lx0), (lx1, lx1 + 10)):
+            p.put(box(bx0, by, bx1, by + 4, W), 'T', 1.8 + sky[by, 100] * 2.6)
+    p.resolve(band=2.0)
+    near = p.L.c.copy()
+    near[..., 3] = np.where(xx < 232, 255, 0).astype(np.uint8)
+    L['s4m_at'] = list(S4M_AT)
+    L['s4m_w'] = W
+    L['s4m_shaft'] = [(S4M_LADDER[0] + S4M_LADDER[1]) // 2, 46]
+    return hall, near
+
+
 def build(w):
     import env_c4_cine_figs as G
-    w('stamp/s1_desk.png', s1_desk())
+    w('stamp/s1_desk.png', s1_desk2())
     w('stamp/s1_boxfront.png', s1_boxfront())
     nimg = notes()
     w('stamp/s1_notes.png', nimg)
@@ -362,8 +639,9 @@ def build(w):
         spans.append([int(xs.min()), y - 2, int(xs.max()) + 1, y + 18])
     L['note_spans'] = spans
     w('stamp/s1_card.png', card_small())
-    w('stamp/s1_pencil.png', Q.sheet([G.s1_pencil(0), G.s1_pencil(1)]))
-    lev = G.s1_lev()
+    from env_c4_cine_places import figs_disk as FD
+    w('stamp/s1_pencil.png', FD('stamp/s1_pencil.png', lambda: Q.sheet([G.s1_pencil(0), G.s1_pencil(1)])))
+    lev = FD('stamp/s1_lev.png', G.s1_lev)
     w('stamp/s1_lev.png', lev)
     ys, xs = np.nonzero(lev[..., 3] > 0)
     k = int(np.argmax(ys))
@@ -375,13 +653,16 @@ def build(w):
     w('stamp/imp_de.png', impression('ABGANG', 'red', 7703, 1.5))
     w('stamp/stamp_ru.png', stamp_top('karsk'))
     w('stamp/stamp_de.png', stamp_top('berlin'))
-    w('stamp/hand_ru.png', G.stamp_hand('karsk'))
-    w('stamp/hand_de.png', G.stamp_hand('berlin'))
-    w('stamp/s3b_counter.png', s3b_counter())
-    w('stamp/s3b_hands.png', G.s3_hands_med())
+    w('stamp/hand_ru.png', FD('stamp/hand_ru.png', lambda: G.stamp_hand('karsk')))
+    w('stamp/hand_de.png', FD('stamp/hand_de.png', lambda: G.stamp_hand('berlin')))
+    w('stamp/s3b_back.png', s3b_back())
+    w('stamp/s3b_counter.png', s3b_front())
+    w('stamp/s3b_hands.png', FD('stamp/s3b_hands.png', G.s3_hands_med))
+    for k in ('a', 'b'):
+        w('stamp/typist_%s.png' % k, life_strip('typist_' + k))
     w('stamp/lever.png', lever_sheet())
     w('stamp/split.png', split_card())
-    w('stamp/s4_ladder.png', s4_ladder())
+    w('stamp/s4_ladder.png', s4_ladder2())
     fw, fh = Q.STAMP_FRAME
     L['stamp_c'] = list(STAMP_C)
     L['stamp_frame'] = [fw, fh]
@@ -391,6 +672,13 @@ def build(w):
     L['lever_pivot'] = [12, 12]
     L['s3b_hands_at'] = list(G.S3M_AT)
     look = Q.LIGHT_FLUO
-    sheet, idx = Q.fig_sheet('konrad', [('idle_side', None, False), ('inspect_side', None, False)], look)
+    sheet, idx = Q.fig_sheet('konrad', [('idle_side', None, False), ('inspect_side', None, False),
+                                        ('look_side', None, False)], look)
     w('stamp/s4_konrad.png', sheet)
     L['s4_konrad'] = idx
+    # the medium shot of s4 (round 10): the niche and the hall in two depths, Konrad waist-up between them
+    hall, near = s4_medium()
+    w('stamp/s4m_hall.png', hall)
+    w('stamp/s4m_niche.png', near)
+    w('stamp/s4_konrad_med.png', FD('stamp/s4_konrad_med.png',
+                                     lambda: Q.sheet([G.s4_konrad_medium(0), G.s4_konrad_medium(1)])))

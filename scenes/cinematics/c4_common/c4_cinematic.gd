@@ -142,3 +142,162 @@ static func draw_cell(ci: CanvasItem, sheet: Texture2D, n: int, i: int, top_left
 	var fw := sheet.get_width() / maxi(1, n)
 	var src := Rect2(posmod(i, n) * fw, 0, fw, sheet.get_height())
 	ci.draw_texture_rect_region(sheet, Rect2(top_left.round(), Vector2(fw, sheet.get_height())), src, mod)
+
+
+# ------------------------------------------------------------------ polish-pass helpers (additive; nothing above
+# changed).  All of them stay pure functions of the timeline time.
+
+## A looping sprite-sheet animation (the levels' own fx strips): frame of `frames` at `fps` with a phase.
+func loop_frame(time: float, frames: int, fps: float, phase := 0.0) -> int:
+	var r := fps * (0.6 if reduced_motion() else 1.0)
+	return posmod(int(floor(time * r + phase * frames)), maxi(1, frames))
+
+
+## A sprite showing one frame of a horizontal fx strip (frames of equal width), top-left at `pos`.
+func fx_sprite(rel: String, frames: int, pos: Vector2, parent: Node, add := false) -> Sprite2D:
+	return sprite(rel, pos, parent, maxi(1, frames), add)
+
+
+## Puffs (steam, smoke, breath) rising from `origin`: `count` puffs spread over a `period`-second life, each
+## drifting `drift` px sideways and `rise` px up while it grows through the sheet's frames and fades.
+func draw_puffs(ci: CanvasItem, sheet: Texture2D, n: int, origin: Vector2, time: float, count: int, period: float,
+		rise: float, drift: float, alpha := 0.7, phase := 0.0, sway := 3.0) -> void:
+	if sheet == null:
+		return
+	var k := motion_k()
+	for i in count:
+		var age := fposmod(time / period + phase + float(i) / float(count), 1.0)
+		var p := origin + Vector2(drift * age * k + sin(age * 5.0 + i * 1.7) * sway * k, -rise * age * k)
+		var a := alpha * (1.0 - age) * clampf(age * 6.0, 0.0, 1.0)
+		draw_frame(ci, sheet, n, int(age * float(n - 1) + 0.5), p, false, Color(1, 1, 1, a))
+
+
+## Dust motes drifting slowly inside `rect` (a lamp's beam): `count` specks, each a pure function of t, brighter
+## near `focus`; drawn with a 4-frame speck sheet (env_c4_cine_places._motes).
+func draw_motes(ci: CanvasItem, sheet: Texture2D, rect: Rect2, focus: Vector2, radius: float, time: float,
+		count: int, seed: int, alpha := 0.8) -> void:
+	if sheet == null:
+		return
+	var k := motion_k()
+	for i in count:
+		var h1 := h01(i, seed)
+		var h2 := h01(i, seed + 11)
+		var h3 := h01(i, seed + 23)
+		var x := rect.position.x + fposmod(h1 * rect.size.x + time * (h3 - 0.5) * 9.0 * k, rect.size.x)
+		var y := rect.position.y + fposmod(h2 * rect.size.y + time * (2.0 + h3 * 5.0) * k + sin(time * 0.9 + i) * 3.0,
+			rect.size.y)
+		var d := Vector2(x, y).distance_to(focus) / maxf(1.0, radius)
+		var a := alpha * clampf(1.0 - d, 0.0, 1.0)
+		if a <= 0.03:
+			continue
+		var fi := clampi(int((1.0 - d) * 3.99), 0, 3)
+		draw_cell(ci, sheet, 4, fi, Vector2(x, y), Color(1, 1, 1, a))
+
+
+## Water drops falling from `top` to `bottom` at x positions inside [x0, x1] (each drop a pure function of t),
+## with a two-pixel splash where it lands.
+func draw_drips(ci: CanvasItem, x0: float, x1: float, top: float, bottom: float, time: float, count: int,
+		seed: int, col := Color(0.62, 0.66, 0.70, 0.8)) -> void:
+	var k := motion_k()
+	for i in count:
+		var x := roundf(x0 + h01(i, seed) * (x1 - x0))
+		var period := 1.6 + h01(i, seed + 5) * 1.8
+		var age := fposmod(time / period + h01(i, seed + 9), 1.0)
+		var fall := 0.55
+		if age < fall:
+			var u := age / fall
+			var y := top + (bottom - top) * u * u
+			ci.draw_rect(Rect2(Vector2(x, roundf(y)), Vector2(1, 2 + int(u * 3.0 * k))), col)
+		elif age < fall + 0.08:
+			ci.draw_rect(Rect2(Vector2(x - 2, bottom), Vector2(1, 1)), col)
+			ci.draw_rect(Rect2(Vector2(x + 2, bottom), Vector2(1, 1)), col)
+
+
+## Place a layer of a parallax stack: its home position shifted by the camera x times its parallax factor.
+static func par_pos(home: Vector2, cam_x: float, par: float) -> Vector2:
+	return Vector2(roundf(home.x - cam_x * par), home.y)
+
+
+## Snow lit by a lamp: flakes falling through the cone under each light (cones = [[x, y_lamp, half_width_at_floor,
+## floor_y], ...]), brighter near the lamp; each flake a pure function of t.
+func draw_lit_snow(ci: CanvasItem, cones: Array, time: float, per_cone: int, seed: int,
+		col := Color(1.0, 0.86, 0.6, 1.0)) -> void:
+	var k := 0.6 if reduced_motion() else 1.0
+	for c in cones:
+		var cx := float(c[0])
+		var top := float(c[1])
+		var hw := float(c[2])
+		var floor_y := float(c[3])
+		for i in per_cone:
+			var period := 3.2 + h01(i, seed + 3) * 2.4
+			var age := fposmod(time * k / period + h01(i, seed + int(cx)), 1.0)
+			var y := top + age * (floor_y - top)
+			var spread := hw * (y - top) / maxf(1.0, floor_y - top)
+			var x := cx + (h01(i, seed + 7) * 2.0 - 1.0) * spread + sin(time * 1.3 + i) * 2.0 * k
+			var a := clampf(1.0 - absf(x - cx) / maxf(1.0, spread + 1.0), 0.0, 1.0) * clampf((1.0 - age) * 2.5, 0.0, 1.0)
+			ci.draw_rect(Rect2(Vector2(roundf(x), roundf(y)), Vector2(1 + int(i % 3 == 0), 1 + int(i % 3 == 0))),
+				Color(col.r, col.g, col.b, col.a * a * 0.9))
+
+
+## Deterministic hash in 0..1 (the base's _h is -1..1).
+static func h01(i: int, seed: int) -> float:
+	return (_h(i, seed) + 1.0) * 0.5
+
+
+# ------------------------------------------------------------------ round-10 helpers (additive; nothing above changed)
+
+## fig_frame that draws only the part of the cell inside `clip` (a screen rect): a figure inside a door, behind a
+## sill, a parapet or a jamb is cut exactly by it.  A clip that holds the whole cell draws it like fig_frame (the
+## sprite's region is switched off again); a cell wholly outside the clip hides the sprite.
+func fig_frame_clip(s: Sprite2D, index: Dictionary, anim: String, i: int, feet: Vector2, clip: Rect2) -> void:
+	var n := maxi(1, s.texture.get_width() / FIG_W) if s.texture else 1
+	var r = index.get(anim, [0, 1])
+	var f := clampi(int(r[0]) + posmod(i, maxi(1, int(r[1]))), 0, n - 1)
+	var tl := (feet - FEET_OFF).round()
+	var cell := Rect2(tl, Vector2(FIG_W, FIG_H))
+	var c := Rect2(clip.position.round(), clip.size.round())
+	if c.encloses(cell):
+		s.region_enabled = false
+		s.region_rect = Rect2()
+		s.hframes = n
+		s.frame = f
+		s.position = tl
+		return
+	var vis := cell.intersection(c)
+	s.frame = 0
+	s.hframes = 1
+	s.region_enabled = true
+	if vis.size.x < 1.0 or vis.size.y < 1.0:
+		s.region_rect = Rect2(f * FIG_W, 0, 1, 1)
+		s.position = tl
+		s.visible = false
+		return
+	s.region_rect = Rect2(Vector2(f * FIG_W, 0) + (vis.position - tl), vis.size)
+	s.position = vis.position
+
+
+## No clip at all (for fig_frame_clip).
+const NO_CLIP := Rect2(-4096, -4096, 8192, 8192)
+
+
+## A sprite placed by its frame position that is cut to `clip` (screen rect) -- the same idea for any sheet sprite
+## (hframes cells of one row): only the part inside the clip is drawn.
+func sprite_clip(s: Sprite2D, frames: int, f: int, top_left: Vector2, clip: Rect2) -> void:
+	if s.texture == null:
+		return
+	var fw := s.texture.get_width() / maxi(1, frames)
+	var fh := s.texture.get_height()
+	var tl := top_left.round()
+	var cell := Rect2(tl, Vector2(fw, fh))
+	var c := Rect2(clip.position.round(), clip.size.round())
+	var vis := cell.intersection(c)
+	s.frame = 0
+	s.hframes = 1
+	s.region_enabled = true
+	if vis.size.x < 1.0 or vis.size.y < 1.0:
+		s.region_rect = Rect2(0, 0, 1, 1)
+		s.position = tl
+		s.visible = false
+		return
+	s.region_rect = Rect2(Vector2(posmod(f, maxi(1, frames)) * fw, 0) + (vis.position - tl), vis.size)
+	s.position = vis.position

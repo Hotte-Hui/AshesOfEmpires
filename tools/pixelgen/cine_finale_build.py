@@ -32,6 +32,7 @@ import cine_finale_berlin as b         # noqa: E402
 import cine_finale_berlin_anim as ba   # noqa: E402
 import cine_finale_karsk as k          # noqa: E402
 import cine_finale_karsk_anim as ka    # noqa: E402
+import cine_finale_figure as fig       # noqa: E402
 import pg                              # noqa: E402
 
 OUT = kit.OUT
@@ -54,6 +55,10 @@ T = {
     'map': (33.6, 47.5),
 }
 DURATION = 47.5
+# split screen: Konrad's head (x 272 request / 236 evidence) around the middle of the left half (view x 160),
+# Alexei's (x 360) in the middle of the right half (view x 480)
+SPLIT_SHIFT_B = -70
+SPLIT_SHIFT_K = 140
 
 
 def rel(path: str) -> str:
@@ -107,6 +112,12 @@ def build_b_close(ext_b) -> dict:
     fr = ka.wisp_frames(at, (tip[0], tip[1] - 1), 10, kit.BR['smoke'], b.LAMP_B, 'b_smoke', height=58, spread=4.0,
                         draft=-6.0, count=6, rmax=3.0, density=0.7, ribbon=True)
     nodes.append(loop_node('smoke', 'b_close/smoke.png', at.save(os.path.join(OUT, 'b_close/smoke.png')), fr, 7.0, 18))
+    # steam over the coffee cup (thin, it has gone half cold)
+    at = kit.Atlas('b_cup')
+    cup = base['cup']
+    fr = ka.wisp_frames(at, (cup[0], cup[1] - 2), 10, kit.BR['smoke'], b.LAMP_B, 'b_cup', height=30, spread=2.0,
+                        draft=-3.0, count=5, rmax=2.5, density=0.55)
+    nodes.append(loop_node('cup_steam', 'b_close/cup_steam.png', at.save(os.path.join(OUT, 'b_close/cup_steam.png')), fr, 6.0, 18))
     # lamp (on / off frames; the map reuses the same heads at the same screen position)
     at = kit.Atlas('b_lamp')
     on, _ = b.lamp_architect(b.W, b.H, b.V(112, 70), True)
@@ -148,7 +159,7 @@ def build_k_close(ext_k) -> dict:
     nodes.append({'id': 'stamp_a', 'type': 'sprite', 'file': 'k_close/stamp.png', 'hist': 'k_close/stamp_hist.png', 'z': 11,
                   'when': {'a1_choose': 'share_with_irina'}})
     nodes.append({'id': 'stamp_b', 'type': 'sprite', 'file': 'k_close/stamp.png', 'hist': 'k_close/stamp_hist.png', 'z': 11,
-                  'when': {'a1_choose': 'keep_private'}, 'vis': [[0.0, 1], [t0 + 1.85, 0]]})
+                  'when': {'a1_choose': 'keep_private'}, 'vis': [[0.0, 1], [t0 + ka.T_TURN[0] + 0.07, 0]]})
     # tea steam (two loops: still air / draught while the door is open in the share branch)
     at = kit.Atlas('k_steam')
     still = ka.wisp_frames(at, (k.GLASS_C[0], k.GLASS_C[1] - 9), 10, kit.KR['steam'], k.LAMP_K, 'k_steam', height=54,
@@ -198,7 +209,10 @@ def add_tap(nodes: list, arm_id: str, t_tap: float, set_dir: str, only_if_missin
         last = n['keys'][-1][1]
         if last < 0:
             continue
-        f = kit.render_tap(n['_atlas'])
+        if '_rig' in n:
+            f = fig.render_tap(n['_rig'], n['_side'], n['_atlas'], extra=n.get('_extra'))
+        else:
+            f = kit.render_tap(n['_atlas'])
         if f < 0:
             continue
         n['frames'] = n['_atlas'].save(n['_path'])
@@ -246,18 +260,31 @@ def cam(t0, t1, a, bxy):
 def make_shots() -> list:
     sh = []
     t0, t1 = T['b_close']
-    sh.append({'set': 'b_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (20, 12), (26, 9))})
+    sh.append({'set': 'b_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (20, 12), (26, 9)),
+               'when': {'m1_choose': 'preserve_evidence'}})
+    # request: the camera tilts up with his hand to the sheet in the platen, follows the sheet down into the
+    # AUSGANG tray (the reach is framed on forearm, hand and sheet, not on an upright arm)
+    sh.append({'set': 'b_close', 't0': t0, 't1': t1, 'home': HOME, 'when': {'m1_choose': 'request_explanation'},
+               'cam': [[t0, 20, 12], [t0 + ba.T_REACH[0] - 0.1, 23, 10], [t0 + ba.T_REACH[1], 25, -22],
+                       [t0 + ba.T_SWING[1], 26, -14], [t0 + ba.T_CARRY[1], 27, 6], [t1, 26, 9]]})
     t0, t1 = T['k_close']
-    sh.append({'set': 'k_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (20, 12), (14, 9))})
+    sh.append({'set': 'k_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (20, 12), (14, 9)),
+               'when': {'a1_choose': 'share_with_irina'}})
+    # keep_private: the camera tilts down with Alexei's hand to the wide-open pedestal drawer and back up
+    sh.append({'set': 'k_close', 't0': t0, 't1': t1, 'home': HOME, 'when': {'a1_choose': 'keep_private'},
+               'cam': [[t0, 20, 12], [t0 + 2.2, 19, 12], [t0 + 3.1, 18, 66], [t0 + 5.3, 17, 66], [t0 + 6.4, 15, 14],
+                       [t1, 14, 9]]})
     t0, t1 = T['r1_b']
     sh.append({'set': 'b_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (24, 10), (25, 10))})
     t0, t1 = T['r2_k']
     sh.append({'set': 'k_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (16, 10), (15, 10))})
     t0, t1 = T['split']
+    # each half is framed on its sitter (the set is shifted inside its fixed half): Konrad and Alexei both sit
+    # in the middle of their half, heads clear of the divider
     sh.append({'set': 'b_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (20, 10), (20, 10)),
-               'clip': [0, 0, 319, 360]})
+               'clip': [0, 0, 319, 360], 'shift': [SPLIT_SHIFT_B, 0]})
     sh.append({'set': 'k_close', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (20, 10), (20, 10)),
-               'clip': [321, 0, 319, 360]})
+               'clip': [321, 0, 319, 360], 'shift': [SPLIT_SHIFT_K, 0]})
     return sh
 
 

@@ -87,12 +87,30 @@ def k1_bg():
     p.put(car, 'P', 3.2 + np.clip((yy - 246) / 54, 0, 1) * -1.0)
     p.put(p.box(0, 244, 236, 248), 'I', 5.0)
     p.put(p.box(0, 243, 236, 245), 'W', 3.0)                                  # snow on the roof
-    for wx in range(12, 230, 22):
+    for k, wx in enumerate(range(12, 230, 22)):
         win = p.box(wx, 256, wx + 13, 270)
         p.put(win, 'I', 3.4)
-        p.put(p.box(wx + 1, 257, wx + 12, 269), 'M', 5.0)
-        if wx in (56, 122):
-            p.put(p.box(wx + 1, 257, wx + 12, 269), 'L', 2.4, emis=True)
+        lit = wx in (34, 56, 122, 188)
+        if lit:                                          # round 10: lit compartments, white half-curtains
+            p.put(p.box(wx + 1, 257, wx + 12, 269), 'L', 2.4 + (k % 2) * 0.5, emis=True)
+            p.put(p.box(wx + 4, 258, wx + 9, 261), 'L', 4.0, emis=True)          # the compartment lamp
+        else:
+            p.put(p.box(wx + 1, 257, wx + 12, 269), 'M', 5.0)
+            p.put(p.box(wx + 1, 257, wx + 12, 259), 'M', 6.4)                    # the sky in the upper pane
+        p.put(p.box(wx + 1, 263, wx + 12, 269), 'W', 3.6 if lit else 2.8)       # the lower half-curtain
+        p.put(p.box(wx + 1, 263, wx + 12, 264), 'W', 4.6)
+        p.put(p.box(wx + 6, 256, wx + 7, 270), 'I', 3.0)                          # the sash bar
+    # the route board under the windows, the conductor's door with its handrails, the heater chimney with snow
+    p.put(p.box(70, 276, 176, 282), 'I', 4.6)
+    p.put(K.text_at('МОСКВА · KORDON-17 · VELTRAVA', VW, VH, 123, 277, font='s', center=True) & p.box(70, 276, 176, 282),
+          'W', 5.0)
+    p.put(p.box(214, 252, 232, 290), 'P', 2.4)
+    p.put(p.box(216, 256, 230, 266), 'M', 5.2)
+    for hx in (212, 233):
+        p.put(p.box(hx, 258, hx + 1, 288), 'W', 4.4)
+    p.put(p.box(196, 236, 202, 245), 'I', 2.6)
+    p.put(p.box(195, 235, 203, 236), 'W', 5.0)
+    LAYOUT['k1_chimney'] = [199, 234]
     p.put(p.box(0, 288, 236, 291), 'P', 1.2)
     p.put(p.box(0, 291, 236, 300), 'I', 2.0)
     p.put(p.box(237, 270, 241, 296), 'I', 3.0)                                # gangway bellows
@@ -165,6 +183,12 @@ def k1_bg():
     p.put(K.text_at('3', VW, VH, 54, 155, font='l') & sign, 'W', 3.6)
     p.put(K.text_at('GLEIS · ПУТЬ · VOIE', VW, VH, 70, 157, font='s') & sign, 'W', 3.2)
     p.put(K.text_at('KORDON · MOSKVA', VW, VH, 70, 167, font='s') & sign, 'W', 2.4)
+    for (lx, ly) in ((264, 120), (430, 126)):                      # round 10: more hanging lamps
+        p.put(p.box(lx, 106, lx + 1, ly), 'I', 2.0)
+        sh2 = p.poly([(lx - 11, ly + 8), (lx + 12, ly + 8), (lx + 7, ly), (lx - 6, ly)])
+        p.put(sh2, 'P', 2.4 + np.clip((xx - lx + 11) / 23, 0, 1) * 1.6)
+        p.put(p.box(lx - 11, ly + 8, lx + 13, ly + 9), 'G', 4.0)
+        p.put(p.ell(lx + 0.5, ly + 10, 2.4, 1.6), 'G', 5.4)
     p.put(p.box(562, 106, 563, 138), 'I', 2.0)
     shade = p.poly([(548, 146), (577, 146), (570, 136), (555, 136)])
     p.put(shade, 'P', 2.4 + np.clip((xx - 548) / 29, 0, 1) * 1.6)
@@ -255,10 +279,14 @@ def k1_glass():
 
 
 def steam_puffs():
-    n, fw, fh = 4, 112, 80
+    """Eight frames of the carriage heating's steam drifting along the platform (112 x 80), soft morning light.
+    AD round 2: one cloud at eight successive ages (CT._drift_frames), so the runtime steps through them with a
+    cross-fade -- the puffs swell and thin instead of snapping back to a small shape every 0.67 s."""
+    import env_veltrava_cine_city as CT
+    n, fw, fh = 8, 112, 80
     LAYOUT['steam_frames'] = n
-    return K.puff_sheet(n, fw, fh, ['#8593A3', '#A1AAB7', '#C2C9D2', '#DEE2E7'], 611, grow=(0.34, 0.5),
-                        thin=0.4, light=(0.3, -0.8))
+    return CT._drift_frames(n, fw, fh, ['#687789', '#8593A3', '#A1AAB7', '#B6B9C9', '#C2C9D2'], 611,
+                            light=(0.3, -0.85), aspect=1.8, lobes=12, grow=(0.62, 1.0), thin=0.5)
 
 
 # =========================================================================== k2: the palais clock
@@ -457,49 +485,10 @@ def pendulum():
 
 
 def k2_konrad():
-    """Konrad in the foreground walking right under the clock: a near-black silhouette with a warm
-    chandelier rim on his front and a cold window rim on his back; 2 frames (step down / step up)."""
-    fw, fh = 132, 150
-    R = C.ramps(N=['#030508', '#05080C', '#0A1016', '#10181F', '#172229'],
-                A=['#22150F', '#4A2D1F', '#6E3F22', '#9A5A2F', '#C88A4E', '#E9B46E'],
-                Y=['#10181F', '#263445', '#3A4D63', '#55708A', '#7C98B0'])
-    sheet = np.zeros((fh, fw * 2, 4), np.uint8)
-    for fr in range(2):
-        p = C.Paint(fw, fh, R, 'k2_konrad')
-        yy, xx = p.yy, p.xx
-        b = 0 if fr == 0 else -2                     # the body rises on the passing step
-        sw = 0 if fr == 0 else 2                     # the coat hem swings
-        # drafting tube on its strap, slung diagonally across the back (behind the body)
-        tube = p.line([(26, 58 + b), (44, 30 + b)], 5.2)
-        cap = p.line([(42, 33 + b), (46, 27 + b)], 5.6)
-        # body: coat from the turned-up collar down past the frame bottom; the arm swings forward
-        torso = p.poly([(52, 44 + b), (70, 41 + b), (86, 46 + b), (96, 60 + b), (100, 90 + b), (102, 150), (40 + sw, 150),
-                        (38, 112 + b), (40, 76 + b), (44, 56 + b)])
-        arm = p.poly([(80, 52 + b), (94, 58 + b), (104 + sw, 96 + b), (108 + sw, 122 + b), (100 + sw, 126 + b),
-                      (92, 100 + b), (82, 70 + b)])
-        collar = p.poly([(56, 30 + b), (72, 28 + b), (80, 40 + b), (74, 48 + b), (56, 48 + b)])
-        # head in profile (facing right): skull, nose, chin; homburg with its curled brim
-        head = p.ell(70, 20 + b, 11, 12.5) | p.poly([(78, 16 + b), (84, 22 + b), (81, 24 + b), (80, 30 + b), (72, 33 + b)])
-        crown = p.poly([(57, 10 + b), (59, -2 + b), (66, -6 + b), (76, -6 + b), (82, -2 + b), (83, 10 + b)])
-        brim = p.poly([(48, 12 + b), (54, 9 + b), (88, 9 + b), (95, 12 + b), (90, 14 + b), (52, 14 + b)])
-        sil = tube | cap | torso | arm | collar | head | crown | brim
-        p.put(sil, 'N', 1.2)
-        p.put(tube | cap, 'N', 2.0)
-        p.put(arm & ~torso, 'N', 1.6)
-        # warm rim (chandelier, upper right): the front edges of hat, face, collar, arm
-        warm_edge = sil & ~C.shift(sil, 1, 0) | sil & ~C.shift(sil, 1, -1)
-        p.put(warm_edge & (xx > 60), 'A', 2.6)
-        p.put(warm_edge & (xx > 60) & (yy < 40 + b), 'A', 4.0)
-        p.put(head & ~C.shift(head, 1, 0), 'A', 4.6)
-        # cold rim (window, left): the back of the coat and the tube
-        cold_edge = sil & ~C.shift(sil, -1, 0) | sil & ~C.shift(sil, 0, -1)
-        p.put(cold_edge & (xx < 60), 'Y', 2.4)
-        p.put((tube | cap) & ~C.shift(tube | cap, 0, -1), 'Y', 3.4)
-        p.put(crown & ~C.shift(crown, 0, -1), 'Y', 3.0)
-        # ear and the hat band as tiny value breaks
-        p.put(p.ell(66, 22 + b, 2, 3), 'N', 2.4)
-        p.put(crown & (yy >= 6 + b) & (yy < 9 + b), 'N', 0.4)
-        p.resolve(band=2.0)
-        sheet[:, fr * fw:(fr + 1) * fw] = p.L.c
-    LAYOUT['konrad_y'] = 224
-    return sheet
+    """Round 10 (figures stream): Konrad walking right under the palais clock is a full SDF figure with an
+    8-frame walk cycle -- the near arm swings from the shoulder with the elbow bending on the forward swing, the
+    hand open, the far arm swings against it, the shoulders counter-rotate, the body rises on the passing step,
+    the drafting tube hangs on its strap across his back -- still back-lit (warm chandelier rim on the front,
+    cold window rim on the back).  env_veltrava_cine_heroes.walking_konrad; sets konrad_y / konrad_frames."""
+    import env_veltrava_cine_heroes as H
+    return H.k2_konrad_sheet(LAYOUT)

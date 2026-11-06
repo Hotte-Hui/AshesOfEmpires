@@ -68,7 +68,7 @@
     "ui.inspect.unknown": "Unbekannter Gegenstand",
 
     "ui.signal.title": "Signal-Übungskasten",
-    "ui.signal.subtitle": "Stillgelegtes Lehrmodell – fiktiv, keine echte Signalvorschrift.",
+    "ui.signal.subtitle": "Stillgelegtes Lehrmodell im Stellwerk.",
     "ui.signal.instruction": "Lege die drei Symbolkarten in der Reihenfolge ein, die Siegel und Fahrplan nahelegen.",
     "ui.signal.sym.square": "Quadrat",
     "ui.signal.sym.circle": "Kreis",
@@ -85,7 +85,7 @@
     "ui.signal.error": "Das Rätsel kann gerade nicht geprüft werden. {error}",
 
     "ui.blueprint.title": "Planabgleich",
-    "ui.blueprint.subtitle": "Vereinfachte, fiktive Überlagerung – kein echtes Baudokument.",
+    "ui.blueprint.subtitle": "Die beiden Fassungen übereinandergelegt.",
     "ui.blueprint.instruction": "Verschiebe und drehe den Vorentwurf (B) über dem genehmigten Plan (A), bis jede Raute auf ihrem Ring liegt.",
     "ui.blueprint.legend_a": "A  genehmigter Plan · Ring",
     "ui.blueprint.legend_b": "B  Vorentwurf · Raute",
@@ -141,7 +141,7 @@
     "ui.menu.settings": "Einstellungen",
     "ui.menu.credits": "Mitwirkende",
     "ui.menu.quit": "Beenden",
-    "ui.menu.footer": "Fiktive alternative Geschichte · Version {version}",
+    "ui.menu.footer": "Version {version}",
     "ui.menu.confirm_quit": "Das Spiel beenden?",
 
     "ui.settings.title": "Einstellungen",

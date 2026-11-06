@@ -20,7 +20,10 @@ import cine_finale_kit as kit
 import cine_finale_berlin as b
 import cine_finale_karsk as k
 import cine_finale_karsk_anim as ka
+import cine_finale_wide as wide
 import pg
+
+WIDE_EXTRA = {}
 
 BR, KR, MR = kit.BR, kit.KR, kit.MR
 W, H = b.W, b.H
@@ -100,6 +103,7 @@ def build_windows(ext_b, ext_k, T, out):
             {'id': 'frame', 'type': 'sprite', 'file': save(fr, sid + '/frame.png', out), 'z': 3},
             {'id': 'glass', 'type': 'sprite', 'file': save(gl, sid + '/glass.png', out), 'z': 4},
         ]
+        nodes[1:1] = window_life(sid, out, T)
         sets[sid] = {'nodes': nodes, 'flicker': {}}
     # veil: dense snow + pale dithered fill (its shot fades in and out)
     veil_nodes = [
@@ -130,11 +134,11 @@ def b_wide(ext_b):
     bay = kit.bayer_full(W, H)
     floor_y = V(0, 292)[1]
     feet = (V(330, 0)[0], floor_y + 1)
-    lamp_head = V(384, 226)
-    L = kit.Lamp(lamp_head[0] - 6, floor_y, 64, 70, depth=0.35, power=1.0)
+    lamp_head = V(236, 228)                  # architect's lamp at the left end of his desk (as in the close-up)
+    L = kit.Lamp(lamp_head[0] + 14, floor_y, 64, 70, depth=0.35, power=1.0)
     halo = np.clip(1.0 - np.sqrt((xx - lamp_head[0]) ** 2 + ((yy - lamp_head[1]) * 1.15) ** 2) / 150.0, 0, 1) ** 1.6
     nz = pg.value_noise(W, H, 40, kit.seed_of('bw_wall'), octaves=3)
-    wall_t = 0.20 + 0.42 * halo + (nz - 0.5) * 0.05 - 0.04 * ((np.floor(xx) % 9) == 0)
+    wall_t = 0.24 + 0.46 * halo + (nz - 0.5) * 0.05 - 0.04 * ((np.floor(xx) % 9) == 0)
     cv.paint(yy < floor_y, np.clip(wall_t, 0, 1), BR['wall'])
     # wainscot panels on the lower wall + picture rail
     wy = V(0, 240)[1]
@@ -212,25 +216,20 @@ def b_wide(ext_b):
     cv.rect(V(300, 0)[0], 0, 1, V(0, 66)[1], BR['black'][2])
     shade = kit.poly_mask_full(W, H, [V(290, 66), V(312, 66), V(318, 78), V(284, 78)])
     cv.paint(shade, np.full((H, W), 0.25, np.float32), BR['black'])
-    # drafting table (correct scale): stand + slanted board + sheet; stool behind Konrad
-    st = V(370, 0)[0]
-    cv.rect(st - 1, V(0, 262)[1], 3, floor_y - V(0, 262)[1], BR['black'][3])
-    cv.rect(st - 18, floor_y - 2, 38, 2, BR['black'][3])
-    board = kit.poly_mask_full(W, H, [V(344, 263), V(346, 259), V(394, 241), V(396, 245)])
-    cv.paint(board, np.clip(0.35 + 0.7 * L.pool(xx, yy + 20), 0, 1), BR['desk'])
-    sheet_m = kit.poly_mask_full(W, H, [V(350, 259), V(351, 257), V(388, 243), V(389, 245)])
-    cv.paint(sheet_m, np.clip(0.55 + 0.6 * L.pool(xx, yy + 20), 0, 1), BR['paper'])
-    cv.rect(V(300, 0)[0], V(0, 268)[1], 20, 3, BR['desk'][3])
-    cv.rect(V(302, 0)[0], V(0, 271)[1], 2, floor_y - V(0, 271)[1], BR['desk'][2])
-    cv.rect(V(315, 0)[0], V(0, 271)[1], 2, floor_y - V(0, 271)[1], BR['desk'][2])
+    # his desk against the wall under the rendering (the close-up looks over his shoulder at it)
+    wide.b_wide_desk(cv, L, halo, floor_y)
     # foreground frame: dark door jamb at the left edge
     jamb = (xx < V(14, 0)[0]) | ((xx < V(22, 0)[0]) & (yy < V(0, 40)[1]))
     cv.paint(jamb, np.full((H, W), 0.04, np.float32), BR['void'])
+    wide.clock_case_cover(cv, cx, cy)
+    tip = wide.b_wide_enrich(cv, L, halo, floor_y)
+    WIDE_EXTRA['b'] = {'pendulum': (cx, cy + 12), 'tip': tip, 'win': (wx0, wy0, wx1, wy1),
+                       'ext_off': (V(520, 0)[0] - 360, V(0, 196)[1] - 240)}
     glass = np.zeros((H, W, 4), np.uint8)
     dd = np.minimum.reduce([xx - wx0, wx1 - xx, yy - wy0, wy1 - yy])
     frm = panes & (dd < 12) & (bay < np.clip(1.0 - dd / 12.0, 0, 1) * 0.5)
     glass[frm] = pg.hx('#57494D')
-    lr = panes & ((((xx - lamp_head[0] - 96) ** 2) / 9 + ((yy - lamp_head[1] + 20) ** 2) / 4) < 1)
+    lr = panes & ((((xx - lamp_head[0] - 262) ** 2) / 9 + ((yy - lamp_head[1] + 22) ** 2) / 4) < 1)
     glass[lr] = pg.hx('#F4BA81')
     glass[..., 3] = np.where(glass[..., :3].any(-1), 255, 0)
     extl = b.ext_layer(ext_b, (V(520, 0)[0] - 360, V(0, 196)[1] - 240))
@@ -239,23 +238,28 @@ def b_wide(ext_b):
 
 
 def small_lamp_b(head):
-    """Architect's lamp clamped to the top of the drafting board; shade points down-left at the sheet."""
+    """Architect's lamp standing at the left end of Konrad's desk: weighted foot, two-part arm, the shade
+    aimed down-right at the typewriter, a faint cone of dust in the light."""
     cv = kit.Canvas(W, H)
     hx, hy = head
-    clamp = V(394, 243)
-    cv.line(clamp[0], clamp[1], clamp[0] - 2, clamp[1] - 10, BR['black'][4])
-    cv.line(clamp[0] - 2, clamp[1] - 10, hx + 6, hy - 4, BR['black'][4])
-    cv.line(clamp[0] - 1, clamp[1] - 10, hx + 7, hy - 4, BR['black'][2])
-    sh = kit.poly_mask_full(W, H, [(hx - 2, hy - 5), (hx + 6, hy - 6), (hx + 3, hy + 4), (hx - 8, hy + 3)])
+    top = V(0, 292)[1] - 20
+    foot = (hx - 4, top - 2)
+    cv.rect(foot[0] - 4, top - 3, 9, 2, BR['black'][3])
+    cv.px(foot[0] - 3, top - 3, BR['black'][6])
+    elbow = (hx - 12, hy + 16)
+    cv.line(foot[0], top - 3, elbow[0], elbow[1], BR['black'][4])
+    cv.line(elbow[0], elbow[1], hx - 3, hy - 3, BR['black'][4])
+    cv.line(elbow[0] + 1, elbow[1], hx - 2, hy - 3, BR['black'][2])
+    cv.px(elbow[0], elbow[1], BR['metal'][6])
+    sh = kit.poly_mask_full(W, H, [(hx - 4, hy - 6), (hx + 3, hy - 5), (hx + 8, hy + 4), (hx - 3, hy + 3)])
     cv.paint(sh, np.full((H, W), 0.55, np.float32), BR['black'])
-    cv.px(hx - 5, hy + 3, pg.hx('#FFE3AA'))
-    cv.px(hx - 4, hy + 3, pg.hx('#FFE3AA'))
-    cv.px(hx - 3, hy + 3, pg.hx('#F2C27E'))
+    for dx_ in (3, 4, 5):
+        cv.px(hx + dx_, hy + 3, pg.hx('#FFE3AA') if dx_ < 5 else pg.hx('#F2C27E'))
     xx, yy = cv.grid()
     bay = kit.bayer_full(W, H)
-    cone = kit.poly_mask_full(W, H, [(hx - 7, hy + 4), (hx + 2, hy + 4), (hx - 8, hy + 40), (hx - 46, hy + 30)])
-    ct = np.clip(1.0 - np.sqrt((xx - hx) ** 2 + (yy - hy) ** 2) / 48.0, 0, 1)
-    cv.c[cone & (bay < ct * 0.18)] = pg.hx('#9A5A2F')
+    cone = kit.poly_mask_full(W, H, [(hx - 2, hy + 4), (hx + 8, hy + 4), (hx + 52, top - 2), (hx + 8, top - 2)])
+    ct = np.clip(1.0 - np.sqrt((xx - hx) ** 2 + (yy - hy) ** 2) / 56.0, 0, 1)
+    cv.c[cone & (bay < ct * 0.16)] = pg.hx('#9A5A2F')
     return cv.c
 
 
@@ -270,7 +274,7 @@ def k_wide(ext_k):
     L = kit.Lamp(lamp_head[0] + 4, floor_y, 64, 70, depth=0.35, power=1.0)
     halo = np.clip(1.0 - np.sqrt((xx - lamp_head[0]) ** 2 + ((yy - lamp_head[1]) * 1.15) ** 2) / 150.0, 0, 1) ** 1.6
     nz = pg.value_noise(W, H, 40, kit.seed_of('kw_wall'), octaves=3)
-    wall_t = 0.20 + 0.42 * halo + (nz - 0.5) * 0.05
+    wall_t = 0.24 + 0.46 * halo + (nz - 0.5) * 0.05
     cv.paint(yy < floor_y, np.clip(wall_t, 0, 1), KR['wall'])
     dado = (yy >= V(0, 212)[1]) & (yy < floor_y)
     cv.paint(dado, np.clip(wall_t - 0.06, 0, 1), KR['green'])
@@ -365,6 +369,8 @@ def k_wide(ext_k):
     # foreground: the stove pipe's shadow column at the right edge (frame device)
     jamb = (xx >= V(626, 0)[0])
     cv.paint(jamb, np.full((H, W), 0.04, np.float32), KR['void'])
+    info = wide.k_wide_enrich(cv, L, halo, floor_y)
+    WIDE_EXTRA['k'] = info
     k.cold_patch_k(cv, [(wx0 + 5, floor_y), (wx1 - 5, floor_y), (wx1 + 70, H), (wx0 + 30, H)])
     glass = np.zeros((H, W, 4), np.uint8)
     dd = np.minimum.reduce([xx - wx0, wx1 - xx, yy - wy0, wy1 - yy])
@@ -394,6 +400,17 @@ def small_lamp_k(head):
     return cv.c
 
 
+def konrad_seated_node(out):
+    """Konrad at his desk in the wide shot (back to us): breathes, turns his head to the window and the dome
+    (2.0-3.4 s), turns back and leans in towards the typewriter as the shot cuts to the close-up."""
+    at = kit.Atlas('bw_konrad')
+    fr = wide.konrad_seated_frames(at, V(0, 292)[1], V(236, 228))
+    keys = [[0.0, fr[0]], [0.9, fr[1]], [1.6, fr[0]], [2.0, fr[2]], [2.7, fr[3]], [3.3, fr[2]], [3.5, fr[0]],
+            [4.0, fr[1]], [4.3, fr[4]]]
+    return {'id': 'konrad', 'type': 'anim', 'atlas': 'b_wide/konrad.png', 'frames': at.save(os.path.join(out, 'b_wide/konrad.png')),
+            'keys': keys, 'z': 10}
+
+
 def build_wides(ext_b, ext_k, out, T):
     sets = {}
     base, glass, extl, lamp_rgba, lamp_head, feet = b_wide(ext_b)
@@ -405,12 +422,9 @@ def build_wides(ext_b, ext_k, out, T):
          'colors': ['#8F8A92', '#D2CCCB'], 'z': 1, 'parallax': 0.6},
         {'id': 'base', 'type': 'sprite', 'file': save(base, 'b_wide/base.png', out), 'z': 2},
         {'id': 'glass', 'type': 'sprite', 'file': save(glass, 'b_wide/glass.png', out), 'z': 3},
-        {'id': 'konrad', 'type': 'actor', 'char': 'konrad', 'anim': 'idle_side', 'flip': False, 'pos': list(feet),
-         'modulate': '#7d8394', 'z': 10,
-         'light': {'pos': [lamp_head[0] - feet[0] + 4, lamp_head[1] - feet[1] + 8], 'color': '#F2C27E', 'energy': 1.6,
-                   'scale': 0.45, 'height': 20}},
+        konrad_seated_node(out),
         {'id': 'lamp', 'type': 'sprite', 'file': save(lamp_rgba, 'b_wide/lamp.png', out), 'z': 12},
-    ], 'flicker': {'amp': 0.015, 'dips': [[1.9, 0.08, 0.16]]}}
+    ] + b_wide_anims(out, T), 'flicker': {'amp': 0.015, 'dips': [[1.9, 0.08, 0.16]]}}
     base, glass, extl, lamp_rgba, lamp_head, feet, wk = k_wide(ext_k)
     sets['k_wide'] = {'nodes': [
         {'id': 'ext', 'type': 'sprite', 'file': save(extl, 'k_wide/ext.png', out), 'z': 0, 'parallax': 0.4},
@@ -424,8 +438,109 @@ def build_wides(ext_b, ext_k, out, T):
          'light': {'pos': [lamp_head[0] - feet[0] - 4, lamp_head[1] - feet[1] + 8], 'color': '#F0C487', 'energy': 1.6,
                    'scale': 0.45, 'height': 20}},
         {'id': 'lamp', 'type': 'sprite', 'file': save(lamp_rgba, 'k_wide/lamp.png', out), 'z': 12},
-    ], 'flicker': {'amp': 0.015, 'dips': []}}
+    ] + k_wide_anims(out, T), 'flicker': {'amp': 0.015, 'dips': []}}
     return sets
+
+
+def window_life(sid, out, T):
+    """Motion behind the window inserts: Berlin -- the searchlights sweeping behind the dome; Karsk -- a
+    signalman's lantern walking along the far track and a shunting engine's headlamp crawling past."""
+    nodes = []
+    if sid == 'b_window':
+        at = kit.Atlas('bwin_beams')
+        fr = wide.searchlight_frames(at, (V(320, 0)[0] - 360, V(0, 190)[1] - 240), n=24)
+        nodes.append({'id': 'beams', 'type': 'anim', 'atlas': 'b_window/beams.png',
+                      'frames': at.save(os.path.join(out, 'b_window/beams.png')), 'z': 0, 'parallax': 0.5,
+                      'loop': {'fps': 3.0, 'seq': fr, 't0': 0.0}})
+        return nodes
+    t0, t1 = T['k_window']
+    lant = np.zeros((H, W, 4), np.uint8)
+    cv = kit.Canvas(W, H)
+    bay = kit.bayer_full(W, H)
+    xx, yy = cv.grid()
+    cx, cy = 40, 232
+    g = np.clip(1.0 - np.sqrt(((xx - cx) / 22.0) ** 2 + ((yy - cy - 6) / 10.0) ** 2), 0, 1)
+    m = (g > 0.04) & (bay < g * 0.5)
+    cv.c[m] = pg.hx('#6B3B2C')
+    cv.c[m & (bay < g * 0.2)] = pg.hx('#AF6C47')
+    cv.rect(cx - 1, cy - 2, 3, 3, pg.hx('#FBE3AE'))
+    cv.rect(cx - 3, cy - 14, 2, 10, pg.hx('#0A1219'))
+    cv.rect(cx - 4, cy - 18, 4, 4, pg.hx('#13252B'))
+    cv.rect(cx - 4, cy - 4, 2, 9, pg.hx('#0A1219'))
+    save(cv.c, 'k_window/lantern.png', out)
+    nodes.append({'id': 'lantern', 'type': 'sprite', 'file': 'k_window/lantern.png', 'z': 0, 'parallax': 0.5,
+                  'pos_keys': [[t0, 0, 0], [t1 + 0.5, 70, -4]], 'pos_lin': True})
+    hl = kit.Canvas(W, H)
+    g = np.clip(1.0 - np.sqrt(((xx - 300) / 60.0) ** 2 + ((yy - 196) / 8.0) ** 2), 0, 1)
+    m = (g > 0.03) & (bay < g * 0.6)
+    hl.c[m] = pg.hx('#7E8E8C')
+    hl.c[m & (bay < g * 0.25)] = pg.hx('#DEE5DC')
+    hl.rect(296, 194, 6, 4, pg.hx('#F1F4EC'))
+    hl.rect(302, 186, 34, 12, pg.hx('#0A1219'))
+    hl.rect(310, 180, 14, 6, pg.hx('#0A1219'))
+    save(hl.c, 'k_window/shunter.png', out)
+    nodes.append({'id': 'shunter', 'type': 'sprite', 'file': 'k_window/shunter.png', 'z': 0, 'parallax': 0.5,
+                  'pos_keys': [[t0, 120, 0], [t1 + 0.5, -40, 0]], 'pos_lin': True})
+    return nodes
+
+
+def b_wide_anims(out, T):
+    """Pendulum (1 Hz swing in step with the tick/tock), searchlight sweep behind the dome, tram flash at the
+    tram bell, smoke from the cigarette on the sill."""
+    ex = WIDE_EXTRA['b']
+    nodes = []
+    at = kit.Atlas('bw_pend')
+    fr = wide.pendulum_frames(at, ex['pendulum'], 22, n=16)
+    nodes.append({'id': 'pendulum', 'type': 'anim', 'atlas': 'b_wide/pendulum.png',
+                  'frames': at.save(os.path.join(out, 'b_wide/pendulum.png')),
+                  'z': 5, 'loop': {'fps': 8.0, 'seq': fr, 't0': 0.0}})        # extremes on the ticks (0.5, 1.5, ...)
+    at = kit.Atlas('bw_beams')
+    fr = wide.searchlight_frames(at, ex['ext_off'], n=24)
+    nodes.append({'id': 'beams', 'type': 'anim', 'atlas': 'b_wide/beams.png', 'frames': at.save(os.path.join(out, 'b_wide/beams.png')),
+                  'z': 0, 'parallax': 0.4, 'loop': {'fps': 3.0, 'seq': fr, 't0': 0.0}})
+    at = kit.Atlas('bw_flash')
+    f1, f2 = wide.tram_flash(at, ex['win'])
+    nodes.append({'id': 'tram_flash', 'type': 'anim', 'atlas': 'b_wide/flash.png', 'frames': at.save(os.path.join(out, 'b_wide/flash.png')),
+                  'z': 6, 'keys': [[0.0, -1], [2.32, f1], [2.40, f2], [2.47, -1], [2.58, f2], [2.63, -1]]})
+    at = kit.Atlas('bw_sillsmoke')
+    fr = ka.wisp_frames(at, ex['tip'], 10, kit.BR['smoke'], kit.Lamp(404, 240, 64, 70), 'bw_sill', height=46, spread=3.0,
+                        draft=-5.0, count=6, rmax=2.6, density=0.7, ribbon=True)
+    nodes.append({'id': 'sill_smoke', 'type': 'anim', 'atlas': 'b_wide/sill_smoke.png',
+                  'frames': at.save(os.path.join(out, 'b_wide/sill_smoke.png')), 'z': 7, 'loop': {'fps': 7.0, 'seq': fr, 't0': 0.0}})
+    return nodes
+
+
+def k_wide_anims(out, T):
+    """Freight train passing in the yard (behind the window, with the far horn), blinking track lamps on the
+    diagram, the stove's firelight, the kettle's steam."""
+    ex = WIDE_EXTRA['k']
+    nodes = []
+    t0, t1 = T['k_wide']
+    train = wide.train_sprite(360)
+    save(train, 'k_wide/train.png', out)
+    y_tr = 136
+    nodes.append({'id': 'train', 'type': 'sprite', 'file': 'k_wide/train.png', 'pos': [0, y_tr], 'z': 1, 'parallax': 0.4,
+                  'pos_keys': [[0.0, 396, 0], [t0 - 0.2, 396, 0], [t1 + 0.2, -312, 0]], 'pos_lin': True})
+    at = kit.Atlas('kw_plume')
+    fr = [at.add_cropped(img, 0, 0) for img in wide.steam_plume_frames(at, n=6)]
+    nodes.append({'id': 'plume', 'type': 'anim', 'atlas': 'k_wide/plume.png', 'frames': at.save(os.path.join(out, 'k_wide/plume.png')),
+                  'pos': [8, y_tr - 22], 'z': 1, 'parallax': 0.4, 'loop': {'fps': 6.0, 'seq': fr, 't0': 0.0},
+                  'pos_keys': [[0.0, 396, 0], [t0 - 0.2, 396, 0], [t1 + 0.2, -312, 0]], 'pos_lin': True})
+    at = kit.Atlas('kw_lamps')
+    fr = wide.track_lamp_frames(at, ex['lamps'], n=8)
+    nodes.append({'id': 'track_lamps', 'type': 'anim', 'atlas': 'k_wide/track_lamps.png',
+                  'frames': at.save(os.path.join(out, 'k_wide/track_lamps.png')), 'z': 5, 'loop': {'fps': 2.0, 'seq': fr, 't0': 0.0}})
+    at = kit.Atlas('kw_glow')
+    fr = wide.stove_glow_frames(at, (556, 280), n=8)
+    nodes.append({'id': 'stove_glow', 'type': 'anim', 'atlas': 'k_wide/stove_glow.png',
+                  'frames': at.save(os.path.join(out, 'k_wide/stove_glow.png')), 'z': 6,
+                  'loop': {'fps': 9.0, 'seq': [fr[i] for i in (0, 3, 1, 5, 2, 7, 4, 6, 1, 3)], 't0': 0.0}})
+    at = kit.Atlas('kw_kettle')
+    fr = ka.wisp_frames(at, (570, 250), 10, kit.KR['steam'], kit.Lamp(282, 302, 64, 70), 'kw_kettle', height=40, spread=3.0,
+                        draft=-6.0, count=7, rmax=3.5, density=0.8)
+    nodes.append({'id': 'kettle_steam', 'type': 'anim', 'atlas': 'k_wide/kettle_steam.png',
+                  'frames': at.save(os.path.join(out, 'k_wide/kettle_steam.png')), 'z': 7, 'loop': {'fps': 7.0, 'seq': fr, 't0': 0.0}})
+    return nodes
 
 
 # ------------------------------------------------------------------------------------------- map
@@ -530,6 +645,10 @@ def map_paper(state: str) -> np.ndarray:
     # compass + title block
     tm = kit.text_mask('SCHEMA - NICHT MASSSTAEBLICH', kit.FONT3)
     kit.blit_mask(cv.c, tm, V(30, 0)[0], V(0, 292)[1], ink(np.array([[t[V(0, 292)[1], V(30, 0)[0]] * 0.45]]))[0, 0])
+    import cine_finale_mapdetail as md
+    md.enrich(cv, t, tone, state, {'BERLIN': B_CITY, 'VELTRAVA': VELTRAVA, 'KARSK': K_CITY}, lx, route_points())
+    if state == 'dark':
+        md.window_light(cv, tone)
     cv.c[..., 3] = 255
     return cv.c
 
@@ -655,7 +774,7 @@ def build(ext_b, ext_k, T, DUR, out, HOME):
     shots.append({'set': 'k_window', 't0': t0, 't1': t1, 'home': HOME, 'cam': cam(t0, t1, (18, 9), (17, 9))})
     t0, t1 = T['map']
     shots.append({'set': 'map', 't0': t0, 't1': t1, 'home': HOME, 'fade_in': 0.8,
-                  'cam': [[t0, 20, 10], [t0 + 8.0, 20, 8], [t1, 20, 8]],
+                  'cam': [[t0, 20, 10], [r_start, 24, 10], [r_end, 10, 8], [t1, 14, 8]],
                   'tint': [[0.0, 0.0], [DUR - 1.2, 0.0], [DUR - 0.1, 1.0]], 'tint_color': '#000000'})
     ev = events(T, DUR, r_start, r_end, k_off, b_off)
     return sets, shots, ev
@@ -716,9 +835,11 @@ def events(T, DUR, r_start, r_end, k_off, b_off):
     sfx(b0 + 0.5, 'paper_rustle', -13.0, evd)
     sfx(b0 + 1.2, 'cine_finale_fold', -10.0, evd)
     sfx(b0 + 2.1, 'cine_finale_fold', -11.0, evd)
-    sfx(b0 + 2.9, 'cine_finale_cloth', -10.0, evd)
-    sfx(b0 + 3.9, 'cine_finale_cloth', -13.0, evd)
-    sfx(b0 + 5.4, 'cine_finale_cloth', -12.0, evd)
+    sfx(b0 + 2.8, 'cine_finale_cloth', -10.0, evd)          # the coat panel pulled up over the desk edge
+    sfx(b0 + 3.5, 'cine_finale_cloth', -16.0, evd)          # the lining smoothed
+    sfx(b0 + 4.3, 'paper_rustle', -15.0, evd)               # the packet slides into the slit
+    sfx(b0 + 5.05, 'cine_finale_cloth', -17.0, evd)         # patted flat
+    sfx(b0 + 5.35, 'cine_finale_cloth', -12.0, evd)         # the panel falls back
     # branch foley -- Karsk
     k0 = T['k_close'][0]
     sh = {'a1_choose': 'share_with_irina'}
@@ -731,11 +852,12 @@ def events(T, DUR, r_start, r_end, k_off, b_off):
     sfx(k0 + 4.0, 'cine_finale_pencil', -12.0, sh)
     sfx(k0 + 5.2, 'cine_finale_door_shut', -11.0, sh)
     sfx(k0 + 1.25, 'cine_finale_pencil', -12.0, kp)
-    sfx(k0 + 1.9, 'cine_finale_book', -8.0, kp)
-    sfx(k0 + 2.45, 'drawer_slide', -10.0, kp)
-    sfx(k0 + 3.6, 'cine_finale_book', -14.0, kp)
-    sfx(k0 + 4.25, 'drawer_slide', -10.0, kp)
-    sfx(k0 + 5.0, 'cine_finale_key', -8.0, kp)
+    sfx(k0 + 1.9, 'cine_finale_book', -8.0, kp)             # the ledger shuts
+    sfx(k0 + 2.55, 'drawer_slide', -10.0, kp)               # the drawer pulled wide open
+    sfx(k0 + 3.4, 'paper_rustle', -17.0, kp)                # the book slides across the blotter
+    sfx(k0 + 4.15, 'cine_finale_book', -9.0, kp)            # over the edge, into the drawer
+    sfx(k0 + 4.65, 'drawer_slide', -10.0, kp)               # pushed shut
+    sfx(k0 + 5.3, 'cine_finale_key', -8.0, kp)              # the key turns
     # rhyme: tick / telegraph answering, then together
     sfx(T['r1_b'][0] + 0.45, 'cine_finale_tick', -14.0)
     sfx(T['r2_k'][0] + 0.45, 'cine_finale_telegraph', -13.0)

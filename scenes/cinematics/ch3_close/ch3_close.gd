@@ -40,11 +40,26 @@ var _win_a: Sprite2D
 var _lamp_glow: Sprite2D
 var _life: Node2D
 var _layout: Dictionary = {}
+var _n1_glow: Sprite2D
+var _plume: Node2D
+## round 10 (figures stream): the people on platform 5 and on the square (env_veltrava_cine_people.EXTRAS)
+const People := preload("res://scenes/cinematics/ch3_common/c3_people.gd")
+var _people_n1: Node2D
+var _people_n2: Node2D
 
 
 func _init() -> void:
 	duration = DUR
 	max_duration = DUR + 3.0
+
+
+## the extras of one shot (layout close.extras, names start with the shot id)
+func _extras(prefix: String) -> Array:
+	var out: Array = []
+	for e in _layout.get("extras", []):
+		if e is Dictionary and str((e as Dictionary).get("name", "")).begins_with(prefix):
+			out.append(e)
+	return out
 
 
 func chosen_lines() -> Array:
@@ -82,6 +97,10 @@ func _build() -> void:
 	_train.draw.connect(_draw_train)
 	n1.add_child(_train)
 	sprite("close/n1_mid.png", Vector2.ZERO, n1)      # canopy columns / lamp posts in front of the track
+	_n1_glow = sprite("close/n1_glow.png", Vector2.ZERO, n1, 1, true)   # round 10: lamp cones in the snow
+	_people_n1 = People.new()
+	_people_n1.setup(_extras("n1_"), tex)
+	n1.add_child(_people_n1)
 	_steam_tex = tex("close/steam.png")
 	_steam = Node2D.new()
 	_steam.name = "Steam"
@@ -91,9 +110,10 @@ func _build() -> void:
 	_snow1.name = "Snow"
 	n1.add_child(_snow1)
 	var k := 0.6 if reduced_motion() else 1.0
-	_snow1.setup_snow(Rect2(250, 0, 390, 300), [
-		{"count": int(60 * k), "v": Vector2(-4, 18), "vjit": 0.3, "size": Vector2(1, 1), "color": Color("#687789"), "sway": 2.0},
-		{"count": int(22 * k), "v": Vector2(-6, 34), "vjit": 0.3, "size": Vector2(2, 2), "color": Color("#c2c9d2"), "sway": 3.0}], 5101)
+	_snow1.setup_snow(Rect2(140, 0, 500, 314), [
+		{"count": int(90 * k), "v": Vector2(-4, 18), "vjit": 0.3, "size": Vector2(1, 1), "color": Color("#687789"), "sway": 2.0},
+		{"count": int(34 * k), "v": Vector2(-6, 34), "vjit": 0.3, "size": Vector2(2, 2), "color": Color("#c2c9d2"), "sway": 3.0},
+		{"count": int(10 * k), "v": Vector2(-8, 52), "vjit": 0.25, "size": Vector2(2, 3), "color": Color("#dee2e7"), "sway": 4.0}], 5101)
 	sprite("close/n1_fg.png", Vector2.ZERO, n1)
 	_board = sprite("close/board.png", Vector2.ZERO, n1, 1, false, 4)
 	var bp = _layout.get("board")
@@ -104,17 +124,27 @@ func _build() -> void:
 	_n2_mat.shader = DISSOLVE
 	n2.material = _n2_mat
 	sprite("close/n2_bg.png", Vector2.ZERO, n2)
-	_win_k = sprite("close/n2_win_konrad.png", Vector2.ZERO, n2, 3)
-	_win_a = sprite("close/n2_win_alexei.png", Vector2.ZERO, n2, 3)
+	# round 10b (figures stream): the windows step through layout win_frames states (empty, at the back of the
+	# room, beside the curtain, at the glass, the head half turned, the profile) on the win_seq schedule
+	var wf := int(_layout.get("win_frames", 3))
+	_win_k = sprite("close/n2_win_konrad.png", Vector2.ZERO, n2, wf)
+	_win_a = sprite("close/n2_win_alexei.png", Vector2.ZERO, n2, wf)
 	for pair in [[_win_k, "win_konrad"], [_win_a, "win_alexei"]]:
 		var v = _layout.get(pair[1])
 		if v is Array and v.size() >= 2:
 			(pair[0] as Sprite2D).position = Vector2(float(v[0]), float(v[1]))
+	_people_n2 = People.new()
+	_people_n2.setup(_extras("n2_"), tex)
+	n2.add_child(_people_n2)
 	_lamp_glow = sprite("close/n2_lamp_glow.png", Vector2.ZERO, n2, 1, true)
 	_life = Node2D.new()
 	_life.name = "Life"
 	_life.draw.connect(_draw_life)
 	n2.add_child(_life)
+	_plume = Node2D.new()                                           # round 10: the whistle's steam, taxi exhaust
+	_plume.name = "Plume"
+	_plume.draw.connect(_draw_plume)
+	n2.add_child(_plume)
 	_snow2 = FX.new()
 	_snow2.name = "Snow"
 	n2.add_child(_snow2)
@@ -143,6 +173,12 @@ func _apply(time: float) -> void:
 	_snow1.set_time(time * (0.6 if rm else 1.0))
 	_snow2.set_time(time * (0.6 if rm else 1.0))
 	_life.queue_redraw()
+	_plume.queue_redraw()
+	if _n1_glow:
+		_n1_glow.modulate = Color(1, 1, 1, 0.9 + 0.06 * hnoise(time * 1.7, 5) * (0.4 if rm else 1.0))
+	if _people_n1:
+		_people_n1.set_time(time)
+		_people_n2.set_time(time)
 	# split-flap board: two flap frames, then the cleared row (one clean change with reduced motion)
 	if _board.texture:
 		var f := 0
@@ -152,9 +188,25 @@ func _apply(time: float) -> void:
 			f = 1 + int(floor((time - BOARD_FLIP[0]) / 0.12)) % 2
 		_board.frame = f
 	# n2: Konrad steps to his window, then Alexei; the whistle; both turn toward it
-	_win_k.frame = 0 if time < 6.9 else (1 if time < 8.75 else 2)
-	_win_a.frame = 0 if time < 7.45 else (1 if time < 9.05 else 2)
+	_win_k.frame = window_frame("konrad", time)
+	_win_a.frame = window_frame("alexei", time)
 	_lamp_glow.modulate = Color(1, 1, 1, 0.92 + 0.05 * hnoise(time * 2.1, 3) * (0.4 if rm else 1.0))
+
+
+## n2 window state of Konrad's / Alexei's window at `time`: the last [t, frame] of layout win_seq[who] that has
+## started (round 10b); without it the round-10 three states (empty, at the glass, the profile).
+func window_frame(who: String, time: float) -> int:
+	var seq = (_layout.get("win_seq", {}) as Dictionary).get(who, [])
+	var n := maxi(1, int(_layout.get("win_frames", 3)))
+	if seq is Array and not (seq as Array).is_empty():
+		var f := 0
+		for e in seq:
+			if e is Array and (e as Array).size() >= 2 and time >= float(e[0]):
+				f = int(e[1])
+		return clampi(f, 0, n - 1)
+	if who == "konrad":
+		return 0 if time < 6.9 else (1 if time < 8.75 else 2)
+	return 0 if time < 7.45 else (1 if time < 9.05 else 2)
 
 
 # ------------------------------------------------------------------ the departing train
@@ -277,13 +329,21 @@ func _draw_steam() -> void:
 	var fw := _steam_tex.get_width() / n
 	var fh := _steam_tex.get_height()
 	var sp := 0.5 if reduced_motion() else 1.0
-	var puffs := [[300.0, 62.0, 0, 0.0], [380.0, 96.0, 1, 0.3], [250.0, 104.0, 2, 0.6], [440.0, 70.0, 3, 0.2]]
+	# [x, y, first frame (of 8), age offset]; the frames are one cloud at successive ages (AD round 2): the step
+	# from one to the next is cross-faded, so the steam swells and thins without jumps
+	var puffs := [[300.0, 62.0, 0, 0.0], [380.0, 96.0, 2, 0.3], [250.0, 104.0, 4, 0.6], [440.0, 70.0, 6, 0.2]]
 	for pf in puffs:
 		var age: float = t + float(pf[3])
 		var x: float = float(pf[0]) - age * 9.0 * sp
 		var y: float = float(pf[1]) - age * 2.0 * sp
-		var fi := clampi(int(pf[2]) + int(age / 2.2), 0, n - 1)
-		_steam.draw_texture_rect_region(_steam_tex, Rect2(Vector2(roundf(x), roundf(y)), Vector2(fw, fh)), Rect2(fi * fw, 0, fw, fh))
+		var f := clampf(float(pf[2]) + age / 1.1, 0.0, float(n - 1))
+		var f0 := int(floor(f))
+		var f1 := mini(f0 + 1, n - 1)
+		var fr := f - float(f0)
+		var dst := Rect2(Vector2(roundf(x), roundf(y)), Vector2(fw, fh))
+		_steam.draw_texture_rect_region(_steam_tex, dst, Rect2(f0 * fw, 0, fw, fh), Color(1, 1, 1, 1.0 - fr))
+		if f1 != f0 and fr > 0.0:
+			_steam.draw_texture_rect_region(_steam_tex, dst, Rect2(f1 * fw, 0, fw, fh), Color(1, 1, 1, fr))
 
 
 ## n2: the parked car under the trees with a cigarette glowing behind the windscreen (one pixel, slow)
@@ -295,3 +355,41 @@ func _draw_life() -> void:
 		var glow := 0.5 + 0.5 * sin((t - N2) * 1.3)
 		var col := Color("#a8643a").lerp(Color("#edb777"), glow)
 		_life.draw_rect(Rect2(float(ember[0]), float(ember[1]), 1, 1), col)
+
+
+## n2 (round 10): the one whistle seen as well as heard -- a plume of steam rising over the old-town roofs
+## from the station side as it sounds; the waiting taxi's exhaust curling in the cold
+func _draw_plume() -> void:
+	if t < N2 - 0.4:
+		return
+	var sp := 0.6 if reduced_motion() else 1.0
+	var whistle := 8.35
+	for k in 30:
+		var born := whistle - 0.1 + float(k) * 0.1
+		var age := (t - born) * sp
+		if age < 0.0 or age > 5.0:
+			continue
+		var x := 228.0 + float(k % 3) * 4.0 + age * (8.0 + float(k % 4) * 1.5)
+		var y := 186.0 - age * 20.0 + age * age * 1.1
+		var r := 4.0 + age * 4.6
+		var a := clampf(0.7 - age * 0.14, 0.0, 0.7)
+		var col := Color(0.62, 0.66, 0.74, a).lerp(Color(0.8, 0.62, 0.45, a), clampf(1.0 - age, 0.0, 1.0) * 0.5)
+		_puff(_plume, Vector2(x, y), r, col, k)
+	var tx: Array = _layout.get("n2_taxi", [177, 272])
+	for k in 6:
+		var age := fposmod((t - N2) * sp * 0.8 + float(k) * 0.42, 2.5)
+		var p := Vector2(float(tx[0]) + age * 7.0, float(tx[1]) - age * 3.0 + sin(age * 3.0 + k) * 1.0)
+		_puff(_plume, p, 1.0 + age * 1.6, Color(0.55, 0.6, 0.68, clampf(0.4 - age * 0.15, 0.0, 0.4)), k + 20)
+
+
+func _puff(ci: CanvasItem, c: Vector2, r: float, col: Color, seed: int) -> void:
+	var ir := int(ceil(r))
+	for dy in range(-ir, ir + 1):
+		for dx in range(-ir, ir + 1):
+			var d := sqrt(float(dx * dx + dy * dy)) / maxf(r, 0.5)
+			if d > 1.0:
+				continue
+			var pp := Vector2(roundf(c.x) + dx, roundf(c.y) + dy)
+			var th := (float((int(pp.x + seed) % 4) * 4 + (int(pp.y) % 4)) + 0.5) / 16.0
+			if (1.0 - d * d) * 1.2 > th:
+				ci.draw_rect(Rect2(pp, Vector2.ONE), col)

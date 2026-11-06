@@ -157,6 +157,8 @@ def exterior(w: int = 720, h: int = 400) -> np.ndarray:
 LEDGER_L = [V(262, 184), V(368, 180), V(370, 262), V(266, 268)]     # left page
 LEDGER_R = [V(368, 180), V(474, 182), V(476, 266), V(370, 262)]     # right page
 GLASS_C = V(536, 200)
+STAMP_UV = (0.34, 0.40)                 # the ledger stamp sits clear of Alexei's head in the close-up
+DRAWER_X = (420, 556)                   # right pedestal drawer (set coords), wide enough for the ledger
 
 
 def cold_patch_k(cv, quad, gain=1.3, lift=0.04):
@@ -358,7 +360,7 @@ def plaque(hist: bool, lamp) -> np.ndarray:
 def ledger_stamp(hist: bool, lamp) -> np.ndarray:
     rgba = np.zeros((H, W, 4), np.uint8)
     st = kit.round_stamp(30, kit.soviet_emblem(hist), kit.seed_of('k_stamp'))
-    x, y = bb.quad_map(LEDGER_L, 0.66, 0.66)
+    x, y = bb.quad_map(LEDGER_L, STAMP_UV[0], STAMP_UV[1])
     kit.ink(rgba, st, int(x - 15), int(y - 15), KR['stamp'] + [pg.hx('#C8503C')], lamp, wear=0.12,
             seed=kit.seed_of('k_stamp_wear'), base=0.05, gain=1.0)
     return rgba
@@ -384,12 +386,19 @@ def k_close_base(ext: np.ndarray):
     cv.paint(fe, np.clip(0.2 + 0.9 * lamp.pool(xx, yy - 20), 0, 1), KR['desk'])
     below = yy >= FRONT_Y + 3
     cv.paint(below, np.clip(0.05 + 0.25 * lamp.pool(xx, yy - 60), 0, 1), KR['desk'])
-    dr = (xx >= V(250, 0)[0]) & (xx < V(450, 0)[0]) & (yy >= FRONT_Y + 5) & (yy < FRONT_Y + 26)
+    dr = (xx >= DRAWER_X[0]) & (xx < DRAWER_X[1]) & (yy >= FRONT_Y + 5) & (yy < FRONT_Y + 26)
     cv.paint(dr, np.clip(0.10 + 0.5 * lamp.pool(xx, yy - 60), 0, 1), KR['desk'])
     cv.c[kit.outline_of(dr)] = KR['desk'][1]
+    import cine_finale_props as props
+    props.blotter(cv, 268, 178, 512, 290, lamp)
     waybills(cv, *V(40, 196), lamp)
     tea_glass(cv, *GLASS_C, lamp)
     morse_key(cv, *V(232, 140), lamp)
+    props.telephone_k(cv, 150, 170, lamp)
+    props.signal_lantern(cv, 36, 160, lamp, lit=True)
+    props.inkwell_pen(cv, 254, 214, lamp)
+    props.stamp_pad(cv, 226, 262, lamp)
+    props.abacus(cv, 576, 238, lamp)
     cold_patch_k(cv, [V(0, 116), V(130, 116), V(100, 282), V(-30, 282)])
     cold_patch_k(cv, [V(140, 116), V(250, 116), V(236, 282), V(118, 282)])
     glass = np.zeros((H, W, 4), np.uint8)

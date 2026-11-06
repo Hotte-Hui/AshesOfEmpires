@@ -14,7 +14,9 @@ Writes assets/cinematics/a1m1/berlin/ (all original, deterministic):
   banner.png / banner_hist.png   strip 32 (30x96): vertical banner in the wind -- 16 phases of a cloth wave
                    travelling down from the pole, calm set + gust set (neutral: Reichssiegel on black;
                    _hist: red with white disc and a bold, thick 45-degree black swastika)
-  relief.png / relief_hist.png   stone eagle above the portal (neutral: wreath with the Reichssiegel)
+  relief.png / relief_hist.png   52x31 lower part of the bronze eagle relief above the portal (legs, tail, oak
+                   wreath; neutral: Reichssiegel obelisk in the wreath, _hist: swastika); the eagle's upper rows
+                   + its cast shadow are painted into street.png (the scene script anchors the sprite at y 160)
   door.png         strip 3: portal doors closed / ajar / open (+_e warm interior)
   jambs.png        portal jambs drawn above Konrad as he enters
   tram.png (+_e)   two-axle tram, lit windows with passengers, destination board
@@ -49,6 +51,8 @@ RAIL_FAR = (288, 292)
 RAIL_NEAR = (302, 306)
 ARCH_X0, ARCH_X1 = 210, 500     # Bauarchiv facade
 PORTAL_CX = 355
+ARCH_PIERS = [213, 247, 281, 315, 387, 421, 455, 489]   # left x of the 8-px giant pilasters (mirror: 710 - x - 8)
+CENTRAL_BAY = (323, 387)        # wide bay over the portal: central window + eagle relief
 DOOR_W, DOOR_H = 34, 50
 DOOR_Y = PAVE_Y - 6 - DOOR_H    # door top (two steps of 3 px)
 CHIMNEYS: list = []             # (x, y) of chimney tops in set coordinates (smoke anchors)
@@ -301,7 +305,8 @@ def _tenement(L, x0, x1, top, floors, ground_h, base_col, seed, shop=None):
 
 def _archive(L, hist: bool):
     """Bauarchiv: sober stripped classicism -- rusticated base, giant pilasters, tall windows, attic with
-    the inscription, portal with lanterns.  (Eagle relief, banners and doors are separate sprites.)"""
+    the inscription, portal with lanterns, the bronze state eagle over the portal (its lower part + emblem is
+    the relief sprite; banners and doors are separate sprites)."""
     x0, x1 = ARCH_X0, ARCH_X1
     top = 44
     w = x1 - x0
@@ -326,19 +331,23 @@ def _archive(L, hist: bool):
             L.vline(x + (12 if (y // 7) % 2 else 0), y - Y0, 7, VI[2])
     L.rect(x0 - 2, base_top - Y0 - 5, w + 4, 5, STN[4], hgt=0.9)
     L.hline(x0 - 2, base_top - Y0 - 6, w + 4, SN[3])
-    # giant pilasters (piers) between tall windows
-    piers = list(range(x0 + 6, x1 - 4, 36))
-    for px_ in piers:
+    # giant pilasters (piers) between tall windows -- symmetric about the portal axis, with a wide central
+    # bay above the portal that carries the state eagle (round 10: the old 36-px grid put a pier and two
+    # windows right behind the eagle, which made the relief collide with the window frames)
+    for px_ in ARCH_PIERS:
         L.rect(px_, top + 22 - Y0, 8, base_top - top - 27, STN[3], hgt=0.85)
         L.vline(px_, top + 22 - Y0, base_top - top - 27, STN[4])
         L.vline(px_ + 7, top + 22 - Y0, base_top - top - 27, VI[3])
         L.rect(px_ - 1, top + 20 - Y0, 10, 3, STN[4])
-    # tall windows (two storeys merged) between piers, dark, a few lit (night clerks), with snow sills
-    for i, px_ in enumerate(piers[:-1]):
-        wx = px_ + 12
-        lit = i in (2, 5)
-        _window(L, wx, top + 34 - Y0, 16, 58, lit=lit, frame=VI[3])
-        _window(L, wx, top + 104 - Y0, 16, 30, lit=(i == 1), frame=VI[3])
+    # tall windows (two storeys merged) in the side bays, dark, a few lit (night clerks), with snow sills
+    bays = [p + 8 for p in ARCH_PIERS[:-1] if p + 8 != CENTRAL_BAY[0]]
+    for i, bx in enumerate(bays):
+        wx = bx + 5
+        _window(L, wx, top + 34 - Y0, 16, 58, lit=i in (1, 5), frame=VI[3])
+        _window(L, wx, top + 104 - Y0, 16, 30, lit=(i == 0), frame=VI[3])
+    # central bay: one taller-proportioned window over the axis, below it the plain wall for the eagle
+    _window(L, PORTAL_CX - 10, top + 34 - Y0, 20, 58, frame=VI[3])
+    _eagle_on_facade(L)
     # attic band with the inscription
     L.rect(x0, top - Y0, w, 20, STN[4], hgt=0.9)
     L.hline(x0, top - Y0, w, SN[3])
@@ -595,55 +604,373 @@ def make_banner(hist: bool):
     return frames
 
 
-def make_relief(hist: bool):
-    """Stone eagle relief above the portal (wings spread, head to the viewer's left, wreath in the claws)."""
-    W, H = 52, 34
-    L = Layer(W, H, 'relief')
-    body = lib._grid([
-        '.....................XXX......................',
-        '....................XXXX......................',
-        '...................XXXX.......................',
-        'XX.................XXXX.....................XX',
-        'XXXX..............XXXXXX..................XXXX',
-        '.XXXXX...........XXXXXXXX...............XXXXX.',
-        '..XXXXXXX.......XXXXXXXXXX............XXXXXX..',
-        '...XXXXXXXXXX..XXXXXXXXXXXX.......XXXXXXXXX...',
-        '....XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX....',
-        '.....XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.....',
-        '......XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX......',
-        '........XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX........',
-        '..........XXXXXXXXXXXXXXXXXXXXXXXXXX..........',
-        '.............XXXXX.XXXXXXXX.XXXXX.............',
-        '...................XXXXXXXX...................',
-        '..................XXXXXXXXXX..................',
-        '..................XX.XXXX.XX..................',
-    ])
-    bh, bw = body.shape
-    ox = (W - bw) // 2
-    L._put(body, ox, 0, STN[3], hgt=0.9)
-    # feather steps: darker lines across the wings
-    for k in range(4, bh - 4, 2):
-        row = body[k]
-        for x in range(bw):
-            if row[x] and (x < 18 or x > 28) and (x + k) % 4 == 0:
-                L.px(ox + x, k, STN[2])
-    top = body & ~np.vstack([np.zeros((1, bw), bool), body[:-1]])
-    L._put(top, ox, 0, STN[4])
-    L.px(ox + 20, 1, NI[2])                                   # eye
-    # wreath with the emblem
-    d = lib.disc_mask(15)
-    ring = lib.edge_of(d) | lib.edge_of(lib.erode(d, 1))
-    wy = bh - 1
-    L._put(ring, W // 2 - 7, wy, STN[3], hgt=0.9)
+# --------------------------------------------------------------------------- the state eagle over the portal
+# A cast dark-bronze relief, original drawing (round 10; redrawn in round 10b for legibility at game scale).
+# Built from clean pixel maps instead of per-pixel procedural shading: every shading unit (arm bar, covert,
+# primary feather, chest chevron, tail feather, wreath leaf) is a solid block with one lit edge and one joint
+# line, so at 4K (6 screen px per texel) the rows read as layered feathers instead of speckle.
+# * Head in profile to the viewer's left, raised on the neck above the shoulders: snow on the crown, a glint
+#   in the dark eye socket under the brow, a dark hooked beak with a sky-lit culmen and an open gape.  The
+#   wing's leading edge stays 2+ rows below the hook, so the beak stands free against the wall.
+# * Wings spread with three layered rows (arm bar with a sky-lit top edge and a little snow on the raised
+#   tips, covert row, long primaries with pointed tips stepping down toward the body), chevron chest, feathered
+#   thighs, a tail fan behind the wreath, talons with one polished claw each on an oak wreath (lobed leaves,
+#   bound at the bottom).
+# * Value: the bronze stays darker than the wall (the silhouette is a dark outline everywhere except the
+#   sky-lit top edges, which carry a cool sheen); light from the overcast sky above / east, warm uplight from
+#   the two portal lanterns on the lowest rims (feather tips, tail, wreath, claws).  A smoothed height field
+#   gives the normal map, so the scene's PointLights model the same relief.  A crisp cast shadow (solid core
+#   down-left + a fringe in the wall's darker tone) lies on the wall only -- never on the cornice below,
+#   never around the hook.
+# * Size and place: 48-px span (x 331..378) centred on the portal axis, 7 px clear of the banner cloth at rest;
+#   the crown starts 5 px below the tram wire (y 148); the wreath rests on the cornice (y 186).
+# The scene script places relief.png at (PORTAL_CX - 26, RELIEF_Y) (scripts/cinematics/a1m1/cin_a1_to_m1.gd),
+# so the eagle canvas is split: rows above RELIEF_Y are painted into street.png, the rows from RELIEF_Y down
+# are the relief sprite.  street.png also carries the whole eagle (fallback, identical pixels under the
+# sprite).  Only the emblem in the wreath differs between the variants: neutral = the fictional Reichssiegel
+# obelisk, _hist = the wreathed swastika (TECHNICAL_ARCHITECTURE 12.4).
+EAGLE_W, EAGLE_H = 52, 37
+EAGLE_X0 = PORTAL_CX - 26          # 329 = the relief sprite's left edge (mirror axis at canvas u 26.0 = x 355)
+EAGLE_Y0 = 150                     # canvas top; the crown starts at row 3 (y 153), the tram wire is at y 148
+RELIEF_Y = 160                     # top of the relief sprite (scene script)
+RELIEF_H = 31                      # sprite rows RELIEF_Y .. 190 (the wreath ends on the cornice, y 186)
+LANTERNS = ((320.0, 202.0), (390.0, 202.0))   # portal lanterns (scene PointLights), set coordinates
+WR_C, WR_RI, WR_RO = (26.0, 28.5), 4.9, 7.4    # wreath centre (canvas coords) / inner / outer radius
+_EAGLE_CACHE: dict = {}
+# tone characters of the maps: O deepest (gape, eye socket), o outline / joint, d dark, m mid bronze (the
+# body), l lit band, L highlight (east side of chest and thighs) -- all darker than the wall (STN 1/2) --
+# h cool sky sheen on top edges, s snow, e eye glint, r lowest rim (warm under the lanterns), c polished claw
+_ETONE = {'O': NI[0], 'o': NI[1], 'd': VI[1], 'm': STN[0], 'l': OC[0], 'L': OC[1], 'h': SN[0], 's': SN[2],
+          'e': SN[1]}
+# top row of the left wing per canvas column (mirrored for the right wing): rises toward the tip, stays low
+# next to the head so the hooked beak stands clear of the shoulder
+EAGLE_WING_TOP = {2: 6, 3: 5, 4: 5, 5: 5, 6: 6, 7: 6, 8: 7, 9: 7, 10: 8, 11: 9, 12: 10, 13: 10, 14: 11,
+                  15: 12, 16: 12, 17: 12, 18: 13, 19: 13, 20: 13, 21: 13}
+EAGLE_WING_TIP = [15, 17, 19, 21, 23]           # lowest row of each 4-px primary (u 2-5, 6-9, .. 18-21)
+# head in profile (viewer's left), neck and nape; drawn by hand, origin canvas (u 14, v 3).
+# ' ' keeps what is below, '.' clears.
+EAGLE_HEAD_U, EAGLE_HEAD_V = 14, 3
+EAGLE_HEAD = [
+    '        hssh      ',   # v 3  crown, snow
+    '     hhhllllh     ',   # v 4  culmen + forehead, brow, crown
+    '   hhmdOellmmh    ',   # v 5  culmen, cere, eye glint in the dark socket under the brow
+    '  hmmmdmdmlmmmh   ',   # v 6  beak, cheek, back of the head
+    ' hmmddmmmmmmdmmo  ',   # v 7  beak tip, nape
+    ' odOOOdmmmdmmdmmo ',   # v 8  hook, open gape
+    ' o.ddoodmmmdmmdmmo',   # v 9  hook tip, lower mandible, chin, throat
+    '    oodmmdmmmdmmdo',   # v 10 neck ruff
+    '     odmmmdmmdmmdo',   # v 11
+]
+EAGLE_BEAK_CLEAR = (12, 19, 7, 13)               # u0, u1, v0, v1: no cast shadow around / under the hook
+
+
+def _eagle_maps():
+    """Tone characters + part ids on the 52 x 37 eagle canvas (u right, v down; mirror axis u = 26.0).
+    parts: 1 arm bar, 2 coverts, 3 primaries, 4 chest, 5 head, 7 neck, 8 thigh, 9 tail, 10 foot / claw,
+    11 wreath, 12 wreath binding (13 = emblem, added by the renderer)."""
+    W, H = EAGLE_W, EAGLE_H
+    tone = np.full((H, W), '.', '<U1')
+    part = np.zeros((H, W), np.int16)
+
+    def put(u, v, ch, p):
+        if 0 <= u < W and 0 <= v < H:
+            tone[v, u] = ch
+            part[v, u] = p
+
+    # ---- left wing: arm bar (sky sheen, lit, mid) + its shadow line, covert row, primaries; a little snow
+    # has settled on the flat ledge of the raised wing tip
+    for u, t in EAGLE_WING_TOP.items():
+        for k, ch in enumerate('slm' if u in (3, 4, 5) else 'hlm'):
+            put(u, t + k, ch, 1)
+        j = (u - 4) % 4                                     # covert units u 4-7, 8-11, .. (staggered by 2)
+        put(u, t + 3, 'd' if j != 1 else 'o', 2)            # the bar's underside shadow, scalloped
+        put(u, t + 4, 'lmmd'[j], 2)
+        put(u, t + 5, 'mddo'[j], 2)
+    for f, tip in enumerate(EAGLE_WING_TIP):                # primaries: 4-px feathers, pointed tips
+        for j in range(4):
+            u = 2 + 4 * f + j
+            t = EAGLE_WING_TOP[u]
+            bot = tip if j in (1, 2) else tip - 1
+            put(u, t + 6, 'o' if j == 0 else 'd', 3)        # joint under the coverts
+            mid = (t + 7 + bot) // 2
+            for v in range(t + 7, bot + 1):
+                if j == 0:
+                    ch = 'o'
+                elif j == 3:
+                    ch = 'd'
+                else:
+                    ch = ('l' if j == 1 else 'm') if v <= mid else ('m' if j == 1 else 'd')
+                if v == bot:
+                    ch = 'r' if j in (1, 2) else 'o'
+                put(u, v, ch, 3)
+    # ---- tail fan behind the wreath: four feathers a side radiating from the rump, pointed tips
+    for v in range(19, 28):
+        for u in range(15, 26):
+            dx, dy = 26.0 - (u + 0.5), (v + 0.5) - 18.0
+            if dy <= 0:
+                continue
+            ang = math.degrees(math.atan2(dx, dy))          # 0 = straight down, 90 = sideways
+            if ang > 54:
+                continue
+            ff = (ang % 13.5) / 13.5
+            reach = 9.0 - 1.7 * abs(2 * ff - 1)              # pointed feather ends
+            r = math.hypot(dx, dy)
+            if r > reach:
+                continue
+            ch = 'o' if ff < 0.22 else ('l' if ff > 0.6 and r < reach - 1.5 else 'm')
+            if r > reach - 1.0:
+                ch = 'r' if v >= 24 else 'o'
+            put(u, v, ch, 9)
+    # ---- chest: oval with chevron feather bands, in front of the wing roots
+    for v in range(9, 24):
+        for u in range(18, 26):
+            x, y = u + 0.5 - 26.0, v + 0.5 - 16.5
+            e = (x / 6.0) ** 2 + (y / 6.5) ** 2
+            if e > 1.0:
+                continue
+            band = (v - 12 + int(abs(x) * 0.5)) % 3     # chevrons: V pointing down
+            ch = 'l' if band == 0 else ('m' if band == 1 else 'd')
+            if e > 0.7:                                     # the flank turns away from the light
+                ch = 'm' if band == 0 else 'd'
+            put(u, v, ch, 4)
+    # ---- feathered thighs ("trousers"): small scale feathers, lit on top
+    for i, row in enumerate(('dllm', 'omdm', 'odmd', 'omdo')):
+        for k, ch in enumerate(row):
+            put(21 + k, 18 + i, ch, 8)
+    # ---- mirror the left half (u 0..25) to the right, then a selective outline: dark on the sides and the
+    # bottom, the top edges keep their sky sheen
+    tone[:, 26:] = tone[:, :26][:, ::-1]
+    part[:, 26:] = part[:, :26][:, ::-1]
+    m = part > 0
+    pm = np.pad(m, 1)
+    up_e, dn_e = ~pm[:-2, 1:-1], ~pm[2:, 1:-1]
+    lf_e, rt_e = ~pm[1:-1, :-2], ~pm[1:-1, 2:]
+    side = m & (lf_e | rt_e | dn_e) & ~up_e & ~np.isin(tone, ('r',))
+    tone[side] = 'o'
+    # ---- head + neck (asymmetric: profile to the viewer's left)
+    for i, row in enumerate(EAGLE_HEAD):
+        for k, ch in enumerate(row):
+            u, v = EAGLE_HEAD_U + k, EAGLE_HEAD_V + i
+            if ch == ' ':
+                continue
+            if ch == '.':
+                tone[v, u], part[v, u] = '.', 0
+            else:
+                tone[v, u] = ch
+                part[v, u] = 5 if i < 6 else 7
+    # ---- oak wreath (in front of the tail, behind the feet): a torus of lobed leaves (notched outer edge),
+    # two garlands rising from the binding at the bottom; lit where it faces the sky, a warm rim below
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float64) + 0.5
+    ex_, ey_ = xx - WR_C[0], yy - WR_C[1]
+    r = np.hypot(ex_, ey_)
+    a = np.degrees(np.abs(np.arctan2(ex_, ey_)))            # 0 at the binding (bottom) .. 180 at the top
+    q = a / 25.0 + 0.35
+    fl = q - np.floor(q)
+    ro = WR_RO - 0.75 * (fl < 0.24)                          # a notch between two leaves
+    ring = (r >= WR_RI) & (r <= ro)
+    tr = (r - WR_RI) / (WR_RO - WR_RI)
+    face = (ex_ * 0.35 - ey_ * 0.94) / np.maximum(r, 1e-6)  # +1 = outward normal toward the sky (up / east)
+    pr = np.pad(ring, 1)
+    outer_e = ring & (~pr[:-2, 1:-1] | ~pr[2:, 1:-1] | ~pr[1:-1, :-2] | ~pr[1:-1, 2:]) & (tr > 0.5)
+    inner_e = ring & (np.pad(r < WR_RI, 1)[:-2, 1:-1] | np.pad(r < WR_RI, 1)[2:, 1:-1] |
+                      np.pad(r < WR_RI, 1)[1:-1, :-2] | np.pad(r < WR_RI, 1)[1:-1, 2:])
+    for v, u in zip(*np.nonzero(ring)):
+        f = face[v, u] if tr[v, u] > 0.5 else -face[v, u]
+        ch = 'l' if f > 0.45 else ('m' if f > -0.35 else 'd')
+        if fl[v, u] < 0.2 and 0.3 < tr[v, u]:
+            ch = 'o'                                       # leaf joint
+        if outer_e[v, u] and face[v, u] < 0.1:
+            ch = 'r' if ey_[v, u] > 3.5 else 'o'           # lower rim (lanterns) / outline away from the sky
+        elif inner_e[v, u]:
+            ch = 'd' if ey_[v, u] < -1 else ('l' if ey_[v, u] > 1.5 else ch)
+        tone[v, u], part[v, u] = ch, 11
+    bind = (np.abs(ex_) < 1.5) & (r > WR_RI - 0.3) & (r < WR_RO + 0.2) & (ey_ > 3)
+    for v, u in zip(*np.nonzero(bind)):
+        tone[v, u] = 'r' if ey_[v, u] > 6.2 else ('l' if xx[v, u] > WR_C[0] else 'm')
+        part[v, u] = 12
+    hole = (r < WR_RI) & (part > 0)                         # nothing fills the wreath's opening
+    tone[hole], part[hole] = '.', 0
+    # ---- talons gripping the wreath top: dark toes, one polished claw over its front (left foot, mirrored)
+    for (u, v, ch) in ((22, 22, 'o'), (23, 22, 'd'), (24, 22, 'o'), (21, 23, 'd'), (21, 24, 'c')):
+        put(u, v, ch, 10)
+        put(W - 1 - u, v, ch, 10)
+    # ---- east light: the chest, thighs and neck read one step lighter right of the axis
+    lift = {'o': 'd', 'd': 'm', 'm': 'l', 'l': 'L'}
+    east = (xx > 26.0) & np.isin(part, (4, 8)) & (tone != 'o')
+    for v, u in zip(*np.nonzero(east)):
+        tone[v, u] = lift.get(tone[v, u], tone[v, u])
+    return tone, part
+
+
+def _depth(mask: np.ndarray, n: int = 3) -> np.ndarray:
+    """erosion depth (0 on the silhouette edge, up to n inside)"""
+    d = np.zeros(mask.shape, np.int8)
+    m = mask.copy()
+    for k in range(n):
+        m = lib.erode(m, 1)
+        d += m
+    return d
+
+
+def _eagle_render(hist: bool) -> dict:
+    """Colour + OpenGL normal per pixel of the eagle canvas (52 x 37), silhouette masks, emblem mask."""
+    key = bool(hist)
+    if key in _EAGLE_CACHE:
+        return _EAGLE_CACHE[key]
+    W, H = EAGLE_W, EAGLE_H
+    tone, part = _eagle_maps()
+    sil = part > 0                                          # variant-independent silhouette (eagle + wreath)
+    # emblem inside the wreath (dark raised bronze on the pale wall, touching the ring)
+    emb = np.zeros((H, W), bool)
+    cx = int(WR_C[0])
     if hist:
-        sw = lib.swastika(2, 2, 1)
-        L._put(sw, W // 2 - sw.shape[1] // 2, wy + 7 - sw.shape[0] // 2, STN[2])
-    else:
-        rs = lib.REICHSSIEGEL_11[:, 2:9]
-        L._put(rs[1:10], W // 2 - 3, wy + 3, STN[2])
-    # shadow side (lower right edges) for depth
-    sh = L.alpha() & ~np.vstack([L.alpha()[1:], np.zeros((1, W), bool)])
-    L.c[sh] = VI[2]
+        sw = lib.swastika(2, 2, 2)                          # 45-degree, 2-px strokes, 9 x 10
+        ey, ex = int(round(WR_C[1] - sw.shape[0] / 2)), int(round(WR_C[0] - sw.shape[1] / 2))
+        emb[ey:ey + sw.shape[0], ex:ex + sw.shape[1]] = sw
+    else:                                                   # fictional Reichssiegel: obelisk on a stepped base
+        emb[24, cx - 1:cx + 1] = True
+        for v in range(25, 31):
+            emb[v, cx - 1:cx + 1] = True
+        emb[31, cx - 2:cx + 2] = True
+        emb[32, cx - 3:cx + 3] = True
+    emb &= ~sil
+    part = part.copy()
+    part[emb] = 13
+    allm = sil | emb
+    vv, uu = np.mgrid[0:H, 0:W].astype(np.float32) + 0.5
+    X, Y = EAGLE_X0 + uu, EAGLE_Y0 + vv
+    lamp = np.zeros((H, W), np.float32)                     # how much the portal lanterns reach (0..1)
+    for (lx, ly) in LANTERNS:
+        lamp = np.maximum(lamp, np.clip(1.0 - np.hypot(lx - X, ly - Y) / 70.0, 0, 1) ** 1.2)
+    # ---- colours
+    col = np.zeros((H, W, 4), np.uint8)
+    for ch, c in _ETONE.items():
+        col[tone == ch] = c
+    rim = tone == 'r'                                       # lowest rims: warm where the lanterns reach
+    warm = rim & (lamp > 0.3)
+    wi = np.clip(((lamp - 0.3) / 0.06).astype(int), 0, 2)
+    col[warm] = np.stack([OC[2], OC[3], OC[3]])[wi[warm]]
+    col[rim & ~warm] = VI[0]
+    claw = tone == 'c'                                      # polished claw tips catch the lantern light
+    col[claw] = OC[2]
+    col[claw & (lamp > 0.4)] = OC[3]
+    col[emb] = VI[0]                                        # emblem: a dark raised shape on the pale wall
+    em_lit = emb & ~np.vstack([np.zeros((1, W), bool), emb[:-1]])
+    col[em_lit] = STN[0]                                    # its top edges catch the sky
+    # ---- height field -> normals (the large form + bevels; fine detail lives in the colours)
+    base = {1: 0.75, 2: 0.6, 3: 0.45, 4: 0.9, 5: 1.1, 7: 0.95, 8: 0.8, 9: 0.35, 10: 0.95, 11: 0.7, 12: 0.8,
+            13: 0.55}
+    hf = np.zeros((H, W), np.float32)
+    for p, b in base.items():
+        hf[part == p] = b
+    chest = part == 4
+    hf[chest] += (0.35 * np.sqrt(np.clip(1 - ((uu - 26.0) / 6.3) ** 2 - ((vv - 15.2) / 6.4) ** 2, 0, 1)))[chest]
+    wr = part == 11
+    tr = (np.hypot(uu - WR_C[0], vv - WR_C[1]) - WR_RI) / (WR_RO - WR_RI)
+    hf[wr] += (0.3 * np.sqrt(np.clip(1 - (2 * tr - 1) ** 2, 0, 1)))[wr]
+    dep = _depth(allm, 2)
+    hf *= np.array([0.6, 0.85, 1.0], np.float32)[dep]
+    hf[np.isin(tone, ('O', 'o')) & allm] -= 0.15
+    hf[~allm] = 0.0
+    q = np.pad(hf, 1)
+    hs = sum(q[dy_:dy_ + H, dx_:dx_ + W] for dy_ in range(3) for dx_ in range(3)) / 9.0
+    hs = np.where(allm, 0.5 * hs + 0.5 * hf, 0.0)
+    p = np.pad(hs, 1)
+    dx = (p[1:-1, 2:] - p[1:-1, :-2]) * 0.5
+    dy = (p[2:, 1:-1] - p[:-2, 1:-1]) * 0.5
+    n = np.stack([-dx * 2.0, -dy * 2.0, np.ones_like(hf)], -1)
+    n /= np.linalg.norm(n, axis=-1, keepdims=True)
+    gl = np.stack([n[..., 0], -n[..., 1], n[..., 2]], -1)    # OpenGL normal map: +Y up
+    snow = np.isin(tone, ('s', 'S'))
+    gl[snow] = (0.0, 0.8, 0.6)
+    out = {'c': col, 'n': gl.astype(np.float32), 'mask': allm, 'sil': sil, 'emblem': emb, 'tone': tone}
+    _EAGLE_CACHE[key] = out
+    return out
+
+
+# facade darkening chain for the cast shadow (each step one tone darker)
+_SHADE_CHAIN = [VI[0], VI[1], VI[2], VI[3], STN[1], STN[2], STN[3], STN[4], STN[5]]
+
+
+def _darken(c: np.ndarray, steps: int) -> np.ndarray:
+    chain = np.stack(_SHADE_CHAIN)[:, :3].astype(np.int32)
+    d = ((chain - c[:3].astype(np.int32)) ** 2).sum(-1)
+    i = int(np.argmin(d))
+    return _SHADE_CHAIN[max(0, i - steps)]
+
+
+def _shift(m: np.ndarray, dx: int, dy: int) -> np.ndarray:
+    o = np.zeros_like(m)
+    h, w = m.shape
+    o[max(0, dy):h + min(0, dy), max(0, dx):w + min(0, dx)] = \
+        m[max(0, -dy):h - max(0, dy), max(0, -dx):w - max(0, dx)]
+    return o
+
+
+def _eagle_shadow(sil: np.ndarray, pad: int = 4) -> np.ndarray:
+    """Shadow class on the wall around the silhouette, on a canvas padded by `pad`: 2 = core, 1 = soft fringe.
+    The overcast sky (above / east) throws it down-left.  The wreath's opening stays clean wall (the emblem
+    reads against it; the emblem's own shadow is in the relief sprite) and so does the wall around the hook."""
+    H, W = sil.shape
+    M = np.zeros((H + 2 * pad, W + 2 * pad), bool)
+    M[pad:pad + H, pad:pad + W] = sil
+    S = np.zeros(M.shape, np.int8)
+    S[_shift(M, -2, 3) | _shift(M, -1, 3)] = 1
+    S[_shift(M, -1, 1) | _shift(M, -1, 2) | _shift(M, 0, 2)] = 2
+    yy, xx = np.mgrid[0:H + 2 * pad, 0:W + 2 * pad].astype(np.float32) + 0.5 - pad
+    opening = np.hypot(xx - WR_C[0], yy - WR_C[1]) < WR_RI + 0.3
+    S[opening] = 0
+    u0, u1, v0, v1 = EAGLE_BEAK_CLEAR
+    S[pad + v0:pad + v1 + 1, pad + u0:pad + u1 + 1] = 0
+    S[M] = 0
+    return S
+
+
+def _eagle_on_facade(L):
+    """Paints the eagle (all rows, neutral silhouette without emblem) and its cast shadow onto street.png;
+    the shadow stays on the wall (rows above the cornice snow line at y 186)."""
+    E = _eagle_render(False)
+    pad = 4
+    S = _eagle_shadow(E['sil'], pad)
+    ox, oy = EAGLE_X0 - pad, EAGLE_Y0 - pad - Y0
+    for v in range(S.shape[0]):
+        if EAGLE_Y0 - pad + v >= 186:                       # the cornice (snow line y 186) projects: no shadow
+            break
+        for u in range(S.shape[1]):
+            s = S[v, u]
+            if s == 2:
+                L.c[oy + v, ox + u] = VI[3]                 # solid core: one flat tone, no checker
+            elif s == 1:
+                L.c[oy + v, ox + u] = STN[1]                # soft fringe: the wall's darker tone
+    m = E['sil']
+    ys, xs = np.nonzero(m)
+    L.c[EAGLE_Y0 - Y0 + ys, EAGLE_X0 + xs] = E['c'][ys, xs]
+    L.nrm[EAGLE_Y0 - Y0 + ys, EAGLE_X0 + xs] = E['n'][ys, xs]
+
+
+def make_relief(hist: bool, street=None):
+    """The relief sprite: the eagle rows from RELIEF_Y down (legs, tail, wreath) + the emblem in the wreath
+    with its little shadow on the wall (wall pixels copied from street.png, so the sprite sits seamlessly)."""
+    W, H = EAGLE_W, RELIEF_H
+    L = Layer(W, H, 'relief')
+    E = _eagle_render(hist)
+    r0 = RELIEF_Y - EAGLE_Y0                                 # first eagle canvas row in the sprite
+    m = E['mask'][r0:]
+    hh = min(H, m.shape[0])
+    L.c[:hh][m[:hh]] = E['c'][r0:r0 + hh][m[:hh]]
+    L.nrm[:hh][m[:hh]] = E['n'][r0:r0 + hh][m[:hh]]
+    L.hgt[:hh][m[:hh]] = 0.6
+    if street is not None:
+        # the emblem's shadow falls on the wall inside the wreath (down-left): copy + darken those wall px
+        emb = E['emblem'][r0:]
+        sh = np.zeros_like(emb)
+        sh[1:, :-1] |= emb[:-1, 1:]
+        sh &= ~E['mask'][r0:]
+        ys, xs = np.nonzero(sh[:hh])
+        for (y, x) in zip(ys, xs):
+            L.c[y, x] = _darken(street.c[RELIEF_Y - Y0 + y, EAGLE_X0 + x], 2)
+            L.nrm[y, x] = (0.0, 0.0, 1.0)
+            L.hgt[y, x] = 0.6
     return L
 
 
@@ -834,12 +1161,13 @@ def build():
     info['sky'] = lib.save(make_sky(), DIR + '/sky', normal=False)
     info['dome'] = lib.save(make_dome(), DIR + '/dome', normal=False)
     info['far'] = lib.save(make_far(), DIR + '/far', normal=False)
-    info['street'] = lib.save(make_street(False), DIR + '/street', normal=True)
+    street = make_street(False)
+    info['street'] = lib.save(street, DIR + '/street', normal=True)
     info['fg'] = lib.save(make_fg(), DIR + '/fg', normal=False)
     info['banner'] = lib.strip(make_banner(False), DIR + '/banner', normal=False)
     info['banner_hist'] = lib.strip(make_banner(True), DIR + '/banner_hist', normal=False)
-    info['relief'] = lib.save(make_relief(False), DIR + '/relief', normal=True)
-    info['relief_hist'] = lib.save(make_relief(True), DIR + '/relief_hist', normal=True)
+    info['relief'] = lib.save(make_relief(False, street), DIR + '/relief', normal=True)
+    info['relief_hist'] = lib.save(make_relief(True, street), DIR + '/relief_hist', normal=True)
     info['door'] = lib.strip(make_door(), DIR + '/door', normal=False)
     info['jambs'] = lib.save(make_jambs(), DIR + '/jambs', normal=True)
     info['tram'] = lib.save(make_tram(), DIR + '/tram', normal=True)

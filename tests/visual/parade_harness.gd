@@ -8,7 +8,8 @@ extends Node
 ##        time with vsync off and reports fps, process time and the viewport's measured CPU/GPU render time.
 ##   (headless)  "$GODOT" --headless --path C:/Spiele/AshesOfEmpires res://tests/visual/parade_harness.tscn -- --selftest
 ##     -> finished exactly once (natural end and skip), skip idempotent, cues complete and in order, 7-9 shots,
-##        duration 40-50 s, seek/get_time, Symbols-resolved banner textures, viewport settings restored. Exit 0 = pass.
+##        duration 40-50 s, seek/get_time, Symbols-resolved banner textures, the avenue layer and its crowds
+##        (shot p8), viewport settings restored. Exit 0 = pass.
 
 const LEVEL_PATH := "res://scenes/levels/L_M1_Parade.tscn"
 const BERLIN := ["#120C14", "#1B1520", "#211623", "#2A2130", "#25202B", "#342F37", "#443B43", "#57494D",
@@ -189,6 +190,13 @@ func _selftest() -> void:
 	print("PARADE symbols=%s banner=%s" % [str(Symbols.enabled()), tex.resource_path if tex else "none"])
 	if hist_tex != Symbols.enabled():
 		fails.append("banner texture does not follow Symbols.enabled()")
+	# shot p8 looks down the avenue: its staging layer and the parade set's crowds lining it are there
+	var av_crowd := int(level.pset.stats.get("AvenueCrowd", 0))
+	print("PARADE avenue crowd = %d" % av_crowd)
+	if level.get_node_or_null("Avenue") == null:
+		fails.append("avenue layer missing (shot p8)")
+	if av_crowd < 8000:
+		fails.append("avenue crowd too thin (%d)" % av_crowd)
 	print("PARADE cues: ", got)
 	level.queue_free()
 	await get_tree().process_frame

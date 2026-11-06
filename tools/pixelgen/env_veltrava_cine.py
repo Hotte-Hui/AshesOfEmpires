@@ -9,15 +9,22 @@ code, deterministic (fixed seeds, no time or global random state) and drawn at 1
 Palette: the 'veltrava' / 'palais' ramps of data/chapters/c3.json are registered into pg.PALETTES at import
 time (read-only use).  Konrad and Alexei (backs at the windows, faces in the glass) are sculpted with the
 dialogue-portrait SDF pipeline in env_veltrava_cine_figs.py so they match their portraits and sprites.
-Modules: this file (trains: night exterior, both compartments, flare, build/main), env_veltrava_cine_dawn.py
-(t4), env_veltrava_cine_tohall.py, env_veltrava_cine_close.py, env_veltrava_cine_kit.py, env_veltrava_cine_figs.py.
+Modules: this file (trains: night exterior, both compartments, flare, build/main), env_veltrava_cine_journey.py
+(round 10: the land outside the windows, the station without a stop, the river under the truss bridge),
+env_veltrava_cine_line.py (round 10: t3b, the Line before dawn), env_veltrava_cine_city.py (round 10: t4, the
+crane over Veltrava at dawn), env_veltrava_cine_dawn.py (the two train sheets), env_veltrava_cine_cast.py (who
+stands where in t4; the sheets come from the figures stream's env_veltrava_cine_people), env_veltrava_cine_tohall.py,
+env_veltrava_cine_close.py, env_veltrava_cine_kit.py; figures: env_veltrava_cine_heroes.py / _people.py (figures
+stream).
 
 Output (assets/cinematics/ch3/):
-  trains/  ext_sky, ext_far_de|su, ext_mid, ext_near, pole, int_konrad, fig_konrad, refl_konrad, glow_lamp,
-           patch_warm|cold, int_alexei, fig_alexei, refl_alexei, glow_tea, steam_tea, spoon, sweep, flare,
-           roomflare_k|a, bridge_bg, bridge_fg, train_de, train_su, smoke, dawn_glow, fg_glow, walker
+  trains/  ext_sky, ext_far_de|su, ext_mid_de|su, ext_near, pole, pass_station, pass_river(_obj), int_konrad, fig_konrad,
+           refl_konrad, glow_lamp, patch_warm|cold, int_alexei, fig_alexei, refl_alexei, glow_tea, steam_tea, spoon,
+           sweep, flare, roomflare_k|a, l3_bg, l3_fg, l3_glow, d4_sky, d4_sun_glow, d4_city, d4_dome_glow,
+           d4_bridge, d4_parapet, d4_lamp_glow, d4_bank, d4_tram, d4_gull, d4_chimney_smoke, train_de, train_su,
+           smoke, pp_d4_* (extras)
   tohall/  k1_bg, k1_clock, k1_glass, steam_puffs, k2_bg, k2_clock, k2_glass, pendulum, k2_konrad
-  close/   n1_bg, n1_mid, n1_fg, board, steam, n2_bg, n2_win_konrad, n2_win_alexei, n2_lamp_glow
+  close/   n1_bg, n1_glow, n1_mid, n1_fg, board, steam, n2_bg, n2_win_konrad, n2_win_alexei, n2_lamp_glow
 The runtime (scenes/cinematics/ch3_*) composes these layers and animates them; layout constants shared with
 the runtime are listed in LAYOUT and written to assets/cinematics/ch3/layout.json.
 """
@@ -657,10 +664,11 @@ def int_konrad():
                        (tie_x + 12, tie_y - 3)], 0.7) & cm
         p.put(cord, 'B', 2.2 + lamp * 2.6)
         p.add(cm & shift(cord, 0, -1) & ~cord, -0.8)
+        # the tassel hangs from the cord and swings with the rail joints (drawn by the runtime: k_tassels)
+        LAYOUT['trains'].setdefault('k_tassels', [])
         tx = tie_x + (7 if side < 0 else -7)
-        p.put(p.line([(tx, tie_y), (tx, tie_y + 7)], 0.5), 'B', 2.0)
-        p.put(p.poly([(tx - 1.5, tie_y + 7), (tx + 1.5, tie_y + 7), (tx + 2.5, tie_y + 13), (tx - 2.5, tie_y + 13)]),
-              'B', 2.4 + lamp * 1.5)
+        if [tx, tie_y] not in LAYOUT['trains']['k_tassels']:
+            LAYOUT['trains']['k_tassels'].append([tx, tie_y])
     # curtain rod
     p.put(p.box(104, 63, 536, 65), 'B', 2.6)
     p.put(p.box(104, 63, 536, 64), 'B', 3.6)
@@ -757,30 +765,15 @@ K_CUP = (352, 236)
 
 
 def paint_reach_k(p: Paint, lamp):
-    """Konrad's left forearm on the table: from behind his body (right) to the cup handle by the window.
-    Coat sleeve, white shirt cuff, the back of the hand warm in the lamp light, fingers round the handle."""
-    yy, xx = p.yy, p.xx
-    hx = K_CUP[0] + 9                                   # the handle
-    sleeve = p.poly([(hx + 10, 225), (hx + 22, 222), (hx + 42, 233), (hx + 44, 250), (hx + 30, 252), (hx + 12, 236)])
-    p.put(sleeve, 'K', 1.0 + lamp * 1.6)
-    top = sleeve & ~shift(sleeve, 0, -1)
-    p.put(top, 'K', 3.2 + lamp * 1.2)
-    p.put(sleeve & ~shift(sleeve, -1, 0) & (yy < 238), 'L', 1.4 + lamp * 1.2)      # lamp rim on the cuff side
-    p.add(p.line([(hx + 20, 229), (hx + 36, 240)], 0.5) & sleeve, -0.6)              # fold along the forearm
-    cuff = p.poly([(hx + 6, 227), (hx + 11, 225), (hx + 14, 235), (hx + 9, 237)])
-    p.put(cuff, 'P', 4.6 + lamp * 0.8)
-    p.put(cuff & ~shift(cuff, 1, 0), 'P', 2.8)
-    hand = p.poly([(hx - 1, 228), (hx + 3, 226), (hx + 8, 227), (hx + 10, 234), (hx + 5, 236), (hx, 235)])
-    p.put(hand, 'F', 2.4 + lamp * 1.4)
-    p.put(hand & ~shift(hand, 0, -1), 'F', 4.6)                                    # knuckles catch the lamp
-    p.put(hand & ~shift(hand, -1, 0), 'F', 4.0)
-    for fy in (230, 232):
-        p.px(hx + 1, fy, 'F', 1.2)                                                 # fingers round the handle
-    p.px(hx - 1, 231, 'F', 3.2)
+    """Round 10 (figures stream): Konrad's whole left arm -- shoulder, elbow, forearm, cuff and the hand on the
+    cup handle -- is now part of the figure sprite (env_veltrava_cine_heroes); the room only gets the soft
+    contact shadow of the forearm and hand on the polished table top."""
+    import env_veltrava_cine_heroes as H
+    H.reach_shadow_k(p, lamp)
 
 
 # ---------------------------------------------------------------- Konrad (seated, seen from behind-right)
-FIG_K = (363, 88, 200, 232)          # frame box x, y, w, h (absolute), 4 frames side by side
+FIG_K = (334, 88, 236, 232)          # frame box x, y, w, h (absolute), 4 frames side by side (= heroes.BOX_K)
 
 
 def _breath(img):
@@ -797,12 +790,10 @@ def _sheet4(f0, f1):
 
 
 def fig_konrad():
-    import env_veltrava_cine_figs as F
-    f0 = F.back_konrad(0)['rgba']
-    f1 = F.back_konrad(1)['rgba']
-    LAYOUT['trains']['fig_konrad'] = [FIG_K[0], FIG_K[1]]
-    LAYOUT['trains']['fig_frames'] = 4
-    return _sheet4(f0, f1)
+    """Round 10: Konrad with complete arms, the club chair, breath frames that keep the hand on the cup
+    (env_veltrava_cine_heroes, figures stream).  Sets LAYOUT['trains']['fig_konrad'] / ['fig_frames']."""
+    import env_veltrava_cine_heroes as H
+    return H.fig_konrad_sheet(LAYOUT['trains'])
 
 
 def _glass_reflection(face_rgba, at, extra, fade_from, fade_len):
@@ -826,9 +817,11 @@ def _glass_reflection(face_rgba, at, extra, fade_from, fade_len):
 
 
 def refl_konrad():
-    """Additive reflection in the black glass: Konrad's lamp-lit face, the lamp, the table edge and cup."""
-    import env_veltrava_cine_figs as F
-    face = F.reflection(F.face_konrad(0), (54, 38, 26), gain=1.25, levels=5)
+    """Additive reflection in the black glass: Konrad's lamp-lit face, the lamp, the table edge and cup.
+    Round 10 (figures stream): the face is the dialogue portrait's (eyes, brows, mouth), env_veltrava_cine_reflect."""
+    import env_veltrava_cine_reflect as RF
+    face, (fcx, fcy) = RF.face_reflection('konrad', (54, 38, 26), gain=1.25, levels=5)
+    at = (388 - fcx, 138 - fcy)                       # the eye line where the round-7 reflection had it
     yy, xx = grid(VH, VW)
     a = np.zeros((VH, VW, 3), np.float32)
     d = np.hypot((xx - 304) / 14, (yy - 203) / 9)
@@ -836,8 +829,8 @@ def refl_konrad():
         a[..., c] += np.clip(1 - d, 0, 1) ** 1.3 * v
     a[ellipse_mask(VW, VH, 304, 205, 5, 2.5)] += (40, 26, 12)
     a[(yy >= 220) & (yy < 225) & (xx > 290) & (xx < 380)] += (14, 9, 4)
-    LAYOUT['trains']['refl_face_konrad'] = [358, 104]
-    return _glass_reflection(face, (358, 104), a, 158, 26)
+    LAYOUT['trains']['refl_face_konrad'] = [int(at[0]), int(at[1])]
+    return _glass_reflection(face, at, a, 158, 26)
 
 
 def additive_glow(cx, cy, rx, ry, rgb, power=1.5, levels=7, w=None, h=None, ox=0, oy=0):
@@ -1146,41 +1139,28 @@ def t3_second_glass(p: Paint, lamp):
 
 
 def paint_reach_a(p: Paint, lamp):
-    """Alexei's right forearm on the table, the quilted sleeve, his hand at the handle of the glass holder."""
-    yy, xx = p.yy, p.xx
-    hx = TEA[0] - 11                                    # the holder's handle
-    sleeve = p.poly([(hx - 10, 224), (hx - 24, 221), (hx - 46, 233), (hx - 48, 252), (hx - 32, 254), (hx - 12, 236)])
-    p.put(sleeve, 'A', 1.2 + lamp * 1.8)
-    p.put(sleeve & ~shift(sleeve, 0, -1), 'A', 3.4 + lamp * 1.2)
-    p.put(sleeve & ~shift(sleeve, 1, 0) & (yy < 240), 'L', 1.4 + lamp * 1.4)       # the wall lamp on its side
-    for k in range(3):                                                             # quilting across the sleeve
-        q = p.line([(hx - 20 - k * 8, 223 + k * 3), (hx - 14 - k * 8, 236 + k * 4)], 0.5) & sleeve
-        p.add(q, -0.8)
-    hand = p.poly([(hx + 1, 228), (hx - 3, 226), (hx - 9, 227), (hx - 11, 234), (hx - 5, 236), (hx, 235)])
-    p.put(hand, 'F', 2.4 + lamp * 1.6)
-    p.put(hand & ~shift(hand, 0, -1), 'F', 4.6)
-    p.put(hand & ~shift(hand, 1, 0), 'F', 4.0)
-    for fy in (230, 232):
-        p.px(hx - 1, fy, 'F', 1.2)
-    p.px(hx + 1, 231, 'F', 3.2)
+    """Round 10 (figures stream): Alexei's right arm and the hand at the holder's handle are part of the figure
+    sprite (env_veltrava_cine_heroes); the room only gets their contact shadow on the laminate."""
+    import env_veltrava_cine_heroes as H
+    H.reach_shadow_a(p, lamp)
 
 
 # ---------------------------------------------------------------- Alexei (seated, seen from behind-left)
-FIG_A = (96, 86, 220, 232)
+FIG_A = (90, 86, 252, 232)           # = heroes.BOX_A
 
 
 def fig_alexei():
-    import env_veltrava_cine_figs as F
-    f0 = F.back_alexei(0)['rgba']
-    f1 = F.back_alexei(1)['rgba']
-    LAYOUT['trains']['fig_alexei'] = [FIG_A[0], FIG_A[1]]
-    return _sheet4(f0, f1)
+    """Round 10: Alexei with complete arms (env_veltrava_cine_heroes, figures stream)."""
+    import env_veltrava_cine_heroes as H
+    return H.fig_alexei_sheet(LAYOUT['trains'])
 
 
 def refl_alexei():
-    """Additive reflections: Alexei's face lit from the wall lamp, the lamp itself and the glowing tea."""
-    import env_veltrava_cine_figs as F
-    face = F.reflection(F.face_alexei(0), (50, 38, 24), gain=1.25, levels=5)
+    """Additive reflections: Alexei's face lit from the wall lamp, the lamp itself and the glowing tea.
+    Round 10 (figures stream): the face is the dialogue portrait's (eyes, brows, mouth), env_veltrava_cine_reflect."""
+    import env_veltrava_cine_reflect as RF
+    face, (fcx, fcy) = RF.face_reflection('alexei', (50, 38, 24), gain=1.25, levels=5)
+    at = (267 - fcx, 141 - fcy)
     yy, xx = grid(VH, VW)
     a = np.zeros((VH, VW, 3), np.float32)
     d = np.hypot((xx - 452) / 12, (yy - 150) / 8)
@@ -1189,8 +1169,8 @@ def refl_alexei():
     d2 = np.hypot((xx - 352) / 9, (yy - 214) / 7)
     for c, v in enumerate((34, 20, 9)):
         a[..., c] += np.clip(1 - d2, 0, 1) ** 1.4 * v
-    LAYOUT['trains']['refl_face_alexei'] = [236, 106]
-    return _glass_reflection(face, (236, 106), a, 160, 26)
+    LAYOUT['trains']['refl_face_alexei'] = [int(at[0]), int(at[1])]
+    return _glass_reflection(face, at, a, 160, 26)
 
 
 def spoon():
@@ -1329,9 +1309,14 @@ def build_trains():
     w('ext_sky.png', ext_sky())
     w('ext_far_de.png', ext_far('de'))
     w('ext_far_su.png', ext_far('su'))
-    w('ext_mid.png', ext_mid())
     w('ext_near.png', ext_near())
     w('pole.png', pole())
+    import env_veltrava_cine_journey as J
+    w('ext_mid_de.png', J.ext_mid_de())
+    w('ext_mid_su.png', J.ext_mid_su())
+    w('pass_station.png', J.pass_station())
+    w('pass_river.png', J.pass_river())
+    w('pass_river_obj.png', J.pass_river_obj())
     ik = w('int_konrad.png', int_konrad())
     fk = w('fig_konrad.png', fig_konrad())
     w('refl_konrad.png', refl_konrad())
@@ -1350,15 +1335,25 @@ def build_trains():
     fwa = FIG_A[2]
     w('roomflare_k.png', roomflare(ik, fk[:, :fwk], FIG_K[:2], toward=(-1, -1)))
     w('roomflare_a.png', roomflare(ia, fa[:, :fwa], FIG_A[:2], toward=(1, -1)))
+    import env_veltrava_cine_line as LN
+    w('l3_bg.png', LN.l3_bg())
+    w('l3_fg.png', LN.l3_fg())
+    w('l3_glow.png', LN.l3_glow())
     import env_veltrava_cine_dawn as D
-    w('bridge_bg.png', D.bridge_bg())
-    w('bridge_fg.png', D.bridge_fg())
+    import env_veltrava_cine_city as CT
+    for rel, fn in (('d4_sky.png', CT.d4_sky), ('d4_sun_glow.png', CT.d4_sun_glow), ('d4_city.png', CT.d4_city),
+                    ('d4_dome_glow.png', CT.d4_dome_glow), ('d4_bridge.png', CT.d4_bridge),
+                    ('d4_parapet.png', CT.d4_parapet), ('d4_lamp_glow.png', CT.d4_lamp_glow),
+                    ('d4_bank.png', CT.d4_bank), ('d4_tram.png', CT.d4_tram), ('d4_gull.png', CT.d4_gull)):
+        w(rel, fn())
+    _layout_d4(CT)
     w('train_de.png', D.train_de())
     w('train_su.png', D.train_su())
-    w('smoke.png', D.smoke())
-    w('dawn_glow.png', D.dawn_glow())
-    w('fg_glow.png', D.fg_glow())
-    w('walker.png', D.walker())
+    w('smoke.png', CT.d4_steam())
+    w('d4_chimney_smoke.png', CT.d4_chimney_smoke())
+    import env_veltrava_cine_cast as CAST
+    CAST.build('trains', LAYOUT['trains'])
+    CAST.clean('trains')
     return out
 
 
@@ -1369,16 +1364,25 @@ def build_tohall():
                     ('k2_glass.png', T.k2_glass), ('pendulum.png', T.pendulum), ('k2_konrad.png', T.k2_konrad)):
         img = fn()
         save(img.c if hasattr(img, 'c') else img, 'tohall/' + rel)
+    _extras('tohall')
+
+
+def _extras(part):
+    """Round 10 (figures stream): the travellers, railwaymen, police and delegates of LS_C3_ToHall / LS_C3_Close
+    (env_veltrava_cine_people.EXTRAS) -> <part>/ex_*.png + LAYOUT[part]['extras'] (c3_people.gd draws them)."""
+    import env_veltrava_cine_people as PP
+    PP.build_extras(part, LAYOUT.setdefault(part, {}), OUT)
 
 
 def build_close():
     import env_veltrava_cine_close as N
-    for rel, fn in (('n1_bg.png', N.n1_bg), ('n1_mid.png', N.n1_mid), ('n1_fg.png', N.n1_fg),
-                    ('board.png', N.board), ('steam.png', N.steam), ('n2_bg.png', N.n2_bg),
+    for rel, fn in (('n1_bg.png', N.n1_bg), ('n1_glow.png', N.n1_glow), ('n1_mid.png', N.n1_mid),
+                    ('n1_fg.png', N.n1_fg), ('board.png', N.board), ('steam.png', N.steam), ('n2_bg.png', N.n2_bg),
                     ('n2_win_konrad.png', N.n2_win_konrad), ('n2_win_alexei.png', N.n2_win_alexei),
                     ('n2_lamp_glow.png', N.n2_lamp_glow)):
         img = fn()
         save(img.c if hasattr(img, 'c') else img, 'close/' + rel)
+    _extras('close')
 
 
 def write_layout():
@@ -1445,12 +1449,27 @@ def main(argv=None):
     print('env_veltrava_cine: %s in %.1f s -> %s' % (','.join(parts), time.time() - t0, OUT))
 
 
+def _layout_d4(CT):
+    LAYOUT['trains']['k_cup'] = [K_CUP[0], K_CUP[1] - 11]
+    # Alexei's compartment: a towel and a string bag hanging from the upper berth rail swing with the joints
+    LAYOUT['trains']['a_swing'] = [[598, 73, 26, '#8593a3', 6], [600, 73, 24, '#c2c9d2', 1], [606, 73, 22, '#c2c9d2', 2]]
+    LAYOUT['trains']['d4'] = {'planes': dict(CT.PLANES), 'de_rail': CT.DE_RAIL, 'su_rail': CT.SU_RAIL,
+                              'water_y': CT.WATER_Y, 'walker_y': CT.WALKER_Y, 'bank_top': CT.BANK_TOP}
+
+
 def _layout_only_trains():
     # cheap functions that register the trains LAYOUT keys (the figure renders are skipped)
     import env_veltrava_cine_dawn as D
-    for fn in (pole, glow_lamp, glow_tea, steam_tea, spoon, sweep, D.bridge_bg, D.bridge_fg, D.train_de, D.train_su,
-               D.smoke, D.walker):
+    import env_veltrava_cine_city as CT
+    import env_veltrava_cine_journey as J
+    import env_veltrava_cine_line as LN
+    for fn in (pole, glow_lamp, glow_tea, steam_tea, spoon, sweep, D.train_de, D.train_su, CT.d4_steam,
+               CT.d4_chimney_smoke, CT.d4_city, CT.d4_bridge, CT.d4_bank, CT.d4_tram, J.ext_mid_de, J.ext_mid_su,
+               J.pass_station, J.pass_river, J.pass_river_obj, LN.l3_bg, int_konrad, int_alexei):
         fn()
+    import env_veltrava_cine_cast as CAST
+    CAST.build('trains', LAYOUT['trains'])
+    _layout_d4(CT)
     ext_far('de')
     ext_far('su')
     LAYOUT['trains']['fig_konrad'] = [FIG_K[0], FIG_K[1]]
@@ -1465,6 +1484,7 @@ def _layout_only(part):
         T.steam_puffs()
         T.pendulum()
         T.k2_konrad()
+        _extras('tohall')
     else:
         import env_veltrava_cine_close as N
         N.n1_bg()
@@ -1473,6 +1493,7 @@ def _layout_only(part):
         N.n2_bg()
         N.n2_win_konrad()
         N.n2_win_alexei()
+        _extras('close')
 
 
 if __name__ == '__main__':

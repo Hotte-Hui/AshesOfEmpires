@@ -21,12 +21,16 @@ const LEGACY_ORDER := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable
 ## The non-additive changes of data/v3 against the preproduction package: Chapter 3 is inserted between the
 ## archive and the montage (documentation/C3_DESIGN.md §1), and the Great Hall shot list describes the reveal as
 ## built (scripts/levels/hall/hall_reveal.gd: h1 5.5 s, h2 9 s, h3 9.5 s). Everything else is an addition.
+## 2026-11-06: the „(fiktiv)“ / „fiktive“ notes in world.a1.title and obj.a1_signal were dropped at the user's request
+## (one disclaimer at the start of a new game and the credits are enough).
 const EXPECTED_DELTA := ["scenes/scenes[L_M1_Archive]/next_scene: \"L_X1_Montage\" -> \"L_C3_Station\"",
 	"cinematics/sequences[LS_M1_Hall]/shots[h1]/duration_s: 3 -> 5.5",
 	"cinematics/sequences[LS_M1_Hall]/shots[h2]/duration_s: 5 -> 9",
 	"cinematics/sequences[LS_M1_Hall]/shots[h3]/duration_s: 3 -> 9.5",
 	"cinematics/sequences[LS_M1_Hall]/shots[h3]/shot: \"Return to office workbench\" -> \"Slow low-angle push and tilt up to the dome; a neighbour draws the curtains above the waiting family; held final frame (the parade and the return to the workbench follow)\"",
-	"cinematics/sequences[LS_M1_Hall]/shots[h3]/camera: \"fixed\" -> \"low_angle_push\""]
+	"cinematics/sequences[LS_M1_Hall]/shots[h3]/camera: \"fixed\" -> \"low_angle_push\"",
+	"locale_de/strings/obj.a1_signal: \"Löse das fiktive Signal-Rätsel am stillgelegten Übungskasten.\" -> \"Löse das Signal-Rätsel am stillgelegten Übungskasten.\"",
+	"locale_de/strings/world.a1.title: \"Verladebahnhof Karsk (fiktiv)\" -> \"Verladebahnhof Karsk\""]
 
 var kit: Kit
 var fx: Dictionary = {}

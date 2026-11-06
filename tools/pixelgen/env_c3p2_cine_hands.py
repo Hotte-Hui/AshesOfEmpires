@@ -225,6 +225,14 @@ E3A_SIZE = (520, 360)
 
 
 def e3a_frame(fr):
+    """Round 11: the arms on the anatomical rig with true bone lengths (env_c3p2_cine_hero.e3a_frame): 0 the hand
+    rises out of the smoke, 1 reaches (fingers open), 2 Konrad's open hand comes in from the rim, 3 it closes round
+    the wrist, 4-6 he pulls (both arms rise, his elbow bends)."""
+    import env_c3p2_cine_hero as HR
+    return HR.e3a_frame(fr)
+
+
+def _legacy_e3a_frame(fr):
     """0 the hand rises out of the smoke, 1 reaches (fingers open), 2 Konrad's hand takes the wrist, 3 he pulls."""
     ox, oy = E3A_ORIGIN
     up = (0.0, -10.0, -14.0, -58.0)[fr]
@@ -255,7 +263,8 @@ def e3a_frame(fr):
 E3B_ORIGIN = (40, 220)         # layout.json escape.e3b_men
 E3B_SIZE = (560, 96)
 E3B_HEADS = (292.0, 360.0)     # head centres (frame x) of Konrad and Alexei, a hand's breadth apart
-E3B_BREATH = [[286, 258], [366, 258]]   # their mouths (layout.json escape.e3b_breath, the runtime's breath puffs)
+E3B_BREATH = [[287, 250], [384, 251]]   # their mouths (layout.json escape.e3b_breath, the runtime's breath puffs;
+                                        # round 10: measured on the rigged men of env_c3p2_cine_hero.lying_men)
 
 
 def _man_lying(M, who, b):
@@ -335,6 +344,12 @@ def _hat_in_snow(M):
 
 
 def lying_men(b):
+    """Round 10: both men on the full anatomical rig (env_c3p2_cine_hero.lying_men), 2 frames (chest heave)."""
+    import env_c3p2_cine_hero as HR
+    return HR.lying_men(b)
+
+
+def _legacy_lying_men(b):
     """Both men on their backs (2 frames: b = 0 / 1 chest heave), view = canvas px of the e3b sprite."""
     ox, oy = E3B_ORIGIN
     M = A.Mats()
@@ -407,47 +422,23 @@ def lying_men(b):
 
 
 # ------------------------------------------------------------------------------------------------ h1 arms
-ARMS_ORIGIN = (210, 170)       # layout.json halves.arms_at (every frame 220 x 110)
-ARMS_SIZE = (220, 110)
-STACK_RU = (276, 262)
-STACK_DE = (364, 262)
-# the shoulder joints of the bench figures (fig_alexei / fig_konrad, measured on their silhouettes): the arm leaves
-# the body at the outer edge of the shoulder (round 8 started it beside the head)
-SHOULDER_A = (216.0, 238.0)
-SHOULDER_K = (421.0, 236.0)
+# Round 10: the reaching arms come from the same 3D scene as the bench figures (env_c3p2_cine_hero): the inner arm
+# (Alexei's right, Konrad's left) leaves the body at the shoulder, the blade slides toward the pages for the far
+# reach, the hand lands flat on the stack; drawn under the bodies by the runtime.
+import env_c3p2_cine_hero as _HR   # noqa: E402
+E3A_FRAMES = _HR.E3A_FRAMES        # round 11: 7 frames (see env_c3p2_cine_hero.e3a_arms)
+E3B_BREATH = _HR.e3b_breath()      # round 11: the mouths of the men in the snow, measured on the low camera
+
+ARMS_ORIGIN = _HR.ARMS_AT     # layout.json halves.arms_at
+ARMS_SIZE = _HR.ARMS_WH
+
+
+def arms_sheet():
+    """h1 arms.png, round 11: (sheet, layout additions) -- 2 rows x env_c3p2_cine_hero.ARM_COLS cells (reach
+    in three steps, the pull in two, the hold, Konrad's list); see env_c3p2_cine_hero.arms_sheet."""
+    return _HR.arms_sheet()
 
 
 def arm_frame(who, mode):
-    """h1 from behind and above: Alexei's right arm (who 'a', from his shoulder at the left) / Konrad's left arm
-    ('k'), reaching to the near or the far stack on the seat, or drawn back holding pages against the body."""
-    ox, oy = ARMS_ORIGIN
-    M = A.Mats()
-    if who == 'a':
-        sh = SHOULDER_A
-        tgt = {'near': (STACK_RU[0] - 4, STACK_RU[1] - 8), 'far': (STACK_DE[0] - 6, STACK_DE[1] - 8),
-               'hold': (240.0, 252.0)}[mode]
-        coat, skin, cuff, side = 'quilt', 'skin', None, 1.0
-    else:
-        sh = SHOULDER_K
-        tgt = {'near': (STACK_DE[0] + 4, STACK_DE[1] - 8), 'far': (STACK_RU[0] + 6, STACK_RU[1] - 8),
-               'hold': (402.0, 250.0)}[mode]
-        coat, skin, cuff, side = 'coat', 'skin_k', 'shirt', -1.0
-    shoulder = np.array([sh[0] - ox, sh[1] - oy, -6.0])
-    wrist = np.array([tgt[0] - ox - side * 9.0, tgt[1] - oy - 4.0, 4.0 if mode != 'hold' else 10.0])
-    mid = (shoulder + wrist) / 2.0
-    elbow = mid + np.array([side * -6.0, 10.0 if mode != 'hold' else 14.0, 8.0 if mode == 'hold' else -2.0])
-    reach = _norm(wrist - elbow)
-    if mode == 'hold':
-        hand_y = _norm(np.array([side * 0.6, -0.2, 0.75]))       # fingers curled round the pages at the chest
-        hand_kw = dict(curl=0.7, spread=0.1, grip=0.6)
-    else:
-        hand_y = _norm(reach + np.array([0.0, 0.25, -0.15]))     # reaching down onto the stack, fingers spread
-        hand_kw = dict(curl=0.25 if mode == 'near' else 0.15, spread=0.6, grip=0.0)
-    hand_z = (0.0, -0.75, 0.6)                                    # the back of the hand faces up (we look from above)
-    node = arm(M, coat, skin, shoulder, elbow, wrist, (8.6, 7.6, 6.4), hand_y, hand_z, 9.0, cuff=cuff,
-               cuff_len=2.2 if cuff else 0.0, thumb=side * 1.0, **hand_kw)
-    frames = {'tf': frame_along(tuple(elbow), tuple(reach), (0.0, -0.7, 0.7))}
-    look = dict(key=(-0.80, -0.05, -0.58), rim=(0.62, -0.42, -0.66), ambient=0.05, wrap=0.10, bg='karsk',
-                glow=(0.8, 0.2), fill=0.05, fill_dir=(0.2, -0.8, 0.6), ao=0.5)
-    return paint(node, M, ARMS_SIZE, look, _styles_quay(), frames=frames, groups=GROUPS,
-                 tone_passes=[CC.pass_stitches('quilt', 5.0, frame='tf', axis=1)], cache=('h1arm', who, mode))
+    """h1 arms.png frame: who 'a' / 'k', mode near / far / hold."""
+    return _HR.bench_arm(who, mode)

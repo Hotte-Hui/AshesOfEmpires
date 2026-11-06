@@ -5,7 +5,8 @@ extends RefCounted
 ## exist in the locale, reduced motion runs, every texture exists and the runtime layout matches the art
 ## generator's assets/cinematics/ch3/layout.json; every sound a cue plays exists; the rail-joint beat of the car
 ## equals the beat cut into the bed sounds (tools/audiogen/c3_cine_audio.py); reduced motion keeps the cars
-## still; the dawn dissolve completes.  Owner: cinematics stream.
+## still; the dissolves t3 -> t3b -> t4 complete and the t4 crane moves its planes (round 10 rework, 36 s).
+## Owner: cinematics stream.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const ChapterExt := preload("res://scripts/core/chapter_ext.gd")
@@ -14,8 +15,8 @@ const SCENES := {
 	"LS_C3_ToHall": "res://scenes/cinematics/ch3_tohall/Ch3ToHall.tscn",
 	"LS_C3_Close": "res://scenes/cinematics/ch3_close/Ch3Close.tscn",
 }
-const DUR := {"LS_C3_Trains": [22.0, 26.0], "LS_C3_ToHall": [5.0, 7.5], "LS_C3_Close": [11.0, 13.5]}
-const SHOTS := {"LS_C3_Trains": ["t1", "t2", "t3", "t4"], "LS_C3_ToHall": ["k1", "k2"], "LS_C3_Close": ["n1", "n2"]}
+const DUR := {"LS_C3_Trains": [34.0, 38.0], "LS_C3_ToHall": [5.0, 7.5], "LS_C3_Close": [11.0, 13.5]}
+const SHOTS := {"LS_C3_Trains": ["t1", "t2", "t3", "t3b", "t4"], "LS_C3_ToHall": ["k1", "k2"], "LS_C3_Close": ["n1", "n2"]}
 
 var kit: Kit
 
@@ -296,8 +297,17 @@ func _layout_keys() -> bool:
 		return true
 	var tr: Dictionary = L.get("trains", {})
 	for k in ["fig_konrad", "fig_alexei", "glow_lamp", "glow_tea", "steam_tea", "sweep", "spoon", "towers_de",
-			"towers_su", "glints", "chimneys", "walker", "smoke", "train_de", "train_su", "pole"]:
+			"towers_su", "smoke", "train_de", "train_su", "pole", "d4", "d4_glints", "d4_chimneys", "d4_lit_windows",
+			"d4_tram", "line", "station_lamps", "mid_de_road", "mid_su_chimneys", "k_tassels", "k_cup", "people"]:
 		kit.ok(tr.has(k), "layout trains.%s" % k)
+	var d4: Dictionary = tr.get("d4", {})
+	for k in ["planes", "de_rail", "su_rail", "water_y", "walker_y"]:
+		kit.ok(d4.has(k), "layout trains.d4.%s" % k)
+	var pl: Dictionary = d4.get("planes", {})
+	kit.ok(float(pl.get("sky", 0)) < float(pl.get("city", 0)) and float(pl.get("city", 0)) < float(pl.get("bridge", 0))
+		and float(pl.get("bridge", 0)) < float(pl.get("bank", 0)), "t4 crane: nearer planes travel farther (parallax)")
+	var ln: Dictionary = tr.get("line", {})
+	kit.ok(ln.has("proj") and ln.has("track_x") and ln.has("towers"), "layout trains.line (t3b projection, tracks, towers)")
 	for side in ["train_de", "train_su"]:
 		var d: Dictionary = tr.get(side, {})
 		kit.ok(d.has("chimney") and d.has("headlamp") and d.has("front") and d.has("y"), "%s anchors" % side)
@@ -391,13 +401,36 @@ func _dawn() -> bool:
 	var s := _make("LS_C3_Trains")
 	s.play()
 	s.seek(16.0)
-	kit.ok(not s.get("dawn").visible, "dawn hidden during t3")
-	s.seek(19.0)
+	kit.ok(not s.get("line").visible and not s.get("dawn").visible, "t3b and dawn hidden during t3")
+	s.seek(19.5)
+	kit.ok(s.get("line").visible, "the Line before dawn visible in t3b")
+	kit.ok(not s.get("win").visible, "the compartment is gone once the first dissolve has completed")
+	for m in s.get("_line_mats"):
+		kit.eq(float((m as ShaderMaterial).get_shader_parameter("progress")), 1.0, "t3 -> t3b dissolve finished")
+	s.seek(25.0)
 	kit.ok(s.get("dawn").visible, "dawn visible in t4")
-	kit.ok(not s.get("win").visible, "the compartment is gone once the dissolve has completed")
+	kit.ok(not s.get("line").visible, "t3b gone once the dawn dissolve has completed")
 	for m in s.get("_dawn_mats"):
-		kit.eq(float((m as ShaderMaterial).get_shader_parameter("progress")), 1.0, "dissolve finished")
+		kit.eq(float((m as ShaderMaterial).get_shader_parameter("progress")), 1.0, "t3b -> t4 dissolve finished")
+	# the crane: the bridge plane starts high in frame and comes down to its home row; the city rises less
+	var b0 := float(s.get("_off")["bridge"])
+	s.seek(35.9)
+	var b1 := float(s.get("_off")["bridge"])
+	var c1 := float(s.get("_off")["city"])
+	kit.ok(b0 < -100.0 and absf(b1) < 0.5 and absf(c1) < 0.5, "t4 crane: planes move from the low start to the city view")
 	s.skip()
 	kit.ok(s.get("dawn").visible, "skip lands on the dawn's final frame")
 	_drop(s)
+	# reduced motion: no crane, the middle view is held
+	var r: Node = load(SCENES["LS_C3_Trains"]).instantiate()
+	r.set("use_director", false)
+	r.set("reduced_motion_override", 1)
+	(Engine.get_main_loop() as SceneTree).root.add_child(r)
+	kit.track(r)
+	r.play()
+	r.seek(25.0)
+	var a0 := float(r.get("_off")["bridge"])
+	r.seek(35.0)
+	kit.eq(float(r.get("_off")["bridge"]), a0, "reduced motion: the crane holds one view")
+	_drop(r)
 	return true

@@ -3,7 +3,7 @@
  "area": "c3p2_ui",
  "strings": {
   "ui.c3p2.check.title": "Gegenprobe",
-  "ui.c3p2.check.subtitle": "Eingangsbuch Serie C-17 gegen Alexeis Frachtkette – fiktive Akten, keine echten Dokumente",
+  "ui.c3p2.check.subtitle": "Eingangsbuch Serie C-17 gegen Alexeis Frachtkette",
   "ui.c3p2.check.instruction": "Lege zu jedem Papier aus Alexeis Frachtkette den Eintrag, der dieselbe Fahrt beschreibt. Jedes Paar teilt genau eine Angabe.",
   "ui.c3p2.check.column.alexei": "Alexeis Frachtkette",
   "ui.c3p2.check.column.registry": "Eingangsbuch und Protokoll",

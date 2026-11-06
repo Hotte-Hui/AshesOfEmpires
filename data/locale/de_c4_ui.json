@@ -3,7 +3,7 @@
  "area": "c4_ui",
  "strings": {
   "ui.c4.numbers.title": "Die Nummernkette",
-  "ui.c4.numbers.subtitle": "Ein Wagen auf dem Umsetzgleis, vier Nummern unter einer Farbe – fiktive Nummern, kein echtes Nummernsystem",
+  "ui.c4.numbers.subtitle": "Ein Wagen auf dem Umsetzgleis, vier Nummern unter einer Farbe",
   "ui.c4.numbers.instruction": "Häng an jeden Weichenposten das Schild, das der Wagen dort trug. Unter jeder Farbe steht die Nummer davor – halt die Schilder gegen die Lampe.",
   "ui.c4.numbers.post.1": "W 1 · Einfahrt Güterbahnhof",
   "ui.c4.numbers.post.2": "W 2 · Umsetzgleis",
@@ -34,7 +34,7 @@
   "ui.c4.numbers.btn.lamp": "Lampe",
   "ui.c4.numbers.btn.close": "Schließen",
   "ui.c4.routes.title": "Linie 74",
-  "ui.c4.routes.subtitle": "Martas Pauspapier über dem Lageplan Süd 8 – fiktive Pläne einer fiktiven Stadtplanung",
+  "ui.c4.routes.subtitle": "Martas Pauspapier über dem Lageplan Süd 8",
   "ui.c4.routes.instruction": "Leg die Umleitungen der Linie 74 so auf den Lageplan, dass jede Schleife einen Schacht umfährt. Pfeiltasten verschieben, R dreht.",
   "ui.c4.routes.legend.shaft": "Schacht S 1 – S 3 (Lageplan)",
   "ui.c4.routes.legend.loop": "Umleitung Oktober, Dezember, Januar (Pauspapier)",

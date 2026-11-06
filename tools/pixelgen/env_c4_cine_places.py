@@ -18,6 +18,7 @@ Runtime anchors in layout.json "places".
 from __future__ import annotations
 
 import math
+import os
 
 import numpy as np
 
@@ -580,27 +581,114 @@ def siding_glow():
                                   (lx, FEET, 160, 22, (40, 30, 14), 1.5)], 6.0)
 
 
+# ======================================================================================= build (polish pass)
+# The plates are now built from the levels' own art (env_c4_cine_levelplates) and the layered yard
+# (env_c4_cine_yard); the round-9 painters above stay for reference.  The legacy single plates keep their file
+# names (composites at the shots' camera) so older runtimes still find them.
+def _loop_anchors():
+    import env_c4_annex_layout as AL
+    c0, c1 = AL.COLUMN
+    y0, y1 = AL.COLUMN_Y
+    door = [c0 + 8, y0 + 32, c1 - 8, y1 - 4]          # the steel door behind the torn poster (Street.column)
+    mx, my, mw, mh = AL.MARTA_WIN
+    return {'loop_w': AL.SEAM, 'loop_shelter': list(AL.SHELTER), 'loop_case': [AL.CASE[0], AL.CASE_Y[0], AL.CASE[1],
+                                                                                 AL.CASE_Y[1]],
+            'loop_column': list(AL.COLUMN), 'loop_door': door, 'loop_lamp': list(AL.LAMP_LOOP),
+            'marta_window': [mx, my, mx + mw, my + mh], 'loop_hatch': list(AL.HATCH), 'loop_stop': AL.STOP_SIGN,
+            'loop_wire_y': AL.WIRE_Y, 'loop_tram_stop_x': AL.TRAM[0]}
+
+
+def figs_disk(rel, fn):
+    """A render of the figures stream (fn()), or -- with ASHES_C4_FIGS_FROM_DISK=1, for the places stream's quick
+    passes while the figures' sources keep changing (every change invalidates their render cache) -- the asset
+    already on disk.  A missing file always renders."""
+    if os.environ.get('ASHES_C4_FIGS_FROM_DISK') == '1':
+        p = os.path.join(Q.OUT, rel)
+        if os.path.exists(p):
+            from PIL import Image
+            return np.asarray(Image.open(p).convert('RGBA')).copy()
+    return fn()
+
+
 def build(w):
-    w('places/yard.png', karsk_yard())
-    w('places/yard_parapet.png', yard_parapet())
-    g, wm = yard_glows()
-    w('places/yard_green.png', g)
-    w('places/yard_warm.png', wm)
-    w('places/loop_dawn.png', berlin_loop('dawn'))
-    w('places/loop_morning.png', berlin_loop('morning'))
-    w('places/loop_glow_dawn.png', loop_glow('dawn'))
-    w('places/loop_glow_morning.png', loop_glow('morning'))
-    w('places/tram_left.png', tram('left'))
-    w('places/tram_right.png', Q.sheet([tram('right', False, 0.7), tram('right', True, 0.7)]))
-    w('places/siding_lit.png', siding(True))
-    dark = siding(False).copy()
-    dark[..., :3] = (dark[..., :3].astype(np.float32) * 0.5).astype(np.uint8)
-    w('places/siding_dark.png', dark)
-    w('places/siding_glow.png', siding_glow())
+    import env_c4_cine_levelart as LA
+    import env_c4_cine_levelplates as LP
+    import env_c4_cine_yard as Y
+    # ---- the Karsk yard in parallax layers (+ the legacy plate at camera 0)
+    lay, meta = Y.layers()
+    for nm in ('sky', 'far', 'mid', 'main', 'parapet', 'green', 'warm'):
+        w('places/yard_l_%s.png' % nm, lay[nm])
+    w('places/yard.png', Y.composite(lay, 0))
+    w('places/yard_parapet.png', lay['parapet'][:, :VW].copy())
+    w('places/yard_green.png', lay['green'][:, :VW].copy())
+    w('places/yard_warm.png', lay['warm'][:, :VW].copy())
+    L['yard_layers'] = meta
+    L['yard_signal'] = list(Y.SIG_AT)
+    L['yard_window'] = list(Y.WINDOW)
+    L['yard_stair'] = list(Y.STAIR)
+    L['yard_parapet'] = [Y.STAIR[0] - 6, 262, Y.STAIR[1], Y.FEET + 12]   # x0, railing top, x1, the wall's foot
+    L['yard_lamps'] = [list(v) for v in Y.LAMPS]
+    L['yard_towers'] = [list(v) for v in Y.TOWERS]
+    # ---- the tram loop Süd 8 from the level's layers, dawn (Number n4) and morning (Voices v1/v2)
+    L.update(_loop_anchors())
+    homes = {}
+    for light in ('dawn', 'morning'):
+        layers, st = LP.loop_layers(light)
+        for nm, (img, home) in layers.items():
+            w('places/loop_%s_%s.png' % (light, nm), img)
+            homes[nm] = home
+        c = np.zeros((VH, layers['street'][0].shape[1], 4), np.float32)
+        c[..., 3] = 1.0
+        for nm in ('sky', 'dome', 'far', 'mid', 'street', 'fg'):
+            img, (hx, hy, par) = layers[nm]
+            LA.over(c, img.astype(np.float32) / 255.0, int(hx), int(hy))
+        w('places/loop_%s.png' % light, LA.to8(c))
+        w('places/loop_glow_%s.png' % light, layers['glow'][0])
+    L['loop_layers'] = homes
+    fxm = {}
+    for nm, (img, meta_) in LP.loop_fx().items():
+        w('places/fx_%s.png' % nm, img)
+        fxm[nm] = meta_
+    L['loop_fx'] = fxm
+    arrive, leave, tm = LP.tram_sheets()
+    w('places/tram_left.png', arrive)
+    w('places/tram_right.png', leave)
+    L['tram_size'] = tm['size']
+    L['tram_top'] = tm['origin'][1]                   # world y of the sprite's top (the bow on the wire)
+    # ---- the siding hall of L_C4_TunnelsB around wagon C-17/45
+    w('places/siding_lit.png', LP.siding(True))
+    w('places/siding_dark.png', LP.siding(False))
+    w('places/siding_glow.png', LP.siding_glow())
+    cx0 = LP.SIDING_CROP[0]
+    L['siding_lamp'] = [LP.SIDING_BULB[0] - cx0, LP.SIDING_BULB[1]]
+    L['siding_wagon'] = [1555 - cx0, 196, 1745 - cx0, 290]
+    L['siding_portal'] = [LP.SIDING_PORTAL[0] - cx0, LP.SIDING_PORTAL[1]]
+    # ---- puffs
     w('places/breath.png', Q.K.puff_sheet(6, 20, 16, ['#46556A', '#5E6D7B', '#7E8B96'], 5501, grow=(0.2, 0.42),
                                           thin=0.7))
     w('places/steam.png', Q.K.puff_sheet(8, 48, 40, ['#3C4C68', '#4E5F7C', '#64768F', '#7E8EA4'], 5503,
                                          grow=(0.26, 0.5), thin=0.5))
     w('places/steam_light.png', Q.K.puff_sheet(8, 48, 40, ['#7E8EA4', '#9CAABB', '#BFC9D5', '#E2E8EE'], 5505,
                                                grow=(0.26, 0.5), thin=0.55))
+    w('places/steam_warm.png', Q.K.puff_sheet(8, 48, 40, ['#5A5060', '#7A6A72', '#A08A86', '#C8AEA2'], 5507,
+                                              grow=(0.26, 0.5), thin=0.5))
+    w('places/smoke.png', Q.K.puff_sheet(8, 32, 28, ['#1A1E26', '#262C36', '#343C48'], 5509, grow=(0.22, 0.5),
+                                         thin=0.6))
+    w('places/smoke_light.png', Q.K.puff_sheet(8, 36, 32, ['#5A5452', '#7A726C', '#9C948A', '#BEB6AA'], 5511,
+                                               grow=(0.18, 0.46), thin=0.66, drift=0.2))
+    w('places/motes.png', _motes())
     L['feet'] = FEET
+
+
+def _motes():
+    """Dust motes in a light beam: 4 frames of a 3 x 3 speck (bright core, dim halo), additive."""
+    out = []
+    for i in range(4):
+        a = np.zeros((3, 3, 4), np.uint8)
+        v = (min(255, 196 + i * 20), min(255, 182 + i * 20), min(255, 146 + i * 22))
+        a[1, 1] = (*v, 255)
+        if i >= 2:
+            for (yy_, xx_) in ((0, 1), (1, 0), (1, 2), (2, 1)):
+                a[yy_, xx_] = (int(v[0] * 0.62), int(v[1] * 0.6), int(v[2] * 0.55), 255)
+        out.append(a)
+    return Q.sheet(out)

@@ -3,7 +3,8 @@ extends RefCounted
 ## TECHNICAL_ARCHITECTURE §12.5): every scene is instanced in the tree and driven headless (use_director = false:
 ## no Game/Audio/subtitle side effects, nothing written anywhere).  finished fires exactly once per run (skip, skip
 ## twice, before play, natural end, fast-forward, replay), skip() is idempotent and stops the cues, the inner lines
-## follow ctx.choices for every combination and are spoken in order, fit the film and exist in German, every
+## follow ctx.choices for every combination and are spoken in order, fit the film, read at <= 19 characters per second
+## (round 10) and exist in German, every
 ## texture exists and the runtime anchors match the generators' layout.json, every cued sound exists, the picture
 ## is a pure function of t, the match cut and the choice choreography hold, reduced motion halves the travel.
 ## Owner: cinematics stream (round 8).
@@ -38,6 +39,7 @@ func run() -> Array:
 	kit.run_case("natural_end_and_fast_forward_finish_once", _natural_end)
 	kit.run_case("replay_finishes_once_per_run", _replay)
 	kit.run_case("radio_lines_for_every_choice", _radio_lines)
+	kit.run_case("radio_lines_over_their_pictures", _radio_pictures)
 	kit.run_case("halves_lines_for_every_choice", _halves_lines)
 	kit.run_case("variants_spoken_in_order_fit_and_localised", _spoken)
 	kit.run_case("skip_mid_run_stops_cues", _skip_stops_cues)
@@ -215,6 +217,34 @@ func _radio_lines() -> bool:
 	return true
 
 
+## round 11: every radio line plays over its own picture -- the broadcasts and the men's thoughts about them in
+## their rooms, the note's text on its close-up, the lines about Elena or the note after it (the Russian news may
+## start with its sound bridge over the last 0.5 s of the square)
+func _radio_pictures() -> bool:
+	var s := _make("LS_C3_Radio")
+	var rg = load("res://scenes/cinematics/ch3_radio/ch3_radio.gd")
+	for a in C3A:
+		for b in C3B:
+			s.configure({"choices": {"c3a_choose": a, "c3b_choose": b}, "flags": {}})
+			for c in s.get("_line_cues"):
+				var key := str(c["say"])
+				var t0 := float(c["t"])
+				var t1 := t0 + float(c["dur"])
+				var win := [22.3, float(rg.DUR)]
+				if key == "cin.c3p2.radio.time":
+					win = [0.0, 4.0]
+				elif key in ["cin.c3p2.radio.ru", "cin.c3p2.radio.alexei.base"]:
+					win = [3.5, 10.5]
+				elif key in ["cin.c3p2.radio.de", "cin.c3p2.radio.konrad.base", "cin.c3p2.radio.konrad.report"]:
+					win = [10.5, 17.3]
+				elif key == "cin.c3p2.radio.note":
+					win = [float(rg.NOTE_CLOSE), 22.3]
+				kit.ok(t0 >= float(win[0]) - 0.001 and t1 <= float(win[1]) + 0.001,
+					"radio %s/%s: %s over its picture (%.2f-%.2f, wants %s)" % [a, b, key, t0, t1, str(win)])
+	_drop(s)
+	return true
+
+
 func _halves_lines() -> bool:
 	var s := _make("LS_C3_Halves")
 	var g_key := {"": "split", "split_by_language": "split", "swap_halves": "swap", "hide_for_elena": "elena"}
@@ -250,7 +280,7 @@ func _spoken() -> bool:
 				end = t0 + float(c["dur"])
 				kit.ok(end <= s.get_duration() + 0.05, "%s %s: %s ends inside the film (%.2f)" % [id, str(ch), c["say"], end])
 				var chars := Loc.t(str(c["say"])).length()
-				kit.ok(float(chars) / float(c["dur"]) <= 22.5, "%s: %s readable (%d chars in %.1f s)" % [id, c["say"], chars, c["dur"]])
+				kit.ok(float(chars) / float(c["dur"]) <= 19.0, "%s: %s readable (%d chars in %.1f s)" % [id, c["say"], chars, c["dur"]])
 			for key in s.chosen_lines():
 				kit.ok(Loc.has(str(key)), "%s: locale has %s" % [id, key])
 				kit.ok(Loc.t(str(key)) != str(key) and Loc.t(str(key)).length() > 5, "%s: %s has German text" % [id, key])
@@ -328,20 +358,24 @@ func _assets() -> bool:
 	kit.eq(float(R.get("dial_r", 0)), float(rg.DIAL_R), "radio dial radius: runtime == generator")
 	for k in ["radio", "fig_alexei", "fig_konrad", "arm_alexei", "hand_konrad", "win_konrad", "win_alexei",
 			"door_konrad", "door_alexei", "path_konrad", "path_alexei", "prints_konrad", "prints_alexei", "clock",
-			"door_floor", "door_cx", "pad_line", "steam_tea", "magic_eye", "cafe_win"]:
+			"door_floor", "door_cx", "pad_line", "steam_tea", "magic_eye", "cafe_win",
+			# round 10: the layered square, the chairs, the keys, the café's layers, the coffee cup
+			"square_bg_at", "near_at", "near_lantern", "taxi_path", "chair_alexei", "chair_konrad", "key_214",
+			"key_317", "cafe_at", "cafe_fg_at", "cat_at", "steam_cup"]:
 		kit.ok(R.has(k), "layout radio.%s" % k)
 	kit.ok((R.get("path_konrad", []) as Array).size() >= 40, "walker path long enough for r6")
 	var F: Dictionary = L.get("fire", {})
 	for k in ["f1_konrad", "f2_door_at", "f2_fire", "f3_gap", "f3_floor", "f4_alexei", "f4_fire"]:
 		kit.ok(F.has(k), "layout fire.%s" % k)
 	var E: Dictionary = L.get("escape", {})
-	for k in ["e1_hatch", "hatch", "hatch_at", "e2_konrad", "e3_hands", "e3b_hatch", "e3b_men", "e3b_breath", "e4_windows"]:
+	for k in ["e1_hatch", "hatch", "hatch_at", "e2_konrad", "e3_hands", "e3b_hatch", "e3b_men", "e3b_breath", "e4_windows",
+			"e4_people"]:
 		kit.ok(E.has(k), "layout escape.%s" % k)
 	var eg = load("res://scenes/cinematics/ch3_escape/ch3_escape.gd")
 	kit.ok((E.get("e4_windows", []) as Array).size() >= (eg.BURST_ORDER as Array).size(), "a window for every burst")
 	var H: Dictionary = L.get("halves", {})
 	for k in ["bench", "stack_ru", "stack_de", "arms_at", "fig_alexei", "fig_konrad", "prom_y", "h3_towers", "h3_fire",
-			"charset", "cell", "rows_y", "row_x", "fresh_row", "fresh"]:
+			"charset", "cell", "rows_y", "row_x", "fresh_row", "fresh", "ice_y", "h2_near_at", "board_ledge", "travellers"]:
 		kit.ok(H.has(k), "layout halves.%s" % k)
 	kit.eq(str(H.get("fresh", "")), "DIENSTAG · 23.40 · KORDON-17 · GLEIS 5", "the fresh row on the board")
 	var cs := str(H.get("charset", ""))

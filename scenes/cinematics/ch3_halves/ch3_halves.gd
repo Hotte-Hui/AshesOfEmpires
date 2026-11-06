@@ -10,7 +10,11 @@ extends "res://scenes/cinematics/c3p2_common/c3p2_cinematic.gd"
 ##   h3  11-17   wide: the burning wing mirrored in the ice, the Line's searchlights sweep, the first grey of dawn
 ##   h4  17-21   the departures board: a fresh row flips in, „Dienstag · 23.40 · Kordon-17 · Gleis 5"
 ## Lines: c3g (split / swap / elena), then c3d (pocket_plan -> plan_kept, else plan_burnt), then tuesday.
-## Art: tools/pixelgen/env_c3p2_cine_quay.py -> assets/cinematics/c3p2/halves/ (+ layout.json "halves").
+## Round 10: the men sit on the granite bench (slab and blocks in their camera), the searchlights' pools wander over the ice,
+## the promenade has a foreground that drifts against the trees and lanterns, the walkers cast lantern shadows, the
+## burning wing sends sparks and a leaning column of smoke, crows cross the dawn, pigeons sit on the board's frame
+## and steam drifts through the station hall.
+## Art: tools/pixelgen/env_c3p2_cine_quay.py (+ _river, _life) -> assets/cinematics/c3p2/halves/ (+ layout.json).
 
 const DUR := 21.0
 const SHOTS := [["h1", 0.0, 6.0], ["h2", 6.0, 11.0], ["h3", 11.0, 17.0], ["h4", 17.0, 21.0]]
@@ -26,6 +30,7 @@ var line_c3d := "cin.c3p2.halves.plan_burnt"
 ## h1 choreography: [{who, mode (near/far), stack (ru/de/list), reach, take, hold_end}]
 var moves: Array = []
 var _fold_t := -1.0                   # hide_for_elena: when the list is in Konrad's hand
+var _lean := {"a": 0, "k": 0}         # h1: 0 upright, 1 / 2 leaning half / fully over toward the far stack
 
 var h1: Node2D
 var h2: Node2D
@@ -52,9 +57,19 @@ var _board: Node2D
 var _stack_tex: Texture2D
 var _fold_tex: Texture2D
 var _breath: Texture2D
+var _plume: Sprite2D
 var _smoke: Texture2D
 var _flame_s: Texture2D
 var _glyphs: Texture2D
+var _h2near: Sprite2D
+var _h2fx: Node2D
+var _sky3: Node2D
+var _hall: Node2D
+var _crow: Texture2D
+var _pigeon: Texture2D
+var _steam: Texture2D
+var _trav: Node2D
+var _trav_tex: Array = []
 
 
 func _init() -> void:
@@ -125,10 +140,10 @@ func _build() -> void:
 	_beams1 = _fx(h1, "Searchlights", _draw_beams1)
 	_h1glow = sprite("halves/h1_glow.png", Vector2.ZERO, h1, 1, true)
 	_stacks = _fx(h1, "Pages", _draw_stacks)
-	_arm_a = sprite("halves/arms.png", _lv("arms_at"), h1, 3, false, 2)
-	_arm_k = sprite("halves/arms.png", _lv("arms_at"), h1, 3, false, 2)
-	_fig_a = sprite("halves/fig_alexei.png", _lv("fig_alexei"), h1, 2)
-	_fig_k = sprite("halves/fig_konrad.png", _lv("fig_konrad"), h1, 2)
+	_arm_a = sprite("halves/arms.png", _lv("arms_at"), h1, int(layout.get("arm_cols", 3)), false, 2)
+	_arm_k = sprite("halves/arms.png", _lv("arms_at"), h1, int(layout.get("arm_cols", 3)), false, 2)
+	_fig_a = sprite("halves/fig_alexei.png", _lv("fig_alexei"), h1, BODY_FRAMES)
+	_fig_k = sprite("halves/fig_konrad.png", _lv("fig_konrad"), h1, BODY_FRAMES)
 	_h1top = _fx(h1, "FoldBreath", _draw_h1top)
 	_snow1 = snow(h1, Rect2(0, 0, 640, 360), [
 		{"count": 80, "v": Vector2(8, 14), "vjit": 0.35, "size": Vector2(1, 1), "color": Color("#687789"), "sway": 2.0},
@@ -137,17 +152,22 @@ func _build() -> void:
 	sprite("halves/h2_bg.png", Vector2.ZERO, h2)
 	sprite("halves/h2_glow.png", Vector2.ZERO, h2, 1, true)
 	_prints = _fx(h2, "Footprints", _draw_prints)
+	_h2fx = _fx(h2, "Shadows", _draw_h2fx)
 	_walk_a = sprite("halves/walk_alexei.png", Vector2.ZERO, h2, 6)
 	_walk_k = sprite("halves/walk_konrad.png", Vector2.ZERO, h2, 6)
 	_walk_k.flip_h = true
+	_h2near = sprite("halves/h2_near.png", _lv("h2_near_at"), h2)
 	_snow2 = snow(h2, Rect2(0, 0, 640, 360), [
 		{"count": 90, "v": Vector2(9, 14), "vjit": 0.35, "size": Vector2(1, 1), "color": Color("#687789"), "sway": 2.0},
 		{"count": 30, "v": Vector2(12, 26), "vjit": 0.3, "size": Vector2(2, 2), "color": Color("#c2c9d2"), "sway": 3.0}], 9302)
 	h3 = group("River")
 	sprite("halves/h3_bg.png", Vector2.ZERO, h3)
 	_dawn = sprite("halves/h3_dawn.png", Vector2.ZERO, h3, 1, true)
+	_plume = sprite("halves/h3_plume.png", Vector2.ZERO, h3)
 	_h3glow = sprite("halves/h3_glow.png", Vector2.ZERO, h3, 1, true)
 	_h3fx = _fx(h3, "SmokeBeams", _draw_h3)
+	_crow = tex("halves/crow.png")
+	_sky3 = _fx(h3, "Crows", _draw_crows)
 	_snow3 = snow(h3, Rect2(0, 0, 640, 360), [
 		{"count": 100, "v": Vector2(7, 12), "vjit": 0.35, "size": Vector2(1, 1), "color": Color("#4f5e70"), "sway": 2.0},
 		{"count": 30, "v": Vector2(10, 22), "vjit": 0.3, "size": Vector2(1, 1), "color": Color("#a1aab7"), "sway": 3.0}], 9303)
@@ -155,6 +175,14 @@ func _build() -> void:
 	sprite("halves/board_bg.png", Vector2.ZERO, h4)
 	sprite("halves/board_glow.png", Vector2.ZERO, h4, 1, true)
 	_board = _fx(h4, "FreshRow", _draw_board)
+	_pigeon = tex("halves/pigeon.png")
+	_steam = tex("halves/steam.png")
+	_hall = _fx(h4, "HallLife", _draw_hall)
+	for tv in layout.get("travellers", []):
+		var tt := tex(str(tv[0]))
+		if tt:
+			_trav_tex.append([tt, Vector2(float(tv[1]), float(tv[2]))])
+	_trav = _fx(h4, "Travellers", _draw_travellers)
 
 
 func _fx(parent: Node, n: String, fn: Callable) -> Node2D:
@@ -183,20 +211,8 @@ func _apply(time: float) -> void:
 	h4.visible = sh == "h4"
 	var rm := reduced_motion()
 	var k := motion_k()
-	# h1: the arms per choreography
-	_arm_a.visible = false
-	_arm_k.visible = false
-	for m in moves:
-		var s: Sprite2D = _arm_a if m["who"] == "a" else _arm_k
-		var row := 0 if m["who"] == "a" else 1
-		if time >= float(m["reach"]) and time < float(m["take"]):
-			s.visible = true
-			s.frame = row * 3 + (0 if m["mode"] == "near" else 1)
-		elif time >= float(m["take"]) and time < float(m["hold_end"]):
-			s.visible = true
-			s.frame = row * 3 + 2
-	_fig_a.frame = int(floor((time + 0.3) / 1.9)) % 2 if not rm else 0
-	_fig_k.frame = int(floor((time + 1.0) / 2.1)) % 2 if not rm else 0
+	# h1: the arms per choreography (and the bodies: breath, or leaning over for the far stack)
+	_apply_arms(time, rm)
 	_h1glow.modulate = Color(1, 1, 1, clampf(fire_wobble(time, 31, 0.1), 0.0, 1.0))
 	_stacks.queue_redraw()
 	_h1top.queue_redraw()
@@ -211,16 +227,92 @@ func _apply(time: float) -> void:
 	_walk_a.frame = int(floor(maxf(0.0, time - float(WALK[0])) * 8.0 * k)) % 6
 	_walk_k.frame = int(floor(maxf(0.0, time - float(WALK[1])) * 8.0 * k + 3.0)) % 6
 	_prints.queue_redraw()
+	_h2fx.queue_redraw()
+	_h2near.position = _lv("h2_near_at") + Vector2(roundf(-12.0 * ramp01(time, 6.0, 11.0) * k), 0)
 	_snow2.set_time(time * (0.6 if rm else 1.0))
 	# h3: dawn grows, the fire's glow wobbles
-	_dawn.modulate = Color(1, 1, 1, ramp01(time, float(DAWN[0]), float(DAWN[1])) * 0.95)
+	_dawn.modulate = Color(1, 1, 1, ramp01(time, float(DAWN[0]), float(DAWN[1])))
+	# the smoke column drifts slowly east with the wind
+	_plume.position = Vector2(roundf(clampf((time - 11.0) / 6.0, 0.0, 1.0) * 6.0 * motion_k()), 0)
 	_h3glow.modulate = Color(1, 1, 1, clampf(fire_wobble(time, 33), 0.0, 1.0))
 	_h3fx.queue_redraw()
+	_sky3.queue_redraw()
 	_snow3.set_time(time * (0.6 if rm else 1.0))
 	_board.queue_redraw()
+	_hall.queue_redraw()
+	_trav.queue_redraw()
 
 
 # ------------------------------------------------------------------ h1
+## Round 11 (figures stream): each man's inner arm is one cell of arms.png per moment (layout halves.arm_cols
+## cells per row): the reach in three steps (lifting out of the lap, the hand open over the pages, the hand on
+## them), the pull with the pages -- the sprite is shifted by the rest of the stack's way, so the hand stays on the
+## sliding pages --, the hold, and Konrad's list in his hand beside his hip while he folds it (cells 11-13).  While
+## a man reaches across the bench for the other man's pages he leans over (body frames 2 / 3).
+const BODY_FRAMES := 4
+const PULL := 0.45                    # the taken stack's slide to the lap (as _draw_stacks)
+
+
+func _apply_arms(time: float, rm: bool) -> void:
+	var cols := int(layout.get("arm_cols", 3))
+	var lean := {"a": 0, "k": 0}
+	for s in [_arm_a, _arm_k]:
+		(s as Sprite2D).visible = false
+		(s as Sprite2D).position = _lv("arms_at")
+	for m in moves:
+		var who: String = m["who"]
+		var s: Sprite2D = _arm_a if who == "a" else _arm_k
+		var row := 0 if who == "a" else 1
+		var reach := float(m["reach"])
+		var take := float(m["take"])
+		if time < reach or time >= float(m["hold_end"]):
+			continue
+		s.visible = true
+		var far: bool = m["mode"] == "far"
+		if cols < 14:
+			s.frame = row * 3 + ((1 if far else 0) if time < take else 2)
+			continue
+		var col := 0
+		if time < take:
+			var v := (time - reach) / maxf(0.01, take - reach)
+			var step := 0 if v < 0.3 else (1 if v < 0.72 else 2)
+			col = (3 if far else 0) + step
+			if far:
+				lean[who] = 2 if step > 0 else 1
+		elif m["stack"] == "list":
+			var fi := int((time - take) / 0.38)
+			col = 11 + fi if fi < 3 else 10
+		else:
+			var u := ramp01(time, take, take + PULL)
+			var seat: Vector2 = _lv("stack_" + str(m["stack"]))
+			var lap: Vector2 = LAP[who]
+			var uk := 1.0
+			if u < 1.0 / 6.0:
+				col = (3 if far else 0) + 2
+				uk = 0.0
+			elif u < 0.5:
+				col = 8 if far else 6
+				uk = 1.0 / 3.0
+			elif u < 5.0 / 6.0:
+				col = 9 if far else 7
+				uk = 2.0 / 3.0
+			else:
+				col = 10
+			if far:
+				lean[who] = 2 if u < 0.5 else (1 if u < 5.0 / 6.0 else 0)
+			s.position = _lv("arms_at") + (seat.lerp(lap, u) - seat.lerp(lap, uk)).round()
+		s.frame = row * cols + col
+	_lean = lean
+	for who in ["a", "k"]:
+		var f: Sprite2D = _fig_a if who == "a" else _fig_k
+		if int(lean[who]) > 0 and f.hframes >= BODY_FRAMES:
+			f.frame = 1 + int(lean[who])
+		elif who == "a":
+			f.frame = int(floor((time + 0.3) / 1.9)) % 2 if not rm else 0
+		else:
+			f.frame = int(floor((time + 1.0) / 2.1)) % 2 if not rm else 0
+
+
 func _stack_frame(stack: String) -> int:
 	return {"ru": 0, "de": 1, "list": 2}.get(stack, 0)
 
@@ -269,13 +361,20 @@ func _draw_h1top() -> void:
 		var age := t - _fold_t
 		var fi := clampi(int(age / 0.38), 0, 3)
 		if fi < 3:
+			# in Konrad's left hand beside his hip (the arm sheet's list cells hold it there)
 			var hand := LAP["k"] + Vector2(-26, -26 + age * 6.0)
+			if layout.has("list_fold_at"):
+				hand = _lv("list_fold_at") + Vector2(0, 2 * fi)
 			draw_frame(_h1top, _fold_tex, 4, fi, hand.round())
 	# breath of both men in the cold
 	if _breath:
 		var k := motion_k()
 		for j in 2:
 			var base: Vector2 = _lv("fig_alexei") + Vector2(80, 30) if j == 0 else _lv("fig_konrad") + Vector2(66, 28)
+			# leaning over for the far stack, his face moves toward the middle of the bench (16 / 31 px)
+			var ln := clampi(int(_lean["a" if j == 0 else "k"]), 0, 2)
+			var dx: float = 0.0 if ln == 0 else (17.0 if ln == 1 else 31.0)
+			base.x += dx if j == 0 else -dx
 			var period := 2.2 + j * 0.4
 			var age := fposmod(t + j * 0.9, period) / period
 			if age > 0.6:
@@ -302,14 +401,51 @@ func _draw_beams1() -> void:
 	if not h1.visible:
 		return
 	var towers: Array = layout.get("towers", [[168, 94], [486, 90]])
+	var ice: Array = layout.get("ice_y", [128, 196])
 	for i in towers.size():
 		var tw: Array = towers[i]
+		var from := Vector2(float(tw[0]) + 0.5, float(tw[1]) + 2.0)
 		var a := _sweep_angle(t, i * 2.1)
-		_beam(_beams1, Vector2(float(tw[0]) + 0.5, float(tw[1]) + 2.0), a, 150.0, 18.0, Color(0.8, 0.86, 0.95, 0.10))
-		_beam(_beams1, Vector2(float(tw[0]) + 0.5, float(tw[1]) + 2.0), a, 120.0, 7.0, Color(0.85, 0.9, 1.0, 0.10))
+		# the beam reaches down to the ice and leaves a pale pool that wanders with the sweep
+		var land := float(ice[0]) + 18.0 + 30.0 * (0.5 + 0.5 * sin(t * 0.37 + i * 1.7))
+		var reach := (land - from.y) / maxf(0.2, cos(a))
+		_beam(_beams1, from, a, reach, 12.0, Color(0.8, 0.86, 0.95, 0.09))
+		_beam(_beams1, from, a, reach, 4.5, Color(0.85, 0.9, 1.0, 0.10))
+		var tip := from + Vector2(sin(a), cos(a)) * reach
+		_pool(_beams1, tip, 20.0, 4.0)
+
+
+## a soft dithered-looking pool of searchlight on the ice (three nested ellipses)
+func _pool(ci: CanvasItem, c: Vector2, rx: float, ry: float) -> void:
+	for k in 3:
+		var f := 1.0 - k * 0.3
+		var pts := PackedVector2Array()
+		for j in 16:
+			var an := TAU * j / 16.0
+			pts.append(c + Vector2(cos(an) * rx * f, sin(an) * ry * f))
+		ci.draw_colored_polygon(pts, Color(0.85, 0.9, 1.0, 0.07 + k * 0.03))
 
 
 # ------------------------------------------------------------------ h2
+## the lanterns throw each walker's shadow on the snow (long when he is between two lanterns)
+func _draw_h2fx() -> void:
+	if not h2.visible:
+		return
+	var py := float(layout.get("prom_y", 290))
+	var lanterns: Array = layout.get("lanterns", [96, 256, 416, 576])
+	for wk in [_walk_a, _walk_k]:
+		var fx := (wk as Sprite2D).position.x + 22.0
+		var near := 9999.0
+		for lx in lanterns:
+			if absf(float(lx) - fx) < absf(near - fx):
+				near = float(lx)
+		var dirx := signf(fx - near)
+		var ln := clampf(absf(fx - near) * 0.35, 6.0, 30.0)
+		var pts := PackedVector2Array([Vector2(fx - 4, py + 1), Vector2(fx + 4, py + 1),
+			Vector2(fx + 4 + dirx * ln, py + 4), Vector2(fx - 4 + dirx * ln, py + 4)])
+		_h2fx.draw_colored_polygon(pts, Color(0.06, 0.08, 0.12, 0.45))
+
+
 func _draw_prints() -> void:
 	if not h2.visible:
 		return
@@ -341,22 +477,80 @@ func _draw_h3() -> void:
 	for i in towers.size():
 		var tw: Array = towers[i]
 		var a := _sweep_angle(t, 0.7 + i * 2.4) * 0.8
-		_beam(_h3fx, Vector2(float(tw[0]) + 0.5, float(tw[1]) + 1.0), a, 230.0, 26.0, Color(0.8, 0.86, 0.95, 0.09))
-		_beam(_h3fx, Vector2(float(tw[0]) + 0.5, float(tw[1]) + 1.0), a, 190.0, 9.0, Color(0.85, 0.9, 1.0, 0.10))
-	# flames in the wing's windows and the smoke column leaning with the wind
+		var from := Vector2(float(tw[0]) + 0.5, float(tw[1]) + 1.0)
+		var land := 214.0 + 40.0 * (0.5 + 0.5 * sin(t * 0.31 + i * 2.3))
+		var reach := (land - from.y) / maxf(0.2, cos(a))
+		_beam(_h3fx, from, a, reach, 20.0, Color(0.8, 0.86, 0.95, 0.09))
+		_beam(_h3fx, from, a, reach, 7.0, Color(0.85, 0.9, 1.0, 0.10))
+		_pool(_h3fx, from + Vector2(sin(a), cos(a)) * reach, 26.0, 5.0)
+	# flames in the wing's windows and on its roof, the smoke column leaning east with the wind, sparks
 	var fires: Array = layout.get("h3_fire", [])
 	for j in fires.size():
 		var f: Array = fires[j]
 		if _flame_s:
 			draw_frame(_h3fx, _flame_s, 8, flame_frame(t, 8, j * 0.31), Vector2(float(f[0]), float(f[1]) + 14.0))
 		if _smoke:
-			for i in 3:
-				var age := fposmod(t * 0.35 + j * 0.21 + i * 0.33, 1.0)
-				var p := Vector2(float(f[0]) + age * 60.0 * k, float(f[1]) - 6.0 - age * 90.0 * k)
-				draw_frame(_h3fx, _smoke, 8, int(age * 7.0), p, false, Color(1.0, 0.86, 0.76, 0.8 * (1.0 - age)))
+			for i in 4:
+				var age := fposmod(t * 0.3 + j * 0.17 + i * 0.25, 1.0)
+				var p := Vector2(float(f[0]) + age * age * 120.0 * k, float(f[1]) - 6.0 - age * 110.0 * k)
+				draw_frame(_h3fx, _smoke, 8, int(age * 7.0), p, false, Color(1.0, 0.86, 0.76, 0.85 * (1.0 - age)))
+	for i in 22:
+		var ph := float(i) * 1.37
+		var age2 := fposmod(t * 0.45 + i * 0.113, 1.0)
+		var x0 := 160.0 + fposmod(i * 37.0, 140.0)
+		var sp := Vector2(x0 + age2 * age2 * 70.0 * k + sin(ph + t * 2.0) * 3.0, 100.0 - age2 * 70.0 * k)
+		_h3fx.draw_rect(Rect2(sp.floor(), Vector2.ONE), Color(1.0, 0.75, 0.35, 0.9 * (1.0 - age2)))
+
+
+## three crows cross the first grey of dawn, wings beating at their own pace
+func _draw_crows() -> void:
+	if not h3.visible or _crow == null:
+		return
+	var k := motion_k()
+	for i in 3:
+		var t0 := 12.2 + i * 0.9
+		if t < t0:
+			continue
+		var age := t - t0
+		var p := Vector2(80.0 + i * 26.0 + age * 58.0 * k, 66.0 + i * 9.0 - age * 4.0 * k + sin(age * 2.0 + i) * 3.0)
+		var fr := int(floor(age * (7.0 + i))) % 4
+		draw_frame(_sky3, _crow, 4, fr, p.round(), false, Color(1, 1, 1, clampf(age / 0.4, 0.0, 1.0)))
 
 
 # ------------------------------------------------------------------ h4
+## pigeons on the board's top frame, steam from a locomotive drifting through the hall
+func _draw_hall() -> void:
+	if not h4.visible:
+		return
+	var ledge: Array = layout.get("board_ledge", [34, 64, 606])
+	if _pigeon:
+		for i in 3:
+			var px := float(ledge[0]) + 70.0 + i * 190.0 + (i % 2) * 24.0
+			var bob := 1 if fposmod(t * (0.7 + i * 0.23) + i * 0.4, 1.0) > 0.78 else 0
+			draw_frame(_hall, _pigeon, 2, bob, Vector2(px, float(ledge[1]) + 1.0), i == 1)
+	if _steam:
+		var k := motion_k()
+		var n := 6
+		var fw := _steam.get_width() / n
+		var fh := _steam.get_height()
+		for i in 4:
+			var age := fposmod(t * 0.22 + i * 0.25, 1.0)
+			var x := -80.0 + i * 190.0 + age * 160.0 * k
+			var y := 300.0 - age * 14.0
+			_hall.draw_texture_rect_region(_steam, Rect2(Vector2(roundf(x), roundf(y)), Vector2(fw, fh)),
+				Rect2(clampi(int(age * n), 0, n - 1) * fw, 0, fw, fh), Color(1, 1, 1, 0.5 * sin(age * PI)))
+
+
+## two early travellers in front of the board, looking up at it (backs to us, lit by the hall's dawn)
+func _draw_travellers() -> void:
+	if not h4.visible:
+		return
+	for i in _trav_tex.size():
+		var tv: Array = _trav_tex[i]
+		var fr := 1 if (not reduced_motion() and fposmod(t * 0.45 + i * 0.5, 1.0) > 0.6) else 0
+		draw_frame(_trav, tv[0], 2, fr, tv[1])
+
+
 func _draw_board() -> void:
 	if not h4.visible or _glyphs == null:
 		return

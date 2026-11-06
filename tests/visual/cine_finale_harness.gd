@@ -10,6 +10,10 @@ extends Node
 ##        plays the montage in real time through the proposed Game._cin_final body (_cin_final_body below
 ##        is the exact code handed to the lead), optionally presses the real "skip" input, and reports:
 ##        finished emissions, return value, wall time, frame-time statistics.
+##   --fin-mode=endcard --fin-endcard=<m1>,<a1>,<c3a>,<c3b>,<c3d>,<c3g>,<c4d> --fin-out=DIR [--fin-prefix=P]
+##        shows the end card exactly as Game._show_end_card lays it out (title + "Ende der Demo" + one bullet
+##        per decision in story order, via Game.end_card_decisions) and saves the window as DIR/<prefix>.png;
+##        prints the laid-out caption height so an overflow below the frame is caught.
 ## Run: "$GODOT" --path . res://tests/visual/cine_finale_harness.tscn -- --cinematic=none --fin-mode=...
 
 const FINALE := "res://scenes/cinematics/finale/Finale.tscn"
@@ -41,7 +45,47 @@ func _ready() -> void:
 			await _mode_shots()
 		"run":
 			await _mode_run()
+		"endcard":
+			await _mode_endcard()
 	get_tree().quit()
+
+
+# ------------------------------------------------------------------------------------------- end card
+const ENDCARD_OBJECTIVES := ["m1_choose", "a1_choose", "c3a_choose", "c3b_choose", "c3d_choose", "c3g_choose",
+	"c4d_choose"]
+
+
+func _mode_endcard() -> void:
+	var out := str(args.get("fin-out", "user://finale_shots"))
+	DirAccess.make_dir_recursive_absolute(out)
+	var prefix := str(args.get("fin-prefix", "endcard"))
+	var ch := {}
+	var parts := str(args.get("fin-endcard", "")).split(",")
+	for i in mini(parts.size(), ENDCARD_OBJECTIVES.size()):
+		if parts[i] != "":
+			ch[ENDCARD_OBJECTIVES[i]] = parts[i]
+	Game.input_locked = true
+	Game.in_cinematic = true
+	# the harness has no finished story, so the HUD would show the first objective; at the real end card every
+	# objective is done and the objective box stays empty
+	Game._call(Game._ui("hud"), "hide_hud")
+	# the same layout as Game._show_end_card(), fed with an explicit choice history
+	var lines: Array = [Loc.t("ui.slice_end")]
+	lines.append_array(Game.end_card_decisions(ch))
+	Game._title.text = Loc.t("game.title")
+	Game._title.visible = true
+	Game._caption.text = "\n".join(lines)
+	Game._caption.visible = true
+	Game._caption.modulate.a = 1.0
+	await Game.fade_in(0.01)
+	for i in 6:
+		await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png(out.path_join(prefix + ".png"))
+	var cap: Label = Game._caption
+	var bottom := cap.global_position.y + cap.get_minimum_size().y
+	print("ENDCARD ", prefix, " lines=", lines.size(), " bullets=", lines.size() - 1, " caption_bottom=", bottom,
+		" visible_lines=", cap.get_visible_line_count(), " line_count=", cap.get_line_count())
 
 
 func _ctx() -> Dictionary:

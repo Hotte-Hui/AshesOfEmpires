@@ -16,13 +16,74 @@ faces east, Alexei's west — they "look at each other" across the cuts), the sa
 city to the other, a clock tick answered by telegraph clicks, two lamps over one border map, the red C-17 route
 drawn from Karsk west to Berlin, and both lamps going out until only the line is left.
 
+**Rework 06.11. (cinematics quality pass, user feedback „Arme komisch, Sequenzen leer“).** Same beats, shot
+order, framings and subtitles; what changed:
+* **Close-ups over the shoulder** (`cine_finale_figure.py`): Konrad (bareheaded: brown hair, ears, cream wool
+  scarf, navy overcoat) and Alexei (ushanka, grey knit collar, green quilted jacket) sit in the foreground at the
+  bottom of the frame; every arm is one chain shoulder → upper arm → elbow → forearm → wrist → hand, solved per
+  frame by a two-bone IK whose screen bone lengths follow the reach (foreshortening), elbows outward or — when a
+  hand crosses the body — dropped in front of the chest; the upper body leans in for far reaches. Sleeves are
+  tapered tubes with elbow creases, folds, quilting (Alexei), shirt / knit cuffs; hands have a narrowing wrist,
+  knuckles, four three-joint fingers with nails and creases, a two-joint thumb, skin ramps sampled from the
+  portraits, and cast a dithered shadow on the desk. Irina's arm reaches in from the open door (shoulder off
+  frame). Staging: the evidence branch is done by the left hand (fold, packet into the slit) while the right
+  holds up the soft lined coat panel; the request branch pulls the sheet only as far as it comes free and the
+  hand returns to the desk; keep_private uses a right pedestal drawer with the camera tilting down to it.
+* **Desks** (`cine_finale_props.py`): Berlin — Konrad's grey felt hat, a coffee cup with steam, rolled plans, a
+  pencil cup; Karsk — a green blotter under the ledger, an abacus, inkwell and dip pen, stamp pad and stamp, a
+  bakelite telephone, a lit signal lantern (the ledger stamp moved clear of Alexei's head).
+* **Wide shots** (`cine_finale_wide.py`): Berlin — cornice, herringbone parquet and rug, a second drawing, wall
+  calendar, the dome model in a glass case, basket of rolled plans, waste-paper basket; animated pendulum (its
+  extremes on the tick/tock), searchlights sweeping behind the dome, the tram's blue spark at the tram bell,
+  cigarette smoke on the sill. Karsk — illuminated track diagram with blinking lamps, binders shelf, clock by the
+  stove pipe, blanket and mug, coal scuttle and firewood, hanging lantern, ceiling lamp; animated freight train
+  in the yard (loco mid-window on the far horn), stove firelight, kettle steam.
+* **Window inserts**: searchlight sweep (Berlin); a signalman's lantern and a shunting engine's headlamp (Karsk).
+* **Map** (`cine_finale_mapdetail.py`): forests, lakes, railway network with stations, roads, grid letters /
+  numbers, legend, scale bar, north arrow, a pencil circle round Veltrava, kilometre ticks, a coffee ring and a
+  tea-glass ring, torn corner and tape, Konrad's pencil and eraser crumbs / Alexei's pencil stub in the two lamp
+  pools, the window light across the dark map; the camera drifts with the pen from Karsk to Berlin.
+* Runtime: `pos_lin` (constant-speed `pos_keys`) in `finale_montage.gd`; harness `--fin-mode=endcard` renders
+  the end card (title + seven decisions in story order) for any decision combination: 8 lines, no wrap, bottom
+  of the caption at 840 px for the longest and the shortest texts.
+
+**Second pass 06.11. (art-director review of the rework).** Same beats, shot order and subtitles; what changed:
+* **3D arm rig** (`cine_finale_figure.py`, rewritten): arms are real 3D chains (upper arm 29 cm, forearm 26 cm,
+  hand with palm, three-joint fingers and a two-joint thumb) solved by a 3D two-bone IK (elbow pole down and out,
+  or in front of the chest) and projected through a perspective camera fitted to the sets (`Cam3`: 1.7 m above,
+  0.4 m behind the shoulders) — the foreshortening comes from the camera, so a reaching forearm gets shorter, a
+  hanging upper arm is short, hands on the desk are seen from above with the curled fingers dropping out of
+  sight; beyond 86 % of the reach the upper body leans in (rotation about the hips) instead of the arm
+  stretching. The old screen-space bone table (forearms growing to 172 px) is gone. Hands are z-buffered and
+  smaller (in proportion to the heads); relaxed hands curl and turn inwards, no open palm points up-screen.
+  The upper arms are drawn in the body layer under the back, so each sleeve runs unbroken from the shoulder
+  seam over the elbow to the cuff (no elbow discs); one lamp model (set pool + 3D direction) lights both.
+* **Request**: the carriage-return lever now reaches forward-left to the typist (paddle tip); the right hand
+  takes the finished sheet by its corner (the camera tilts up with it), draws it towards him and lays it into
+  an AUSGANG tray at the front right (the old back-left tray is now EINGANG).
+* **Evidence**: the coat panel is cloth rendered per frame (12 fps): pulled up over the edge of the desk from
+  under his left arm, wine-red striped satin lining with sheen and folds from the hinge, navy facing with two
+  buttonholes, tailor's label, inner pocket welt with its slit; the packet is pushed into the slit (cut along
+  the slit line) by the left hand, patted flat, the panel falls back. One hand does it; the right one rests.
+* **Keep**: the ledger closes with a continuous page-block turn (7 frames); the pedestal drawer (widened to fit
+  the book) is pulled wide open with the camera tilting down to it; the book slides across the blotter, over
+  the desk edge and drops into the drawer (cut at the desk edge once inside), then rides into the desk as the
+  drawer is pushed shut; sounds at the slide, the drop, the drawer and the key. Alexei's idle hand goes to his lap.
+* **Share**: Irina leans in from the door (shoulder just off frame, coat shoulder at the edge): a full arm
+  with upper arm, elbow and a tapering sleeve lays the note; it enters and leaves with the forearm in frame.
+* **Split**: each half is framed on its sitter (`shift` per shot in `finale_montage.gd`: the set moves inside
+  its fixed clip), both heads clear of the divider for all four decision combinations.
+* **b_wide** continuity: Konrad now sits, bareheaded, at the same typewriter desk under the framed rendering
+  (architect's lamp at its left end, his hat lying on it, the sheet in the typewriter), back to us — the close-up
+  pushes in over his shoulder; he breathes, looks out at the dome and turns back to the machine.
+
 | t (s) | shot | content |
 |---|---|---|
-| 0.0 | `b_wide` | Konrad (runtime sprite `assets/characters/konrad`) at his drafting table, the floodlit Great Hall in the east window, pendulum clock; caption "Berlin, 23:47 Uhr" |
-| 4.6 | `b_close` | branch `m1_choose`: **request_explanation** — he types a request on office letterhead (red ribbon for "C-17"), returns the carriage, stops, hesitates, pulls the sheet and lays it in the AUSGANG tray · **preserve_evidence** — he slides his tracing-paper copy off the stamped original, folds it twice, lifts his coat's front panel and slips it through a slit in the lining |
+| 0.0 | `b_wide` | Konrad seated at his typewriter desk under the framed rendering, back to us (bareheaded, hat on the desk), the floodlit Great Hall in the east window, pendulum clock; caption "Berlin, 23:47 Uhr" |
+| 4.6 | `b_close` | branch `m1_choose`: **request_explanation** — he types a request on office letterhead (red ribbon for "C-17"), returns the carriage, stops, hesitates, pulls the sheet and lays it in the AUSGANG tray · **preserve_evidence** — he slides his tracing-paper copy off the stamped original, folds it twice, pulls his coat's front panel up over the edge of the desk and slips it through the slit of the inner pocket |
 | 12.6 | `b_window` → `veil` → `k_window` | snow against the glass and the dome; the snow thickens into a dithered veil and becomes the snow over the Karsk yard; caption "Karsk, 1:47 Uhr Moskauer Zeit – dieselbe Minute" |
 | 16.2 | `k_wide` | the signal box: Alexei (runtime sprite `assets/characters/alexei`, facing west) at his desk, lever frame, block instruments, stove |
-| 20.4 | `k_close` | branch `a1_choose`: **share_with_irina** — a knock, the door opens (cold light wedge, the tea steam bends in the draught), Irina's hand lays a note on the ledger, he covers it with his hand · **keep_private** — he finishes the entry, closes the ledger, opens the drawer, slides the book in, locks it and pockets the key |
+| 20.4 | `k_close` | branch `a1_choose`: **share_with_irina** — a knock, the door opens (cold light wedge, the tea steam bends in the draught), Irina leans in from the door and lays a note on the ledger, he covers it with his hand · **keep_private** — he finishes the entry, closes the ledger, pulls the drawer wide open, slides the book over the desk edge into it, pushes it shut, locks it and pockets the key |
 | 28.4 | rhyme | Berlin desk / Karsk desk (each hand lifts a finger on the tick / the telegraph click), Berlin window / Karsk window, then both desks side by side (split at the seam that becomes the line on the map) |
 | 33.6 | `map` | both desk lamps (same screen positions as in the close-ups) over one schematic map; the route draws itself Karsk → Veltrava → Berlin ("Zwei fremde Orte. Dieselbe Kennung."); the Karsk lamp clicks off, then the Berlin lamp ("Ein Frieden, dessen Akten nicht übereinstimmen."); the red line fades last |
 

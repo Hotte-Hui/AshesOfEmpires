@@ -331,7 +331,7 @@ func _check_puzzle() -> bool:
 		kit.ok(loc.has("ui.c3p2.check.row." + row), "row label %s" % row)
 	for k in ["title", "subtitle", "instruction", "hint", "success", "wrong", "incomplete", "check", "undo", "reset", "close"]:
 		kit.ok(loc.has("ui.c3p2.check." + k), "puzzle text %s" % k)
-	kit.ok(loc.t("ui.c3p2.check.subtitle").contains("fiktiv"), "fiction note in the subtitle")
+	kit.ok(not loc.t("ui.c3p2.check.subtitle").contains("fiktiv"), "no fiction note under the title (user: one disclaimer at the start is enough)")
 	return true
 
 

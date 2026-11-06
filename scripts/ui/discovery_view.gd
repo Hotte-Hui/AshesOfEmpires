@@ -639,14 +639,6 @@ func _build_card(cid: String) -> Control:
 				sv.add_child(ul)
 			body.add_child(sv)
 	v.add_child(_scroll_for(body))
-	# the one-line separation note (always visible, outside the scroll area)
-	v.add_child(Kit.rule(Color(0, 0, 0, 0), 14))
-	v.add_child(Kit.rule(C_ARCH_RULE_L if not hc else Color.BLACK, 3))
-	v.add_child(Kit.rule(Color(0, 0, 0, 0), 12))
-	var note := Kit.wrap_label(Kit.t("ui.history.note"), "", 0, dim)
-	note.add_theme_font_override("font", Kit.font("fv_serif_italic"))
-	Kit.scalable(note, 23)
-	v.add_child(note)
 	return center
 
 

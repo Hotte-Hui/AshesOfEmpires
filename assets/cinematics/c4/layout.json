@@ -1,41 +1,111 @@
 {
  "card": {
-  "c1_lhand_at": [113, 22],
-  "c1_rhand_tip": [102, 76],
+  "c1_lhand_at": [-65, -210],
+  "c1_rhand_tip": [29, 76],
+  "c3_flame_at": [542, 90],
   "c3_hand_at": [128, 100],
   "c3_lamp": [548, 92],
-  "c4_alexei_at": [16, 96],
+  "c3_tea": [521, 186],
+  "c3_wick": [548, 112],
+  "c4_alexei_at": [-20, 70],
+  "c4_snow_clip": [250, 70, 350, 184],
   "c4_win": [250, 70, 600, 254],
   "card_at": [230, 104],
   "card_size": [176, 118],
   "edge_x": 330,
+  "macro_digit": {
+   "de": [290, 36],
+   "ru": [0, 36]
+  },
   "macro_holes": [6, 30, 54, 78, 102, 126, 150, 174, 198, 222, 246, 270, 294, 318, 342, 366],
   "macro_k": 4,
   "macro_y0": -6,
   "ru_at": [300, 150]
  },
  "homeward": {
-  "door_a": [392, 266],
-  "door_k": [248, 266],
+  "door_a": [432, 284],
+  "door_k": [208, 284],
+  "door_m": [225, 265],
+  "mid_w": 520,
   "strip_w": 780,
-  "vp": [320, 148],
+  "tea_spoon": [557, 260],
+  "vp": [320, 160],
   "w1_alexei": {
    "walk_back": [0, 8],
    "walk_side": [8, 8]
   },
+  "w1_door_a_at": [431, 192],
+  "w1_door_k_at": [201, 192],
+  "w1_in_a": [452, 271],
+  "w1_in_k": [188, 271],
+  "w1_in_m": [209, 254],
   "w1_konrad": {
    "walk_back": [0, 8],
    "walk_side_l": [8, 8]
   },
+  "w1_npc": {
+   "babushka": [449, 315],
+   "conductor_a": [405, 301],
+   "conductor_k": [235, 301],
+   "mother": [263, 294],
+   "porter": [366, 311]
+  },
+  "w1_npc_anims": {
+   "babushka": {
+    "idle_side": [8, 8],
+    "walk_side": [0, 8]
+   },
+   "child": {
+    "idle_side_l": [8, 8],
+    "walk_side_l": [0, 8]
+   },
+   "conductor_a": {
+    "gesture_side_l": [8, 8],
+    "idle_side_l": [0, 8]
+   },
+   "conductor_k": {
+    "gesture_side": [8, 8],
+    "idle_side": [0, 8]
+   },
+   "mother": {
+    "idle_side_l": [8, 8],
+    "walk_side_l": [0, 8]
+   },
+   "porter": {
+    "idle_side_l": [8, 8],
+    "walk_side_l": [0, 8]
+   }
+  },
+  "w1_open_a": [431, 192, 439, 295],
+  "w1_open_k": [201, 192, 209, 295],
+  "w1_open_m": [220, 187, 226, 273],
+  "w1_start_a": [342, 307],
+  "w1_start_k": [298, 307],
   "w1_steam": [
-   [262, 150],
-   [378, 150]
+   [301, 156],
+   [339, 156]
+  ],
+  "w1_steam_under": [
+   [191, 309],
+   [246, 246],
+   [281, 205],
+   [449, 309],
+   [394, 246],
+   [359, 205]
+  ],
+  "w2_chimneys_berlin": [
+   [180, 98]
+  ],
+  "w2_chimneys_karsk": [
+   [278, 76],
+   [300, 60]
   ],
   "w3_alexei": {
    "idle_side": [8, 8],
    "look_side": [16, 10],
    "walk_side": [0, 8]
   },
+  "w3_cam": [0, 64],
   "w3_walk": [230, 466],
   "win_a": [340, 70, 604, 290],
   "win_k": [36, 70, 300, 290]
@@ -43,43 +113,173 @@
  "number": {
   "macro": [192, 92, 180],
   "macro_drip": [372, 266.6],
-  "n1_drip": [852.2, 184.5],
-  "n1_stencil": [640, 136, 50],
-  "n1_tin": [624, 124, 1000, 198],
+  "n1_beam": [270, 110],
+  "n1_drip": [852.2, 224.5],
+  "n1_lamp_y": 206,
+  "n1_stencil": [640, 176, 50],
+  "n1_tin": [624, 164, 1000, 238],
   "n1_w": 1100,
+  "n3_blinker": [602, 138],
   "n3_chain": [441, 122],
-  "n3_exhaust": [232, 262],
+  "n3_exhaust": [238, 262],
+  "n3_hand_chain": [502, 124],
   "n3_hatch": [360, 276, 520, 292],
+  "n3_people": {
+   "banksman": {
+    "gesture_side": [0, 8],
+    "idle_side": [18, 8],
+    "look_side": [8, 10]
+   },
+   "driver": {
+    "idle_side": [0, 8],
+    "look_side": [8, 10]
+   }
+  },
+  "n3_people_at": {
+   "banksman": [292, 240],
+   "driver": [22, 234]
+  },
   "n3_stack": [382, 160],
   "n3_tail": [
-   [57, 235],
-   [215, 235]
+   [56, 234],
+   [214, 234]
   ],
   "n4_konrad": {
-   "idle_side": [0, 8]
+   "idle_side": [0, 8],
+   "look_side": [8, 10]
+  },
+  "n4_people": {
+   "child": {
+    "idle_side": [0, 8],
+    "walk_side": [8, 8]
+   },
+   "mother": {
+    "idle_side": [0, 8],
+    "walk_side": [8, 8]
+   },
+   "worker": {
+    "idle_side": [0, 8],
+    "walk_side": [8, 8]
+   }
+  },
+  "n4_people_at": {
+   "child": [300, 300],
+   "mother": [286, 300],
+   "worker": [196, 300]
   }
  },
  "places": {
   "feet": 300,
-  "loop_case": [292, 238, 312, 262],
-  "loop_column": [622, 670],
-  "loop_door": [632, 236, 658, 300],
-  "loop_lamp": [344, 128],
-  "loop_shelter": [250, 330],
-  "loop_w": 1000,
-  "marta_window": [222, 158, 236, 174],
-  "siding_lamp": [330, 96],
-  "siding_wagon": [196, 150, 456, 278],
-  "tram_size": [248, 96],
+  "loop_case": [280, 230, 304, 262],
+  "loop_column": [630, 662],
+  "loop_door": [638, 226, 654, 282],
+  "loop_fx": {
+   "chimney_11": {
+    "fps": 5,
+    "frames": 16,
+    "parallax": 1,
+    "pos": [6, -30]
+   },
+   "crane_light_0": {
+    "fps": 2,
+    "frames": 4,
+    "parallax": 0.2,
+    "pos": [121, 82]
+   },
+   "crane_light_1": {
+    "fps": 2,
+    "frames": 4,
+    "parallax": 0.2,
+    "pos": [381, 64]
+   },
+   "crane_light_2": {
+    "fps": 2,
+    "frames": 4,
+    "parallax": 0.2,
+    "pos": [611, 92]
+   },
+   "crows": {
+    "fps": 6,
+    "frames": 11,
+    "parallax": 1,
+    "perches": [
+     [676, 176],
+     [690, 176],
+     [705, 176],
+     [722, 176]
+    ],
+    "pos": [676, 176]
+   },
+   "exhaust": {
+    "fps": 8,
+    "frames": 12,
+    "parallax": 1,
+    "pos": [784, 238]
+   },
+   "fence_blinker": {
+    "fps": 2,
+    "frames": 4,
+    "parallax": 1,
+    "pos": [836, 192]
+   },
+   "steam_s2": {
+    "fps": 8,
+    "frames": 16,
+    "parallax": 1,
+    "pos": [626, 206]
+   }
+  },
+  "loop_hatch": [698, 792],
+  "loop_lamp": [344, 152],
+  "loop_layers": {
+   "dome": [430, 54, 0.08],
+   "far": [0, 62, 0.2],
+   "fg": [0, 318, 1.25],
+   "glow": [0, 0, 1],
+   "mid": [0, 150, 0.5],
+   "sky": [0, 0, 0.03],
+   "street": [0, 0, 1]
+  },
+  "loop_shelter": [250, 334],
+  "loop_stop": 244,
+  "loop_tram_stop_x": 362,
+  "loop_w": 846,
+  "loop_wire_y": 176,
+  "marta_window": [52, 202, 68, 228],
+  "siding_lamp": [366, 153],
+  "siding_portal": [623, 230],
+  "siding_wagon": [275, 196, 465, 290],
+  "tram_size": [250, 122],
+  "tram_top": 174,
   "yard_lamps": [
    [262, 104],
    [612, 96]
   ],
+  "yard_layers": {
+   "chimney": [504, 58],
+   "lamp_heads": [
+    [140, 152],
+    [690, 152]
+   ],
+   "main_w": 720,
+   "par": {
+    "far": 0.15,
+    "main": 1,
+    "mid": 0.5,
+    "sky": 0
+   },
+   "reds": [
+    [238.5, 116],
+    [264.5, 128],
+    [614.5, 122]
+   ]
+  },
+  "yard_parapet": [408, 262, 500, 312],
   "yard_signal": [152, 158],
   "yard_stair": [414, 500],
   "yard_towers": [
-   [88, 196],
-   [172, 196]
+   [96, 200],
+   [176, 200]
   ],
   "yard_window": [520, 280, 560, 297]
  },
@@ -88,7 +288,7 @@
   "box_slot": [370, 86],
   "hand_knob": [100, 150],
   "imp_size": [232, 84],
-  "lev_tip": [103, 114],
+  "lev_tip": [108, 320],
   "lever_pivot": [12, 12],
   "note_lines": [
    [70, 206],
@@ -103,15 +303,34 @@
    [72, 264, 158, 284]
   ],
   "pencil_tip": [60, 62],
+  "s1_ember": [566, 289],
+  "s1_tea": [466, 244],
   "s3_perf": [96, 120],
   "s3_split": [78, 214],
-  "s3b_hands_at": [170, 30],
+  "s3_typists": [
+   [
+    452,
+    92,
+    "a"
+   ],
+   [
+    548,
+    96,
+    "b"
+   ]
+  ],
+  "s3b_hands_at": [150, 34],
   "s4_konrad": {
    "idle_side": [0, 8],
-   "inspect_side": [8, 6]
+   "inspect_side": [8, 6],
+   "look_side": [14, 10]
   },
-  "s4_konrad_x": 214,
-  "s4_ladder": [150, 196],
+  "s4_konrad_x": 88,
+  "s4_ladder": [70, 90],
+  "s4_shaft_light": [80, 46],
+  "s4m_at": [186, 44],
+  "s4m_shaft": [108, 46],
+  "s4m_w": 660,
   "stamp_c": [320, 188],
   "stamp_frame": [212, 64],
   "stamp_size": [236, 88]
@@ -128,8 +347,9 @@
    "idle_side_l": [8, 8],
    "walk_side_l": [0, 8]
   },
-  "v1_off": -330,
-  "v1_walk": [644, 482],
+  "v1_off": -206,
+  "v1_sill": 282,
+  "v1_walk": [646, 496],
   "v2_konrad_at": [14, 98],
   "v2_off": -150,
   "v3_alexei": {
@@ -139,6 +359,7 @@
   "v3_lev": {
    "idle_side_l": [8, 8],
    "walk_side_l": [0, 8]
-  }
+  },
+  "v3t_at": [-40, 190]
  }
 }

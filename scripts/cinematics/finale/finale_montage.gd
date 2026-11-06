@@ -328,6 +328,10 @@ func _apply(t: float) -> void:
 		var cl = st["shot"].get("clip", null)
 		if cl is Array and cl.size() == 4:
 			clip = Rect2(cam_pos.x + float(cl[0]), cam_pos.y + float(cl[1]), float(cl[2]), float(cl[3]))
+		# shift: the set is drawn offset inside its (screen-fixed) clip -- the split screen centres each
+		# sitter in his half without moving the halves
+		var shf = st["shot"].get("shift", null)
+		root.position = Vector2(float(shf[0]), float(shf[1])) if shf is Array and shf.size() == 2 else Vector2.ZERO
 		var tint := 0.0
 		var tk = st["shot"].get("tint", null)
 		if tk is Array:
@@ -419,7 +423,9 @@ func _pos_at(nd: Dictionary, t: float) -> Vector2:
 		var a: Array = keys[i]
 		var b: Array = keys[i + 1]
 		if t < float(b[0]):
-			var f := smoothstep(0.0, 1.0, (t - float(a[0])) / maxf(0.0001, float(b[0]) - float(a[0])))
+			var f := clampf((t - float(a[0])) / maxf(0.0001, float(b[0]) - float(a[0])), 0.0, 1.0)
+			if not bool(nd.get("pos_lin", false)):     # pos_lin: constant speed (a passing train), else eased
+				f = smoothstep(0.0, 1.0, f)
 			return Vector2(lerpf(float(a[1]), float(b[1]), f), lerpf(float(a[2]), float(b[2]), f)).round()
 	var l: Array = keys[keys.size() - 1]
 	return Vector2(float(l[1]), float(l[2]))

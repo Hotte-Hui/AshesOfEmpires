@@ -304,6 +304,8 @@ def lamp_architect(w, h, head, lamp_on=True, side='left'):
 
 # typewriter geometry (view coords)
 TW = dict(x0=180, x1=320, back=176, front=214, face=232, strike=250, platen_y=150)
+LEVER_TIP = V(TW['strike'] + 40 - 106, TW['platen_y'] + 14)     # set coords, carriage at the line start
+OUT_TRAY = V(380, 226) + V(466, 266)                              # AUSGANG tray opening (x0, y0, x1, y1), set
 
 
 def drop_shadow(cv: kit.Canvas, mask: np.ndarray, dx: int, dy: int, steps: int, ramp, lamp, blur: int = 1):
@@ -409,11 +411,16 @@ def carriage(w: int, h: int, lamp: kit.Lamp) -> np.ndarray:
         cv.paint(k, np.clip(kt, 0, 1), blk)
         r_ = kit.ellipse_full(w, h, *V(kx, py - 1), 4, 3)
         cv.paint(r_, np.clip(kt + 0.15, 0, 1), met)
-    # carriage return lever (chrome) on the left
-    lx, ly = V(cx - 92, py - 6)
-    cv.line(lx, ly, lx - 18, ly - 13, met[6])
-    cv.line(lx, ly + 1, lx - 18, ly - 12, met[3])
-    cv.ellipse(lx - 19, ly - 14, 2, 2, met[7])
+    # carriage return lever (chrome): from the left end of the carriage forward and to the left, towards
+    # the typist, ending in a flat paddle for the fingers
+    lx, ly = V(cx - 92, py - 3)
+    tx, ty = LEVER_TIP
+    cv.line(lx, ly, tx + 2, ty - 2, met[6])
+    cv.line(lx, ly + 1, tx + 2, ty - 1, met[3])
+    cv.line(lx + 1, ly, tx + 3, ty - 2, met[4])
+    cv.ellipse(tx, ty, 3.5, 2.2, met[7])
+    cv.px(tx - 1, ty - 1, met[8])
+    cv.px(tx + 1, ty + 1, met[3])
     # paper bail with two rubber rollers (drawn over the paper)
     bail_y = py - 9
     cv.line(*V(cx - 60, bail_y), *V(cx + 60, bail_y), met[6])
@@ -524,8 +531,8 @@ def ashtray(cv: kit.Canvas, cx, cy, lamp):
     return (cx + 5, cy - 2)
 
 
-def out_tray(cv: kit.Canvas, x0, y0, x1, y1, lamp):
-    """Wooden AUSGANG (outbox) tray with a few papers; set coords of the top opening."""
+def out_tray(cv: kit.Canvas, x0, y0, x1, y1, lamp, label='AUSGANG', papers=3):
+    """Wooden letter tray (EINGANG / AUSGANG) with a few papers; set coords of the top opening."""
     w, h = cv.w, cv.h
     xx, yy = cv.grid()
     body = kit.poly_mask_full(w, h, [(x0, y0), (x1, y0), (x1 + 2, y1 + 8), (x0 - 2, y1 + 8)])
@@ -534,12 +541,12 @@ def out_tray(cv: kit.Canvas, x0, y0, x1, y1, lamp):
     inside = kit.poly_mask_full(w, h, [(x0 + 3, y0 + 2), (x1 - 3, y0 + 2), (x1 - 2, y1), (x0 + 2, y1)])
     cv.paint(body, np.clip(0.12 + 0.75 * pool, 0, 1), BR['desk'])
     cv.paint(inside, np.clip(0.06 + 0.4 * pool, 0, 1), BR['desk'])
-    for k in range(3):
+    for k in range(papers):
         pq = [(x0 + 6 + k, y0 + 4 + k), (x1 - 8 + k, y0 + 3 + k), (x1 - 6 + k, y1 - 3), (x0 + 5 + k, y1 - 2)]
         sheet(cv, pq, BR['paper'], lamp, base=0.02, gain=0.55, shadow=False)
     lip = kit.poly_mask_full(w, h, [(x0 - 2, y1), (x1 + 2, y1), (x1 + 2, y1 + 8), (x0 - 2, y1 + 8)])
     cv.paint(lip, np.clip(0.10 + 0.6 * pool, 0, 1), BR['desk'])
-    lab = kit.text_mask('AUSGANG', kit.FONT3)
+    lab = kit.text_mask(label, kit.FONT3)
     lx = int((x0 + x1) / 2 - lab.shape[1] / 2)
     kit.blit_mask(cv.c, lab, lx, int(y1 + 2), BR['paper'][3])
 
@@ -557,6 +564,9 @@ def b_close_base(ext: np.ndarray):
     # cold light from the window falling across the right of the desk (mullion shadow splits it)
     folders(cv, *V(540, 152), lamp, n=4)
     telephone(cv, *V(430, 182), lamp)
+    import cine_finale_props as props
+    props.rolled_plans(cv, 596, 238, lamp, n=3, seed='b_close_rolls')
+    props.felt_hat(cv, 532, 282, lamp)                 # Konrad's hat, put down on the desk (cold window light)
     cold_patch(cv, [V(392, 128), V(500, 128), V(536, 340), V(378, 340)])
     cold_patch(cv, [V(522, 128), V(660, 128), V(700, 340), V(560, 340)])
     plan_q = [V(14, 192), V(180, 186), V(186, 304), V(18, 312)]
@@ -566,14 +576,17 @@ def b_close_base(ext: np.ndarray):
     cv.line(*V(206, 263), *V(240, 247), BR['brass'][1])
     cv.px(*V(241, 246), BR['black'][1])
     xx, yy = cv.grid()
-    ruler = kit.poly_mask_full(W, H, [V(330, 250), V(452, 244), V(452, 248), V(330, 254)])
+    ruler = kit.poly_mask_full(W, H, [V(300, 300), V(392, 296), V(392, 300), V(300, 304)])
     cv.paint(ruler, np.clip(0.2 + 0.8 * lamp.pool(xx, yy), 0, 1), BR['brass'])
-    for k in range(334, 452, 6):
-        a = V(k, 250 - (k - 330) * 6 / 122)
+    for k in range(304, 392, 6):
+        a = V(k, 300 - (k - 300) * 4 / 92)
         cv.px(a[0], a[1], BR['brass'][1])
     typewriter_body(cv, lamp)
     tip = ashtray(cv, *V(352, 196), lamp)
-    out_tray(cv, *V(22, 128), *V(146, 180), lamp)
+    cup = props.cup_saucer(cv, 392, 236, lamp)          # cold coffee, still steaming a little
+    props.pencil_cup(cv, 182, 166, lamp)
+    out_tray(cv, *V(22, 128), *V(146, 180), lamp, label='EINGANG', papers=4)
+    out_tray(cv, *OUT_TRAY, lamp, label='AUSGANG', papers=1)          # front right, within his reach
     glass = np.zeros((H, W, 4), np.uint8)
     bay = kit.bayer_full(W, H)
     x0, y0, x1, y1 = WIN_B
@@ -586,7 +599,7 @@ def b_close_base(ext: np.ndarray):
     lr = V(430, 60)
     lampref = panes & ((((xx - lr[0]) ** 2) / 16 + ((yy - lr[1]) ** 2) / 4) < 1)
     glass[lampref] = pg.hx('#F4BA81')
-    return {'base': cv.c, 'glass': glass, 'panes': panes, 'tip': tip, 'plan_q': plan_q}
+    return {'base': cv.c, 'glass': glass, 'panes': panes, 'tip': tip, 'plan_q': plan_q, 'cup': cup}
 
 
 def stamp_overlay(plan_q, lamp, hist: bool) -> np.ndarray:

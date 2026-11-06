@@ -93,6 +93,13 @@ func _ready() -> void:
 	pset.name = "Parade"
 	add_child(pset)
 	pset.build(builder)
+	# the avenue between the street and the plaza (opt-in hall layer): the parade route shot p8 looks down on --
+	# cordon, fire pylons, the marching and the vehicle column, halted blocks, transports, the work crews of the
+	# cleared stretch (the crowds lining it are pset's AvenueCrowd); follows get_time() itself
+	var avenue: Node3D = (load("res://scripts/levels/hall/hall_avenue.gd") as GDScript).new()
+	avenue.name = "Avenue"
+	add_child(avenue)
+	avenue.call("build", builder, "parade")
 	builder.stats["build_ms"] = snappedf((Time.get_ticks_usec() - t0) / 1000.0, 0.1)
 	_halos = builder.halos.duplicate()
 	_halos.append_array(pset.halos)

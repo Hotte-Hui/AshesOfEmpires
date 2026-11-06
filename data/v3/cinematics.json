@@ -90,26 +90,32 @@
         {
           "id": "t1",
           "duration_s": 8,
-          "shot": "Konrad at the window of the German delegation's saloon car; night, snow plain, floodlit Line",
+          "shot": "Konrad at the window of the German delegation's saloon car; night, snow plain, floodlit Line; a village under its steeple, a small station rushing past without a stop, a green signal",
           "camera": "fixed_window"
         },
         {
           "id": "t2",
           "duration_s": 2,
-          "shot": "Match cut through the window frame",
+          "shot": "Match cut through the window frame: a level crossing's red lamps and floodlight",
           "camera": "fixed_window"
         },
         {
           "id": "t3",
           "duration_s": 8,
-          "shot": "Alexei at the window of the Soviet car; tea glass in a metal holder; same plain from the other side",
+          "shot": "Alexei at the window of the Soviet car; tea glass in a metal holder; same plain from the other side; log-house village, a truss bridge over a frozen river",
           "camera": "fixed_window"
         },
         {
+          "id": "t3b",
+          "duration_s": 5.5,
+          "shot": "The Line before dawn from high above: the floodlit fence runs to the glowing Free City, Konrad's train on one side, Alexei's on the other, neither stopping",
+          "camera": "high_static"
+        },
+        {
           "id": "t4",
-          "duration_s": 7.5,
-          "shot": "Dawn: both trains converge on the river bridge into Veltrava",
-          "camera": "establishing"
+          "duration_s": 12.5,
+          "shot": "Dawn: both trains converge on the river bridge into Veltrava; crane up from the ice and the bank to the city rising over the bridge",
+          "camera": "crane_up"
         }
       ]
     },

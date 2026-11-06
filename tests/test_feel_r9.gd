@@ -724,15 +724,18 @@ func _cine_figures() -> bool:
 		return true
 	var esc: Dictionary = lay.get("escape", {})
 	var hal: Dictionary = lay.get("halves", {})
-	# e3a: four 520 x 360 frames; the hand rises and is pulled up (frame 3 higher than frame 0)
+	# e3a: 520 x 360 frames (round 11: seven -- the reach-in and a three-step pull); the hand rises and is pulled up
+	# (the last frame higher than the first)
 	var hands := _img(base + "escape/e3a_hands.png")
-	if kit.ok(hands != null and hands.get_size() == Vector2i(2080, 360), "e3a_hands: 4 frames of 520 x 360"):
+	var nh := hands.get_width() / 520 if hands != null else 0
+	if kit.ok(hands != null and hands.get_height() == 360 and hands.get_width() % 520 == 0 and nh >= 4,
+			"e3a_hands: frames of 520 x 360 (%d)" % nh):
 		var tops: Array = []
-		for f in 4:
+		for f in nh:
 			var r := _opaque_rect(hands, Rect2i(f * 520, 0, 520, 360))
 			tops.append(r.position.y)
 			kit.ok(r.size.x > 40 and r.size.y > 150, "e3a frame %d: the arm and hand are drawn (%s)" % [f, r])
-		kit.ok(int(tops[3]) < int(tops[0]) - 20, "e3a: the hand is pulled up (top %d -> %d)" % [tops[0], tops[3]])
+		kit.ok(int(tops[nh - 1]) < int(tops[0]) - 20, "e3a: the hand is pulled up (top %d -> %d)" % [tops[0], tops[nh - 1]])
 	# e3b: the breath puffs start at the two faces
 	var men := _img(base + "escape/e3b_men.png")
 	var at: Array = esc.get("e3b_men", [40, 220])
@@ -747,27 +750,43 @@ func _cine_figures() -> bool:
 	var aat: Array = hal.get("arms_at", [210, 170])
 	var figs := {"a": [_img(base + "halves/fig_alexei.png"), hal.get("fig_alexei", [112, 150])],
 		"k": [_img(base + "halves/fig_konrad.png"), hal.get("fig_konrad", [378, 148])]}
-	if kit.ok(arms != null and arms.get_size() == Vector2i(660, 220), "arms: 3 x 2 frames of 220 x 110"):
+	# round 11: layout halves.arm_cols cells per row (reach x 3, the pull, the hold, Konrad's list); the bodies have 4
+	# frames (breath x 2, leaning over x 2).  Every drawn cell starts under its body; all but the hold show the arm.
+	var cols := int(hal.get("arm_cols", 3))
+	var nfig := 4 if cols >= 14 else 2
+	if kit.ok(arms != null and arms.get_width() % cols == 0 and arms.get_height() % 2 == 0,
+			"arms: %d x 2 cells" % cols):
+		var cw := arms.get_width() / cols
+		var chh := arms.get_height() / 2
 		for row in 2:
 			var who := "a" if row == 0 else "k"
 			var fig: Image = figs[who][0]
 			var fat: Array = figs[who][1]
-			for col in 3:
+			for col in cols:
+				# the body frame the runtime shows with this cell: leaning over (2 half / 3 full) for the far reach
+				var bf := 0
+				if cols >= 14:
+					bf = {3: 2, 4: 3, 5: 3, 8: 3, 9: 2}.get(col, 0)
+				var bw := fig.get_width() / nfig if fig != null else 0
 				var hidden := 0
 				var shown := 0
-				for y in 110:
-					for x in 220:
-						if arms.get_pixel(col * 220 + x, row * 110 + y).a <= 0.0:
+				for y in chh:
+					for x in cw:
+						if arms.get_pixel(col * cw + x, row * chh + y).a <= 0.0:
 							continue
 						var fx := int(aat[0]) + x - int(fat[0])
 						var fy := int(aat[1]) + y - int(fat[1])
-						var covered := fig != null and fx >= 0 and fy >= 0 and fx < fig.get_width() / 2 and fy < fig.get_height() \
-							and fig.get_pixel(fx, fy).a > 0.0
+						var covered := fig != null and fx >= 0 and fy >= 0 and fx < bw and fy < fig.get_height() \
+							and fig.get_pixel(bf * bw + fx, fy).a > 0.0
 						if covered:
 							hidden += 1
 						else:
 							shown += 1
-				kit.ok(hidden > 20 and shown > 40, "%s arm frame %d: starts inside the body (%d px under the figure, %d visible)" % [who, col, hidden, shown])
+				if hidden + shown == 0 and cols >= 14 and col >= 11:
+					continue                    # Alexei has no list cells
+				# the late pull and the hold slide the hand with the pages under his thigh (mostly behind the body)
+				var under := cols >= 14 and col in [7, 9, 10]
+				kit.ok(hidden > 20 and (under or shown > 40), "%s arm frame %d: starts inside the body (%d px under the figure, %d visible)" % [who, col, hidden, shown])
 	# the board's umlaut flaps keep their dots (row above the letter) -- distinct from A / O / U
 	var glyphs := _img(base + "halves/glyphs.png")
 	var charset := str(hal.get("charset", ""))

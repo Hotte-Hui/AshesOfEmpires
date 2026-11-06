@@ -13,8 +13,13 @@ responses; nothing is sampled or downloaded), deterministic (seeds = crc32 of th
     c3cine_crossing       a floodlit level crossing at speed: its bell swells and drops in pitch, the rush
                           of air (the match cut)                                              stereo 2.4 s
     c3cine_bridge         dawn: two engines on the stone bridge, exhaust beats from both sides slowing, the
-                          hollow rumble of the arches, the wheel clatter, the river valley    stereo 8.5 s
+                          hollow rumble of the arches, the wheel clatter, the river valley    stereo 13.2 s
     c3cine_whistle_de     Konrad's engine answering, lower and farther than the Karsk whistle stereo 3.0 s
+    c3cine_station_rush   (round 10) a small station rushing past the saloon car: platform echo, its bell,
+                          three lamps                                                         stereo 2.8 s
+    c3cine_truss          (round 10) the truss bridge over the frozen river under the Soviet car stereo 3.0 s
+    c3cine_line_night     (round 10) the Line before dawn: wind, floodlight hum, two trains far off stereo 7.2 s
+    c3cine_city_morning   (round 10) the waking city at dawn: two bells, a tram, crows        stereo 5.8 s
   LS_C3_ToHall
     c3cine_clock_tick     the seconds of the platform clock, under the canopy                 stereo 0.6 s
     c3cine_clock_clack    the minute hand jumping to 9:40 (railway clock), iron and echo     stereo 1.2 s
@@ -47,6 +52,8 @@ OUT = os.path.join(ROOT, 'assets', 'audio', 'sfx')
 #   K: 0.3 + n * 1.55 from t = 0;  A: 9.4 + n * 1.8 from t = 9.0 -> 0.4 + n * 1.8 in the file)
 JOINT_DE = (0.30, 1.55)
 JOINT_SU = (0.40, 1.80)
+# round 10: the bridge bed starts at 23.1 s of LS_C3_Trains, the trains meet over the middle arch at 28.1 s
+BRIDGE_MEET = 28.1 - 23.1
 KNOCK_GAP = 0.16
 
 
@@ -284,11 +291,11 @@ def crossing():
 
 def bridge():
     r = rng('c3cine_bridge')
-    sec = 9.4
+    sec = 13.2
     n = n_of(sec)
     t = np.arange(n) / SR
     out = np.zeros((n, 2))
-    meet = 21.6 - 17.4
+    meet = BRIDGE_MEET
     # exhaust beats: the near engine (Alexei's, from the right) and the far one (Konrad's, from the left)
     for who, p0, p1, gain, dark, rate0, rate1, ph in (('near', 0.75, -0.35, 1.0, 1000.0, 3.6, 2.9, 0.0),
                                                       ('far', -0.75, 0.35, 0.55, 650.0, 3.2, 2.6, 0.13)):
@@ -453,12 +460,136 @@ def flaps():
     return norm(fades(st, 0.0, 0.15), -10.0)
 
 
+# --------------------------------------------------------------------------- round 10: the journey
+def station_rush():
+    """Konrad's car runs through a small station without a stop (bed at 4.4 s of the film): the platform wall
+    throws the rumble back (louder, brighter), the station bell rings and drops in pitch as it passes, three
+    platform lamps whip past, then the open plain again."""
+    r = rng('c3cine_station_rush')
+    sec = 2.8
+    n = n_of(sec)
+    t = np.arange(n) / SR
+    out = np.zeros((n, 2))
+    near = np.clip((t - 0.15) / 0.25, 0, 1) * np.clip((2.15 - t) / 0.3, 0, 1)        # alongside the platform
+    wall = band(r.standard_normal(n), 300, 2600) * near * 0.35 + lp(brown(n, r), 220) * near * 0.5
+    out += pan(wall, 0.0)
+    for lt in (0.27, 0.93, 1.59):                                                   # the platform lamps
+        pulse = lp(r.standard_normal(n), 160) * np.exp(-((t - lt) / 0.05) ** 2) * 0.55
+        swish = band(r.standard_normal(n), 900, 3200) * np.exp(-((t - lt) / 0.09) ** 2) * 0.3
+        out += pan(pulse + swish, 0.0)
+    closest = 0.95                                                                   # the station bell
+    tt = 0.05
+    k = 0
+    while tt < sec - 0.3:
+        rel = tt - closest
+        dop = 1.0 + 0.05 * np.tanh(-rel * 3.0)
+        amp = 1.0 / (1.0 + (rel / 0.45) ** 2)
+        s_ = bell_strike(r, 980.0 * dop, 0.3)
+        place(out, pan(s_ * amp * 0.7, float(np.clip(-rel * 1.2, -0.8, 0.8))), tt)
+        tt += 0.24 if k % 3 != 2 else 0.36
+        k += 1
+    out = room(out, 'c3cine_station_rush', 1.4, 1.0, 0.5, 0.22)
+    return norm(fades(out, 0.08, 0.6), -7.0)
+
+
+def truss():
+    """Alexei's car on the truss bridge over the frozen river (bed at 11.55 s; AD round 2: the bridge is 2.0 s long,
+    its portals pass the glass at 11.7 / 13.7 s): the hollow steel drumming, a girder beat on every bay (13 bays),
+    the wheels ringing on the deck, the gorge's echo when it ends."""
+    r = rng('c3cine_truss')
+    sec = 3.0
+    n = n_of(sec)
+    t = np.arange(n) / SR
+    on = np.clip((t - 0.1) / 0.12, 0, 1) * np.clip((2.2 - t) / 0.12, 0, 1)
+    drum = lp(brown(n, r), 180) * on * 0.8
+    ring = np.zeros(n)
+    for f, g in ((311.0, 1.0), (467.0, 0.6), (701.0, 0.35)):
+        ring += g * np.sin(2 * np.pi * f * t + r.uniform(0, 6.28))
+    ring *= 0.05 * on * (0.6 + 0.4 * np.sin(2 * np.pi * 7.0 * t) ** 2)
+    x = drum + ring
+    bay = 2.0 / 13.0
+    tt = 0.15
+    while tt < 2.2:
+        m = n_of(0.12)
+        hit = lp(r.standard_normal(m), 400) * decay(m, 0.03, 0.002) * 0.7
+        hit += band(r.standard_normal(m), 1500, 4500) * decay(m, 0.008, 0.0005) * 0.25
+        place(x, hit, tt)
+        tt += bay
+    st = np.stack([x, x * 0.92], 1)
+    st += pan(band(r.standard_normal(n), 500, 2000) * on * 0.08, 0.3)
+    st = room(st, 'c3cine_truss', 2.2, 1.6, 0.8, 0.3, predelay=0.02, slap=[(0.21, 0.35, 1600.0)])
+    return norm(fades(st, 0.05, 0.7), -6.0)
+
+
+def line_night():
+    """The Line before dawn from high above (bed at 17.3 s): wind over the open snow, the hum of the floodlight
+    masts, the two trains far off on either side -- their beats left and right, receding."""
+    r = rng('c3cine_line_night')
+    sec = 7.2
+    n = n_of(sec)
+    t = np.arange(n) / SR
+    out = np.zeros((n, 2))
+    gust = 0.5 + 0.5 * np.sin(2 * np.pi * t / 4.3 + 0.4) ** 2
+    wl = band(r.standard_normal(n), 180, 1400) * (0.18 + 0.22 * gust)
+    wr = band(r.standard_normal(n), 220, 1700) * (0.18 + 0.22 * np.roll(gust, n_of(1.1)))
+    out[:, 0] += wl
+    out[:, 1] += wr
+    hum = (np.sin(2 * np.pi * 100.0 * t) * 0.5 + np.sin(2 * np.pi * 200.0 * t) * 0.25) * 0.025
+    out += pan(hum, 0.0)
+    for side, p_, rate, ph in ((0, -0.85, 3.3, 0.0), (1, 0.85, 3.6, 0.11)):
+        tt = 0.3 + ph
+        while tt < sec - 0.3:
+            dist = 1.0 + tt * 0.35
+            s_ = chuff(r, 0.8, 600.0 / dist ** 0.5)
+            place(out, pan(s_ * 0.22 / dist, p_), tt)
+            tt += 1.0 / rate
+        for k in range(int(sec / 0.9)):                                            # far wheel clatter
+            at = 0.5 + k * 0.9 + side * 0.33
+            m = n_of(0.03)
+            c = band(r.standard_normal(m), 600, 2400) * decay(m, 0.006, 0.0005)
+            place(out, pan(c * 0.06 / (1 + at * 0.3), p_), at)
+    out = room(out, 'c3cine_line_night', 3.2, 2.6, 1.4, 0.45, predelay=0.05)
+    return norm(fades(out, 0.9, 1.4), -9.0)
+
+
+def city_morning():
+    """The waking Free City over the river (bed at 30.6 s): two church bells far apart, a tram's double ring on
+    the quay, crows, and the low murmur of the streets."""
+    r = rng('c3cine_city_morning')
+    sec = 5.8
+    n = n_of(sec)
+    t = np.arange(n) / SR
+    out = np.zeros((n, 2))
+    mur = lp(brown(n, r), 300) * 0.25 + band(r.standard_normal(n), 300, 1200) * 0.04
+    out += pan(mur, 0.0)
+    for (f0, p_, at0, every, cnt, g) in ((392.0, -0.5, 0.2, 1.55, 4, 0.5), (311.0, 0.55, 0.9, 1.9, 3, 0.4)):
+        for k in range(cnt):
+            m = n_of(3.0)
+            tt = np.arange(m) / SR
+            b = np.zeros(m)
+            for ratio, d, gg in ((1.0, 1.6, 1.0), (2.0, 0.9, 0.4), (2.4, 0.7, 0.35), (3.0, 0.5, 0.2), (0.5, 2.2, 0.3)):
+                b += gg * np.sin(2 * np.pi * f0 * ratio * tt + r.uniform(0, 6.28)) * decay(m, d, 0.004)
+            place(out, pan(lp(b, 2600) * g, p_), at0 + k * every)
+    for at in (2.6, 2.85):                                                         # the tram bell
+        place(out, pan(bell_strike(r, 1560.0, 0.22) * 0.35, 0.3), at)
+    for at, p_ in ((1.3, -0.3), (1.55, -0.35), (3.9, 0.2)):                        # crows
+        m = n_of(0.3)
+        tt = np.arange(m) / SR
+        c = band(r.standard_normal(m), 700, 2200) * np.sin(np.pi * np.clip(tt / 0.22, 0, 1)) ** 0.5
+        c *= 0.6 + 0.4 * np.sin(2 * np.pi * 38 * tt)
+        place(out, pan(c * 0.22, p_), at)
+    out = room(out, 'c3cine_city_morning', 3.5, 3.0, 1.5, 0.55, predelay=0.06)
+    return norm(fades(out, 0.8, 1.6), -9.0)
+
+
 SOUNDS = {
     'c3cine_ride_de': ride_de, 'c3cine_ride_su': ride_su, 'c3cine_pass': pass_lamp, 'c3cine_crossing': crossing,
     'c3cine_bridge': bridge, 'c3cine_whistle_de': whistle_de, 'c3cine_clock_tick': clock_tick,
     'c3cine_clock_clack': clock_clack, 'c3cine_palais_chime': palais_chime,
     'c3cine_step_marble_1': lambda: step_marble(1), 'c3cine_step_marble_2': lambda: step_marble(2),
     'c3cine_step_marble_3': lambda: step_marble(3), 'c3cine_depart_night': depart_night, 'c3cine_flaps': flaps,
+    'c3cine_station_rush': station_rush, 'c3cine_truss': truss, 'c3cine_line_night': line_night,
+    'c3cine_city_morning': city_morning,
 }
 
 

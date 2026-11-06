@@ -3,8 +3,8 @@
  "area": "c3p2_cinematics",
  "strings": {
   "cin.c3p2.radio.time": "Veltrava, 0.10 Uhr.",
-  "cin.c3p2.radio.ru": "(Radio Veltrava, russisch) …hat die Kommission Anlage C angenommen. Der Verkehr von Gütern und begleiteten Personen über die Linie…",
-  "cin.c3p2.radio.de": "(Radio Veltrava) …hat die Kommission Anlage C angenommen. Güter und Begleitgut passieren die Linie ab März ohne Aufenthalt.",
+  "cin.c3p2.radio.ru": "(russisch) …Anlage C: Güter und begleitete Personen passieren die Linie…",
+  "cin.c3p2.radio.de": "(deutsch) …Anlage C: Güter und Begleitgut passieren die Linie ohne Halt.",
   "cin.c3p2.radio.note": "Registratur. Hof, Rampe. 0.30 Uhr. – E.",
   "cin.c3p2.radio.note_ru": "Регистратура. Двор, рампа. 0.30. – Е.",
   "cin.c3p2.radio.alexei.base": "Begleitete Personen. Auf Deutsch sagen sie es anders.",

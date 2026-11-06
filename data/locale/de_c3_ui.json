@@ -3,7 +3,7 @@
  "area": "c3_ui",
  "strings": {
   "ui.c3.protocol.title": "Sitzordnung und Dolmetscherprotokoll",
-  "ui.c3.protocol.subtitle": "Eröffnungssitzung · TOP 4 „Anlage C“ – fiktive Sitzung, kein echtes Protokoll",
+  "ui.c3.protocol.subtitle": "Eröffnungssitzung · TOP 4 „Anlage C“",
   "ui.c3.protocol.instruction": "Lege die Namenskarten in der Reihenfolge ab, in der zu Anlage C gesprochen wurde. Das Protokoll nennt nur Uhrzeit und Mikrofon – die Sitzordnung verrät, wer an welchem Mikrofon saß.",
   "ui.c3.protocol.slot": "{n}. Wortmeldung",
   "ui.c3.protocol.card.chair": "Hochkommissar Aalto (Vorsitz)",

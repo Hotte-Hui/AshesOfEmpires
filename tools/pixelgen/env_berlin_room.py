@@ -353,7 +353,7 @@ class Room:
         if sill_item == 'plant':
             self.sill_plant(x0 + 4, y1 + 4)
         elif sill_item == 'rolls':
-            self.sill_rolls(x1 - 22, y1 + 4)
+            self.sill_rolls(x1, y1 + 4)
         self.windows.append({'glass': glass, 'x0': x0, 'y0': y0, 'x1': x1, 'y1': y1, 'tr': tr})
 
     def _panes(self, w, h, mid, tr):
@@ -397,13 +397,21 @@ class Room:
             lay.rect(lx, ly, lw, lh, 'G', 3.0, hgt=0.5, flat=True)
             lay.rect(lx, ly, 1, lh, 'G', 4.4, hgt=0.55, flat=True)
 
-    def sill_rolls(self, x, y):
+    def sill_rolls(self, x1, sill_y):
+        """Rolled drawings lying on the window board, seen from the side (horizontal cylinders).  Round 10:
+        they used to float 2 px above the board and stick out over the right-hand window frame (a visible
+        glitch); now a small pyramid inside the glass span, the lowest roll resting on the board's back
+        row (the front row stays visible below it), each roll showing its cut end with the spiral core."""
         lay = self.lay
-        for i, (dx, ln, t) in enumerate([(0, 26, 4.6), (4, 22, 5.2), (9, 18, 4.2)]):
-            # rolls lying on the sill, seen from the side (horizontal cylinders)
-            lay.rect(x + dx - ln + 20, y - 4 - i * 3, ln, 3, 'P', t, hgt=0.5, flat=True)
-            lay.rect(x + dx - ln + 20, y - 4 - i * 3, ln, 1, 'P', t + 1.2, hgt=0.6, flat=True)
-            lay.rect(x + dx + 19, y - 4 - i * 3, 1, 3, 'P', t - 1.4, hgt=0.4, flat=True)
+        for i, (r_end, ln, t) in enumerate([(x1 - 5, 26, 4.6), (x1 - 7, 21, 5.2), (x1 - 10, 15, 4.2)]):
+            y = sill_y - 2 - i * 3
+            xs = r_end - ln + 1
+            lay.rect(xs, y, ln, 3, 'P', t, hgt=0.5, flat=True)
+            lay.rect(xs, y, ln, 1, 'P', t + 1.2, hgt=0.6, flat=True)
+            lay.rect(xs, y + 2, ln, 1, 'P', t - 0.8, hgt=0.45, flat=True)
+            lay.rect(r_end, y, 1, 3, 'P', t - 1.4, hgt=0.4, flat=True)
+            lay.px(r_end, y + 1, 'I', 2.0)
+        lay.rect(x1 - 30, sill_y + 1, 26, 1, 'W', 5.4, hgt=0.6, flat=True)      # contact shadow on the board
 
     # ------------------------------------------------------------------ door
     def double_door(self, x0, x1, top, glass_text=None, lit=True, seed=0):
@@ -469,17 +477,21 @@ class Room:
         lay.put(m, x + (w - m.shape[1]) // 2, y + 40, 'I', 1.0, flat=True)
         m2 = kit.text_mask('1964', '35')
         lay.put(m2, x + w - m2.shape[1] - 3, y + 47, 'I', 2.0, flat=True)
-        # a notice pasted over the lower-left corner (half-papered over)
-        nx, ny = x - 4, y + 44
+        lay.px(x + w - 2, y + h - 2, 'A', 4.0, hgt=0.4)
+        # drop shadow right/bottom
+        lay.rect(x + w, y + 2, 1, h - 1, 'W', 2.6, flat=True)
+        lay.rect(x + 1, y + h, w, 1, 'W', 2.6, flat=True)
+        # a typed notice pinned on the bare wall right of the framed notice, level with it.  Round 10b: it used
+        # to be pasted over the poster's lower-left corner, covering the 'A' of AUFBAU, and the poster's drop
+        # shadow (drawn after it) ran across it like a stray text line -- it now overlaps nothing.
+        nx, ny = X(538), 190
+        lay.rect(nx + 15, ny + 2, 1, 17, 'W', 2.6, flat=True)
+        lay.rect(nx + 1, ny + 18, 15, 1, 'W', 2.6, flat=True)
         lay.rect(nx, ny, 15, 18, 'P', 6.0, hgt=0.16, flat=True)
         lay.rect(nx + 14, ny + 1, 1, 17, 'P', 4.0, hgt=0.16, flat=True)
         lay.rect(nx, ny + 17, 14, 1, 'P', 4.4, hgt=0.16, flat=True)
         pseudo_text(lay, nx + 2, ny + 3, 11, 5, 'I', 2.0, seed=31)
         lay.px(nx + 1, ny + 1, 'A', 4.0, hgt=0.4)
-        lay.px(x + w - 2, y + h - 2, 'A', 4.0, hgt=0.4)
-        # drop shadow right/bottom
-        lay.rect(x + w, y + 2, 1, h - 1, 'W', 2.6, flat=True)
-        lay.rect(x + 1, y + h, w, 1, 'W', 2.6, flat=True)
 
     def framed_notice(self, x, y, w, h, seed, emblem=True):
         lay = self.lay
@@ -639,10 +651,13 @@ class Room:
         # wall sconce on pier 4
         sx = L.PIERS[3] + L.PIER_W // 2
         self.sconce(sx, 204)
-        # small enamel sign on the first pier: room number
-        m = kit.text_mask('214', '35')
-        lay.rect(L.PIERS[1] + 1, 160, 10, 7, 'P', 5.4, hgt=0.6, flat=True)
-        lay.put(m, L.PIERS[1] + 1 + (10 - m.shape[1]) // 2, 161, 'I', 1.0, flat=True)
+        # small enamel sign on the first pier: room number (round 10: the old 3-digit number was 11 px on a
+        # 10-px plate and lost its first column -- it read as a clipped '314'; two digits sit with a margin)
+        m = kit.text_mask('14', '35')
+        px0 = L.PIERS[1] + 2
+        lay.rect(px0, 160, m.shape[1] + 2, 7, 'P', 5.4, hgt=0.6, flat=True)
+        lay.rect(px0, 166, m.shape[1] + 2, 1, 'P', 3.6, hgt=0.6, flat=True)
+        lay.put(m, px0 + 1, 161, 'I', 1.0, flat=True)
 
     def pier(self, x0, x1):
         lay = self.lay
@@ -1102,7 +1117,7 @@ class Room:
         self.double_door(L.DOOR0[0], L.DOOR0[1], L.DOOR0_TOP, glass_text='ZEICHENBÜRO', lit=True, seed=4)
         self.poster()
         self.framed_notice(X(512), 192, 14, 18, seed=7)
-        self.framed_notice(X(498), 222, 10, 12, seed=8, emblem=False)
+        self.framed_notice(X(494), 222, 10, 12, seed=8, emblem=False)    # clear of the binders (round 10)
         self.clock()
         self.filing_cabinets(*L.CABINETS)
         # light switch + cable conduit by the door

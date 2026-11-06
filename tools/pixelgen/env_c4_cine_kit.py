@@ -324,8 +324,32 @@ def relight(rgba, nrm, amb, key, key_rgb, rim=None, rim_rgb=(0, 0, 0), bands=3, 
     return res
 
 
-def lit_row(cid, anim, look, standin=None, pick=None, flip=False):
-    """One relit animation row as a horizontal sheet (look = relight kwargs)."""
+def feet_shadow(cell, strength=1.0):
+    """Contact shadow of a sheet cell (origin (16, 54)): black with partial alpha on the transparent pixels round
+    and under the feet (rows 53-55), as wide as the stance of this frame -- the figure stands on the plate's
+    ground instead of floating over it (round 10)."""
+    out = cell.copy()
+    h, w = out.shape[:2]
+    if h < 56:
+        return out
+    a = out[..., 3] > 0
+    xs = np.nonzero(a[48:55].any(0))[0]
+    if xs.size == 0:
+        return out
+    x0, x1 = xs.min() - 2.0, xs.max() + 3.0
+    cx, rx = (x0 + x1) / 2.0, (x1 - x0) / 2.0 + 0.5
+    for y, k, al in ((53, 0.80, 52), (54, 1.0, 84), (55, 0.82, 58)):
+        for x in range(w):
+            d = abs(x + 0.5 - cx) / (rx * k)
+            if d <= 1.0 and not a[y, x]:
+                out[y, x, :3] = 0
+                out[y, x, 3] = int((al if d < 0.68 else al * 0.55) * strength)
+    return out
+
+
+def lit_row(cid, anim, look, standin=None, pick=None, flip=False, shadow=True):
+    """One relit animation row as a horizontal sheet (look = relight kwargs); shadow = feet_shadow() under every
+    frame (round 10; False = the bare cells of round 9)."""
     cells = []
     for c, n in anim_frames(cid, anim, standin, pick):
         if flip:
@@ -333,8 +357,66 @@ def lit_row(cid, anim, look, standin=None, pick=None, flip=False):
             if n is not None:
                 n = n[:, ::-1].copy()
                 n[..., 0] = 255 - n[..., 0]
-        cells.append(relight(c, n, **look))
+        cell = relight(c, n, **look)
+        cells.append(feet_shadow(cell) if shadow else cell)
     return sheet(cells)
+
+
+def _rgb2hsv(rgb):
+    r, g, b = (rgb[..., i] for i in range(3))
+    mx = np.max(rgb, -1)
+    mn = np.min(rgb, -1)
+    d = mx - mn + 1e-6
+    h = np.where(mx == r, ((g - b) / d) % 6, np.where(mx == g, (b - r) / d + 2, (r - g) / d + 4)) / 6.0
+    s = np.where(mx > 0, (mx - mn) / (mx + 1e-6), 0)
+    return np.stack([h % 1.0, s, mx], -1)
+
+
+def _hsv2rgb(hsv):
+    h, s, v = (hsv[..., i] for i in range(3))
+    i = np.floor(h * 6).astype(int) % 6
+    f = h * 6 - np.floor(h * 6)
+    p, q, t = v * (1 - s), v * (1 - f * s), v * (1 - (1 - f) * s)
+    out = np.zeros(hsv.shape, np.float32)
+    for k, (a, b, c) in enumerate(((v, t, p), (q, v, p), (p, v, t), (p, q, v), (t, p, v), (v, p, q))):
+        m = i == k
+        out[m] = np.stack([a[m], b[m], c[m]], -1)
+    return out
+
+
+# deterministic clothing variations of a crowd: (hue shift, saturation gain, value gain)
+CROWD_VARIANTS = ((0.0, 1.0, 1.0), (0.07, 0.9, 1.05), (-0.06, 1.1, 0.92), (0.45, 0.6, 0.95), (0.12, 0.7, 1.12),
+                  (-0.12, 0.8, 0.86), (0.30, 0.5, 1.0), (0.0, 0.35, 1.08))
+
+
+def crowd_variant(rgba, seed):
+    """The same sprite in other clothes: hue / saturation / value of the cloth pixels shift by a deterministic
+    variant (skin keeps its colour), so a crowd built from a few sheets does not look cloned."""
+    dh, ds, dv = CROWD_VARIANTS[seed % len(CROWD_VARIANTS)]
+    if (dh, ds, dv) == (0.0, 1.0, 1.0):
+        return rgba.copy()
+    out = rgba.copy()
+    a = out[..., 3] > 0
+    rgb = out[..., :3].astype(np.float32) / 255.0
+    hsv = _rgb2hsv(rgb)
+    skin = (((hsv[..., 0] < 0.11) | (hsv[..., 0] > 0.96)) & (hsv[..., 1] > 0.18) & (hsv[..., 1] < 0.75)
+            & (hsv[..., 2] > 0.30))
+    m = a & ~skin & (out[..., 3] == 255)
+    hs = hsv.copy()
+    hs[..., 0] = (hs[..., 0] + dh) % 1.0
+    hs[..., 1] = np.clip(hs[..., 1] * ds, 0, 1)
+    hs[..., 2] = np.clip(hs[..., 2] * dv, 0, 1)
+    new = _hsv2rgb(hs)
+    out[m, :3] = np.clip(new[m] * 255.0 + 0.5, 0, 255).astype(np.uint8)
+    return out
+
+
+def crowd_row(cid, anim, look, seed=0, standin=None, pick=None, flip=False, shadow=True):
+    """lit_row() of an extra in one of the CROWD_VARIANTS clothes (people for the empty plates: travellers,
+    workers, passers-by from the game's own sheets -- porter, worker_a/b, babushka, clerk, typist, berlin_*,
+    conductor, vendor, child_a ...)."""
+    row = lit_row(cid, anim, look, standin, pick, flip, shadow)
+    return crowd_variant(row, seed)
 
 
 def cell_size(cid, standin=None):
