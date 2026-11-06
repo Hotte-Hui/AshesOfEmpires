@@ -144,3 +144,20 @@ controller, motion quality judged by a person, other GPUs/1440p displays.
 Unit **23 files, 178 cases, 13,195 checks — all passed**; autoplay skip+exploration **PASS** (plaza 18/18, cards 16/16);
 real-input skip+exploration **PASS** in 461 s (the plaza mini-game solved by synthetic key presses); exported .exe
 real-input skip+exploration **PASS** in 461 s.
+
+## 11. Round 7 (2026-11-06) — Chapter 3 finished, memories, side tasks, five new mini-games
+All runs on this machine (RTX 4090, Forward+, windowed 1080p unless noted).
+| Layer | Result |
+|---|---|
+| Unit (`tests/run_all.gd`) | **37 files, 341 cases, 29,548 checks — all passed** |
+| Autoplay, skip + exploration + memories (share_with_irina / preserve_evidence / ask_elena / share_protocol) | **PASS** 125 s — finds Karsk 26/26, archive 29/29, plaza 21/21, station 21/21, Palais 18/18; history 19/19; tasks 5/5; memory round trip Station → Karsk → Station |
+| Autoplay, skip (keep_private / request_explanation / note_alone / report_delegation) and (keep_private / preserve_evidence / note_alone / search_elena) | **PASS** 36 s each |
+| Autoplay, played in full (share_with_irina / request_explanation / ask_elena / search_elena) | **PASS** 251 s, every cinematic watched |
+| Autoplay, skip + memories without exploration (a genuinely new find inside the memory) | **PASS**, the find is kept after the return |
+| Real input, played in full (share_with_irina / preserve_evidence / ask_elena / report_delegation) | **INPUTPLAY_PASS** 519 s |
+| Real input, skip + exploration + memories (keep_private / request_explanation / note_alone / share_protocol) | **INPUTPLAY_PASS** 1128 s — 115/115 finds incl. 9 mini-games by synthetic keys, 5/5 tasks, 19/19 cards, memory trip by keys only |
+| Real input, skip + memories without exploration | **INPUTPLAY_PASS** 313 s |
+| Exported .exe (218 MB pack, lossless audio), real input, skip + memories | **INPUTPLAY_PASS** 313 s, memory trip with a new find kept |
+Found and fixed by these runs: Game's focus stayed cleared after a modal that pauses the tree, so a second task step on
+the same hotspot never got its prompt (player.gd resyncs); the memory driver pressed E inside the 350 ms arrival
+cooldown (driver waits it out). Not covered: a human playtest and listening pass (§6), physical controller.
