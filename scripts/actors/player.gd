@@ -191,7 +191,10 @@ func _update_focus(hide_only: bool) -> void:
 			if dist <= it.radius and dist < best_d:
 				best_d = dist
 				best = it
-	if best != focus:
+	# Game clears its focus when an interaction starts; a modal that pauses the tree (DiscoveryView) keeps this
+	# node from noticing, so resync whenever Game's focus differs (else a chained step on the same hotspot,
+	# §12.9, never becomes Game's focus again).
+	if best != focus or Game._focus != best:
 		focus = best
 		Game.set_focus(focus)
 	elif focus:
