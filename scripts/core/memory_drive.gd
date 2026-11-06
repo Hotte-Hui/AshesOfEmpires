@@ -283,13 +283,18 @@ func inputplay(driver: Node) -> bool:
 		if not await driver._walk_to_focus(fi, 60.0):
 			_fail("inputplay: could not walk to the find %s inside the memory" % found_id)
 		else:
+			# right after the arrival the 350 ms input cooldown swallows E (as for a player): wait it out, retry once
+			await driver._until(func(): return Time.get_ticks_msec() >= Game.interact_ready_at, 2.0)
 			await driver._tap(KEY_E)
+			if not await driver._until(func(): return Game.busy, 3.0):
+				await driver._tap(KEY_E)
 			await driver._drain_interaction(found_id)
 			if not Explore.is_found(found_id):
 				_fail("inputplay: find %s not recorded inside the memory" % found_id)
 	var tw := pick_twin("dialogue")
 	if tw != null:
 		if await driver._walk_to_focus(tw, 60.0):
+			await driver._until(func(): return Time.get_ticks_msec() >= Game.interact_ready_at, 2.0)
 			await driver._tap(KEY_E)
 			if not await driver._until(func(): return Game.busy, 3.0):
 				_fail("inputplay: E did not start the remembered conversation")
