@@ -1,0 +1,486 @@
+{
+ "scene": "L_C4P2_BerlinA / L_C4P2_BerlinB",
+ "palette": "ostbahnhof (A) / courtyard (B)",
+ "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+ "date": "2026-11-06",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Story-critical words are legible 3x5 capitals; the rest is print / handwriting scribble under the UI caption. Rects are [x, y, w, h] in document pixels. Two documents carry insignia (seals, house notice) and have a _hist twin that Symbols.pick() chooses.",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/berlin_c4p2_departures.png",
+   "size": [
+    300,
+    190
+   ],
+   "display_scale": 3,
+   "id": "berlin_c4p2_departures",
+   "item_id": "ev_c4_departures_east",
+   "objective": "c4f_inspect_board",
+   "hotspot": "departure_board",
+   "title_key": "item.c4_departures_east.name",
+   "description_key": "item.c4_departures_east.description",
+   "describes": "the enamel departure board of platform K: D 303 Berlin Ost – Kordon-17 – Karsk 21.10; the hand-painted board for Tuesday: special train to Kordon-17 with a special car from 15.30, platform K closed from 15.00",
+   "marks": {
+    "platform": {
+     "rect": [
+      22,
+      18,
+      9,
+      15
+     ],
+     "text": "K"
+    },
+    "corridor": {
+     "rect": [
+      48,
+      16,
+      94,
+      10
+     ],
+     "text": "KORRIDOR OST"
+    },
+    "train": {
+     "rect": [
+      16,
+      52,
+      38,
+      10
+     ],
+     "text": "D 303"
+    },
+    "route": {
+     "rect": [
+      16,
+      72,
+      119,
+      5
+     ],
+     "text": "BERLIN OST – KORDON-17 – KARSK"
+    },
+    "time": {
+     "rect": [
+      250,
+      52,
+      38,
+      10
+     ],
+     "text": "21.10"
+    },
+    "tuesday_1": {
+     "rect": [
+      22,
+      125,
+      35,
+      5
+     ],
+     "text": "DIENSTAG:"
+    },
+    "tuesday_2": {
+     "rect": [
+      22,
+      137,
+      165,
+      5
+     ],
+     "text": "SONDERZUG NACH KORDON-17 MIT SONDERWAGEN,"
+    },
+    "tuesday_3": {
+     "rect": [
+      22,
+      149,
+      51,
+      5
+     ],
+     "text": "AB 15.30 UHR."
+    },
+    "closed": {
+     "rect": [
+      22,
+      163,
+      123,
+      5
+     ],
+     "text": "BAHNSTEIG K AB 15 UHR GESPERRT."
+    }
+   },
+   "alt_key": "doc.berlin_c4p2_departures.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_c4p2_seals.png",
+   "size": [
+    300,
+    180
+   ],
+   "display_scale": 3,
+   "id": "berlin_c4p2_seals",
+   "item_id": "ev_c4_courier_seals",
+   "objective": "c4f_inspect_courier",
+   "hotspot": "courier_car",
+   "title_key": "item.c4_courier_seals.name",
+   "description_key": "item.c4_courier_seals.description",
+   "describes": "two lead seals on the courier van's wire, both stamped C-17 (German: a plain disc DR / _hist eagle; Soviet: a wheel / _hist star); beside it the green car on the next track, a barred hatch frosted from inside, the chalk „Di – Kordon“",
+   "marks": {
+    "seal_de": {
+     "rect": [
+      83,
+      101,
+      35,
+      35
+     ],
+     "text": "C-17 (DR)"
+    },
+    "seal_su": {
+     "rect": [
+      35,
+      103,
+      35,
+      35
+     ],
+     "text": "C-17"
+    },
+    "chalk": {
+     "rect": [
+      228,
+      92,
+      43,
+      5
+     ],
+     "text": "DI – KORDON"
+    }
+   },
+   "alt_key": "doc.berlin_c4p2_seals.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_c4p2_tracing.png",
+   "size": [
+    300,
+    200
+   ],
+   "display_scale": 3,
+   "id": "berlin_c4p2_tracing",
+   "item_id": "ev_c4_konrad_tracing",
+   "objective": "c4f_inspect_book",
+   "hotspot": "dining_table",
+   "title_key": "item.c4_konrad_tracing.name",
+   "description_key": "item.c4_konrad_tracing.description",
+   "describes": "Ekdahl's guidebook open at page 212 „Karsk – bangård och depå“, the German half of card 0417 laid in upside down, Konrad's tracing of the room of Kordon-17 (Tür West, Tür Ost, the counter, the bench for 14), its corner folded back: MOROZOV – 0417 – DI 23.40 – TÜR OST",
+   "marks": {
+    "chapter": {
+     "rect": [
+      32,
+      21,
+      95,
+      6
+     ],
+     "text": "KARSK – BANGÅRD OCH DEPÅ"
+    },
+    "page": {
+     "rect": [
+      18,
+      180,
+      11,
+      5
+     ],
+     "text": "212"
+    },
+    "card_de": {
+     "rect": [
+      22,
+      140,
+      112,
+      38
+     ],
+     "text": "Karte 0417, deutsche Hälfte (verkehrt herum)"
+    },
+    "counter": {
+     "rect": [
+      206,
+      71,
+      31,
+      5
+     ],
+     "text": "SCHALTER"
+    },
+    "door_west": {
+     "rect": [
+      174,
+      85,
+      33,
+      6
+     ],
+     "text": "TÜR WEST"
+    },
+    "door_east": {
+     "rect": [
+      243,
+      85,
+      27,
+      6
+     ],
+     "text": "TÜR OST"
+    },
+    "bench": {
+     "rect": [
+      200,
+      121,
+      43,
+      6
+     ],
+     "text": "BANK FÜR 14"
+    },
+    "back_1": {
+     "rect": [
+      216,
+      164,
+      55,
+      5
+     ],
+     "text": "MOROZOV – 0417"
+    },
+    "back_2": {
+     "rect": [
+      208,
+      175,
+      71,
+      6
+     ],
+     "text": "DI 23.40 – TÜR OST"
+    }
+   },
+   "alt_key": "doc.berlin_c4p2_tracing.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_c4p2_house_notice.png",
+   "size": [
+    320,
+    210
+   ],
+   "display_scale": 3,
+   "id": "berlin_c4p2_house_notice",
+   "item_id": "ev_c4_house_notice",
+   "objective": "c4h_inspect_gate",
+   "hotspot": "gate_notice",
+   "title_key": "item.c4_house_notice.name",
+   "description_key": "item.c4_house_notice.description",
+   "describes": "the Blockleitung's notice (Tuesday from 22.00, children to be shown; neutral: no emblem / _hist: the party eagle), the pinned site plan Bauabschnitt Süd 9 – Kolonnenstraße 12 bis 18, all houses hatched, gez. K. A.",
+   "marks": {
+    "title": {
+     "rect": [
+      39,
+      18,
+      110,
+      10
+     ],
+     "text": "BEKANNTMACHUNG"
+    },
+    "blockleitung": {
+     "rect": [
+      62,
+      34,
+      63,
+      5
+     ],
+     "text": "DER BLOCKLEITUNG"
+    },
+    "line_1": {
+     "rect": [
+      20,
+      62,
+      115,
+      5
+     ],
+     "text": "ALLE HAUSHALTE HALTEN SICH AM"
+    },
+    "line_2": {
+     "rect": [
+      20,
+      71,
+      87,
+      5
+     ],
+     "text": "DIENSTAG AB 22 UHR ZUR"
+    },
+    "line_3": {
+     "rect": [
+      20,
+      79,
+      103,
+      6
+     ],
+     "text": "ÜBERPRÜFUNG DER HAUSHALTS-"
+    },
+    "line_4": {
+     "rect": [
+      20,
+      89,
+      55,
+      5
+     ],
+     "text": "KARTEI BEREIT."
+    },
+    "children": {
+     "rect": [
+      20,
+      104,
+      95,
+      5
+     ],
+     "text": "KINDER SIND VORZUZEIGEN."
+    },
+    "house_14": {
+     "rect": [
+      206,
+      115,
+      7,
+      5
+     ],
+     "text": "14"
+    },
+    "plan_title": {
+     "rect": [
+      164,
+      151,
+      71,
+      6
+     ],
+     "text": "BAUABSCHNITT SÜD 9"
+    },
+    "plan_street": {
+     "rect": [
+      164,
+      162,
+      87,
+      5
+     ],
+     "text": "KOLONNENSTR. 12 BIS 18"
+    },
+    "plan": {
+     "rect": [
+      164,
+      172,
+      31,
+      5
+     ],
+     "text": "LAGEPLAN"
+    },
+    "sign_ka": {
+     "rect": [
+      258,
+      174,
+      39,
+      5
+     ],
+     "text": "GEZ. K. A."
+    }
+   },
+   "alt_key": "doc.berlin_c4p2_house_notice.alt"
+  },
+  {
+   "file": "res://assets/ui/documents/berlin_c4p2_house_cards.png",
+   "size": [
+    320,
+    220
+   ],
+   "display_scale": 3,
+   "id": "berlin_c4p2_house_cards",
+   "item_id": "ev_c4_house_cards",
+   "objective": "c4h_inspect_cards",
+   "hotspot": "lodge_window",
+   "title_key": "item.c4_house_cards.name",
+   "description_key": "item.c4_house_cards.description",
+   "describes": "Kuhnert's wooden box of household cards, six cards fanned out (Adler, Pohl, the lodge, the empty Hinterhaus 3, the passage, the drying loft) and the slip of the cobbler Pietsch (no household card)",
+   "marks": {
+    "adler": {
+     "rect": [
+      16,
+      18,
+      151,
+      5
+     ],
+     "text": "SF 3: ADLER, HANNA – LEHRERIN, 1 PERS."
+    },
+    "pohl": {
+     "rect": [
+      22,
+      39,
+      195,
+      6
+     ],
+     "text": "SF 2: POHL, GERTRUD – WITWE – MELDET ZUVERLÄSSIG"
+    },
+    "loge": {
+     "rect": [
+      16,
+      62,
+      193,
+      5
+     ],
+     "text": "LOGE: KUHNERT, ERWIN U. FRIEDA – FENSTER ZUM HOF"
+    },
+    "leer": {
+     "rect": [
+      22,
+      84,
+      107,
+      5
+     ],
+     "text": "HH 3: LEER, UMGESETZT 10/63"
+    },
+    "durchfahrt": {
+     "rect": [
+      16,
+      106,
+      131,
+      5
+     ],
+     "text": "DURCHFAHRT: AB 22 UHR BLOCKLEITER"
+    },
+    "dachboden": {
+     "rect": [
+      22,
+      128,
+      117,
+      5
+     ],
+     "text": "DACHBODEN: WASCHTAG DI: OFFEN"
+    },
+    "pietsch_1": {
+     "rect": [
+      250,
+      48,
+      51,
+      5
+     ],
+     "text": "SCHUHMACHEREI"
+    },
+    "pietsch_2": {
+     "rect": [
+      260,
+      57,
+      31,
+      5
+     ],
+     "text": "PIETSCH,"
+    },
+    "pietsch_3": {
+     "rect": [
+      256,
+      66,
+      39,
+      5
+     ],
+     "text": "SOUTERRAIN"
+    },
+    "pietsch_4": {
+     "rect": [
+      252,
+      78,
+      45,
+      5
+     ],
+     "text": "– GEWERBE –"
+    }
+   },
+   "alt_key": "doc.berlin_c4p2_house_cards.alt"
+  }
+ ]
+}

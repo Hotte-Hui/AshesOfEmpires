@@ -1,0 +1,544 @@
+{
+ "generator": "tools/pixelgen/env_veltrava_station.py (+ _bg, _tracks, _props, _fx, _life, env_veltrava_lib)",
+ "date": "2026-11-04",
+ "area": "env_veltrava_station",
+ "licence": "project-owned original artwork, generated procedurally with fixed seeds; no copied, traced, downloaded or AI-generated pixels",
+ "run": "python3 -P tools/pixelgen/env_veltrava_station.py",
+ "files": [
+  {
+   "path": "assets/environments/veltrava_station/actors/bread.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite bread"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/breath_puff.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite breath_puff"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/pigeons_sheet.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite pigeons_sheet"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/porter_barrow.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite porter_barrow"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/tram.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite tram"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/tram_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite tram -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/viaduct_loco.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite viaduct_loco"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/viaduct_loco_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite viaduct_loco -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/viaduct_puff.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite viaduct_puff"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/viaduct_wag_box.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite viaduct_wag_box"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/viaduct_wag_flat.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite viaduct_wag_flat"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/viaduct_wag_tank.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite viaduct_wag_tank"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_official.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_official"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_railwayman.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_railwayman"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_railwayman_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_railwayman -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_soviet_staff.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_soviet_staff"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_traveller.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_traveller"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_woman_fur.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_woman_fur"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/walker_woman_scarf.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite walker_woman_scarf"
+  },
+  {
+   "path": "assets/environments/veltrava_station/actors/window_life.png",
+   "generator": "tools/pixelgen/env_veltrava_station_life.py",
+   "content": "ambient actor sprite window_life"
+  },
+  {
+   "path": "assets/environments/veltrava_station/canopy.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer canopy"
+  },
+  {
+   "path": "assets/environments/veltrava_station/canopy_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer canopy -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/canopy_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer canopy -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/city.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer city"
+  },
+  {
+   "path": "assets/environments/veltrava_station/city_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer city -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/city_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer city -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/clouds.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer clouds"
+  },
+  {
+   "path": "assets/environments/veltrava_station/clouds_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer clouds -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/concourse.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer concourse"
+  },
+  {
+   "path": "assets/environments/veltrava_station/concourse_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer concourse -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/concourse_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer concourse -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/far_track.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer far_track"
+  },
+  {
+   "path": "assets/environments/veltrava_station/far_track_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer far_track -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/far_track_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer far_track -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fg_frame.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer fg_frame"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/chimney_smoke.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip chimney_smoke"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/chimney_smoke_far.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip chimney_smoke_far"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/heater_steam.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip heater_steam"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/loco_steam.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip loco_steam"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/snow_arch.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip snow_arch"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/snow_far.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip snow_far"
+  },
+  {
+   "path": "assets/environments/veltrava_station/fx/snow_near.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "fx strip snow_near"
+  },
+  {
+   "path": "assets/environments/veltrava_station/ground.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer ground"
+  },
+  {
+   "path": "assets/environments/veltrava_station/ground_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer ground -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/ground_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer ground -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/island.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer island"
+  },
+  {
+   "path": "assets/environments/veltrava_station/island_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer island -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/island_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer island -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/pennants_reich.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer pennants_reich"
+  },
+  {
+   "path": "assets/environments/veltrava_station/pennants_reich_hist.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer pennants_reich -- variant with the historical insignia (Symbols.pick)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/pennants_reich_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer pennants_reich -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/barrier.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop barrier"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/barrier_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop barrier -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/bench_a.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop bench_a"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/bench_a_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop bench_a -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/bench_mitten.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop bench_mitten"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/bench_mitten_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop bench_mitten -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_1.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_1"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_1_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_1 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_2.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_2"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_2_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_2 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_3.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_3"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_3_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_3 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_4.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_4"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_4_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_4 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_5.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_5"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_5_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_5 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_6.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_6"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/column_6_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop column_6 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/control_booth.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop control_booth"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/control_booth_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop control_booth -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/control_booth_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop control_booth -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_commission.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_commission"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_commission_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_commission -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_reich.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_reich"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_reich_hist.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_reich -- variant with the historical insignia (Symbols.pick)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_reich_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_reich -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_ussr.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_ussr"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_ussr_hist.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_ussr -- variant with the historical insignia (Symbols.pick)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/flag_ussr_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop flag_ussr -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/kiosk.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop kiosk"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/kiosk_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop kiosk -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/litter_basket.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop litter_basket"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/litter_basket_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop litter_basket -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/luggage_cart.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop luggage_cart"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/luggage_cart_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop luggage_cart -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/menu_stand.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop menu_stand"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/menu_stand_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop menu_stand -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/menu_stand_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop menu_stand -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/queue_reich.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop queue_reich"
+  },
+  {
+   "path": "assets/environments/veltrava_station/props/queue_reich_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "prop queue_reich -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/scene.json",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "art manifest (TECHNICAL_ARCHITECTURE 3.1)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/sky.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer sky"
+  },
+  {
+   "path": "assets/environments/veltrava_station/skyline.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer skyline"
+  },
+  {
+   "path": "assets/environments/veltrava_station/skyline_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer skyline -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/skyline_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer skyline -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/square.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer square"
+  },
+  {
+   "path": "assets/environments/veltrava_station/square_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer square -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/square_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer square -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/station.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer station"
+  },
+  {
+   "path": "assets/environments/veltrava_station/station_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer station -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/station_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer station -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/train_near.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer train_near"
+  },
+  {
+   "path": "assets/environments/veltrava_station/train_near_e.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer train_near -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_station/train_near_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer train_near -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_station/viaduct.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer viaduct"
+  },
+  {
+   "path": "assets/environments/veltrava_station/viaduct_n.png",
+   "generator": "tools/pixelgen/env_veltrava_station.py",
+   "content": "layer viaduct -- normal map (OpenGL +Y up)"
+  }
+ ]
+}

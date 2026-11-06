@@ -1,0 +1,31 @@
+{
+ "doc": "Exploration hotspots of L_C4P2_Berlin (Level._merge_explore_hotspots; scene.json wins on name clashes). Owner: exploration stream (documentation/C4P2_DESIGN.md §4.2/§6). Every spot keeps >= 24 px from the story hotspots and NPC anchors of §4.2, >= 14 px from the other finds, >= 20 px from the spawns, and lies in the walk area of the scene that reaches it: x 30-892 = scene A (Ostbahnhof, Korridorbahnsteig K, Konrad, Monday evening, open until c4f_inspect_book), x 944-1895 = scene B (courtyard of Kolonnenstraße 14, Konrad, Tuesday night, open after c4f_inspect_book). `info` is the art contract for env-berlin: stand = where Konrad stands (feet line y 300), focus = where the thing is painted (world px), what = what must be visible there (positions follow the scenery of §4.2 left to right; an env stream may move a spot a few px with its art and then edits only the numbers here). The chats stand on NPC anchors of the story stream (marta_buffet, kuhnert_gate, hanna_yard) and need no entry here; the side task's voice from the window is Frau Grabowski's (no figure in the walk band). The engine reads only `hotspots` / `spawns`.",
+ "hotspots": {
+  "exp_liaison_booth": [34, 300], "exp_luggage_scale": [166, 300], "exp_corridor_permit": [236, 300],
+  "exp_kiosk": [380, 300], "exp_green_car": [560, 300], "exp_porters": [616, 300],
+  "exp_station_clock": [740, 300], "exp_ticket_stub": [846, 300],
+  "exp_task_basket": [1160, 300], "exp_frozen_laundry": [1196, 300], "exp_ilse_drawing": [1282, 300],
+  "exp_task_coal": [1330, 300], "exp_cellar_hatch": [1356, 300], "exp_windows": [1500, 300],
+  "exp_dustbins": [1550, 300], "exp_carpet_rack": [1640, 300], "exp_workshop_window": [1760, 300]
+ },
+ "spawns": {},
+ "info": {
+  "exp_liaison_booth": {"stand": [34, 300], "focus": [30, 236], "what": "the glass booth at the barrier to platform K (x 5-60): two officials at one desk under one lamp, a Soviet liaison officer with a tea glass in a metal holder, a German railway policeman with a stamp pad and a ruler"},
+  "exp_luggage_scale": {"stand": [166, 300], "focus": [172, 262], "what": "the baggage counter's decimal platform scale (x ~150-195): a low platform with a suitcase on it, the weighing beam with two sliding weights at hand height, the counter window beside it"},
+  "exp_corridor_permit": {"stand": [236, 300], "focus": [240, 252], "what": "at the buffet (x 200-360): a family waiting, the mother holding a permit in cellophane, a boy asleep on a suitcase"},
+  "exp_kiosk": {"stand": [380, 300], "focus": [392, 232], "what": "the newspaper kiosk (x ~375-445): rows of papers with one headline, a card on a hook („vergriffen“), the man in the leather coat reading beside it"},
+  "exp_green_car": {"stand": [560, 300], "focus": [566, 222], "what": "on the next track the green windowless car (x ~530-620): barred hatches, chalk „Di – Kordon“ on the door, one hatch frosted from inside"},
+  "exp_porters": {"stand": [616, 300], "focus": [620, 262], "what": "two porters with brass badges on their caps and their luggage carts (x ~600-640)"},
+  "exp_station_clock": {"stand": [740, 300], "focus": [740, 150], "what": "the station clock under the glass roof (20.31) half in steam; a small enamel plate beside it „Ortszeit Karsk + 2“"},
+  "exp_ticket_stub": {"stand": [846, 300], "focus": [850, 296], "what": "hidden: between two platform boards near the end of platform K a small cardboard ticket stub (2 px, optional)"},
+  "exp_task_basket": {"stand": [1160, 300], "focus": [1160, 196], "what": "side task „Ein Korb für Frau Grabowski“: the courtyard face of the front wing, the dark kitchen window of the 2nd floor (Frau Grabowski), a basket hanging from it on a washing line down to head height (basket at y ~262)"},
+  "exp_frozen_laundry": {"stand": [1196, 300], "focus": [1204, 128], "what": "washing lines across the courtyard: frozen shirts, a stiff sheet, children's stockings in three sizes"},
+  "exp_ilse_drawing": {"stand": [1282, 300], "focus": [1286, 250], "what": "hidden: the glass pane of the side wing's stair door (beside Hanna): frost with a finger-drawn house, all its windows lit (optional, 3-4 px)"},
+  "exp_task_coal": {"stand": [1330, 300], "focus": [1336, 290], "what": "side task: a heap of briquettes beside the cellar hatch (delivered today), a coal shovel leaning against the hatch"},
+  "exp_cellar_hatch": {"stand": [1356, 300], "focus": [1362, 292], "what": "the iron cellar hatch in the pavement, open, a coal chute below; luminous arrows of the wartime shelter route inside (optional)"},
+  "exp_windows": {"stand": [1500, 300], "focus": [1500, 120], "what": "the lit windows of the courtyard façades = the households of the house puzzle (§2.7/§4.2): a radio and a desk lamp, a baby, a dark kitchen, a moving curtain, a card game, three sealed windows with paper strips"},
+  "exp_dustbins": {"stand": [1550, 300], "focus": [1554, 270], "what": "four dustbins under snow caps, white painted labels (VH, SF, HH); fir twigs sticking out of one, a chair leg out of another, one („HH 3“) empty and lined with newspaper"},
+  "exp_carpet_rack": {"stand": [1640, 300], "focus": [1648, 250], "what": "the iron carpet-beating rack beside the pump (x ~1630-1670) with an enamel plate of the house rules, chalk lines of a hopscotch half under snow"},
+  "exp_workshop_window": {"stand": [1760, 300], "focus": [1766, 288], "what": "the cobbler Pietsch's souterrain windows at the foot of the back wing (x 1700-1880), half below the pavement: shelves of shoes with name tags behind the glass (the candle after the puzzle is the env stream's art gate)"}
+ }
+}

@@ -259,6 +259,83 @@
       "description_key": "item.c4_tube_slip.description",
       "scene": "L_C4_AnnexB",
       "category": "document"
+    },
+    {
+      "id": "ev_c4_special_order",
+      "name_key": "item.c4_special_order.name",
+      "description_key": "item.c4_special_order.description",
+      "scene": "L_C4P2_KarskA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_work_list",
+      "name_key": "item.c4_work_list.name",
+      "description_key": "item.c4_work_list.description",
+      "scene": "L_C4P2_KarskA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_press_notice",
+      "name_key": "item.c4_press_notice.name",
+      "description_key": "item.c4_press_notice.description",
+      "scene": "L_C4P2_KarskA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_departures_east",
+      "name_key": "item.c4_departures_east.name",
+      "description_key": "item.c4_departures_east.description",
+      "scene": "L_C4P2_BerlinA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_courier_seals",
+      "name_key": "item.c4_courier_seals.name",
+      "description_key": "item.c4_courier_seals.description",
+      "scene": "L_C4P2_BerlinA",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_konrad_tracing",
+      "name_key": "item.c4_konrad_tracing.name",
+      "description_key": "item.c4_konrad_tracing.description",
+      "scene": "L_C4P2_BerlinA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_guidebook",
+      "name_key": "item.c4_guidebook.name",
+      "description_key": "item.c4_guidebook.description",
+      "scene": "L_C4P2_KarskB",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c4_card_ru_original",
+      "name_key": "item.c4_card_ru_original.name",
+      "description_key": "item.c4_card_ru_original.description",
+      "scene": "L_C4P2_KarskB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_card_whole",
+      "name_key": "item.c4_card_whole.name",
+      "description_key": "item.c4_card_whole.description",
+      "scene": "L_C4P2_KarskB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_house_notice",
+      "name_key": "item.c4_house_notice.name",
+      "description_key": "item.c4_house_notice.description",
+      "scene": "L_C4P2_BerlinB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c4_house_cards",
+      "name_key": "item.c4_house_cards.name",
+      "description_key": "item.c4_house_cards.description",
+      "scene": "L_C4P2_BerlinB",
+      "category": "document"
     }
   ]
 }

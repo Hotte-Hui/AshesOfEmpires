@@ -1,0 +1,357 @@
+{
+ "scene": "L_C4P2_KarskA / L_C4P2_KarskB",
+ "palette": "depot",
+ "generator": "tools/pixelgen/env_c4p2_karsk_docs.py",
+ "date": "2026-11-06",
+ "note": "Pixel art drawn 1:1, shown at 3x (nearest). Only the story-critical lines are legible; the UI shows the item name/description as HD text and the alt text (data/locale/de_env_karsk_c4p2.json) as the German caption line. All rects are [x, y, w, h] in document pixels. Card 0417 keeps the perforation contract of part 1 (pitch 6, hole 3, first hole 8 px below the top edge, 15 holes); the round stamp C-17 is centred on the cut (German letters on the left arc, Cyrillic on the right). ev_c4_card_ru_original is granted by c4g_talk_lev (its last line), so its record names that objective.",
+ "documents": [
+  {
+   "file": "res://assets/ui/documents/karsk_c4p2_order.png",
+   "size": [
+    300,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_c4p2_order",
+   "alt_key": "doc.karsk_c4p2_order.alt",
+   "item_id": "ev_c4_special_order",
+   "objective": "c4e_inspect_order",
+   "hotspot": "dispatch_window",
+   "scene": "L_C4P2_KarskA",
+   "title_key": "item.c4_special_order.name",
+   "description_key": "item.c4_special_order.description",
+   "describes": "A violet carbon copy of the depot order on Irina's window sill: special run C-17/45 on Tuesday 18.2., one engine and one crew, transfer track 19.40 local, Kordon-17 23.40 corridor time, wagon 24 318, escort Dept. T, „Персонал молчит“; the depot stamp; under it Irina's pencil „Кто?“.",
+   "marks": {
+    "run": {
+     "rect": [
+      38,
+      59,
+      210,
+      25
+     ],
+     "text": "Sonderlauf C-17/45, Dienstag 18.2.: eine Lok, ein Personal"
+    },
+    "times": {
+     "rect": [
+      38,
+      95,
+      220,
+      16
+     ],
+     "text": "Ab Umsetzgleis 19.40 Uhr Ortszeit, an Kordon-17 23.40 Uhr Korridorzeit"
+    },
+    "wagon": {
+     "rect": [
+      38,
+      113,
+      200,
+      7
+     ],
+     "text": "Wagen 24 318. Begleitung: Abt. T"
+    },
+    "silent": {
+     "rect": [
+      38,
+      131,
+      90,
+      7
+     ],
+     "text": "Das Personal schweigt."
+    },
+    "who": {
+     "rect": [
+      48,
+      159,
+      32,
+      14
+     ],
+     "text": "Irinas Bleistift: „Wer?“"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_c4p2_work_list.png",
+   "size": [
+    280,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_c4p2_work_list",
+   "alt_key": "doc.karsk_c4p2_work_list.alt",
+   "item_id": "ev_c4_work_list",
+   "objective": "c4e_inspect_list",
+   "hotspot": "coal_list",
+   "scene": "L_C4P2_KarskA",
+   "title_key": "item.c4_work_list.name",
+   "description_key": "item.c4_work_list.description",
+   "describes": "A typed list under yellowed cellophane on the coal-stage post: „Колонна 4“, arrival 22.1.1964, until the check is complete; eleven numbered names, blurred; in the margin two pencil notes: Lena, 4, and Miron, 6 – children's home No. 2; Wilhelm S. – special settlement North.",
+   "marks": {
+    "head": {
+     "rect": [
+      36,
+      24,
+      100,
+      26
+     ],
+     "text": "Kolonne 4. Zugang 22.1.1964. Bis zum Abschluss der Prüfung."
+    },
+    "names": {
+     "rect": [
+      36,
+      56,
+      86,
+      112
+     ],
+     "text": "Elf Namen, unter dem Zellophan unleserlich"
+    },
+    "children": {
+     "rect": [
+      126,
+      60,
+      108,
+      22
+     ],
+     "text": "„Lena, 4, und Miron, 6 – Kinderheim Nr. 2“"
+    },
+    "wilhelm": {
+     "rect": [
+      122,
+      112,
+      112,
+      22
+     ],
+     "text": "„Wilhelm S. – Sondersiedlung Nord“"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_c4p2_press_notice.png",
+   "size": [
+    320,
+    210
+   ],
+   "display_scale": 3,
+   "id": "karsk_c4p2_press_notice",
+   "alt_key": "doc.karsk_c4p2_press_notice.alt",
+   "item_id": "ev_c4_press_notice",
+   "objective": "c4e_inspect_notice",
+   "hotspot": "press_notice",
+   "scene": "L_C4P2_KarskA",
+   "title_key": "item.c4_press_notice.name",
+   "description_key": "item.c4_press_notice.description",
+   "describes": "A typed notice with the depot stamp on the roundhouse's back door: Tuesday 18.2., 17.30, visit of a representative of the Swedish press; to be shown: the restored signal (Eng. A. Morozov), the model brigade, the canteen; Kolonne 4 that day: back yard, behind the tarpaulin -- underlined in pencil.",
+   "marks": {
+    "visit": {
+     "rect": [
+      30,
+      42,
+      150,
+      17
+     ],
+     "text": "Dienstag, 18.2., 17.30 Uhr: Besuch eines Vertreters der schwedischen Presse"
+    },
+    "show": {
+     "rect": [
+      30,
+      72,
+      150,
+      27
+     ],
+     "text": "Vorzuführen: das wiederhergestellte Signal der Strecke (Ing. A. Morozov), die Musterbrigade, die Speisehalle"
+    },
+    "kolonne": {
+     "rect": [
+      30,
+      112,
+      130,
+      24
+     ],
+     "text": "Kolonne 4 an diesem Tag: Hinterhof, hinter der Plane (unterstrichen)"
+    },
+    "stamp": {
+     "rect": [
+      198,
+      140,
+      40,
+      40
+     ],
+     "text": "Stempel der Depotleitung"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_c4p2_guidebook.png",
+   "size": [
+    320,
+    210
+   ],
+   "display_scale": 3,
+   "id": "karsk_c4p2_guidebook",
+   "alt_key": "doc.karsk_c4p2_guidebook.alt",
+   "item_id": "ev_c4_guidebook",
+   "objective": "c4g_inspect_book",
+   "hotspot": "canteen_table",
+   "scene": "L_C4P2_KarskB",
+   "title_key": "item.c4_guidebook.name",
+   "description_key": "item.c4_guidebook.description",
+   "describes": "A Swedish travel guide of 1938 open on the press table at page 212, „Karsk – bangård och depå“; between the pages the German half of card 0417 laid in upside down and Konrad's tracing of the Kordon room on onion-skin, its folded edge showing the block letters MOROZOV – 0417 – DI 23.40 – TÜR OST.",
+   "marks": {
+    "title": {
+     "rect": [
+      32,
+      24,
+      70,
+      16
+     ],
+     "text": "Seite 212: „Karsk – Bahnhof und Depot“ (schwedisch, 1938)"
+    },
+    "card": {
+     "rect": [
+      174,
+      58,
+      116,
+      56
+     ],
+     "text": "Die deutsche Hälfte der Karte 0417, verkehrt herum eingelegt"
+    },
+    "tracing": {
+     "rect": [
+      46,
+      114,
+      128,
+      58
+     ],
+     "text": "Konrads Pause: der Raum von Kordon-17, Tür West, Tür Ost, der Durchgabeschalter, die Wartebank für vierzehn"
+    },
+    "back": {
+     "rect": [
+      46,
+      172,
+      128,
+      12
+     ],
+     "text": "Auf der Rückseite: „MOROZOV – 0417 – DI 23.40 – TÜR OST“"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_c4p2_card_ru.png",
+   "size": [
+    240,
+    160
+   ],
+   "display_scale": 3,
+   "id": "karsk_c4p2_card_ru",
+   "alt_key": "doc.karsk_c4p2_card_ru.alt",
+   "item_id": "ev_c4_card_ru_original",
+   "objective": "c4g_talk_lev",
+   "hotspot": "lev_sandhouse",
+   "scene": "L_C4P2_KarskB",
+   "title_key": "item.c4_card_ru_original.name",
+   "description_key": "item.c4_card_ru_original.description",
+   "describes": "Card 0417, the Russian half, borrowed for an hour from the box „C-17/45 – принять“: Kovalenko, Anna Petrovna, 1926, Kharkov; returnee; on to the filtration point Karsk; the stamp „Принять“; the notches of the perforation on its left edge and over them the right half of a round stamp C-17 in Cyrillic letters. Lev's slip: back in the box by 19.30.",
+   "marks": {
+    "name": {
+     "rect": [
+      58,
+      41,
+      140,
+      30
+     ],
+     "text": "„Kowalenko, Anna Petrowna, 1926, Charkow“"
+    },
+    "returnee": {
+     "rect": [
+      58,
+      71,
+      140,
+      20
+     ],
+     "text": "„Rückkehrerin. Weiter: Filtrationspunkt Karsk.“"
+    },
+    "accept": {
+     "rect": [
+      116,
+      104,
+      56,
+      18
+     ],
+     "text": "Stempel „Annehmen“"
+    },
+    "stamp_half": {
+     "rect": [
+      50,
+      56,
+      24,
+      46
+     ],
+     "text": "Links die Perforation, darüber ein halber runder Stempel „C-17“ in kyrillischer Schrift"
+    },
+    "slip": {
+     "rect": [
+      40,
+      140,
+      160,
+      12
+     ],
+     "text": "Levs Zettel: „Bis 19.30 – zurück in den Kasten“"
+    }
+   }
+  },
+  {
+   "file": "res://assets/ui/documents/karsk_c4p2_card_whole.png",
+   "size": [
+    320,
+    200
+   ],
+   "display_scale": 3,
+   "id": "karsk_c4p2_card_whole",
+   "alt_key": "doc.karsk_c4p2_card_whole.alt",
+   "item_id": "ev_c4_card_whole",
+   "objective": "c4g_inspect_card",
+   "hotspot": "sand_lamp",
+   "scene": "L_C4P2_KarskB",
+   "title_key": "item.c4_card_whole.name",
+   "description_key": "item.c4_card_whole.description",
+   "describes": "Card 0417 whole under the green lamp: the German half (Lindner, Anna, née Kowalenko … note C-17: return East, hand-over Kordon-17, Tür Ost) and the Russian half (Kovalenko, Anna Petrovna … accept … filtration point Karsk) laid edge to edge; the teeth of the perforation in the notches; the round stamp C-17 closes across the cut, half in German, half in Cyrillic letters.",
+   "marks": {
+    "de": {
+     "rect": [
+      12,
+      64,
+      140,
+      66
+     ],
+     "text": "Links, deutsch: „Lindner, Anna, geb. Kowalenko … Vermerk C-17: Rückführung Ost. Abgabe Kordon-17, Tür Ost.“"
+    },
+    "ru": {
+     "rect": [
+      165,
+      64,
+      145,
+      60
+     ],
+     "text": "Rechts, russisch: „Kowalenko, Anna Petrowna … Annehmen … Weiter: Filtrationspunkt Karsk.“"
+    },
+    "stamp": {
+     "rect": [
+      138,
+      78,
+      46,
+      48
+     ],
+     "text": "Der runde Stempel „C-17“ schließt sich über den Schnitt: halb deutsche, halb kyrillische Schrift"
+    },
+    "teeth": {
+     "rect": [
+      156,
+      56,
+      8,
+      92
+     ],
+     "text": "Die Zähne der Perforation greifen ineinander"
+    }
+   }
+  }
+ ]
+}

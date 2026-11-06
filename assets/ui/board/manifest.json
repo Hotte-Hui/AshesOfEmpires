@@ -389,6 +389,126 @@
    "source": "assets/ui/documents/veltrava_hall_carbon.png @ 108,49"
   },
   {
+   "path": "assets/ui/board/thumbs/ev_c4_special_order.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_c4p2_order.png @ 38,57"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_work_list.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_c4p2_work_list.png @ 124,58"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_press_notice.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_c4p2_press_notice.png @ 30,112"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_guidebook.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_c4p2_guidebook.png @ 32,20"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_card_ru_original.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_c4p2_card_ru.png @ 117,101"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_card_whole.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/karsk_c4p2_card_whole.png @ 134,90"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_departures_east.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_c4p2_departures.png @ 12,51"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_courier_seals.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_c4p2_seals.png @ 62,110"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_courier_seals_hist.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the _hist close-up",
+   "source": "assets/ui/documents/berlin_c4p2_seals_hist.png"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_konrad_tracing.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_c4p2_tracing.png @ 196,106"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_house_notice.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_c4p2_house_notice.png @ 244,156"
+  },
+  {
+   "path": "assets/ui/board/thumbs/ev_c4_house_cards.png",
+   "size_1x": [
+    54,
+    24
+   ],
+   "scale": 3,
+   "note": "detail crop of the inspect close-up",
+   "source": "assets/ui/documents/berlin_c4p2_house_cards.png @ 14,12"
+  },
+  {
    "path": "assets/ui/board/thumbs/ev_c3_cut_seal.png",
    "size_1x": [
     54,

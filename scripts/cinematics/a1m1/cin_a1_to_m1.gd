@@ -1242,7 +1242,7 @@ func _grade_blend(a_name: String, b_name: String, k: float) -> void:
 	var cols := _palette_cols(pal_b if use_b else pal_a)
 	mat.set_shader_parameter("palette_size", cols.size())
 	if cols.size() > 0:
-		while cols.size() < 64:
+		while cols.size() < 128:
 			cols.append(cols[0])
 		mat.set_shader_parameter("palette", cols)
 	mat.set_shader_parameter("palette_strength", strength * float(Settings.get_value("pixel_post")) if cols.size() > 1 else 0.0)
@@ -1256,7 +1256,7 @@ func _palette_cols(name: String) -> Array:
 			for hexc in ramp:
 				var c := Color(str(hexc))
 				cols.append(Vector3(c.r, c.g, c.b))
-	return cols.slice(0, 64)
+	return cols.slice(0, 128)
 
 
 func _apply_fade(time: float) -> void:

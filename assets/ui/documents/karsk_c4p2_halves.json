@@ -1,0 +1,416 @@
+{
+ "puzzle_id": "pz_c4_halves",
+ "objective": "c4g_solve_halves",
+ "cell_px": 16,
+ "display_scale": 3,
+ "coords": "board in cells (+x right, +y down); marks in continuous art px of each sheet BODY (+x right, +y down); rotation_steps turn the German half clockwise around its body centre (screen coordinates); offsets move it in whole cells; a mark pair is joined when the positions meet and the inward directions are opposite",
+ "generator": "tools/pixelgen/gen_ui_c4p2.py",
+ "date": "2026-11-06",
+ "board": {
+  "file": "c4p2_halves_table.png",
+  "cells": [
+   20,
+   14
+  ],
+  "lamp": [
+   214,
+   116
+  ],
+  "edge_margin_px": 8,
+  "book": [
+   6,
+   46,
+   146,
+   124
+  ]
+ },
+ "base": {
+  "file": "karsk_c4p2_halves_ru.png",
+  "item": "ev_c4_card_ru_original",
+  "cells": [
+   7,
+   5
+  ],
+  "at": [
+   12,
+   5
+  ],
+  "pad": 0,
+  "marks": {
+   "notch": [
+    {
+     "id": "t1",
+     "at": [
+      5.0,
+      7.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 3
+    },
+    {
+     "id": "t2",
+     "at": [
+      5.0,
+      18.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 4
+    },
+    {
+     "id": "t3",
+     "at": [
+      5.0,
+      30.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 3
+    },
+    {
+     "id": "t4",
+     "at": [
+      5.0,
+      52.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 4
+    },
+    {
+     "id": "t5",
+     "at": [
+      5.0,
+      69.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 3
+    }
+   ],
+   "stamp_half": [
+    {
+     "id": "stamp",
+     "at": [
+      0.0,
+      40.0
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "r": 24
+    }
+   ],
+   "line_end": [
+    {
+     "id": "l1",
+     "at": [
+      0.0,
+      22.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l2",
+     "at": [
+      0.0,
+      34.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l3",
+     "at": [
+      0.0,
+      46.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l4",
+     "at": [
+      0.0,
+      58.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l5",
+     "at": [
+      0.0,
+      70.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    }
+   ]
+  }
+ },
+ "overlay": {
+  "file": "karsk_c4p2_halves_de.png",
+  "item": "ev_c4_guidebook",
+  "cells": [
+   7,
+   5
+  ],
+  "at": [
+   1,
+   4
+  ],
+  "pad": 6,
+  "stored": "upside down, as Konrad laid it into the guidebook",
+  "marks": {
+   "tooth": [
+    {
+     "id": "t1",
+     "at": [
+      -5,
+      72.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 3
+    },
+    {
+     "id": "t2",
+     "at": [
+      -5,
+      61.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 4
+    },
+    {
+     "id": "t3",
+     "at": [
+      -5,
+      49.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 3
+    },
+    {
+     "id": "t4",
+     "at": [
+      -5,
+      27.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 4
+    },
+    {
+     "id": "t5",
+     "at": [
+      -5,
+      10.5
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "half_base": 3
+    }
+   ],
+   "stamp_half": [
+    {
+     "id": "stamp",
+     "at": [
+      0,
+      40
+     ],
+     "dir": [
+      1,
+      0
+     ],
+     "r": 24
+    }
+   ],
+   "line_end": [
+    {
+     "id": "l1",
+     "at": [
+      0,
+      57.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l2",
+     "at": [
+      0,
+      45.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l3",
+     "at": [
+      0,
+      33.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l4",
+     "at": [
+      0,
+      21.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    },
+    {
+     "id": "l5",
+     "at": [
+      0,
+      9.5
+     ],
+     "dir": [
+      1,
+      0
+     ]
+    }
+   ]
+  }
+ },
+ "pairs": [
+  [
+   "tooth",
+   "notch"
+  ],
+  [
+   "stamp_half",
+   "stamp_half"
+  ],
+  [
+   "line_end",
+   "line_end"
+  ]
+ ],
+ "start": {
+  "rotation_steps": 0,
+  "offset_x": 0,
+  "offset_y": 0
+ },
+ "offsets": [
+  {
+   "rotation_steps": 0,
+   "min": [
+    0,
+    -3
+   ],
+   "max": [
+    11,
+    4
+   ]
+  },
+  {
+   "rotation_steps": 1,
+   "min": [
+    -1,
+    -2
+   ],
+   "max": [
+    12,
+    3
+   ]
+  },
+  {
+   "rotation_steps": 2,
+   "min": [
+    0,
+    -3
+   ],
+   "max": [
+    11,
+    4
+   ]
+  },
+  {
+   "rotation_steps": 3,
+   "min": [
+    -1,
+    -2
+   ],
+   "max": [
+    12,
+    3
+   ]
+  }
+ ],
+ "marks": {
+  "snap": "c4p2_halves_snap.png",
+  "ring": "c4p2_halves_ring.png",
+  "click": "c4p2_halves_click.png"
+ },
+ "legend": {
+  "tooth": "c4p2_halves_legend_teeth.png",
+  "stamp": "c4p2_halves_legend_stamp.png",
+  "lines": "c4p2_halves_legend_lines.png"
+ },
+ "surfaces": {
+  "paper": "#E6DEC2",
+  "table": "#442B18"
+ },
+ "pose_check": {
+  "verified_against": "data/v3/puzzles.json pz_c4_halves",
+  "unique": "exactly one pose (rotation, offset) joins all five teeth and the stamp; no other pose joins even one tooth; only one rotation lets the marks face each other",
+  "start_joined": 0,
+  "rotation_fits": [
+   false,
+   false,
+   true,
+   false
+  ]
+ },
+ "accessibility": "teeth are triangles, notches are cut-outs, the stamp halves are semicircles, the line ends are ticks -- shapes, not colours; the card text turns with the paper",
+ "world_note": "Fictional two-part registry card laid against its other half; not a real form."
+}

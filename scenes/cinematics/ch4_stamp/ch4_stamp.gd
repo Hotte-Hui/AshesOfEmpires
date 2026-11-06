@@ -85,9 +85,15 @@ func _make_cues() -> Array:
 		{"t": 0.0, "bed": "c4cine_desk", "db": -6.0},
 		say_at(LINES[0], 0.4),
 		{"t": 3.5, "bed": "c4cine_stamp_ru", "db": -4.0},
+		# the stamps' surfaces over the beds' thumps (tools/audiogen/c4_audio.py, strike 0.36 s in = the contact
+		# frame): the Karsk desk's wooden knock in the booth, then the Berlin counter's steel in the concrete hall
+		{"t": float(STAMP_RU[0]), "sfx": "c4_stamp_accept", "db": -5.0, "pv": 0.0},
 		{"t": 5.0, "bed": "c4cine_stamp_de", "db": -4.0},
+		{"t": float(STAMP_DE[0]), "sfx": "c4_stamp_dispatch", "db": -5.0, "pv": 0.0},
 		say_at(LINES[1], 5.3, 1.4, 1.6),
 		{"t": S3_CUT, "bed": "c4cine_annex", "db": -6.0},
+		# the card tearing along its perforation under the lever (the split at LEVER[1], the halves' ease-out)
+		{"t": float(LEVER[0]), "sfx": "c4_card_tear", "db": -6.0, "pv": 0.0},
 	]
 
 

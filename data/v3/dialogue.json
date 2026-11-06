@@ -1194,6 +1194,594 @@
           "end": true
         }
       ]
+    },
+    {
+      "id": "dlg_c4e_irina",
+      "entry_node": "c4e_iri_01",
+      "nodes": [
+        {
+          "id": "c4e_iri_01",
+          "speaker": "irina",
+          "text_key": "dlg.c4p2.e_iri_01",
+          "next": "c4e_iri_02"
+        },
+        {
+          "id": "c4e_iri_02",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_iri_02",
+          "next": "c4e_iri_03"
+        },
+        {
+          "id": "c4e_iri_03",
+          "speaker": "irina",
+          "text_key": "dlg.c4p2.e_iri_03",
+          "next": "c4e_iri_04"
+        },
+        {
+          "id": "c4e_iri_04",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_iri_04",
+          "next": "c4e_iri_05"
+        },
+        {
+          "id": "c4e_iri_05",
+          "speaker": "irina",
+          "text_key": "dlg.c4p2.e_iri_05",
+          "next": "c4e_iri_06"
+        },
+        {
+          "id": "c4e_iri_06",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_iri_06",
+          "next": "c4e_iri_07"
+        },
+        {
+          "id": "c4e_iri_07",
+          "speaker": "irina",
+          "text_key": "dlg.c4p2.e_iri_07",
+          "next": "c4e_iri_08"
+        },
+        {
+          "id": "c4e_iri_08",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_iri_08",
+          "next": "c4e_iri_09"
+        },
+        {
+          "id": "c4e_iri_09",
+          "speaker": "irina",
+          "text_key": "dlg.c4p2.e_iri_09",
+          "next": "c4e_iri_10"
+        },
+        {
+          "id": "c4e_iri_10",
+          "speaker": "irina",
+          "text_key": "dlg.c4p2.e_iri_10",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4e_maria",
+      "entry_node": "c4e_mar_01",
+      "nodes": [
+        {
+          "id": "c4e_mar_01",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_01",
+          "next": "c4e_mar_02"
+        },
+        {
+          "id": "c4e_mar_02",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_mar_02",
+          "next": "c4e_mar_03"
+        },
+        {
+          "id": "c4e_mar_03",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_03",
+          "next": "c4e_mar_04"
+        },
+        {
+          "id": "c4e_mar_04",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_mar_04",
+          "next": "c4e_mar_05"
+        },
+        {
+          "id": "c4e_mar_05",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_05",
+          "next": "c4e_mar_06"
+        },
+        {
+          "id": "c4e_mar_06",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_mar_06",
+          "next": "c4e_mar_07"
+        },
+        {
+          "id": "c4e_mar_07",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_07",
+          "next": "c4e_mar_08"
+        },
+        {
+          "id": "c4e_mar_08",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_mar_08",
+          "next": "c4e_mar_09"
+        },
+        {
+          "id": "c4e_mar_09",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_09",
+          "next": "c4e_mar_10"
+        },
+        {
+          "id": "c4e_mar_10",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_mar_10",
+          "next": "c4e_mar_11"
+        },
+        {
+          "id": "c4e_mar_11",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_11",
+          "next": "c4e_mar_12"
+        },
+        {
+          "id": "c4e_mar_12",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.e_mar_12",
+          "next": "c4e_mar_13"
+        },
+        {
+          "id": "c4e_mar_13",
+          "speaker": "maria",
+          "text_key": "dlg.c4p2.e_mar_13",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4f_marta",
+      "entry_node": "c4f_mar_01",
+      "nodes": [
+        {
+          "id": "c4f_mar_01",
+          "speaker": "marta",
+          "text_key": "dlg.c4p2.f_mar_01",
+          "next": "c4f_mar_02"
+        },
+        {
+          "id": "c4f_mar_02",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_mar_02",
+          "next": "c4f_mar_03"
+        },
+        {
+          "id": "c4f_mar_03",
+          "speaker": "marta",
+          "text_key": "dlg.c4p2.f_mar_03",
+          "next": "c4f_mar_04"
+        },
+        {
+          "id": "c4f_mar_04",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_mar_04",
+          "next": "c4f_mar_05"
+        },
+        {
+          "id": "c4f_mar_05",
+          "speaker": "marta",
+          "text_key": "dlg.c4p2.f_mar_05",
+          "next": "c4f_mar_06"
+        },
+        {
+          "id": "c4f_mar_06",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_mar_06",
+          "next": "c4f_mar_07"
+        },
+        {
+          "id": "c4f_mar_07",
+          "speaker": "marta",
+          "text_key": "dlg.c4p2.f_mar_07",
+          "next": "c4f_mar_08"
+        },
+        {
+          "id": "c4f_mar_08",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_mar_08",
+          "next": "c4f_mar_09"
+        },
+        {
+          "id": "c4f_mar_09",
+          "speaker": "marta",
+          "text_key": "dlg.c4p2.f_mar_09",
+          "next": "c4f_mar_10"
+        },
+        {
+          "id": "c4f_mar_10",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_mar_10",
+          "next": "c4f_mar_11"
+        },
+        {
+          "id": "c4f_mar_11",
+          "speaker": "marta",
+          "text_key": "dlg.c4p2.f_mar_11",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4f_ekdahl",
+      "entry_node": "c4f_ekd_01",
+      "nodes": [
+        {
+          "id": "c4f_ekd_01",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.f_ekd_01",
+          "next": "c4f_ekd_02"
+        },
+        {
+          "id": "c4f_ekd_02",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_ekd_02",
+          "next": "c4f_ekd_03"
+        },
+        {
+          "id": "c4f_ekd_03",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.f_ekd_03",
+          "next": "c4f_ekd_04"
+        },
+        {
+          "id": "c4f_ekd_04",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_ekd_04",
+          "next": "c4f_ekd_05"
+        },
+        {
+          "id": "c4f_ekd_05",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.f_ekd_05",
+          "next": "c4f_ekd_06"
+        },
+        {
+          "id": "c4f_ekd_06",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_ekd_06",
+          "next": "c4f_ekd_07"
+        },
+        {
+          "id": "c4f_ekd_07",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.f_ekd_07",
+          "next": "c4f_ekd_08"
+        },
+        {
+          "id": "c4f_ekd_08",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_ekd_08",
+          "next": "c4f_ekd_09"
+        },
+        {
+          "id": "c4f_ekd_09",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.f_ekd_09",
+          "next": "c4f_ekd_10"
+        },
+        {
+          "id": "c4f_ekd_10",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.f_ekd_10",
+          "next": "c4f_ekd_11"
+        },
+        {
+          "id": "c4f_ekd_11",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.f_ekd_11",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4g_ekdahl",
+      "entry_node": "c4g_ekd_01",
+      "nodes": [
+        {
+          "id": "c4g_ekd_01",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.g_ekd_01",
+          "next": "c4g_ekd_02"
+        },
+        {
+          "id": "c4g_ekd_02",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_ekd_02",
+          "next": "c4g_ekd_03"
+        },
+        {
+          "id": "c4g_ekd_03",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.g_ekd_03",
+          "next": "c4g_ekd_04"
+        },
+        {
+          "id": "c4g_ekd_04",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_ekd_04",
+          "next": "c4g_ekd_05"
+        },
+        {
+          "id": "c4g_ekd_05",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.g_ekd_05",
+          "next": "c4g_ekd_06"
+        },
+        {
+          "id": "c4g_ekd_06",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_ekd_06",
+          "next": "c4g_ekd_07"
+        },
+        {
+          "id": "c4g_ekd_07",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.g_ekd_07",
+          "next": "c4g_ekd_08"
+        },
+        {
+          "id": "c4g_ekd_08",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_ekd_08",
+          "next": "c4g_ekd_09"
+        },
+        {
+          "id": "c4g_ekd_09",
+          "speaker": "journalist",
+          "text_key": "dlg.c4p2.g_ekd_09",
+          "next": "c4g_ekd_10"
+        },
+        {
+          "id": "c4g_ekd_10",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_ekd_10",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4g_lev",
+      "entry_node": "c4g_lev_01",
+      "nodes": [
+        {
+          "id": "c4g_lev_01",
+          "speaker": "lev",
+          "text_key": "dlg.c4p2.g_lev_01",
+          "next": "c4g_lev_02"
+        },
+        {
+          "id": "c4g_lev_02",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_lev_02",
+          "next": "c4g_lev_03"
+        },
+        {
+          "id": "c4g_lev_03",
+          "speaker": "lev",
+          "text_key": "dlg.c4p2.g_lev_03",
+          "next": "c4g_lev_04"
+        },
+        {
+          "id": "c4g_lev_04",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_lev_04",
+          "next": "c4g_lev_05"
+        },
+        {
+          "id": "c4g_lev_05",
+          "speaker": "lev",
+          "text_key": "dlg.c4p2.g_lev_05",
+          "next": "c4g_lev_06"
+        },
+        {
+          "id": "c4g_lev_06",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_lev_06",
+          "next": "c4g_lev_07"
+        },
+        {
+          "id": "c4g_lev_07",
+          "speaker": "lev",
+          "text_key": "dlg.c4p2.g_lev_07",
+          "next": "c4g_lev_08"
+        },
+        {
+          "id": "c4g_lev_08",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_lev_08",
+          "next": "c4g_lev_09"
+        },
+        {
+          "id": "c4g_lev_09",
+          "speaker": "lev",
+          "text_key": "dlg.c4p2.g_lev_09",
+          "next": "c4g_lev_10"
+        },
+        {
+          "id": "c4g_lev_10",
+          "speaker": "lev",
+          "text_key": "dlg.c4p2.g_lev_10",
+          "next": "c4g_lev_11"
+        },
+        {
+          "id": "c4g_lev_11",
+          "speaker": "alexei",
+          "text_key": "dlg.c4p2.g_lev_11",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4h_hanna",
+      "entry_node": "c4h_han_01",
+      "nodes": [
+        {
+          "id": "c4h_han_01",
+          "speaker": "hanna",
+          "text_key": "dlg.c4p2.h_han_01",
+          "next": "c4h_han_02"
+        },
+        {
+          "id": "c4h_han_02",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_han_02",
+          "next": "c4h_han_03"
+        },
+        {
+          "id": "c4h_han_03",
+          "speaker": "hanna",
+          "text_key": "dlg.c4p2.h_han_03",
+          "next": "c4h_han_04"
+        },
+        {
+          "id": "c4h_han_04",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_han_04",
+          "next": "c4h_han_05"
+        },
+        {
+          "id": "c4h_han_05",
+          "speaker": "hanna",
+          "text_key": "dlg.c4p2.h_han_05",
+          "next": "c4h_han_06"
+        },
+        {
+          "id": "c4h_han_06",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_han_06",
+          "next": "c4h_han_07"
+        },
+        {
+          "id": "c4h_han_07",
+          "speaker": "hanna",
+          "text_key": "dlg.c4p2.h_han_07",
+          "next": "c4h_han_08"
+        },
+        {
+          "id": "c4h_han_08",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_han_08",
+          "next": "c4h_han_09"
+        },
+        {
+          "id": "c4h_han_09",
+          "speaker": "hanna",
+          "text_key": "dlg.c4p2.h_han_09",
+          "next": "c4h_han_10"
+        },
+        {
+          "id": "c4h_han_10",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_han_10",
+          "next": "c4h_han_11"
+        },
+        {
+          "id": "c4h_han_11",
+          "speaker": "hanna",
+          "text_key": "dlg.c4p2.h_han_11",
+          "next": "c4h_han_12"
+        },
+        {
+          "id": "c4h_han_12",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_han_12",
+          "end": true
+        }
+      ]
+    },
+    {
+      "id": "dlg_c4h_wendt",
+      "entry_node": "c4h_wen_01",
+      "nodes": [
+        {
+          "id": "c4h_wen_01",
+          "speaker": "wendt",
+          "text_key": "dlg.c4p2.h_wen_01",
+          "next": "c4h_wen_02"
+        },
+        {
+          "id": "c4h_wen_02",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_wen_02",
+          "next": "c4h_wen_03"
+        },
+        {
+          "id": "c4h_wen_03",
+          "speaker": "wendt",
+          "text_key": "dlg.c4p2.h_wen_03",
+          "next": "c4h_wen_04"
+        },
+        {
+          "id": "c4h_wen_04",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_wen_04",
+          "next": "c4h_wen_05"
+        },
+        {
+          "id": "c4h_wen_05",
+          "speaker": "wendt",
+          "text_key": "dlg.c4p2.h_wen_05",
+          "next": "c4h_wen_06"
+        },
+        {
+          "id": "c4h_wen_06",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_wen_06",
+          "next": "c4h_wen_07"
+        },
+        {
+          "id": "c4h_wen_07",
+          "speaker": "blockwart",
+          "text_key": "dlg.c4p2.h_wen_07",
+          "next": "c4h_wen_08"
+        },
+        {
+          "id": "c4h_wen_08",
+          "speaker": "wendt",
+          "text_key": "dlg.c4p2.h_wen_08",
+          "next": "c4h_wen_09"
+        },
+        {
+          "id": "c4h_wen_09",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_wen_09",
+          "next": "c4h_wen_10"
+        },
+        {
+          "id": "c4h_wen_10",
+          "speaker": "wendt",
+          "text_key": "dlg.c4p2.h_wen_10",
+          "next": "c4h_wen_11"
+        },
+        {
+          "id": "c4h_wen_11",
+          "speaker": "wendt",
+          "text_key": "dlg.c4p2.h_wen_11",
+          "next": "c4h_wen_12"
+        },
+        {
+          "id": "c4h_wen_12",
+          "speaker": "konrad",
+          "text_key": "dlg.c4p2.h_wen_12",
+          "end": true
+        }
+      ]
     }
   ]
 }

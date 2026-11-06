@@ -1,0 +1,22 @@
+{
+ "locale": "de",
+ "area": "c4p2_cinematics",
+ "strings": {
+  "cin.c4p2.depot.place": "Karsk, Montag, 17. Februar 1964, 6.10 Uhr.",
+  "cin.c4p2.steam.alexei": "Sie spannen eine Plane für morgen. Damit der Schwede die Kohle sieht, aber nicht, wer schaufelt.",
+  "cin.c4p2.steam.berlin": "Berlin, Ostbahnhof, 20.30 Uhr.",
+  "cin.c4p2.book.konrad": "Seite zweihundertzwölf. Mehr Russisch kann ich nicht.",
+  "cin.c4p2.book.karsk": "Karsk, Dienstag, 17.30 Uhr.",
+  "cin.c4p2.express.alexei_publish": "Morgen weiß Stockholm, was in Kordon-17 um 23.40 Uhr geschieht. Und Archipov, wer es erzählt hat.",
+  "cin.c4p2.express.alexei_protect": "Kein Zeuge an Tür Ost. Aber Lev schläft heute in seinem eigenen Bett.",
+  "cin.c4p2.express.berlin": "Berlin, Kolonnenstraße, 22.10 Uhr.",
+  "cin.c4p2.clock.berlin": "Berlin, 23.40 Uhr.",
+  "cin.c4p2.clock.konrad_name": "Ilse schläft zwischen Leisten und Leder. Hanna weiß jetzt, wessen Namen ich genannt habe.",
+  "cin.c4p2.clock.konrad_protect": "Ilse schläft zwischen Leisten und Leder. Wendt kennt jetzt meinen Namen.",
+  "cin.c4p2.clock.kordon": "Kordon-17, 23.40 Uhr Korridorzeit.",
+  "cin.c4p2.clock.publish": "Übergabe ausgesetzt. Nicht abgesagt.",
+  "cin.c4p2.clock.protect": "Der Wagen fährt. Die Karte bleibt bei mir, bis keiner mehr dafür bezahlen muss.",
+  "cin.c4p2.clock.karsk": "Karsk, 1.40 Uhr.",
+  "cin.c4p2.clock.end": "Ende des vierten Kapitels."
+ }
+}

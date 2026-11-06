@@ -12,6 +12,10 @@ extends RefCounted
 ##    variant (`name_1`), so Audio.sfx() never mixes them up
 ##  * wiring: the level shells and the c4.json switches name existing files; every c4 sound a C4 cinematic cue names
 ##    exists (cinematics that do not exist yet are skipped)
+##  * round 10: every one-shot the generator builds is heard (a C4 film cue or a C4 level script names it); the
+##    LS_C4_Stamp layers sit on the picture: the generator's film times equal the picture's, the cues start with
+##    their shots / the lever without pitch variation, the strikes land on the contact frames, the tear starts on
+##    the split and its last tooth where the picture's halves come to rest
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
@@ -33,10 +37,13 @@ const SOUNDS := {
 	"amb_berlin_loop": [AMB, 2, true, 2646000], "amb_berlin_annex": [AMB, 2, true, 2646000],
 	"mus_c4_karsk": [MUS, 2, true, 3136000], "mus_c4_berlin": [MUS, 2, true, 2352000],
 	"mus_c4_voices": [MUS, 2, true, 2116800],
-	"c4_stencil_brush": [SFX, 2, false, 0], "c4_card_tear": [SFX, 2, false, 0], "c4_stamp_accept": [SFX, 2, false, 0],
-	"c4_stamp_dispatch": [SFX, 2, false, 0], "c4_bell_once": [SFX, 2, false, 0], "c4_bell_twice": [SFX, 2, false, 0],
-	"c4_train_overhead": [SFX, 2, false, 0], "c4_lamp_out": [SFX, 2, false, 0],
+	"c4_stamp_accept": [SFX, 2, false, 0], "c4_stamp_dispatch": [SFX, 2, false, 0], "c4_card_tear": [SFX, 2, false, 0],
+	"c4_train_overhead": [SFX, 2, false, 0],
 }
+## round 10: the cast one-shots LS_C4_Stamp layers over its beds, and where the picture puts them
+const STAMP_FILM := "res://scenes/cinematics/ch4_stamp/Ch4Stamp.tscn"
+const GEN := "res://tools/audiogen/c4_audio.py"
+const LEVEL_SCRIPTS := "res://scripts/levels/c4/"
 ## loudness windows (dBFS RMS min, max; peak max), as enforced by tools/audiogen/c4_audio.py (the round-8 windows)
 const WINDOW := {"amb": [-28.0, -21.0, -2.5], "music": [-25.0, -19.0, -0.8], "loop": [-36.0, -19.0, -2.5],
 	"sfx": [-45.0, -9.0, -2.5]}
@@ -57,6 +64,9 @@ func run() -> Array:
 	kit.run_case("audio_files_format_and_loops", _audio_files)
 	kit.run_case("audio_levels_and_seams", _audio_levels)
 	kit.run_case("audio_wiring", _wiring)
+	kit.run_case("audio_every_cast_cue_is_heard", _heard)
+	kit.run_case("audio_stamp_layers_on_the_picture", _stamp_layers)
+	kit.run_case("audio_card_tear_on_the_split", _card_tear)
 	kit.cleanup()
 	return kit.failures
 
@@ -247,7 +257,8 @@ func _speakers() -> bool:
 	var speakers := {}
 	if kit.ok(d is Dictionary, "dialogue.json parses"):
 		for c in d.get("conversations", []):
-			if str(c.get("id", "")).begins_with("dlg_c4"):
+			# Chapter 4 part 1 only (dlg_c4a … dlg_c4d); part 2's speakers belong to the round-10 cast stream's own test
+			if str(c.get("id", "")).substr(0, 7) in ["dlg_c4a", "dlg_c4b", "dlg_c4c", "dlg_c4d"]:
 				for n in c.get("nodes", []):
 					speakers[str(n.get("speaker", ""))] = true
 	for id in CAST:
@@ -437,4 +448,178 @@ func _wiring() -> bool:
 				var found := ResourceLoader.exists(SFX + id + ".wav") or ResourceLoader.exists(SFX + id + "_1.wav") \
 					or ResourceLoader.exists(AMB + id + ".wav") or ResourceLoader.exists(MUS + id + ".wav")
 				kit.ok(found, "%s%s names %s: it exists" % [d, f, id])
+	return true
+
+
+# ------------------------------------------------------------------------------------------------ round 10: heard, in sync
+## the film times tools/audiogen/c4_audio.py mirrors: {NAME: [floats]}
+static func _gen_times() -> Dictionary:
+	var out := {}
+	var rx := RegEx.create_from_string("(?m)^(STAMP_RU|STAMP_DE|LEVER|SPLIT_PART|SPLIT_REST) = \\(?([0-9., ]+)\\)?")
+	for m in rx.search_all(FileAccess.get_file_as_string(GEN)):
+		var vals: Array = []
+		for v in m.get_string(2).split(",", false):
+			if v.strip_edges() != "":
+				vals.append(float(v))
+		out[m.get_string(1)] = vals
+	return out
+
+
+## RMS (dBFS, both channels) of the window [t0, t1) s.
+static func _win_db(w: Dictionary, t0: float, t1: float) -> float:
+	var b: PackedByteArray = w["bytes"]
+	var at: int = w["data_at"]
+	var ch: int = w["channels"]
+	var f0 := clampi(int(t0 * 44100.0), 0, int(w["frames"]))
+	var f1 := clampi(int(t1 * 44100.0), f0, int(w["frames"]))
+	var sum := 0.0
+	for f in range(f0, f1):
+		for c in ch:
+			var v := b.decode_s16(at + (f * ch + c) * 2) / 32768.0
+			sum += v * v
+	return linear_to_db(sqrt(sum / maxf(1.0, float((f1 - f0) * ch))) + 1e-9)
+
+
+## Levels (dBFS) of the 5 ms frames from t0 on, up to t1.
+static func _frames_db(w: Dictionary, t0: float, t1: float) -> Array:
+	var out: Array = []
+	var t := t0
+	while t < t1 - 0.0001:
+		out.append(_win_db(w, t, t + 0.005))
+		t += 0.005
+	return out
+
+
+## Onset in [t0, t1): start (s) of the first 5 ms frame within `below` dB of the window's loudest frame.
+static func _onset(w: Dictionary, t0: float, t1: float, below := 12.0) -> float:
+	var f := _frames_db(w, t0, t1)
+	var top: float = f.max()
+	for i in f.size():
+		if float(f[i]) >= top - below:
+			return t0 + 0.005 * i
+	return -1.0
+
+
+## Start (s) of the loudest 5 ms frame in [t0, t1).
+static func _loudest(w: Dictionary, t0: float, t1: float) -> float:
+	var f := _frames_db(w, t0, t1)
+	return t0 + 0.005 * f.find(f.max())
+
+
+func _stamp_film() -> Node:
+	var s: Node = load(STAMP_FILM).instantiate()
+	s.set("use_director", false)
+	(Engine.get_main_loop() as SceneTree).root.add_child(s)
+	kit.track(s)
+	s.configure({"choices": {}, "flags": {}, "symbols": true})
+	return s
+
+
+static func _drop(s: Node) -> void:
+	if is_instance_valid(s):
+		if s.get_parent():
+			s.get_parent().remove_child(s)
+		s.free()
+
+
+## Every one-shot the generator builds is in SOUNDS and heard: a C4 film cue or a C4 level script names it (round 10
+## dropped the four cues no picture shows instead of shipping them unused).
+func _heard() -> bool:
+	var gen := FileAccess.get_file_as_string(GEN)
+	if not kit.ok(gen != "", "c4_audio.py readable"):
+		return true
+	var built: Array = []
+	for m in RegEx.create_from_string("'(c4_[a-z0-9_]+)': \\('sfx'").search_all(gen):
+		built.append(m.get_string(1))
+	kit.ok(built.size() >= 4, "the generator builds its one-shots (%s)" % [built])
+	var srcs := ""
+	for d in CINE_DIRS + [LEVEL_SCRIPTS]:
+		var dir := DirAccess.open(d)
+		if dir == null:
+			continue
+		for f in dir.get_files():
+			if f.ends_with(".gd"):
+				srcs += FileAccess.get_file_as_string(d + f) + "\n"
+	for n in built:
+		kit.ok(SOUNDS.has(n) and SOUNDS[n][0] == SFX, "%s is a checked one-shot (SOUNDS)" % n)
+		kit.ok(srcs.contains("\"%s\"" % n), "%s is heard: a C4 film cue or a C4 level script names it" % n)
+	for n in SOUNDS:
+		if SOUNDS[n][0] == SFX:
+			kit.ok(n in built, "%s: SOUNDS lists only what the generator builds" % n)
+	return true
+
+
+## LS_C4_Stamp s2 / s3a: each stamp's surface layer starts with its bed (the shot's start) without pitch variation,
+## the generator's film times are the picture's, the layer has no ink-pad dab before the strike and strikes on the
+## contact frame -- where the bed's thump is.
+func _stamp_layers() -> bool:
+	var film = load("res://scenes/cinematics/ch4_stamp/ch4_stamp.gd")
+	var g := _gen_times()
+	kit.eq(g.get("STAMP_RU", []), film.STAMP_RU, "c4_audio.STAMP_RU == the picture's")
+	kit.eq(g.get("STAMP_DE", []), film.STAMP_DE, "c4_audio.STAMP_DE == the picture's")
+	kit.eq(g.get("LEVER", []), film.LEVER, "c4_audio.LEVER == the picture's")
+	var s := _stamp_film()
+	var at := {}
+	for c in s.get("_cues"):
+		var d: Dictionary = c
+		for key in ["sfx", "bed"]:
+			if d.has(key):
+				at[str(d[key])] = d
+	_drop(s)
+	for pair in [["c4_stamp_accept", "c4cine_stamp_ru", film.STAMP_RU], ["c4_stamp_dispatch", "c4cine_stamp_de", film.STAMP_DE]]:
+		var id: String = pair[0]
+		var m: Array = pair[2]
+		if not kit.ok(at.has(id), "LS_C4_Stamp plays %s" % id):
+			continue
+		var cue: Dictionary = at[id]
+		kit.eq(float(cue["t"]), float(m[0]), "%s starts with its shot" % id)
+		kit.eq(float(at.get(pair[1], {}).get("t", -1.0)), float(cue["t"]), "%s starts with the bed %s" % [id, pair[1]])
+		kit.eq(float(cue.get("pv", 0.05)), 0.0, "%s: no pitch variation (it would move the strike)" % id)
+		var w := _wav(SFX + id + ".wav")
+		if not kit.ok(w.has("data_at"), "%s readable" % id):
+			continue
+		var hit := float(m[1]) - float(m[0])
+		kit.ok(_win_db(w, 0.0, hit - 0.03) < -60.0, "%s: silent before the strike (no ink-pad dab: the stamp comes in inked)" % id)
+		var on := _onset(w, hit - 0.1, hit + 0.1)
+		kit.ok(absf(on - hit) <= 0.012, "%s: the strike at %.3f s = the contact frame (%.2f s in)" % [id, on, hit])
+	return true
+
+
+## LS_C4_Stamp s3b: the tear starts with the lever (no pitch variation), the teeth start letting go on the split
+## (LEVER[1]) and the last one goes where the picture's halves come to rest.
+func _card_tear() -> bool:
+	var film = load("res://scenes/cinematics/ch4_stamp/ch4_stamp.gd")
+	var g := _gen_times()
+	var part: float = (g.get("SPLIT_PART", [0.0]) as Array)[0]
+	var rest_frac: float = (g.get("SPLIT_REST", [0.0]) as Array)[0]
+	if not kit.ok(part > 0.0 and rest_frac > 0.0 and rest_frac < 1.0, "c4_audio.py gives SPLIT_PART / SPLIT_REST"):
+		return true
+	var rest := part * (1.0 - sqrt(1.0 - rest_frac))
+	var split := float(film.LEVER[1]) - float(film.LEVER[0])
+	var s := _stamp_film()
+	var cue := {}
+	for c in s.get("_cues"):
+		if str((c as Dictionary).get("sfx", "")) == "c4_card_tear":
+			cue = c
+	if kit.ok(not cue.is_empty(), "LS_C4_Stamp plays c4_card_tear"):
+		kit.eq(float(cue["t"]), float(film.LEVER[0]), "c4_card_tear starts with the lever")
+		kit.eq(float(cue.get("pv", 0.05)), 0.0, "c4_card_tear: no pitch variation")
+	# the picture: the halves still part just before `rest` and are at rest from it on
+	var gap := func(time: float) -> float:
+		s.seek(time)
+		return ((s.get("_split_r") as Sprite2D).position.x - (s.get("_split_l") as Sprite2D).position.x)
+	var g_rest: float = gap.call(float(film.LEVER[1]) + rest + 0.004)
+	kit.ok(gap.call(float(film.LEVER[1]) + rest - 0.03) < g_rest, "the halves still part 30 ms before the last tooth")
+	kit.eq(gap.call(float(film.LEVER[1]) + part + 0.1), g_rest, "the halves rest from the last tooth on")
+	kit.ok(gap.call(float(film.LEVER[1]) - 0.01) < g_rest, "the card is whole before the split")
+	_drop(s)
+	var w := _wav(SFX + "c4_card_tear.wav")
+	if not kit.ok(w.has("data_at"), "c4_card_tear readable"):
+		return true
+	var on := _onset(w, split - 0.06, split + 0.1)
+	kit.ok(absf(on - split) <= 0.012, "the tear starts on the split: %.3f s (lever down %.2f s in)" % [on, split])
+	var last := _loudest(w, split + rest - 0.04, split + rest + 0.04)
+	kit.ok(absf(last - (split + rest)) <= 0.012, "the last tooth at %.3f s = the halves at rest (%.3f s)" % [last, split + rest])
+	kit.ok(_win_db(w, split, split + rest) > _win_db(w, split + rest + 0.1, split + rest + 0.4) + 6.0,
+		"the tear is loudest while the halves part")
 	return true

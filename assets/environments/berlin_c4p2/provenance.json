@@ -1,0 +1,794 @@
+{
+ "environment": "berlin_c4p2",
+ "level": "scenes/levels/L_C4P2_Berlin.tscn",
+ "generator": "tools/pixelgen/env_c4p2_berlin.py",
+ "date": "2026-11-06",
+ "license": "original work, generated deterministically by the project tools (no third-party images, no traced references)",
+ "files": [
+  {
+   "path": "assets/environments/berlin_c4p2/actors/radio_glow.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin.py",
+   "description": "the lodge radio's dial glow for BerlinRadio (3 frames)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_attendant_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the buffet woman behind her counter (feet hidden by the counter prop, base_y 292), pouring tea (colour variant of vendor through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_attendant_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the buffet woman behind her counter (feet hidden by the counter prop, base_y 292), pouring tea (colour variant of vendor through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_attendant_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the buffet woman behind her counter (feet hidden by the counter prop, base_y 292), pouring tea (colour variant of vendor through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_conductor_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the sleeping-car conductor at his door (colour variant of conductor through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_conductor_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the sleeping-car conductor at his door (colour variant of conductor through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_conductor_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the sleeping-car conductor at his door (colour variant of conductor through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_father_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the father with the family's second case (colour variant of berlin_father through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_father_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the father with the family's second case (colour variant of berlin_father through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_father_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the father with the family's second case (colour variant of berlin_father through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_grandmother_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the grandmother who is helped up into the sleeping car (once a year to Karsk) (colour variant of babushka through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_grandmother_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the grandmother who is helped up into the sleeping car (once a year to Karsk) (colour variant of babushka through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_grandmother_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: the grandmother who is helped up into the sleeping car (once a year to Karsk) (colour variant of babushka through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_mother_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_corridor_permit: the mother waits by her sleeping boy, the permits in cellophane (colour variant of berlin_mother through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_mother_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_corridor_permit: the mother waits by her sleeping boy, the permits in cellophane (colour variant of berlin_mother through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_mother_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_corridor_permit: the mother waits by her sleeping boy, the permits in cellophane (colour variant of berlin_mother through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_police_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a railway policeman walks the buffet and watches the travellers (no insignia) (colour variant of guard through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_police_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a railway policeman walks the buffet and watches the travellers (no insignia) (colour variant of guard through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_police_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a railway policeman walks the buffet and watches the travellers (no insignia) (colour variant of guard through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_porter_a_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_porters: a porter by his cart (colour variant of porter through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_porter_a_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_porters: a porter by his cart (colour variant of porter through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_porter_a_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_porters: a porter by his cart (colour variant of porter through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_porter_b_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_porters: the older porter in his short blue work jacket and felt boots, the brass badge on his cap, waiting for a fare (another build than the young one in the long coat) (colour variant of worker_a through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_porter_b_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_porters: the older porter in his short blue work jacket and felt boots, the brass badge on his cap, waiting for a fare (another build than the young one in the long coat) (colour variant of worker_a through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_porter_b_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: exp_porters: the older porter in his short blue work jacket and felt boots, the brass badge on his cap, waiting for a fare (another build than the young one in the long coat) (colour variant of worker_a through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_reader_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: an older man reads the departure board twice (colour variant of clerk through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_reader_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: an older man reads the departure board twice (colour variant of clerk through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_reader_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: an older man reads the departure board twice (colour variant of clerk through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_son_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: her son with the parcel for Karsk (colour variant of berlin_father through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_son_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: her son with the parcel for Karsk (colour variant of berlin_father through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_son_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: her son with the parcel for Karsk (colour variant of berlin_father through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_walker_a_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a traveller walks down the train looking for his car (colour variant of clerk through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_walker_a_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a traveller walks down the train looking for his car (colour variant of clerk through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_walker_a_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a traveller walks down the train looking for his car (colour variant of clerk through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_walker_b_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a woman with a small case walks to the buffet and back (starts at x 345, clear of Marta at 318) (colour variant of berlin_mother through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_walker_b_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a woman with a small case walks to the buffet and back (starts at x 345, clear of Marta at 318) (colour variant of berlin_mother through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_walker_b_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a woman with a small case walks to the buffet and back (starts at x 345, clear of Marta at 318) (colour variant of berlin_mother through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_worker_rig.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a railway worker drinks his coffee at the counter (colour variant of worker_a through the character pipeline) -- sheet json"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_worker_rig.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a railway worker drinks his coffee at the counter (colour variant of worker_a through the character pipeline)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/crowd/ost_worker_rig_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walker rig: a railway worker drinks his coffee at the counter (colour variant of worker_a through the character pipeline) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fg_station.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the platform wall with cables and weep holes, signal wires, the near track with the lamps in its rails, meltwater, coal, litter, a dwarf signal, the stair down to the underpass (foreground)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fg_yard.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the courtyard's near edge: trodden snow, window light lying on it, footprints, a sledge track, a handcart with briquettes, milk bottles, a broom, a bucket, a light well's railing, a lost mitten (foreground)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/drift_end.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "snow blown in through the open end of the hall"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/exhaust.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "the sweep's car: exhaust in the frost"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/haze_vault.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "steam collected under the glass vault, drifting"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/smoke_0.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "smoke from a chimney of No. 14 (stoves lit for the night)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/smoke_1.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "smoke from a chimney of No. 14 (stoves lit for the night)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/smoke_2.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "smoke from a chimney of No. 14 (stoves lit for the night)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/smoke_3.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "smoke from a chimney of No. 14 (stoves lit for the night)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/smoke_chimney.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "a lazy wisp of smoke from the standing engine's chimney"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/snow_a.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "snow falling into the courtyard, two depths (left half)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/snow_b.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "snow falling into the courtyard, two depths (right half)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/steam_cocks.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "steam curling from the drain cocks between the drivers (seen in the gap between buffet and kiosk)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/steam_heat_a.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "steam heating leaking at the uncoupled ends (winter)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/steam_heat_b.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "steam heating leaking between dining car and sleeper"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/steam_kitchen.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "the dining car's kitchen chimney: cooking steam"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/steam_urn.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "the buffet urn steaming"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/fx/steam_valve.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_life.py",
+   "description": "the engine's safety valve blowing off: a white plume up into the vault"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/baggage_clerk.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the baggage clerk behind his hatch writing slips"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/baggage_clerk_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the baggage clerk behind his hatch writing slips -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/booth_officials.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the liaison booth at the barrier: a German railway policeman stamping, a Soviet liaison officer with his tea glass in its metal holder, one desk, one lamp"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/booth_officials_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the liaison booth at the barrier: a German railway policeman stamping, a Soviet liaison officer with his tea glass in its metal holder, one desk, one lamp -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/candle_flame.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the candle in the cobbler's souterrain (after the house is solved)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/candle_flame_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the candle in the cobbler's souterrain (after the house is solved) -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/diners.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the dining car: a couple with wine, a man behind his paper, Ekdahl's empty table (hat, cup, scarf), two women talking, an old man with soup, the waiter walking the aisle"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/diners_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the dining car: a couple with wine, a man behind his paper, Ekdahl's empty table (hat, cup, scarf), two women talking, an old man with soup, the waiter walking the aisle -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/h1_kuehn.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "h1 Kühn: the old couple's card game"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/h1_kuehn_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "h1 Kühn: the old couple's card game -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/kiosk_woman.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the kiosk woman folding papers, looking up now and then"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/kiosk_woman_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the kiosk woman folding papers, looking up now and then -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/loco_crew.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the engine driver leaning out of the cab, the firebox glow"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/loco_crew_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the engine driver leaning out of the cab, the firebox glow -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s1_mertens.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s1 Mertens: the tram conductor's family at supper"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s1_mertens_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s1 Mertens: the tram conductor's family at supper -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s2_pohl.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s2 Pohl: the curtain moves, a face, the curtain again"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s2_pohl_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s2 Pohl: the curtain moves, a face, the curtain again -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s3_hanna.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s3 after the house is solved: Hanna back at her window, her light on"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s3_hanna_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s3 after the house is solved: Hanna back at her window, her light on -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s3_ilse.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s3 Hanna's kitchen: Ilse draws houses with lit windows (until the house is solved)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/s3_ilse_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "s3 Hanna's kitchen: Ilse draws houses with lit windows (until the house is solved) -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/se_kuhnert.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "se the lodge: Frau Kuhnert knitting by the radio"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/se_kuhnert_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "se the lodge: Frau Kuhnert knitting by the radio -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/sleeper_passenger.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "a passenger lifting his case into the rack of the sleeper"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/sleeper_passenger_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "a passenger lifting his case into the rack of the sleeper -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/sleeping_boy.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "exp_corridor_permit: a boy asleep on the family's suitcase in front of the buffet"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/sweep_men.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "after the house is solved: two of the sweep's men by the street door, one smoking"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/sweep_men_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "after the house is solved: two of the sweep's men by the street door, one smoking -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/v1_schulz.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "v1 Schulz: the mother walks the baby between her two windows"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/v1_schulz_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "v1 Schulz: the mother walks the baby between her two windows -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/v3_lenz.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "v3 Lenz: the student under his desk lamp, the radio dial"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/v3_lenz_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "v3 Lenz: the student under his desk lamp, the radio dial -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/warning_lamp.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the red warning lamp on the barrier of No. 12 (1 Hz)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/warning_lamp_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "the warning lamp -- emission"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/yard_coal.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "an old neighbour up from the cellar with a full coal scuttle for the night (sets it down by the hatch, blows into his hand, glances at the lodge)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/life/yard_wash.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_strips.py",
+   "description": "Tuesday is washing day: a woman out of the wash-house with the last basket for the attic, looking back at the lodge"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/candle_ws.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "a candle in the cobbler's souterrain: Ilse is there"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/candle_ws_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "a candle in the cobbler's souterrain: Ilse is there -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/candle_ws_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "a candle in the cobbler's souterrain: Ilse is there -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/car.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the sweep's car in the street, head-on in the doorway, its headlamps glaring"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/car_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the sweep's car in the street, head-on in the doorway, its headlamps glaring -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/car_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the sweep's car in the street, head-on in the doorway, its headlamps glaring -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/headlights.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the headlights' light on the passage's setts, the men's long shadows"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/headlights_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the headlights' light on the passage's setts, the men's long shadows -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/notice_k14.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the Blockleitung's notice in the passage: neutral (no party emblem) / historical (the party eagle)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/notice_k14_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the Blockleitung's notice in the passage: neutral (no party emblem) / historical (the party eagle) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/notice_k14_hist_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the Blockleitung's notice in the passage: neutral (no party emblem) / historical (the party eagle) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/notice_k14_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the Blockleitung's notice in the passage: neutral (no party emblem) / historical (the party eagle) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plate_cab.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the plate on the engine's cab: neutral „DR“ monogram / historical Reichsbahn eagle"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plate_cab_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the plate on the engine's cab: neutral „DR“ monogram / historical Reichsbahn eagle -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plate_cab_hist_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the plate on the engine's cab: neutral „DR“ monogram / historical Reichsbahn eagle -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plate_cab_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the plate on the engine's cab: neutral „DR“ monogram / historical Reichsbahn eagle -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plates_booth.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the liaison booth's two plates: the Reich (neutral Reichssiegel / historical state eagle) and the Soviet Union (neutral gear-and-wheat / historical hammer and sickle)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plates_booth_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the liaison booth's two plates: the Reich (neutral Reichssiegel / historical state eagle) and the Soviet Union (neutral gear-and-wheat / historical hammer and sickle) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plates_booth_hist_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the liaison booth's two plates: the Reich (neutral Reichssiegel / historical state eagle) and the Soviet Union (neutral gear-and-wheat / historical hammer and sickle) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/plates_booth_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the liaison booth's two plates: the Reich (neutral Reichssiegel / historical state eagle) and the Soviet Union (neutral gear-and-wheat / historical hammer and sickle) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/roster_l3.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Marta's duty roster on the buffet counter: „Linie 3“ (her gloves on it)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/roster_l3_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Marta's duty roster on the buffet counter: „Linie 3“ (her gloves on it) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/roster_l74.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Marta's duty roster on the buffet counter: „Linie 74“ (her gloves on it)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/roster_l74_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Marta's duty roster on the buffet counter: „Linie 74“ (her gloves on it) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_h.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the back wing's stairwell lit: the sweep went up"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_h_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the back wing's stairwell lit: the sweep went up -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_h_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the back wing's stairwell lit: the sweep went up -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_s.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the side wing's stairwell lit: the sweep went up"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_s_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the side wing's stairwell lit: the sweep went up -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_s_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the side wing's stairwell lit: the sweep went up -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_v.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the front wing's stairwell lit: the sweep went up"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_v_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the front wing's stairwell lit: the sweep went up -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/patches/stairs_v_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the front wing's stairwell lit: the sweep went up -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/props/counter_front.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the buffet counter and what stands on it, cut from station.png (y-sorted prop: the buffet woman behind it, Marta and the walk band in front of it)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/props/counter_front_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the buffet counter and what stands on it, cut from station.png (y-sorted prop: the buffet woman behind it, Marta and the walk band in front of it) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/scene.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin.py",
+   "description": "art manifest of L_C4P2_Berlin (both scenes)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/st_city.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the night city beyond the hall: blocks with lit windows, masts, track signals"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/st_city_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "city layer -- emission (lit windows, signal lights)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/st_hall.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the hall's shell: the glass barrel vault under its smoke lantern -- lattice arches with lit lower chords, purlins, panes clear / snowed / sooted / boarded, cables, pigeons, the glow of the lamp rows -- the far brick wall with arched windows, the end screen of the vault"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/st_sky.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "night over Berlin through the open end of the hall: low cloud lit by the city"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/st_track2.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "the next track: the green windowless car with barred hatches and the chalk „Di – Kordon“, one hatch frosted from inside; a dwarf signal"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/st_track2_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "next track -- emission (the dwarf signal)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/station.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Ostbahnhof, Korridorbahnsteig K: track K with the D 303 (engine 01 064, courier van with two seals, the uncoupled gap, dining car, sleeping car) and platform K (liaison booth at the barrier, departure board, baggage counter and scale, buffet, kiosk, porters' carts, lamps, clock, the Corridor fence), x 0..918"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/station_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Ostbahnhof, Korridorbahnsteig K: track K with the D 303 (engine 01 064, courier van with two seals, the uncoupled gap, dining car, sleeping car) and platform K (liaison booth at the barrier, departure board, baggage counter and scale, buffet, kiosk, porters' carts, lamps, clock, the Corridor fence), x 0..918 -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/station_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_station.py",
+   "description": "Ostbahnhof, Korridorbahnsteig K: track K with the D 303 (engine 01 064, courier van with two seals, the uncoupled gap, dining car, sleeping car) and platform K (liaison booth at the barrier, departure board, baggage counter and scale, buffet, kiosk, porters' carts, lamps, clock, the Corridor fence), x 0..918 -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/walkers_a.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_crowd.py",
+   "description": "ambient walkers of the Corridor platform"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yard.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "Kolonnenstraße 14, Tuesday night: the gate passage with the Blockleitung's notice, the courtyard façades of front wing, side wing and back wing (every lit window a household of the house puzzle), the coal, the cellar hatch, the lodge window with the card box, the bins, the pump, the carpet rack, the frozen laundry, the cobbler's souterrain (x 918..1920)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yard_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "Kolonnenstraße 14, Tuesday night: the gate passage with the Blockleitung's notice, the courtyard façades of front wing, side wing and back wing (every lit window a household of the house puzzle), the coal, the cellar hatch, the lodge window with the card box, the bins, the pump, the carpet rack, the frozen laundry, the cobbler's souterrain (x 918..1920) -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yard_n.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "Kolonnenstraße 14, Tuesday night: the gate passage with the Blockleitung's notice, the courtyard façades of front wing, side wing and back wing (every lit window a household of the house puzzle), the coal, the cellar hatch, the lodge window with the card box, the bins, the pump, the carpet rack, the frozen laundry, the cobbler's souterrain (x 918..1920) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yd_dome.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the Great Hall far above the roofs, floodlit in the haze, searchlights behind it; neutral banners (grey cloth, the fictional Reichssiegel)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yd_dome_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the Great Hall far above the roofs, historical banners (red, white disc, swastika; Symbols.pick, 12.4)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yd_roofs.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "the roofscape beyond the courtyard: chimneys, firewalls, a church spire"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yd_roofs_e.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "roofs -- emission (a lit attic window)"
+  },
+  {
+   "path": "assets/environments/berlin_c4p2/yd_sky.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_yard.py",
+   "description": "night sky over the courtyard, low cloud lit by the city"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_departures.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "the enamel departure board of platform K: D 303 Berlin Ost – Kordon-17 – Karsk 21.10; the hand-painted board for Tuesday: special train to Kordon-17 with a special car from 15.30, platform K closed from 15.00"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_documents.json",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "document metadata (item -> image, key marks)"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_house_cards.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "Kuhnert's wooden box of household cards, six cards fanned out (Adler, Pohl, the lodge, the empty Hinterhaus 3, the passage, the drying loft) and the slip of the cobbler Pietsch (no household card)"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_house_notice.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "the Blockleitung's notice (Tuesday from 22.00, children to be shown; neutral: no emblem / _hist: the party eagle), the pinned site plan Bauabschnitt Süd 9 – Kolonnenstraße 12 bis 18, all houses hatched, gez. K. A."
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_house_notice_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "the Blockleitung's notice (Tuesday from 22.00, children to be shown; neutral: no emblem / _hist: the party eagle), the pinned site plan Bauabschnitt Süd 9 – Kolonnenstraße 12 bis 18, all houses hatched, gez. K. A. -- historical insignia variant (Symbols.pick, 12.4)"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_seals.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "two lead seals on the courier van's wire, both stamped C-17 (German: a plain disc DR / _hist eagle; Soviet: a wheel / _hist star); beside it the green car on the next track, a barred hatch frosted from inside, the chalk „Di – Kordon“"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_seals_hist.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "two lead seals on the courier van's wire, both stamped C-17 (German: a plain disc DR / _hist eagle; Soviet: a wheel / _hist star); beside it the green car on the next track, a barred hatch frosted from inside, the chalk „Di – Kordon“ -- historical insignia variant (Symbols.pick, 12.4)"
+  },
+  {
+   "path": "assets/ui/documents/berlin_c4p2_tracing.png",
+   "generator": "tools/pixelgen/env_c4p2_berlin_docs.py",
+   "description": "Ekdahl's guidebook open at page 212 „Karsk – bangård och depå“, the German half of card 0417 laid in upside down, Konrad's tracing of the room of Kordon-17 (Tür West, Tür Ost, the counter, the bench for 14), its corner folded back: MOROZOV – 0417 – DI 23.40 – TÜR OST"
+  }
+ ]
+}

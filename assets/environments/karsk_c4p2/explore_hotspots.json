@@ -1,0 +1,35 @@
+{
+ "doc": "Exploration hotspots of L_C4P2_Karsk (Level._merge_explore_hotspots; scene.json wins on name clashes). Owner: exploration stream (documentation/C4P2_DESIGN.md §4.1/§6). Every spot keeps >= 24 px from the story hotspots and NPC anchors of §4.1, >= 14 px from the other finds, >= 20 px from the spawns, and lies in the walk area of the scene that reaches it: x 30-852 = scene A (back yard and coal stage, Alexei, Monday dawn, open until c4e_inspect_notice), x 904-1895 = scene B (showcase and platform 1, Alexei, Tuesday evening, open after c4e_inspect_notice). `info` is the art contract for env-karsk: stand = where Alexei stands (feet line y 300), focus = where the thing is painted (world px), what = what must be visible there (positions follow the scenery of §4.1 left to right; an env stream may move a spot a few px with its art and then edits only the numbers here). The chats stand on NPC anchors of the story stream (maria_coal, minder_canteen, lev_sandhouse) and need no entry here. The engine reads only `hotspots` / `spawns`.",
+ "hotspots": {
+  "exp_duty_board": [164, 300], "exp_canteen_radio": [290, 300], "exp_water_crane": [350, 300],
+  "exp_kolonne_shoes": [470, 300], "exp_lena_mitten": [520, 300], "exp_ash_pit_dog": [626, 300],
+  "exp_barrel_fire": [662, 300], "exp_banner_back": [836, 300],
+  "exp_tarpaulin_front": [906, 300], "exp_signal_scratch": [954, 300], "exp_task_wire": [1012, 300],
+  "exp_model_engine": [1060, 300], "exp_brass_band": [1140, 300], "exp_press_buffet": [1214, 300],
+  "exp_turntable": [1290, 300], "exp_task_scale": [1404, 300], "exp_two_clocks": [1574, 300],
+  "exp_platform_families": [1628, 300], "exp_task_parcel": [1676, 300], "exp_task_conductor": [1724, 300]
+ },
+ "spawns": {},
+ "info": {
+  "exp_duty_board": {"stand": [164, 300], "focus": [164, 236], "what": "Irina's duty board on the plank wall of the dispatch lean-to, between her lit window and her door: seven name strips under a heading „Lokführer“, one strip with a fresh red pencil line, a pencil on a string"},
+  "exp_canteen_radio": {"stand": [290, 300], "focus": [292, 232], "what": "the canteen's back hatch (x 250-330): a pot of kasha steaming on the sill, a small brown radio beside it, the cook's arm in a white sleeve"},
+  "exp_water_crane": {"stand": [350, 300], "focus": [352, 210], "what": "the water crane between the canteen and the coal stage, its column wrapped in straw and sacking, a fire basket with glowing coke at its foot, the swivel joint mended with wire and rags"},
+  "exp_kolonne_shoes": {"stand": [470, 300], "focus": [478, 289], "what": "at the foot of the coal-stage ramp a neat row of worn Western shoes (ladies' strap shoes, men's leather shoes split by coal dust), beside them issued felt boots stuffed with straw (3-5 px, optional detail)"},
+  "exp_lena_mitten": {"stand": [520, 300], "focus": [522, 268], "what": "hidden: a small grey child's mitten nailed to a trestle post of the coal stage at knee height (2-3 px, optional)"},
+  "exp_ash_pit_dog": {"stand": [626, 300], "focus": [630, 290], "what": "the ash pit (x 600-660) glowing faintly, a sooty dog asleep in its warmth with one ear standing up"},
+  "exp_barrel_fire": {"stand": [662, 300], "focus": [676, 270], "what": "the guard's barrel fire (env-karsk's KarskBarrel actor at x 672, the guard beside it at 690): flames and sparks; on the barrel rim two thin darned ladies' gloves laid out to dry (optional detail)"},
+  "exp_banner_back": {"stand": [836, 300], "focus": [852, 236], "what": "the back of the tarpaulin fence (x 858+): sacking patches, a tent half, a potato sack with a stamp, the red letters of the front bleeding through mirrored; low on a board a child's chalk drawing of a train"},
+  "exp_tarpaulin_front": {"stand": [906, 300], "focus": [900, 250], "what": "the front of the tarpaulin fence in the floodlight: „ВОССТАНОВИМ ВМЕСТЕ“ red on white; low left a hand-wide tear with the handle of a shovel visible behind it"},
+  "exp_signal_scratch": {"stand": [954, 300], "focus": [985, 285], "what": "hidden: the foot of the restored signal post (x 940-1010): fresh paint ends a hand's width above the ballast, below it rust with the scratched letters „А. М.“ (1-2 px marks, optional)"},
+  "exp_task_wire": {"stand": [1012, 300], "focus": [1008, 288], "what": "side task „Ein Paket über die Linie“: at the foot of the signal a lineman's box with a coil of galvanised signal wire (left from Alexei's January repair)"},
+  "exp_model_engine": {"stand": [1060, 300], "focus": [1060, 240], "what": "the polished model locomotive (x 1020-1100): red ribbons on the handrails, a wreath on the smokebox door, chalk-whitened wheel rims, a small brass plate"},
+  "exp_brass_band": {"stand": [1140, 300], "focus": [1130, 248], "what": "the railway workers' brass band on its plank platform (x 1100-1160): two trumpets, a horn, a drum and a tuba, children sitting on the platform's edge"},
+  "exp_press_buffet": {"stand": [1214, 300], "focus": [1222, 246], "what": "the press canteen's table (x 1140-1260): white tablecloth, tea glasses in holders, plates of bread with red and black caviar in neat circles; at the back a curtain, behind it the band's kasha pot"},
+  "exp_turntable": {"stand": [1290, 300], "focus": [1290, 284], "what": "the 30-m turntable in the yard (x 1260-1320): the pit rim and the bridge with its small operator's hut, the operator's stool empty and his cap on the controller (he plays in the band); the mini-game turns the black shunting engine into stall 7, so the bridge may stay empty"},
+  "exp_task_scale": {"stand": [1404, 300], "focus": [1410, 280], "what": "side task: inside the sand-drying house a platform sack scale with its weighing beam, sand sacks stacked beside it"},
+  "exp_two_clocks": {"stand": [1574, 300], "focus": [1580, 196], "what": "over the gate to platform 1 (x ~1580): the station clock (local time, about 19.10) and beside it a smaller clock with a plate „Korridorzeit“, two hours behind"},
+  "exp_platform_families": {"stand": [1628, 300], "focus": [1630, 252], "what": "families seeing off at the sleeping car: a woman holding up a permit with two stamps, a man with a parcel, children on a suitcase"},
+  "exp_task_parcel": {"stand": [1676, 300], "focus": [1680, 262], "what": "side task: the grandmother on platform 1 (life strip: headscarf, felt boots, a parcel tied with string held against her chest)"},
+  "exp_task_conductor": {"stand": [1724, 300], "focus": [1730, 240], "what": "side task: the sleeping-car conductor at his car's door (life strip: uniform coat, ticket pouch, a lantern)"}
+ }
+}

@@ -21,7 +21,7 @@ const LEGACY_ORDER := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable
 ## The non-additive changes of data/v3 against the preproduction package: Chapter 3 is inserted between the
 ## archive and the montage (documentation/C3_DESIGN.md §1), and the Great Hall shot list describes the reveal as
 ## built (scripts/levels/hall/hall_reveal.gd: h1 5.5 s, h2 9 s, h3 9.5 s). Everything else is an addition.
-## 2026-11-06: the „(fiktiv)“ / „fiktive“ notes in world.a1.title and obj.a1_signal were dropped at the user's request
+## 2026-11-06: the „(fiktiv)“ / „fiktive“ / „(alternative Geschichte)“ notes in world.a1.title, world.m1.title and obj.a1_signal were dropped at the user's request
 ## (one disclaimer at the start of a new game and the credits are enough).
 const EXPECTED_DELTA := ["scenes/scenes[L_M1_Archive]/next_scene: \"L_X1_Montage\" -> \"L_C3_Station\"",
 	"cinematics/sequences[LS_M1_Hall]/shots[h1]/duration_s: 3 -> 5.5",
@@ -30,7 +30,8 @@ const EXPECTED_DELTA := ["scenes/scenes[L_M1_Archive]/next_scene: \"L_X1_Montage
 	"cinematics/sequences[LS_M1_Hall]/shots[h3]/shot: \"Return to office workbench\" -> \"Slow low-angle push and tilt up to the dome; a neighbour draws the curtains above the waiting family; held final frame (the parade and the return to the workbench follow)\"",
 	"cinematics/sequences[LS_M1_Hall]/shots[h3]/camera: \"fixed\" -> \"low_angle_push\"",
 	"locale_de/strings/obj.a1_signal: \"Löse das fiktive Signal-Rätsel am stillgelegten Übungskasten.\" -> \"Löse das Signal-Rätsel am stillgelegten Übungskasten.\"",
-	"locale_de/strings/world.a1.title: \"Verladebahnhof Karsk (fiktiv)\" -> \"Verladebahnhof Karsk\""]
+	"locale_de/strings/world.a1.title: \"Verladebahnhof Karsk (fiktiv)\" -> \"Verladebahnhof Karsk\"",
+	"locale_de/strings/world.m1.title: \"Berliner Bauarchiv (alternative Geschichte)\" -> \"Berliner Bauarchiv\""]
 
 var kit: Kit
 var fx: Dictionary = {}
@@ -90,8 +91,8 @@ func _fixture_current() -> bool:
 	return true
 
 
-## Every slice combination (a1 × m1) × every Chapter-3 option (c3a × c3b × c3d × c3g) × the Chapter-4 decision (c4d)
-## × skip/play.
+## Every slice combination (a1 × m1) × every Chapter-3 option (c3a × c3b × c3d × c3g) × the Chapter-4 decisions (c4d,
+## part 2 c4g) × skip/play.
 func _routes() -> bool:
 	var g0 := kit.story()
 	var expected := {}
@@ -102,12 +103,14 @@ func _routes() -> bool:
 					for d in g0.choices_for("c3d_choose"):
 						for q in g0.choices_for("c3g_choose"):
 							for k in g0.choices_for("c4d_choose"):
-								for mode in ["play", "skip"]:
-									expected["|".join([a["id"], m["id"], c["id"], b["id"], d["id"], q["id"], k["id"], mode])] = true
+								for h in g0.choices_for("c4g_choose"):
+									for mode in ["play", "skip"]:
+										expected["|".join([a["id"], m["id"], c["id"], b["id"], d["id"], q["id"], k["id"], h["id"],
+											mode])] = true
 	kit.eq(_sorted_keys(fx["routes"]), _sorted_keys(expected), "route keys cover every option of every choice × skip/play (%d)" % expected.size())
 	for key in fx["routes"]:
 		var p: PackedStringArray = (key as String).split("|")
-		var g := kit.play_verified_route(p[0], p[1], p[7] == "skip", p[2], p[3], p[4], p[5], p[6])
+		var g := kit.play_verified_route(p[0], p[1], p[8] == "skip", p[2], p[3], p[4], p[5], p[6], p[7])
 		kit.eq(g.save_json(), fx["routes"][key], "route %s" % key)
 		g.free()
 	return true

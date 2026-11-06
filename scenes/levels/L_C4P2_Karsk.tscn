@@ -1,0 +1,387 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/c4/annex_level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/lever_spot.gd" id="c4p2x_spot"]
+
+[node name="L_C4P2_Karsk" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C4P2_KarskA"
+protagonist = "alexei"
+mode = "side"
+art_manifest = "res://assets/environments/karsk_c4p2/scene.json"
+ambience = "amb_karsk_depot"
+music = "mus_c4p2_karsk"
+footstep_surface = "gravel"
+grade_preset = "depot_dawn"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="IrinaYard" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "irina"
+hotspot_id = "irina_window"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+
+[node name="MariaCoal" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "maria"
+hotspot_id = "maria_coal"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+idle_anim = "work_side"
+
+[node name="GuardCoal" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "guard_karsk"
+hotspot_id = "guard_coal"
+face_left = true
+look_at_player = false
+idle_anim = "work_side"
+
+[node name="EkdahlSignal" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "journalist"
+hotspot_id = "signal_post"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+hide_after = "c4g_inspect_card"
+
+[node name="MinderCanteen" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "press_officer"
+hotspot_id = "minder_canteen"
+face_left = true
+look_at_player = false
+idle_anim = "work_side"
+
+[node name="LevSandhouse" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "lev"
+hotspot_id = "lev_sandhouse"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+show_after = "c4g_inspect_book"
+
+[node name="EkdahlExpress" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "journalist"
+hotspot_id = "express_door"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+show_after = "c4g_inspect_card"
+
+[node name="S_c4e_inspect_order" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4e_inspect_order"
+kind = "inspect"
+hotspot_id = "dispatch_window"
+
+[node name="S_c4e_talk_irina" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4e_talk_irina"
+kind = "dialogue"
+hotspot_id = "irina_window"
+npc_id = "irina"
+radius = 38.0
+
+[node name="S_c4e_inspect_list" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4e_inspect_list"
+kind = "inspect"
+hotspot_id = "coal_list"
+
+[node name="S_c4e_talk_maria" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4e_talk_maria"
+kind = "dialogue"
+hotspot_id = "maria_coal"
+npc_id = "maria"
+radius = 38.0
+
+[node name="S_c4e_inspect_notice" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4e_inspect_notice"
+kind = "inspect"
+hotspot_id = "press_notice"
+
+[node name="S_c4g_talk_ekdahl" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4g_talk_ekdahl"
+kind = "dialogue"
+hotspot_id = "signal_post"
+npc_id = "journalist"
+radius = 38.0
+
+[node name="S_c4g_inspect_book" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4g_inspect_book"
+kind = "inspect"
+hotspot_id = "canteen_table"
+
+[node name="S_c4g_talk_lev" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4g_talk_lev"
+kind = "dialogue"
+hotspot_id = "lev_sandhouse"
+npc_id = "lev"
+radius = 38.0
+
+[node name="S_c4g_solve_halves" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4g_solve_halves"
+kind = "puzzle"
+hotspot_id = "sand_table"
+
+[node name="S_c4g_inspect_card" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4g_inspect_card"
+kind = "inspect"
+hotspot_id = "sand_lamp"
+
+[node name="S_c4g_choose" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c4g_choose"
+kind = "choice"
+hotspot_id = "express_door"
+npc_id = "journalist"
+radius = 38.0
+
+[node name="Find_DutyBoard" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_duty_board"
+explore_id = "karsk.depot.duty_board"
+radius = 24.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_CanteenRadio" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_canteen_radio"
+explore_id = "karsk.depot.canteen_radio"
+radius = 24.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_WaterCrane" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_water_crane"
+explore_id = "karsk.depot.water_crane"
+radius = 24.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_KolonneShoes" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_kolonne_shoes"
+explore_id = "karsk.depot.kolonne_shoes"
+radius = 24.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_LenaMitten" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_lena_mitten"
+explore_id = "karsk.depot.lena_mitten"
+radius = 18.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="ChatMaria" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "maria_coal"
+explore_id = "karsk.depot.chat_maria"
+npc_id = "maria"
+radius = 38.0
+once = true
+after_objective = "c4e_talk_maria"
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_AshPitDog" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_ash_pit_dog"
+explore_id = "karsk.depot.ash_pit_dog"
+radius = 24.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_BarrelFire" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_barrel_fire"
+explore_id = "karsk.depot.barrel_fire"
+radius = 22.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_BannerBack" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_banner_back"
+explore_id = "karsk.depot.banner_back"
+radius = 24.0
+once = true
+until_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskA")
+
+[node name="Find_TarpaulinFront" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_tarpaulin_front"
+explore_id = "karsk.depot.tarpaulin_front"
+radius = 22.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_SignalScratch" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_signal_scratch"
+explore_id = "karsk.depot.signal_scratch"
+radius = 18.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Task_Wire" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_task_wire"
+explore_id = "karsk.depot.parcel_wire"
+radius = 22.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_ModelEngine" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_model_engine"
+explore_id = "karsk.depot.model_engine"
+radius = 26.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="ChatMinder" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "minder_canteen"
+explore_id = "karsk.depot.minder"
+npc_id = "press_officer"
+radius = 34.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_BrassBand" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_brass_band"
+explore_id = "karsk.depot.brass_band"
+radius = 22.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_PressBuffet" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_press_buffet"
+explore_id = "karsk.depot.press_buffet"
+radius = 24.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_Turntable" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_turntable"
+explore_id = "karsk.depot.turntable"
+radius = 26.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="ChatLevSandhouse" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "lev_sandhouse"
+explore_id = "karsk.depot.chat_lev"
+npc_id = "lev"
+radius = 38.0
+once = true
+after_objective = "c4g_inspect_card"
+until_objective = "c4g_choose"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Task_Scale" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_task_scale"
+explore_id = "karsk.depot.parcel_scale"
+radius = 22.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_TwoClocks" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_two_clocks"
+explore_id = "karsk.depot.two_clocks"
+radius = 26.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Find_PlatformFamilies" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "discover"
+hotspot_id = "exp_platform_families"
+explore_id = "karsk.depot.platform_families"
+radius = 24.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Task_Parcel" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "exp_task_parcel"
+explore_id = "karsk.depot.parcel_ask"
+explore_chain = PackedStringArray("karsk.depot.parcel_ask", "karsk.depot.parcel_letter")
+radius = 24.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")
+
+[node name="Task_Conductor" type="Node2D" parent="Playfield"]
+script = ExtResource("c4p2x_spot")
+kind = "chat"
+hotspot_id = "exp_task_conductor"
+explore_id = "karsk.depot.parcel_conductor"
+radius = 24.0
+once = true
+after_objective = "c4e_inspect_notice"
+memory_scenes = PackedStringArray("L_C4P2_KarskB")

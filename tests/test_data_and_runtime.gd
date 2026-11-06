@@ -49,10 +49,12 @@ func _test_schema() -> bool:
 	kit.is_ok(report, "canonical data validates")
 	# The Python test expects the slice (2 quests, 3 scenes); Chapter 3 adds q_c3a_arrival / q_c3b_palais and
 	# the scenes L_C3_Station / L_C3_Hall (documentation/C3_DESIGN.md §2), part 2 five quests and scenes with 19
-	# objectives (C3P2_DESIGN.md §2), Chapter 4 part 1 four quests and scenes with 22 objectives (C4_DESIGN.md §2).
-	kit.eq(report.get("report", {}).get("quests"), 13, "quests")
-	kit.eq(report.get("report", {}).get("scenes"), 14, "scenes")
-	kit.eq(report.get("report", {}).get("objectives"), 65, "objectives (11 slice + 13 Chapter 3 + 19 part 2 + 22 Chapter 4)")
+	# objectives (C3P2_DESIGN.md §2), Chapter 4 part 1 four quests and scenes with 22 objectives (C4_DESIGN.md §2), part 2
+	# four more with 21 objectives (C4P2_DESIGN.md §2).
+	kit.eq(report.get("report", {}).get("quests"), 17, "quests")
+	kit.eq(report.get("report", {}).get("scenes"), 18, "scenes")
+	kit.eq(report.get("report", {}).get("objectives"), 86,
+		"objectives (11 slice + 13 Chapter 3 + 19 part 2 + 22 Chapter 4 + 21 part 2)")
 	return true
 
 

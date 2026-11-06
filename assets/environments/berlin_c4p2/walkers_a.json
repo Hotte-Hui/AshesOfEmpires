@@ -1,0 +1,361 @@
+{
+ "doc": "Ambient walkers of L_C4P2_BerlinA (Ostbahnhof, Korridorbahnsteig K): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn (scene_id L_C4P2_BerlinA). Rigs in crowd/ from tools/pixelgen/env_c4p2_berlin_crowd.py (colour variants of existing characters, same silhouettes, no insignia). Lane y 295.5 = in front of the platform furniture (base_y <= 294), behind the walk band (>= 296): the player and the story NPCs are always drawn in front; the buffet woman stands behind her counter (y 281 < the counter prop's base_y 292).",
+ "walkers": [
+  {
+   "id": "ost_police",
+   "char": "guard",
+   "rig": "crowd/ost_police_rig.json",
+   "path": [
+    [
+     186,
+     295.5
+    ],
+    [
+     262,
+     295.5
+    ],
+    [
+     356,
+     295.5
+    ]
+   ],
+   "speed": 13,
+   "start": 0.2,
+   "pauses": {
+    "1": [
+     2.0,
+     4.0
+    ]
+   },
+   "end_pause": [
+    3.0,
+    6.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "a railway policeman walks the buffet and watches the travellers (no insignia)"
+  },
+  {
+   "id": "ost_attendant",
+   "char": "vendor",
+   "rig": "crowd/ost_attendant_rig.json",
+   "path": [
+    [
+     256,
+     281.0
+    ],
+    [
+     286,
+     281.0
+    ]
+   ],
+   "speed": 7,
+   "start": 0.6,
+   "end_pause": [
+    4.0,
+    9.0
+   ],
+   "pause_rows": [
+    "work_side",
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "the buffet woman behind her counter (feet hidden by the counter prop, base_y 292), pouring tea"
+  },
+  {
+   "id": "ost_mother",
+   "char": "berlin_mother",
+   "rig": "crowd/ost_mother_rig.json",
+   "path": [
+    [
+     210,
+     295.5
+    ],
+    [
+     214,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.0,
+   "end_pause": [
+    7.0,
+    14.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "exp_corridor_permit: the mother waits by her sleeping boy, the permits in cellophane"
+  },
+  {
+   "id": "ost_father",
+   "char": "berlin_father",
+   "rig": "crowd/ost_father_rig.json",
+   "path": [
+    [
+     188,
+     295.5
+    ],
+    [
+     192,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.5,
+   "end_pause": [
+    8.0,
+    15.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "the father with the family's second case"
+  },
+  {
+   "id": "ost_reader",
+   "char": "clerk",
+   "rig": "crowd/ost_reader_rig.json",
+   "path": [
+    [
+     94,
+     295.5
+    ],
+    [
+     100,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.3,
+   "end_pause": [
+    6.0,
+    12.0
+   ],
+   "pause_rows": [
+    "look_side"
+   ],
+   "give_way": 0,
+   "note": "an older man reads the departure board twice"
+  },
+  {
+   "id": "ost_porter_a",
+   "char": "porter",
+   "rig": "crowd/ost_porter_a_rig.json",
+   "path": [
+    [
+     600,
+     295.5
+    ],
+    [
+     606,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.0,
+   "end_pause": [
+    5.0,
+    11.0
+   ],
+   "pause_rows": [
+    "work_side",
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "exp_porters: a porter by his cart"
+  },
+  {
+   "id": "ost_porter_b",
+   "char": "worker_a",
+   "rig": "crowd/ost_porter_b_rig.json",
+   "path": [
+    [
+     634,
+     295.5
+    ],
+    [
+     638,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.7,
+   "end_pause": [
+    6.0,
+    12.0
+   ],
+   "pause_rows": [
+    "work_side",
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "exp_porters: the older porter in his short blue work jacket and felt boots, the brass badge on his cap, waiting for a fare (another build than the young one in the long coat)"
+  },
+  {
+   "id": "ost_conductor",
+   "char": "conductor",
+   "rig": "crowd/ost_conductor_rig.json",
+   "path": [
+    [
+     810,
+     295.5
+    ],
+    [
+     815,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.2,
+   "end_pause": [
+    5.0,
+    10.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "the sleeping-car conductor at his door"
+  },
+  {
+   "id": "ost_grandmother",
+   "char": "babushka",
+   "rig": "crowd/ost_grandmother_rig.json",
+   "path": [
+    [
+     828,
+     295.5
+    ],
+    [
+     831,
+     295.5
+    ]
+   ],
+   "speed": 4,
+   "start": 0.5,
+   "end_pause": [
+    6.0,
+    12.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "the grandmother who is helped up into the sleeping car (once a year to Karsk)"
+  },
+  {
+   "id": "ost_son",
+   "char": "berlin_father",
+   "rig": "crowd/ost_son_rig.json",
+   "path": [
+    [
+     856,
+     295.5
+    ],
+    [
+     861,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.1,
+   "end_pause": [
+    5.0,
+    9.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "her son with the parcel for Karsk"
+  },
+  {
+   "id": "ost_walker_a",
+   "char": "clerk",
+   "rig": "crowd/ost_walker_a_rig.json",
+   "path": [
+    [
+     452,
+     295.5
+    ],
+    [
+     828,
+     295.5
+    ]
+   ],
+   "speed": 19,
+   "start": 0.35,
+   "end_pause": [
+    2.0,
+    5.0
+   ],
+   "pauses": {},
+   "give_way": 0,
+   "note": "a traveller walks down the train looking for his car"
+  },
+  {
+   "id": "ost_walker_b",
+   "char": "berlin_mother",
+   "rig": "crowd/ost_walker_b_rig.json",
+   "path": [
+    [
+     124,
+     295.5
+    ],
+    [
+     364,
+     295.5
+    ]
+   ],
+   "speed": 16,
+   "start": 0.92,
+   "end_pause": [
+    2.0,
+    4.0
+   ],
+   "give_way": 0,
+   "note": "a woman with a small case walks to the buffet and back (starts at x 345, clear of Marta at 318)"
+  },
+  {
+   "id": "ost_worker",
+   "char": "worker_a",
+   "rig": "crowd/ost_worker_rig.json",
+   "path": [
+    [
+     283,
+     295.5
+    ],
+    [
+     288,
+     295.5
+    ]
+   ],
+   "speed": 5,
+   "start": 0.4,
+   "end_pause": [
+    7.0,
+    13.0
+   ],
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 0,
+   "note": "a railway worker drinks his coffee at the counter"
+  }
+ ]
+}

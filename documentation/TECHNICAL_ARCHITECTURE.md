@@ -39,7 +39,7 @@ Main (Node, main.gd)
 * **Low-res path** (any Node3D in LevelRoot, e.g. the Great Hall; also legacy `--capture-world` runs, see below):
   642×362, zoom 1, pixel-locked gameplay camera, sub-pixel remainder of cinematic moves and of the hall's lens
   shift via `PixelView.set_fraction` — identical to the round-1 pipeline.
-* **Post** (`post_grade.gdshader`): palette snap + 4×4 Bayer, grade, vignette dither and grain are evaluated per
+* **Post** (`post_grade.gdshader`): palette snap (up to 128 colours since round 10) + 4×4 Bayer, grade, vignette dither and grain are evaluated per
   world texel (`px_scale` = k, `dither_origin` = camera in viewport px). The dither threshold comes from the
   **texel code** that opaque sprites write into the framebuffer alpha (`pixel_sprite.gdshader`, 16 levels in
   0.03..0.87): the dither sticks to each layer's/actor's own texels → no dither crawl on parallax layers during
@@ -110,6 +110,11 @@ Level scene = `scenes/levels/<LevelId>.tscn`, root script `scripts/levels/level.
 * Hotspot ids for the slice: Karsk `irina, seal, timetable, signal_board, ledger` (+ optional `obs_*`);
   archive `plan_a, plan_b, overlay_table, emil` (+ optional `obs_*`).
 * Each PNG may have `<name>_n.png` (normal, OpenGL +Y up) and `<name>_e.png` (emission mask, drawn unshaded).
+* An env folder is shared (round 10): other tools add files (`walkers/` of `walkers_r8.py`, the station's `thaw/`),
+  `actors` entries and provenance rows. A generator removes only the PNGs its previous run recorded in the folder's
+  `provenance.json`, merges `scene.json` (keys it does not write stay in place; `actors` it does not produce stay at
+  their index) and `provenance.json`, and leaves an unchanged `scene.json` byte for byte — `tools/pixelgen/env_keep.py`
+  (`--selftest`), used by `env_veltrava_hall.py`, `env_veltrava_station.py`, `env_c3p2_quay.py`.
 
 ## 4. Characters — `assets/characters/<id>/`
 * `sheet.png` (+ `sheet_n.png`) with a uniform cell grid; `sheet.json`:
@@ -418,6 +423,21 @@ naming the worst duct; hints after two (Settings `puzzle_hints`), the second nam
 button acknowledges). The stage is drawn in code (pixel art ×3, ×2 + side sheet for larger text). The reveal: the third
 duct's line on Blatt 3 reads „Gang – Warteraum, 14 Plätze“ in Konrad's own hand.
 
+Chapter 4 part 2 (round 10, owner exploration c4p2; entries `data/explore/c4p2_karsk.json` / `c4p2_berlin.json`, strings
+`data/locale/de_explore_c4p2.json` `mg.turntable.*` / `mg.luggage.*`, tests `tests/test_c4p2_explore.gd`, sounds
+`tools/audiogen/mg_audio_c4p2.py`, capture `tests/visual/c4p2_explore_shots.gd`; both stages drawn in code, static parts
+baked once into an image): `Turntable.tscn` „Die Drehscheibe“ at `exp_turntable` (1290, 300), depot scene B — the press
+minder wants the sooty shunting engine out of the photograph; Alexei turns the 30-m bridge and pulls the engine into
+stall 7 (`turntable_logic.gd`: a tap sets ~4 cm, held it drives to 18 °/s and coasts ~100°, the brake stops it in ~8°;
+a pull is refused while moving, between the tracks, at the entry, at another stall or > 0.2° off; the loupe on the rail
+joint says „fluchtet“). Keys ←/→ (tap or hold), Space brakes while held, E pulls, R; pad LB/RB, A brakes, X pulls, Y;
+mouse drag on the rim, right button brakes, wheel nudges, a click on the loupe pulls. `LuggageScale.tscn` „Die
+Gepäckwaage“ at `exp_luggage_scale` (166, 300), Ostbahnhof scene A — a decimal scale with two sliding weights
+(`luggage_logic.gd`: 5-kg notches, 0.1-kg steps, the tongue plays in at the mark): the suitcase for the grandmother in
+Karsk 23,6 kg (too heavy), repacked 19,8 kg, the parcel 3,8 kg. Keys ←/→ big weight, ↑/↓ small (held it slides), Page
+Up/Down a kilo, E/Enter/Space read, R; pad d-pad, LB/RB, A, Y; mouse click/drag a weight, wheel, „Ablesen“. Every part-2
+find uses `lever_spot.gd`.
+
 ### 12.9 Side tasks („Aufgaben“, round 7, owner: tasks)
 A small optional-task layer on top of §12.1 — backward compatible, **no save data beyond `Explore.state()`**
 (`{found, cards}`), never Story state.
@@ -489,6 +509,17 @@ A small optional-task layer on top of §12.1 — backward compatible, **no save 
   before `S_c4c_talk_lev` in the level file, so when both are open (names read, wagon inspected) the player's focus rule
   (nearest, then tree order) offers the hand-in first and the story talk right after. The drivers complete it in the
   siding's first pass (before `c4c_inspect_card`); the final pass before `c4c_talk_lev` requires it done.
+- **Chapter 4 part 2 (round 10, owner exploration c4p2).** Depot „Ein Paket über die Linie“ (`karsk.task.parcel`, level
+  key `L_C4P2_KarskA`, Alexei, scene B only): the grandmother on platform 1 (chain on `Task_Parcel` at `exp_task_parcel`:
+  ask → letter) → the sack scale in the sand-drying house (`exp_task_scale`) → back to her: a letter instead of the jar of
+  honey → signal wire at the foot of Alexei's signal (`exp_task_wire`) → the sleeping-car conductor (`exp_task_conductor`).
+  Courtyard „Ein Korb für Frau Grabowski“ (`berlin.task.basket`, level key `L_C4P2_BerlinA`, Konrad, scene B only): the
+  basket from the dark kitchen window (chain on `Task_Basket` at `exp_task_basket`: rope → up; the voice `grabowski` has
+  no figure and no sheet) → Hanna's briquettes by the cellar hatch (`exp_task_coal`). Both are open from the start of their
+  walk area, so the drivers finish them in the first B pass; chats on a life strip (`exp_task_*`) carry no `npc_id`.
+  Exploration passes this content needs in the drivers: autoplay `EXPLORE_AT` + `c4e_inspect_notice`, `c4f_inspect_book`,
+  `c4h_solve_house` (the chats with Maria, Marta, Hanna); inputplay a mid-route walk before `c4h_solve_house` (Hanna);
+  `tests/test_c4p2_explore.gd` reports any that are still missing.
 
 ### 12.10 Memories („Erinnerungen“, round 7, owner: memories)
 Revisit a completed scene, look at everything again, return to the present — only completed scenes.
@@ -589,7 +620,10 @@ Control passes between Alexei and Konrad inside ONE level, at an authored story 
   played; `"none"` = nobody; default: the protagonist of the chain scene before, when it plays in the same file),
   `partner_spawn` (where he stands: he walks there after the hand-over, is placed there on a load), `partner_anim`
   (idle row, e.g. `work_side`), `partner_hide_after` (objective id: he leaves then), `glide` (s, default 1.2),
-  `music` / `ambience` (the scene's own tracks; default the level's).
+  `music` / `ambience` (the scene's own tracks; default the level's), `grade` (round 10: set as the level's
+  `grade_preset` on every level load of that scene — `Game._apply_switch_grade` in `_setup_level`, memories too —
+  unless the level sets its grade itself: grade looks, `Game.level_sets_grade()`; an unknown key changes nothing;
+  test `tests/test_switch_grade.gd`).
 - **Detection.** `Game.goto_level(next)` → `can_switch_in_level(next)`: a walkable level with a player is loaded, `next` is
   another scene of the same level file (`level_file()`), no memory / return trip / transition, no loaded save
   (`_force_reload`, set by `_on_loaded_slot()` and a new game). Then `_switch_in_level()` instead of a reload.
@@ -674,6 +708,15 @@ Control passes between Alexei and Konrad inside ONE level, at an authored story 
   finished playthroughs (`slice_completed`) and unknown shapes are untouched; the load reports a warning.
   Round 9 grew the chain again behind `c3g_completed` (the round-8 montage form continues in `L_C4_TunnelsA` with
   Alexei). Test: `tests/test_save_rebase_r8.gd` (both generations, container path and memory snapshots).
+- **Flag fill for older saves (round 10).** `SaveSystem.fill_flag_defaults(story)` runs first in `rebase_story()` (so in
+  `read_container` — slots, load menu, „Fortsetzen“, profile seeding — and in `Memories.snapshot_raw`);
+  `Memories.memory_flags()` uses it for replayed line variants. Every flag of `data/v3/flags.json` that a v3 payload
+  lacks gets its default (deep copy; present values untouched; wrong types / ranges, unknown keys or a missing flags
+  dictionary still fail `Story.validate_save_json`); the load warns „Save migrated: Story flags filled with their
+  defaults: …“. The Story engine and its Python reference stay strict. Rule: a new flag is written only by objectives
+  of the chapter that introduces it, so its default is what an older save's replay computes. Round 10 adds
+  `people_protected` (17 flags) and re-bases the round-9 montage form and `L_C4_AnnexB` memory snapshots to
+  `L_C4P2_KarskA`. Tests `tests/test_save_migration_r10.gd`, `tests/test_save_rebase_r8.gd`.
 - **Pad A in menus.** `Settings._build_input_map()` adds `JOY_BUTTON_A` to `ui_accept` (Godot 4.7's built-in action
   has Enter / Kp Enter / Space only), so the A button presses the focused button in every menu; modals that read
   `interact` / `advance` as well treat both as one press.
@@ -700,7 +743,9 @@ A cork board of the whole investigation; it only ever READS Story (`inventory`, 
   column (no names, no pictures, no count of places). Focus: arrows/WASD/D-pad/stick (spatial `neighbor()`),
   Enter/Space/A = InspectView (read-only), mouse hover/click; the focused card's threads light up, their captions
   hang on bare cork only (never over a card), all of them in the detail strip. PgUp/PgDn or the right stick scroll the
-  summary sheet (opens on its newest line). 100 % shows Chapters 1–3 without panning (4 rows); larger text grows cards
+  summary sheet (opens on its newest line). Round 10: the strip's threads come in pages of whole groups that fit its
+  lines (`thread_pages()`, never a trailing „…“), a page ends in „+n weitere“ while groups follow, the kicker counts
+  „1/3“; F / pad X / a click or the wheel on the threads turn the pages (hint „Fäden blättern“ only while a card pages). 100 % shows Chapters 1–3 without panning (4 rows); larger text grows cards
   and strips and the cork pans to the focus. High contrast: dark cork, black ink, bright focus, 6-px threads.
   Cards pinned since the last opening in this session carry „Neu“ and the focus starts on the newest (session only;
   `Story.state_replaced` — new game / load — resets it; a memory never marks anything).
@@ -764,6 +809,37 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   „wrong_turned“ is derived from the marks' geometry (`rotation_fits`), not from the answer. Art
   `tools/pixelgen/gen_ui_c4.py` (verifies both against `data/v3/puzzles.json`); tests `tests/test_c4_puzzle_ui.gd`,
   screenshots `res://tests/visual/C4PuzzleShots.tscn -- --out=<dir>`.
+- **Chapter 4, part 2 (round 10, story stream; contract `documentation/C4P2_DESIGN.md`).** Four scenes between
+  `L_C4_AnnexB` and the montage, alternating cities on shared objects: `L_C4P2_KarskA` / `L_C4P2_KarskB` (Alexei, Karsk
+  depot) share `scenes/levels/L_C4P2_Karsk.tscn`, `L_C4P2_BerlinA` / `L_C4P2_BerlinB` (Konrad: Ostbahnhof, Kolonnenstraße
+  14) share `L_C4P2_Berlin.tscn` (two walk areas per file, blockers `tarpaulin` / `platform_end`; c4p2.json `switches` =
+  partner none + ambience / music / grade). Match-cut films `LS_C4P2_Depot` / `Steam` / `Book` (the guidebook crosses
+  the Line) / `Express` / `Clock`. Puzzles `pz_c4_halves` (`overlay_alignment`, `JoinPuzzle.tscn`, RoutePuzzle keys) and
+  `pz_c4_house` (`symbol_order`, new `HousePuzzle.tscn`: arrows walk a route through the house, Enter = Probegang,
+  Backspace / R / K / L). One decision `c4g_choose` (publish_now → `evidence_chain`, protect_first → the new flag
+  `people_protected`); the end card lists eight decisions; the drivers take an 8-value choice spec. Tests
+  `tests/test_c4p2_routes.gd`, `tests/test_save_migration_r10.gd`; QUEST_DATABASE §13 by `tools/docs/gen_quest_db_c4p2.py`.
+- **Chapter-4-part-2 puzzle UIs (round 10, puzzle stream).** `JoinPuzzle.tscn` + its own `scripts/ui/join_puzzle.gd`
+  (the RoutePuzzle key / pad / mouse contract; the German half is stored upside down; marks = teeth / notches / stamp
+  halves / line ends, a pair is joined when the positions meet and the inward normals are opposite; `wrong_turned` /
+  `wrong_sideways` / `wrong` from the marks' geometry), layout `assets/ui/documents/karsk_c4p2_halves.json`.
+  `HousePuzzle.tscn` + `scripts/ui/house_puzzle.gd` (a route of room ids from `s3`; arrows follow the layout's
+  (col, row) grid and its passages; „Probegang“ = `Story.solve_puzzle` at once plus a ≤ 1 s walk of the markers that any
+  key ends; failures keep the route, from the third a walk into a watcher leaves Ilse on the last safe room; K = Kuhnert's
+  cards, L = the 22.40 lights), layout `assets/ui/puzzle/c4p2_house.json` (rooms, the contract's passages, watchers,
+  households, lit windows, window animations). Art and verification `tools/pixelgen/gen_ui_c4p2.py`; texts
+  `data/locale/de_c4p2_puzzles.json` (adds keys to the story's `de_c4p2_ui.json`, never overrides); tests
+  `tests/test_c4p2_puzzle_ui.gd`, screenshots `res://tests/visual/C4P2PuzzleShots.tscn -- --out=<dir>`.
+- **Chapter-4-part-2 Berlin art (round 10, env-berlin).** `L_C4P2_Berlin.tscn` runs
+  `scripts/levels/c4p2/berlin_c4p2_level.gd` (extends `annex_level.gd`; adds the footsteps of the place — concrete in the
+  station, snow in the courtyard — and `look()` = station | courtyard). Art `py -3 -P tools/pixelgen/env_c4p2_berlin.py`
+  (deterministic, `env_keep.py` rules; `assets/environments/berlin_c4p2/`, documents `assets/ui/documents/berlin_c4p2_*`):
+  gated patches by `choice` (Marta's roster, `c4d_choose`) and `after` / `until` `c4h_solve_house` (stairwells, the
+  car's lights, the candle, the sweep's men; Ilse's / Hanna's window), the courtyard's lit windows = the house puzzle's
+  households (scene.json `households`), ambient walkers of the platform (`walkers_a.json`, rigs in `crowd/` via
+  `walkers_r8.build_rig`), actor `scenes/levels/c4p2/C4P2StationClock.tscn` (hands at 20.31, the minute hand jumps).
+  Test `tests/test_c4p2_berlin_art.gd`; shots `res://scripts/levels/c4p2/berlin_shots.tscn` (`--as-shots=A:0,B:918 …`,
+  `--as-done=c4h_solve_house`, `--symbols=0`); provenance `asset_manifest_parts/env_c4p2_berlin.md`.
 - **Palais ambient life (art, round 7).** `veltrava_hall/scene.json` `decals` with `frames`/`fps` are looping strips
   (`assets/environments/veltrava_hall/life/`, `tools/pixelgen/env_veltrava_hall_life.py`): figures on `"layer":
   "playfield"` keep `base_y` < 296 (actors always pass in front), figures behind glass or a balustrade sit on the `room`

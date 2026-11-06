@@ -1,0 +1,12 @@
+{
+ "locale": "de",
+ "area": "karsk_c4p2",
+ "strings": {
+  "doc.karsk_c4p2_order.alt": "Ein violetter Durchschlag auf Irinas Fensterbrett: „Наряд № 45/С“ – Sonderlauf C-17/45 am Dienstag, eine Lok, ein Personal, ab Umsetzgleis 19.40 Uhr, an Kordon-17 23.40 Uhr, Wagen 24 318, Begleitung Abt. T. „Персонал молчит“ (Das Personal schweigt). Darunter in Bleistift: „Кто?“ (Wer?).",
+  "doc.karsk_c4p2_work_list.alt": "Unter vergilbtem Zellophan: „Колонна 4. Прибытие 22.1.1964. До окончания проверки.“ Elf Namen, unleserlich. Am Rand in Bleistift: „Лена, 4, и Мирон, 6 – детдом № 2“ und „Вильгельм С. – спецпоселение Север“. Elf und drei sind vierzehn.",
+  "doc.karsk_c4p2_press_notice.alt": "Ein Aushang mit dem Stempel der Depotleitung: Dienstag, 18.2., 17.30 Uhr, Besuch eines Vertreters der schwedischen Presse. Vorzuführen: das Signal (Ing. A. Morozov), die Musterbrigade, die Speisehalle. „Колонна 4 в этот день: задний двор, за брезентом“ – jemand hat die Zeile unterstrichen.",
+  "doc.karsk_c4p2_guidebook.alt": "Ekdahls Reiseführer von 1938, Seite 212: „Karsk – bangård och depå“. Darin, verkehrt herum, die deutsche Hälfte der Karte 0417 und eine Pause auf Pauspapier: der Raum von Kordon-17, Tür West, Tür Ost, die Wartebank für vierzehn. Auf der umgeschlagenen Rückseite: „MOROZOV – 0417 – DI 23.40 – TÜR OST“.",
+  "doc.karsk_c4p2_card_ru.alt": "Karte 0417, russische Hälfte: „Коваленко Анна Петровна, 1926, Харьков“ – Rückkehrerin, weiter zum Filtrationspunkt Karsk, Stempel „Принять“ (Annehmen). Links die Kerben der Perforation, darüber ein halber runder Stempel „C-17“ in kyrillischer Schrift. Levs Zettel: „До 19.30 – обратно в ящик“ (Bis 19.30 zurück in den Kasten).",
+  "doc.karsk_c4p2_card_whole.alt": "Die ganze Karte 0417 unter der grünen Lampe. Links deutsch: „Lindner, Anna, geb. Kowalenko … Vermerk C-17: Rückführung Ost, Abgabe Kordon-17, Tür Ost“. Rechts russisch: „Коваленко Анна Петровна … Принять … Фильтрационный пункт Карск“. Die Zähne greifen ineinander; der runde Stempel „C-17“ schließt sich – halb deutsch, halb kyrillisch."
+ }
+}

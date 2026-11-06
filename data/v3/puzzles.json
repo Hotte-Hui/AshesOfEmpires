@@ -134,6 +134,59 @@
       "retry_unlimited": true,
       "hint_after_attempts": 2,
       "world_note": "Fictional wagon numbers, paint layers and switch posts; not a real railway numbering scheme."
+    },
+    {
+      "id": "pz_c4_halves",
+      "type": "overlay_alignment",
+      "scene": "L_C4P2_KarskB",
+      "clue_item_ids": [
+        "ev_c4_guidebook",
+        "ev_c4_card_ru_original"
+      ],
+      "solution": {
+        "rotation_steps": 2,
+        "offset_x": 4,
+        "offset_y": 1
+      },
+      "snap_tolerance": 0,
+      "retry_unlimited": true,
+      "hint_after_attempts": 2,
+      "world_note": "Fictional two-part registry card laid against its other half; not a real form."
+    },
+    {
+      "id": "pz_c4_house",
+      "type": "symbol_order",
+      "scene": "L_C4P2_BerlinB",
+      "clue_item_ids": [
+        "ev_c4_house_notice",
+        "ev_c4_house_cards"
+      ],
+      "solution": [
+        "s3",
+        "sd",
+        "hd",
+        "h3",
+        "h2",
+        "h1",
+        "he",
+        "hk",
+        "ws"
+      ],
+      "display_symbols": [
+        "he",
+        "s3",
+        "hk",
+        "h2",
+        "ws",
+        "sd",
+        "h1",
+        "hd",
+        "h3"
+      ],
+      "max_penalty": 0,
+      "retry_unlimited": true,
+      "hint_after_attempts": 2,
+      "world_note": "Fictional tenement and households; the Blockleiter card file follows the documented practice (hist.reich.blockleiter), not a real house."
     }
   ]
 }

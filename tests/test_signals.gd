@@ -117,9 +117,35 @@ func _full_stream() -> bool:
 		["item_granted", "ev_c4_tube_slip"], ["objective_completed", "c4d_inspect_tube"],
 		["objective_completed", "c4d_talk_registrar"],
 		["flag_changed", "evidence_chain", 2], ["objective_completed", "c4d_choose"], ["event_fired", "c4d_completed"],
-		["cinematic_queued", "LS_C4_Voices"], ["scene_changed", "L_X1_Montage"],
+		["cinematic_queued", "LS_C4_Voices"], ["cinematic_queued", "LS_C4P2_Depot"], ["scene_changed", "L_C4P2_KarskA"],
+		# Chapter 4 part 2 (C4P2_DESIGN.md): Karsk depot → Ostbahnhof → the depot's showcase → Kolonnenstraße 14
+		["item_granted", "ev_c4_special_order"], ["objective_completed", "c4e_inspect_order"],
+		["objective_completed", "c4e_talk_irina"],
+		["item_granted", "ev_c4_work_list"], ["objective_completed", "c4e_inspect_list"],
+		["objective_completed", "c4e_talk_maria"],
+		["item_granted", "ev_c4_press_notice"], ["objective_completed", "c4e_inspect_notice"], ["event_fired", "c4e_completed"],
+		["cinematic_queued", "LS_C4P2_Steam"], ["scene_changed", "L_C4P2_BerlinA"],
+		["item_granted", "ev_c4_departures_east"], ["objective_completed", "c4f_inspect_board"],
+		["objective_completed", "c4f_talk_marta"],
+		["item_granted", "ev_c4_courier_seals"], ["objective_completed", "c4f_inspect_courier"],
+		["objective_completed", "c4f_talk_ekdahl"],
+		["item_granted", "ev_c4_konrad_tracing"], ["objective_completed", "c4f_inspect_book"], ["event_fired", "c4f_completed"],
+		["cinematic_queued", "LS_C4P2_Book"], ["scene_changed", "L_C4P2_KarskB"],
+		["objective_completed", "c4g_talk_ekdahl"],
+		["item_granted", "ev_c4_guidebook"], ["objective_completed", "c4g_inspect_book"],
+		["item_granted", "ev_c4_card_ru_original"], ["objective_completed", "c4g_talk_lev"],
+		["objective_completed", "c4g_solve_halves"],
+		["item_granted", "ev_c4_card_whole"], ["objective_completed", "c4g_inspect_card"],
+		["flag_changed", "evidence_chain", 3], ["objective_completed", "c4g_choose"], ["event_fired", "c4g_completed"],
+		["cinematic_queued", "LS_C4P2_Express"], ["scene_changed", "L_C4P2_BerlinB"],
+		["item_granted", "ev_c4_house_notice"], ["objective_completed", "c4h_inspect_gate"],
+		["objective_completed", "c4h_talk_hanna"],
+		["item_granted", "ev_c4_house_cards"], ["objective_completed", "c4h_inspect_cards"],
+		["objective_completed", "c4h_solve_house"],
+		["objective_completed", "c4h_talk_wendt"], ["event_fired", "c4h_completed"],
+		["cinematic_queued", "LS_C4P2_Clock"], ["scene_changed", "L_X1_Montage"],
 		["flag_changed", "slice_finished", true], ["event_fired", "slice_completed"],
-	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol / admit_plan / split_by_language / name_marta)")
+	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol / admit_plan / split_by_language / name_marta / publish_now)")
 	return true
 
 

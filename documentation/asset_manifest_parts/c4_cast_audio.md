@@ -17,7 +17,8 @@ of the other side-level NPCs + portrait with the four expressions) and §8 (audi
   breaths and chords only (the contract's „bayan breath“) — no folk melody, no augmented-second scale, no cliché.
 * No insignia on any new sprite or portrait: Marta's cap carries only the line number „74“, Fengler's lapel pin is a
   plain round pin. Licence: project-owned original assets, no attribution needed.
-* Deterministic: verified 2026-11-06 — all 15 WAVs rebuilt and md5-compared (identical); all 18 character files
+* Deterministic: verified 2026-11-06 — all 15 WAVs rebuilt and md5-compared (identical; round 10: 11 WAVs, the
+  three re-voiced cues rebuild bit-identically and `amb_berlin_annex`, which shares `stamp_take`, is unchanged); all 18 character files
   (3 × sheet.png, sheet_n.png, sheet.json, portrait.png, portrait_anim.png, portrait.json) rebuilt into a scratch
   directory and byte-compared (identical).
 
@@ -26,7 +27,7 @@ of the other side-level NPCs + portrait with the four expressions) and §8 (audi
 py -3 -P tools/pixelgen/characters_c4.py --portraits   # 3 speakers: sheets, normal maps, living portraits, checks
 py -3 -P tools/pixelgen/characters_c4.py --check       # validators only (characters_check + C4 contract checks)
 py -3 -P tools/pixelgen/characters_c4.py --heads       # review image of the hand-drawn heads (8x)
-py -3 -P tools/audiogen/c4_audio.py                    # 15 WAVs + .import + analysis + numeric checks
+py -3 -P tools/audiogen/c4_audio.py                    # 11 WAVs + .import + analysis + numeric checks
 py -3 -P tools/audiogen/c4_audio.py --list             # names and where each is (to be) wired
 # then the shared, locked import (TECHNICAL_ARCHITECTURE §1)
 ```
@@ -63,13 +64,10 @@ Measured on the delivered files (RMS / sample peak in dBFS; seam = level step ov
 | `music/mus_c4_karsk.wav` | sparse low strings in D Aeolian, a cello line descending D–C–Bb–A, the bayan breathing three times (Dm, Dsus2, an open fifth into the loop), soft low plucks, K once on the felt piano | 71.1 s loop (54 bpm, 64 beats) | −22.0 / −5.5 (+0.7 dB) | `L_C4_Tunnels.tscn` music; switches `L_C4_TunnelsA` / `B` |
 | `music/mus_c4_berlin.wav` | cool and mechanical in G Aeolian: a muted-piano pulse in 3+3+2, a card machine's dry tick (a heavier feed every two bars), brass chords over the G pedal, a cold harmonic line, B on the celesta, B low on the piano | 53.3 s loop (72 bpm, 64 beats) | −21.0 / −2.3 (−1.9 dB) | `L_C4_Annex.tscn` music; switches `L_C4_AnnexA` / `B` |
 | `music/mus_c4_voices.wav` | the closing: a clock on every beat; the Karsk drone and K on the piano, then B on the celesta over the G pedal, then K_B and B together (B's Eb bent to E where they meet), the clock alone again. The first 24 s are a full arc for LS_C4_Voices (≈ 24 s); the loop serves longer scenes | 48.0 s loop (60 bpm, 48 beats) | −21.0 / −1.0 (−1.9 dB) | LS_C4_Voices `{"music": "mus_c4_voices"}` (cine stream) |
-| `sfx/c4_stencil_brush.wav` | a stippling brush dabbed through a stencil on wagon planks, wiped on the tin's rim | 5.0 s | −35.3 / −9.0 | LS_C4_Number n1 |
-| `sfx/c4_card_tear.wav` | a stiff registry card torn along its perforation (the tear runs 0.20–0.66 s) | 1.4 s | −39.9 / −10.0 | LS_C4_Card c1 → c2 |
-| `sfx/c4_stamp_accept.wav` | Karsk „ПРИНЯТЬ“: ink pad at 0.00 s, the stroke at 0.36 s on the siding office's wooden desk (small wooden booth) | 2.0 s | −31.5 / −6.0 | LS_C4_Stamp s1 / s2 |
-| `sfx/c4_stamp_dispatch.wav` | Berlin „ABGANG“: same timing, on the annex counter (linoleum over steel, concrete hall) — the match cut lands on the stroke | 2.4 s | −33.9 / −6.0 | LS_C4_Stamp s3 |
-| `sfx/c4_bell_once.wav`, `c4_bell_twice.wav` | Marta's foot gong in the open loop (slap off the bare party wall), one ring / two | 4.6 s | −27.4 / −7.0, −25.4 / −7.0 | LS_C4_Voices v2 (name_marta / protect_marta) |
-| `sfx/c4_train_overhead.wav` | a goods train crossing above a vault: rumble, wheelsets over a rail joint along the train, the vault's low modes, dust trickling, the lamp chain rattling | 13.0 s | −25.3 / −6.0 | LS_C4_Homeward w3 (optional); a tunnels level script (see note) |
-| `sfx/c4_lamp_out.wav` | the work lamp switched off: hum and ballast buzz, the switch (at 0.62 s), the filament ticking as it cools | 3.6 s | −26.3 / −9.0 | LS_C4_Voices v4 |
+| `sfx/c4_stamp_accept.wav` | the surface of the Karsk stamp „ПРИНЯТЬ“ on the siding office's wooden desk in the small wooden booth: the desk's knock, the rubber's slap, the handle's ring — strike at 0.36 s; no ink pad, no low body, high-passed at 190 Hz (round 10: a layer over the film's bed) | 2.0 s | −36.7 / −6.0 | LS_C4_Stamp s2: `{"sfx": "c4_stamp_accept", "db": -5}` at `STAMP_RU[0]`, over the bed `c4cine_stamp_ru` |
+| `sfx/c4_stamp_dispatch.wav` | the same for the Berlin stamp „ABGANG“ on the annex counter (linoleum over steel, concrete hall) — the match cut lands on two surfaces in two rooms | 2.4 s | −35.4 / −6.0 | LS_C4_Stamp s3a: at `STAMP_DE[0]`, over `c4cine_stamp_de` |
+| `sfx/c4_card_tear.wav` | the perforator splits a card (round 10, re-timed on the picture): the card flexes under the coming lever, at the split (0.12 s) 28 teeth let go in equal steps along the perforation on the picture's ease-out while the fibres hiss with the halves' speed, the last tooth at 0.36 s where the halves come to rest; annex room, from the counter's side | 1.2 s | −40.9 / −9.0 | LS_C4_Stamp s3b: `{"sfx": "c4_card_tear", "db": -6}` at `LEVER[0]` (the bed `c4cine_annex` has the lever's clack) |
+| `sfx/c4_train_overhead.wav` | a goods train crossing above a vault: rumble, wheelsets over a rail joint along the train, the vault's low modes, dust trickling, the lamp chain rattling | 13.0 s | −25.3 / −6.0 | `scripts/levels/c4/tunnels_level.gd` (the trains over the vault) |
 
 Level windows enforced by the generator (`c3p2_audio.check_rows`) and `tests/test_c4_cast_audio.gd`: ambiences −28…−21
 dBFS RMS, peak ≤ −2.5; music −25…−19, peak ≤ −0.8; one-shots −45…−9, peak ≤ −2.5, ending in silence. Loops: `smpl`
@@ -80,10 +78,30 @@ Karsk pair was de-rumbled (energy below 120 Hz 55 % / 68 % → 36 % / 38 %, like
 the levels of their relatives (`tram_bell` −27.7 RMS, `stamp_thud` −35.8 / −6 peak). SFX ids never end in `_<n>`
 (Audio.sfx would treat them as random variants). Spectrograms + `c4_analysis.json`: `assets/audio/_preview/`.
 
+### Round 10: the cast cues per beat (`tools/audiogen/c4_audio.py`, `scenes/cinematics/ch4_stamp/ch4_stamp.gd`)
+The films had their own `c4cine_*` beds (`c4_cine_audio.py`, synced to the pictures and pinned by
+`tests/test_c4_cinematics.gd`), so seven cast cues were never heard. Compared per beat (picture, sync, spectrum):
+* **Stamps (s2 / s3a): layered.** The beds carry the descent's air, the thump on the contact frame and the lift, but
+  their thump is 97 % / 87 % energy below 200 Hz (centroid 151 / 259 Hz) — on small speakers barely a stamp. The cast
+  takes added the surfaces (desk knock, rubber slap, handle ring; booth vs. concrete hall) with the same 0.36 s strike;
+  now re-voiced as layers without the ink-pad dab (the stamp enters the frame already inked) and the low body, played
+  with their beds at −5 dB (≈ 2 dB under equal A-weighted energy with the bed's thump at −4 dB; centroid 590 / 800 Hz).
+* **Card tear: moved to s3b.** No card tears in LS_C4_Card (it is found torn); the perforator in s3b splits one — the
+  bed has only the lever's clack. Re-timed to the picture (split at `LEVER[1]`, rest at 90 % of the 5-px ease-out),
+  annex room, −6 dB (≈ 2 dB under the clack's A-weighted energy).
+* **Dropped:** `c4_stencil_brush` (n1 shows the number painted and wet, nobody paints), `c4_bell_once` / `_twice`
+  (`c4cine_bell` is the same 1480-Hz bell tram 74 rings in LS_C4_Number n4; the double ring's 0.26 s gap misses the
+  picture's 0.75 s; a second bell at once would be a second tram), `c4_lamp_out` (v4: nobody is at the wagon — the
+  lamp fails and `c4cine_lamp_out` flickers it in sync; the cue's switch click and 100-Hz ballast hum contradict it).
+  Generator, test and disk no longer carry them. Tests: every one-shot the generator builds is heard; the layers start
+  with their beds without pitch variation, strike on the contact frames; the tear starts on the split and its last
+  tooth lands where the picture's halves rest (`audio_*` cases in `tests/test_c4_cast_audio.gd`).
+
 ## Tests
 `tests/test_c4_cast_audio.gd` — sheets (rows, 8-frame rhythm, variants, ground speed, size, normal map, feet on the
 origin), the rig (every row loads and plays), living portraits (contract, the mouth opens and the eyes close in every
 expression, expressions differ, opaque), individual silhouettes (IoU vs each other and 16 existing figures) and faces,
 names and speakers (every speaker of the C4 dialogues and every `char_id` of the two level shells has a sheet and a
 portrait), every WAV's format, loop chunk, import loop mode and length, levels and seams on the PCM, wiring (shell
-ambience / music ids, the four switch ambiences of `c4.json`, every c4 sound a C4 cinematic cue names).
+ambience / music ids, the four switch ambiences of `c4.json`, every c4 sound a C4 cinematic cue names), and (round 10)
+every one-shot heard and the LS_C4_Stamp layers in sync with the picture.

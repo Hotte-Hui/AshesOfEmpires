@@ -22,18 +22,24 @@ extends Node
 ## overlay) → Karsk (transfer siding, number chain) → Berlin (annex, the decision) — a level load at every city change;
 ## an optional 7th spec value chooses c4d_choose (default name_marta). A fourth save (the quicksave slot) is taken at the siding
 ## (the second scene of the tunnels file) and reloaded at the end.
+## Chapter 4 part 2 (documentation/C4P2_DESIGN.md): Karsk depot → Berlin Ostbahnhof → the depot's showcase (the halves
+## joined, the decision at the express) → Kolonnenstraße 14 (Ilse's way through the house, Wendt) — again a level load
+## at every city change; an optional 8th spec value chooses c4g_choose (default publish_now).
 
 ## Objectives before which a level's last exploration pass runs (all its tasks must be done afterwards).
 ## The registry's last pass is before c3d_choose (registry B: the last registry scene with finds; its tasks are filed
 ## under the level key L_C3_RegistryA, ChapterExt.level_key).
 ## Chapter 4: the tunnels' last pass is before c4c_talk_lev (siding), the annex's before c4d_choose (C4_DESIGN §9).
+## Part 2: the Karsk depot's last pass is before c4g_choose (showcase), the Berlin file's before c4h_talk_wendt
+## (Kolonnenstraße 14) — both side tasks live in the B areas (C4P2_DESIGN §6).
 const FINAL_PASS := ["a1_choose", "m1_choose", "c3a_choose", "c3b_choose", "c3d_choose", "c3g_choose", "c4c_talk_lev",
-	"c4d_choose"]
+	"c4d_choose", "c4g_choose", "c4h_talk_wendt"]
 ## Objectives before which a (non-final) exploration pass runs: level starts and story-gated openings.
 const EXPLORE_AT := ["a1_talk_irina", "m1_inspect_plan_a", "c3a_talk_conductor", "c3b_arrival", "c3b_inspect_booth",
 	"c3c_inspect_crates", "c3c_talk_konrad", "c3d_inspect_intake", "c3g_inspect_halves",
 	"c4a_inspect_shelf", "c4a_open_door", "c4b_inspect_notice", "c4b_inspect_crates", "c4c_inspect_card",
-	"c4d_inspect_drawer"]
+	"c4d_inspect_drawer", "c4e_inspect_order", "c4e_talk_maria", "c4e_inspect_notice", "c4f_inspect_board",
+	"c4f_inspect_book", "c4g_talk_ekdahl", "c4h_inspect_gate", "c4h_solve_house"]
 const E2E_SAVES := "user://e2e/saves"
 
 const ROUTE := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal",
@@ -49,7 +55,11 @@ const ROUTE := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_
 	"c4a_inspect_shelf", "c4a_talk_lev", "c4a_inspect_book", "c4a_inspect_carbon", "c4a_talk_tunnel", "c4a_open_door",
 	"c4b_inspect_notice", "c4b_talk_marta", "c4b_solve_routes", "c4b_inspect_column", "c4b_talk_ilse", "c4b_inspect_crates",
 	"c4c_inspect_card", "c4c_inspect_stencils", "c4c_solve_numbers", "c4c_inspect_wagon", "c4c_talk_lev",
-	"c4d_inspect_drawer", "c4d_inspect_plan", "c4d_inspect_tube", "c4d_talk_registrar", "c4d_choose"]
+	"c4d_inspect_drawer", "c4d_inspect_plan", "c4d_inspect_tube", "c4d_talk_registrar", "c4d_choose",
+	"c4e_inspect_order", "c4e_talk_irina", "c4e_inspect_list", "c4e_talk_maria", "c4e_inspect_notice",
+	"c4f_inspect_board", "c4f_talk_marta", "c4f_inspect_courier", "c4f_talk_ekdahl", "c4f_inspect_book",
+	"c4g_talk_ekdahl", "c4g_inspect_book", "c4g_talk_lev", "c4g_solve_halves", "c4g_inspect_card", "c4g_choose",
+	"c4h_inspect_gate", "c4h_talk_hanna", "c4h_inspect_cards", "c4h_solve_house", "c4h_talk_wendt"]
 ## flag written by each choice (C3_DESIGN §2.4); used to verify the consequence meters at the end
 const CHOICE_FLAG := {"share_with_irina": "irina_trust", "keep_private": "alexei_secrecy",
 	"preserve_evidence": "konrad_evidence", "request_explanation": "office_suspicion",
@@ -57,11 +67,12 @@ const CHOICE_FLAG := {"share_with_irina": "irina_trust", "keep_private": "alexei
 	"search_elena": "elena_trust", "report_delegation": "kessler_alerted",
 	"admit_plan": "alexei_konrad_trust", "pocket_plan": "evidence_chain", "split_by_language": "evidence_chain",
 	"swap_halves": "alexei_konrad_trust", "hide_for_elena": "elena_trust",
-	"name_marta": "evidence_chain", "protect_marta": "civilian_welfare"}
+	"name_marta": "evidence_chain", "protect_marta": "civilian_welfare",
+	"publish_now": "evidence_chain", "protect_first": "people_protected"}
 
 var choices := {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence", "c3a_choose": "ask_elena",
 	"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language",
-	"c4d_choose": "name_marta"}
+	"c4d_choose": "name_marta", "c4g_choose": "publish_now"}
 var skip := false
 var shots_dir := ""
 var failures: Array = []
@@ -84,6 +95,8 @@ func configure(spec: String, do_skip: bool, shots: String) -> void:
 		choices["c3g_choose"] = parts[5]
 	if parts.size() >= 7 and parts[6] != "":
 		choices["c4d_choose"] = parts[6]
+	if parts.size() >= 8 and parts[7] != "":
+		choices["c4g_choose"] = parts[7]
 	skip = do_skip
 	shots_dir = shots
 
@@ -183,7 +196,8 @@ func run() -> void:
 	for fl in ["courier_files_seen", "protocol_matched", "elena_missing"]:
 		if not bool(Story.flag(fl)):
 			_fail("flag %s should be set after Chapter 3" % fl)
-	for ev in ["c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed"]:
+	for ev in ["c4a_completed", "c4b_completed", "c4c_completed", "c4d_completed", "c4e_completed", "c4f_completed",
+			"c4g_completed", "c4h_completed"]:
 		if not Story.has_event(ev):
 			_fail("Chapter 4 event %s missing" % ev)
 	_check_variants()
@@ -350,6 +364,30 @@ func _check_variants() -> void:
 	if trust >= 2:
 		keys.append("dlg.c4.sid_10.trust")
 	keys.append("dlg.c4.react." + choices["c4d_choose"])
+	# Chapter 4 part 2 (C4P2_DESIGN §2.8): the variants every route must hear, and the reaction of the decision
+	var named: bool = choices["c4d_choose"] == "name_marta"
+	keys.append("dlg.c4p2.e_iri_01." + ("irina" if choices["a1_choose"] == "share_with_irina" else "secrecy"))
+	for n in ["f_mar_01", "f_mar_03", "f_mar_04", "f_mar_05", "h_han_01", "h_wen_01"]:
+		keys.append("dlg.c4p2.%s.%s" % [n, "named" if named else "protected"])
+	keys.append("dlg.c4p2.f_mar_11.named" if named else "dlg.c4p2.f_mar_09.protected")
+	if named:
+		keys.append("dlg.c4p2.g_ekd_07.named")
+	if choices["c3d_choose"] == "admit_plan":
+		keys += ["dlg.c4p2.f_ekd_06.admit", "dlg.c4p2.h_han_06.admit", "dlg.c4p2.h_wen_04.admit"]
+	if rd == "report_delegation":
+		keys += ["dlg.c4p2.f_ekd_10.report", "dlg.c4p2.f_ekd_11.report", "dlg.c4p2.g_ekd_06.report", "dlg.c4p2.h_wen_08.report"]
+	elif trust >= 2:
+		keys.append("dlg.c4p2.g_ekd_06.trust")
+	if choices["a1_choose"] == "keep_private":
+		keys.append("dlg.c4p2.g_ekd_02.secrecy")
+	if choices["m1_choose"] == "request_explanation":
+		keys.append("dlg.c4p2.h_wen_03.suspicion")
+	if choices["c3g_choose"] == "swap_halves":
+		keys.append("dlg.c4p2.g_lev_04.swap")
+	if choices["c4g_choose"] == "publish_now":
+		keys.append("dlg.c4p2.react.publish_now" + (".elena" if choices["c3g_choose"] == "hide_for_elena" else ""))
+	else:
+		keys.append("dlg.c4p2.react.protect_first")
 	for k in keys:
 		if not spoken.has(Loc.t(k)):
 			_fail("line variant %s was not spoken on this route" % k)

@@ -1,0 +1,38 @@
+{
+ "size": [
+  112,
+  112
+ ],
+ "expressions": [
+  "neutral",
+  "concerned",
+  "determined",
+  "surprised"
+ ],
+ "anim": {
+  "file": "portrait_anim.png",
+  "layout": "grid: column = expression index (same order as expressions), row = state",
+  "rows": [
+   "rest",
+   "talk_half",
+   "talk_open",
+   "blink",
+   "blink_talk_half",
+   "blink_talk_open"
+  ],
+  "talk_rows": [
+   "rest",
+   "talk_half",
+   "talk_open"
+  ],
+  "blink_offset": 3,
+  "mouth_fps": 11,
+  "blink_ms": 130,
+  "blink_interval_s": [
+   2.6,
+   5.2
+  ],
+  "generator": "tools/pixelgen/chargen_portrait2.py",
+  "spec": "tools/pixelgen/characters_c4p2.py"
+ }
+}

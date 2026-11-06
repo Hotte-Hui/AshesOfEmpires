@@ -37,15 +37,21 @@ MUSIC (assets/audio/music, loops; every loop point sits in a rest)
                      drone, K on the piano, then B on the celesta over the G pedal, then both together where B
                      bends its Eb to E, and the clock alone again.  The first 24 s are a complete arc (the
                      cinematic is ~24 s); the loop goes on for longer scenes (60 bpm, 48 beats, 48.0 s)
-SFX (assets/audio/sfx, one-shots; ids for the cinematic stream -- C4_DESIGN section 2.9)
-  c4_stencil_brush   a stippling brush dabbed through a stencil on wagon planks, then wiped on the tin (LS_C4_Number)
-  c4_card_tear       a stiff registry card torn along its perforation (LS_C4_Card match cut)
-  c4_stamp_accept    the Karsk stamp „ПРИНЯТЬ“: ink pad, then down on the card on the siding office's desk
-  c4_stamp_dispatch  the Berlin stamp „ABGANG“ on the annex counter (same timing: the LS_C4_Stamp match cut)
-  c4_bell_once / c4_bell_twice   Marta's foot gong in the open loop, one ring or two (LS_C4_Voices v2, per c4d)
-  c4_train_overhead  a freight train crossing above the vault: rumble, rail joints, dust, the lamp chain (12 s)
-  c4_lamp_out        the work lamp switched off: the hum, the switch, the filament ticking as it cools (v4)
-(the existing `tram_bell` stays available; these are recorded in the places of this chapter)
+SFX (assets/audio/sfx, one-shots; LS_C4_Stamp layers its films' beds with them -- C4_DESIGN section 2.9)
+  c4_stamp_accept    the surface of the Karsk stamp „ПРИНЯТЬ“ on the siding office's wooden desk (small wooden
+                     booth): the desk's knock, the rubber's slap, the handle's ring -- a layer over the film's bed
+                     c4cine_stamp_ru, which carries the descent, the low thump and the lift (LS_C4_Stamp s2)
+  c4_stamp_dispatch  the same for the Berlin stamp „ABGANG“ on the annex counter (linoleum over steel, concrete
+                     hall) over c4cine_stamp_de: the match cut lands on two surfaces, two rooms (s3a)
+  c4_card_tear       the perforator splits a card along its perforation (s3b): the card flexes under the lever, the
+                     teeth let go while the halves part (fast, then slowing, like the picture), the last tooth
+  c4_train_overhead  a freight train crossing above the vault: rumble, rail joints, dust, the lamp chain (12 s;
+                     tunnels level script)
+Round 10 compared every cast cue with the beat it was made for and dropped the ones no picture shows: the stencil
+brush (LS_C4_Number n1 shows the number already painted and wet, nobody painting), Marta's bells (c4cine_bell is the
+same bell tram 74 rings in LS_C4_Number n4, the double ring's 0.26 s gap misses the picture's 0.75 s, and two bells
+at once would be two trams) and the lamp switch (LS_C4_Voices v4: nobody is at the wagon -- the lamp fails, the bed
+c4cine_lamp_out flickers it in sync).  The film times this module mirrors are LEVER / STAMP_RU / STAMP_DE below.
 
 Everything reuses dsp / instruments / foley / ambience / music / c3_audio / c3p2_audio by import (none of them is
 modified; build_all.py's registry does not know this module: run this file directly).  Seeds derive from
@@ -86,6 +92,22 @@ seed_of = C3A.seed_of
 far = C3A.far
 R = P2A.R
 one_shot = P2A.one_shot
+
+# film times of LS_C4_Stamp (scenes/cinematics/ch4_stamp/ch4_stamp.gd; tests/test_c4_cast_audio.gd compares them):
+# a stamp [descends from, touches, lifts from, is gone]; the perforator's lever [starts down, down -- the card
+# splits, back up, up]; the halves part 5 px on an ease-out over SPLIT_PART s, drawn rounded, so they come to rest
+# when 90 % of the gap is reached (SPLIT_REST; the test seeks the picture there).  The stamp layers start with their
+# shot (the bed's start), the tear with the lever.
+STAMP_RU = (3.5, 3.86, 4.18, 4.55)
+STAMP_DE = (5.0, 5.36, 5.68, 6.05)
+LEVER = (7.3, 7.42, 7.9, 8.05)
+SPLIT_PART = 0.35
+SPLIT_REST = 0.9
+
+
+def part_time(frac: float) -> float:
+    """Seconds after the split at which the picture's ease-out has parted the halves by `frac` of the gap."""
+    return SPLIT_PART * (1.0 - np.sqrt(1.0 - frac))
 
 
 # =============================================================================== rooms
@@ -514,31 +536,34 @@ def amb_berlin_annex():
 
 
 # =============================================================================== one-shots
-def stamp_take(rng: np.random.Generator, surface: str) -> np.ndarray:
+def stamp_take(rng: np.random.Generator, surface: str, pad: bool = True, body: bool = True) -> np.ndarray:
     """Ink pad dab at 0.00 s, lift, the stroke at 0.36 s (both stamps share this timing: the match cut).
-    surface 'wood' = the Karsk siding office desk, 'steel' = the annex counter (linoleum over steel)."""
+    surface 'wood' = the Karsk siding office desk, 'steel' = the annex counter (linoleum over steel).
+    pad=False / body=False leave out the dab and the low body: the surface layer the films put over their own beds
+    (the ambience amb_berlin_annex calls the full take; its random sequence is unchanged by the two switches)."""
     n = secs(1.3)
     y = np.zeros(n)
     t = np.arange(n) / SR
-    pad = noise_burst(0.07, rng, 150.0, 1800.0, 0.035, attack=0.002)
-    pad = 0.35 * norm_peak(pad)
-    pad[:secs(0.05)] += 0.2 * np.sin(TAU * 260.0 * t[:secs(0.05)]) * np.exp(-t[:secs(0.05)] / 0.012)
-    place(y, pad, 0, circular=False)
+    if pad:
+        dab = noise_burst(0.07, rng, 150.0, 1800.0, 0.035, attack=0.002)
+        dab = 0.35 * norm_peak(dab)
+        dab[:secs(0.05)] += 0.2 * np.sin(TAU * 260.0 * t[:secs(0.05)]) * np.exp(-t[:secs(0.05)] / 0.012)
+        place(y, dab, 0, circular=False)
     hit_at = secs(0.36)
     m = n - hit_at
     tb = np.arange(m) / SR
     if surface == 'wood':
         desk = wood_knock(rng, 96.0, 0.9, hard=0.32)[:m]
         slap = noise_burst(0.05, rng, 180.0, 2400.0, 0.02, attack=0.0008)
-        body = 0.45 * np.sin(TAU * 58.0 * tb) * np.exp(-tb / 0.06) * smoothstep(tb / 0.002)
+        low = 0.45 * np.sin(TAU * 58.0 * tb) * np.exp(-tb / 0.06) * smoothstep(tb / 0.002)
         handle = modal([(1420.0, 0.6, 0.035), (2210.0, 0.4, 0.025)], 0.12, seed=int(rng.integers(1 << 30)))
     else:
         desk = impact(rng, random_modes(rng, 170.0, 2600.0, 10, 0.12, 0.55, tilt=0.6), 0.9, hard=0.55,
                       noise_amt=0.3)[:m] * 0.55
         slap = noise_burst(0.04, rng, 300.0, 4200.0, 0.015, attack=0.0006)
-        body = 0.5 * np.sin(TAU * 72.0 * tb) * np.exp(-tb / 0.04) * smoothstep(tb / 0.0015)
+        low = 0.5 * np.sin(TAU * 72.0 * tb) * np.exp(-tb / 0.04) * smoothstep(tb / 0.0015)
         handle = modal([(1850.0, 0.5, 0.03), (2950.0, 0.35, 0.02)], 0.1, seed=int(rng.integers(1 << 30)))
-    strike = body.copy()
+    strike = low.copy() if body else np.zeros(m)
     strike[:min(m, len(desk))] += desk[:m]
     strike[:len(slap)] += 0.6 * norm_peak(slap)
     strike[:len(handle)] += 0.15 * handle
@@ -546,79 +571,55 @@ def stamp_take(rng: np.random.Generator, surface: str) -> np.ndarray:
     return y
 
 
-def c4_stencil_brush():
-    rng = R('c4_stencil_brush')
-    n = secs(3.8)
-    y = np.zeros(n)
-    t = 0.1
-    while t < 2.9:
-        hit = noise_burst(0.07, rng, 250.0, 3800.0, 0.035, attack=0.002)
-        knock = wood_knock(rng, rng.uniform(150.0, 190.0), 0.25, hard=0.2)
-        ev_ = 0.6 * norm_peak(hit)
-        ev_[:len(knock)] += 0.3 * norm_peak(knock)[:len(ev_)]
-        place(y, ev_ * rng.uniform(0.7, 1.0), secs(t), circular=False)
-        tack = noise_burst(0.02, rng, 1500.0, 6000.0, 0.008, attack=0.0005)
-        place(y, 0.16 * norm_peak(tack), secs(t + rng.uniform(0.05, 0.08)), circular=False)
-        t += rng.uniform(0.15, 0.24) if rng.random() > 0.15 else rng.uniform(0.38, 0.5)
-    wipe = noise_burst(0.4, rng, 900.0, 5000.0, 1e6, attack=0.0)
-    wipe = norm_peak(wipe) * bump(len(wipe), 0.08, 0.12, peak_at=0.15)
-    place(y, 0.3 * wipe, secs(3.0), circular=False)
-    tink = impact(rng, random_modes(rng, 900.0, 4800.0, 6, 0.05, 0.25), 0.5, hard=0.5)
-    place(y, 0.28 * tink, secs(3.18), circular=False)
-    y = eq(y, ('hp', 80.0, 2), circular=False)
-    st = far(y, ir_tunnel(seed_of('c4_stencil_brush', 1)), wet=0.22, dry=1.0, pan=0.05)
-    return one_shot(st[:secs(5.0)], -9.0, fout=0.6), None
-
-
-def c4_card_tear():
-    rng = R('c4_card_tear')
-    n = secs(1.4)
-    y = np.zeros(n)
-    flex = paper_rustle(rng, 0.22, 0.25, 1)
-    place(y, 0.18 * flex, secs(0.0), circular=False)
-    holes = 28
-    u = np.linspace(0.0, 1.0, holes)
-    times = 0.2 + 0.42 * (u ** 0.8) + rng.normal(0, 0.004, holes)
-    for k, t in enumerate(times):
-        ck = noise_burst(0.006, rng, 2200.0, 9000.0, 0.002, attack=0.0002)
-        place(y, ck * rng.uniform(0.45, 1.0) * (0.7 + 0.3 * np.sin(np.pi * u[k])), secs(t), circular=False)
-    fib = noise_burst(0.5, rng, 1500.0, 8000.0, 1e6, attack=0.0)
-    fib = norm_peak(fib) * bump(len(fib), 0.08, 0.1, peak_at=0.24) * (0.6 + 0.4 * np.abs(ctrl_noise(len(fib), 60.0,
-                                                                                                    rng)))
-    place(y, 0.32 * fib, secs(0.2), circular=False)
-    sep = noise_burst(0.06, rng, 200.0, 1400.0, 0.03, attack=0.001)
-    place(y, 0.5 * norm_peak(sep), secs(0.66), circular=False)
-    st = np.stack([y, np.roll(y, 9)], axis=1)
-    return one_shot(st, -10.0, fout=0.3), None
+def stamp_layer(name: str, surface: str, ir: np.ndarray, wet: float, length: float, fout: float):
+    """LS_C4_Stamp: the surface of a stamp over the film's bed (which has the descent's air, the low thump at the
+    same 0.36 s and the lift).  No ink pad (the picture brings the stamp in from above, already inked), no low body,
+    and a high-pass under the bed's thump (110 / 150 Hz), so the two layers add up instead of doubling."""
+    rng = R(name)
+    y = stamp_take(rng, surface, pad=False, body=False)
+    y = eq(y, ('hp', 190.0, 2), circular=False)
+    st = far(y, ir, wet=wet, dry=1.0, pan=0.0)
+    return one_shot(st[:secs(length)], -6.0, fout=fout), None
 
 
 def c4_stamp_accept():
-    rng = R('c4_stamp_accept')
-    y = stamp_take(rng, 'wood')
-    st = far(y, ir_booth(seed_of('c4_stamp_accept', 1)), wet=0.3, dry=1.0, pan=0.0)
-    return one_shot(st[:secs(2.0)], -6.0, fout=0.4), None
+    return stamp_layer('c4_stamp_accept', 'wood', ir_booth(seed_of('c4_stamp_accept', 1)), 0.3, 2.0, 0.4)
 
 
 def c4_stamp_dispatch():
-    rng = R('c4_stamp_dispatch')
-    y = stamp_take(rng, 'steel')
-    st = far(y, ir_annex(seed_of('c4_stamp_dispatch', 1)), wet=0.35, dry=1.0, pan=0.0)
-    return one_shot(st[:secs(2.4)], -6.0, fout=0.5), None
+    return stamp_layer('c4_stamp_dispatch', 'steel', ir_annex(seed_of('c4_stamp_dispatch', 1)), 0.35, 2.4, 0.5)
 
 
-def _bell(name: str, strikes: int):
-    rng = R(name)
-    b = tram_bell(rng, strikes, 820.0, gap=0.26, dur=3.8)
-    st = far(b, ir_loop(seed_of(name, 1)), wet=0.45, dry=1.0, pan=-0.1)
-    return one_shot(st[:secs(4.6)], -7.0, fout=0.8), None
-
-
-def c4_bell_once():
-    return _bell('c4_bell_once', 1)
-
-
-def c4_bell_twice():
-    return _bell('c4_bell_twice', 2)
+def c4_card_tear():
+    """The perforator at the annex counter splits a card (LS_C4_Stamp s3b; the cue starts with the lever, LEVER[0]):
+    the card flexes under the coming lever, at the split (LEVER[1]) the teeth let go one by one while the halves part
+    -- equal steps along the perforation timed on the picture's ease-out (fast, then slowing), the fibres' hiss
+    following the speed -- and the last tooth lets go with a soft tick as the halves come to rest.  In the annex
+    room, from the counter's side (the bed's lever clack sits at the same place)."""
+    rng = R('c4_card_tear')
+    split = LEVER[1] - LEVER[0]
+    n = secs(1.2)
+    y = np.zeros(n)
+    flex = paper_rustle(rng, 0.16, 0.25, 1)
+    place(y, 0.14 * flex, secs(0.0), circular=False)
+    holes = 28
+    u = np.linspace(0.0, 1.0, holes)
+    rest = part_time(SPLIT_REST)
+    times = split + part_time(SPLIT_REST * u) + rng.normal(0, 0.003, holes)
+    times[0] = split
+    for k, tt in enumerate(times):
+        ck = noise_burst(0.006, rng, 2200.0, 9000.0, 0.002, attack=0.0002)
+        place(y, ck * rng.uniform(0.45, 1.0) * (1.0 - 0.45 * u[k]), secs(min(max(split, tt), split + rest - 0.01)),
+              circular=False)
+    fib = noise_burst(SPLIT_PART + 0.05, rng, 1500.0, 8000.0, 1e6, attack=0.0)
+    tau = np.arange(len(fib)) / SR / SPLIT_PART
+    speed = np.clip(1.0 - tau, 0.0, 1.0) * smoothstep(np.clip(tau / 0.03, 0.0, 1.0))
+    fib = norm_peak(fib) * speed * (0.6 + 0.4 * np.abs(ctrl_noise(len(fib), 60.0, rng)))
+    place(y, 0.42 * fib, secs(split), circular=False)
+    last = noise_burst(0.05, rng, 200.0, 1400.0, 0.025, attack=0.001)
+    place(y, 0.42 * norm_peak(last), secs(split + rest), circular=False)
+    st = far(y, ir_annex(seed_of('c4_card_tear', 1)), wet=0.25, dry=1.0, pan=-0.3)
+    return one_shot(st[:n], -9.0, fout=0.35), None
 
 
 def c4_train_overhead():
@@ -627,26 +628,6 @@ def c4_train_overhead():
     st = far(y, ir_cellar(seed_of('c4_train_overhead', 1)), wet=0.4, dry=1.0, pan=0.0)
     st[:, 1] = np.roll(st[:, 1], 23)
     return one_shot(st[:secs(13.0)], -6.0, fin=0.3, fout=2.0), None
-
-
-def c4_lamp_out():
-    rng = R('c4_lamp_out')
-    n = secs(2.4)
-    t = np.arange(n) / SR
-    off = 0.62
-    h = (np.sin(TAU * 100.0 * t) + 0.45 * np.sin(TAU * 200.0 * t) + 0.25 * np.sin(TAU * 300.0 * t))
-    buzz = noise_burst(2.4, rng, 1500.0, 5000.0, 1e6, attack=0.0) * 0.08
-    hm = (0.25 * h + buzz) * smoothstep(t / 0.05) * np.clip((off + 0.03 - t) / 0.03, 0, 1)
-    y = hm.copy()
-    sw = impact(rng, random_modes(rng, 900.0, 5200.0, 7, 0.02, 0.08), 0.18, hard=0.85, noise_amt=0.5)
-    place(y, 0.8 * sw, secs(off - 0.012), circular=False)
-    sw2 = impact(rng, random_modes(rng, 1200.0, 6000.0, 5, 0.015, 0.05), 0.1, hard=0.9, noise_amt=0.4)
-    place(y, 0.35 * sw2, secs(off + 0.05), circular=False)
-    for tt, a in ((1.1, 0.06), (1.62, 0.035)):
-        tk = impact(rng, random_modes(rng, 3500.0, 8000.0, 3, 0.006, 0.02), 0.04, hard=0.9)
-        place(y, a * tk, secs(tt), circular=False)
-    st = far(y, ir_tunnel(seed_of('c4_lamp_out', 1)), wet=0.3, dry=1.0, pan=0.0)
-    return one_shot(st[:secs(3.6)], -9.0, fin=0.04, fout=0.9), None
 
 
 # =============================================================================== the bayan (free reeds)
@@ -814,14 +795,10 @@ BUILDERS = {
     'mus_c4_karsk': ('music', mus_c4_karsk),
     'mus_c4_berlin': ('music', mus_c4_berlin),
     'mus_c4_voices': ('music', mus_c4_voices),
-    'c4_stencil_brush': ('sfx', c4_stencil_brush),
-    'c4_card_tear': ('sfx', c4_card_tear),
     'c4_stamp_accept': ('sfx', c4_stamp_accept),
     'c4_stamp_dispatch': ('sfx', c4_stamp_dispatch),
-    'c4_bell_once': ('sfx', c4_bell_once),
-    'c4_bell_twice': ('sfx', c4_bell_twice),
+    'c4_card_tear': ('sfx', c4_card_tear),
     'c4_train_overhead': ('sfx', c4_train_overhead),
-    'c4_lamp_out': ('sfx', c4_lamp_out),
 }
 # where each sound is (or should be) wired -- the --list output and documentation/asset_manifest_parts/c4_cast_audio.md
 WIRING = {
@@ -832,14 +809,10 @@ WIRING = {
     'mus_c4_karsk': 'L_C4_Tunnels.tscn music; c4.json switches L_C4_TunnelsA / B "music"',
     'mus_c4_berlin': 'L_C4_Annex.tscn music; c4.json switches L_C4_AnnexA / B "music"',
     'mus_c4_voices': 'LS_C4_Voices (cinematic cue {"music": "mus_c4_voices"})',
-    'c4_stencil_brush': 'LS_C4_Number n1 / n2',
-    'c4_card_tear': 'LS_C4_Card c1 / c2',
-    'c4_stamp_accept': 'LS_C4_Stamp s1 / s2',
-    'c4_stamp_dispatch': 'LS_C4_Stamp s3',
-    'c4_bell_once': 'LS_C4_Voices v2 (c4d = name_marta)',
-    'c4_bell_twice': 'LS_C4_Voices v2 (c4d = protect_marta)',
-    'c4_train_overhead': 'LS_C4_Homeward w3 / tunnels level script (every 20-40 s, C4_DESIGN 4.1)',
-    'c4_lamp_out': 'LS_C4_Voices v4 (the lamp goes out)',
+    'c4_stamp_accept': 'LS_C4_Stamp s2: {"sfx": "c4_stamp_accept"} at STAMP_RU[0] over the bed c4cine_stamp_ru',
+    'c4_stamp_dispatch': 'LS_C4_Stamp s3a: {"sfx": "c4_stamp_dispatch"} at STAMP_DE[0] over the bed c4cine_stamp_de',
+    'c4_card_tear': 'LS_C4_Stamp s3b: {"sfx": "c4_card_tear"} at LEVER[0] (the split at LEVER[1])',
+    'c4_train_overhead': 'scripts/levels/c4/tunnels_level.gd (trains over the vault, C4_DESIGN 4.1)',
 }
 # loudness envelope the checks enforce: (min RMS, max RMS, max peak) in dBFS (same windows as round 8)
 TARGETS = {'amb': (-28.0, -21.0, -2.5), 'music': (-25.0, -19.0, -0.8), 'loop': (-36.0, -19.0, -2.5),

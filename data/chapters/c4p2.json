@@ -1,0 +1,842 @@
+{
+ "chapter": "c4p2",
+ "doc": "documentation/C4P2_DESIGN.md §3 — presentation rules for Chapter 4 part 2 (no Story state). Variant texts: data/locale/de_c4p2_dialogue.json. Conditions may name flags or \"choice.<objective>\" (the recorded choice id).",
+ "levels": {
+  "L_C4P2_KarskA": "res://scenes/levels/L_C4P2_Karsk.tscn",
+  "L_C4P2_BerlinA": "res://scenes/levels/L_C4P2_Berlin.tscn",
+  "L_C4P2_KarskB": "res://scenes/levels/L_C4P2_Karsk.tscn",
+  "L_C4P2_BerlinB": "res://scenes/levels/L_C4P2_Berlin.tscn"
+ },
+ "entry_spawn": {
+  "L_C4P2_KarskA": "SP_C4P2_Yard",
+  "L_C4P2_BerlinA": "SP_C4P2_Platform",
+  "L_C4P2_KarskB": "SP_C4P2_Signal",
+  "L_C4P2_BerlinB": "SP_C4P2_Gate"
+ },
+ "chapter_cards": {
+  "L_C4P2_KarskA": [
+   "ui.chapter_c4",
+   "world.c4e.title"
+  ],
+  "L_C4P2_BerlinA": [
+   "ui.chapter_c4",
+   "world.c4f.title"
+  ],
+  "L_C4P2_KarskB": [
+   "ui.chapter_c4",
+   "world.c4g.title"
+  ],
+  "L_C4P2_BerlinB": [
+   "ui.chapter_c4",
+   "world.c4h.title"
+  ]
+ },
+ "palettes": {
+  "depot": {
+   "night": [
+    "#07090C",
+    "#0D1015",
+    "#15191F",
+    "#1F242B"
+   ],
+   "brick": [
+    "#2B1A15",
+    "#3F261D",
+    "#573527",
+    "#714734",
+    "#8C5D46"
+   ],
+   "coal": [
+    "#08080A",
+    "#121214",
+    "#1C1C1F",
+    "#2A2A2E",
+    "#3A3A3F"
+   ],
+   "iron": [
+    "#15181C",
+    "#23282E",
+    "#343A42",
+    "#4A525B",
+    "#646D76"
+   ],
+   "steam": [
+    "#5E646C",
+    "#7F868E",
+    "#A2A8AE",
+    "#C6CACE",
+    "#E8EAEC"
+   ],
+   "lamp": [
+    "#5A3216",
+    "#8C5426",
+    "#BA7A3A",
+    "#E0A85A",
+    "#F8D898"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "green": [
+    "#1B2E28",
+    "#28423A",
+    "#3A5B4F",
+    "#527766",
+    "#6F9580"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "skin_shade": [
+    "#5E3B38",
+    "#E8BE98"
+   ],
+   "wood": [
+    "#1C1511",
+    "#2B2018",
+    "#3D2E21",
+    "#54402D",
+    "#6E563C",
+    "#8C7150"
+   ],
+   "quilt": [
+    "#1A1C17",
+    "#272A21",
+    "#373B2E",
+    "#4B503E",
+    "#62684F"
+   ],
+   "navy": [
+    "#0F131D",
+    "#182033",
+    "#232E48",
+    "#32405F",
+    "#46577A"
+   ],
+   "plum": [
+    "#21161D",
+    "#33212B",
+    "#4A2F3B",
+    "#64404D"
+   ],
+   "dawn": [
+    "#121826",
+    "#1A2335",
+    "#24304A",
+    "#33425F",
+    "#475879",
+    "#617494"
+   ],
+   "dusk": [
+    "#3A3040",
+    "#56464F",
+    "#776060"
+   ],
+   "stone": [
+    "#26282A",
+    "#37393A",
+    "#4C4E4D",
+    "#646662",
+    "#7E807A"
+   ],
+   "signal": [
+    "#6FD49A",
+    "#B6F2CC"
+   ],
+   "skyglow": [
+    "#272630",
+    "#383139",
+    "#4F3D3C",
+    "#6B4E42",
+    "#8C6449"
+   ],
+   "violet": [
+    "#2A2142",
+    "#3A2E5C",
+    "#4D3F78",
+    "#625494"
+   ]
+  },
+  "ostbahnhof": {
+   "night": [
+    "#06080B",
+    "#0C1015",
+    "#141A21",
+    "#1D252E"
+   ],
+   "glass": [
+    "#1C2630",
+    "#2A3846",
+    "#3C4E60",
+    "#56697C",
+    "#76899A"
+   ],
+   "steel": [
+    "#1C2228",
+    "#2A323A",
+    "#3B4650",
+    "#526070",
+    "#6E7D8C"
+   ],
+   "sodium": [
+    "#4A3014",
+    "#7E521E",
+    "#B67E2C",
+    "#E2AC4A",
+    "#F8DB96"
+   ],
+   "steam": [
+    "#5E646C",
+    "#7F868E",
+    "#A2A8AE",
+    "#C6CACE",
+    "#E8EAEC"
+   ],
+   "green": [
+    "#162A22",
+    "#223D31",
+    "#325443",
+    "#486E58"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "wood": [
+    "#2A1B12",
+    "#43291A",
+    "#5E3B24",
+    "#7C5233"
+   ],
+   "brick": [
+    "#2B1A15",
+    "#3F261D",
+    "#573527",
+    "#714734"
+   ],
+   "enamel": [
+    "#101C34",
+    "#1C2E52",
+    "#2E4878"
+   ],
+   "cream": [
+    "#E9DFC4",
+    "#F6F0DE"
+   ]
+  },
+  "courtyard": {
+   "night": [
+    "#05070B",
+    "#0A0F16",
+    "#111822",
+    "#1A2330"
+   ],
+   "plaster": [
+    "#2A2C30",
+    "#3C3F44",
+    "#53575C",
+    "#6E7277",
+    "#8D9195"
+   ],
+   "brick": [
+    "#2B1A15",
+    "#3F261D",
+    "#573527",
+    "#714734"
+   ],
+   "window": [
+    "#5A3A16",
+    "#8C5E26",
+    "#C08A3A",
+    "#E8B65A",
+    "#FBE2A0"
+   ],
+   "snow": [
+    "#6F7A8C",
+    "#94A0B2",
+    "#B9C3D0",
+    "#DCE2EA",
+    "#F2F4F7"
+   ],
+   "laundry": [
+    "#8E8C86",
+    "#B2AFA6",
+    "#D4D0C6"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ],
+   "dusk": [
+    "#1C2433",
+    "#273248",
+    "#36435C",
+    "#4A5874",
+    "#63718C"
+   ],
+   "wood": [
+    "#2A1B12",
+    "#43291A",
+    "#5E3B24",
+    "#7C5233"
+   ],
+   "green": [
+    "#1B2E28",
+    "#28423A",
+    "#3A5B4F"
+   ]
+  }
+ },
+ "grades": {
+  "depot_dawn": {
+   "lift": [
+    0.012,
+    0.012,
+    0.018
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.0,
+    0.99,
+    0.98
+   ],
+   "saturation": 0.82,
+   "tint": [
+    0.99,
+    0.99,
+    1.03
+   ],
+   "vignette": 0.34,
+   "grain": 0.022,
+   "palette_strength": 0.5,
+   "palette": "depot"
+  },
+  "depot_evening": {
+   "lift": [
+    0.014,
+    0.01,
+    0.008
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.03,
+    0.99,
+    0.94
+   ],
+   "saturation": 0.86,
+   "tint": [
+    1.04,
+    0.99,
+    0.94
+   ],
+   "vignette": 0.38,
+   "grain": 0.02,
+   "palette_strength": 0.5,
+   "palette": "depot"
+  },
+  "ostbahnhof": {
+   "lift": [
+    0.012,
+    0.012,
+    0.01
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.02,
+    1.0,
+    0.96
+   ],
+   "saturation": 0.84,
+   "tint": [
+    1.02,
+    1.0,
+    0.96
+   ],
+   "vignette": 0.36,
+   "grain": 0.02,
+   "palette_strength": 0.5,
+   "palette": "ostbahnhof"
+  },
+  "courtyard_night": {
+   "lift": [
+    0.01,
+    0.012,
+    0.022
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    0.98,
+    0.99,
+    1.04
+   ],
+   "saturation": 0.8,
+   "tint": [
+    0.97,
+    0.99,
+    1.05
+   ],
+   "vignette": 0.42,
+   "grain": 0.022,
+   "palette_strength": 0.5,
+   "palette": "courtyard"
+  }
+ },
+ "line_expr": {
+  "c4e_iri_01": "neutral",
+  "c4e_iri_02": "determined",
+  "c4e_iri_03": "concerned",
+  "c4e_iri_04": "neutral",
+  "c4e_iri_05": "concerned",
+  "c4e_iri_06": "concerned",
+  "c4e_iri_07": "neutral",
+  "c4e_iri_08": "surprised",
+  "c4e_iri_09": "concerned",
+  "c4e_iri_10": "neutral",
+  "c4e_mar_01": "neutral",
+  "c4e_mar_02": "neutral",
+  "c4e_mar_03": "surprised",
+  "c4e_mar_04": "concerned",
+  "c4e_mar_05": "concerned",
+  "c4e_mar_06": "neutral",
+  "c4e_mar_07": "concerned",
+  "c4e_mar_08": "neutral",
+  "c4e_mar_09": "concerned",
+  "c4e_mar_10": "concerned",
+  "c4e_mar_11": "determined",
+  "c4e_mar_12": "determined",
+  "c4e_mar_13": "determined",
+  "c4f_mar_01": "neutral",
+  "c4f_mar_02": "concerned",
+  "c4f_mar_03": "concerned",
+  "c4f_mar_04": "concerned",
+  "c4f_mar_05": "determined",
+  "c4f_mar_06": "concerned",
+  "c4f_mar_07": "concerned",
+  "c4f_mar_08": "surprised",
+  "c4f_mar_09": "concerned",
+  "c4f_mar_10": "determined",
+  "c4f_mar_11": "determined",
+  "c4f_ekd_01": "neutral",
+  "c4f_ekd_02": "neutral",
+  "c4f_ekd_03": "neutral",
+  "c4f_ekd_04": "surprised",
+  "c4f_ekd_05": "neutral",
+  "c4f_ekd_06": "determined",
+  "c4f_ekd_07": "concerned",
+  "c4f_ekd_08": "neutral",
+  "c4f_ekd_09": "neutral",
+  "c4f_ekd_10": "concerned",
+  "c4f_ekd_11": "determined",
+  "c4g_ekd_01": "neutral",
+  "c4g_ekd_02": "neutral",
+  "c4g_ekd_03": "neutral",
+  "c4g_ekd_04": "surprised",
+  "c4g_ekd_05": "neutral",
+  "c4g_ekd_06": "concerned",
+  "c4g_ekd_07": "neutral",
+  "c4g_ekd_08": "determined",
+  "c4g_ekd_09": "concerned",
+  "c4g_ekd_10": "determined",
+  "c4g_lev_01": "concerned",
+  "c4g_lev_02": "neutral",
+  "c4g_lev_03": "neutral",
+  "c4g_lev_04": "determined",
+  "c4g_lev_05": "surprised",
+  "c4g_lev_06": "neutral",
+  "c4g_lev_07": "concerned",
+  "c4g_lev_08": "concerned",
+  "c4g_lev_09": "concerned",
+  "c4g_lev_10": "determined",
+  "c4g_lev_11": "determined",
+  "c4h_han_01": "concerned",
+  "c4h_han_02": "neutral",
+  "c4h_han_03": "neutral",
+  "c4h_han_04": "concerned",
+  "c4h_han_05": "determined",
+  "c4h_han_06": "concerned",
+  "c4h_han_07": "determined",
+  "c4h_han_08": "neutral",
+  "c4h_han_09": "neutral",
+  "c4h_han_10": "determined",
+  "c4h_han_11": "concerned",
+  "c4h_han_12": "determined",
+  "c4h_wen_01": "neutral",
+  "c4h_wen_02": "neutral",
+  "c4h_wen_03": "neutral",
+  "c4h_wen_04": "neutral",
+  "c4h_wen_05": "neutral",
+  "c4h_wen_06": "determined",
+  "c4h_wen_07": "concerned",
+  "c4h_wen_08": "neutral",
+  "c4h_wen_09": "neutral",
+  "c4h_wen_10": "neutral",
+  "c4h_wen_11": "neutral",
+  "c4h_wen_12": "determined"
+ },
+ "line_variants": {
+  "c4e_iri_01": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c4p2.e_iri_01.irina"
+   },
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c4p2.e_iri_01.secrecy"
+   }
+  ],
+  "c4f_mar_01": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.f_mar_01.named"
+   },
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.f_mar_01.protected"
+   }
+  ],
+  "c4f_mar_03": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.f_mar_03.named"
+   },
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.f_mar_03.protected"
+   }
+  ],
+  "c4f_mar_04": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.f_mar_04.named"
+   },
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.f_mar_04.protected"
+   }
+  ],
+  "c4f_mar_05": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.f_mar_05.named"
+   },
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.f_mar_05.protected"
+   }
+  ],
+  "c4f_mar_09": [
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.f_mar_09.protected"
+   }
+  ],
+  "c4f_mar_11": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.f_mar_11.named"
+   }
+  ],
+  "c4f_ekd_06": [
+   {
+    "when": {
+     "choice.c3d_choose": "admit_plan"
+    },
+    "key": "dlg.c4p2.f_ekd_06.admit"
+   }
+  ],
+  "c4f_ekd_10": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c4p2.f_ekd_10.report"
+   }
+  ],
+  "c4f_ekd_11": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c4p2.f_ekd_11.report"
+   }
+  ],
+  "c4g_ekd_02": [
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c4p2.g_ekd_02.secrecy"
+   }
+  ],
+  "c4g_ekd_06": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c4p2.g_ekd_06.report"
+   },
+   {
+    "when": {
+     "alexei_konrad_trust": ">=2"
+    },
+    "key": "dlg.c4p2.g_ekd_06.trust"
+   }
+  ],
+  "c4g_ekd_07": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.g_ekd_07.named"
+   }
+  ],
+  "c4g_lev_04": [
+   {
+    "when": {
+     "choice.c3g_choose": "swap_halves"
+    },
+    "key": "dlg.c4p2.g_lev_04.swap"
+   }
+  ],
+  "c4h_han_01": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.h_han_01.named"
+   },
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.h_han_01.protected"
+   }
+  ],
+  "c4h_han_06": [
+   {
+    "when": {
+     "choice.c3d_choose": "admit_plan"
+    },
+    "key": "dlg.c4p2.h_han_06.admit"
+   }
+  ],
+  "c4h_wen_01": [
+   {
+    "when": {
+     "choice.c4d_choose": "name_marta"
+    },
+    "key": "dlg.c4p2.h_wen_01.named"
+   },
+   {
+    "when": {
+     "choice.c4d_choose": "protect_marta"
+    },
+    "key": "dlg.c4p2.h_wen_01.protected"
+   }
+  ],
+  "c4h_wen_03": [
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c4p2.h_wen_03.suspicion"
+   }
+  ],
+  "c4h_wen_04": [
+   {
+    "when": {
+     "choice.c3d_choose": "admit_plan"
+    },
+    "key": "dlg.c4p2.h_wen_04.admit"
+   }
+  ],
+  "c4h_wen_08": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c4p2.h_wen_08.report"
+   }
+  ]
+ },
+ "choice_text": {
+  "c4g_choose": {
+   "publish_now": [
+    {
+     "when": {
+      "choice.c4d_choose": "name_marta"
+     },
+     "key": "choice.c4g.publish_now.marta"
+    }
+   ],
+   "protect_first": [
+    {
+     "when": {
+      "choice.c4d_choose": "protect_marta"
+     },
+     "key": "choice.c4g.protect_first.marta"
+    }
+   ]
+  }
+ },
+ "reactions": {
+  "c4g_choose": {
+   "publish_now": [
+    {
+     "when": {
+      "choice.c3g_choose": "hide_for_elena"
+     },
+     "speaker": "journalist",
+     "key": "dlg.c4p2.react.publish_now.elena",
+     "expr": "determined"
+    },
+    {
+     "speaker": "journalist",
+     "key": "dlg.c4p2.react.publish_now",
+     "expr": "determined"
+    }
+   ],
+   "protect_first": [
+    {
+     "speaker": "journalist",
+     "key": "dlg.c4p2.react.protect_first",
+     "expr": "concerned"
+    }
+   ]
+  }
+ },
+ "puzzles": {
+  "c4g_solve_halves": "res://scenes/ui/JoinPuzzle.tscn",
+  "c4h_solve_house": "res://scenes/ui/HousePuzzle.tscn"
+ },
+ "cinematics": {
+  "LS_C4P2_Depot": "res://scenes/cinematics/ch4p2_depot/Ch4p2Depot.tscn",
+  "LS_C4P2_Steam": "res://scenes/cinematics/ch4p2_steam/Ch4p2Steam.tscn",
+  "LS_C4P2_Book": "res://scenes/cinematics/ch4p2_book/Ch4p2Book.tscn",
+  "LS_C4P2_Express": "res://scenes/cinematics/ch4p2_express/Ch4p2Express.tscn",
+  "LS_C4P2_Clock": "res://scenes/cinematics/ch4p2_clock/Ch4p2Clock.tscn"
+ },
+ "switches": {
+  "L_C4P2_KarskA": {
+   "partner": "none",
+   "ambience": "amb_karsk_depot",
+   "music": "mus_c4p2_karsk",
+   "grade": "depot_dawn"
+  },
+  "L_C4P2_BerlinA": {
+   "partner": "none",
+   "ambience": "amb_berlin_station",
+   "music": "mus_c4p2_berlin",
+   "grade": "ostbahnhof"
+  },
+  "L_C4P2_KarskB": {
+   "partner": "none",
+   "ambience": "amb_karsk_platform",
+   "music": "mus_c4p2_karsk",
+   "grade": "depot_evening"
+  },
+  "L_C4P2_BerlinB": {
+   "partner": "none",
+   "ambience": "amb_berlin_courtyard",
+   "music": "mus_c4p2_berlin",
+   "grade": "courtyard_night"
+  }
+ },
+ "looks": {
+  "L_C4P2_KarskB": {
+   "alexei": "alexei_press"
+  }
+ },
+ "carry": {
+  "L_C4P2_KarskB": {
+   "alexei": "ev_c4_guidebook"
+  }
+ }
+}
