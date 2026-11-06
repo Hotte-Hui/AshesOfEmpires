@@ -81,6 +81,7 @@ func _files() -> bool:
 
 
 func _entries() -> bool:
+	var ext = load("res://scripts/core/chapter_ext.gd").new()   # level keys of shared level files (C3P2_DESIGN §3.2)
 	for f in files:
 		var data: Dictionary = files[f]
 		if not (data.get("entries", null) is Array):
@@ -98,7 +99,10 @@ func _entries() -> bool:
 			var kind := str(e.get("kind", ""))
 			kit.ok(kind in KINDS, "%s: kind '%s' is one of %s" % [where, kind, KINDS])
 			var lvl := str(e.get("level", ""))
-			kit.ok(lvl != "" and ResourceLoader.exists("res://scenes/levels/%s.tscn" % lvl), "%s: level '%s' exists" % [where, lvl])
+			var lpath := "res://scenes/levels/%s.tscn" % lvl
+			if not ResourceLoader.exists(lpath):
+				lpath = str(ext.level_path(lvl))
+			kit.ok(lvl != "" and lpath != "" and ResourceLoader.exists(lpath), "%s: level '%s' exists" % [where, lvl])
 			kit.ok(str(e.get("title_key", "")) != "", "%s: has title_key" % where)
 			if kind != "chat":
 				kit.ok(str(e.get("text_key", "")) != "", "%s: has text_key" % where)

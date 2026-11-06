@@ -18,11 +18,13 @@ Berliner Bauarchiv. Beide stoßen unabhängig voneinander auf dieselbe rätselha
 | Laufen | Umschalt (halten) | LB |
 | Untersuchen / Sprechen / Weiter | E, Leertaste, Enter | A |
 | Entscheidung wählen | Pfeiltasten + Enter oder 1 / 2 | Steuerkreuz + A |
+| Menüpunkt bestätigen | Enter, Leertaste | A |
 | Tagebuch | J oder Tab | Back |
 | Pause / Überspringen (Filmsequenz) | Esc | Start / Y |
 | Dialogverlauf | H | X |
 | Signalrätsel | 1–3 Karten legen, Rücktaste zurück, Enter prüfen | — |
 | Planrätsel | Pfeiltasten verschieben, R drehen, Enter bestätigen | LB/RB drehen |
+| Protokoll / Gegenprobe | 1–4 Belege zuordnen, Rücktaste zurück, Enter prüfen | A / X / Y |
 | Fotomodus | P | rechter Stick (R3) |
 | Erinnerungen (Zeitreise) | Esc → „Erinnerungen“ | Start → „Erinnerungen“ |
 
@@ -41,28 +43,33 @@ Textgröße, Textgeschwindigkeit, hohen Kontrast, reduzierte Bewegung und alle L
 4. **Kapitel 3 – „Der eiserne Frieden“** (Freie Stadt Veltrava): die nächtliche Fahrt beider Männer in zwei Zügen,
    der Bahnhof mit Kurierwagen 4, Passkontrolle und Elena (Alexei), das Palais der Kommission mit Kessler, Sitzordnung,
    Protokollbüro, Dolmetscherkabine und der ersten Begegnung von Konrad und Alexei (Konrad), zwei Entscheidungen.
-5. **Ende:** die Nacht am Bahnsteig 5, zwei Hotelfenster, Endkarte und Abspann mit allen Quellen.
+5. **Kapitel 3, zweiter Teil:** die Nacht am Bahnsteig 5, dieselbe Radiomeldung in beiden Hotelzimmern, Elena
+   verschwindet. In der Registratur der Kommission spielt man abwechselnd Alexei und Konrad im selben Raum (ohne
+   Ladepause): die geleerten Kisten von Wagen 4, das Nachtbuch, die gemeinsame „Gegenprobe“ beider Aktenhälften,
+   Blatt 7 – dann das Feuer, die verriegelte Rampentür und der Kohlenschacht von 1909. Draußen am Kai behält jeder
+   seine Hälfte. Zwei weitere Entscheidungen.
+6. **Ende:** die Montage, die Endkarte mit allen sechs Entscheidungen und der Abspann mit allen Quellen.
 
-**Erkunden (optional):** 91 Entdeckungen und 24 Gespräche – Details, Verstecke, Easter Eggs, Nebengespräche – und
-**19 Karten „Reale Geschichte“**: was nach dem Krieg über NS-Staat und Sowjetunion aufgedeckt, bewiesen oder
+**Erkunden (optional):** 116 Entdeckungen und 27 Gespräche – Details, Verstecke, Easter Eggs, Nebengespräche – und
+**21 Karten „Reale Geschichte“**: was nach dem Krieg über NS-Staat und Sowjetunion aufgedeckt, bewiesen oder
 zugegeben wurde (Wannsee-Protokoll, Reichsbahn-Fahrpläne, Germania, Katyn, Nowotscherkassk, Kyschtym, die
 Zwangsrepatriierungen nach Jalta, die Auslieferungen von 1940, das Simultandolmetschen in Nürnberg …), sachlich.
 Die Quellen stehen im Abspann und unter „Mitwirkende“.
 
-**Aufgaben:** fünf kleine Nebenaufgaben, eine in jedem begehbaren Ort (ansprechen → suchen → zurückbringen), im
-Tagebuch unter „Aufgaben“.
+**Aufgaben:** sechs kleine Nebenaufgaben (ansprechen → suchen → zurückbringen), eine in jedem großen begehbaren Ort,
+im Tagebuch unter „Aufgaben“.
 
 **Minispiele (optional):** Rangieren und ein Schachproblem in Karsk, der Morsetaster im Stellwerk, das Radio des
 Pförtners und die Rohrpost im Archiv, das Blatt im Schnee auf dem Paradeplatz, die Fallblatttafel am Bahnhof
-Veltrava, die Garderobe und das Relaispult der Dolmetscheranlage im Palais.
+Veltrava, die Garderobe und das Relaispult der Dolmetscheranlage im Palais, die Kartei in der Registratur.
 
 **Erinnerungen:** Abgeschlossene Szenen lassen sich über das Pausenmenü noch einmal besuchen – eine Zeitreise in
 Sepia, in der man alles in Ruhe ansieht, verpasste Funde nachholt und Gespräche nachliest. Die Geschichte ändert sich
 dabei nicht; „In die Gegenwart zurückkehren“ bringt einen genau dorthin zurück, wo man war. Nach dem Durchspielen
 auch aus dem Hauptmenü, dazu die Filmsequenzen zum Wiedersehen.
 
-**Spielzeit (geschätzt, nicht mit Testspielern gemessen):** Hauptweg ca. 25 Minuten; mit Aufgaben, Minispielen und
-vielen Entdeckungen deutlich über eine Stunde.
+**Spielzeit (geschätzt, nicht mit Testspielern gemessen):** Hauptweg ca. 35 Minuten; mit Aufgaben, Minispielen und
+allen Entdeckungen fast drei Stunden.
 
 **Historische Hoheitszeichen:** Hakenkreuz, Reichsadler, Hammer und Sichel erscheinen als Bildsprache der beiden
 Regime in kritischem Zusammenhang (Sozialadäquanzklausel, § 86 Abs. 4 StGB). Unter *Einstellungen* lassen sie sich

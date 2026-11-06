@@ -11,7 +11,8 @@ Runs the ORIGINAL, unmodified reference implementation of the preproduction pack
   * preproduction/tools/story_engine_v4.py runs DIRECTLY on this project's data/v3 (only its module-level DATA
     path is monkeypatched). The project data already uses the protagonist id `konrad`, so engine runs need no
     id mapping. This covers the whole chain L_A1_Railyard -> L_M1_Archive -> L_C3_Station -> L_C3_Hall ->
-    L_X1_Montage (documentation/C3_DESIGN.md §1).
+    L_C3_RegistryA -> … -> L_C3_RegistryD -> L_C3_Quay -> L_X1_Montage (documentation/C3_DESIGN.md §1,
+    C3P2_DESIGN.md §1).
   * preproduction/tools/simulate_slice.py (the v0.3 runtime) runs twice: on preproduction/data/v3 (authentic
     save_version 2 files of the old slice, written with the pre-rename protagonist id and mapped to this
     project's id space exactly as before) and on the project data (byte reference for the GDScript port
@@ -20,7 +21,7 @@ Runs the ORIGINAL, unmodified reference implementation of the preproduction pack
     so the recorded verdicts are the same whichever OS generates the fixture.
 Recorded sections (all in this project's id space):
   * routes      - save_json() of the full route for every slice combination (a1 x m1) x every Chapter-3 option
-                  (c3a x c3b) x skip/play; the finale is only reachable after c3b
+                  (c3a x c3b x c3d x c3g) x skip/play; the finale is only reachable after c3g
   * legacy      - v0.3 saves (authentic + port) and the reference VERDICT of StoryEngine.load_json() on them:
                   the migrated state, or the exact StoryError message (saves that claim the old demo end
                   directly after M1 are rejected now; saves taken before it still migrate)
@@ -155,10 +156,14 @@ A1 = options('a1_choose')          # share_with_irina, keep_private
 M1 = options('m1_choose')          # preserve_evidence, request_explanation
 C3A = options('c3a_choose')        # ask_elena, note_alone
 C3B = options('c3b_choose')        # share_protocol, search_elena, report_delegation
+C3D = options('c3d_choose')        # admit_plan, pocket_plan  (Chapter 3 part 2, C3P2_DESIGN.md §2.4)
+C3G = options('c3g_choose')        # split_by_language, swap_halves, hide_for_elena
 SYMBOLS = solution('a1_solve_signal')
 OVERLAY = solution('m1_align_plans')
 PROTOCOL = solution('c3b_solve_protocol')
 PROTOCOL_SHOWN = display('c3b_solve_protocol')
+CHECK = solution('c3d_solve_check')
+CHECK_SHOWN = display('c3d_solve_check')
 
 
 # ------------------------------------------------------------------------------------- id mapping (legacy only)
@@ -282,7 +287,41 @@ def play_c3b(g, c3b):
     g.choose('c3b_choose', c3b)
 
 
-def play_full_route(a1, m1, c3a, c3b, skip=False):
+def play_c3c(g):
+    g.inspect('c3c_inspect_crates')
+    g.inspect('c3c_inspect_night_book')
+    play_dialogue(g, 'c3c_talk_konrad')
+
+
+def play_c3d(g, c3d):
+    g.inspect('c3d_inspect_intake')
+    g.inspect('c3d_inspect_drawer')
+    play_dialogue(g, 'c3d_talk_compare')
+    g.solve_puzzle('c3d_solve_check', copy.deepcopy(CHECK))
+    g.inspect('c3d_inspect_plan')
+    play_dialogue(g, 'c3d_talk_partner')
+    g.choose('c3d_choose', c3d)
+
+
+def play_c3e(g):
+    g.inspect('c3e_take_file')
+    g.inspect('c3e_try_ramp')
+    play_dialogue(g, 'c3e_reach_konrad')
+
+
+def play_c3f(g):
+    g.inspect('c3f_inspect_hose')
+    play_dialogue(g, 'c3f_push_desk')
+    play_dialogue(g, 'c3f_climb')
+
+
+def play_c3g(g, c3g):
+    g.inspect('c3g_inspect_halves')
+    play_dialogue(g, 'c3g_talk_konrad')
+    g.choose('c3g_choose', c3g)
+
+
+def play_full_route(a1, m1, c3a, c3b, c3d='admit_plan', c3g='split_by_language', skip=False):
     """story_engine_v4.play_verified_route() extended to the whole chain (GDScript: Kit.play_verified_route):
     authentic dialogue and puzzle flows, every cinematic consumed at the end, then the finale."""
     g = StoryEngine()
@@ -290,14 +329,19 @@ def play_full_route(a1, m1, c3a, c3b, skip=False):
     play_m1(g, m1)
     play_c3a(g, c3a)
     play_c3b(g, c3b)
+    play_c3c(g)
+    play_c3d(g, c3d)
+    play_c3e(g)
+    play_c3f(g)
+    play_c3g(g, c3g)
     for seq in list(g.pending_cinematics()):
         g.consume_cinematic(seq, skipped=skip)
     g.finale(skipped=skip)
     return g
 
 
-def route_key(a1, m1, c3a, c3b, skip):
-    return '|'.join([a1, m1, c3a, c3b, 'skip' if skip else 'play'])
+def route_key(a1, m1, c3a, c3b, c3d, c3g, skip):
+    return '|'.join([a1, m1, c3a, c3b, c3d, c3g, 'skip' if skip else 'play'])
 
 
 def routes():
@@ -308,8 +352,8 @@ def routes():
     except StoryError as e:
         assert str(e) == 'Finale locked', e
     out = {}
-    for a1, m1, c3a, c3b, skip in itertools.product(A1, M1, C3A, C3B, (False, True)):
-        out[route_key(a1, m1, c3a, c3b, skip)] = play_full_route(a1, m1, c3a, c3b, skip).save_json()
+    for a1, m1, c3a, c3b, c3d, c3g, skip in itertools.product(A1, M1, C3A, C3B, C3D, C3G, (False, True)):
+        out[route_key(a1, m1, c3a, c3b, c3d, c3g, skip)] = play_full_route(a1, m1, c3a, c3b, c3d, c3g, skip).save_json()
     return out
 
 
@@ -448,6 +492,17 @@ TRACES = {
         ['solve_puzzle', 'c3b_solve_protocol', PROTOCOL], ['inspect', 'c3b_inspect_booth']] +
         _dialogue('c3b_talk_alexei', 12) + [
         ['choose', 'c3b_choose', 'share_protocol'], ['consume', 'LS_C3_Close', False], ['finale', False],
+        ['consume', 'LS_C3_Radio', False], ['save_load'], ['available'],
+        ['inspect', 'c3c_inspect_crates'], ['inspect', 'c3c_inspect_night_book']] + _dialogue('c3c_talk_konrad', 13) + [
+        ['available'], ['inspect', 'c3d_inspect_drawer'], ['inspect', 'c3d_inspect_intake']] +
+        _dialogue('c3d_talk_compare', 7) + [
+        ['solve_puzzle', 'c3d_solve_check', CHECK], ['inspect', 'c3d_inspect_plan']] + _dialogue('c3d_talk_partner', 12) + [
+        ['choose', 'c3d_choose', 'admit_plan'], ['pending'], ['consume', 'LS_C3_Fire', False],
+        ['inspect', 'c3e_take_file'], ['inspect', 'c3e_try_ramp']] + _dialogue('c3e_reach_konrad', 6) + [
+        ['inspect', 'c3f_inspect_hose']] + _dialogue('c3f_push_desk', 4) + _dialogue('c3f_climb', 5) + [
+        ['consume', 'LS_C3_Escape', False], ['finale', False], ['inspect', 'c3g_inspect_halves']] +
+        _dialogue('c3g_talk_konrad', 12) + [
+        ['choose', 'c3g_choose', 'swap_halves'], ['consume', 'LS_C3_Halves', False], ['finale', False],
         ['save_load'], ['available'], ['pending'],
     ],
     # Chapter 3 with noise: locked/foreign objectives, the finale before c3b, C3 cinematics out of order,
@@ -517,6 +572,47 @@ TRACES = {
         ['consume', 'LS_C3_Close', True], ['consume', 'LS_A1_ToM1', False], ['consume', 'LS_M1_Hall', True],
         ['consume', 'LS_C3_Close', True], ['pending'], ['save_load'], ['inspect', 'c3a_inspect_weighbill'],
         ['new_game'], ['available'], ['pending'],
+    ],
+    # Chapter 3 part 2 with noise (C3P2_DESIGN.md): part-2 objectives before their scene, the registry scenes out of
+    # order, every kind of check-puzzle payload, invalid choice ids, resumes mid-dialogue across the in-level
+    # switches, cinematics out of order, the finale before the quay decision.
+    'chapter3_part2_with_noise': _slice_route('keep_private', 'request_explanation') + [
+        ['inspect', 'c3c_inspect_crates'], ['solve_puzzle', 'c3d_solve_check', CHECK], ['choose', 'c3g_choose', 'swap_halves'],
+        ['consume', 'LS_C3_Radio', False]] + _dialogue('c3a_talk_conductor', 7) + [
+        ['inspect', 'c3a_inspect_weighbill'], ['inspect', 'c3a_inspect_departures']] + _dialogue('c3a_pass_control', 8) +
+        _dialogue('c3a_talk_elena', 9) + [['choose', 'c3a_choose', 'note_alone']] + _dialogue('c3b_arrival', 9) + [
+        ['inspect', 'c3b_inspect_seating'], ['inspect', 'c3b_inspect_log'], ['solve_puzzle', 'c3b_solve_protocol', PROTOCOL],
+        ['inspect', 'c3b_inspect_booth']] + _dialogue('c3b_talk_alexei', 12) + [
+        ['choose', 'c3b_choose', 'report_delegation'], ['pending'], ['available'], ['finale', True],
+        ['consume', 'LS_C3_Radio', True], ['consume', 'LS_C3_Fire', False], ['inspect', 'c3d_inspect_intake'],
+        ['inspect', 'c3c_inspect_night_book'], ['inspect', 'c3c_inspect_crates'], ['start_dialogue', 'c3c_talk_konrad'],
+        ['inspect', 'c3c_inspect_night_book'], ['start_dialogue', 'c3c_talk_konrad'],
+        ['advance_dialogue', 'c3c_talk_konrad'], ['save_load'], ['current_line', 'c3c_talk_konrad']] +
+        [['advance_dialogue', 'c3c_talk_konrad']] * 12 + [
+        ['available'], ['inspect', 'c3c_inspect_crates'], ['start_dialogue', 'c3d_talk_compare'],
+        ['inspect', 'c3d_inspect_intake'], ['hint', 'c3d_solve_check'], ['inspect', 'c3d_inspect_drawer'],
+        ['start_dialogue', 'c3d_talk_compare'], ['advance_dialogue', 'c3d_talk_compare'], ['save_load'],
+        ['current_line', 'c3d_talk_compare']] + [['advance_dialogue', 'c3d_talk_compare']] * 6 + [
+        ['hint', 'c3d_solve_check'], ['solve_puzzle', 'c3d_solve_check', CHECK_SHOWN], ['hint', 'c3d_solve_check'],
+        ['solve_puzzle', 'c3d_solve_check', CHECK[:3]], ['hint', 'c3d_solve_check'],
+        ['solve_puzzle', 'c3d_solve_check', CHECK + [CHECK[0]]], ['solve_puzzle', 'c3d_solve_check', [CHECK[0], 7] + CHECK[2:]],
+        ['solve_puzzle', 'c3d_solve_check', ','.join(CHECK)], ['solve_puzzle', 'c3d_solve_check', {'0': CHECK[0]}],
+        ['solve_puzzle', 'c3d_solve_check', None], ['solve_puzzle', 'c3d_solve_check', []],
+        ['solve_puzzle', 'c3d_solve_check', PROTOCOL], ['save_load'], ['hint', 'c3d_solve_check'],
+        ['solve_puzzle', 'c3d_solve_check', list(reversed(CHECK))], ['solve_puzzle', 'c3d_solve_check', CHECK],
+        ['solve_puzzle', 'c3d_solve_check', CHECK], ['inspect', 'c3d_inspect_plan']] + _dialogue('c3d_talk_partner', 12) + [
+        ['choose', 'c3d_choose', 'swap_halves'], ['choose', 'c3d_choose', ''], ['choose', 'c3d_choose', 'Pocket_Plan'],
+        ['choose', 'c3d_choose', 'pocket_plan'], ['choose', 'c3d_choose', 'admit_plan'], ['pending'],
+        ['inspect', 'c3f_inspect_hose'], ['consume', 'LS_C3_Fire', True], ['inspect', 'c3e_take_file'],
+        ['start_dialogue', 'c3e_reach_konrad'], ['inspect', 'c3e_try_ramp']] + _dialogue('c3e_reach_konrad', 6) + [
+        ['save_load'], ['available'], ['start_dialogue', 'c3f_climb'], ['inspect', 'c3f_inspect_hose']] +
+        _dialogue('c3f_push_desk', 4) + [['start_dialogue', 'c3f_climb'], ['advance_dialogue', 'c3f_climb'],
+        ['save_load']] + [['advance_dialogue', 'c3f_climb']] * 4 + [
+        ['finale', False], ['consume', 'LS_C3_Halves', False], ['inspect', 'c3g_inspect_halves']] +
+        _dialogue('c3g_talk_konrad', 12) + [
+        ['choose', 'c3g_choose', 'admit_plan'], ['choose', 'c3g_choose', 'hide_for_elena'], ['pending'],
+        ['save_load'], ['consume', 'LS_C3_Escape', True], ['consume', 'LS_C3_Halves', True], ['finale', True],
+        ['finale', False], ['available'], ['pending'], ['save_load'],
     ],
 }
 
@@ -627,9 +723,38 @@ def base_saves():
     play_dialogue(g, 'c3b_talk_alexei')
     g.choose('c3b_choose', 'report_delegation')
     b['c3b_done_unconsumed'] = g.save_json()
+    # Chapter 3 part 2 checkpoints (in-level switches: registry A -> B -> C -> D, then the quay)
+    play_c3c(g)
+    b['c3c_done'] = g.save_json()
+    g.consume_cinematic('LS_C3_Close')
+    g.inspect('c3d_inspect_drawer')
+    g.inspect('c3d_inspect_intake')
+    play_dialogue(g, 'c3d_talk_compare')
+    g.solve_puzzle('c3d_solve_check', CHECK_SHOWN)
+    g.solve_puzzle('c3d_solve_check', CHECK[:2])
+    g.solve_puzzle('c3d_solve_check', CHECK_SHOWN)
+    b['mid_c3d'] = g.save_json()
+    g.solve_puzzle('c3d_solve_check', CHECK)
+    g.inspect('c3d_inspect_plan')
+    play_dialogue(g, 'c3d_talk_partner')
+    g.choose('c3d_choose', 'pocket_plan')
+    b['c3d_done'] = g.save_json()
+    play_c3e(g)
+    g.inspect('c3f_inspect_hose')
+    g.start_dialogue('c3f_push_desk')
+    g.advance_dialogue('c3f_push_desk')
+    b['mid_c3f'] = g.save_json()
+    while 'c3f_push_desk' in g.state['dialogue_progress']:
+        g.advance_dialogue('c3f_push_desk')
+    play_dialogue(g, 'c3f_climb')
+    g.inspect('c3g_inspect_halves')
+    play_dialogue(g, 'c3g_talk_konrad')
+    g.choose('c3g_choose', 'hide_for_elena')
+    b['c3g_done_unconsumed'] = g.save_json()
     g.finale()
     b['finished_unconsumed'] = g.save_json()
-    b['finished'] = play_full_route('keep_private', 'request_explanation', 'ask_elena', 'search_elena').save_json()
+    b['finished'] = play_full_route('keep_private', 'request_explanation', 'ask_elena', 'search_elena',
+                                    'pocket_plan', 'swap_halves').save_json()
     # authentic v0.3 saves (simulate_slice on the preproduction data, mapped to this project's ids)
     with legacy_data(PRE_DATA):
         b['legacy_v2_finished'] = to_project(legacy_mod.play_route('share_with_irina', 'preserve_evidence').save_json())
@@ -646,7 +771,7 @@ DIALOGUE_NODES = {o['id']: _CONV[o['dialogue_id']] for o in OBJECTIVES.values() 
 PUZZLE_OBJECTIVES = [o['id'] for o in OBJECTIVES.values() if o['type'] == 'puzzle']
 CHOICE_IDS = [c for o in OBJECTIVES.values() if o['type'] == 'choice' for c in options(o['id'])]
 SCENES = [s['id'] for s in load(PROJECT_DATA / 'scenes.json')['scenes']]
-RICH = {'after_fail', 'mid_m1', 'm1_done_unconsumed', 'mid_c3b', 'finished'}
+RICH = {'after_fail', 'mid_m1', 'm1_done_unconsumed', 'mid_c3b', 'mid_c3d', 'finished'}
 
 
 def mutations(name, text):
@@ -898,7 +1023,8 @@ def main():
         'data_sha256': {stem: sha256(PROJECT_DATA / (stem + '.json')) for stem in DATA_FILES},
         'legacy_data_sha256': {stem: sha256(PRE_DATA / (stem + '.json')) for stem in LEGACY_DATA_FILES},
         'preproduction_delta': preproduction_delta(),
-        'choices': {'a1_choose': A1, 'm1_choose': M1, 'c3a_choose': C3A, 'c3b_choose': C3B},
+        'choices': {'a1_choose': A1, 'm1_choose': M1, 'c3a_choose': C3A, 'c3b_choose': C3B, 'c3d_choose': C3D,
+                    'c3g_choose': C3G},
         'routes': routes(),
         'legacy': legacy(),
         'traces': {k: {'actions': v, 'expected': run_trace(v)} for k, v in TRACES.items()},

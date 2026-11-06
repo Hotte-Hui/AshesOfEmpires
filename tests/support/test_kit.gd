@@ -11,10 +11,15 @@ const A1_SYMBOLS := ["square", "circle", "triangle"]
 const M1_OVERLAY := {"rotation_steps": 0, "offset_x": 2, "offset_y": -1}
 ## pz_c3_protocol (documentation/C3_DESIGN.md §2.7): who spoke on Anlage C, in order.
 const C3_PROTOCOL := ["chair", "reich", "secretariat", "soviet"]
-## The scene chain and the stages of the canonical route (each stage ends with its quest's choice).
-const CHAIN := ["L_A1_Railyard", "L_M1_Archive", "L_C3_Station", "L_C3_Hall", "L_X1_Montage"]
-const STAGES := ["a1", "m1", "c3a", "c3b"]
-const DEFAULT_CHOICES := {"a1": "share_with_irina", "m1": "preserve_evidence", "c3a": "ask_elena", "c3b": "share_protocol"}
+## pz_c3_check (documentation/C3P2_DESIGN.md §2.7): the registry entry for each row of Alexei's freight chain.
+const C3_CHECK := ["in_c17_44", "out_2340", "par_4", "january"]
+## The scene chain and the stages of the canonical route (each stage ends with its quest's last objective; the
+## stages with a decision end with it). Chapter 3 part 2 (C3P2_DESIGN.md): c3c … c3g.
+const CHAIN := ["L_A1_Railyard", "L_M1_Archive", "L_C3_Station", "L_C3_Hall", "L_C3_RegistryA", "L_C3_RegistryB",
+	"L_C3_RegistryC", "L_C3_RegistryD", "L_C3_Quay", "L_X1_Montage"]
+const STAGES := ["a1", "m1", "c3a", "c3b", "c3c", "c3d", "c3e", "c3f", "c3g"]
+const DEFAULT_CHOICES := {"a1": "share_with_irina", "m1": "preserve_evidence", "c3a": "ask_elena", "c3b": "share_protocol",
+	"c3d": "admit_plan", "c3g": "split_by_language"}
 
 var failures: Array = []
 var context := ""
@@ -200,21 +205,21 @@ func get_to_signal(g: Node) -> void:
 	step(g.inspect("a1_inspect_timetable"), "inspect timetable")
 
 
-## The canonical route through the whole chain A1 → M1 → C3a → C3b → finale (the Python counterpart is
-## play_full_route() in tests/reference/make_python_reference.py; story_engine_v4.play_verified_route()
+## The canonical route through the whole chain A1 → M1 → C3a → C3b → C3c … C3g → finale (the Python counterpart
+## is play_full_route() in tests/reference/make_python_reference.py; story_engine_v4.play_verified_route()
 ## itself ends after M1, where the finale is locked since Chapter 3 was inserted). Authentic dialogue and
 ## puzzle flows, no bypass; every cinematic is consumed at the end, then the finale.
 func play_verified_route(a1 := "share_with_irina", m1 := "preserve_evidence", skip := false,
-		c3a := "ask_elena", c3b := "share_protocol") -> Node:
+		c3a := "ask_elena", c3b := "share_protocol", c3d := "admit_plan", c3g := "split_by_language") -> Node:
 	var g := story()
-	play_route_on(g, a1, m1, skip, false, c3a, c3b)
+	play_route_on(g, a1, m1, skip, false, c3a, c3b, c3d, c3g)
 	return g
 
 
 ## Same route on an existing instance. consume_now = consume each cinematic as soon as it is queued
 ## (what the Game director does) instead of all at the end (what the Python helper does).
 func play_route_on(g: Node, a1: String, m1: String, skip: bool, consume_now: bool,
-		c3a := "ask_elena", c3b := "share_protocol") -> void:
+		c3a := "ask_elena", c3b := "share_protocol", c3d := "admit_plan", c3g := "split_by_language") -> void:
 	var drain := func() -> void:
 		if consume_now:
 			for seq in g.pending_cinematics():
@@ -225,6 +230,16 @@ func play_route_on(g: Node, a1: String, m1: String, skip: bool, consume_now: boo
 	play_c3a(g, c3a)
 	drain.call()
 	play_c3b(g, c3b)
+	drain.call()
+	play_c3c(g)
+	drain.call()
+	play_c3d(g, c3d)
+	drain.call()
+	play_c3e(g)
+	drain.call()
+	play_c3f(g)
+	drain.call()
+	play_c3g(g, c3g)
 	for seq in g.pending_cinematics():
 		step(g.consume_cinematic(seq, skip), "cinematic " + seq)
 	step(g.finale(skip), "finale")
@@ -272,7 +287,43 @@ func play_c3b(g: Node, c3b := "share_protocol") -> void:
 	step(g.choose("c3b_choose", c3b), "c3b choice")
 
 
-## Plays the canonical route up to and including the choice of `stage` ("a1" … "c3b"); no cinematic is
+## Chapter 3 part 2 (documentation/C3P2_DESIGN.md §2.3): registry A (Alexei), B (Konrad, the joint check and
+## its decision), C (Alexei, smoke), D (Konrad, the chute), quay (Alexei, the decision on the halves).
+func play_c3c(g: Node) -> void:
+	step(g.inspect("c3c_inspect_crates"), "inspect crates")
+	step(g.inspect("c3c_inspect_night_book"), "inspect night book")
+	play_dialogue(g, "c3c_talk_konrad")
+
+
+func play_c3d(g: Node, c3d := "admit_plan") -> void:
+	step(g.inspect("c3d_inspect_intake"), "inspect intake book")
+	step(g.inspect("c3d_inspect_drawer"), "inspect drawer C-17")
+	play_dialogue(g, "c3d_talk_compare")
+	step(g.solve_puzzle("c3d_solve_check", C3_CHECK.duplicate()), "solve check")
+	step(g.inspect("c3d_inspect_plan"), "inspect Blatt 7")
+	play_dialogue(g, "c3d_talk_partner")
+	step(g.choose("c3d_choose", c3d), "c3d choice")
+
+
+func play_c3e(g: Node) -> void:
+	step(g.inspect("c3e_take_file"), "take the file")
+	step(g.inspect("c3e_try_ramp"), "try the ramp door")
+	play_dialogue(g, "c3e_reach_konrad")
+
+
+func play_c3f(g: Node) -> void:
+	step(g.inspect("c3f_inspect_hose"), "inspect the hose")
+	play_dialogue(g, "c3f_push_desk")
+	play_dialogue(g, "c3f_climb")
+
+
+func play_c3g(g: Node, c3g := "split_by_language") -> void:
+	step(g.inspect("c3g_inspect_halves"), "inspect the halves")
+	play_dialogue(g, "c3g_talk_konrad")
+	step(g.choose("c3g_choose", c3g), "c3g choice")
+
+
+## Plays the canonical route up to and including the last objective of `stage` ("a1" … "c3g"); no cinematic is
 ## consumed and the finale is not called. choices: {stage: option} overrides DEFAULT_CHOICES.
 func play_until(g: Node, stage: String, choices := {}) -> void:
 	var c := DEFAULT_CHOICES.duplicate()
@@ -291,6 +342,16 @@ func play_until(g: Node, stage: String, choices := {}) -> void:
 				play_c3a(g, c["c3a"])
 			"c3b":
 				play_c3b(g, c["c3b"])
+			"c3c":
+				play_c3c(g)
+			"c3d":
+				play_c3d(g, c["c3d"])
+			"c3e":
+				play_c3e(g)
+			"c3f":
+				play_c3f(g)
+			"c3g":
+				play_c3g(g, c["c3g"])
 
 
 static func parse(text: String) -> Variant:

@@ -35,7 +35,12 @@ func _fresh() -> bool:
 		{"id": "q_a1_last_signal", "title_key": "ui.chapter_a1", "character": "alexei", "state": "active"},
 		{"id": "q_m1_wrong_blueprint", "title_key": "ui.chapter_m1", "character": "konrad", "state": "locked"},
 		{"id": "q_c3a_arrival", "title_key": "ui.chapter_c3", "character": "alexei", "state": "locked"},
-		{"id": "q_c3b_palais", "title_key": "ui.chapter_c3", "character": "konrad", "state": "locked"}], "quests")
+		{"id": "q_c3b_palais", "title_key": "ui.chapter_c3", "character": "konrad", "state": "locked"},
+		{"id": "q_c3c_registry", "title_key": "ui.chapter_c3", "character": "alexei", "state": "locked"},
+		{"id": "q_c3d_check", "title_key": "ui.chapter_c3", "character": "konrad", "state": "locked"},
+		{"id": "q_c3e_smoke", "title_key": "ui.chapter_c3", "character": "alexei", "state": "locked"},
+		{"id": "q_c3f_chute", "title_key": "ui.chapter_c3", "character": "konrad", "state": "locked"},
+		{"id": "q_c3g_snow", "title_key": "ui.chapter_c3", "character": "alexei", "state": "locked"}], "quests")
 	kit.eq(_states(j), {"a1_talk_irina": "available", "a1_inspect_seal": "locked", "a1_inspect_timetable": "locked",
 		"a1_solve_signal": "locked", "a1_inspect_ledger": "locked", "a1_choose": "locked"}, "only A1 objectives, gated")
 	kit.eq(j["objectives"][0], {"id": "a1_talk_irina", "quest": "q_a1_last_signal", "text_key": "obj.a1_talk",
@@ -112,7 +117,9 @@ func _chapter3() -> bool:
 	var g := kit.story()
 	kit.play_until(g, "m1", {"a1": "share_with_irina", "m1": "request_explanation"})
 	var j: Dictionary = g.journal()
-	kit.eq(_quest_states(j), ["complete", "complete", "active", "locked"], "after M1: Chapter 3a active, 3b locked")
+	# Chapter 3 part 2 (C3P2_DESIGN.md) adds five more quests behind the palais.
+	kit.eq(_quest_states(j), ["complete", "complete", "active", "locked", "locked", "locked", "locked", "locked", "locked"],
+		"after M1: Chapter 3a active, 3b and part 2 locked")
 	kit.eq(j["chapter_key"], "ui.chapter_c3", "chapter key of the station")
 	kit.eq([j["scene"], j["character"]], ["L_C3_Station", "alexei"], "station, Alexei")
 	var st := _states(j)
@@ -136,7 +143,8 @@ func _chapter3() -> bool:
 	kit.play_dialogue(g, "c3a_talk_elena")
 	g.choose("c3a_choose", "note_alone")
 	j = g.journal()
-	kit.eq(_quest_states(j), ["complete", "complete", "complete", "active"], "after c3a: palais active")
+	kit.eq(_quest_states(j), ["complete", "complete", "complete", "active", "locked", "locked", "locked", "locked", "locked"],
+		"after c3a: palais active")
 	kit.eq([j["scene"], j["character"], j["chapter_key"]], ["L_C3_Hall", "konrad", "ui.chapter_c3"], "palais, Konrad, same chapter")
 	kit.eq(_states(j)["c3b_arrival"], "available", "Kessler first")
 	kit.eq(j["decisions"][-1], {"objective": "c3a_choose", "choice": "note_alone", "text_key": "choice.c3a.note_alone",
@@ -156,15 +164,19 @@ func _finished() -> bool:
 	kit.eq(j["people"], ["irina", "emil", "conductor", "border_officer", "elena", "kessler"], "people met")
 	kit.eq(_ids(j["evidence"]),
 		["ev_damaged_seal", "ev_timetable", "ev_ledger", "ev_plan_a", "ev_plan_b", "ev_emil_note",
-		"ev_c3_weighbill", "ev_c3_departures", "ev_c3_travel_order", "ev_c3_seating", "ev_c3_booth_log", "ev_c3_carbon"],
+		"ev_c3_weighbill", "ev_c3_departures", "ev_c3_travel_order", "ev_c3_seating", "ev_c3_booth_log", "ev_c3_carbon",
+		"ev_c3_cut_seal", "ev_c3_night_book", "ev_c3_intake_book", "ev_c3_scarf", "ev_c3_halves", "ev_c3_kordon_plan",
+		"ev_c3_file", "ev_c3_bolt", "ev_c3_cut_hose", "ev_c3_escort_list"],
 		"all evidence")
 	kit.eq(j["decisions"], [
 		{"objective": "a1_choose", "choice": "keep_private", "text_key": "choice.keep_private", "objective_text_key": "obj.a1_choice"},
 		{"objective": "m1_choose", "choice": "request_explanation", "text_key": "choice.ask_official", "objective_text_key": "obj.m1_choice"},
 		{"objective": "c3a_choose", "choice": "ask_elena", "text_key": "choice.c3a.ask_elena", "objective_text_key": "obj.c3a_choice"},
-		{"objective": "c3b_choose", "choice": "share_protocol", "text_key": "choice.c3b.share_protocol", "objective_text_key": "obj.c3b_choice"}],
-		"all four decisions")
-	kit.eq(j["objectives"].size(), 24, "every objective listed")
+		{"objective": "c3b_choose", "choice": "share_protocol", "text_key": "choice.c3b.share_protocol", "objective_text_key": "obj.c3b_choice"},
+		{"objective": "c3d_choose", "choice": "admit_plan", "text_key": "choice.c3d.admit_plan", "objective_text_key": "obj.c3d_choice"},
+		{"objective": "c3g_choose", "choice": "split_by_language", "text_key": "choice.c3g.split_by_language", "objective_text_key": "obj.c3g_choice"}],
+		"all six decisions")
+	kit.eq(j["objectives"].size(), 43, "every objective listed")
 	for q in j["quests"]:
 		kit.eq(q["state"], "complete", "quest %s complete" % q["id"])
 	for o in j["objectives"]:

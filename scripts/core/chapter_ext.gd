@@ -21,11 +21,14 @@ var choice_text: Dictionary = {}
 var reactions: Dictionary = {}
 var puzzles: Dictionary = {}
 var cinematics: Dictionary = {}
+var switches: Dictionary = {}           ## §12.11 per-scene settings of in-level protagonist switches (read-only here)
+var looks: Dictionary = {}              ## round 8: scene -> {character id: look sheet dir} (C3P2 §6)
+var carry: Dictionary = {}              ## round 8: scene -> {character id: item id held in the hand}
 var files: Array = []
 var _puzzle_nodes: Dictionary = {}
 
 const SECTIONS := ["levels", "entry_spawn", "chapter_cards", "palettes", "grades", "line_expr", "line_variants",
-	"choice_text", "reactions", "puzzles", "cinematics"]
+	"choice_text", "reactions", "puzzles", "cinematics", "switches", "looks", "carry"]
 
 
 func _init() -> void:
@@ -88,9 +91,26 @@ static func matches(when, flags: Dictionary) -> bool:
 	if when == null or not (when is Dictionary) or (when as Dictionary).is_empty():
 		return true
 	for k in when:
-		if not compare(flags.get(str(k)), when[k]):
+		var key := str(k)
+		var value = flags.get(key)
+		if value == null and key.begins_with(CHOICE_PREFIX):
+			value = live_choice(key.substr(CHOICE_PREFIX.length()))
+		if not compare(value, when[k]):
 			return false
 	return true
+
+
+## C3P2_DESIGN §3.2: a condition key "choice.<objective_id>" compares with the recorded choice id. A flags dictionary
+## may carry it (tests, memories); otherwise the live Story answers. "" while the objective is not decided.
+const CHOICE_PREFIX := "choice."
+
+
+static func live_choice(objective_id: String) -> String:
+	var ml := Engine.get_main_loop()
+	var st = ml.root.get_node_or_null("/root/Story") if ml is SceneTree else null
+	if st and st.has_method("choice_history"):
+		return str(st.choice_history().get(objective_id, ""))
+	return ""
 
 
 func current_flags() -> Dictionary:
@@ -123,6 +143,55 @@ func spawn_for(id: String) -> String:
 func chapter_card(id: String) -> Array:
 	var c = chapter_cards.get(id, [])
 	return c if c is Array and c.size() == 2 else []
+
+
+## C3P2_DESIGN §3.2 — shared level files: every Story scene played in level file `path`, in the order of the
+## chapter files' "levels" section.
+func scenes_of_level(path: String) -> Array:
+	var out: Array = []
+	if path == "":
+		return out
+	for id in levels:
+		if str(levels[id]) == path:
+			out.append(str(id))
+	return out
+
+
+## The identity of the level a Story scene plays in: the FIRST scene id mapped to the same level file (Explore
+## entries of a shared level use it as "level"); the id itself when no chapter file maps it.
+func level_key(id: String) -> String:
+	var s := scenes_of_level(level_path(id))
+	return str(s[0]) if not s.is_empty() else id
+
+
+## True when both Story scenes play in the same chapter level file.
+func same_level(a: String, b: String) -> bool:
+	return level_path(a) != "" and level_path(a) == level_path(b)
+
+
+## §12.11 in-level protagonist switch: the optional settings of Story scene `id` (a copy; {} when none) —
+## switch_spawn, partner, partner_spawn, partner_anim, partner_hide_after, glide, music, ambience
+## (meaning: TECHNICAL_ARCHITECTURE §12.11; game.gd decides, this only reads).
+func switch_settings(id: String) -> Dictionary:
+	var s = switches.get(id, {})
+	return (s as Dictionary).duplicate(true) if s is Dictionary else {}
+
+
+## Round 8: character looks of Story scene `id` ({character id: sheet dir}, a copy; {} = base sheets).
+func looks_for(id: String) -> Dictionary:
+	var l = looks.get(id, {})
+	return (l as Dictionary).duplicate() if l is Dictionary else {}
+
+
+## Round 8: items the characters of scene `id` hold once they own them ({character id: item id}, a copy).
+func carry_for(id: String) -> Dictionary:
+	var c = carry.get(id, {})
+	return (c as Dictionary).duplicate() if c is Dictionary else {}
+
+
+## Spawn where control passes to the protagonist of scene `id` at an in-level switch ("" = default rule).
+func switch_spawn(id: String) -> String:
+	return str(switch_settings(id).get("switch_spawn", ""))
 
 
 func line_key(node_id: String, text_key: String, flags = null) -> String:

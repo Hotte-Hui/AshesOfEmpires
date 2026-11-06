@@ -161,3 +161,24 @@ All runs on this machine (RTX 4090, Forward+, windowed 1080p unless noted).
 Found and fixed by these runs: Game's focus stayed cleared after a modal that pauses the tree, so a second task step on
 the same hotspot never got its prompt (player.gd resyncs); the memory driver pressed E inside the 350 ms arrival
 cooldown (driver waits it out). Not covered: a human playtest and listening pass (§6), physical controller.
+
+## 12. Round 8 (2026-11-06) — Chapter 3 part 2, in-level protagonist switch, feel pass
+All runs on this machine (RTX 4090, Forward+, windowed 1080p unless noted). Six choices per route now
+(a1 / m1 / c3a / c3b / c3d / c3g); the drivers keep their saves in `user://e2e/saves`.
+| Layer | Result |
+|---|---|
+| Unit (`tests/run_all.gd`) | **47 files, 458 cases, 46,812 checks — all passed** (new: test_switch, test_c3p2_routes, test_c3p2_archive_art, test_c3p2_cast_audio, test_c3p2_explore, test_c3p2 cinematics/puzzle tests, test_feel_r8, test_save_rebase_r8) |
+| Autoplay, played in full (share_with_irina / preserve_evidence / ask_elena / share_protocol / admit_plan / split_by_language) | **PASS** 366 s, every cinematic watched incl. LS_C3_Radio / Fire / Escape / Halves; a slot-3 save inside registry B reloaded through the game (Konrad playing, his position, Alexei standing in) |
+| Autoplay, skip (keep_private / request_explanation / note_alone / search_elena / pocket_plan / swap_halves) | **PASS** 64 s |
+| Autoplay, skip + exploration (… report_delegation / admit_plan / hide_for_elena) | **PASS** 161 s — registry 18/18, quay 10/10, history 21/21 |
+| Autoplay, skip + memories | **PASS** 70 s |
+| Real input, skip (share_with_irina / preserve_evidence / ask_elena / share_protocol / pocket_plan / hide_for_elena) | **INPUTPLAY_PASS** 432 s — the in-level switches by real frames, „Gegenprobe“ solved by number keys, main menu „Fortsetzen“ resumes on the quay before the last decision |
+| Real input, skip + exploration + memories (keep_private / request_explanation / note_alone / search_elena / admit_plan / swap_halves) | **INPUTPLAY_PASS** 1364 s — 143/143 finds (Karsk 26, archive 29, plaza 21, station 21, Palais 18, registry 18, quay 10) incl. 10 mini-games by synthetic keys, 6/6 tasks, 21/21 history cards, memory trips by keys only |
+| All E2E logs | 0 script errors, 0 warnings |
+| Exported .exe (324 MB pack, lossless audio), real input, skip + memories (share_with_irina / request_explanation / ask_elena / report_delegation / admit_plan / split_by_language) | **INPUTPLAY_PASS** 454 s, 0 errors, 0 warnings |
+Found and fixed in the integration: pad A did not press focused buttons in menus (Godot 4.7's built-in `ui_accept`
+has no pad button) → added in `Settings._build_input_map()`; saves and memory snapshots from the shorter round-7
+chain failed the replay validation after the chain grew → `SaveSystem.rebase_story` (test_save_rebase_r8); memory
+cards of the shared registry level counted 0/0 finds → counted by the level key; the old memory prints of the Berlin
+archive and plaza showed Alexei (capture harness used the Story's protagonist) → harness fixed, prints re-captured.
+Not covered: a human playtest and listening pass (§6), a physical controller.

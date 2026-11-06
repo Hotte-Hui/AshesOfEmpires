@@ -66,6 +66,31 @@
       "retry_unlimited": true,
       "hint_after_attempts": 2,
       "world_note": "Fictional seating plan and interpreters' booth log of a fictional conference; not a real protocol."
+    },
+    {
+      "id": "pz_c3_check",
+      "type": "symbol_order",
+      "scene": "L_C3_RegistryB",
+      "clue_item_ids": [
+        "ev_c3_halves",
+        "ev_c3_intake_book"
+      ],
+      "solution": [
+        "in_c17_44",
+        "out_2340",
+        "par_4",
+        "january"
+      ],
+      "display_symbols": [
+        "out_2340",
+        "january",
+        "in_c17_44",
+        "par_4"
+      ],
+      "max_penalty": 0,
+      "retry_unlimited": true,
+      "hint_after_attempts": 2,
+      "world_note": "Fictional registry intake book checked against a fictional freight chain; not real documents."
     }
   ]
 }

@@ -48,10 +48,11 @@ func _test_schema() -> bool:
 	var report: Dictionary = ENGINE.validate_data(fresh_data(), root)
 	kit.is_ok(report, "canonical data validates")
 	# The Python test expects the slice (2 quests, 3 scenes); Chapter 3 adds q_c3a_arrival / q_c3b_palais and
-	# the scenes L_C3_Station / L_C3_Hall (documentation/C3_DESIGN.md §2).
-	kit.eq(report.get("report", {}).get("quests"), 4, "quests")
-	kit.eq(report.get("report", {}).get("scenes"), 5, "scenes")
-	kit.eq(report.get("report", {}).get("objectives"), 24, "objectives (11 slice + 13 Chapter 3)")
+	# the scenes L_C3_Station / L_C3_Hall (documentation/C3_DESIGN.md §2), part 2 five quests and scenes with 19
+	# objectives (C3P2_DESIGN.md §2).
+	kit.eq(report.get("report", {}).get("quests"), 9, "quests")
+	kit.eq(report.get("report", {}).get("scenes"), 10, "scenes")
+	kit.eq(report.get("report", {}).get("objectives"), 43, "objectives (11 slice + 13 Chapter 3 + 19 part 2)")
 	return true
 
 

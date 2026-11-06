@@ -51,6 +51,16 @@ var _turn_left := false
 var _turn_t := -1.0
 var _turn_row := ""             ## row shown while turning (idle_front, or walk_front for a walking turn)
 var _rng := RandomNumberGenerator.new()
+## Round 8 (C3P2 §6): per-scene LOOKS -- character id -> sheet directory ("alexei" -> "alexei_soot"). Game sets it
+## whenever the playing Story scene changes; identity (char_id, dialogue speaker) never changes.
+static var looks: Dictionary = {}
+var carry := false              ## holding the file: idle/walk side rows play carry_idle_side / carry_side when present
+
+
+static func look_of(id: String) -> String:
+	var l := str(looks.get(id, ""))
+	return l if l != "" and FileAccess.file_exists("res://assets/characters/%s/sheet.json" % l) else id
+
 
 
 func _init() -> void:
@@ -64,7 +74,7 @@ func load_character(id: String) -> bool:
 	sprite = Sprite2D.new()
 	sprite.centered = false
 	add_child(sprite)
-	var dir := "res://assets/characters/%s/" % id
+	var dir := "res://assets/characters/%s/" % look_of(id)
 	if FileAccess.file_exists(dir + "sheet.json"):
 		var data = JSON.parse_string(FileAccess.get_file_as_string(dir + "sheet.json"))
 		var t := LayerStack.canvas_tex(dir + "sheet.png", true)
@@ -113,6 +123,10 @@ func resolve(a: String) -> String:
 
 ## "talk_side" -> "talk_front" while view_hint is "front" (only when the sheet has that row).
 func view_row(a: String) -> String:
+	if carry and view_hint == "" and (a == "idle_side" or a == "walk_side"):
+		var cr := "carry_idle_side" if a == "idle_side" else "carry_side"
+		if has_anim(cr):
+			return cr
 	if view_hint != "" and a.ends_with("_side"):
 		var v := a.trim_suffix("_side") + "_" + view_hint
 		if has_anim(v):

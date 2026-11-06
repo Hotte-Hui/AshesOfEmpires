@@ -1,0 +1,159 @@
+{
+ "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Station: open platform (walkable y 262..350): the walkers give way to the player (look-ahead 30 px, side step up to 14 px inside bounds, else they wait and after 3 s turn back), pass the speaking NPCs in front (y >= 318) and pause only away from them.",
+ "walkers": [
+  {
+   "id": "station_traveller_woman",
+   "char": "berlin_mother",
+   "sheet": "walkers/traveller_woman.png",
+   "path": [
+    [
+     60,
+     326
+    ],
+    [
+     300,
+     334
+    ],
+    [
+     520,
+     330
+    ],
+    [
+     700,
+     322
+    ],
+    [
+     880,
+     304
+    ]
+   ],
+   "speed": 18,
+   "start": 0.55,
+   "dir": 1,
+   "pauses": {
+    "0": [
+     2.0,
+     4.0
+    ],
+    "4": [
+     3.0,
+     6.0
+    ]
+   },
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "give_way": 30,
+   "dodge": 14,
+   "bounds": [
+    24,
+    266,
+    1896,
+    348
+   ],
+   "pause_clear": 40,
+   "note": "traveller with her suitcase: platform end -> departures board and back"
+  },
+  {
+   "id": "station_traveller_man",
+   "char": "berlin_father",
+   "sheet": "walkers/traveller_man.png",
+   "path": [
+    [
+     1580,
+     342
+    ],
+    [
+     1260,
+     344
+    ],
+    [
+     980,
+     340
+    ],
+    [
+     760,
+     338
+    ],
+    [
+     470,
+     336
+    ]
+   ],
+   "speed": 20,
+   "start": 0.3,
+   "dir": 1,
+   "pauses": {
+    "3": [
+     2.0,
+     4.0
+    ]
+   },
+   "pause_rows": [
+    "look_side",
+    "gesture_side"
+   ],
+   "give_way": 30,
+   "dodge": 14,
+   "bounds": [
+    24,
+    266,
+    1896,
+    348
+   ],
+   "pause_clear": 40,
+   "note": "traveller carrying a crate along the front of the platform"
+  },
+  {
+   "id": "station_porter",
+   "char": "porter",
+   "sheet": "walkers/porter.png",
+   "path": [
+    [
+     452,
+     304
+    ],
+    [
+     530,
+     316
+    ],
+    [
+     700,
+     318
+    ],
+    [
+     980,
+     306
+    ]
+   ],
+   "speed": 21,
+   "start": 0.7,
+   "dir": -1,
+   "pauses": {
+    "0": [
+     3.0,
+     6.0
+    ],
+    "3": [
+     2.0,
+     4.5
+    ]
+   },
+   "pause_rows": [
+    "gesture_side",
+    "look_side"
+   ],
+   "give_way": 30,
+   "dodge": 14,
+   "bounds": [
+    24,
+    266,
+    1896,
+    348
+   ],
+   "pause_clear": 40,
+   "note": "Veltrava station porter between the luggage cart and the kiosk"
+  }
+ ]
+}

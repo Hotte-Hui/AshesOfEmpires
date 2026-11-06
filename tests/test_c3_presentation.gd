@@ -12,7 +12,7 @@ const CHAPTER_DIR := "res://data/chapters/"
 const EXPRESSIONS := ["neutral", "concerned", "determined", "surprised"]
 const OPERATORS := [">=", "<=", "==", "!=", ">", "<"]
 const TOP_KEYS := ["chapter", "doc", "levels", "entry_spawn", "chapter_cards", "palettes", "grades", "line_expr",
-	"line_variants", "choice_text", "reactions", "puzzles", "cinematics"]
+	"line_variants", "choice_text", "reactions", "puzzles", "cinematics", "switches", "looks", "carry"]
 
 var kit: Kit
 var CE: GDScript
@@ -291,6 +291,15 @@ func _condition_flags() -> bool:
 				continue
 			for flag in when:
 				n += 1
+				# C3P2_DESIGN §3.2: "choice.<objective>" names a recorded decision; the value is one of its options.
+				if str(flag).begins_with("choice."):
+					var cobj := str(flag).substr(7)
+					var opts: Array = []
+					for c in objectives.get(cobj, {}).get("choices", []):
+						opts.append(str(c.get("id", "")))
+					kit.ok(not opts.is_empty(), "%s: %s names a choice objective" % [vl[0], flag])
+					kit.ok(opts.has(str(when[flag])), "%s: %s = %s is one of its options %s" % [vl[0], flag, Kit.fmt(when[flag]), opts])
+					continue
 				kit.ok(defaults.has(flag), "%s: flag %s exists in data/v3/flags.json" % [vl[0], flag])
 				var spec = when[flag]
 				var valid: bool = spec is bool or spec is int or spec is float
@@ -377,8 +386,17 @@ func _cards() -> bool:
 	for sid in ext.levels:
 		kit.ok(scenes.has(sid), "level %s is a scene of data/v3/scenes.json" % sid)
 		kit.ok(ResourceLoader.exists(str(ext.levels[sid])), "level scene %s exists" % ext.levels[sid])
-		kit.ok(ext.chapter_cards.has(sid), "level %s has a chapter card" % sid)
 		kit.eq(ext.spawn_for(sid), scenes.get(sid, {}).get("entry_spawn"), "entry spawn of %s matches scenes.json" % sid)
+		# C3P2_DESIGN §4: a scene entered by an in-level switch (same level file as the chain scene before it) shows
+		# no chapter card; every scene that loads a level does.
+		var prev := ""
+		for s2 in scenes:
+			if str(scenes[s2].get("next_scene", "")) == sid:
+				prev = str(s2)
+		if prev != "" and ext.level_path(prev) == ext.level_path(sid):
+			kit.ok(not ext.chapter_cards.has(sid), "switch scene %s has no chapter card" % sid)
+			continue
+		kit.ok(ext.chapter_cards.has(sid), "level %s has a chapter card" % sid)
 		kit.eq(ext.chapter_cards.get(sid, ["", ""])[1], scenes.get(sid, {}).get("title_key"), "card subtitle of %s = scene title" % sid)
 		kit.eq(ext.chapter_cards.get(sid, ["", ""])[0], _quest_title(sid), "card title of %s = quest title" % sid)
 	for sid in ["L_C3_Station", "L_C3_Hall"]:

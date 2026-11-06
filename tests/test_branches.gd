@@ -1,8 +1,9 @@
 extends RefCounted
 ## All four slice branch combinations × skip × cinematic timing, identical progression gating across branches,
-## save/load at every step, skip equivalence — over the whole chain A1 → M1 → Chapter 3 (C3a, C3b) → finale.
-## The Chapter-3 options of every combination are the canonical defaults of Kit.play_verified_route
-## (ask_elena / share_protocol); every C3 option is covered in tests/test_c3_routes.gd.
+## save/load at every step, skip equivalence — over the whole chain A1 → M1 → Chapter 3 (C3a, C3b, part 2 C3c–C3g)
+## → finale. The Chapter-3 options of every combination are the canonical defaults of Kit.play_verified_route
+## (ask_elena / share_protocol / admit_plan / split_by_language); every C3 option is covered in
+## tests/test_c3_routes.gd and tests/test_c3p2_routes.gd.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 
@@ -12,8 +13,11 @@ const COMBOS := [
 	["keep_private", "preserve_evidence", {"irina_trust": 0, "alexei_secrecy": 1, "konrad_evidence": 1, "office_suspicion": 0}],
 	["keep_private", "request_explanation", {"irina_trust": 0, "alexei_secrecy": 1, "konrad_evidence": 0, "office_suspicion": 1}],
 ]
-## Effects of the default Chapter-3 options (ask_elena: elena_trust +1, share_protocol: alexei_konrad_trust +1).
-const C3_DEFAULT_FLAGS := {"elena_trust": 1, "alexei_konrad_trust": 1, "evidence_chain": 0, "kessler_alerted": 0}
+## Effects of the default Chapter-3 options (ask_elena: elena_trust +1, share_protocol: alexei_konrad_trust +1,
+## part 2 — C3P2_DESIGN §2.4 — admit_plan: alexei_konrad_trust +1, split_by_language: evidence_chain +1).
+const C3_DEFAULT_FLAGS := {"elena_trust": 1, "alexei_konrad_trust": 2, "evidence_chain": 1, "kessler_alerted": 0}
+const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "c3c_completed", "c3d_completed",
+	"c3e_completed", "c3f_completed", "c3g_completed", "slice_completed"]
 
 var kit: Kit
 
@@ -43,10 +47,10 @@ func _four_combinations() -> bool:
 				"elena_missing", "slice_finished"]:
 			kit.eq(f[k], true, label + " " + k)
 		kit.eq(f["civilian_welfare"], 0, label + " civilian_welfare untouched (reserved for later chapters)")
-		kit.eq(g.completed_events(), ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "slice_completed"], label + " events")
+		kit.eq(g.completed_events(), EVENTS, label + " events")
 		kit.eq(g.current_scene, "L_X1_Montage", label + " scene")
 		kit.eq(g.active_character, "none", label + " character")
-		kit.eq(g.inventory().size(), 12, label + " evidence (6 slice + 6 Chapter 3)")
+		kit.eq(g.inventory().size(), 22, label + " evidence (6 slice + 6 Chapter 3 + 10 part 2)")
 		kit.eq(g.is_finished(), true, label + " finished")
 		kit.eq(g.is_finale_viewed(), true, label + " finale viewed")
 		kit.eq(g.relationship("irina_trust"), combo[2]["irina_trust"], label + " relationship accessor")
@@ -105,6 +109,26 @@ func _gating_trace(a1: String, m1: String) -> Array:
 	advance.call(g.inspect("c3b_inspect_booth"))
 	talk.call("c3b_talk_alexei")
 	advance.call(g.choose("c3b_choose", "share_protocol"))
+	# Chapter 3 part 2 (C3P2_DESIGN §2.3)
+	advance.call(g.inspect("c3c_inspect_crates"))
+	advance.call(g.inspect("c3c_inspect_night_book"))
+	talk.call("c3c_talk_konrad")
+	advance.call(g.inspect("c3d_inspect_intake"))
+	advance.call(g.inspect("c3d_inspect_drawer"))
+	talk.call("c3d_talk_compare")
+	advance.call(g.solve_puzzle("c3d_solve_check", Kit.C3_CHECK.duplicate()))
+	advance.call(g.inspect("c3d_inspect_plan"))
+	talk.call("c3d_talk_partner")
+	advance.call(g.choose("c3d_choose", "admit_plan"))
+	advance.call(g.inspect("c3e_take_file"))
+	advance.call(g.inspect("c3e_try_ramp"))
+	talk.call("c3e_reach_konrad")
+	advance.call(g.inspect("c3f_inspect_hose"))
+	talk.call("c3f_push_desk")
+	talk.call("c3f_climb")
+	advance.call(g.inspect("c3g_inspect_halves"))
+	talk.call("c3g_talk_konrad")
+	advance.call(g.choose("c3g_choose", "split_by_language"))
 	return trace
 
 
@@ -183,15 +207,37 @@ func _save_load_every_step() -> bool:
 	g.inspect("c3b_inspect_booth")
 	kit.play_dialogue(g, "c3b_talk_alexei")
 	g.choose("c3b_choose", "report_delegation")
+	roundtrip.call()   # Chapter 3 part 2: registry A (Alexei) with LS_C3_Close + LS_C3_Radio queued
+	kit.play_c3c(g)
+	roundtrip.call()   # in-level switch registry A → B (Konrad)
+	g.inspect("c3d_inspect_intake")
+	g.inspect("c3d_inspect_drawer")
+	g.start_dialogue("c3d_talk_compare")
+	g.advance_dialogue("c3d_talk_compare")
+	roundtrip.call()   # mid-dialogue in the registry
+	while g.state["dialogue_progress"].has("c3d_talk_compare"):
+		g.advance_dialogue("c3d_talk_compare")
+	g.solve_puzzle("c3d_solve_check", ["out_2340", "january", "par_4", "in_c17_44"])
+	roundtrip.call()   # failed check attempt preserved
+	g.solve_puzzle("c3d_solve_check", Kit.C3_CHECK.duplicate())
+	g.inspect("c3d_inspect_plan")
+	kit.play_dialogue(g, "c3d_talk_partner")
+	g.choose("c3d_choose", "pocket_plan")
+	roundtrip.call()   # B → C with LS_C3_Fire queued
+	kit.play_c3e(g)
+	roundtrip.call()   # C → D
+	kit.play_c3f(g)
+	roundtrip.call()   # level change to the quay
+	kit.play_c3g(g, "hide_for_elena")
 	roundtrip.call()   # montage, finale still open
 	g.finale(true)
 	roundtrip.call()
-	kit.ok(checkpoints[0] >= 21, "checkpoints exercised (%d)" % checkpoints[0])
+	kit.ok(checkpoints[0] >= 28, "checkpoints exercised (%d)" % checkpoints[0])
 	return true
 
 
 func _finale_without_cinematics() -> bool:
-	# Python semantics: cinematics are presentation; the finale needs every quest event (A1, M1, C3a, C3b).
+	# Python semantics: cinematics are presentation; the finale needs every quest event (A1, M1, C3a … C3g).
 	var g := kit.story()
 	kit.play_a1(g, "share_with_irina")
 	kit.is_err(g.finale(), "finale locked after A1 only")
@@ -200,8 +246,22 @@ func _finale_without_cinematics() -> bool:
 	kit.play_c3a(g, "note_alone")
 	kit.is_err(g.finale(), "finale locked after C3a")
 	kit.play_c3b(g, "search_elena")
-	var all_six := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close"]
-	kit.eq(g.pending_cinematics(), all_six, "all six still queued")
+	kit.is_err(g.finale(), "finale locked after C3b (the former demo end): part 2 is still open")
+	for stage in ["c3c", "c3d", "c3e", "c3f"]:
+		match stage:
+			"c3c":
+				kit.play_c3c(g)
+			"c3d":
+				kit.play_c3d(g, "pocket_plan")
+			"c3e":
+				kit.play_c3e(g)
+			"c3f":
+				kit.play_c3f(g)
+		kit.is_err(g.finale(), "finale locked after " + stage)
+	kit.play_c3g(g, "swap_halves")
+	var all_ten := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close",
+		"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]
+	kit.eq(g.pending_cinematics(), all_ten, "all ten still queued")
 	kit.is_ok(g.finale(), "finale reachable")
-	kit.eq(g.pending_cinematics(), all_six, "queue untouched by the finale")
+	kit.eq(g.pending_cinematics(), all_ten, "queue untouched by the finale")
 	return true

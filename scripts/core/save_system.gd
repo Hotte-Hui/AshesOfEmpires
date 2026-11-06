@@ -416,8 +416,40 @@ static func read_container(path: String) -> Dictionary:
 	for k in doc:
 		if not ["meta", "story", "extra"].has(k):
 			warnings.append("Unknown container field ignored: " + str(k))
+	# Round 8: a save taken at the end of an older, shorter chain (e.g. the montage after c3b_completed) continues
+	# in the scene that now follows its last completed event instead of failing the replay validation.
+	var story_doc: Dictionary = rebase_story(doc["story"])
+	if str(story_doc.get("current_scene")) != str(doc["story"].get("current_scene")):
+		warnings.append("Save re-based to the extended story chain: " + str(story_doc.get("current_scene")))
 	return {"ok": true, "error": "", "error_key": "", "meta": meta,
-		"story_raw": ENGINE.json_dumps(doc["story"], 2), "extra": extra, "warnings": warnings}
+		"story_raw": ENGINE.json_dumps(story_doc, 2), "extra": extra, "warnings": warnings}
+
+
+## Re-bases a Story state recorded before the scene chain grew (round 8: c3b_completed used to lead to the montage,
+## now to the registry): current_scene / active_character = the scene after the last completed exit event, as the
+## replay validation computes it. Finished playthroughs (slice_completed) and unknown shapes stay unchanged.
+## Used for save slots (read_container) and for the profile snapshots of the memories (Memories.snapshot_raw).
+static func rebase_story(story: Dictionary) -> Dictionary:
+	var st: Dictionary = story.duplicate(true)
+	var events = st.get("completed_events", [])
+	if not (events is Array) or (events as Array).has("slice_completed") or not st.has("current_scene"):
+		return st
+	var sd: Dictionary = ENGINE.json_parse(FileAccess.get_file_as_string("res://data/v3/scenes.json"))
+	if not sd.get("ok", false) or not (sd["value"] is Dictionary):
+		return st
+	var scenes := {}
+	var next_after := {}
+	for s in sd["value"].get("scenes", []):
+		scenes[str(s["id"])] = s
+		if s.get("next_scene") != null:
+			next_after[str(s.get("exit_on_event", ""))] = str(s["next_scene"])
+	var cur := str(sd["value"].get("start_scene", ""))
+	for ev in events:
+		cur = str(next_after.get(str(ev), cur))
+	if scenes.has(cur) and cur != str(st.get("current_scene")):
+		st["current_scene"] = cur
+		st["active_character"] = str(scenes[cur].get("protagonist", "none"))
+	return st
 
 
 ## Strict UTF-8 check (no overlongs, no surrogates) so corrupt files are rejected without decoding noise.

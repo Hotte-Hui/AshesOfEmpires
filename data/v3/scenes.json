@@ -43,8 +43,63 @@
       "entry_spawn": "SP_C3_Vestibule",
       "associated_quest": "q_c3b_palais",
       "exit_on_event": "c3b_completed",
-      "next_scene": "L_X1_Montage",
+      "next_scene": "L_C3_RegistryA",
       "render_profile": "rp_veltrava_palais"
+    },
+    {
+      "id": "L_C3_RegistryA",
+      "title_key": "world.c3c.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C3_Gate",
+      "associated_quest": "q_c3c_registry",
+      "exit_on_event": "c3c_completed",
+      "next_scene": "L_C3_RegistryB",
+      "render_profile": "rp_veltrava_registry"
+    },
+    {
+      "id": "L_C3_RegistryB",
+      "title_key": "world.c3d.title",
+      "protagonist": "konrad",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C3_KonradCards",
+      "associated_quest": "q_c3d_check",
+      "exit_on_event": "c3d_completed",
+      "next_scene": "L_C3_RegistryC",
+      "render_profile": "rp_veltrava_registry"
+    },
+    {
+      "id": "L_C3_RegistryC",
+      "title_key": "world.c3e.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C3_AlexeiTable",
+      "associated_quest": "q_c3e_smoke",
+      "exit_on_event": "c3e_completed",
+      "next_scene": "L_C3_RegistryD",
+      "render_profile": "rp_veltrava_fire"
+    },
+    {
+      "id": "L_C3_RegistryD",
+      "title_key": "world.c3f.title",
+      "protagonist": "konrad",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C3_KonradBooth",
+      "associated_quest": "q_c3f_chute",
+      "exit_on_event": "c3f_completed",
+      "next_scene": "L_C3_Quay",
+      "render_profile": "rp_veltrava_fire"
+    },
+    {
+      "id": "L_C3_Quay",
+      "title_key": "world.c3g.title",
+      "protagonist": "alexei",
+      "camera_mode": "side_on_2d",
+      "entry_spawn": "SP_C3_Quay",
+      "associated_quest": "q_c3g_snow",
+      "exit_on_event": "c3g_completed",
+      "next_scene": "L_X1_Montage",
+      "render_profile": "rp_veltrava_quay"
     },
     {
       "id": "L_X1_Montage",

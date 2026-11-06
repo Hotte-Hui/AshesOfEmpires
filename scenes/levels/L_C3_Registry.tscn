@@ -1,0 +1,306 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/c3p2_archive/registry_level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/kartei_spot.gd" id="c3p2x_spot"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/kartei_world_cue.gd" id="c3p2x_cue"]
+[ext_resource type="Texture2D" path="res://assets/ui/minigames/kartei/world_drawer.png" id="c3p2x_tex"]
+
+[node name="L_C3_Registry" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C3_RegistryA"
+protagonist = "alexei"
+mode = "side"
+art_manifest = "res://assets/environments/veltrava_registry/scene.json"
+ambience = "amb_veltrava_registry"
+footstep_surface = "concrete"
+grade_preset = "registry"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Crates" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3c_inspect_crates"
+kind = "inspect"
+hotspot_id = "crates"
+
+[node name="NightBook" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3c_inspect_night_book"
+kind = "inspect"
+hotspot_id = "porter_booth"
+
+[node name="TalkKonrad" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3c_talk_konrad"
+kind = "dialogue"
+hotspot_id = "konrad_cards"
+npc_id = "konrad"
+radius = 38.0
+
+[node name="IntakeBook" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_inspect_intake"
+kind = "inspect"
+hotspot_id = "intake_desk"
+
+[node name="DrawerC17" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_inspect_drawer"
+kind = "inspect"
+hotspot_id = "drawer_c17"
+
+[node name="TalkCompare" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_talk_compare"
+kind = "dialogue"
+hotspot_id = "alexei_table"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="CheckTable" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_solve_check"
+kind = "puzzle"
+hotspot_id = "sorting_table"
+
+[node name="PlanWall" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_inspect_plan"
+kind = "inspect"
+hotspot_id = "plan_wall"
+
+[node name="TalkPartner" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_talk_partner"
+kind = "dialogue"
+hotspot_id = "alexei_table"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="ChoicePlan" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3d_choose"
+kind = "choice"
+hotspot_id = "alexei_table"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="TakeFile" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3e_take_file"
+kind = "inspect"
+hotspot_id = "sorting_table"
+
+[node name="RampDoor" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3e_try_ramp"
+kind = "inspect"
+hotspot_id = "ramp_door"
+
+[node name="TalkSmoke" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3e_reach_konrad"
+kind = "dialogue"
+hotspot_id = "konrad_booth"
+npc_id = "konrad"
+radius = 38.0
+
+[node name="FireCase" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3f_inspect_hose"
+kind = "inspect"
+hotspot_id = "fire_case"
+
+[node name="TalkDesk" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3f_push_desk"
+kind = "dialogue"
+hotspot_id = "intake_desk"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="TalkChute" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3f_climb"
+kind = "dialogue"
+hotspot_id = "chute_door"
+npc_id = "alexei"
+radius = 38.0
+
+[node name="Find_GateSign" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_gate_sign"
+explore_id = "veltrava.registry.gate_sign"
+once = true
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Find_TwoTracks" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_two_tracks"
+explore_id = "veltrava.registry.two_tracks"
+once = true
+radius = 20.0
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Find_Handcart" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_handcart"
+explore_id = "veltrava.registry.handcart"
+once = true
+radius = 24.0
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Find_Hatch" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_hatch"
+explore_id = "veltrava.registry.hatch"
+once = true
+radius = 24.0
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Find_CardAlexei" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_card_alexei"
+explore_id = "veltrava.registry.card_alexei"
+once = true
+radius = 22.0
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Task_Thermos" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_thermos"
+explore_id = "veltrava.registry.thermos"
+explore_chain = PackedStringArray("veltrava.registry.thermos", "veltrava.registry.porter_note")
+once = true
+radius = 22.0
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Task_Radio" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_radio"
+explore_id = "veltrava.registry.radio"
+explore_chain = PackedStringArray("veltrava.registry.radio", "veltrava.registry.keys")
+once = true
+radius = 22.0
+until_objective = "c3c_talk_konrad"
+memory_scenes = PackedStringArray("L_C3_RegistryA")
+
+[node name="Find_FireBucket" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_fire_bucket"
+explore_id = "veltrava.registry.fire_bucket"
+once = true
+radius = 24.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_CardKonrad" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_card_konrad"
+explore_id = "veltrava.registry.card_konrad"
+once = true
+radius = 26.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_Ladder" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_ladder"
+explore_id = "veltrava.registry.ladder"
+once = true
+radius = 26.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_Stamps" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_stamps"
+explore_id = "veltrava.registry.stamps"
+once = true
+radius = 24.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_Kartei" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_kartei"
+explore_id = "veltrava.registry.kartei"
+once = true
+radius = 26.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="KarteiCue" type="Sprite2D" parent="Playfield"]
+position = Vector2(1166, 297)
+texture = ExtResource("c3p2x_tex")
+centered = false
+offset = Vector2(-17, -11)
+hframes = 2
+script = ExtResource("c3p2x_cue")
+
+[node name="Find_WindowFeet" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_window_feet"
+explore_id = "veltrava.registry.window_feet"
+once = true
+radius = 26.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_PlanChests" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_plan_chests"
+explore_id = "veltrava.registry.plan_chests"
+once = true
+radius = 26.0
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_KurhausPlaque" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_kurhaus_plaque"
+explore_id = "veltrava.registry.kurhaus_plaque"
+once = true
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")
+
+[node name="Find_Cassation" type="Node2D" parent="Playfield"]
+script = ExtResource("c3p2x_spot")
+kind = "discover"
+hotspot_id = "exp_cassation"
+explore_id = "veltrava.registry.cassation"
+once = true
+after_objective = "c3c_talk_konrad"
+until_objective = "c3d_choose"
+memory_scenes = PackedStringArray("L_C3_RegistryB")

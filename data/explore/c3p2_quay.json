@@ -1,0 +1,63 @@
+{
+ "area": "veltrava",
+ "doc": "documentation/C3P2_DESIGN.md §7, TECHNICAL_ARCHITECTURE §12.1 — optional finds and chats on the quay behind the palais (scenes/levels/L_C3_Quay.tscn, Alexei, ≈ 2.20 Uhr, the east wing burning). Chats on the NPC anchors typist_quay (Frau Brunner), voronova_quay (Lidia Voronova) and journalist_quay (Nils Ekdahl); finds on exp_* hotspots in assets/environments/veltrava_quay/explore_hotspots.json. Texts: data/locale/de_explore_c3p2.json; tests: tests/test_c3p2_explore.gd. Order = position along the quay (x).",
+ "entries": [
+  {"id": "veltrava.quay.soot_print", "kind": "secret", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.soot_print.title", "text_key": "explore.veltrava.quay.soot_print.text",
+   "prompt_key": "explore.veltrava.quay.soot_print.prompt"},
+  {"id": "veltrava.quay.fire_engine", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.fire_engine.title", "text_key": "explore.veltrava.quay.fire_engine.text",
+   "prompt_key": "explore.veltrava.quay.fire_engine.prompt"},
+  {"id": "veltrava.quay.chat_typist", "kind": "chat", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.chat_typist.title", "text_key": "explore.veltrava.quay.chat_typist.text",
+   "prompt_key": "explore.veltrava.quay.chat_typist.prompt",
+   "lines": [
+    {"speaker": "typist", "key": "explore.veltrava.quay.chat_typist.l1", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_typist.l2", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.quay.chat_typist.l3", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_typist.l4", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.quay.chat_typist.l5", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_typist.l6", "expr": "concerned"},
+    {"speaker": "typist", "key": "explore.veltrava.quay.chat_typist.l7", "expr": "determined"}
+   ]},
+  {"id": "veltrava.quay.lantern", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.lantern.title", "text_key": "explore.veltrava.quay.lantern.text",
+   "prompt_key": "explore.veltrava.quay.lantern.prompt"},
+  {"id": "veltrava.quay.ice", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.ice.title", "text_key": "explore.veltrava.quay.ice.text",
+   "prompt_key": "explore.veltrava.quay.ice.prompt"},
+  {"id": "veltrava.quay.searchlights", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.searchlights.title", "text_key": "explore.veltrava.quay.searchlights.text",
+   "prompt_key": "explore.veltrava.quay.searchlights.prompt"},
+  {"id": "veltrava.quay.cars", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.cars.title", "text_key": "explore.veltrava.quay.cars.text",
+   "prompt_key": "explore.veltrava.quay.cars.prompt"},
+  {"id": "veltrava.quay.chat_voronova", "kind": "chat", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.chat_voronova.title", "text_key": "explore.veltrava.quay.chat_voronova.text",
+   "prompt_key": "explore.veltrava.quay.chat_voronova.prompt",
+   "lines": [
+    {"speaker": "voronova", "key": "explore.veltrava.quay.chat_voronova.l1", "expr": "surprised"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_voronova.l2", "expr": "neutral"},
+    {"speaker": "voronova", "key": "explore.veltrava.quay.chat_voronova.l3", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_voronova.l4", "expr": "neutral"},
+    {"speaker": "voronova", "key": "explore.veltrava.quay.chat_voronova.l5", "expr": "determined"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_voronova.l6", "expr": "neutral"},
+    {"speaker": "voronova", "key": "explore.veltrava.quay.chat_voronova.l7", "expr": "concerned"}
+   ]},
+  {"id": "veltrava.quay.chat_journalist", "kind": "chat", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.chat_journalist.title", "text_key": "explore.veltrava.quay.chat_journalist.text",
+   "prompt_key": "explore.veltrava.quay.chat_journalist.prompt",
+   "lines": [
+    {"speaker": "journalist", "key": "explore.veltrava.quay.chat_journalist.l1", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_journalist.l2", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.quay.chat_journalist.l3", "expr": "determined"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_journalist.l4", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.quay.chat_journalist.l5", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.quay.chat_journalist.l6", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.quay.chat_journalist.l7", "expr": "neutral"}
+   ]},
+  {"id": "veltrava.quay.bridge_arms", "kind": "detail", "level": "L_C3_Quay",
+   "title_key": "explore.veltrava.quay.bridge_arms.title", "text_key": "explore.veltrava.quay.bridge_arms.text",
+   "prompt_key": "explore.veltrava.quay.bridge_arms.prompt"}
+ ]
+}

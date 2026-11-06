@@ -1,0 +1,2214 @@
+{
+ "id": "veltrava_registry",
+ "palette": "registry",
+ "world_size": [
+  1920,
+  360
+ ],
+ "camera": {
+  "bounds": [
+   0,
+   0,
+   1920,
+   360
+  ]
+ },
+ "canvas_modulate": "#CED4DC",
+ "layers": [
+  {
+   "name": "outside",
+   "file": "outside.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  },
+  {
+   "name": "room",
+   "file": "room.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -50,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": true
+  },
+  {
+   "name": "room_a",
+   "file": "room_a.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -48,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": true,
+   "until": [
+    "c3c_talk_konrad"
+   ],
+   "fade": 0.15
+  },
+  {
+   "name": "room_fire_c",
+   "file": "room_fire_c.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -46,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": true,
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "room_fire_d",
+   "file": "room_fire_d.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": -44,
+   "normal": true,
+   "emission": true,
+   "emission_strength": 0.5,
+   "lit": true,
+   "after": [
+    "c3e_reach_konrad"
+   ],
+   "fade": 2.6
+  },
+  {
+   "name": "torch_beam",
+   "file": "torch_beam.png",
+   "pos": [
+    878,
+    202
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 11,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "fade": 0.15,
+   "until": [
+    "c3c_talk_konrad"
+   ]
+  },
+  {
+   "name": "shafts",
+   "file": "shafts.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 10,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "fade": 0.8,
+   "until": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "smoke_c",
+   "file": "smoke_c.png",
+   "pos": [
+    404,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 20,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "smoke_d",
+   "file": "smoke_d.png",
+   "pos": [
+    404,
+    0
+   ],
+   "parallax": [
+    1,
+    1
+   ],
+   "z": 20,
+   "normal": false,
+   "emission": false,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "fg_frame",
+   "file": "fg_frame.png",
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.25,
+    1.0
+   ],
+   "z": 60,
+   "normal": false,
+   "emission": false,
+   "lit": false
+  }
+ ],
+ "props": [
+  {
+   "name": "cart",
+   "file": "props/cart.png",
+   "pos": [
+    194,
+    232
+   ],
+   "base_y": 292,
+   "size": [
+    92,
+    64
+   ],
+   "collision": [
+    [
+     196,
+     288
+    ],
+    [
+     280,
+     288
+    ],
+    [
+     280,
+     293
+    ],
+    [
+     196,
+     293
+    ]
+   ],
+   "normal": true,
+   "emission": false,
+   "hist_variant": "props/cart_hist.png",
+   "fade": 0.3,
+   "until": [
+    "c3c_inspect_crates"
+   ]
+  },
+  {
+   "name": "cart_open",
+   "file": "props/cart_open.png",
+   "pos": [
+    194,
+    232
+   ],
+   "base_y": 292,
+   "size": [
+    92,
+    64
+   ],
+   "collision": [
+    [
+     196,
+     288
+    ],
+    [
+     280,
+     288
+    ],
+    [
+     280,
+     293
+    ],
+    [
+     196,
+     293
+    ]
+   ],
+   "normal": true,
+   "emission": false,
+   "hist_variant": "props/cart_open_hist.png",
+   "fade": 0.3,
+   "after": [
+    "c3c_inspect_crates"
+   ]
+  }
+ ],
+ "decals": [
+  {
+   "name": "insignia_magazin_b",
+   "file": "patches/insignia_magazin_b.png",
+   "pos": [
+    1758,
+    128
+   ],
+   "z": -49,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "hist_variant": "patches/insignia_magazin_b_hist.png",
+   "after": [
+    "c3c_talk_konrad"
+   ],
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.15
+  },
+  {
+   "name": "scarf_taken_b",
+   "file": "patches/scarf_taken_b.png",
+   "pos": [
+    1105,
+    253
+   ],
+   "z": -49,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "after": [
+    "c3c_talk_konrad",
+    "c3d_inspect_drawer"
+   ],
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.35
+  },
+  {
+   "name": "halves_b",
+   "file": "patches/halves_b.png",
+   "pos": [
+    956,
+    260
+   ],
+   "z": -49,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "after": [
+    "c3c_talk_konrad",
+    "c3d_talk_compare"
+   ],
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.35
+  },
+  {
+   "name": "insignia_magazin_a",
+   "file": "patches/insignia_magazin_a.png",
+   "pos": [
+    1758,
+    128
+   ],
+   "z": -47,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "hist_variant": "patches/insignia_magazin_a_hist.png",
+   "until": [
+    "c3c_talk_konrad"
+   ],
+   "fade": 0.15
+  },
+  {
+   "name": "insignia_magazin_c",
+   "file": "patches/insignia_magazin_c.png",
+   "pos": [
+    1258,
+    128
+   ],
+   "z": -45,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "hist_variant": "patches/insignia_magazin_c_hist.png",
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "blatt7_pocketed_c",
+   "file": "patches/blatt7_pocketed_c.png",
+   "pos": [
+    1259,
+    127
+   ],
+   "z": -45,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ],
+   "choice": {
+    "c3d_choose": "pocket_plan"
+   },
+   "fade": 0.35
+  },
+  {
+   "name": "file_taken_c",
+   "file": "patches/file_taken_c.png",
+   "pos": [
+    992,
+    258
+   ],
+   "z": -45,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "after": [
+    "c3d_choose",
+    "c3e_take_file"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ],
+   "fade": 0.35
+  },
+  {
+   "name": "insignia_magazin_d",
+   "file": "patches/insignia_magazin_d.png",
+   "pos": [
+    724,
+    128
+   ],
+   "z": -43,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "hist_variant": "patches/insignia_magazin_d_hist.png",
+   "after": [
+    "c3e_reach_konrad"
+   ],
+   "fade": 2.6
+  },
+  {
+   "name": "blatt7_pocketed_d",
+   "file": "patches/blatt7_pocketed_d.png",
+   "pos": [
+    725,
+    127
+   ],
+   "z": -43,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "after": [
+    "c3e_reach_konrad"
+   ],
+   "choice": {
+    "c3d_choose": "pocket_plan"
+   },
+   "fade": 0.35
+  },
+  {
+   "name": "case_broken_d",
+   "file": "patches/case_broken_d.png",
+   "pos": [
+    549,
+    218
+   ],
+   "z": -43,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "after": [
+    "c3e_reach_konrad",
+    "c3f_inspect_hose"
+   ],
+   "fade": 0.35
+  },
+  {
+   "name": "desk_pushed_d",
+   "file": "patches/desk_pushed_d.png",
+   "pos": [
+    430,
+    158
+   ],
+   "z": -43,
+   "lit": true,
+   "normal": true,
+   "emission": true,
+   "after": [
+    "c3e_reach_konrad",
+    "c3f_push_desk"
+   ],
+   "fade": 0.35
+  },
+  {
+   "name": "guard_feet",
+   "file": "life/guard_feet.png",
+   "pos": [
+    1207,
+    46
+   ],
+   "z": -55,
+   "frames": 80,
+   "fps": 8,
+   "lit": false,
+   "normal": false,
+   "emission": false,
+   "note": "between outside.png and the room layer: seen through the glass, behind the bars",
+   "until": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_front_c",
+   "file": "fx/flames_front_c.png",
+   "pos": [
+    1222,
+    174
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_fallen",
+   "file": "fx/flames_fallen.png",
+   "pos": [
+    1380,
+    262
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_chests",
+   "file": "fx/flames_chests.png",
+   "pos": [
+    1290,
+    218
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_frame_a",
+   "file": "fx/flames_frame_a.png",
+   "pos": [
+    1288,
+    168
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_frame_b",
+   "file": "fx/flames_frame_b.png",
+   "pos": [
+    1402,
+    132
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_frame_c",
+   "file": "fx/flames_frame_c.png",
+   "pos": [
+    1478,
+    170
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_units",
+   "file": "fx/flames_units.png",
+   "pos": [
+    1580,
+    140
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_c17",
+   "file": "fx/flames_c17.png",
+   "pos": [
+    1670,
+    102
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_shelves",
+   "file": "fx/flames_shelves.png",
+   "pos": [
+    1746,
+    130
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_door",
+   "file": "fx/flames_door.png",
+   "pos": [
+    1858,
+    212
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "flames_front_d",
+   "file": "fx/flames_front_d.png",
+   "pos": [
+    676,
+    174
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "flames_rows",
+   "file": "fx/flames_rows.png",
+   "pos": [
+    726,
+    132
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "flames_bank",
+   "file": "fx/flames_bank.png",
+   "pos": [
+    1068,
+    122
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "flames_table",
+   "file": "fx/flames_table.png",
+   "pos": [
+    940,
+    234
+   ],
+   "z": -40,
+   "frames": 16,
+   "fps": 10,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "emission_strength": 0.55,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "bell_ringing",
+   "file": "fx/bell_ringing.png",
+   "pos": [
+    596,
+    149
+   ],
+   "z": -42,
+   "frames": 4,
+   "fps": 12,
+   "lit": true,
+   "normal": false,
+   "emission": false,
+   "after": [
+    "c3d_choose"
+   ],
+   "fade": 0.2
+  }
+ ],
+ "lights": [
+  {
+   "name": "yard_lit_window",
+   "pos": [
+    314,
+    74
+   ],
+   "color": "#F0C487",
+   "energy": 0.2,
+   "radius": 60,
+   "flicker": 0.0,
+   "height": 6,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "lane_lamp",
+   "pos": [
+    30,
+    192
+   ],
+   "color": "#F0C487",
+   "energy": 0.3,
+   "radius": 60,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "yard_lamp",
+   "pos": [
+    184,
+    174
+   ],
+   "color": "#F0C487",
+   "energy": 0.55,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 30,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "win_507",
+   "pos": [
+    507,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_645",
+   "pos": [
+    645,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "booth_lamp",
+   "pos": [
+    650,
+    218
+   ],
+   "color": "#F0C487",
+   "energy": 0.7,
+   "radius": 110,
+   "flicker": 0.02,
+   "height": 16,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "radio_dial",
+   "pos": [
+    664,
+    235
+   ],
+   "color": "#F0C487",
+   "energy": 0.2,
+   "radius": 26,
+   "flicker": 0.0,
+   "height": 4,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "desk_lamp",
+   "pos": [
+    514,
+    239
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 70,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "until": [
+    "c3f_push_desk"
+   ]
+  },
+  {
+   "name": "win_740",
+   "pos": [
+    740,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_900",
+   "pos": [
+    900,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1060",
+   "pos": [
+    1060,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1220",
+   "pos": [
+    1220,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1383",
+   "pos": [
+    1383,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1525",
+   "pos": [
+    1525,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1610",
+   "pos": [
+    1610,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1748",
+   "pos": [
+    1748,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "win_1886",
+   "pos": [
+    1886,
+    62
+   ],
+   "color": "#9FB4CC",
+   "energy": 0.32,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "exit_lamp",
+   "pos": [
+    1885,
+    202
+   ],
+   "color": "#F0C487",
+   "energy": 0.4,
+   "radius": 90,
+   "flicker": 0.0,
+   "height": 14,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "desk_lamp_pushed",
+   "pos": [
+    532,
+    239
+   ],
+   "color": "#F0C487",
+   "energy": 0.45,
+   "radius": 70,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "after": [
+    "c3f_push_desk"
+   ]
+  },
+  {
+   "name": "green_lamp",
+   "pos": [
+    1000,
+    233
+   ],
+   "color": "#F0C487",
+   "energy": 0.95,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 12,
+   "on_layer": "playfield",
+   "after": [
+    "c3c_talk_konrad"
+   ],
+   "until": [
+    "c3d_choose"
+   ],
+   "fade": 0.15
+  },
+  {
+   "name": "green_lamp_flicker",
+   "pos": [
+    1000,
+    233
+   ],
+   "color": "#F0C487",
+   "energy": 0.76,
+   "radius": 150,
+   "flicker": 0.0,
+   "height": 12,
+   "on_layer": "playfield",
+   "flicker_slow": 0.22,
+   "flicker_hz": 2.4,
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ],
+   "fade": 0.8
+  },
+  {
+   "name": "torch",
+   "pos": [
+    897,
+    266
+   ],
+   "color": "#E8E4DA",
+   "energy": 1.1,
+   "radius": 120,
+   "flicker": 0.0,
+   "height": 10,
+   "on_layer": "playfield",
+   "until": [
+    "c3c_talk_konrad"
+   ],
+   "fade": 0.15
+  },
+  {
+   "name": "fire_c17",
+   "pos": [
+    1704,
+    210
+   ],
+   "color": "#F2A044",
+   "energy": 0.75,
+   "radius": 300,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield",
+   "flicker_slow": 0.2,
+   "flicker_hz": 1.6,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "fire_magazin",
+   "pos": [
+    1830,
+    250
+   ],
+   "color": "#F2A044",
+   "energy": 0.5,
+   "radius": 220,
+   "flicker": 0.0,
+   "height": 34,
+   "on_layer": "playfield",
+   "flicker_slow": 0.22,
+   "flicker_hz": 2.1,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "fire_planarchiv",
+   "pos": [
+    1410,
+    262
+   ],
+   "color": "#F2A044",
+   "energy": 0.5,
+   "radius": 220,
+   "flicker": 0.0,
+   "height": 30,
+   "on_layer": "playfield",
+   "flicker_slow": 0.24,
+   "flicker_hz": 1.9,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "fire_front_c",
+   "pos": [
+    1248,
+    246
+   ],
+   "color": "#F2A044",
+   "energy": 0.8,
+   "radius": 280,
+   "flicker": 0.0,
+   "height": 36,
+   "on_layer": "playfield",
+   "flicker_slow": 0.22,
+   "flicker_hz": 2.4,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "name": "fire_rows",
+   "pos": [
+    810,
+    216
+   ],
+   "color": "#F2A044",
+   "energy": 0.7,
+   "radius": 260,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield",
+   "flicker_slow": 0.22,
+   "flicker_hz": 1.7,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "fire_bank",
+   "pos": [
+    1150,
+    206
+   ],
+   "color": "#F2A044",
+   "energy": 0.7,
+   "radius": 280,
+   "flicker": 0.0,
+   "height": 40,
+   "on_layer": "playfield",
+   "flicker_slow": 0.22,
+   "flicker_hz": 2.2,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "fire_front_d",
+   "pos": [
+    702,
+    250
+   ],
+   "color": "#F2A044",
+   "energy": 0.8,
+   "radius": 280,
+   "flicker": 0.0,
+   "height": 36,
+   "on_layer": "playfield",
+   "flicker_slow": 0.24,
+   "flicker_hz": 2.6,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "name": "fire_table",
+   "pos": [
+    1000,
+    262
+   ],
+   "color": "#D8662A",
+   "energy": 0.4,
+   "radius": 160,
+   "flicker": 0.0,
+   "height": 24,
+   "on_layer": "playfield",
+   "flicker_slow": 0.26,
+   "flicker_hz": 2.0,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  }
+ ],
+ "fx": [
+  {
+   "type": "anim_sprite",
+   "name": "snow_yard",
+   "file": "fx/snow_yard.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    0,
+    0
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 30,
+   "lit": false,
+   "fade": 0.6
+  },
+  {
+   "type": "anim_sprite",
+   "name": "snow_gap",
+   "file": "fx/snow_gap.png",
+   "frames": 24,
+   "fps": 10,
+   "pos": [
+    399,
+    258
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 31,
+   "lit": false,
+   "fade": 0.4,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "dust_lamp",
+   "file": "fx/dust_lamp.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    958,
+    232
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 12,
+   "lit": false,
+   "fade": 0.3,
+   "after": [
+    "c3c_talk_konrad"
+   ],
+   "until": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "embers_c0",
+   "file": "fx/embers_c0.png",
+   "frames": 24,
+   "fps": 10,
+   "pos": [
+    1220,
+    40
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 32,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "embers_c1",
+   "file": "fx/embers_c1.png",
+   "frames": 24,
+   "fps": 10,
+   "pos": [
+    1570,
+    40
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 32,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "embers_d0",
+   "file": "fx/embers_d0.png",
+   "frames": 24,
+   "fps": 10,
+   "pos": [
+    680,
+    40
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 32,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "embers_d1",
+   "file": "fx/embers_d1.png",
+   "frames": 24,
+   "fps": 10,
+   "pos": [
+    970,
+    40
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 32,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "ash_c0",
+   "file": "fx/ash_c0.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    880,
+    30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 34,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "ash_c1",
+   "file": "fx/ash_c1.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    1220,
+    30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 34,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "ash_c2",
+   "file": "fx/ash_c2.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    1570,
+    30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 34,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "ash_d0",
+   "file": "fx/ash_d0.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    404,
+    30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 34,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "ash_d1",
+   "file": "fx/ash_d1.png",
+   "frames": 24,
+   "fps": 8,
+   "pos": [
+    690,
+    30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 34,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "plume_front_c",
+   "file": "fx/plume_front_c.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    1208,
+    60
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 22,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "plume_service",
+   "file": "fx/plume_service.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    1850,
+    120
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 22,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "plume_front_d",
+   "file": "fx/plume_front_d.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    662,
+    70
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 22,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "plume_door",
+   "file": "fx/plume_door.png",
+   "frames": 16,
+   "fps": 8,
+   "pos": [
+    372,
+    196
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 22,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "roll_c0",
+   "file": "fx/roll_c0.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    1300,
+    70
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 21,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "roll_c1",
+   "file": "fx/roll_c1.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    960,
+    50
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 21,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "roll_c2",
+   "file": "fx/roll_c2.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    620,
+    30
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 21,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ],
+   "until": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "roll_d0",
+   "file": "fx/roll_d0.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    860,
+    120
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 21,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "roll_d1",
+   "file": "fx/roll_d1.png",
+   "frames": 32,
+   "fps": 6,
+   "pos": [
+    520,
+    100
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": 21,
+   "lit": false,
+   "fade": 2.6,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "heat_c",
+   "file": "fx/heat_c.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    1218,
+    150
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -39,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3d_choose"
+   ]
+  },
+  {
+   "type": "anim_sprite",
+   "name": "heat_d",
+   "file": "fx/heat_d.png",
+   "frames": 16,
+   "fps": 10,
+   "pos": [
+    672,
+    150
+   ],
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "z": -39,
+   "lit": false,
+   "fade": 0.8,
+   "after": [
+    "c3e_reach_konrad"
+   ]
+  }
+ ],
+ "walkable": [
+  [
+   18,
+   296
+  ],
+  [
+   1902,
+   296
+  ],
+  [
+   1902,
+   306
+  ],
+  [
+   18,
+   306
+  ]
+ ],
+ "spawns": {
+  "SP_C3_Gate": [
+   44,
+   300
+  ],
+  "SP_C3_KonradCards": [
+   898,
+   300
+  ],
+  "SP_C3_AlexeiTable": [
+   968,
+   300
+  ],
+  "SP_C3_KonradBooth": [
+   658,
+   300
+  ],
+  "SP_C3_AlexeiChute": [
+   458,
+   300
+  ]
+ },
+ "hotspots": {
+  "crates": [
+   232,
+   300
+  ],
+  "ramp_door": [
+   398,
+   300
+  ],
+  "alexei_chute": [
+   440,
+   300
+  ],
+  "chute_door": [
+   476,
+   300
+  ],
+  "intake_desk": [
+   505,
+   300
+  ],
+  "fire_case": [
+   560,
+   300
+  ],
+  "porter_booth": [
+   612,
+   300
+  ],
+  "konrad_booth": [
+   640,
+   300
+  ],
+  "konrad_cards": [
+   880,
+   300
+  ],
+  "alexei_table": [
+   950,
+   300
+  ],
+  "sorting_table": [
+   1012,
+   300
+  ],
+  "drawer_c17": [
+   1104,
+   300
+  ],
+  "plan_wall": [
+   1340,
+   300
+  ]
+ },
+ "blockers": [
+  {
+   "name": "ramp_bolted",
+   "rect": [
+    384,
+    280,
+    12,
+    40
+   ],
+   "after": "c3d_choose"
+  },
+  {
+   "name": "fire_c",
+   "rect": [
+    1236,
+    270,
+    24,
+    60
+   ],
+   "after": "c3d_choose"
+  },
+  {
+   "name": "fire_d",
+   "rect": [
+    690,
+    270,
+    24,
+    60
+   ],
+   "after": "c3e_reach_konrad"
+  }
+ ],
+ "zones": {
+  "yard": [
+   0,
+   380
+  ],
+  "annahme": [
+   380,
+   680
+  ],
+  "karteisaal": [
+   680,
+   1260
+  ],
+  "planarchiv": [
+   1260,
+   1560
+  ],
+  "magazin": [
+   1560,
+   1920
+  ]
+ },
+ "looks": [
+  {
+   "name": "night",
+   "canvas_modulate": "#CED4DC",
+   "grade": "registry"
+  },
+  {
+   "name": "fire",
+   "after": [
+    "c3d_choose"
+   ],
+   "canvas_modulate": "#D9CBC0",
+   "grade": "registry_fire",
+   "fade": 0.8
+  }
+ ],
+ "hotspot_info": {
+  "crates": {
+   "kind": "story",
+   "stand": [
+    232,
+    300
+   ],
+   "what": "handcart with the emptied crates of courier wagon 4",
+   "span": [
+    194,
+    276
+   ]
+  },
+  "ramp_door": {
+   "kind": "story",
+   "stand": [
+    398,
+    300
+   ],
+   "what": "iron-clad ramp door",
+   "span": [
+    373,
+    404
+   ]
+  },
+  "alexei_chute": {
+   "kind": "story",
+   "stand": [
+    440,
+    300
+   ],
+   "what": "iron chute door \"1909\" (Alexei holds it)",
+   "span": [
+    436,
+    468
+   ]
+  },
+  "chute_door": {
+   "kind": "story",
+   "stand": [
+    476,
+    300
+   ],
+   "what": "iron chute door \"1909\" (stand point beside the desk)",
+   "span": [
+    436,
+    480
+   ]
+  },
+  "intake_desk": {
+   "kind": "story",
+   "stand": [
+    505,
+    300
+   ],
+   "what": "oak intake desk with the intake book",
+   "span": [
+    456,
+    548
+   ]
+  },
+  "fire_case": {
+   "kind": "story",
+   "stand": [
+    560,
+    300
+   ],
+   "what": "red fire case with hose and axe",
+   "span": [
+    548,
+    576
+   ]
+  },
+  "porter_booth": {
+   "kind": "story",
+   "stand": [
+    612,
+    300
+   ],
+   "what": "porter's booth: night book on the counter",
+   "span": [
+    588,
+    680
+   ]
+  },
+  "konrad_booth": {
+   "kind": "story",
+   "stand": [
+    640,
+    300
+   ],
+   "what": "porter's booth: the framed 1909 Kurhaus plan",
+   "span": [
+    588,
+    680
+   ]
+  },
+  "konrad_cards": {
+   "kind": "story",
+   "stand": [
+    880,
+    300
+   ],
+   "what": "end of the third cabinet row (Konrad with his torch)",
+   "span": [
+    854,
+    900
+   ]
+  },
+  "alexei_table": {
+   "kind": "story",
+   "stand": [
+    950,
+    300
+   ],
+   "what": "sorting table (left end)",
+   "span": [
+    934,
+    1066
+   ]
+  },
+  "sorting_table": {
+   "kind": "story",
+   "stand": [
+    1012,
+    300
+   ],
+   "what": "sorting table under the green lamp",
+   "span": [
+    934,
+    1066
+   ]
+  },
+  "drawer_c17": {
+   "kind": "story",
+   "stand": [
+    1104,
+    300
+   ],
+   "what": "half-open drawer C-17, chair with the scarf",
+   "span": [
+    1088,
+    1122
+   ]
+  },
+  "plan_wall": {
+   "kind": "story",
+   "stand": [
+    1340,
+    300
+   ],
+   "what": "Blatt 7 of Annex C on the plan wall",
+   "span": [
+    1324,
+    1356
+   ]
+  }
+ },
+ "gates_doc": "Entries with \"after\" (objectives that must be complete), \"until\" (hidden once one of them is complete) or \"choice\" ({objective: choice id | \"!id\"}) are built by registry_level.gd and shown while the condition holds; \"fade\" = seconds of the live cross-fade (instant at load, switch cuts and while the level is hidden). An objective of a scene before the one the level plays counts as complete; inside a memory only those count. c3d_choose (the fire starts in LS_C3_Fire) shows its look only once the level is hidden by the cinematic or the scene is C.",
+ "notes": [
+  "Side view like L_C3_Hall: feet line y 300, walk band 296-306, x 18-1902.",
+  "Four looks: A (lamp off, torch), B (green lamp), C (fire in Magazin/Planarchiv, smoke), D (fire in the Karteisaal). Each look is one opaque room layer + patches; flames, embers, ash, smoke are FX strips.",
+  "Insignia: props/cart*.png (railway stencil on the crates) and patches/insignia_magazin_*.png (delegation plates in the Magazin) have *_hist variants; layer_stack resolves them via Symbols.pick.",
+  "No story character is painted into the art; the partner stands at the switch spawns.",
+  "Sprinkler-less 1964 cellar: fire case with hose and axe, bucket stand, extinguisher, an electric fire bell (rings from the fire on), a sliding steel fire door at the service stairs (wedged open in C/D)."
+ ],
+ "meta": {
+  "mode": "side",
+  "feet_y": 300,
+  "generator": "tools/pixelgen/env_c3p2_archive.py",
+  "date": "2026-11-06",
+  "palette_ramps": {
+   "night": [
+    "#06080D",
+    "#0B1017",
+    "#121A23",
+    "#1A2530"
+   ],
+   "slate": [
+    "#1E2836",
+    "#2A3646",
+    "#3A4859",
+    "#4F5E70",
+    "#687789"
+   ],
+   "oak": [
+    "#1C120C",
+    "#2B1B12",
+    "#3D271A",
+    "#553826",
+    "#6E4A33"
+   ],
+   "lamp_green": [
+    "#14261C",
+    "#1F3A2A",
+    "#2E5640",
+    "#4A7A5C",
+    "#7FAE8C"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "brass": [
+    "#4A3415",
+    "#73531F",
+    "#9C7630",
+    "#C49A48",
+    "#E8C779"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "fire": [
+    "#3A0F08",
+    "#6E1E0C",
+    "#A8381A",
+    "#D8662A",
+    "#F2A044",
+    "#FCE0A0"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ]
+  }
+ }
+}

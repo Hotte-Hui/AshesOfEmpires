@@ -3,7 +3,9 @@ extends RefCounted
 ## every slice combination (a1 × m1) × every Chapter-3 option (c3a × c3b), the gating order of the 13 objectives,
 ## inventory order, flags per choice, events, scene/protagonist switches, the finale gate, the cinematic queue,
 ## skip/timing equivalence, mid-chapter save/load, saves from before the M1 decision continued into Chapter 3,
-## the protocol-puzzle rules and the validator's Chapter-3 integrity checks.
+## the protocol-puzzle rules and the validator's Chapter-3 integrity checks. Since round 8 the chain goes on from c3b
+## into part 2 (documentation/C3P2_DESIGN.md, tests/test_c3p2_routes.gd); finished routes here play part 2 with the
+## Kit defaults (admit_plan, split_by_language).
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const ENGINE := preload("res://scripts/story/story_engine.gd")
@@ -21,8 +23,14 @@ const SLICE_ITEMS := ["ev_damaged_seal", "ev_timetable", "ev_ledger", "ev_plan_a
 const C3_ITEMS := ["ev_c3_weighbill", "ev_c3_departures", "ev_c3_travel_order", "ev_c3_seating", "ev_c3_booth_log", "ev_c3_carbon"]
 const C3_FLAGS := ["alexei_konrad_trust", "elena_trust", "evidence_chain", "kessler_alerted", "courier_files_seen",
 	"protocol_matched", "elena_missing"]
-const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "slice_completed"]
-const ALL_CINEMATICS := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close"]
+const EVENTS := ["a1_completed", "m1_completed", "c3a_completed", "c3b_completed", "c3c_completed", "c3d_completed",
+	"c3e_completed", "c3f_completed", "c3g_completed", "slice_completed"]
+const ALL_CINEMATICS := ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains", "LS_C3_ToHall", "LS_C3_Close",
+	"LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]
+## Part 2 with the Kit defaults (C3P2_DESIGN §2.3/§2.5): items in acquisition order, meters added on top of C3a/C3b.
+const P2_ITEMS := ["ev_c3_cut_seal", "ev_c3_night_book", "ev_c3_intake_book", "ev_c3_scarf", "ev_c3_halves",
+	"ev_c3_kordon_plan", "ev_c3_file", "ev_c3_bolt", "ev_c3_cut_hose", "ev_c3_escort_list"]
+const P2_DEFAULT_DELTA := {"alexei_konrad_trust": 1, "evidence_chain": 1}
 
 var kit: Kit
 
@@ -107,6 +115,21 @@ func c3_trace(g: Node, c3a: String, c3b: String) -> Array:
 	return trace
 
 
+## One part-2 stage with the Kit defaults (C3P2_DESIGN §2.3).
+func _play_stage(g: Node, stage: String) -> void:
+	match stage:
+		"c3c":
+			kit.play_c3c(g)
+		"c3d":
+			kit.play_c3d(g)
+		"c3e":
+			kit.play_c3e(g)
+		"c3f":
+			kit.play_c3f(g)
+		"c3g":
+			kit.play_c3g(g)
+
+
 static func _find(records: Array, id: String) -> Dictionary:
 	for r in records:
 		if r is Dictionary and r.get("id") == id:
@@ -125,15 +148,18 @@ func _all_combinations() -> bool:
 					var g := kit.play_verified_route(a1, m1, false, c3a, c3b)
 					var f: Dictionary = g.flags()
 					var want := c3_flags(c3a, c3b)
+					for k in P2_DEFAULT_DELTA:
+						want[k] = int(want[k]) + int(P2_DEFAULT_DELTA[k])
 					for k in want:
 						kit.eq(f[k], want[k], label + " " + k)
 					kit.eq([f["irina_trust"], f["alexei_secrecy"]], [int(a1 == "share_with_irina"), int(a1 == "keep_private")], label + " A1 meters kept")
 					kit.eq([f["konrad_evidence"], f["office_suspicion"]], [int(m1 == "preserve_evidence"), int(m1 == "request_explanation")], label + " M1 meters kept")
 					kit.eq(g.completed_events(), EVENTS, label + " events")
 					kit.eq([g.current_scene, g.active_character], ["L_X1_Montage", "none"], label + " montage, no protagonist")
-					kit.eq(g.inventory(), SLICE_ITEMS + C3_ITEMS, label + " inventory order")
-					kit.eq(g.choice_history(), {"a1_choose": a1, "m1_choose": m1, "c3a_choose": c3a, "c3b_choose": c3b}, label + " choices")
-					kit.eq(g.completed_objectives().slice(11), C3_OBJECTIVES, label + " Chapter-3 objectives in order")
+					kit.eq(g.inventory(), SLICE_ITEMS + C3_ITEMS + P2_ITEMS, label + " inventory order")
+					kit.eq(g.choice_history(), {"a1_choose": a1, "m1_choose": m1, "c3a_choose": c3a, "c3b_choose": c3b,
+						"c3d_choose": "admit_plan", "c3g_choose": "split_by_language"}, label + " choices")
+					kit.eq(g.completed_objectives().slice(11, 24), C3_OBJECTIVES, label + " Chapter-3 objectives in order")
 					kit.eq([g.is_finished(), g.is_finale_viewed(), f["slice_finished"]], [true, true, true], label + " finished")
 					kit.eq(g.pending_cinematics(), [], label + " every cinematic consumed")
 					finals[g.save_json()] = label
@@ -169,7 +195,7 @@ func _gating_order() -> bool:
 		["solve", "c3b_solve_protocol", ["c3b_inspect_booth"]],
 		["inspect", "c3b_inspect_booth", ["c3b_talk_alexei"]],
 		["talk", "c3b_talk_alexei", ["c3b_choose"]],
-		["choose", "c3b_choose", []],
+		["choose", "c3b_choose", ["c3c_inspect_crates"]],
 	]
 	kit.eq(g.available(), ["c3a_talk_conductor"], "entry gate of the station")
 	sweep_locked(g, "station entry")
@@ -255,17 +281,26 @@ func _step_by_step() -> bool:
 	kit.is_err(g.finale(), "finale locked before the c3b decision")
 	var rb: Dictionary = g.choose("c3b_choose", "search_elena")
 	kit.eq(rb.get("changes"), {"flags": {"elena_trust": 2}, "objectives": ["c3b_choose"], "items": [], "events": ["c3b_completed"],
-		"cinematics": ["LS_C3_Close"], "scene": "L_X1_Montage"}, "c3b decision changes (search_elena adds to elena_trust)")
+		"cinematics": ["LS_C3_Close", "LS_C3_Radio"], "scene": "L_C3_RegistryA"}, "c3b decision changes (search_elena adds to elena_trust)")
+	kit.eq([g.current_scene, g.active_character, g.chapter_key()], ["L_C3_RegistryA", "alexei", "ui.chapter_c3"], "part 2: Alexei at the registry")
+	kit.eq([g.current_quest().get("id"), g.available()], ["q_c3c_registry", ["c3c_inspect_crates"]], "registry quest, first gate")
+	kit.eq(g.pending_cinematics(), ["LS_C3_Close", "LS_C3_Radio"], "the night: closing train, then the radio")
+	kit.is_err(g.finale(true), "finale locked after c3b (part 2 is open)")
+	kit.play_c3c(g)
+	kit.play_c3d(g)
+	kit.play_c3e(g)
+	kit.play_c3f(g)
+	kit.play_c3g(g)
 	kit.eq([g.current_scene, g.active_character, g.chapter_key()], ["L_X1_Montage", "none", "world.x1.title"], "montage")
 	kit.eq([g.current_quest(), g.available()], [{}, []], "no quest, nothing available")
-	kit.eq(g.pending_cinematics(), ["LS_C3_Close"], "closing cinematic queued")
 	var fin: Dictionary = g.finale(true)
-	kit.is_ok(fin, "finale open after c3b")
+	kit.is_ok(fin, "finale open after c3g")
 	kit.eq([fin["changes"]["events"], fin["changes"]["flags"]], [["slice_completed"], {"slice_finished": true}], "finale changes")
 	kit.is_ok(g.finale(false), "finale idempotent")
 	kit.eq(g.completed_events(), EVENTS, "events once each, in order")
-	kit.eq(g.pending_cinematics(), ["LS_C3_Close"], "the finale does not consume the closing cinematic")
-	kit.is_ok(g.consume_cinematic("LS_C3_Close", false), "close")
+	kit.eq(g.pending_cinematics(), ["LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"], "the finale does not consume the night's cinematics")
+	for cid in ["LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]:
+		kit.is_ok(g.consume_cinematic(cid, false), "consume " + cid)
 	kit.eq(g.state["cinematics_seen"], ALL_CINEMATICS, "every cinematic seen once, data order")
 	return true
 
@@ -301,7 +336,7 @@ func _gating_identical() -> bool:
 						reference = trace
 						# one entry per call: 13 objectives, dialogues node by node (start + one advance per node)
 						kit.eq(reference.size(), 59, "trace covers every Chapter-3 step (%d)" % reference.size())
-						kit.eq([reference[0], reference[-1]], [["c3a_talk_conductor"], []], "from the station gate to the montage")
+						kit.eq([reference[0], reference[-1]], [["c3a_talk_conductor"], ["c3c_inspect_crates"]], "from the station gate to the registry gate")
 					kit.eq(trace, reference, "Chapter-3 gating of %s/%s/%s/%s equals the reference" % [a1, m1, c3a, c3b])
 					g.free()
 	return true
@@ -394,6 +429,8 @@ func _continue_old_saves() -> bool:
 		kit.eq([g.current_scene, g.active_character, g.available()], ["L_C3_Station", "alexei", ["c3a_talk_conductor"]], label + ": into Chapter 3")
 		kit.play_c3a(g, "note_alone")
 		kit.play_c3b(g, "report_delegation")
+		for stage in ["c3c", "c3d", "c3e", "c3f", "c3g"]:
+			_play_stage(g, stage)
 		for seq in g.pending_cinematics():
 			kit.step(g.consume_cinematic(seq), label + " cinematic " + seq)
 		kit.is_ok(g.finale(), label + ": finale")

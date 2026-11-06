@@ -1,0 +1,383 @@
+{
+ "puzzle_id": "pz_c3_check",
+ "objective": "c3d_solve_check",
+ "display_scale": 3,
+ "coords": "art pixels ([x, y, w, h]); the UI multiplies by 3",
+ "generator": "tools/pixelgen/gen_ui_c3p2.py",
+ "date": "2026-11-06",
+ "layout": {
+  "row_h": 39,
+  "row_gap": 2,
+  "label_h": 7,
+  "paper_w": 242,
+  "card_w": 152,
+  "card_h": 34
+ },
+ "rows": [
+  {
+   "id": "weighbill",
+   "item": "ev_c3_weighbill",
+   "doc": "veltrava_station_weighbill",
+   "doc_file": "res://assets/ui/documents/veltrava_station_weighbill.png",
+   "file": "c3p2_row_weighbill.png",
+   "mark_file": "c3p2_mark_weighbill.png",
+   "size": [
+    157,
+    32
+   ],
+   "strips": [
+    [
+     30,
+     96,
+     70,
+     30
+    ],
+    [
+     134,
+     100,
+     84,
+     20
+    ]
+   ],
+   "place": [
+    [
+     1,
+     1
+    ],
+    [
+     72,
+     6
+    ]
+   ],
+   "ink": "red",
+   "marks": [
+    {
+     "kind": "loop",
+     "source": "mass",
+     "doc_rect": [
+      32,
+      107,
+      65,
+      16
+     ],
+     "rect": [
+      3,
+      12,
+      65,
+      16
+     ]
+    },
+    {
+     "kind": "loop",
+     "source": "seal_no",
+     "doc_rect": [
+      142,
+      106,
+      46,
+      7
+     ],
+     "rect": [
+      80,
+      12,
+      46,
+      7
+     ]
+    }
+   ],
+   "pairs_with": "in_c17_44",
+   "shared": "seal C-17/44 + 2410 kg",
+   "label_key": "ui.c3p2.check.row.weighbill"
+  },
+  {
+   "id": "departures",
+   "item": "ev_c3_departures",
+   "doc": "veltrava_station_departures",
+   "doc_file": "res://assets/ui/documents/veltrava_station_departures.png",
+   "file": "c3p2_row_departures.png",
+   "mark_file": "c3p2_mark_departures.png",
+   "size": [
+    242,
+    22
+   ],
+   "strips": [
+    [
+     12,
+     109,
+     240,
+     20
+    ]
+   ],
+   "place": [
+    [
+     1,
+     1
+    ]
+   ],
+   "ink": "chalk",
+   "marks": [
+    {
+     "kind": "loop",
+     "source": "time",
+     "doc_rect": [
+      19,
+      115,
+      25,
+      7
+     ],
+     "rect": [
+      8,
+      7,
+      25,
+      7
+     ]
+    },
+    {
+     "kind": "loop",
+     "source": "track",
+     "doc_rect": [
+      141,
+      115,
+      36,
+      7
+     ],
+     "rect": [
+      130,
+      7,
+      36,
+      7
+     ]
+    }
+   ],
+   "pairs_with": "out_2340",
+   "shared": "23.40 + Gleis 5",
+   "label_key": "ui.c3p2.check.row.departures"
+  },
+  {
+   "id": "travel_order",
+   "item": "ev_c3_travel_order",
+   "doc": "veltrava_station_travel_order",
+   "doc_file": "res://assets/ui/documents/veltrava_station_travel_order.png",
+   "file": "c3p2_row_travel_order.png",
+   "mark_file": "c3p2_mark_travel_order.png",
+   "size": [
+    178,
+    24
+   ],
+   "strips": [
+    [
+     20,
+     111,
+     176,
+     22
+    ]
+   ],
+   "place": [
+    [
+     1,
+     1
+    ]
+   ],
+   "ink": "red",
+   "marks": [
+    {
+     "kind": "word",
+     "source": "addendum_ru",
+     "doc_rect": [
+      26,
+      114,
+      62,
+      7
+     ],
+     "rect": [
+      7,
+      4,
+      62,
+      7
+     ]
+    },
+    {
+     "kind": "word",
+     "source": "addendum_de",
+     "doc_rect": [
+      26,
+      123,
+      56,
+      7
+     ],
+     "rect": [
+      7,
+      13,
+      56,
+      7
+     ]
+    }
+   ],
+   "pairs_with": "par_4",
+   "shared": "the word Begleit- (RU: сопровождающий)",
+   "label_key": "ui.c3p2.check.row.travel_order"
+  },
+  {
+   "id": "timetable",
+   "item": "ev_timetable",
+   "doc": "karsk_timetable",
+   "doc_file": "res://assets/ui/documents/karsk_timetable.png",
+   "file": "c3p2_row_timetable.png",
+   "mark_file": "c3p2_mark_timetable.png",
+   "size": [
+    211,
+    31
+   ],
+   "strips": [
+    [
+     13,
+     83,
+     209,
+     9
+    ],
+    [
+     13,
+     107,
+     209,
+     9
+    ],
+    [
+     13,
+     131,
+     209,
+     9
+    ]
+   ],
+   "place": [
+    [
+     1,
+     1
+    ],
+    [
+     1,
+     11
+    ],
+    [
+     1,
+     21
+    ]
+   ],
+   "ink": "red",
+   "marks": [
+    {
+     "kind": "dash",
+     "source": "line_1_square",
+     "doc_rect": [
+      160,
+      88,
+      24,
+      1
+     ],
+     "rect": [
+      148,
+      6,
+      24,
+      1
+     ]
+    },
+    {
+     "kind": "dash",
+     "source": "line_2_circle",
+     "doc_rect": [
+      160,
+      112,
+      24,
+      1
+     ],
+     "rect": [
+      148,
+      16,
+      24,
+      1
+     ]
+    },
+    {
+     "kind": "dash",
+     "source": "line_3_triangle",
+     "doc_rect": [
+      160,
+      136,
+      24,
+      1
+     ],
+     "rect": [
+      148,
+      26,
+      24,
+      1
+     ]
+    }
+   ],
+   "pairs_with": "january",
+   "shared": "three wagons, no destination",
+   "label_key": "ui.c3p2.check.row.timetable"
+  }
+ ],
+ "card": {
+  "size": [
+   152,
+   34
+  ],
+  "glyph_box": [
+   3,
+   10,
+   15,
+   15
+  ],
+  "text": [
+   21,
+   3,
+   128,
+   29
+  ],
+  "glyphs": {
+   "in_c17_44": "ring",
+   "out_2340": "cross",
+   "par_4": "star",
+   "january": "bowtie"
+  },
+  "files": {
+   "in_c17_44": "c3p2_card_in_c17_44.png",
+   "out_2340": "c3p2_card_out_2340.png",
+   "par_4": "c3p2_card_par_4.png",
+   "january": "c3p2_card_january.png"
+  }
+ },
+ "slot": {
+  "file": "c3p2_slot.png",
+  "size": [
+   152,
+   34
+  ]
+ },
+ "bracket": {
+  "file": "c3p2_bracket.png",
+  "size": [
+   13,
+   158
+  ]
+ },
+ "surfaces": {
+  "card_text": "#E6DEC2",
+  "slot": "#06151D"
+ },
+ "solution_check": {
+  "rows_pair_with": [
+   "in_c17_44",
+   "out_2340",
+   "par_4",
+   "january"
+  ],
+  "display_symbols": [
+   "out_2340",
+   "january",
+   "in_c17_44",
+   "par_4"
+  ]
+ },
+ "world_note": "Fictional registry intake book checked against a fictional freight chain; not real documents. The row strips are cut from this project's own inspect documents."
+}

@@ -6,11 +6,16 @@ extends Node
 ## Memories (§12.10, „Erinnerungen“): travel_to_memory() / return_from_memory() visit a completed scene with a
 ## „Zeitreise“ transition; inside a memory the Story state never changes (snapshot + every Story path blocked),
 ## exploration works normally and nothing is saved.
+## In-level protagonist switch (§12.11): when the next Story scene plays in the level file that is already loaded,
+## goto_level() hands control to that scene's protagonist in place (no reload, fade or chapter card); the one who
+## had control stays in the level as a story NPC (the stand-in) and the camera glides over.
 
 signal level_loaded(level: Node)
 signal focus_changed(target: Node)
 ## Memory mode entered / left (§12.10). info = memory_info().
 signal memory_changed(active: bool)
+## §12.11: control passed to `char_id` inside the loaded level, which now plays Story scene `scene_id`.
+signal protagonist_switched(scene_id: String, char_id: String)
 
 const LEVELS := {
 	"L_A1_Railyard": "res://scenes/levels/L_A1_Railyard.tscn",
@@ -29,10 +34,14 @@ const STILLS := "res://assets/ui/documents/"
 const ChapterExt := preload("res://scripts/core/chapter_ext.gd")
 const CIN_A1_M1 := "res://scenes/cinematics/a1m1/CinA1ToM1.tscn"
 const FINALE_SCENE := "res://scenes/cinematics/finale/Finale.tscn"
+const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 ## §12.10 memories: scene table, global profile (user://profile.json), read-only echo plans, memory grade.
 const Memories := preload("res://scripts/core/memories.gd")
 const ENGINE_JSON := preload("res://scripts/story/story_engine.gd")
 const INTERACTABLE := preload("res://scripts/actors/interactable.gd")
+const STORY_NPC := preload("res://scripts/actors/story_npc.gd")
+const SWITCH_GLIDE := 1.2          # s: default camera glide of an in-level protagonist switch (§12.11)
+const SWITCH_UNLOCK := 0.9         # share of the glide after which the new protagonist may move
 const Kit := preload("res://scripts/ui/ui_kit.gd")
 const MEM_DARK := Color(0.055, 0.04, 0.028, 1.0)   # warm darkroom black of the „Zeitreise“ transition
 const MEM_PROMPTS := {"inspect": "ui.memories.prompt.inspect", "dialogue": "ui.memories.prompt.dialogue",
@@ -103,6 +112,14 @@ var _title: Label
 var _skip := false
 var _focus: Node = null
 var _pending_spawn_pos = null
+## §12.11 in-level protagonist switch
+var level_overrides: Dictionary = {}  # tests / check runs only: {Story scene id: level path}, read before LEVELS / ChapterExt
+var switching := false                # a switch is running (busy + input locked until the camera has nearly arrived)
+var _stand_in: Node2D = null          # the protagonist who is not controlled, as a story NPC (made by Game)
+var _pending_stand_in = null          # {char, pos} for the next level setup (save, memory return, film)
+var _force_reload := false            # the next goto_level() reloads even if the level file is loaded (saves)
+var _level_file := ""                 # file of the loaded level (switch detection)
+var _scene_defs: Dictionary = {}      # data/v3/scenes.json by id (chain order: who came before whom)
 
 
 func _ready() -> void:
@@ -116,11 +133,18 @@ func _ready() -> void:
 	palettes = p if p is Dictionary else {}
 	var g = _json("res://data/grades.json")
 	grades = g if g is Dictionary else {}
+	var sd = _json("res://data/v3/scenes.json")
+	if sd is Dictionary:
+		for s in sd.get("scenes", []):
+			if s is Dictionary:
+				_scene_defs[str(s.get("id", ""))] = s
 	palettes.merge(ext.palettes, false)
 	grades.merge(ext.grades, false)
 	# §12.10: every scene completion is remembered in the global profile (main-menu „Erinnerungen“)
 	if Story.has_signal("event_fired") and not Story.event_fired.is_connected(_on_story_event):
 		Story.event_fired.connect(_on_story_event)
+	if Story.has_signal("item_granted") and not Story.item_granted.is_connected(_update_carry):
+		Story.item_granted.connect(_update_carry)
 
 
 func _json(path: String):
@@ -153,13 +177,18 @@ func register_main(m: Node) -> void:
 	_parse_args()
 	_init_memories()
 	_load_ui()
-	if args.has("capture") or args.has("capture-world") or args.has("memory-demo"):
+	if args.has("capture") or args.has("capture-world") or args.has("memory-demo") or args.has("switch-demo"):
 		get_window().mode = Window.MODE_WINDOWED
 		get_window().size = Vector2i(1920, 1080)
 	if args.has("memory-demo"):   # §12.10 check run with private saves/profile (scripts/core/memory_drive.gd)
 		var md: Node = load("res://scripts/core/memory_drive.gd").new()
 		add_child(md)
 		md.demo.call_deferred(str(args["memory-demo"]), str(args.get("memory-shots", "")))
+		return
+	if args.has("switch-demo"):   # §12.11 check run on the test level, private saves (scenes/levels/test/switch_demo.gd)
+		var sd: Node = load("res://scenes/levels/test/switch_demo.gd").new()
+		add_child(sd)
+		sd.run.call_deferred(str(args["switch-demo"]))
 		return
 	if args.has("autoplay"):
 		var ap: Node = load("res://scripts/core/autoplay.gd").new()
@@ -261,8 +290,10 @@ func _on_new_game() -> void:
 		Explore.reset()
 	playtime = 0.0
 	side_level = false   # a stale flag (plaza → Hauptmenü) would stop every later scene change (_after_story_change)
+	_pending_stand_in = null
 	_call(ui, "close_all")
 	await _show_disclaimer()
+	_force_reload = true
 	await goto_level(_story_scene(), "", true)
 
 
@@ -305,18 +336,29 @@ func _on_loaded_slot(_slot = "") -> void:
 	side_level = false
 	_plaza_after_hall = false
 	var extra = Saves.get("last_loaded_extra") if Saves.get("last_loaded_extra") != null else {}
-	_pending_spawn_pos = null
-	if extra is Dictionary and extra.has("player_pos") and str(extra.get("scene", "")) == _story_scene():
-		_pending_spawn_pos = LayerStack._v2(extra["player_pos"])
-	if extra is Dictionary and extra.has("playtime"):
-		playtime = float(extra["playtime"])
-	if Explore.has_method("restore"):
-		Explore.restore(extra.get("explore", {}) if extra is Dictionary else {})
+	apply_loaded_extra(extra if extra is Dictionary else {})
 	_profile_seed()      # §12.10: scenes completed in this save become memories in the main menu too
+	_force_reload = true   # a save is always loaded afresh, even into the level file that is already loaded (§12.11)
 	await goto_level(_story_scene(), "", true)
 	# A save taken while a transition was still queued: present it now instead of after the next action.
 	if Story.has_method("pending_cinematics") and not Story.pending_cinematics().is_empty():
 		await _after_story_change()
+
+
+## What a loaded save's `extra` gives the next level setup (the Story state is already loaded): the player's position
+## and — §12.11, in a level shared by several scenes — where the other protagonist stands; playtime; finds.
+func apply_loaded_extra(extra: Dictionary) -> void:
+	_pending_spawn_pos = null
+	_pending_stand_in = null
+	var here := str(extra.get("scene", "")) == _story_scene()
+	if extra.has("player_pos") and here:
+		_pending_spawn_pos = LayerStack._v2(extra["player_pos"])
+	if extra.get("stand_in") is Dictionary and here:
+		_pending_stand_in = extra["stand_in"]
+	if extra.has("playtime"):
+		playtime = float(extra["playtime"])
+	if Explore.has_method("restore"):
+		Explore.restore(extra.get("explore", {}))
 
 
 func _story_scene() -> String:
@@ -331,11 +373,17 @@ func _story_character() -> String:
 	return str(c) if c != null and str(c) != "" else (level.protagonist if level else "alexei")
 
 
-## Extra data stored by the save system next to the story payload (position restore, playtime).
+## Extra data stored by the save system next to the story payload (position restore, playtime). §12.11: in a level
+## shared by several scenes also who is controlled and where the other protagonist (the stand-in) stands.
 func save_extra() -> Dictionary:
 	var d := {"scene": level.level_id if level and level.get("level_id") else _story_scene(), "playtime": playtime}
 	if player and is_instance_valid(player):
 		d["player_pos"] = [player.position.x, player.position.y]
+		if is_switch_scene(str(d["scene"])):
+			d["controlled"] = str(player.char_id)
+	var si = _stand_in_state()
+	if si != null:
+		d["stand_in"] = si
 	if Explore.has_method("state"):
 		d["explore"] = Explore.state()
 	return d
@@ -368,6 +416,12 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 			return
 		await _finale_flow()
 		return
+	# §12.11: the next Story scene plays in the level file that is already loaded → hand control over in place
+	var reload := _force_reload
+	_force_reload = false
+	if not reload and can_switch_in_level(id):
+		await _switch_in_level(id, spawn)
+		return
 	if fade:
 		await fade_out(0.6)
 	else:
@@ -399,13 +453,14 @@ func goto_level(id: String, spawn := "", fade := true) -> void:
 ## Unloads the current level and instances `id` at `spawn` (no fades). False when the level is unknown.
 func _load_level(id: String, spawn := "") -> bool:
 	_unload_level()
-	var path: String = LEVELS.get(id, ext.level_path(id))
-	if path == "" and id.begins_with("res://"):   # dev/test: --scene=res://path/Level.tscn (art previews)
-		path = id
+	var path := level_file(id)
 	if path == "" or not ResourceLoader.exists(path):
 		push_error("Game: unknown level " + id)
 		return false
 	level = load(path).instantiate()
+	_adopt_scene(level, id)
+	SpriteRig.looks = ext.looks_for(id)      # round 8: soot / night looks of this scene (C3P2 §6)
+	_level_file = path
 	main.level_root.add_child(level)
 	await get_tree().process_frame
 	_setup_level(spawn)
@@ -440,7 +495,10 @@ func _first_visit() -> bool:
 		quest_obj.append(oid)
 	var j: Dictionary = Story.journal()
 	for o in j.get("objectives", []):
-		if str(o.get("state", "")) == "complete" and str(Story.quest_for(str(o.get("id", ""))).get("scene", "")) == str(level.level_id):
+		var sc := str(Story.quest_for(str(o.get("id", ""))).get("scene", ""))
+		# §12.11: a level shared by several scenes was visited once any of them has progress
+		if str(o.get("state", "")) == "complete" and (sc == str(level.level_id) \
+				or (_level_file != "" and level_file(sc) == _level_file)):
 			return false
 	return true
 
@@ -474,6 +532,9 @@ func _unload_level() -> void:
 	if level and is_instance_valid(level):
 		level.queue_free()
 	level = null
+	_stand_in = null          # freed with the level
+	_level_file = ""
+	SpriteRig.looks = {}
 
 
 func _setup_level(spawn: String) -> void:
@@ -496,10 +557,13 @@ func _setup_level(spawn: String) -> void:
 		camera.target = player
 		camera.set_bounds(level.get_camera_bounds())
 		camera.snap_now()
+		_setup_partner()      # §12.11: the other protagonist of a shared level stands in as a story NPC
+		_update_carry()
+	_pending_stand_in = null
 	if memory_mode:
 		_spawn_memory_hotspots()
-	Audio.play_ambience(str(level.get("ambience")), 1.5)
-	Audio.play_music(str(level.get("music")), 2.5)
+	Audio.play_ambience(_scene_audio(str(level.get("level_id")), "ambience"), 1.5)
+	Audio.play_music(_scene_audio(str(level.get("level_id")), "music"), 2.5)
 	_call(_ui("hud"), "set_memory", [memory_info()])
 	_call(_ui("hud"), "show_hud")
 	_refresh_objective()
@@ -521,6 +585,8 @@ func _grade_for(lvl: Node) -> Dictionary:
 
 
 func _apply_grade(lvl: Node) -> void:
+	if grade == null or not (grade.material is ShaderMaterial):   # headless unit tests mount levels without Main
+		return
 	var key := ""
 	if lvl.get("grade_preset") and str(lvl.get("grade_preset")) != "":
 		key = str(lvl.get("grade_preset"))
@@ -552,6 +618,340 @@ func _apply_grade(lvl: Node) -> void:
 			cols.append(cols[0])
 		mat.set_shader_parameter("palette", cols)
 	mat.set_shader_parameter("palette_strength", strength if cols.size() > 1 else 0.0)
+
+
+# ------------------------------------------------------------------ §12.11 in-level protagonist switch
+## Level file of a Story scene id: level_overrides (tests) → slice table → chapter files; a res:// path stands for
+## itself (dev/test: --scene=res://path/Level.tscn). "" = unknown.
+func level_file(id: String) -> String:
+	var path := str(level_overrides.get(id, LEVELS.get(id, ext.level_path(id))))
+	if path == "" and id.begins_with("res://"):
+		path = id
+	return path
+
+
+## A level file shared by several Story scenes plays the scene it was loaded for: level_id (what the drivers,
+## the journal, memories and saves read as "the scene I am in") and protagonist follow that scene.
+func _adopt_scene(lvl: Node, id: String) -> void:
+	if id.begins_with("res://") or lvl.get("level_id") == null or str(lvl.get("level_id")) == id:
+		return
+	lvl.set("level_id", id)
+	var who := _scene_protagonist(id)
+	if who != "" and lvl.get("protagonist") != null:
+		lvl.set("protagonist", who)
+
+
+## True when Story scene `id` plays in a level file another Story scene uses as well, or has switch settings.
+func is_switch_scene(id: String) -> bool:
+	if id == "" or id.begins_with("res://"):
+		return false
+	if not ext.switch_settings(id).is_empty():
+		return true
+	var f := level_file(id)
+	if f == "":
+		return false
+	for sid in _scene_defs:
+		if str(sid) != id and level_file(str(sid)) == f:
+			return true
+	return false
+
+
+## True when `id` is another Story scene played in the level file that is already loaded and the director may hand
+## control over in place (a walkable level with a player; no memory, transition or reload pending).
+func can_switch_in_level(id: String) -> bool:
+	if level == null or not is_instance_valid(level) or player == null or not is_instance_valid(player):
+		return false
+	if memory_mode or memory_travelling or _quiet_load or switching or id == "" or id.begins_with("res://"):
+		return false
+	if not (str(level.get("mode")) in ["oblique", "side"]) or level.get("playfield") == null:
+		return false
+	return id != str(level.get("level_id")) and _level_file != "" and level_file(id) == _level_file
+
+
+## Protagonist of Story scene `id`: the live Story's active character while `id` is its current scene, else
+## data/v3/scenes.json ("" when the scene has none).
+func _scene_protagonist(id: String) -> String:
+	if id == _story_scene() and not memory_mode:
+		var c = Story.get("active_character")
+		if c != null and not (str(c) in ["", "none"]):
+			return str(c)
+	var who := str(_scene_defs.get(id, {}).get("protagonist", ""))
+	return "" if who == "none" else who
+
+
+## The chain scene whose next_scene is `id` ("" for the first one).
+func _prev_scene(id: String) -> String:
+	for sid in _scene_defs:
+		if str(_scene_defs[sid].get("next_scene", "")) == id:
+			return str(sid)
+	return ""
+
+
+## Who stands in (is in the level but not controlled) while Story scene `id` is played: the switch settings'
+## "partner" ("none" = nobody), else the protagonist of the chain scene before it when that scene plays in the same
+## level file and is someone else ("" = nobody).
+func scene_partner(id: String) -> String:
+	var s := ext.switch_settings(id)
+	if s.has("partner"):
+		var p := str(s["partner"])
+		return "" if p in ["", "none"] else p
+	var prev := _prev_scene(id)
+	if prev == "" or level_file(prev) == "" or level_file(prev) != level_file(id):
+		return ""
+	var a := _scene_protagonist(prev)
+	return "" if a == "" or a == _scene_protagonist(id) else a
+
+
+func _entry_spawn(id: String) -> String:
+	return str(ENTRY_SPAWN.get(id, ext.spawn_for(id)))
+
+
+func _has_spawn(sp: String) -> bool:
+	if sp == "" or level == null or not (level.get("manifest") is Dictionary):
+		return false
+	var spawns = level.manifest.get("spawns", {})
+	return spawns is Dictionary and spawns.has(sp)
+
+
+## Ambience / music of the scene played in the loaded level: a switch scene may name its own (switch settings).
+func _scene_audio(id: String, kind: String) -> String:
+	var fallback := str(level.get(kind)) if level != null and level.get(kind) != null else ""
+	return str(ext.switch_settings(id).get(kind, fallback))
+
+
+## The stand-in NPC (§12.11) when it is in the level, else null.
+func stand_in() -> Node2D:
+	return _stand_in if _stand_in != null and is_instance_valid(_stand_in) and _stand_in.is_inside_tree() else null
+
+
+## {char, pos} of the stand-in for saves and return trips (pos = where he will stand once a walk has ended).
+func _stand_in_state():
+	var si := stand_in()
+	if si == null:
+		return null
+	var p: Vector2 = si.rest_position() if si.has_method("rest_position") else si.position
+	return {"char": str(si.get("char_id")), "pos": [p.x, p.y]}
+
+
+## Visible NPCs of the loaded level that show protagonist `who` (Game's stand-in first, then authored ones).
+func _npcs_of(who: String) -> Array:
+	var out: Array = []
+	if stand_in() != null and str(_stand_in.get("char_id")) == who:
+		out.append(_stand_in)
+	if level == null or level.get("playfield") == null:
+		return out
+	for n in get_tree().get_nodes_in_group("npcs"):
+		if n != _stand_in and n is Node2D and level.is_ancestor_of(n) and str(n.get("char_id")) == who \
+				and (n as CanvasItem).is_visible_in_tree():
+			out.append(n)
+	return out
+
+
+## An NPC that showed the protagonist who is now played leaves the stage: Game's stand-in is freed, an authored
+## StoryNPC is suppressed for good (objective changes never bring it back while he is played), any other NPC hidden.
+func _retire_npc(n: Node) -> void:
+	if n == null or not is_instance_valid(n):
+		return
+	if n.has_method("set_suppressed"):
+		n.set_suppressed(true)       # hidden for good: a Story signal before the end of the frame cannot bring it back
+	if n == _stand_in or n.has_meta("stand_in"):
+		if n == _stand_in:
+			_stand_in = null
+		n.remove_from_group("npcs")
+		(n as CanvasItem).visible = false
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+		n.queue_free()
+	elif not n.has_method("set_suppressed"):
+		n.remove_from_group("npcs")
+		(n as CanvasItem).visible = false
+		n.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+## Game's stand-in for protagonist `who` (a StoryNPC with his sheet) at `pos`, turned towards the player.
+func _make_stand_in(who: String, pos: Vector2, settings: Dictionary, face_left = null) -> Node2D:
+	var npc: Node2D = STORY_NPC.new()
+	npc.name = "StandIn_" + who
+	npc.set("char_id", who)
+	npc.set("stand_in", true)
+	npc.set("hide_after", str(settings.get("partner_hide_after", "")))
+	npc.set("idle_anim", str(settings.get("partner_anim", "")))
+	var p_x: float = player.position.x if player != null and is_instance_valid(player) else pos.x
+	npc.set("face_left", bool(face_left) if face_left != null else p_x < pos.x)
+	npc.position = pos
+	npc.set_meta("stand_in", true)
+	level.playfield.add_child(npc)
+	if player != null and is_instance_valid(player):
+		npc.turn_toward(player.global_position)
+	return npc
+
+
+## Level setup of a switch scene (fresh load, save, memory, capture): the protagonist who is not controlled stands
+## in — at his saved spot (load, return from a memory or film), else at the scene's "partner_spawn", else beside
+## the player. An authored NPC of the controlled protagonist is suppressed; an authored NPC of the partner replaces
+## Game's stand-in.
+func _setup_partner() -> void:
+	_stand_in = null
+	var pend = _pending_stand_in
+	_pending_stand_in = null
+	var sid := str(level.get("level_id"))
+	if player == null or not is_switch_scene(sid):
+		return
+	for n in _npcs_of(str(player.char_id)):
+		_retire_npc(n)
+	var who := scene_partner(sid)
+	if who == "" or who == str(player.char_id) or not _npcs_of(who).is_empty():
+		return
+	var st := ext.switch_settings(sid)
+	var pos := _partner_spot(st)
+	if pend is Dictionary and str(pend.get("char", "")) == who and pend.get("pos") is Array:
+		pos = LayerStack._v2(pend["pos"])
+	_stand_in = _make_stand_in(who, pos, st)
+
+
+## Where the partner stands when nobody saw him come: the scene's "partner_spawn", else 38 px beside the player
+## (towards the middle of the level).
+func _partner_spot(st: Dictionary) -> Vector2:
+	if _has_spawn(str(st.get("partner_spawn", ""))):
+		return level.get_spawn(str(st["partner_spawn"]))
+	var mid: float = level.get_camera_bounds().get_center().x
+	return player.position + Vector2(38.0 if player.position.x < mid else -38.0, 0.0)
+
+
+## The synchronous part of an in-level switch to Story scene `id` (tests call it directly). Game.player is valid
+## before, during and after it (never null in between); returns {scene, from, to, took_over, glide, cut}.
+## Where the incoming protagonist takes over: `spawn` / the scene's "switch_spawn" > where he stood in as an NPC >
+## the scene's entry spawn. The one who had control stays as a story NPC at his spot (walks to "partner_spawn" when
+## the scene names one) and turns to the new player.
+## Round 8: the protagonist holds the file C-17 (c3.json "carry") once the item is his.
+func _update_carry(_item := "") -> void:
+	if player == null or not is_instance_valid(player) or level == null or player.get("rig") == null:
+		return
+	var item := str(ext.carry_for(str(level.get("level_id"))).get(str(player.char_id), ""))
+	player.rig.carry = item != "" and Story.has_item(item)
+
+
+func switch_now(id: String, spawn := "", cut := false) -> Dictionary:
+	var st := ext.switch_settings(id)
+	var prev: Node2D = player
+	var p_out := str(prev.char_id)
+	var p_in := _scene_protagonist(id)
+	if p_in == "":
+		p_in = p_out
+	var mode := str(level.get("mode"))
+	var glide := float(st.get("glide", SWITCH_GLIDE))
+	level.level_id = id
+	level.protagonist = p_in
+	SpriteRig.looks = ext.looks_for(id)
+	if not level.visible or level.process_mode == Node.PROCESS_MODE_DISABLED:   # a cinematic hid it on the way
+		level.visible = true
+		level.process_mode = Node.PROCESS_MODE_INHERIT
+	set_focus(null)
+	var info := {"scene": id, "from": p_out, "to": p_in, "took_over": false, "glide": glide, "cut": cut}
+	var sp := spawn if spawn != "" else str(st.get("switch_spawn", ""))
+	if p_in == p_out:
+		# the same person goes on into the next scene: no hand-over (an authored switch_spawn may move him)
+		if _has_spawn(sp):
+			prev.position = level.get_spawn(sp)
+			if camera:
+				camera.retarget(prev, cut, glide)
+		_refresh_objective()
+		_update_carry()
+		protagonist_switched.emit(id, p_in)
+		return info
+	# 1. where the incoming protagonist takes over
+	var body: Node2D = null
+	var bodies := _npcs_of(p_in)
+	if not bodies.is_empty():
+		body = bodies[0]
+	var pos: Vector2
+	var face_x := 0.0
+	if _has_spawn(sp):
+		pos = level.get_spawn(sp)
+	elif body != null:
+		pos = level.playfield.to_local(body.global_position)
+		var brig = body.get("rig")
+		face_x = -1.0 if brig != null and brig.is_flipped() else 1.0
+		info["took_over"] = true
+	else:
+		pos = level.get_spawn(_entry_spawn(id))
+	for n in bodies:
+		_retire_npc(n)
+	# 2. hand over in one go (no await): the old body leaves the "player" group and frees itself at the end of the
+	# frame, the new one joins it and is Game.player at once — there is never a frame without a valid player
+	var out_pos: Vector2 = prev.position
+	var out_left: bool = prev.get_facing() < 0.0 if prev.has_method("get_facing") else false
+	var nb: Node2D = PLAYER.new()
+	nb.setup(p_in, mode, pos, str(level.get("footstep_surface")))
+	prev.retire()
+	level.playfield.add_child(nb)
+	player = nb
+	# 3. the protagonist who had control stays in the level (unless the scene sends him off or shows him itself)
+	if _stand_in != null and not is_instance_valid(_stand_in):
+		_stand_in = null
+	var partner := scene_partner(id)
+	if partner == p_out and _npcs_of(p_out).is_empty():
+		if stand_in() != null:           # a third person standing in before: the scene's partner replaces him
+			_retire_npc(_stand_in)
+		_stand_in = _make_stand_in(p_out, out_pos, st, out_left)
+		if _has_spawn(str(st.get("partner_spawn", ""))):
+			_stand_in.walk_to(level.get_spawn(str(st["partner_spawn"])))
+	elif partner != "" and partner != p_in and _npcs_of(partner).is_empty() and stand_in() == null:
+		_stand_in = _make_stand_in(partner, _partner_spot(st), st)
+	# the new protagonist looks where he looked as an NPC, else towards the one who hands over
+	if face_x != 0.0:
+		player.face(face_x, false)
+	elif stand_in() != null:
+		player.face(_stand_in.position.x - player.position.x, false)
+	# 4. camera: glide over (critically damped), or cut (a cinematic on the way may have changed lens or bounds)
+	if camera:
+		camera.enabled = true
+		camera.set_bounds(level.get_camera_bounds())
+		camera.retarget(player, cut, glide)
+	# 5. HUD, objectives, journal (Story.active_character / level.level_id), sound of the scene
+	_call(_ui("hud"), "show_protagonist", [p_in])
+	_refresh_objective()
+	Audio.play_ambience(_scene_audio(id, "ambience"), 1.5)
+	Audio.play_music(_scene_audio(id, "music"), 2.5)
+	_update_carry()
+	protagonist_switched.emit(id, p_in)
+	return info
+
+
+## A switch cuts instead of gliding with reduced motion, or when a cinematic on the way left the screen black / the
+## level hidden (then the level fades back in after the cut).
+func switch_cuts() -> bool:
+	return _switch_dark() or bool(Settings.get_value("reduced_motion"))
+
+
+func _switch_dark() -> bool:
+	return (_fade != null and _fade.color.a > 0.02) or (level != null and is_instance_valid(level) \
+		and (not level.visible or level.process_mode == Node.PROCESS_MODE_DISABLED))
+
+
+## §12.11 authored in-level switch (from goto_level): no reload, fade or chapter card. Busy and input-locked until the
+## camera has covered SWITCH_UNLOCK of its glide (~0.7 s of 1.2 s); a black screen left by a cinematic on the way
+## (or reduced motion) makes it a cut — then the level fades back in. The key press that led here can never act
+## for the new protagonist (interaction cooldown). Autosaves like a level start.
+func _switch_in_level(id: String, spawn := "") -> void:
+	switching = true
+	busy = true
+	input_locked = true
+	set_focus(null)
+	var dark := _switch_dark()
+	var info := switch_now(id, spawn, switch_cuts())
+	if dark:
+		await fade_in(0.9)
+	elif not bool(info.get("cut", false)):
+		var t := 0.0
+		var limit := float(info.get("glide", SWITCH_GLIDE)) + 0.5
+		while camera != null and camera.is_gliding() and camera.glide_progress() < SWITCH_UNLOCK and t < limit:
+			await get_tree().process_frame
+			t += get_process_delta_time()
+	interact_ready_at = Time.get_ticks_msec() + 350
+	input_locked = false
+	busy = false
+	switching = false
+	autosave("level_" + id)
 
 
 # ------------------------------------------------------------------ interaction
@@ -1162,6 +1562,7 @@ func _cin_final() -> bool:
 	if prev_level:
 		prev_level.visible = false
 		prev_level.process_mode = Node.PROCESS_MODE_DISABLED
+	SpriteRig.looks = {}           # the montage shows the clean looks
 	var fin: Node = load(FINALE_SCENE).instantiate()
 	main.level_root.add_child(fin)
 	fin.configure({
@@ -1474,13 +1875,14 @@ func memory_scenes(context := "game") -> Array:
 		var found := 0
 		var total := 0
 		if open and Explore.has_method("entries_for"):
+			var key := str(ext.level_key(id))     # scenes sharing one level file count that level's finds
 			if menu:
-				for e in Explore.entries_for(id):
+				for e in Explore.entries_for(key):
 					total += 1
 					if ex_found.has(str(e.get("id", ""))):
 						found += 1
 			else:
-				var c: Dictionary = Explore.counts(id)
+				var c: Dictionary = Explore.counts(key)
 				found = int(c.get("found", 0))
 				total = int(c.get("total", 0))
 		out.append({"id": id, "unlocked": open, "current": open and id == here, "side": bool(s["side"]),
@@ -1577,7 +1979,8 @@ func rewatch_film(cid: String, from_menu := false) -> bool:
 	set_focus(null)
 	_call(_ui("hud"), "hide_hud")
 	var present := {"story": Story.save_json(), "level": str(level.get("level_id")) if level != null else "",
-		"side_level": side_level, "pos": player.position if player != null and is_instance_valid(player) else null}
+		"side_level": side_level, "pos": player.position if player != null and is_instance_valid(player) else null,
+		"stand_in": _stand_in_state()}
 	Audio.stop_music(0.8)
 	await fade_out(0.7)
 	_unload_level()
@@ -1621,6 +2024,7 @@ func rewatch_film(cid: String, from_menu := false) -> bool:
 		return true
 	side_level = bool(present["side_level"])
 	_pending_spawn_pos = present["pos"]
+	_pending_stand_in = present.get("stand_in")
 	await _load_level(str(present["level"]), "")
 	await fade_in(0.8)
 	_skip = false                 # a skip press during the fade-in must not cut the next level fade short
@@ -1671,6 +2075,7 @@ func travel_to_memory(id: String, from_menu := false) -> bool:
 	_mem_present = {"story": Story.save_json(), "from_menu": from_menu,
 		"level": str(level.get("level_id")) if level != null else "", "side_level": side_level,
 		"pos": player.position if player != null and is_instance_valid(player) else null,
+		"stand_in": _stand_in_state(),       # §12.11: the other protagonist of a shared level
 		"explore": Explore.state() if from_menu else {}}
 	var rm := _mem_reduced()
 	Audio.sfx("mem_rewind", -4.0, 0.0)
@@ -1757,6 +2162,7 @@ func return_from_memory() -> void:
 		else Loc.t(str(Kit.scene_def(lid).get("title_key", "ui.memories.card.present"))), "")
 	side_level = bool(present.get("side_level", false))
 	_pending_spawn_pos = present.get("pos")
+	_pending_stand_in = present.get("stand_in")
 	var ok: bool = await _load_level(lid, "")
 	_call(_ui("hud"), "hide_hud")
 	await _mem_card_wait()
@@ -1830,6 +2236,7 @@ func _mem_abort() -> void:
 		return
 	side_level = bool(present.get("side_level", false))
 	_pending_spawn_pos = present.get("pos")
+	_pending_stand_in = present.get("stand_in")
 	_quiet_load = true
 	await goto_level(str(present["level"]), "", false)
 
@@ -2171,7 +2578,8 @@ func _notification(what: int) -> void:
 	# Standard PC behaviour: alt-tabbing away during free play opens the pause menu (never in test modes).
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and level and is_instance_valid(level) and player \
 			and not busy and not in_cinematic and not get_tree().paused and not auto \
-			and not args.has("inputplay") and not args.has("capture") and not args.has("capture-world"):
+			and not args.has("inputplay") and not args.has("capture") and not args.has("capture-world") \
+			and not args.has("switch-demo"):
 		_call(ui, "open_pause")
 
 

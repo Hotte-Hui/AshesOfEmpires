@@ -38,6 +38,7 @@ sys.path.insert(0, HERE)
 import chargen_portrait2_anat as A   # noqa: E402
 import chargen_portrait2_cast as C   # noqa: E402
 import chargen_portrait_c3 as C3     # noqa: E402,F401  registers the Chapter-3 speakers in C.CAST
+import chargen_portrait2_berlin as CB  # noqa: E402,F401  round 8: the evicted Berlin family (mother, father)
 import chargen_portrait2_face as FC  # noqa: E402
 import chargen_portrait2_paint as P  # noqa: E402
 import chargen_portrait2_sdf as S    # noqa: E402

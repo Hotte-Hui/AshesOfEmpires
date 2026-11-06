@@ -84,6 +84,76 @@
       "description_key": "item.c3_carbon.description",
       "scene": "L_C3_Hall",
       "category": "physical_clue"
+    },
+    {
+      "id": "ev_c3_cut_seal",
+      "name_key": "item.c3_cut_seal.name",
+      "description_key": "item.c3_cut_seal.description",
+      "scene": "L_C3_RegistryA",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c3_night_book",
+      "name_key": "item.c3_night_book.name",
+      "description_key": "item.c3_night_book.description",
+      "scene": "L_C3_RegistryA",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_intake_book",
+      "name_key": "item.c3_intake_book.name",
+      "description_key": "item.c3_intake_book.description",
+      "scene": "L_C3_RegistryB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_scarf",
+      "name_key": "item.c3_scarf.name",
+      "description_key": "item.c3_scarf.description",
+      "scene": "L_C3_RegistryB",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c3_halves",
+      "name_key": "item.c3_halves.name",
+      "description_key": "item.c3_halves.description",
+      "scene": "L_C3_RegistryB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_kordon_plan",
+      "name_key": "item.c3_kordon_plan.name",
+      "description_key": "item.c3_kordon_plan.description",
+      "scene": "L_C3_RegistryB",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_file",
+      "name_key": "item.c3_file.name",
+      "description_key": "item.c3_file.description",
+      "scene": "L_C3_RegistryC",
+      "category": "document"
+    },
+    {
+      "id": "ev_c3_bolt",
+      "name_key": "item.c3_bolt.name",
+      "description_key": "item.c3_bolt.description",
+      "scene": "L_C3_RegistryC",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c3_cut_hose",
+      "name_key": "item.c3_cut_hose.name",
+      "description_key": "item.c3_cut_hose.description",
+      "scene": "L_C3_RegistryD",
+      "category": "physical_clue"
+    },
+    {
+      "id": "ev_c3_escort_list",
+      "name_key": "item.c3_escort_list.name",
+      "description_key": "item.c3_escort_list.description",
+      "scene": "L_C3_Quay",
+      "category": "document"
     }
   ]
 }

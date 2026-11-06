@@ -1,0 +1,593 @@
+{
+ "generator": "tools/pixelgen/env_c3p2_archive.py (+ _kit, _layout, _room, _props, _fx)",
+ "date": "2026-11-06",
+ "licence": "project-owned original artwork, generated procedurally; no copied, traced, downloaded or AI-generated pixels; bitmap fonts from env_veltrava_hall_kit.py (hand-defined)",
+ "run": "py -3 -P tools/pixelgen/env_c3p2_archive.py",
+ "files": [
+  {
+   "path": "assets/environments/veltrava_registry/fg_frame.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "foreground silhouettes (bollard, cast-iron columns, boxes, cables), parallax 1.25"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/ash_c0.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "falling ash (look c)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/ash_c1.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "falling ash (look c)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/ash_c2.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "falling ash (look c)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/ash_d0.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "falling ash (look d)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/ash_d1.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "falling ash (look d)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/bell_ringing.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "fire bell ringing: the striker against the dome (4 frames, small motion, no flashing)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/dust_lamp.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "dust motes in the light of the green lamp"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/embers_c0.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "rising embers (look c)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/embers_c1.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "rising embers (look c)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/embers_d0.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "rising embers (look d)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/embers_d1.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "rising embers (look d)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_bank.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_bank), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_bank_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_bank) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_c17.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_c17), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_c17_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_c17) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_chests.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_chests), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_chests_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_chests) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_door.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_door), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_door_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_door) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_fallen.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_fallen), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_fallen_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_fallen) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_frame_a.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_frame_a), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_frame_a_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_frame_a) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_frame_b.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_frame_b), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_frame_b_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_frame_b) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_frame_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_frame_c), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_frame_c_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_frame_c) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_front_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_front_c), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_front_c_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_front_c) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_front_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_front_d), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_front_d_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_front_d) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_rows.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_rows), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_rows_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_rows) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_shelves.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_shelves), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_shelves_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_shelves) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_table.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_table), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_table_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_table) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_units.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_units), 16 frames"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/flames_units_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "flames (flames_units) -- emission strip"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/heat_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "heat shimmer above the fire front"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/heat_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "heat shimmer above the fire front"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/plume_door.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke squeezing out above the ramp door"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/plume_front_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rising from the fire front (C)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/plume_front_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rising from the fire front (D)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/plume_service.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke pouring from the service stairs"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/roll_c0.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rolling along under the vaults toward the Annahme"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/roll_c1.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rolling along under the vaults toward the Annahme"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/roll_c2.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rolling along under the vaults toward the Annahme"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/roll_d0.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rolling along under the vaults toward the Annahme"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/roll_d1.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke rolling along under the vaults toward the Annahme"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/snow_gap.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "snow blowing through the gaps of the shut ramp door"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/fx/snow_yard.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "falling snow over the yard (24 frames, 8 fps)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/life/guard_feet.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "a guard's boots passing the high window of the Karteisaal, turning, passing back (80 frames, 8 fps)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/outside.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "light wells behind the high windows: snow heap, grating shadow, street-lamp glow (unlit)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/blatt7_pocketed_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look c with the story change \"blatt7_pocketed\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/blatt7_pocketed_c_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look c with the story change \"blatt7_pocketed\" -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/blatt7_pocketed_c_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look c with the story change \"blatt7_pocketed\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/blatt7_pocketed_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"blatt7_pocketed\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/blatt7_pocketed_d_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"blatt7_pocketed\" -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/blatt7_pocketed_d_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"blatt7_pocketed\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/case_broken_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"case_broken\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/case_broken_d_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"case_broken\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/desk_pushed_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"desk_pushed\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/desk_pushed_d_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"desk_pushed\" -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/desk_pushed_d_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look d with the story change \"desk_pushed\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/file_taken_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look c with the story change \"file_taken\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/file_taken_c_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look c with the story change \"file_taken\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/halves_b.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look b with the story change \"halves\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/halves_b_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look b with the story change \"halves\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_a.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look a), neutral emblems"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_a_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look a), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_a_hist_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look a), neutral emblems -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_a_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look a), neutral emblems -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_b.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look b), neutral emblems"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_b_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look b), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_b_hist_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look b), neutral emblems -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_b_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look b), neutral emblems -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look c), neutral emblems"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_c_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look c), neutral emblems -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_c_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look c), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_c_hist_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look c), neutral emblems -- historical, emission"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_c_hist_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look c), neutral emblems -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_c_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look c), neutral emblems -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look d), neutral emblems"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_d_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look d), neutral emblems -- emission mask"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_d_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look d), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_d_hist_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look d), neutral emblems -- historical, emission"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_d_hist_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look d), neutral emblems -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/insignia_magazin_d_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "Magazin delegation plates (look d), neutral emblems -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/scarf_taken_b.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look b with the story change \"scarf_taken\""
+  },
+  {
+   "path": "assets/environments/veltrava_registry/patches/scarf_taken_b_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "look b with the story change \"scarf_taken\" -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_hist_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_open.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_open_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_open_hist_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) -- historical, normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/props/cart_open_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_props.py",
+   "content": "handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry at night: yard in the snow, Annahme, Karteisaal under the green lamp, Planarchiv, Magazin"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_a.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry at night, before the green lamp is switched on (Konrad's torch in the aisle)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_a_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry at night, before the green lamp is switched on (Konrad's torch in the aisle) -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_a_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry at night, before the green lamp is switched on (Konrad's torch in the aisle) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry at night: yard in the snow, Annahme, Karteisaal under the green lamp, Planarchiv, Magazin -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_fire_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry on fire (C): smoke under the vaults, the Magazin and Planarchiv burning, ramp door shut"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_fire_c_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry on fire (C): smoke under the vaults, the Magazin and Planarchiv burning, ramp door shut -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_fire_c_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry on fire (C): smoke under the vaults, the Magazin and Planarchiv burning, ramp door shut -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_fire_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry on fire (D): the fire in the Karteisaal, smoke low, ramp door shut"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_fire_d_e.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry on fire (D): the fire in the Karteisaal, smoke low, ramp door shut -- emission mask (unshaded glow)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_fire_d_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry on fire (D): the fire in the Karteisaal, smoke low, ramp door shut -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/room_n.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_room.py",
+   "content": "registry at night: yard in the snow, Annahme, Karteisaal under the green lamp, Planarchiv, Magazin -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/scene.json",
+   "generator": "tools/pixelgen/env_c3p2_archive.py",
+   "content": "art manifest (TECHNICAL_ARCHITECTURE 3.1 + the registry gates)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/shafts.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "cold light falling from the high windows (soft veil, plain alpha)"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/smoke_c.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke under the vaults (smoke_c): sooty grey, lit orange from below near the fire"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/smoke_d.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "smoke under the vaults (smoke_d): sooty grey, lit orange from below near the fire"
+  },
+  {
+   "path": "assets/environments/veltrava_registry/torch_beam.png",
+   "generator": "tools/pixelgen/env_c3p2_archive_fx.py",
+   "content": "Konrad's torch: soft cone of light into the aisle (look A, plain alpha)"
+  }
+ ]
+}

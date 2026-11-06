@@ -10,7 +10,11 @@ extends Node
 ## Prints INPUTPLAY_PASS / INPUTPLAY_FAIL and quits with exit code 0 / 1.
 ## Chapter 3: after M1 the route continues through L_C3_Station (one exploration find + one optional chat by real
 ## input first) and L_C3_Hall incl. the protocol puzzle (one wrong order, then the right one); optional 3rd/4th spec
-## values choose c3a_choose / c3b_choose. "Fortsetzen" must resume before the last decision (c3b_choose).
+## values choose c3a_choose / c3b_choose. Chapter 3 part 2 (documentation/C3P2_DESIGN.md): the registry scenes A–D
+## in ONE level file with three in-level protagonist switches (TECHNICAL_ARCHITECTURE §12.11; the driver always
+## walks Game.player) incl. the check puzzle (CheckPuzzle: one wrong order, then the right one), then the quay;
+## optional 5th/6th spec values choose c3d_choose / c3g_choose. "Fortsetzen" must resume before the last decision
+## (c3g_choose on the quay). Saves of the run go to user://e2e/saves (never the player's slots).
 ## --inputplay-explore (§12 + §12.9 side tasks): walks every level at its start, the parade plaza, and once more
 ## right before each level's final decision (story-gated chats are active by then); a walk repeats, nearest first,
 ## until nothing new is findable (requirements unlock entries, chained hotspots move on to their next entry), and
@@ -25,9 +29,22 @@ const C3A := ["c3a_talk_conductor", "c3a_inspect_weighbill", "c3a_inspect_depart
 	"c3a_talk_elena", "c3a_choose"]
 const C3B := ["c3b_arrival", "c3b_inspect_seating", "c3b_inspect_log", "c3b_solve_protocol", "c3b_inspect_booth",
 	"c3b_talk_alexei", "c3b_choose"]
+## Chapter 3 part 2 (C3P2_DESIGN.md §2.3): registry A (Alexei) → B (Konrad) → C (Alexei) → D (Konrad) → quay (Alexei)
+const C3C := ["c3c_inspect_crates", "c3c_inspect_night_book", "c3c_talk_konrad"]
+const C3D := ["c3d_inspect_intake", "c3d_inspect_drawer", "c3d_talk_compare", "c3d_solve_check", "c3d_inspect_plan",
+	"c3d_talk_partner", "c3d_choose"]
+const C3E := ["c3e_take_file", "c3e_try_ramp", "c3e_reach_konrad"]
+const C3F := ["c3f_inspect_hose", "c3f_push_desk", "c3f_climb"]
+const C3G := ["c3g_inspect_halves", "c3g_talk_konrad", "c3g_choose"]
+## Scenes of a shared level whose route does not end the level's exploration: their last walk is not "final" (the
+## registry's side tasks are checked at the end of B, the last registry scene with finds; C/D have none).
+const NOT_FINAL_WALK := ["L_C3_RegistryA", "L_C3_RegistryC", "L_C3_RegistryD"]
+## Choices answered with arrow keys + Enter (the others with number keys).
+const ARROW_CHOICES := ["a1_choose", "c3a_choose", "c3g_choose"]
+const E2E_SAVES := "user://e2e/saves"
 
 var choices := {"a1_choose": "share_with_irina", "m1_choose": "preserve_evidence", "c3a_choose": "ask_elena",
-	"c3b_choose": "share_protocol"}
+	"c3b_choose": "share_protocol", "c3d_choose": "admit_plan", "c3g_choose": "split_by_language"}
 var skip_cine := false
 var shots_dir := ""
 var failures: Array = []
@@ -47,6 +64,10 @@ func configure(spec: String, do_skip: bool, shots: String) -> void:
 		choices["c3a_choose"] = parts[2]
 	if parts.size() >= 4 and parts[3] != "":
 		choices["c3b_choose"] = parts[3]
+	if parts.size() >= 5 and parts[4] != "":
+		choices["c3d_choose"] = parts[4]
+	if parts.size() >= 6 and parts[5] != "":
+		choices["c3g_choose"] = parts[5]
 	skip_cine = do_skip
 	shots_dir = shots
 
@@ -58,6 +79,7 @@ func run() -> void:
 	# whoever is using the computer (hovering a menu button moves the focus). Mouse events now pass through.
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_mouse_passthrough(PackedVector2Array([Vector2(0, 0), Vector2(1, 0), Vector2(1, 1)]))
+	_isolate_saves()
 	print("INPUTPLAY start choices=", choices, " skip=", skip_cine)
 	var t0 := Time.get_ticks_msec()
 	if ui == null:
@@ -67,9 +89,21 @@ func run() -> void:
 	if await _menu_new_game() and await _intro() and await _menus_in_game() \
 			and await _play_route(A1, "L_A1_Railyard") and await _play_route(M1, "L_M1_Archive") \
 			and await _memories_trip() and await _explore_sample() and await _play_route(C3A, "L_C3_Station") \
-			and await _play_route(C3B, "L_C3_Hall") and await _ending():
+			and await _play_route(C3B, "L_C3_Hall") and await _play_route(C3C, "L_C3_RegistryA") \
+			and await _play_route(C3D, "L_C3_RegistryB") and await _play_route(C3E, "L_C3_RegistryC") \
+			and await _play_route(C3F, "L_C3_RegistryD") and await _play_route(C3G, "L_C3_Quay") and await _ending():
 		await _continue_from_menu()
 	_finish(t0)
+
+
+## The run plays a whole game with autosaves: keep them out of the player's user://saves (same machine, same build).
+func _isolate_saves() -> void:
+	DirAccess.make_dir_recursive_absolute(E2E_SAVES)
+	var d := DirAccess.open(E2E_SAVES)
+	if d:
+		for f in d.get_files():
+			d.remove(f)
+	Saves.base_dir = E2E_SAVES
 
 
 func _finish(t0: int) -> void:
@@ -177,7 +211,7 @@ func _play_route(route: Array, level_id: String) -> bool:
 			if not failures.is_empty():
 				return false
 		if oid == route[route.size() - 1] and Game.args.has("inputplay-explore"):
-			await _explore_level(level_id, true)     # §12.9: story-gated chats are open now; finish every task
+			await _explore_level(level_id, not NOT_FINAL_WALK.has(level_id))   # §12.9: gated chats open; finish every task
 			if not failures.is_empty():
 				return false
 			if not await _until(func(): return Story.is_available(oid) and _gameplay_ready(), 30.0):
@@ -204,6 +238,8 @@ func _play_route(route: Array, level_id: String) -> bool:
 					await _signal_puzzle()
 				elif oid == "c3b_solve_protocol":
 					await _protocol_puzzle()
+				elif oid == "c3d_solve_check":
+					await _check_puzzle()
 				else:
 					await _blueprint_puzzle()
 		if not await _until(func(): return not Game.busy, 20.0):
@@ -262,9 +298,9 @@ func _continue_from_menu() -> void:
 	if not await _until(func(): return _gameplay_ready(), 30.0):
 		_fail("'Fortsetzen' did not resume play")
 		return
-	if str(Game.level.level_id) != "L_C3_Hall" or Story.objective_state("c3b_choose") != "available":
-		_fail("'Fortsetzen' resumed at %s (c3b_choose %s), expected the last playable autosave" % [
-			Game.level.level_id, Story.objective_state("c3b_choose")])
+	if str(Game.level.level_id) != "L_C3_Quay" or Story.objective_state("c3g_choose") != "available":
+		_fail("'Fortsetzen' resumed at %s (c3g_choose %s), expected the last playable autosave" % [
+			Game.level.level_id, Story.objective_state("c3g_choose")])
 	await _wait(0.8)
 	await _shoot("continued")
 
@@ -289,7 +325,7 @@ func _dialogue(oid: String, choice_id: String) -> void:
 			if idx < 0:
 				_fail("unknown choice id " + choice_id)
 				return
-			if oid == "a1_choose" or oid == "c3a_choose":    # arrow keys + Enter
+			if ARROW_CHOICES.has(oid):    # arrow keys + Enter
 				for i in idx:
 					await _tap(KEY_DOWN)
 				await _tap(KEY_ENTER)
@@ -404,6 +440,40 @@ func _protocol_puzzle() -> void:
 	await _tap(KEY_ENTER)
 	if not await _until(func(): return not pz.is_open, 8.0):
 		_fail("protocol puzzle did not close after the correct order (state %s)" % Story.objective_state("c3b_solve_protocol"))
+
+
+## Chapter-3 part-2 check puzzle (scenes/ui/CheckPuzzle.tscn, C3P2_DESIGN.md §2.7 key contract = the protocol
+## puzzle's): number key n places the n-th tray card on the next row; one wrong order first, then the right one.
+func _check_puzzle() -> void:
+	var pz: Node = null
+	var t := 0.0
+	while t < 5.0 and (pz == null or not pz.is_open):
+		pz = _ui_child("check_puzzle.gd")
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if pz == null or not pz.is_open:
+		_fail("check puzzle did not open")
+		return
+	var data_shown: Array = Story.puzzle_for("c3d_solve_check").get("display_symbols", [])
+	var shown: Array = pz.get("symbols") if pz.get("symbols") is Array else data_shown
+	await _wait(0.6)
+	await _shoot("check_start")
+	for k in [KEY_1, KEY_2, KEY_3, KEY_4]:     # the tray order is a wrong answer (C3P2_DESIGN §2.7)
+		await _tap(k)
+	await _tap(KEY_ENTER)
+	await _wait(0.6)
+	if Story.objective_state("c3d_solve_check") == "complete":
+		_fail("check puzzle accepted a wrong order")
+		return
+	for i in 4:
+		await _tap(KEY_BACKSPACE)
+	for sym in ["in_c17_44", "out_2340", "par_4", "january"]:
+		await _tap(KEY_1 + shown.find(sym))
+	await _wait(0.3)
+	await _shoot("check_solved")
+	await _tap(KEY_ENTER)
+	if not await _until(func(): return not pz.is_open, 8.0):
+		_fail("check puzzle did not close after the correct order (state %s)" % Story.objective_state("c3d_solve_check"))
 
 
 func _ui_child(script_suffix: String) -> Node:
@@ -540,14 +610,16 @@ func _explore_level(level_id: String, final := false) -> void:
 		done += 1
 		await _wait(0.45)
 	var finished := 0
-	var tasks: Array = Explore.tasks_for(level_id) if Explore.has_method("tasks_for") else []
+	# a level file shared by several Story scenes files its finds and tasks under its first scene (C3P2_DESIGN §7)
+	var key := str(Game.ext.level_key(level_id)) if Game.get("ext") != null and Game.ext.has_method("level_key") else level_id
+	var tasks: Array = Explore.tasks_for(key) if Explore.has_method("tasks_for") else []
 	for t in tasks:
 		var st: Dictionary = Explore.task_state(str(t["id"]))
 		if str(st["state"]) == "done":
 			finished += 1
 		elif final:
-			_fail("explore: side task %s not completed in %s (%s, step %d)" % [t["id"], level_id, st["state"], st["step"]])
-	var c: Dictionary = Explore.counts(level_id)
+			_fail("explore: side task %s not completed in %s (%s, step %d)" % [t["id"], key, st["state"], st["step"]])
+	var c: Dictionary = Explore.counts(key)
 	print("INPUTPLAY explored %d finds in %s (Explore counts %s/%s, history %s, tasks %d/%d%s)" % [done, level_id,
 		c.get("found", 0), c.get("total", 0), Explore.history_counts(), finished, tasks.size(),
 		", final walk" if final else ""])

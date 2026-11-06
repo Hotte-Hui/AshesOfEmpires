@@ -1,13 +1,23 @@
 {
  "chapter": "c3",
- "doc": "documentation/C3_DESIGN.md §3 — presentation rules for Chapter 3 (no Story state). Variant texts: data/locale/de_c3_dialogue.json.",
+ "doc": "documentation/C3_DESIGN.md §3 and C3P2_DESIGN.md §3/§4 — presentation rules for Chapter 3 (no Story state). Variant texts: data/locale/de_c3_dialogue.json, de_c3p2_dialogue.json. Conditions may name flags or \"choice.<objective>\" (the recorded choice id).",
  "levels": {
   "L_C3_Station": "res://scenes/levels/L_C3_Station.tscn",
-  "L_C3_Hall": "res://scenes/levels/L_C3_Hall.tscn"
+  "L_C3_Hall": "res://scenes/levels/L_C3_Hall.tscn",
+  "L_C3_RegistryA": "res://scenes/levels/L_C3_Registry.tscn",
+  "L_C3_RegistryB": "res://scenes/levels/L_C3_Registry.tscn",
+  "L_C3_RegistryC": "res://scenes/levels/L_C3_Registry.tscn",
+  "L_C3_RegistryD": "res://scenes/levels/L_C3_Registry.tscn",
+  "L_C3_Quay": "res://scenes/levels/L_C3_Quay.tscn"
  },
  "entry_spawn": {
   "L_C3_Station": "SP_C3_Platform",
-  "L_C3_Hall": "SP_C3_Vestibule"
+  "L_C3_Hall": "SP_C3_Vestibule",
+  "L_C3_RegistryA": "SP_C3_Gate",
+  "L_C3_RegistryB": "SP_C3_KonradCards",
+  "L_C3_RegistryC": "SP_C3_AlexeiTable",
+  "L_C3_RegistryD": "SP_C3_KonradBooth",
+  "L_C3_Quay": "SP_C3_Quay"
  },
  "chapter_cards": {
   "L_C3_Station": [
@@ -17,6 +27,14 @@
   "L_C3_Hall": [
    "ui.chapter_c3",
    "world.c3b.title"
+  ],
+  "L_C3_RegistryA": [
+   "ui.chapter_c3",
+   "world.c3c.title"
+  ],
+  "L_C3_Quay": [
+   "ui.chapter_c3",
+   "world.c3g.title"
   ]
  },
  "palettes": {
@@ -161,6 +179,75 @@
     "#B47D63",
     "#D4A17F"
    ]
+  },
+  "registry": {
+   "night": [
+    "#06080D",
+    "#0B1017",
+    "#121A23",
+    "#1A2530"
+   ],
+   "slate": [
+    "#1E2836",
+    "#2A3646",
+    "#3A4859",
+    "#4F5E70",
+    "#687789"
+   ],
+   "oak": [
+    "#1C120C",
+    "#2B1B12",
+    "#3D271A",
+    "#553826",
+    "#6E4A33"
+   ],
+   "lamp_green": [
+    "#14261C",
+    "#1F3A2A",
+    "#2E5640",
+    "#4A7A5C",
+    "#7FAE8C"
+   ],
+   "paper": [
+    "#4A4436",
+    "#6B6350",
+    "#8E856C",
+    "#B3A98D",
+    "#D8CFB2"
+   ],
+   "brass": [
+    "#4A3415",
+    "#73531F",
+    "#9C7630",
+    "#C49A48",
+    "#E8C779"
+   ],
+   "snow": [
+    "#7D8796",
+    "#A1AAB7",
+    "#C2C9D2",
+    "#DEE2E7",
+    "#F2F3F5"
+   ],
+   "fire": [
+    "#3A0F08",
+    "#6E1E0C",
+    "#A8381A",
+    "#D8662A",
+    "#F2A044",
+    "#FCE0A0"
+   ],
+   "red": [
+    "#4A1712",
+    "#7A2218",
+    "#A8382E",
+    "#C8503C"
+   ],
+   "skin": [
+    "#885551",
+    "#B47B65",
+    "#D5A081"
+   ]
   }
  },
  "grades": {
@@ -244,6 +331,87 @@
    "grain": 0.014,
    "palette_strength": 0.0,
    "palette": "veltrava"
+  },
+  "registry": {
+   "lift": [
+    0.008,
+    0.01,
+    0.02
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    0.98,
+    1.0,
+    1.03
+   ],
+   "saturation": 0.86,
+   "tint": [
+    0.97,
+    0.99,
+    1.04
+   ],
+   "vignette": 0.36,
+   "grain": 0.02,
+   "palette_strength": 0.5,
+   "palette": "registry"
+  },
+  "registry_fire": {
+   "lift": [
+    0.02,
+    0.008,
+    0.0
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.06,
+    0.98,
+    0.9
+   ],
+   "saturation": 1.0,
+   "tint": [
+    1.06,
+    0.98,
+    0.9
+   ],
+   "vignette": 0.42,
+   "grain": 0.024,
+   "palette_strength": 0.5,
+   "palette": "registry"
+  },
+  "quay": {
+   "lift": [
+    0.012,
+    0.012,
+    0.02
+   ],
+   "gamma": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "gain": [
+    1.0,
+    0.99,
+    1.0
+   ],
+   "saturation": 0.9,
+   "tint": [
+    0.99,
+    0.99,
+    1.03
+   ],
+   "vignette": 0.32,
+   "grain": 0.018,
+   "palette_strength": 0.5,
+   "palette": "veltrava"
   }
  },
  "line_expr": {
@@ -291,7 +459,66 @@
   "c3b_meet_09": "determined",
   "c3b_meet_10": "concerned",
   "c3b_meet_11": "neutral",
-  "c3b_meet_12": "neutral"
+  "c3b_meet_12": "neutral",
+  "c3c_night_01": "concerned",
+  "c3c_night_02": "surprised",
+  "c3c_night_03": "neutral",
+  "c3c_night_04": "neutral",
+  "c3c_night_05": "concerned",
+  "c3c_night_06": "concerned",
+  "c3c_night_07": "neutral",
+  "c3c_night_08": "neutral",
+  "c3c_night_09": "neutral",
+  "c3c_night_10": "neutral",
+  "c3c_night_11": "neutral",
+  "c3c_night_12": "determined",
+  "c3c_night_13": "neutral",
+  "c3d_cmp_01": "neutral",
+  "c3d_cmp_02": "neutral",
+  "c3d_cmp_03": "neutral",
+  "c3d_cmp_04": "neutral",
+  "c3d_cmp_05": "neutral",
+  "c3d_cmp_06": "neutral",
+  "c3d_cmp_07": "determined",
+  "c3d_par_01": "neutral",
+  "c3d_par_02": "neutral",
+  "c3d_par_03": "neutral",
+  "c3d_par_04": "concerned",
+  "c3d_par_05": "surprised",
+  "c3d_par_06": "concerned",
+  "c3d_par_07": "neutral",
+  "c3d_par_08": "neutral",
+  "c3d_par_09": "determined",
+  "c3d_par_10": "concerned",
+  "c3d_par_11": "concerned",
+  "c3d_par_12": "determined",
+  "c3e_smk_01": "concerned",
+  "c3e_smk_02": "neutral",
+  "c3e_smk_03": "neutral",
+  "c3e_smk_04": "concerned",
+  "c3e_smk_05": "determined",
+  "c3e_smk_06": "determined",
+  "c3f_dsk_01": "neutral",
+  "c3f_dsk_02": "neutral",
+  "c3f_dsk_03": "determined",
+  "c3f_dsk_04": "determined",
+  "c3f_cht_01": "determined",
+  "c3f_cht_02": "concerned",
+  "c3f_cht_03": "neutral",
+  "c3f_cht_04": "neutral",
+  "c3f_cht_05": "determined",
+  "c3g_snw_01": "neutral",
+  "c3g_snw_02": "neutral",
+  "c3g_snw_03": "surprised",
+  "c3g_snw_04": "concerned",
+  "c3g_snw_05": "concerned",
+  "c3g_snw_06": "neutral",
+  "c3g_snw_07": "neutral",
+  "c3g_snw_08": "concerned",
+  "c3g_snw_09": "concerned",
+  "c3g_snw_10": "determined",
+  "c3g_snw_11": "neutral",
+  "c3g_snw_12": "determined"
  },
  "line_variants": {
   "c3a_cond_02": [
@@ -401,6 +628,186 @@
     },
     "key": "dlg.c3.meet_08.suspicion"
    }
+  ],
+  "c3c_night_01": [
+   {
+    "when": {
+     "choice.c3b_choose": "share_protocol"
+    },
+    "key": "dlg.c3p2.night_01.share"
+   },
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c3p2.night_01.report"
+   }
+  ],
+  "c3c_night_04": [
+   {
+    "when": {
+     "choice.c3a_choose": "ask_elena"
+    },
+    "key": "dlg.c3p2.night_04.cafe"
+   },
+   {
+    "when": {
+     "choice.c3a_choose": "note_alone"
+    },
+    "key": "dlg.c3p2.night_04.alone"
+   }
+  ],
+  "c3c_night_05": [
+   {
+    "when": {
+     "choice.c3b_choose": "search_elena"
+    },
+    "key": "dlg.c3p2.night_05.search"
+   }
+  ],
+  "c3c_night_11": [
+   {
+    "when": {
+     "konrad_evidence": ">=1"
+    },
+    "key": "dlg.c3p2.night_11.evidence"
+   },
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c3p2.night_11.suspicion"
+   }
+  ],
+  "c3c_night_13": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c3p2.night_13.report"
+   }
+  ],
+  "c3d_cmp_03": [
+   {
+    "when": {
+     "choice.c3b_choose": "share_protocol"
+    },
+    "key": "dlg.c3p2.cmp_03.share"
+   },
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c3p2.cmp_03.report"
+   }
+  ],
+  "c3d_cmp_04": [
+   {
+    "when": {
+     "konrad_evidence": ">=1"
+    },
+    "key": "dlg.c3p2.cmp_04.evidence"
+   },
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c3p2.cmp_04.suspicion"
+   }
+  ],
+  "c3d_cmp_05": [
+   {
+    "when": {
+     "irina_trust": ">=1"
+    },
+    "key": "dlg.c3p2.cmp_05.irina"
+   },
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c3p2.cmp_05.secrecy"
+   }
+  ],
+  "c3d_par_06": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c3p2.par_06.report"
+   }
+  ],
+  "c3d_par_11": [
+   {
+    "when": {
+     "office_suspicion": ">=1"
+    },
+    "key": "dlg.c3p2.par_11.suspicion"
+   }
+  ],
+  "c3e_smk_06": [
+   {
+    "when": {
+     "choice.c3d_choose": "pocket_plan"
+    },
+    "key": "dlg.c3p2.smk_06.pocket"
+   }
+  ],
+  "c3f_dsk_02": [
+   {
+    "when": {
+     "alexei_konrad_trust": ">=2"
+    },
+    "key": "dlg.c3p2.dsk_02.trust"
+   }
+  ],
+  "c3f_cht_02": [
+   {
+    "when": {
+     "alexei_konrad_trust": "==0"
+    },
+    "key": "dlg.c3p2.cht_02.distrust"
+   }
+  ],
+  "c3f_cht_03": [
+   {
+    "when": {
+     "alexei_konrad_trust": "==0"
+    },
+    "key": "dlg.c3p2.cht_03.distrust"
+   }
+  ],
+  "c3f_cht_04": [
+   {
+    "when": {
+     "alexei_konrad_trust": "==0"
+    },
+    "key": "dlg.c3p2.cht_04.distrust"
+   }
+  ],
+  "c3f_cht_05": [
+   {
+    "when": {
+     "alexei_konrad_trust": "==0"
+    },
+    "key": "dlg.c3p2.cht_05.distrust"
+   }
+  ],
+  "c3g_snw_06": [
+   {
+    "when": {
+     "alexei_secrecy": ">=1"
+    },
+    "key": "dlg.c3p2.snw_06.secrecy"
+   }
+  ],
+  "c3g_snw_11": [
+   {
+    "when": {
+     "choice.c3b_choose": "report_delegation"
+    },
+    "key": "dlg.c3p2.snw_11.report"
+   }
   ]
  },
  "choice_text": {
@@ -441,6 +848,56 @@
       "office_suspicion": ">=1"
      },
      "key": "choice.c3b.report_delegation.suspicion"
+    }
+   ]
+  },
+  "c3d_choose": {
+   "admit_plan": [
+    {
+     "when": {
+      "choice.c3b_choose": "report_delegation"
+     },
+     "key": "choice.c3d.admit_plan.report"
+    }
+   ],
+   "pocket_plan": [
+    {
+     "when": {
+      "konrad_evidence": ">=1"
+     },
+     "key": "choice.c3d.pocket_plan.evidence"
+    },
+    {
+     "when": {
+      "office_suspicion": ">=1"
+     },
+     "key": "choice.c3d.pocket_plan.suspicion"
+    }
+   ]
+  },
+  "c3g_choose": {
+   "split_by_language": [
+    {
+     "when": {
+      "alexei_secrecy": ">=1"
+     },
+     "key": "choice.c3g.split_by_language.secrecy"
+    }
+   ],
+   "swap_halves": [
+    {
+     "when": {
+      "alexei_konrad_trust": ">=2"
+     },
+     "key": "choice.c3g.swap_halves.trust"
+    }
+   ],
+   "hide_for_elena": [
+    {
+     "when": {
+      "elena_trust": ">=2"
+     },
+     "key": "choice.c3g.hide_for_elena.elena"
     }
    ]
   }
@@ -492,14 +949,110 @@
      "expr": "neutral"
     }
    ]
+  },
+  "c3d_choose": {
+   "admit_plan": [
+    {
+     "when": {
+      "choice.c3b_choose": "report_delegation"
+     },
+     "speaker": "alexei",
+     "key": "dlg.c3p2.react.admit_plan.report",
+     "expr": "determined"
+    },
+    {
+     "speaker": "alexei",
+     "key": "dlg.c3p2.react.admit_plan",
+     "expr": "neutral"
+    }
+   ],
+   "pocket_plan": [
+    {
+     "speaker": "alexei",
+     "key": "dlg.c3p2.react.pocket_plan",
+     "expr": "concerned"
+    }
+   ]
+  },
+  "c3g_choose": {
+   "split_by_language": [
+    {
+     "speaker": "konrad",
+     "key": "dlg.c3p2.react.split_by_language",
+     "expr": "neutral"
+    }
+   ],
+   "swap_halves": [
+    {
+     "speaker": "konrad",
+     "key": "dlg.c3p2.react.swap_halves",
+     "expr": "determined"
+    }
+   ],
+   "hide_for_elena": [
+    {
+     "speaker": "konrad",
+     "key": "dlg.c3p2.react.hide_for_elena",
+     "expr": "concerned"
+    }
+   ]
   }
  },
  "puzzles": {
-  "c3b_solve_protocol": "res://scenes/ui/ProtocolPuzzle.tscn"
+  "c3b_solve_protocol": "res://scenes/ui/ProtocolPuzzle.tscn",
+  "c3d_solve_check": "res://scenes/ui/CheckPuzzle.tscn"
  },
  "cinematics": {
   "LS_C3_Trains": "res://scenes/cinematics/ch3_trains/Ch3Trains.tscn",
   "LS_C3_ToHall": "res://scenes/cinematics/ch3_tohall/Ch3ToHall.tscn",
-  "LS_C3_Close": "res://scenes/cinematics/ch3_close/Ch3Close.tscn"
+  "LS_C3_Close": "res://scenes/cinematics/ch3_close/Ch3Close.tscn",
+  "LS_C3_Radio": "res://scenes/cinematics/ch3_radio/Ch3Radio.tscn",
+  "LS_C3_Fire": "res://scenes/cinematics/ch3_fire/Ch3Fire.tscn",
+  "LS_C3_Escape": "res://scenes/cinematics/ch3_escape/Ch3Escape.tscn",
+  "LS_C3_Halves": "res://scenes/cinematics/ch3_halves/Ch3Halves.tscn"
+ },
+ "switches": {
+  "L_C3_RegistryA": {
+   "partner": "konrad",
+   "partner_spawn": "SP_C3_KonradCards"
+  },
+  "L_C3_RegistryB": {
+   "partner_spawn": "SP_C3_AlexeiTable"
+  },
+  "L_C3_RegistryC": {
+   "partner_spawn": "SP_C3_KonradBooth",
+   "ambience": "amb_veltrava_fire",
+   "grade": "registry_fire",
+   "music": "mus_c3p2_fire"
+  },
+  "L_C3_RegistryD": {
+   "partner_spawn": "SP_C3_AlexeiChute",
+   "ambience": "amb_veltrava_fire",
+   "grade": "registry_fire",
+   "music": "mus_c3p2_fire"
+  }
+ },
+ "looks": {
+  "L_C3_RegistryC": {
+   "alexei": "alexei_soot",
+   "konrad": "konrad_soot"
+  },
+  "L_C3_RegistryD": {
+   "alexei": "alexei_soot",
+   "konrad": "konrad_soot"
+  },
+  "L_C3_Quay": {
+   "alexei": "alexei_soot",
+   "konrad": "konrad_soot",
+   "typist": "typist_night"
+  }
+ },
+ "carry": {
+  "L_C3_RegistryC": {
+   "alexei": "ev_c3_file"
+  },
+  "L_C3_RegistryD": {
+   "konrad": "ev_c3_file"
+  }
  }
 }

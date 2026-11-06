@@ -19,6 +19,9 @@ extends Camera2D
 ##    together -> no 1-px vibration against the screen), keeps its world pixel while it stands (feet planted
 ##    while the camera settles) and never steps backwards against its walking direction.
 ## reduced_motion: tighter spring, faster/shorter look-ahead, smaller dead zone.
+## In-level protagonist switch (TECHNICAL_ARCHITECTURE §12.11): retarget(actor) hands the follow to the other
+## protagonist; the window glides over on its own critically damped spring (settles in `glide` s, no overshoot) and
+## then simply keeps following; retarget(actor, true) cuts (reduced motion, black screen).
 
 signal moved(top_left: Vector2)
 
@@ -53,6 +56,8 @@ var _tq_screen := Vector2.ZERO     # _tq minus the camera's viewport px (screen 
 var _tq_valid := false
 var _tween: Tween
 var _k := 1.0                      # viewport px per world px of the active render path
+var _glide_w := 0.0                # > 0: spring frequency of a running switch glide (§12.11)
+var _glide_dist := 0.0             # distance to the goal when the glide began (progress)
 
 
 func _ready() -> void:
@@ -87,6 +92,7 @@ func snap_now() -> void:
 	_look_v = 0.0
 	_dir = 0.0
 	_dir_travel = 0.0
+	_glide_w = 0.0
 	pos = desired()
 	vel = Vector2.ZERO
 	_pos_prev = pos
@@ -127,6 +133,46 @@ func release() -> void:
 		_focus = _tp
 
 
+## Hands the follow to another actor (§12.11 in-level protagonist switch). The window glides from where it is to the
+## new target on a critically damped spring that has covered 99 % of the way after `glide` s ((1 + wt)·e^-wt = 1 %
+## at wt = 6.64); look-ahead, dead zone and the target's pixel lock start fresh. cut = snap at once.
+func retarget(t: Node2D, cut := false, glide := 1.2) -> void:
+	_kill_tween()
+	cinematic = false
+	target = t
+	vel = Vector2.ZERO
+	_look = 0.0
+	_look_v = 0.0
+	_dir = 0.0
+	_dir_travel = 0.0
+	_tq_valid = false
+	_glide_w = 0.0
+	_glide_dist = 0.0
+	if not _has_target():
+		return
+	_tp = _target_pos()
+	_tp_prev = _tp
+	_focus = _tp
+	if cut:
+		snap_now()
+		return
+	_glide_dist = (desired() - pos).length()
+	if _glide_dist > 0.5:
+		_glide_w = 6.64 / maxf(0.2, glide)
+
+
+## True while a switch glide (retarget without cut) has not settled yet.
+func is_gliding() -> bool:
+	return _glide_w > 0.0
+
+
+## 0…1: share of the way the running switch glide has covered (1 when none runs).
+func glide_progress() -> float:
+	if _glide_w <= 0.0 or _glide_dist <= 0.5:
+		return 1.0
+	return clampf(1.0 - (desired() - pos).length() / _glide_dist, 0.0, 1.0)
+
+
 func top_left() -> Vector2:
 	return drawn
 
@@ -155,6 +201,7 @@ func _kill_tween() -> void:
 	if _tween and _tween.is_valid():
 		_tween.kill()
 	_tween = null
+	_glide_w = 0.0                     # a cinematic move or a new hand-over ends a running switch glide
 
 
 func _has_target() -> bool:
@@ -191,6 +238,8 @@ func _update_follow(delta: float) -> void:
 		return
 	var rm := bool(Settings.get_value("reduced_motion"))
 	var w := smoothing * (2.0 if rm else 1.0)
+	if _glide_w > 0.0:
+		w = _glide_w
 	var wl := look_smoothing * (2.2 if rm else 1.0)
 	var la := look_ahead * (0.6 if rm else 1.0)
 	var dz := dead_zone * (0.6 if rm else 1.0)
@@ -230,6 +279,8 @@ func _update_follow(delta: float) -> void:
 	if c.y != pos.y:
 		vel.y = 0.0
 	pos = c
+	if _glide_w > 0.0 and pos == g and vel == Vector2.ZERO:
+		_glide_w = 0.0                 # the switch glide has arrived: plain following from here on
 
 
 func _apply() -> void:

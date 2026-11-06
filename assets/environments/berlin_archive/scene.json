@@ -1134,6 +1134,12 @@
  ],
  "actors": [
   {
+   "scene": "res://scenes/actors/AmbientWalkers.tscn",
+   "pos": [0, 0],
+   "props": {"data": "res://assets/environments/berlin_archive/walkers.json"},
+   "note": "round 8 ambient walkers (feel_r8): a reader and a student in the reading room"
+  },
+  {
    "scene": "res://scenes/levels/berlin/BerlinTram.tscn",
    "pos": [
     0,

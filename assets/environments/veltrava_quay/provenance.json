@@ -1,0 +1,464 @@
+{
+ "generator": "tools/pixelgen/env_c3p2_quay.py (+ _kit, _far, _near, _life)",
+ "date": "2026-11-06",
+ "area": "env_c3p2_night",
+ "licence": "project-owned original artwork, generated procedurally with fixed seeds; no copied, traced, downloaded or AI-generated pixels; fonts from env_veltrava_lib.py",
+ "run": "py -3 -P tools/pixelgen/env_c3p2_quay.py",
+ "files": [
+  {
+   "path": "assets/environments/veltrava_quay/far_bank.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the far bank: hills, the Line (double fence, floodlight masts, five watchtowers)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/far_bank_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the far bank: hills, the Line (double fence, floodlight masts, five watchtowers) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fg.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "low dark snow banks and bollards along the bottom edge (never above y 318)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/chimney_1.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "old-town chimney smoke"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/chimney_2.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "old-town chimney smoke"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/chimney_3.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "old-town chimney smoke"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/chimney_4.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "old-town chimney smoke"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/exhaust_ussr.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "the Soviet car idles: exhaust puffs at its tail"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/smoke_1.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "smoke pouring from a souterrain window, rolling up the facade and drifting right"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/smoke_2.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "smoke pouring from a souterrain window, rolling up the facade and drifting right"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/smoke_3.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "smoke pouring from a souterrain window, rolling up the facade and drifting right"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/smoke_ladder.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "smoke out of the first-floor window at the ladder"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/fx/steam_jet.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "steam where the jet hits the fire"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/glow_air.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "soft halos in the snowy air (lanterns, fire, headlight): additive, alpha in dithered steps"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/aide_kessler.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "Kessler's aide, waiting apart (briefcase, looks at his watch)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/aide_kessler_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "Kessler's aide, waiting apart (briefcase, looks at his watch) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/aide_voronova.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "Voronova's aide, waiting apart (folder, rubs his hands)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/aide_voronova_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "Voronova's aide, waiting apart (folder, rubs his hands) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/beacon.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "blue rotating lamp on the cab roof (one turn per second, no flash)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/beacon_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "blue rotating lamp on the cab roof (one turn per second, no flash) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/drivers.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "the two chauffeurs share one lighter between the cars (flame < 3 Hz), then smoke"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/drivers_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "the two chauffeurs share one lighter between the cars (flame < 3 Hz), then smoke -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/drivers_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "the two chauffeurs share one lighter between the cars (flame < 3 Hz), then smoke -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/embers_1.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "sparks rising over window 1 (emission only)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/embers_1_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "sparks rising over window 1 (emission only) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/embers_2.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "sparks rising over window 2 (emission only)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/embers_2_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "sparks rising over window 2 (emission only) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/embers_3.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "sparks rising over window 3 (emission only)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/embers_3_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "sparks rising over window 3 (emission only) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_1.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 1"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_1_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 1 -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_2.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 2"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_2_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 2 -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_3.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 3"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_3_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 3 -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_4.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 4"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_4_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 4 -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_5.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 5"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/fire_win_5_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "flames licking out of souterrain window 5 -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/hose_team.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "two firemen at the yard gate, the jet arcing into the first souterrain window"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/hose_team_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "two firemen at the yard gate, the jet arcing into the first souterrain window -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/ladder_man.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "a fireman on the turntable ladder at a first-floor window"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/ladder_man_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "a fireman on the turntable ladder at a first-floor window -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/onlookers.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "woken neighbours behind the trestle: a woman in a coat over her nightdress, an old man who points at the fire, a boy on tiptoe"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/onlookers_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "woken neighbours behind the trestle: a woman in a coat over her nightdress, an old man who points at the fire, a boy on tiptoe -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/pump_man.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "the machinist at the pump panel (looks round, works a lever)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/pump_man_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "the machinist at the pump panel (looks round, works a lever) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/searchlight_a.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "searchlight beam of a watchtower sweeping the ice, 6.7 s per sweep (emission only)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/searchlight_a_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "searchlight beam of a watchtower sweeping the ice, 6.7 s per sweep (emission only) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/searchlight_b.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "searchlight beam of a watchtower sweeping the ice, 8.0 s per sweep (emission only)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/searchlight_b_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "searchlight beam of a watchtower sweeping the ice, 8.0 s per sweep (emission only) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_1.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_1_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_2.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_2_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_3.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_3_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_4.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_4_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_5.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_5_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_6.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/life/town_win_6_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_life.py",
+   "content": "an old-town window lighting up as somebody wakes (60 s loop) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/oldtown.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the old town of our bank behind the bridge approach: gables, warm windows, church tower with a lit clock"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/oldtown_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the old town of our bank behind the bridge approach: gables, warm windows, church tower with a lit clock -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/pall.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the smoke pall of the burning east wing: fire-lit belly, drifting right over the river"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/promenade.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the quay: snow, hoses, tyre tracks, two men's footprints from the hatch to the bench, the balustrade with six lanterns, snowed-in benches, bridgehead pylon with the city arms, ramp wall, tram stop + shelter, catenary"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/promenade_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the quay: snow, hoses, tyre tracks, two men's footprints from the hatch to the bench, the balustrade with six lanterns, snowed-in benches, bridgehead pylon with the city arms, ramp wall, tram stop + shelter, catenary -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/promenade_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the quay: snow, hoses, tyre tracks, two men's footprints from the hatch to the bench, the balustrade with six lanterns, snowed-in benches, bridgehead pylon with the city arms, ramp wall, tram stop + shelter, catenary -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/bench_file.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the bench at x 760: the file burst open on the seat, two fans of sheets, the red C-17 tag, sheets in the snow, soot smudges"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/bench_file_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the bench at x 760: the file burst open on the seat, two fans of sheets, the red C-17 tag, sheets in the snow, soot smudges -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_reich.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (Reich) with its fender pennant (neutral; _hist = historical insignia)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_reich_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (Reich) with its fender pennant (neutral; _hist = historical insignia) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_reich_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (Reich) with its fender pennant (neutral; _hist = historical insignia) -- historical insignia variant (Symbols.pick, §12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_reich_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (Reich) with its fender pennant (neutral; _hist = historical insignia) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_ussr.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (USSR) with its fender pennant (neutral; _hist = historical insignia)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_ussr_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (USSR) with its fender pennant (neutral; _hist = historical insignia) -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_ussr_hist.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (USSR) with its fender pennant (neutral; _hist = historical insignia) -- historical insignia variant (Symbols.pick, §12.4)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/car_ussr_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "black delegation car (USSR) with its fender pennant (neutral; _hist = historical insignia) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/fire_engine.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/fire_engine_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/fire_engine_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, the city arms on the cab door -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/trestle.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the commission guard's striped trestle barrier (onlookers behind it)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/props/trestle_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the commission guard's striped trestle barrier (onlookers behind it) -- normal map (OpenGL +Y up)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/river.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the frozen river: drifts, pressure ridges, the open lead; the three-arch bridge with its lamps, the barrier and the guard hut of the Line"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/river_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "the frozen river: drifts, pressure ridges, the open lead; the three-arch bridge with its lamps, the barrier and the guard hut of the Line -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/scene.json",
+   "generator": "tools/pixelgen/env_c3p2_quay.py",
+   "content": "art manifest (TECHNICAL_ARCHITECTURE §3.1)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/sky.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_far.py",
+   "content": "overcast snow night over the river, faint cold glow of the floodlights on the horizon"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/wing.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the corner of the burning east wing (Kurhaus 1909): fire in the souterrain windows, mirrored in the dark upper windows, one lit dormer; yard railing, open gate, the coal hatch they came out of, coal dust and two body prints in the snow"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/wing_e.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the corner of the burning east wing (Kurhaus 1909): fire in the souterrain windows, mirrored in the dark upper windows, one lit dormer; yard railing, open gate, the coal hatch they came out of, coal dust and two body prints in the snow -- emission mask (added unshaded)"
+  },
+  {
+   "path": "assets/environments/veltrava_quay/wing_n.png",
+   "generator": "tools/pixelgen/env_c3p2_quay_near.py",
+   "content": "the corner of the burning east wing (Kurhaus 1909): fire in the souterrain windows, mirrored in the dark upper windows, one lit dormer; yard railing, open gate, the coal hatch they came out of, coal dust and two body prints in the snow -- normal map (OpenGL +Y up)"
+  }
+ ]
+}

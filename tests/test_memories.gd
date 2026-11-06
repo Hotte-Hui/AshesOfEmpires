@@ -19,7 +19,12 @@ const SAVELOAD_SCENE := "res://scenes/ui/SaveLoadMenu.tscn"
 const TMP := "user://test_memories"
 const EXPECTED := [["L_A1_Railyard", "a1_completed", "alexei", 1, false],
 	["L_M1_Archive", "m1_completed", "konrad", 2, false], ["L_M1_Plaza", "m1_completed", "konrad", 2, true],
-	["L_C3_Station", "c3a_completed", "alexei", 3, false], ["L_C3_Hall", "c3b_completed", "konrad", 3, false]]
+	["L_C3_Station", "c3a_completed", "alexei", 3, false], ["L_C3_Hall", "c3b_completed", "konrad", 3, false],
+	# Chapter 3 part 2 (C3P2_DESIGN.md): four registry scenes in one level file (each its own memory, opened with
+	# its own protagonist, TECHNICAL_ARCHITECTURE §12.11) and the quay
+	["L_C3_RegistryA", "c3c_completed", "alexei", 3, false], ["L_C3_RegistryB", "c3d_completed", "konrad", 3, false],
+	["L_C3_RegistryC", "c3e_completed", "alexei", 3, false], ["L_C3_RegistryD", "c3f_completed", "konrad", 3, false],
+	["L_C3_Quay", "c3g_completed", "alexei", 3, false]]
 
 
 class MockGame extends Node:
@@ -121,7 +126,7 @@ func _rm_tree(dir: String) -> void:
 func _scene_table() -> bool:
 	var m = MEM.new(TMP + "/unused.json")
 	var s: Array = m.scenes()
-	kit.eq(s.size(), EXPECTED.size(), "five walkable memory scenes (montage excluded)")
+	kit.eq(s.size(), EXPECTED.size(), "%d walkable memory scenes (montage excluded)" % EXPECTED.size())
 	for i in mini(s.size(), EXPECTED.size()):
 		var e: Array = EXPECTED[i]
 		kit.eq(str(s[i]["id"]), e[0], "scene %d id" % i)
@@ -261,7 +266,8 @@ func _echo_plans() -> bool:
 	var m = MEM.new(TMP + "/unused.json")
 	var g := kit.story()
 	g.new_game()
-	kit.play_until(g, "c3b", {"a1": "keep_private", "c3a": "note_alone", "c3b": "report_delegation"})
+	kit.play_until(g, "c3g", {"a1": "keep_private", "c3a": "note_alone", "c3b": "report_delegation", "c3d": "pocket_plan",
+		"c3g": "hide_for_elena"})
 	var before: String = g.save_json()
 	var live_before: String = Story.save_json()
 	var game_script = load("res://scripts/core/game.gd")
@@ -638,7 +644,7 @@ func _game_cards() -> bool:
 	Story.new_game()
 	kit.play_a1(Story)
 	var cards: Array = game.memory_scenes("game")
-	kit.eq(cards.size(), 5, "five cards")
+	kit.eq(cards.size(), EXPECTED.size(), "one card per memory scene")
 	kit.ok(bool(cards[0]["unlocked"]) and str(cards[0]["place"]) != "", "Karsk card open with its place")
 	kit.ok(int(cards[0]["total"]) > 0, "Karsk card counts its finds")
 	for i in range(1, cards.size()):
@@ -704,7 +710,7 @@ func _view() -> bool:
 	var v: Control = _mount(VIEW_SCENE)
 	v.open("game")
 	kit.ok(v.is_open, "MemoryView opens")
-	kit.eq(v.cards.size(), 5, "five cards")
+	kit.eq(v.cards.size(), 5, "five cards (the mock game's)")
 	kit.eq(TKit.sorted(v.buttons), ["L_A1_Railyard", "L_M1_Archive"], "only unlocked, non-current cards can be chosen")
 	var text := _labels_text(v)
 	kit.ok(text.contains("Verladebahnhof Karsk") and text.contains("3 / 25"), "unlocked card shows place and finds")

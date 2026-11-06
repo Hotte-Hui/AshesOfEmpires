@@ -50,8 +50,11 @@ func _ready() -> void:
 	_progress.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	right.add_child(_progress)
 	root.add_child(Kit.rule(Color(0, 0, 0, 0), 18))
-	var tabs := Kit.hbox(6)
-	tabs.add_theme_constant_override("separation", 6)
+	# round 8: a flow row -- when seven tabs with late-game counters do not fit at a readable size they wrap onto
+	# a second row of index tabs instead of shrinking to 16 px
+	var tabs := HFlowContainer.new()
+	tabs.add_theme_constant_override("h_separation", 6)
+	tabs.add_theme_constant_override("v_separation", 4)
 	var pad := Control.new()
 	pad.custom_minimum_size.x = 30
 	tabs.add_child(pad)
@@ -113,14 +116,22 @@ func _update_tab_titles() -> void:
 	_fit_tabs()
 
 
-## Seven index tabs with their counters must stay inside the 1500 px sheet: the label size steps down from the
-## theme's 24 px (counters three spaces after the label, as before); if even 19 px is too wide, the counters
-## move closer and the lead-in before the first tab shrinks.
+## Seven index tabs with their counters on the 1500 px sheet: the label size steps down from the theme's 24 px
+## (counters three spaces after the label, as before) to TAB_MIN_FS; then the counters move closer and the lead-in
+## before the first tab shrinks; if even that is too wide, the labels keep TAB_MIN_FS and the flow row wraps onto
+## a second row of tabs (round 8: late-game counters used to shrink them to 16-17 px).
+const TAB_MIN_FS := 20
+
+
 func _fit_tabs() -> void:
 	var row: Control = (_tab_buttons[TABS[0]] as Button).get_parent()
 	var pad: Control = row.get_child(0) if row != null and row.get_child_count() > 0 else null
-	var sep := float(row.get_theme_constant("separation")) if row is BoxContainer else 6.0
-	for variant in [["   ", 30.0, [24, 22, 21, 20, 19]], ["  ", 12.0, [21, 20, 19, 18, 17, 16]]]:
+	var sep := 6.0
+	if row is FlowContainer:
+		sep = float(row.get_theme_constant("h_separation"))
+	elif row is BoxContainer:
+		sep = float(row.get_theme_constant("separation"))
+	for variant in [["   ", 30.0, [24, 22, 21, TAB_MIN_FS]], ["  ", 12.0, [TAB_MIN_FS]]]:
 		var avail: float = 1500.0 - float(variant[1]) - sep * float(TABS.size())
 		for fs in variant[2]:
 			var total := 0.0
@@ -134,6 +145,21 @@ func _fit_tabs() -> void:
 				pad.custom_minimum_size.x = float(variant[1])
 			if total <= avail:
 				return
+
+
+## True when the index tabs currently need two rows (the flow row wraps).
+func tabs_wrapped() -> bool:
+	var row: Control = (_tab_buttons[TABS[0]] as Button).get_parent()
+	if not (row is FlowContainer):
+		return false
+	var sep := float(row.get_theme_constant("h_separation"))
+	var total := 0.0
+	for c in row.get_children():
+		if c is Button:
+			total += _tab_width(c as Button, (c as Button).get_theme_font_size("font_size")) + sep
+		elif c is Control:
+			total += (c as Control).custom_minimum_size.x + sep
+	return total - sep > 1500.0
 
 
 ## Width a tab needs at font size fs: measured text + the widest of its paper tab frames.

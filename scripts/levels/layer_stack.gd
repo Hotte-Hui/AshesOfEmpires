@@ -13,7 +13,9 @@ extends Node2D
 ##   layers[].blend "add" | "mix" (default)        layers[].alpha 0..1 (default 1)        fx[].alpha 0..1
 ##   "decals": [{"file", "pos": [x, y], "z": 0, "parallax": [px, py] | p, "layer"?: "<layer name>|playfield",
 ##               "lit"?: true, "normal"?: true, "emission"?: false, "emission_strength"?: 0.22, "alpha"?: 1,
-##               "flip_h"?: false, "frames"?: 1, "fps"?: 6, "base_y"?: y, "name"?: "..."}]
+##               "flip_h"?: false, "frames"?: 1, "fps"?: 6, "t0"?: s, "base_y"?: y, "name"?: "..."}]
+##   looping strips (decals and fx with frames > 1) start at "t0" seconds, default = a stable hash of name +
+##   position over one loop (round 8), so neighbouring loops never pulse in sync
 ##   (see documentation/asset_manifest_parts/render-camera.md for the full decal contract)
 
 const SnowFx := preload("res://scripts/levels/fx_snow.gd")
@@ -243,11 +245,16 @@ func _build_decal(D: Dictionary, playfield: Node2D) -> void:
 			es.flip_h = spr.flip_h
 			node.add_child(es)
 			if frames > 1:
-				_anims.append({"sprite": es, "frames": frames, "fps": float(D.get("fps", 6)), "t": 0.0})
+				_anims.append({"sprite": es, "frames": frames, "fps": float(D.get("fps", 6)),
+					"t": loop_t0(D, "%s@%d,%d" % [nm, int(pos.x), int(pos.y)], frames, float(D.get("fps", 6)))})
 	if D.has("alpha"):
 		node.modulate.a = clampf(float(D["alpha"]), 0.0, 1.0)
 	if frames > 1:
-		_anims.append({"sprite": spr, "frames": frames, "fps": float(D.get("fps", 6)), "t": 0.0})
+		# round 8: every loop starts at its own deterministic phase ("t0" or a hash of name + position), so
+		# neighbouring decor loops never pulse in sync; the emission strip above shares the same phase
+		_anims.append({"sprite": spr, "frames": frames, "fps": float(D.get("fps", 6)),
+			"t": loop_t0(D, "%s@%d,%d" % [nm, int(pos.x), int(pos.y)], frames, float(D.get("fps", 6)))})
+		spr.frame = int(float(_anims[-1]["t"]) * float(D.get("fps", 6))) % frames
 	TexelLightLib.apply(spr, pos, Vector2(t.get_width() / frames, t.get_height()) if frames > 1 else Vector2.ZERO)
 	var on := str(D.get("layer", ""))
 	if on == "playfield":
@@ -329,7 +336,10 @@ func _build_fx(fx: Dictionary, fx_root: Node2D) -> void:
 			add_child(holder)
 			holder.position = home
 			_parallax.append({"node": holder, "home": home, "parallax": _par(fx.get("parallax", 1.0))})
-			_anims.append({"sprite": spr, "frames": frames, "fps": float(fx.get("fps", 6)), "t": randf() * 5.0})
+			# deterministic phase (was randf() * 5): same look in every run and capture, still out of sync
+			_anims.append({"sprite": spr, "frames": frames, "fps": float(fx.get("fps", 6)),
+				"t": loop_t0(fx, "fx:%s@%d,%d" % [str(fx["file"]), int(home.x), int(home.y)], frames,
+					float(fx.get("fps", 6)))})
 		"fog_band":
 			_build_fog(fx)
 
@@ -397,6 +407,24 @@ func _process(delta: float) -> void:
 	for a in _anims:
 		a["t"] += delta
 		a["sprite"].frame = int(a["t"] * a["fps"]) % int(a["frames"])
+
+
+## Start time (s) of a looping strip: the entry's "t0" when given (>= 0), else a stable hash of `key`
+## (decal name + position) spread over one full loop. 0 for still sprites.
+static func loop_t0(entry: Dictionary, key: String, frames: int, fps: float) -> float:
+	if entry.has("t0"):
+		return maxf(0.0, float(entry["t0"]))
+	if frames <= 1 or fps <= 0.0:
+		return 0.0
+	return float(name_hash(key) % 1009) / 1009.0 * float(frames) / fps
+
+
+## FNV-1a (32 bit) over the UTF-8 bytes: identical on every run and platform (unlike randf()).
+static func name_hash(s: String) -> int:
+	var h := 2166136261
+	for b in s.to_utf8_buffer():
+		h = ((h ^ b) * 16777619) & 0xFFFFFFFF
+	return h
 
 
 static func _par(pv) -> Vector2:

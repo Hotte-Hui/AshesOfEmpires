@@ -1,0 +1,11 @@
+{
+ "doc": "Exploration hotspots (Level._merge_explore_hotspots; scene.json wins on name clashes). Append-only: one block per contributing area. Keep >= 24 px from the story hotspots of C3P2_DESIGN.md §5.",
+ "hotspots": {
+  "exp_gate_sign": [80, 300], "exp_two_tracks": [146, 300], "exp_handcart": [268, 300], "exp_hatch": [336, 300],
+  "exp_card_alexei": [532, 300], "exp_thermos": [586, 300], "exp_radio": [666, 300],
+  "exp_fire_bucket": [712, 300], "exp_card_konrad": [770, 300], "exp_ladder": [826, 300], "exp_stamps": [1050, 300],
+  "exp_kartei": [1152, 300], "exp_window_feet": [1206, 300], "exp_plan_chests": [1292, 300],
+  "exp_kurhaus_plaque": [1574, 300], "exp_cassation": [1722, 300]
+ },
+ "spawns": {}
+}

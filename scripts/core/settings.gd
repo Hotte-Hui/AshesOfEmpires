@@ -59,6 +59,16 @@ func _build_input_map() -> void:
 			var jb := InputEventJoypadButton.new()
 			jb.button_index = b
 			InputMap.action_add_event(action, jb)
+	# Pad A presses the focused button in every menu: Godot's built-in ui_accept has no pad button (Enter, Kp Enter,
+	# Space only). Modals that also read "interact"/"advance" (pad A too) treat both as one press.
+	var has_a := false
+	for e in InputMap.action_get_events("ui_accept"):
+		if e is InputEventJoypadButton and (e as InputEventJoypadButton).button_index == JOY_BUTTON_A:
+			has_a = true
+	if not has_a:
+		var ja := InputEventJoypadButton.new()
+		ja.button_index = JOY_BUTTON_A
+		InputMap.action_add_event("ui_accept", ja)
 	var axes := {"move_left": [JOY_AXIS_LEFT_X, -1.0], "move_right": [JOY_AXIS_LEFT_X, 1.0],
 		"move_up": [JOY_AXIS_LEFT_Y, -1.0], "move_down": [JOY_AXIS_LEFT_Y, 1.0]}
 	for action in axes:

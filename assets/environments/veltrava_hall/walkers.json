@@ -1,0 +1,132 @@
+{
+ "doc": "Ambient walkers (round 8, feel pass): scripts/actors/ambient_walker.gd, instanced by the scene.json actor res://scenes/actors/AmbientWalkers.tscn. Variant sheets in walkers/ from tools/pixelgen/walkers_r8.py (same silhouettes as the source character, other clothes / hair). Owner: feel_r8. Schema: see the header of ambient_walker.gd. Palais: lane y 295 = in front of every prop (base_y <= 294), behind the walk band (>= 296) and the speaking NPCs (300); no pause near a speaker or a story hotspot.",
+ "walkers": [
+  {
+   "id": "hall_pressman",
+   "char": "journalist",
+   "sheet": "walkers/pressman.png",
+   "path": [
+    [
+     96,
+     295.0
+    ],
+    [
+     248,
+     295.0
+    ],
+    [
+     470,
+     295.0
+    ],
+    [
+     628,
+     295.0
+    ]
+   ],
+   "speed": 24,
+   "start": 0.35,
+   "dir": 1,
+   "pauses": {
+    "1": [
+     2.0,
+     4.0
+    ],
+    "2": [
+     3.0,
+     5.5
+    ]
+   },
+   "pause_rows": [
+    "look_side",
+    "idle_front",
+    "gesture_side"
+   ],
+   "pause_clear": 36,
+   "note": "second press man between the entrance, the cloakroom and the photo wall"
+  },
+  {
+   "id": "hall_secretary",
+   "char": "typist",
+   "sheet": "walkers/secretary.png",
+   "path": [
+    [
+     1196,
+     295.0
+    ],
+    [
+     1040,
+     295.0
+    ],
+    [
+     962,
+     295.0
+    ],
+    [
+     800,
+     295.0
+    ]
+   ],
+   "speed": 19,
+   "start": 0.6,
+   "dir": 1,
+   "pauses": {
+    "2": [
+     2.0,
+     3.5
+    ],
+    "3": [
+     2.5,
+     5.0
+    ]
+   },
+   "pause_rows": [
+    "idle_front",
+    "look_side"
+   ],
+   "pause_clear": 36,
+   "note": "delegation secretary: office -> session-hall doors -> buffet and back"
+  },
+  {
+   "id": "hall_delegate",
+   "char": "clerk",
+   "sheet": "walkers/delegate.png",
+   "path": [
+    [
+     1296,
+     295.0
+    ],
+    [
+     1420,
+     295.0
+    ],
+    [
+     1530,
+     295.0
+    ],
+    [
+     1612,
+     295.0
+    ]
+   ],
+   "speed": 17,
+   "start": 0.2,
+   "dir": 1,
+   "pauses": {
+    "1": [
+     2.0,
+     4.0
+    ],
+    "2": [
+     3.0,
+     5.0
+    ]
+   },
+   "pause_rows": [
+    "look_side",
+    "idle_front"
+   ],
+   "pause_clear": 36,
+   "note": "elderly delegate with his files: mimeograph room -> headsets -> booth 1 (stays clear of Alexei at 1718)"
+  }
+ ]
+}

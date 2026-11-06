@@ -515,8 +515,14 @@ func _live() -> bool:
 	return true
 
 
+## Round-7 tasks only (the five walkable levels of LEVELS); later rounds test their own tasks
+## (Chapter 3 part 2: tests/test_c3p2_explore.gd, texts in data/locale/de_explore_c3p2.json).
+func _round7(tasks: Array) -> Array:
+	return tasks.filter(func(t): return LEVELS.has(str(t.get("level", ""))))
+
+
 func _five() -> bool:
-	var tasks: Array = real.tasks_for("") if real != null else []
+	var tasks: Array = _round7(real.tasks_for("") if real != null else [])
 	kit.eq(tasks.size(), 5, "five side tasks")
 	var per := {}
 	for t in tasks:
@@ -559,7 +565,7 @@ func _placed() -> bool:
 			if real.has_entry(first):
 				kit.eq(n["kind"], "chat" if str(real.entry(first).get("kind", "")) == "chat" else "discover",
 					"%s/%s: node kind matches its starting entry" % [lid, n["name"]])
-	for t in real.tasks_for(""):
+	for t in _round7(real.tasks_for("")):
 		for sid in real.task_steps(str(t["id"])):
 			kit.eq((count.get(str(sid), []) as Array).size(), 1, "task step %s placed exactly once %s" % [sid, count.get(str(sid), [])])
 	for id in my_entries:
@@ -631,7 +637,7 @@ func _texts() -> bool:
 		mine.call(str(e.get("text_key", "")), id + " text", 520 if str(e.get("kind", "")) != "chat" else 240)
 		for l in e.get("lines", []):
 			mine.call(str(l.get("key", "")), id + " line", 200)
-	for t in real.tasks_for(""):
+	for t in _round7(real.tasks_for("")):
 		mine.call(str(t.get("title_key", "")), str(t["id"]) + " title", 32)
 		mine.call(str(t.get("summary_key", "")), str(t["id"]) + " summary", 200)
 		for s in t.get("steps", []):

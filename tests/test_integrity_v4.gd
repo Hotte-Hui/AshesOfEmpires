@@ -97,10 +97,11 @@ func _test_deep_valid() -> bool:
 	var shotlist := read_csv(SHOTLIST)
 	kit.eq(validate_manifests(d, registry, shotlist, root), "", "production manifests valid")
 	kit.ok(registry.size() >= 25, "assets >= 25 (got %d)" % registry.size())
-	# The slice locked three sequences; Chapter 3 adds LS_C3_Trains, LS_C3_ToHall, LS_C3_Close (C3_DESIGN §2.9).
-	kit.eq(r.get("report", {}).get("cinematics"), 6, "six locked cinematics")
+	# The slice locked three sequences; Chapter 3 adds LS_C3_Trains, LS_C3_ToHall, LS_C3_Close (C3_DESIGN §2.9),
+	# part 2 LS_C3_Radio, LS_C3_Fire, LS_C3_Escape, LS_C3_Halves (C3P2_DESIGN §2.9).
+	kit.eq(r.get("report", {}).get("cinematics"), 10, "ten locked cinematics")
 	kit.eq(Kit.sorted(ENGINE.LOCKED_CINEMATICS), Kit.sorted(["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final", "LS_C3_Trains",
-		"LS_C3_ToHall", "LS_C3_Close"]), "validator list of locked cinematics")
+		"LS_C3_ToHall", "LS_C3_Close", "LS_C3_Radio", "LS_C3_Fire", "LS_C3_Escape", "LS_C3_Halves"]), "validator list of locked cinematics")
 	return true
 
 

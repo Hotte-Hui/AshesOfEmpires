@@ -1,0 +1,13 @@
+{
+ "side": "reich",
+ "doc": "documentation/C3P2_DESIGN.md §7, TECHNICAL_ARCHITECTURE §12.3 — real-history card of Chapter 3 part 2 (presented outside the fiction as „REALE GESCHICHTE“). Text: data/locale/de_history_c3p2.json. Unlocked by veltrava.registry.card_konrad (Konrad finds his own index card). Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen (Bundesarchiv, Tracing the Past e. V., Aly/Roth mit Rezensionen).",
+ "cards": [
+  {"id": "hist.reich.census_1939", "side": "reich", "title_key": "hist.reich.census_1939.title",
+   "text_key": "hist.reich.census_1939.text", "year": "1939",
+   "sources": [
+    {"label": "Bundesarchiv: Residentenliste dokumentiert NS-Verfolgung von Jüdinnen und Juden (Pressemitteilung, 27.05.2024) – Ergänzungskarten der Volkszählung vom 17. Mai 1939, Bestand R 1509", "url": "https://www.bundesarchiv.de/nachricht/residentenliste-dokumentiert-ns-verfolgung-von-juedinnen-und-juden/"},
+    {"label": "Tracing the Past e. V., Mapping the Lives: The 1939 Census – supplementary cards on the four grandparents, later at the Reichssippenamt", "url": "https://tracingthepast.org/?p=251"},
+    {"label": "G. Aly, K. H. Roth: Die restlose Erfassung. Volkszählen, Identifizieren, Aussondern im Nationalsozialismus (1984; Neuausgabe S. Fischer 2000) – Buchnotiz und Rezensionen", "url": "https://www.perlentaucher.de/buch/goetz-aly-karl-heinz-roth/die-restlose-erfassung.html"}
+   ]}
+ ]
+}

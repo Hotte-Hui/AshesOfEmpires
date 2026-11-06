@@ -67,6 +67,66 @@
     180
    ],
    "source": "src/raw_L_C3_Hall.png"
+  },
+  {
+   "crop": [
+    150,
+    124
+   ],
+   "file": "L_C3_RegistryA.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_RegistryA.png"
+  },
+  {
+   "crop": [
+    236,
+    124
+   ],
+   "file": "L_C3_RegistryB.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_RegistryB.png"
+  },
+  {
+   "crop": [
+    320,
+    124
+   ],
+   "file": "L_C3_RegistryC.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_RegistryC.png"
+  },
+  {
+   "crop": [
+    100,
+    124
+   ],
+   "file": "L_C3_RegistryD.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_RegistryD.png"
+  },
+  {
+   "crop": [
+    225,
+    124
+   ],
+   "file": "L_C3_Quay.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_Quay.png"
   }
  ],
  "generator": "tools/pixelgen/gen_ui_memories.py"

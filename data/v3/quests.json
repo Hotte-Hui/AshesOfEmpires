@@ -4,7 +4,12 @@
     "a1_completed",
     "m1_completed",
     "c3a_completed",
-    "c3b_completed"
+    "c3b_completed",
+    "c3c_completed",
+    "c3d_completed",
+    "c3e_completed",
+    "c3f_completed",
+    "c3g_completed"
   ],
   "quests": [
     {
@@ -372,6 +377,274 @@
               "text_key": "choice.c3b.report_delegation",
               "effects": {
                 "kessler_alerted": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_c3c_registry",
+      "title_key": "ui.chapter_c3",
+      "character": "alexei",
+      "scene": "L_C3_RegistryA",
+      "requires_events": [
+        "c3b_completed"
+      ],
+      "completion_event": "c3c_completed",
+      "objectives": [
+        {
+          "id": "c3c_inspect_crates",
+          "type": "inspect",
+          "text_key": "obj.c3c_crates",
+          "requires": [],
+          "grant_item": "ev_c3_cut_seal"
+        },
+        {
+          "id": "c3c_inspect_night_book",
+          "type": "inspect",
+          "text_key": "obj.c3c_night_book",
+          "requires": [
+            "c3c_inspect_crates"
+          ],
+          "grant_item": "ev_c3_night_book"
+        },
+        {
+          "id": "c3c_talk_konrad",
+          "type": "dialogue",
+          "text_key": "obj.c3c_konrad",
+          "requires": [
+            "c3c_inspect_night_book"
+          ],
+          "dialogue_id": "dlg_c3c_night"
+        }
+      ]
+    },
+    {
+      "id": "q_c3d_check",
+      "title_key": "ui.chapter_c3",
+      "character": "konrad",
+      "scene": "L_C3_RegistryB",
+      "requires_events": [
+        "c3c_completed"
+      ],
+      "completion_event": "c3d_completed",
+      "objectives": [
+        {
+          "id": "c3d_inspect_intake",
+          "type": "inspect",
+          "text_key": "obj.c3d_intake",
+          "requires": [],
+          "grant_item": "ev_c3_intake_book"
+        },
+        {
+          "id": "c3d_inspect_drawer",
+          "type": "inspect",
+          "text_key": "obj.c3d_drawer",
+          "requires": [],
+          "grant_item": "ev_c3_scarf"
+        },
+        {
+          "id": "c3d_talk_compare",
+          "type": "dialogue",
+          "text_key": "obj.c3d_compare",
+          "requires": [
+            "c3d_inspect_intake",
+            "c3d_inspect_drawer"
+          ],
+          "dialogue_id": "dlg_c3d_compare",
+          "grant_item": "ev_c3_halves"
+        },
+        {
+          "id": "c3d_solve_check",
+          "type": "puzzle",
+          "text_key": "obj.c3d_check",
+          "requires": [
+            "c3d_talk_compare"
+          ],
+          "puzzle_id": "pz_c3_check"
+        },
+        {
+          "id": "c3d_inspect_plan",
+          "type": "inspect",
+          "text_key": "obj.c3d_plan",
+          "requires": [
+            "c3d_solve_check"
+          ],
+          "grant_item": "ev_c3_kordon_plan"
+        },
+        {
+          "id": "c3d_talk_partner",
+          "type": "dialogue",
+          "text_key": "obj.c3d_partner",
+          "requires": [
+            "c3d_inspect_plan"
+          ],
+          "dialogue_id": "dlg_c3d_partner"
+        },
+        {
+          "id": "c3d_choose",
+          "type": "choice",
+          "text_key": "obj.c3d_choice",
+          "requires": [
+            "c3d_talk_partner"
+          ],
+          "choices": [
+            {
+              "id": "admit_plan",
+              "text_key": "choice.c3d.admit_plan",
+              "effects": {
+                "alexei_konrad_trust": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "pocket_plan",
+              "text_key": "choice.c3d.pocket_plan",
+              "effects": {
+                "evidence_chain": {
+                  "delta": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q_c3e_smoke",
+      "title_key": "ui.chapter_c3",
+      "character": "alexei",
+      "scene": "L_C3_RegistryC",
+      "requires_events": [
+        "c3d_completed"
+      ],
+      "completion_event": "c3e_completed",
+      "objectives": [
+        {
+          "id": "c3e_take_file",
+          "type": "inspect",
+          "text_key": "obj.c3e_file",
+          "requires": [],
+          "grant_item": "ev_c3_file"
+        },
+        {
+          "id": "c3e_try_ramp",
+          "type": "inspect",
+          "text_key": "obj.c3e_ramp",
+          "requires": [
+            "c3e_take_file"
+          ],
+          "grant_item": "ev_c3_bolt"
+        },
+        {
+          "id": "c3e_reach_konrad",
+          "type": "dialogue",
+          "text_key": "obj.c3e_konrad",
+          "requires": [
+            "c3e_try_ramp"
+          ],
+          "dialogue_id": "dlg_c3e_smoke"
+        }
+      ]
+    },
+    {
+      "id": "q_c3f_chute",
+      "title_key": "ui.chapter_c3",
+      "character": "konrad",
+      "scene": "L_C3_RegistryD",
+      "requires_events": [
+        "c3e_completed"
+      ],
+      "completion_event": "c3f_completed",
+      "objectives": [
+        {
+          "id": "c3f_inspect_hose",
+          "type": "inspect",
+          "text_key": "obj.c3f_hose",
+          "requires": [],
+          "grant_item": "ev_c3_cut_hose"
+        },
+        {
+          "id": "c3f_push_desk",
+          "type": "dialogue",
+          "text_key": "obj.c3f_desk",
+          "requires": [
+            "c3f_inspect_hose"
+          ],
+          "dialogue_id": "dlg_c3f_desk"
+        },
+        {
+          "id": "c3f_climb",
+          "type": "dialogue",
+          "text_key": "obj.c3f_chute",
+          "requires": [
+            "c3f_push_desk"
+          ],
+          "dialogue_id": "dlg_c3f_chute"
+        }
+      ]
+    },
+    {
+      "id": "q_c3g_snow",
+      "title_key": "ui.chapter_c3",
+      "character": "alexei",
+      "scene": "L_C3_Quay",
+      "requires_events": [
+        "c3f_completed"
+      ],
+      "completion_event": "c3g_completed",
+      "objectives": [
+        {
+          "id": "c3g_inspect_halves",
+          "type": "inspect",
+          "text_key": "obj.c3g_file",
+          "requires": [],
+          "grant_item": "ev_c3_escort_list"
+        },
+        {
+          "id": "c3g_talk_konrad",
+          "type": "dialogue",
+          "text_key": "obj.c3g_konrad",
+          "requires": [
+            "c3g_inspect_halves"
+          ],
+          "dialogue_id": "dlg_c3g_snow"
+        },
+        {
+          "id": "c3g_choose",
+          "type": "choice",
+          "text_key": "obj.c3g_choice",
+          "requires": [
+            "c3g_talk_konrad"
+          ],
+          "choices": [
+            {
+              "id": "split_by_language",
+              "text_key": "choice.c3g.split_by_language",
+              "effects": {
+                "evidence_chain": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "swap_halves",
+              "text_key": "choice.c3g.swap_halves",
+              "effects": {
+                "alexei_konrad_trust": {
+                  "delta": 1
+                }
+              }
+            },
+            {
+              "id": "hide_for_elena",
+              "text_key": "choice.c3g.hide_for_elena",
+              "effects": {
+                "elena_trust": {
                   "delta": 1
                 }
               }

@@ -11,6 +11,9 @@ extends "res://scripts/ui/ui_modal.gd"
 ## Text scale and high contrast follow the settings.
 ## Data: Game.memory_scenes(context) -> [{id, unlocked, current, place, date, chapter, who, thumb, found, total}],
 ## Game.memory_films(context) -> [{id, unlocked, title, sub}].
+## Round 8 (feel_r8): the panel it was opened from is dimmed fully; the cards carry explicit grid focus
+## neighbours (arrows reach every row at any text scale, the scroll follows); a main-menu memory whose recorded
+## state cannot be opened says why right in the view (toasts are held while the view is open).
 
 signal travel_requested(scene_id: String, from_menu: bool)
 signal film_requested(film_id: String, from_menu: bool)
@@ -41,11 +44,14 @@ var _empty: Label
 var _footer: Control
 var _footer_box: VBoxContainer
 var _selected := ""
+var _notice: Label
+var _notice_t := 0.0
+const NOTICE_SECS := 7.0
 
 
 func _ready() -> void:
 	pauses_game = true
-	add_child(Kit.dimmer(0.95))   # the panel it was opened from (pause / main menu) stays out of sight
+	add_child(Kit.dimmer(1.0))    # the panel it was opened from (pause / main menu) stays fully out of sight
 	var root := Kit.vbox(0)
 	Kit.full_rect(root)
 	root.offset_left = 150
@@ -105,6 +111,13 @@ func _ready() -> void:
 	Kit.scalable(_empty, 28)
 	_empty.visible = false
 	root.add_child(_empty)
+	# why a memory cannot be opened (main menu: broken / missing recorded state); toasts wait while we are open
+	_notice = Kit.wrap_label("", "BodyLabel")
+	_notice.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_notice.add_theme_color_override("font_color", Kit.C_AMBER)
+	Kit.scalable(_notice, 24)
+	_notice.visible = false
+	root.add_child(_notice)
 	root.add_child(Kit.rule(Color(0, 0, 0, 0), 8))
 	_footer_box = Kit.vbox(0)
 	root.add_child(_footer_box)
@@ -132,6 +145,7 @@ func open(ctx := "game", start_page := "scenes") -> void:
 func show_page(id: String) -> void:
 	if not (id in PAGES):
 		return
+	hide_notice()
 	if id != page:
 		Kit.ui_sound("page")
 	page = id
@@ -171,6 +185,7 @@ func refresh() -> void:
 	_empty.text = Kit.t("ui.memories.empty" if page == "scenes" else "ui.memories.empty_films")
 	_empty.visible = not any_open
 	_build_footer()
+	_link_focus()
 	if keep != "" and buttons.has(keep):
 		_selected = keep
 	if is_open:
@@ -381,8 +396,107 @@ func _photo(c: Dictionary) -> Control:
 
 
 func _on_focus(id: String) -> void:
+	if id != _selected:
+		hide_notice()
 	_selected = id
 	Kit.ui_sound("move")
+
+
+## Explicit focus neighbours in reading order (rows of three, centred): down / up go to the nearest choosable
+## card of the next / previous row that has one, left / right step through the cards in reading order. The
+## automatic search of the engine skips rows that the scroll container clips (second row at 150 % text).
+func _link_focus() -> void:
+	var grid: Array = []                       # [[{b, cx}], ...] choosable cards per row
+	for row in _rows.get_children():
+		var cells: Array = []
+		var n := row.get_child_count()
+		for j in n:
+			var card: Node = row.get_child(j)
+			for b in buttons.values():
+				if (b as Button).get_parent() == card:
+					cells.append({"b": b, "cx": float(j) - float(n - 1) * 0.5})
+		grid.append(cells)
+	var flat: Array = []
+	for cells in grid:
+		for cell in cells:
+			flat.append(cell["b"])
+	for r in grid.size():
+		for cell in grid[r]:
+			var b: Button = cell["b"]
+			var i := flat.find(b)
+			var prev: Button = flat[i - 1] if i > 0 else null
+			var nxt: Button = flat[i + 1] if i < flat.size() - 1 else null
+			var down := _nearest(grid, r, 1, float(cell["cx"]))
+			var up := _nearest(grid, r, -1, float(cell["cx"]))
+			for pair in [["focus_neighbor_left", prev], ["focus_neighbor_right", nxt], ["focus_neighbor_bottom", down],
+					["focus_neighbor_top", up], ["focus_previous", prev], ["focus_next", nxt]]:
+				var target: Button = pair[1] if pair[1] != null else b
+				b.set(str(pair[0]), b.get_path_to(target))
+
+
+## Nearest choosable card (by column centre) in the first row after / before `r` that has one.
+static func _nearest(grid: Array, r: int, step: int, cx: float) -> Button:
+	var rr := r + step
+	while rr >= 0 and rr < grid.size():
+		var best: Button = null
+		var dist := INF
+		for cell in grid[rr]:
+			var d := absf(float(cell["cx"]) - cx)
+			if d < dist - 0.01:
+				dist = d
+				best = cell["b"]
+		if best != null:
+			return best
+		rr += step
+	return null
+
+
+## Shows `text` under the cards for a while (amber); hidden again on the next selection or page.
+func show_notice(text: String) -> void:
+	if _notice == null:
+		return
+	_notice.text = text
+	_notice.visible = text != ""
+	_notice_t = NOTICE_SECS
+
+
+func hide_notice() -> void:
+	if _notice != null:
+		_notice.visible = false
+		_notice.text = ""
+	_notice_t = 0.0
+
+
+func notice_text() -> String:
+	return _notice.text if _notice != null and _notice.visible else ""
+
+
+func _process(delta: float) -> void:
+	if _notice_t > 0.0:
+		_notice_t -= delta
+		if _notice_t <= 0.0:
+			hide_notice()
+
+
+## Main menu: why the recorded state of `id` cannot be opened ("" = it can). Only asked when the Game service
+## exposes the memories helper (the real one does); a broken record never reaches travel_to_memory, so its
+## toast cannot pop up later, out of context.
+func snapshot_problem(id: String) -> String:
+	var g := Kit.svc("Game")
+	var mem = g.get("memories") if g != null else null
+	if mem == null or not (mem is Object) or not mem.has_method("snapshot_raw"):
+		return ""
+	var raw := str(mem.snapshot_raw(id))
+	if raw == "":
+		return Kit.t("ui.memories.broken_reason.missing")
+	var st := Kit.svc("Story")
+	if st == null or not st.has_method("validate_save_json"):
+		return ""
+	var check = st.validate_save_json(raw)
+	if check is Dictionary and bool(check.get("ok", false)):
+		return ""
+	var key := str(check.get("error_key", "")) if check is Dictionary else ""
+	return Kit.t(key) if key != "" and Kit.has_key(key) else Kit.t("ui.memories.broken_reason.unknown")
 
 
 ## Selects a card by scene id (keyboard focus); false when it cannot be chosen.
@@ -422,6 +536,12 @@ func activate(id: String) -> bool:
 	if c.is_empty() or not is_selectable(c):
 		Kit.ui_sound("back")
 		return false
+	if from_menu:
+		var why := snapshot_problem(id)
+		if why != "":
+			Kit.ui_sound("back")
+			show_notice(Kit.t("ui.memories.broken") + " " + why)
+			return false
 	Kit.ui_sound("confirm")
 	if not get_signal_connection_list("travel_requested").is_empty():
 		travel_requested.emit(id, from_menu)

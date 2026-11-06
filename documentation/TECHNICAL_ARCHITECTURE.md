@@ -297,6 +297,8 @@ look at the thing, inside the walkable area); content owners rely on exactly the
 | `hist.soviet.repatriation` | Forced repatriations after Yalta 1945–47 (Lienz, „Operation Keelhaul“), widely known only in the 1970s | Veltrava station `exp_return_notice` (Chapter 3, `data/explore/c3_history_soviet.json`) |
 | `hist.soviet.handover_1940` | NKVD handovers of German/Austrian prisoners to the Gestapo at Brest-Litovsk 1939–41 (M. Buber-Neumann) | Veltrava palais `exp_treaty_shelf` (Chapter 3) |
 | `hist.reich.nuremberg_interpreters` | Simultaneous interpreting at the Nuremberg IMT trial 1945–46 | Veltrava palais `exp_headsets` (Chapter 3, `c3_history_reich.json`) |
+| `hist.reich.census_1939` | The census of 17 May 1939 and its „Ergänzungskarte“ on descent (≈ 277 500 people of Jewish descent registered; Aly/Roth 1984; the surviving cards in the Bundesarchiv) | Registry `exp_card_konrad` — Konrad's own index card (Chapter 3 part 2, `c3p2_history_reich.json`) |
+| `hist.soviet.filtration` | NKVD checking-and-filtration of returning POWs and „Ostarbeiter“ 1945–46: presumption of guilt, army/labour battalions, > 200 000 handed to the NKVD, unrecognised until 1991 | Registry `exp_card_alexei` — Alexei filed as „Begleitperson“ (Chapter 3 part 2, `c3p2_history_soviet.json`) |
 Cards are real-world history, presented OUTSIDE the fiction ("REALE GESCHICHTE"), sober, sourced, 450–800
 characters, never celebrated (no fanfare, no "achievement" language; neutral paper sound).
 
@@ -364,6 +366,17 @@ lamp signals (yellow = slower, red = stop) when a booth falls behind; forgiving 
 `MAX_LOST`, per-round `grace`). Open from `c3b_arrival` until `c3b_inspect_booth` and in memories
 (`scripts/ui/minigames/relay_spot.gd`); the drivers explore the hall again when `c3b_inspect_booth` becomes available.
 
+Registry tracing index (round 8, owner exploration c3p2; entry `veltrava.registry.kartei` in `data/explore/c3p2_registry.json`,
+strings `data/locale/de_explore_c3p2.json` `mg.kartei.*`, tests `tests/test_c3p2_explore.gd`, art
+`tools/pixelgen/gen_mg_c3p2_kartei.py`, sounds `tools/audiogen/mg_audio_c3p2.py`): `Kartei.tscn` „Die Suchkartei“ at
+`exp_kartei` (1152, 300) beside drawer C-17 (world cue `KarteiCue`, `kartei_world_cue.gd`: the fallen drawer until the
+find) — Konrad files nine cards of the commission's tracing index back into their drawer: origin (B · K · V), year,
+running number; five cards were written by Russian clerks (Б/К/В — the В of Veltrava looks like a Latin B); a wrong
+gap is refused with the rule it breaks, the card stays in the hand; the side panel reads each card (people searching
+across the Line since 1953). Open in scene B (after `c3c_talk_konrad`, until `c3d_choose`). Every registry find uses
+`scripts/ui/minigames/kartei_spot.gd` (gated_interactable + `memory_scenes`: inside a memory the remembered scene, not
+the objective gates, decides — A: Alexei's yard/Annahme finds, B: Konrad's card hall/Planarchiv/Magazin finds).
+
 ### 12.9 Side tasks („Aufgaben“, round 7, owner: tasks)
 A small optional-task layer on top of §12.1 — backward compatible, **no save data beyond `Explore.state()`**
 (`{found, cards}`), never Story state.
@@ -411,6 +424,13 @@ A small optional-task layer on top of §12.1 — backward compatible, **no save 
   frozen heating coupling → hot water from the waiting-room stove → thawing it → back), Palais „Wer zuerst
   zugreift“ (Frau Brunner → the untouched buffet → Nils Ekdahl → back). Rewards are human beats (closing chats,
   one close-up: `assets/explore/tasks/berlin_drawing.png`, `tools/pixelgen/gen_tasks.py`); no new history card.
+- **Chapter 3 part 2 (round 8, owner exploration c3p2).** Registry „Die Pforte“ (`veltrava.task.porter`, level key
+  `L_C3_RegistryA`, Alexei, `data/explore/c3p2_registry.json`): the porter's thermos (`exp_thermos`) → the radio
+  and a ten-Kronen note (`exp_radio`) → the key board, hook „Magazin“ empty (chain on `exp_radio`) → back to the
+  booth, the porter's note for his relief (chain on `exp_thermos`): sent home at 23.15 by „a gentleman from the
+  secretariat“, he left the money — so whoever wrote Elena's „ab“ at 23.25 was not the porter. An investigation, no
+  NPC (the porter is never seen): starts and ends with a find, texts in `de_explore_c3p2.json`, checked by
+  `tests/test_c3p2_explore.gd` (test_tasks.gd keeps its round-7 rules for its five levels).
 
 ### 12.10 Memories („Erinnerungen“, round 7, owner: memories)
 Revisit a completed scene, look at everything again, return to the present — only completed scenes.
@@ -491,6 +511,85 @@ look stops with the memory (`_mem_film_stop`) and is never drawn while the tree 
 a new game and by every loaded save. Drivers: `--autoplay-memories` (round trip at `c3a_talk_conductor`) and
 `--inputplay-memories` (keys only, at the start of L_C3_Station) call `scripts/core/memory_drive.gd`.
 
+### 12.11 In-level protagonist switch (round 8, owner: engine)
+Control passes between Alexei and Konrad inside ONE level, at an authored story moment — never a menu, no reload.
+- **Data.** Consecutive Story scenes may share one level file: `data/chapters/<ch>.json` `"levels"` maps both scene ids
+  (e.g. `L_C3_ArchiveA`, `L_C3_ArchiveB`) to the same `res://scenes/levels/<X>.tscn`; each scene keeps its protagonist,
+  quest, exit event (`data/v3/scenes.json`; the Story engine and its Python reference are unchanged) and needs its own
+  `"entry_spawn"`. Control may go back and forth (A → B → A2 …). Optional per-scene settings in the chapter file's
+  `"switches"` section (read through `ChapterExt.switch_settings(id)` / `switch_spawn(id)`, all keys optional):
+  `switch_spawn` (where control passes to this scene's protagonist), `partner` (who stands in while this scene is
+  played; `"none"` = nobody; default: the protagonist of the chain scene before, when it plays in the same file),
+  `partner_spawn` (where he stands: he walks there after the hand-over, is placed there on a load), `partner_anim`
+  (idle row, e.g. `work_side`), `partner_hide_after` (objective id: he leaves then), `glide` (s, default 1.2),
+  `music` / `ambience` (the scene's own tracks; default the level's).
+- **Detection.** `Game.goto_level(next)` → `can_switch_in_level(next)`: a walkable level with a player is loaded, `next` is
+  another scene of the same level file (`level_file()`), no memory / return trip / transition, no loaded save
+  (`_force_reload`, set by `_on_loaded_slot()` and a new game). Then `_switch_in_level()` instead of a reload.
+- **The switch** (`switch_now()` = synchronous part, `_switch_in_level()` = timing). The level node now plays the next
+  scene: `level.level_id` / `level.protagonist` follow (drivers, journal, memories, saves read them). The incoming
+  protagonist takes over at `spawn` / `switch_spawn` > where he stood in as an NPC (seamless, same facing) > the
+  scene's entry spawn. The outgoing body `retire()`s (leaves the "player" group at once, frees itself at frame end)
+  and the new `Game.player` is created in the same call — there is never a frame without a valid player. The one who
+  had control becomes **Game's stand-in**: a StoryNPC (`stand_in = true`, meta `stand_in`) with his sheet at his spot,
+  softly turning to the new player, idling / talking when his lines come (group "npcs", `npc_id` hotspots and dialogue
+  docking find him), walking to `partner_spawn` (`walk_to`, 45 px/s; a conversation pauses the walk). The camera
+  `retarget()`s: a critically damped glide from where it is (99 % after `glide` s, no overshoot, then plain following);
+  `busy` + `input_locked` until 90 % of the glide (~0.7 s); then a 350 ms interact cooldown, so the key that ended the
+  last line never acts for the new protagonist. The HUD shows a quiet name plate („KONRAD ADLER“, `HUD.show_protagonist`)
+  — no fade, no chapter card, no intro pan, no porter greeting; objectives refresh; signal
+  `Game.protagonist_switched(scene, char)`; autosave `level_<scene>` at the end. **Cut** instead of the glide with
+  reduced motion, and when a cinematic on the way left the screen black or the level hidden (`switch_cuts()`): the
+  level is shown again and fades in (0.9 s).
+- **Authored NPCs.** In a switch scene an authored NPC of the protagonist being played is suppressed (`set_suppressed`)
+  and an authored, present NPC of the partner replaces Game's stand-in (then the author places him). Prefer the
+  settings above: the protagonists should not also be placed as NPCs in the .tscn.
+- **Saves / loads.** `save_extra()` adds `controlled` and `stand_in = {char, pos}` (pos = end of a running walk) in switch
+  scenes; `apply_loaded_extra()` restores the player's position and the stand-in's on the fresh load. A fresh load
+  without saved positions (memory, `--scene`) puts the player at the scene's entry spawn and the partner at
+  `partner_spawn`, else 38 px beside the player.
+- **Memories / films / photo mode.** A memory of a switch scene opens with that scene's own protagonist (scenes.json),
+  the partner stands in by the same rules; there is never a switch inside a memory. `travel_to_memory`,
+  `return_from_memory`, `rewatch_film` and `_mem_abort` keep and restore the present stand-in with the position. Photo
+  mode is closed during a switch (busy); afterwards it works as before (the figure switch hides `Game.player` only).
+- **Untouched.** Levels with a file of their own never adopt anything (`_adopt_scene` is a no-op); capture mode
+  (`--capture`, `--scene`, `--char`) and every existing flow behave as before.
+- **Tests / checks.** `tests/test_switch.gd` (synchronous: detection, partners, setup, `switch_now` without reload,
+  positions, camera glide stepped by hand, save/load, memory entry, reduced-motion cut, hidden level, same-person
+  scenes, untouched levels, HUD plate). Windowed check in real frames: `godot --path . -- --switch-demo=<dir>`
+  (`scenes/levels/test/switch_demo.gd`; prints SWITCHDEMO_PASS / SWITCHDEMO_FAIL; private `user://switchdemo` saves):
+  Game.player valid and alone in "player" in every frame, swallowed key presses, glide timing, load, memory round trip,
+  cut, black screen, photo mode. Fixture for both: `scenes/levels/test/L_Test_Switch.tscn` (station art + named
+  spawns) with `Game.level_overrides` mapping A1 → M1 → C3 station → C3 hall onto it (tests only).
+- **Gated art of a shared level (round 8, registry art).** `L_C3_Registry.tscn` runs
+  `scripts/levels/c3p2_archive/registry_level.gd` (extends `Level`): scene.json entries of `layers` / `props` /
+  `decals` / `fx` / `lights` with `"after": [objective…]`, `"until": [objective…]` or `"choice": {objective: id | "!id"}`
+  are taken out before the base build (`_merge_explore_hotspots` hook) and built per condition (one LayerStack per
+  gate group); `"blockers": [{name, rect, after?, until?}]` become StaticBody2D walls; `"looks"` (last match) set
+  CanvasModulate + `grade_preset` (live: `Game._apply_grade`). An objective of a Story scene before `level_id` always
+  counts (fresh loads, `--scene` captures, memories — inside a memory only those); else the live Story, except
+  `c3d_choose`, whose fire look waits until LS_C3_Fire hides the level. Live changes cross-fade (`"fade"` s; the
+  replaced look stays until the new one covers it), loads / cuts / a hidden level change instantly; fire lights
+  breathe ≤ 3 Hz (damped with reduced motion). Test: `tests/test_c3p2_archive_art.gd`; windowed shots of every look
+  incl. the live C → D fade: `res://scripts/levels/c3p2_archive/registry_shots.tscn` (header).
+  Sound of the registry (lead integration): in the night looks the porter's radio plays `c3p2_radio_waltz` as an
+  SFX loop whose level follows the player's distance to the `porter_booth` hotspot (−10 … −32 dB); in the fire looks
+  roof creaks / bursting glass every 6–15 s; `c3e_try_ramp` → `c3p2_bolt`, `c3f_push_desk` → `c3p2_desk_push`.
+- **Looks and carry (round 8, C3P2 §6).** `c3.json` `"looks"`: scene → {character id: sheet dir} (soot looks in
+  registry C/D and on the quay, `typist_night`); Game sets the static `SpriteRig.looks` on every level load and switch
+  (cleared on unload and before the finale montage), so players, stand-ins, NPCs and dialogue portraits
+  (`dialogue_box._portrait_entry`) of that scene use the look while ids, speakers and saves keep the base id.
+  `"carry"`: scene → {character id: item}; once the item is owned the player's rig plays `carry_idle_side` /
+  `carry_side` instead of the side idle/walk rows (Game `_update_carry` on load, switch and `Story.item_granted`).
+- **Saves from a shorter chain (round 8).** `SaveSystem.rebase_story()` (used by `read_container` and
+  `Memories.snapshot_raw`): a Story state whose `current_scene` no longer follows from its completed events (a
+  round-7 save in the montage after `c3b_completed`) continues in the scene after its last exit event; valid states,
+  finished playthroughs (`slice_completed`) and unknown shapes are untouched; the load reports a warning.
+  Test: `tests/test_save_rebase_r8.gd`.
+- **Pad A in menus.** `Settings._build_input_map()` adds `JOY_BUTTON_A` to `ui_accept` (Godot 4.7's built-in action
+  has Enter / Kp Enter / Space only), so the A button presses the focused button in every menu; modals that read
+  `interact` / `advance` as well treat both as one press.
+
 ## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
 Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.
 - **Story chain.** The unchanged engine needs ONE linear scene chain ending in the non-quest montage, and a finale that
@@ -503,7 +602,11 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   director's chapter-specific questions without touching Story state: `levels`, `entry_spawn`, `chapter_cards`,
   `palettes`/`grades` (merged into `Game.palettes/grades`), `line_expr`, `line_variants` (node → `[{when, key}]`),
   `choice_text` (objective → choice → `[{when, key}]`), `reactions` (objective → choice → `[{when?, speaker, key, expr}]`),
-  `puzzles` (objective → UI scene, instanced once under UIRoot and pushed on the modal stack via `open(obj_id)`),
+  `puzzles` (objective → UI scene, instanced once under UIRoot and pushed on the modal stack via `open(obj_id)`;
+  key contract of both list puzzles — `ProtocolPuzzle` c3b and `CheckPuzzle` c3d „Gegenprobe“ (round 8,
+  `scripts/ui/check_puzzle.gd`): `is_open`, `symbols` = tray in display order, key N lays `symbols[N-1]` into the
+  next empty slot/row, Backspace undo, R clear, Enter submits via `Story.solve_puzzle`, Esc closes, auto-close ≤ 7 s
+  after success; CheckPuzzle adds mouse rows (click chooses an empty row, drag and drop) and the „Lupe“ at 125/150 %),
   `cinematics` (sequence → §12.5 scene, played by `ChapterExt.play_cinematic(game, id)`). Conditions:
   `{"<flag>": ">=1" | "<=n" | "==n" | "!=n" | ">n" | "<n" | true | false}`, all must hold, first match wins.
   `game.gd` keeps its slice tables and falls back to `Game.ext` for unknown ids.
@@ -511,7 +614,15 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   `scripts/actors/gated_interactable.gd` (extends interactable.gd): optional hotspots with `after_objective` /
   `until_objective`, so an optional chat never competes with a story interaction at the same spot.
 - **Insignia.** `LayerStack.tex()` resolves every texture through `Symbols.pick()` (§12.4).
-- **Drivers.** `--autoplay=<a1>,<m1>[,<c3a>[,<c3b>]]` and `--inputplay=…` (same spec) play the whole chain.
+- **Drivers.** `--autoplay=<a1>,<m1>[,<c3a>[,<c3b>[,<c3d>[,<c3g>]]]]` and `--inputplay=…` (same spec) play the whole
+  chain; their saves go to `user://e2e/saves` (round 8), never to the player's slots.
+- **Chapter 3, part 2 (round 8, story stream; contract `documentation/C3P2_DESIGN.md`).** Five scenes between `L_C3_Hall`
+  and the montage: `L_C3_RegistryA`–`D` share `scenes/levels/L_C3_Registry.tscn` (in-level switches, §12.11; settings in
+  c3.json `switches`, plus `grade` per scene) and `L_C3_Quay`. No new flags (a v3 save is compared flag by flag on load);
+  decisions `c3d_choose`, `c3g_choose` raise existing meters. ChapterExt conditions may name `"choice.<objective>"`
+  (the recorded option id; explicit key in the flags dictionary, else the live `Story.choice_history()`).
+  `ChapterExt.level_key(scene)` = the first scene id of a shared level file — Explore entries of the registry use
+  `"level": "L_C3_RegistryA"`; `same_level(a, b)`, `scenes_of_level(path)`. Tests `tests/test_c3p2_routes.gd`.
 - **Palais ambient life (art, round 7).** `veltrava_hall/scene.json` `decals` with `frames`/`fps` are looping strips
   (`assets/environments/veltrava_hall/life/`, `tools/pixelgen/env_veltrava_hall_life.py`): figures on `"layer":
   "playfield"` keep `base_y` < 296 (actors always pass in front), figures behind glass or a balustrade sit on the `room`
@@ -525,3 +636,15 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   side task „Wagen drei ist kalt“): `level.backdrop.decals_by_name["heater_leak_23"].visible = false` stops it.
   Contract test `tests/test_c3_station_art.gd`; Forward+ harness `res://tests/visual/c3_station_shots.tscn`
   (`--scene=L_C3_Station --capture=<dir>/boot.png --frames=100000 --vs-out=<dir> [--symbols=0|1] [--vs-seconds=N]`).
+- **Feel pass (round 8, owner feel_r8).** *Ambient walkers*: `scripts/actors/ambient_walker.gd` (one y-sorted manager,
+  `scenes/actors/AmbientWalkers.tscn`, declared as a `scene.json` actor with `props.data` = `<env>/walkers.json`) walks
+  2–3 anonymous people per level along a path (pause / soft turn / give way to the player: look-ahead, side step inside
+  `bounds`, wait, turn back); side levels use a lane between the props' `base_y` and the walk band (y 295 / 295.5), so the
+  player and every speaker stay in front. Deterministic, no collision, no group, no Story/Explore. Variant sheets
+  (`<env>/walkers/*.png`, `tools/pixelgen/walkers_r8.py`) keep the source silhouette and reuse its `sheet_n.png`.
+  *Decor loops*: every looping decal / fx strip starts at `"t0"` (s) or a stable FNV hash of name + position
+  (`LayerStack.loop_t0`). *Car 3*: `scenes/levels/veltrava_station/StationThaw.tscn` hides `heater_leak_23` once
+  `veltrava.task.heating.thaw` is found (on load, and live after the interaction: leak fades, pipes knock, a hand wipes
+  a peephole and waves, the frost recedes; art `veltrava_station/thaw/`). Tests `tests/test_feel_r8.gd`; Forward+ harness
+  `res://tests/visual/feel_r8_shots.tscn` (`--fr-shots=label:camx:px:py:seconds[:thaw|thawed|memview150|membroken|
+  journal_late|dlg=<speaker>;<key>;<expr>]`). Provenance `documentation/asset_manifest_parts/feel_r8.md`.

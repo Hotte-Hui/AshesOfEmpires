@@ -15,6 +15,7 @@ signal advanced
 signal chosen(id: String)
 signal line_finished
 
+const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 const BASE_CPS := 42.0
 const PORTRAIT := 112
 const PLACEHOLDER := "res://assets/ui/portrait_placeholder.png"
@@ -321,10 +322,11 @@ func _set_portrait(speaker_id: String, expression: String) -> void:
 
 ## Loads (once) the portrait strip, its metadata and the optional animation grid of a speaker.
 func _portrait_entry(speaker_id: String) -> Dictionary:
-	var entry: Dictionary = _portrait_cache.get(speaker_id, {})
+	var look: String = SpriteRig.look_of(speaker_id)     # round 8: per-scene look (soot / night portraits)
+	var entry: Dictionary = _portrait_cache.get(look, {})
 	if not entry.is_empty():
 		return entry
-	var dir := Kit.CHAR_DIR + speaker_id + "/"
+	var dir := Kit.CHAR_DIR + look + "/"
 	var t2 := Kit.optional_tex(dir + "portrait.png")
 	var meta = Kit.json(dir + "portrait.json")
 	var size := Vector2i(PORTRAIT, PORTRAIT)
@@ -350,7 +352,7 @@ func _portrait_entry(speaker_id: String) -> Dictionary:
 		"rows": rows, "blink_offset": int(anim_meta.get("blink_offset", 3)),
 		"mouth_fps": float(anim_meta.get("mouth_fps", 11.0)), "blink_ms": float(anim_meta.get("blink_ms", 130.0)),
 		"blink_interval": anim_meta.get("blink_interval_s", [2.6, 5.2])}
-	_portrait_cache[speaker_id] = entry
+	_portrait_cache[look] = entry
 	return entry
 
 

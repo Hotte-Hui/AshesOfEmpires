@@ -1,0 +1,25 @@
+{
+ "locale": "de",
+ "area": "c3p2_cinematics",
+ "strings": {
+  "cin.c3p2.radio.time": "Veltrava, 0.10 Uhr.",
+  "cin.c3p2.radio.ru": "(Radio Veltrava, russisch) …hat die Kommission Anlage C angenommen. Der Verkehr von Gütern und begleiteten Personen über die Linie…",
+  "cin.c3p2.radio.de": "(Radio Veltrava) …hat die Kommission Anlage C angenommen. Güter und Begleitgut passieren die Linie ab März ohne Aufenthalt.",
+  "cin.c3p2.radio.note": "Registratur. Hof, Rampe. 0.30 Uhr. – E.",
+  "cin.c3p2.radio.note_ru": "Регистратура. Двор, рампа. 0.30. – Е.",
+  "cin.c3p2.radio.alexei.base": "Begleitete Personen. Auf Deutsch sagen sie es anders.",
+  "cin.c3p2.radio.alexei.cafe": "Ins Café ist sie nicht gekommen. Ich habe zwei Gläser Tee bezahlt.",
+  "cin.c3p2.radio.alexei.alone": "Ich wollte allein suchen. Jetzt schreibt sie mir.",
+  "cin.c3p2.radio.konrad.base": "Begleitgut. Das Wort habe ich heute dreimal gehört.",
+  "cin.c3p2.radio.konrad.share": "Ich habe ihm Elenas Notiz gezeigt, er mir einen Zug. Jetzt schreibt sie uns beiden.",
+  "cin.c3p2.radio.konrad.search": "Ihr Mantel hing noch in der Garderobe, als ich ging. Marke 27.",
+  "cin.c3p2.radio.konrad.report": "Kessler hat zugehört und genickt. Sonst nichts.",
+  "cin.c3p2.fire.time": "1.40 Uhr.",
+  "cin.c3p2.halves.split": "Jeder trägt seine Sprache nach Hause – und die Namen, die darin stehen.",
+  "cin.c3p2.halves.swap": "Er trägt Pjotrs Namen über seine Grenze. Ich trage seine Leute über meine.",
+  "cin.c3p2.halves.elena": "Die Liste steckt in einem Mantel, Marke 27. Wenn sie zurückkommt, findet sie sie.",
+  "cin.c3p2.halves.plan_kept": "In meiner Manteltasche: Blatt sieben. Gezeichnet K. Adler.",
+  "cin.c3p2.halves.plan_burnt": "Blatt sieben ist verbrannt. Gezeichnet habe ich ihn trotzdem.",
+  "cin.c3p2.halves.tuesday": "Dienstag, 23.40 Uhr. Gleis 5."
+ }
+}

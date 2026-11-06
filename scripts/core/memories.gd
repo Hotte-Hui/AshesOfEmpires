@@ -250,7 +250,7 @@ func snapshot_raw(id: String) -> String:
 	var e = (data.get("completed", {}) as Dictionary).get(id)
 	if not (e is Dictionary) or not (e.get("story") is Dictionary):
 		return ""
-	return ENGINE.json_dumps(e["story"], 2)
+	return ENGINE.json_dumps(SAVES.rebase_story(e["story"]), 2)
 
 
 ## Flags that were true while the scene was played: the profile snapshot of the scene when it belongs to the

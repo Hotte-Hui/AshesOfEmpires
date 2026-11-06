@@ -12,9 +12,14 @@ Contract: `documentation/TECHNICAL_ARCHITECTURE.md` §12.10.
 | `assets/ui/memories/L_M1_Plaza.png` | 320×180 RGB | same, `src/raw_L_M1_Plaza.png` | crop (214,92): dome, plain eagle (neutral twin), ranks. |
 | `assets/ui/memories/L_C3_Station.png` | 320×180 RGB | same, `src/raw_L_C3_Station.png` | crop (120,56): clock tower, arch window, departures board. |
 | `assets/ui/memories/L_C3_Hall.png` | 320×180 RGB | same, `src/raw_L_C3_Hall.png` | crop (150,50): staircase, chandelier, gallery door. |
+| `assets/ui/memories/L_C3_RegistryA.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryA.png` | crop (150,124): Alexei in the snowy yard at night, yard lamp, cart with crates (round 8). |
+| `assets/ui/memories/L_C3_RegistryB.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryB.png` | crop (236,124): Konrad and Alexei at the sorting table under the green lamp (round 8). |
+| `assets/ui/memories/L_C3_RegistryC.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryC.png` | crop (320,124): Alexei (soot look) by the card cabinet, the fire front (round 8). |
+| `assets/ui/memories/L_C3_RegistryD.png` | 320×180 RGB | same, `src/raw_L_C3_RegistryD.png` | crop (100,124): Konrad before the lit porter's booth, fire to the right (round 8). |
+| `assets/ui/memories/L_C3_Quay.png` | 320×180 RGB | same, `src/raw_L_C3_Quay.png` | crop (225,124): the burning wing, fire engine, Alexei under a lantern by the river (round 8). |
 | `assets/ui/memories/icon_memory.png` | 39×39 RGBA (13×13 drawn ×3) | same | Pocket watch at nine o'clock, amber arc + arrow tip on the rim (time running back). UI kit palette. |
 | `assets/ui/memories/manifest.json` | JSON | same | Files, sizes, crops, sources. |
-| `assets/ui/memories/src/raw_<scene>.png` (5) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
+| `assets/ui/memories/src/raw_<scene>.png` (10) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
 | `assets/audio/sfx/mem_rewind.wav` | 2.9 s, 44.1 kHz 16-bit stereo | `tools/audiogen/memories_audio.py` | Pocket-clock ticks time-reversed and speeding up (winding back), reversed airy swell with a soft release, faint tape-wow drone sinking 196→176 Hz, hushed low settle. Peak −5 dBFS, RMS −26 dBFS. No chime, no fanfare. |
 | `assets/audio/sfx/mem_return.wav` | 2.6 s, same format | same | The same clock forward, fast at first, settling into tick-tock; the swell from its peak fading out; drone rising back. Peak −5 dBFS, RMS −31 dBFS. |
 

@@ -19,6 +19,12 @@ const SHOTS := {
 	"L_M1_Plaza": [320, 0, 676, 300, false],
 	"L_C3_Station": [640, 0, 850, 300, false],
 	"L_C3_Hall": [320, 0, 590, 300, true],
+	# Chapter 3 part 2: four Story scenes in one level file (L_C3_Registry.tscn, look per scene) and the quay
+	"L_C3_RegistryA": [0, 0, 340, 300, false],
+	"L_C3_RegistryB": [640, 0, 1030, 300, true],
+	"L_C3_RegistryC": [640, 0, 1208, 300, false],
+	"L_C3_RegistryD": [320, 0, 604, 300, true],
+	"L_C3_Quay": [0, 0, 452, 300, true],
 }
 
 var out_dir := ""
@@ -71,8 +77,26 @@ func _save_world(name: String) -> void:
 	print("MT_SHOT ", path, " ", img.get_size())
 
 
+## Who was there then: the memory table's protagonist of `id` (as Game._memory_protagonist inside a memory). Without
+## it the player of a capture is the live Story's active character — Alexei in every scene after the new game.
+func _protagonist(id: String) -> String:
+	var m = Game.get("memories")
+	if m == null or not m.has_method("scene"):
+		return ""
+	var who := str(m.scene(id).get("protagonist", ""))
+	return "" if who in ["", "none"] else who
+
+
 func _goto(id: String) -> bool:
-	if Game.level == null or str(Game.level.get("level_id")) != id:
+	var who := _protagonist(id)
+	if who != "":
+		Game.args["char"] = who      # read by Game._setup_level (the `--char=` override)
+	var here: bool = Game.level != null and str(Game.level.get("level_id")) == id and Game.player != null \
+		and (who == "" or str(Game.player.get("char_id")) == who)
+	if not here:
+		# every scene loads afresh, like a memory (Game.travel_to_memory): another Story scene of the level file that
+		# is already loaded (L_C3_RegistryA–D) would otherwise be handed over in place (§12.11, Game.switch_now)
+		Game.set("_force_reload", true)
 		await Game.goto_level(id, "", false)
 	var guard := 0
 	while (Game.level == null or Game.player == null) and guard < 600:

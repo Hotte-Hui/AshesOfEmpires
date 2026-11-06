@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/c3p2_archive/registry_shots.gd" id="1"]
+
+[node name="RegistryShots" type="Node"]
+script = ExtResource("1")

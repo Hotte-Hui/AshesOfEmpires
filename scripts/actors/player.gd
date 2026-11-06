@@ -13,6 +13,7 @@ extends CharacterBody2D
 ## person or thing it interacts with -- sideways, or towards / away from the camera in oblique levels when the
 ## other one stands below / above. The rig's view_hint follows the facing view, so the dialogue's
 ## "talk_side" / "idle_side" requests show talk_front / idle_front (or the back rows) when facing the camera.
+## §12.11: at an in-level protagonist switch Game creates a new player for the other protagonist and retire()s this one.
 
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 const TURN_STAND := 0.12        ## s the in-between (front) frame is shown when turning on the spot
@@ -67,6 +68,21 @@ func _ready() -> void:
 	add_to_group("player")
 	_phys_prev = position
 	_phys_cur = position
+
+
+## §12.11 in-level protagonist switch: this body hands control to the other protagonist (Game puts a story NPC in its
+## place in the same frame). It leaves the "player" group at once, stops moving, polling input and focusing
+## hotspots, disappears and frees itself at the end of the frame.
+func retire() -> void:
+	remove_from_group("player")
+	focus = null
+	velocity = Vector2.ZERO
+	set_physics_process(false)
+	set_process(false)
+	process_mode = Node.PROCESS_MODE_DISABLED
+	visible = false
+	collision_layer = 0
+	queue_free()
 
 
 func get_facing() -> float:

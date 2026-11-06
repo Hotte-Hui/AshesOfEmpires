@@ -1,0 +1,14 @@
+{
+ "side": "soviet",
+ "doc": "documentation/C3P2_DESIGN.md §7, TECHNICAL_ARCHITECTURE §12.3 — real-history card of Chapter 3 part 2 (presented outside the fiction as „REALE GESCHICHTE“). Text: data/locale/de_history_c3p2.json. Unlocked by veltrava.registry.card_alexei (Alexei finds himself filed as „Begleitperson“). Complements hist.soviet.repatriation (the handovers) with what followed the return. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen (dekoder/Stiftung EVZ, Heinrich-Böll-Stiftung, Forschungsüberblick mit Zahlen nach V. Zemskov und G. Krivosheev, P. Polian).",
+ "cards": [
+  {"id": "hist.soviet.filtration", "side": "soviet", "title_key": "hist.soviet.filtration.title",
+   "text_key": "hist.soviet.filtration.text", "year": "1945",
+   "sources": [
+    {"label": "дekoder, K. Holzmann: Gnose „Ostarbeiter“ – Prüf- und Filtrationslager des NKWD, Schuldvermutung, 5,4 Millionen registrierte Repatrianten (nach V. Zemskov)", "url": "https://www.dekoder.org/de/gnose/ostarbeiter-zwangsarbeit-zeitzeugen/"},
+    {"label": "Heinrich-Böll-Stiftung: „Deutschland, Feinde der Sowjetunion, Verräter“ – Erinnerungen der Ostarbeiter (09.10.2019)", "url": "https://www.boell.de/de/2019/10/09/deutschland-feinde-der-sowjetunion-verraeter-erinnerungen-der-ostarbeiter"},
+    {"label": "Wikipedia (engl.): Soviet repressions against former prisoners of war – Filtrationslager 1945, Übergaben an das NKWD (Zahlen nach V. Zemskov und G. Krivosheev)", "url": "https://en.wikipedia.org/wiki/Soviet_repressions_against_former_prisoners_of_war"},
+    {"label": "P. Polian: Deportiert nach Hause. Sowjetische Kriegsgefangene im „Dritten Reich“ und ihre Repatriierung (Oldenbourg 2001, Kriegsfolgen-Forschung 2)", "url": ""}
+   ]}
+ ]
+}

@@ -67,9 +67,32 @@ func _full_stream() -> bool:
 		["flag_changed", "elena_missing", true], ["item_granted", "ev_c3_carbon"], ["objective_completed", "c3b_inspect_booth"],
 		["objective_completed", "c3b_talk_alexei"],
 		["flag_changed", "alexei_konrad_trust", 1], ["objective_completed", "c3b_choose"], ["event_fired", "c3b_completed"],
-		["cinematic_queued", "LS_C3_Close"], ["scene_changed", "L_X1_Montage"],
+		["cinematic_queued", "LS_C3_Close"], ["cinematic_queued", "LS_C3_Radio"], ["scene_changed", "L_C3_RegistryA"],
+		# Chapter 3 part 2 (C3P2_DESIGN.md): registry A → B → C → D (in-level switches), the quay
+		["item_granted", "ev_c3_cut_seal"], ["objective_completed", "c3c_inspect_crates"],
+		["item_granted", "ev_c3_night_book"], ["objective_completed", "c3c_inspect_night_book"],
+		["objective_completed", "c3c_talk_konrad"], ["event_fired", "c3c_completed"], ["scene_changed", "L_C3_RegistryB"],
+		["item_granted", "ev_c3_intake_book"], ["objective_completed", "c3d_inspect_intake"],
+		["item_granted", "ev_c3_scarf"], ["objective_completed", "c3d_inspect_drawer"],
+		["item_granted", "ev_c3_halves"], ["objective_completed", "c3d_talk_compare"],
+		["objective_completed", "c3d_solve_check"],
+		["item_granted", "ev_c3_kordon_plan"], ["objective_completed", "c3d_inspect_plan"],
+		["objective_completed", "c3d_talk_partner"],
+		["flag_changed", "alexei_konrad_trust", 2], ["objective_completed", "c3d_choose"], ["event_fired", "c3d_completed"],
+		["cinematic_queued", "LS_C3_Fire"], ["scene_changed", "L_C3_RegistryC"],
+		["item_granted", "ev_c3_file"], ["objective_completed", "c3e_take_file"],
+		["item_granted", "ev_c3_bolt"], ["objective_completed", "c3e_try_ramp"],
+		["objective_completed", "c3e_reach_konrad"], ["event_fired", "c3e_completed"], ["scene_changed", "L_C3_RegistryD"],
+		["item_granted", "ev_c3_cut_hose"], ["objective_completed", "c3f_inspect_hose"],
+		["objective_completed", "c3f_push_desk"],
+		["objective_completed", "c3f_climb"], ["event_fired", "c3f_completed"],
+		["cinematic_queued", "LS_C3_Escape"], ["scene_changed", "L_C3_Quay"],
+		["item_granted", "ev_c3_escort_list"], ["objective_completed", "c3g_inspect_halves"],
+		["objective_completed", "c3g_talk_konrad"],
+		["flag_changed", "evidence_chain", 1], ["objective_completed", "c3g_choose"], ["event_fired", "c3g_completed"],
+		["cinematic_queued", "LS_C3_Halves"], ["scene_changed", "L_X1_Montage"],
 		["flag_changed", "slice_finished", true], ["event_fired", "slice_completed"],
-	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol)")
+	], "exact signal stream of the share/preserve route (+ ask_elena / share_protocol / admit_plan / split_by_language)")
 	return true
 
 

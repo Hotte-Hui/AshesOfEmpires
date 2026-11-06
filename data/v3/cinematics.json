@@ -150,6 +150,142 @@
           "camera": "fixed"
         }
       ]
+    },
+    {
+      "id": "LS_C3_Radio",
+      "trigger_event": "c3b_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "r1",
+          "duration_s": 4,
+          "shot": "Station square at night: two hotels face each other across the snow; steam of the 23.40 train drifts off; radio interval signal",
+          "camera": "establishing"
+        },
+        {
+          "id": "r2",
+          "duration_s": 6,
+          "shot": "Alexei's room: Bakelite radio, tea glass, the Russian news",
+          "camera": "fixed"
+        },
+        {
+          "id": "r3",
+          "duration_s": 6,
+          "shot": "Match cut on the tuning dial to Konrad's room: the same radio, the German news; his pencil stops",
+          "camera": "fixed"
+        },
+        {
+          "id": "r4",
+          "duration_s": 5,
+          "shot": "Split: a folded note slides under each door; close-up of the note in two languages",
+          "camera": "macro_locked"
+        },
+        {
+          "id": "r5",
+          "duration_s": 4,
+          "shot": "Cafe Korridor after closing: chairs on the tables, Elena's table, an untouched glass; station clock 0.10",
+          "camera": "fixed"
+        },
+        {
+          "id": "r6",
+          "duration_s": 4,
+          "shot": "Two hotel doors open at once; two men in the snow, their tracks converge on the palais' dark east wing",
+          "camera": "establishing"
+        }
+      ]
+    },
+    {
+      "id": "LS_C3_Fire",
+      "trigger_event": "c3d_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "f1",
+          "duration_s": 3,
+          "shot": "The green lamp flickers over the sorting table; Konrad looks up",
+          "camera": "side_on"
+        },
+        {
+          "id": "f2",
+          "duration_s": 3,
+          "shot": "The stacks: an orange glow, the C-17 boxes catch; a figure in a porter's cap slips out, face never shown",
+          "camera": "side_on"
+        },
+        {
+          "id": "f3",
+          "duration_s": 2.5,
+          "shot": "The ramp door from inside: a shadow outside, the iron bolt slides home",
+          "camera": "macro_locked"
+        },
+        {
+          "id": "f4",
+          "duration_s": 3.5,
+          "shot": "Fire runs along the shelves, smoke rolls under the ceiling toward the camera; Alexei at the table",
+          "camera": "side_on"
+        }
+      ]
+    },
+    {
+      "id": "LS_C3_Escape",
+      "trigger_event": "c3f_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "e1",
+          "duration_s": 4,
+          "shot": "Inside the coal chute: dust, the file pushed up toward a square of snow light",
+          "camera": "fixed"
+        },
+        {
+          "id": "e2",
+          "duration_s": 4,
+          "shot": "The yard: the iron hatch flips open, Konrad crawls out with the file, smoke pours after him",
+          "camera": "side_on"
+        },
+        {
+          "id": "e3",
+          "duration_s": 4,
+          "shot": "Alexei's hand; Konrad pulls him out; the hatch slams; both in the snow, coughing",
+          "camera": "side_on"
+        },
+        {
+          "id": "e4",
+          "duration_s": 4,
+          "shot": "The east wing: souterrain windows burst orange, fire-brigade bells, snow through smoke",
+          "camera": "establishing"
+        }
+      ]
+    },
+    {
+      "id": "LS_C3_Halves",
+      "trigger_event": "c3g_completed",
+      "skip_policy": "visual_only",
+      "shots": [
+        {
+          "id": "h1",
+          "duration_s": 6,
+          "shot": "The quay bench: each man takes his half of the file (pages per the c3g choice)",
+          "camera": "fixed"
+        },
+        {
+          "id": "h2",
+          "duration_s": 5,
+          "shot": "They walk apart along the quay: Alexei east toward the station, Konrad west toward the palais",
+          "camera": "side_on"
+        },
+        {
+          "id": "h3",
+          "duration_s": 6,
+          "shot": "Wide: the burning wing mirrored in the river ice, the Line's searchlights, first grey of dawn",
+          "camera": "establishing"
+        },
+        {
+          "id": "h4",
+          "duration_s": 4,
+          "shot": "The station departures board, a fresh line: Tuesday 23.40, Kordon-17, platform 5",
+          "camera": "macro_locked"
+        }
+      ]
     }
   ]
 }

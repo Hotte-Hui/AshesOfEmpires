@@ -10,9 +10,12 @@ Idempotent: only the text between these marker lines is rewritten (everything el
 On the first run the FLOW block replaces the §1 table and the C3 block is appended at the end of the file.
 Sources (read at run time, so re-run after any text edit): data/v3/*.json (ids, structure, base texts from
 locale_de.json), data/chapters/c3.json (expressions, line/option variants, reactions, puzzle UI, cinematic
-scenes), data/locale/de_c3_dialogue.json (variant and reaction texts), de_c3_ui.json (puzzle cards, hint,
-success), de_c3_cinematics.json (inner lines), de_c3_characters.json (people), scenes/levels/L_C3_*.tscn
-(hotspot per objective). tests/test_quest_database.gd checks that every id and German text is present.
+scenes, level file per scene), data/locale/de_c3_dialogue.json + de_c3p2_dialogue.json (variant and reaction
+texts), de_c3_ui.json + de_c3p2_ui.json (puzzle cards, hint, success), de_c3_cinematics.json +
+de_c3p2_cinematics.json (inner lines), de_c3_characters.json (people), the level files of the Chapter-3 scenes
+(hotspot per objective; several scenes may share one file, C3P2_DESIGN.md §4). Part 2 of the chapter
+(documentation/C3P2_DESIGN.md) is generated into the same §11. tests/test_quest_database.gd checks that every id
+and German text is present.
 """
 import json
 import re
@@ -28,6 +31,9 @@ BLOCKS = {
 }
 SLICE_SCENES = ['L_A1_Railyard', 'L_M1_Archive']
 OPS = {'>=': '≥', '<=': '≤', '==': '=', '!=': '≠', '>': '>', '<': '<'}
+# UI text prefix of each Chapter-3 puzzle (cards = <prefix>.card.<symbol>, <prefix>.hint, <prefix>.success)
+PUZZLE_UI = {'pz_c3_protocol': 'ui.c3.protocol', 'pz_c3_check': 'ui.c3p2.check'}
+CHOICE_PREFIX = 'choice.'     # condition key naming a recorded choice (C3P2_DESIGN §3.2)
 
 
 def load(rel):
@@ -38,7 +44,8 @@ V3 = {stem: load('data/v3/%s.json' % stem) for stem in
       ['flags', 'quests', 'items', 'scenes', 'dialogue', 'puzzles', 'cinematics', 'locale_de']}
 CH = load('data/chapters/c3.json')
 LOC = dict(V3['locale_de']['strings'])
-for f in ['de_c3_dialogue', 'de_c3_ui', 'de_c3_cinematics', 'de_c3_characters']:
+for f in ['de_c3_dialogue', 'de_c3_ui', 'de_c3_cinematics', 'de_c3_characters', 'de_c3p2_dialogue', 'de_c3p2_ui',
+          'de_c3p2_cinematics']:
     LOC.update(load('data/locale/%s.json' % f)['strings'])
 
 SCENES = {s['id']: s for s in V3['scenes']['scenes']}
@@ -105,10 +112,11 @@ def effects_text(effects):
 
 
 def hotspots():
-    """objective id -> hotspot id of its interactable in scenes/levels/L_C3_*.tscn"""
+    """objective id -> hotspot id of its interactable in the level file of each Chapter-3 scene"""
     out = {}
     for scene in C3_SCENES:
-        path = ROOT / 'scenes' / 'levels' / (scene + '.tscn')
+        res = str(CH.get('levels', {}).get(scene, 'res://scenes/levels/%s.tscn' % scene))
+        path = ROOT / res.replace('res://', '')
         if not path.exists():
             continue
         for block in path.read_text(encoding='utf-8').split('\n[node '):
@@ -160,19 +168,24 @@ def fallback_choice(node_id, q, dialogue_obj):
     variant `{flag: ">=1"}` of the node tests: one variant then always matches (first match wins) and the base
     text is only a fallback for level starts without a save (C3_TEXT_REVIEW Befund 23)."""
     tested = set()
+    chosen = {}      # objective id -> option ids named by single-condition "choice.<objective>" variants
     for v in CH.get('line_variants', {}).get(node_id, []):
         w = v.get('when') or {}
         if len(w) == 1:
             (flag, spec), = w.items()
-            if str(spec).replace(' ', '') in ('>=1', '>0'):
+            if flag.startswith(CHOICE_PREFIX):
+                chosen.setdefault(flag[len(CHOICE_PREFIX):], set()).add(str(spec))
+            elif str(spec).replace(' ', '') in ('>=1', '>0'):
                 tested.add(flag)
-    if not tested:
+    if not tested and not chosen:
         return None
     before = [o for x in QUESTS[:QUESTS.index(q)] for o in x['objectives']]
     before += [o for o in q['objectives'] if o['id'] in _requires_closure(q, dialogue_obj['id'])]
     for o in before:
         if o['type'] != 'choice' or not o.get('choices'):
             continue
+        if o['id'] in chosen and {c['id'] for c in o['choices']} <= chosen[o['id']]:
+            return o['id']
         if all(any(f in tested and FLAGS.get(f, {}).get('default') == 0 and spec.get('delta', 0) > 0
                    for f, spec in c.get('effects', {}).items()) for c in o['choices']):
             return o['id']
@@ -214,13 +227,16 @@ def flow_block():
 def c3_block():
     hs = hotspots()
     title_key = C3_QUESTS[0]['title_key']
-    out = ['## 11. Chapter 3 — „%s“ (opening, Veltrava)' % t(title_key), '',
-           'Binding design: `documentation/C3_DESIGN.md`. Everything in this section is generated from `data/v3`, '
-           '`data/chapters/c3.json` and `data/locale/de_c3_*.json` by `%s`; edit the data, then re-run the script. '
-           'The engine is unchanged: Chapter 3 is two more quests in the single scene chain, inserted between '
-           '`L_M1_Archive` and the montage, so the finale (and the end card) now follows Chapter 3. Player-facing '
-           'variants (line texts, option texts, reactions, cinematic inner lines) are presentation data read by '
-           '`scripts/core/chapter_ext.gd`; they never change story state.' % GEN, '']
+    out = ['## 11. Chapter 3 — „%s“ (Veltrava: the opening and the night of the fire)' % t(title_key), '',
+           'Binding design: `documentation/C3_DESIGN.md` (opening: station, palais) and `documentation/C3P2_DESIGN.md` '
+           '(part 2: registry, fire, quay). Everything in this section is generated from `data/v3`, '
+           '`data/chapters/c3.json` and `data/locale/de_c3*_*.json` by `%s`; edit the data, then re-run the script. '
+           'The engine is unchanged: Chapter 3 is seven more quests in the single scene chain, inserted between '
+           '`L_M1_Archive` and the montage, so the finale (and the end card) now follows Chapter 3. The four registry '
+           'scenes share one level file and hand control over in place (in-level protagonist switch, '
+           'TECHNICAL_ARCHITECTURE §12.11). Player-facing variants (line texts, option texts, reactions, cinematic inner '
+           'lines) are presentation data read by `scripts/core/chapter_ext.gd`; they never change story state. '
+           'Conditions name flags or `choice.<objective>` (the recorded option).' % GEN, '']
     # 11.1 transitions
     out += ['### 11.1 Scene flow and transitions', '']
     rows = []
@@ -318,10 +334,11 @@ def c3_block():
     out += table(['Puzzle', 'Objective', 'Type', 'Clue items (must be owned)', 'Shown', 'Solution', 'Hint after', 'Notes'], rows)
     for o in puzzle_objs:
         p = PUZZLES[o['puzzle_id']]
-        plates = [(sym, LOC.get('ui.c3.protocol.card.' + sym)) for sym in p['display_symbols']]
-        out += ['', '%s name plates: ' % code(p['id']) + ', '.join('%s „%s“' % (code(sym), name) for sym, name in plates if name) + '.',
-                'Hint (`ui.c3.protocol.hint`): „%s“' % t('ui.c3.protocol.hint'),
-                'Success (`ui.c3.protocol.success`): „%s“' % t('ui.c3.protocol.success'),
+        pre = PUZZLE_UI.get(p['id'], 'ui.c3.protocol')
+        plates = [(sym, LOC.get(pre + '.card.' + sym)) for sym in p['display_symbols']]
+        out += ['', '%s cards: ' % code(p['id']) + ', '.join('%s „%s“' % (code(sym), name) for sym, name in plates if name) + '.',
+                'Hint (`%s.hint`): „%s“' % (pre, t(pre + '.hint')),
+                'Success (`%s.success`): „%s“' % (pre, t(pre + '.success')),
                 'UI scene: %s (`open(obj_id)`, signal `solved`).' % code(CH.get('puzzles', {}).get(o['id'], '—'))]
     out += ['Engine semantics as in §4: unlimited retries, no penalty; a list of strings in the wrong order **or of '
             'the wrong length** counts one attempt, a malformed answer (not a list, non-string items) is rejected and '
@@ -332,8 +349,8 @@ def c3_block():
     out += table(['Item', 'Name (de)', 'Description (de)', 'Category', 'Scene', 'Granted by'],
                  [[code(i['id']), t(i['name_key']), t(i['description_key']), i['category'], code(i['scene']),
                    code(grant.get(i['id'], '—'))] for i in V3['items']['items'] if i['scene'] in C3_SCENES])
-    out += ['', 'Granted once, in acquisition order, after the six slice items (inventory order of the canonical '
-            'route: weighbill, departures, travel order, seating, booth log, carbon).', '']
+    out += ['', 'Granted once, in acquisition order, after the six slice items (the canonical route collects them '
+            'in the order of this table).', '']
     # 11.7 flags and events
     out += ['### 11.7 Flags and events', '']
     changed = {}     # flag -> [(objective id, label)]
@@ -353,7 +370,9 @@ def c3_block():
         rng = '%d–%d' % (meta['min'], meta['max']) if meta['type'] == 'integer' else '—'
         rows.append([code(f), meta['type'], str(meta['default']).lower(), rng, ', '.join(lbl for _, lbl in changed[f])])
     out += table(['Flag', 'Type', 'Default', 'Range', 'Changed by'], rows)
-    out += ['', 'Defaults keep older saves valid (missing flags take them on load). No combined morality score.', '']
+    out += ['', 'Part 2 adds no flag (C3P2_DESIGN §1.1: a v3 save is compared flag by flag on load, so a new flag '
+            'would invalidate every existing save); it writes the meters above and the choice history. No combined '
+            'morality score.', '']
     reads = {}
     for node, vs in CH.get('line_variants', {}).items():
         for v in vs:
@@ -371,7 +390,8 @@ def c3_block():
                     reads.setdefault(f, []).append('reaction ' + code(cid))
     out += ['Presentation conditions (`data/chapters/c3.json`, first match wins) — this is how the slice callbacks of '
             '§7.3 reach Chapter 3:', '']
-    out += table(['Flag read', 'Used by'], [[code(f), ', '.join(dict.fromkeys(reads[f]))] for f in FLAGS if f in reads])
+    out += table(['Flag read', 'Used by'], [[code(f), ', '.join(dict.fromkeys(reads[f]))] for f in FLAGS if f in reads]
+                 + [[code(f), ', '.join(dict.fromkeys(reads[f]))] for f in sorted(reads) if f.startswith(CHOICE_PREFIX)])
     out.append('')
     # 11.8 choices
     out += ['### 11.8 Choices and reactions', '',
@@ -404,10 +424,12 @@ def c3_block():
         shots = ', '.join('%s %s (%s s)' % (x['id'], x['shot'], x['duration_s']) for x in s['shots'])
         rows.append([code(s['id']), trig, code(s['skip_policy']), shots, code(CH['cinematics'][s['id']])])
     out += table(['Sequence', 'Trigger', 'Skip policy (data)', 'Shots', 'Scene (§12.5)'], rows)
-    out += ['', 'Queued once in data order (`LS_C3_Trains` right after `LS_X1_Final`, both on `m1_completed`); '
-            'skipping has no story effect. Inner lines (`data/locale/de_c3_cinematics.json`, chosen by the scene '
-            'from `configure(ctx).flags`):', '']
-    out += table(['Key', 'Line (de)'], [[code(k), v] for k, v in LOC.items() if k.startswith('cin.c3.')])
+    out += ['', 'Queued once in data order (`LS_C3_Trains` right after `LS_X1_Final`, both on `m1_completed`; '
+            '`LS_C3_Radio` right after `LS_C3_Close`, both on `c3b_completed`); skipping has no story effect. Inner '
+            'lines (`data/locale/de_c3_cinematics.json`, `de_c3p2_cinematics.json`, chosen by the scene from '
+            '`configure(ctx)` choices and flags):', '']
+    out += table(['Key', 'Line (de)'], [[code(k), v] for k, v in LOC.items()
+                                       if k.startswith('cin.c3.') or k.startswith('cin.c3p2.')])
     out.append('')
     # 11.10 people
     people = [k[len('char.'):-len('.name')] for k in LOC if k.startswith('char.') and k.endswith('.name')]

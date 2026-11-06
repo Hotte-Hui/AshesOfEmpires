@@ -19,6 +19,13 @@ const ENGINE := preload("res://scripts/story/story_engine.gd")
 const EXPRESSIONS := ["neutral", "concerned", "determined", "surprised"]
 const KINDS := ["detail", "secret", "easter_egg", "chat"]
 const LEVELS := {"L_C3_Station": "station", "L_C3_Hall": "hall"}
+## Chapter 3 part 2 (C3P2_DESIGN.md §7): exploration entries of the registry (one level file for four scenes; its
+## entries use the first scene id) and the quay may live in data/explore/veltrava_*.json too. Their ids and texts are
+## checked here; documents, placement and counts belong to the part-2 streams' own tests.
+const P2_LEVELS := {"L_C3_RegistryA": "registry", "L_C3_Quay": "quay"}
+## Scenes registered for a round whose streams have not delivered yet are listed here: reported, not failed, until they
+## exist (round 8 delivered all of LS_C3_Radio/Fire/Escape/Halves and c3d_solve_check, so the list is empty again).
+const PENDING_R8: Array = []
 const DOCS_DIR := "res://assets/ui/documents/"
 const EXPLORE_DIR := "res://data/explore/"
 ## C3_DESIGN §4 — names the content relies on (art ↔ content contract)
@@ -294,6 +301,9 @@ func _cinematics() -> bool:
 	var contexts := _cinematic_contexts()
 	for cid in chapter["cinematics"]:
 		var path := str(chapter["cinematics"][cid])
+		if PENDING_R8.has(cid) and not ResourceLoader.exists(path):
+			print("      pending (round 8): %s -> %s" % [cid, path])
+			continue
 		if not kit.ok(ResourceLoader.exists(path), "%s: cinematic scene %s missing" % [cid, path]):
 			continue
 		var packed = load(path)
@@ -339,6 +349,9 @@ func _cinematic_contexts() -> Array:
 func _puzzle_ui() -> bool:
 	for oid in chapter["puzzles"]:
 		var path := str(chapter["puzzles"][oid])
+		if PENDING_R8.has(oid) and not ResourceLoader.exists(path):
+			print("      pending (round 8): %s -> %s" % [oid, path])
+			continue
 		if not kit.ok(ResourceLoader.exists(path), "%s: puzzle UI scene %s missing" % [oid, path]):
 			continue
 		var node: Node = (load(path) as PackedScene).instantiate()
@@ -360,7 +373,10 @@ func _explore_entries() -> bool:
 		if str(entry_file[id]).begins_with("veltrava_"):
 			per_level[lvl] = per_level.get(lvl, 0) + 1
 		kit.ok(KINDS.has(e.get("kind")), "%s: kind %s is one of %s" % [id, Kit.fmt(e.get("kind")), KINDS])
-		if not kit.ok(LEVELS.has(lvl), "%s: level %s is L_C3_Station or L_C3_Hall" % [id, Kit.fmt(lvl)]):
+		if P2_LEVELS.has(lvl):
+			kit.ok(str(id).begins_with("veltrava.%s." % P2_LEVELS[lvl]), "%s: id follows veltrava.%s.<name>" % [id, P2_LEVELS[lvl]])
+			continue
+		if not kit.ok(LEVELS.has(lvl), "%s: level %s is a Chapter-3 level %s" % [id, Kit.fmt(lvl), LEVELS.keys() + P2_LEVELS.keys()]):
 			continue
 		kit.ok(str(id).begins_with("veltrava.%s." % LEVELS[lvl]), "%s: id follows veltrava.%s.<name>" % [id, LEVELS[lvl]])
 		kit.eq(e.get("area"), "veltrava", "%s: area" % id)

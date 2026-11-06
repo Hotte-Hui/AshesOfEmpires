@@ -1,0 +1,162 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
+
+[node name="L_C3_Quay" type="Node2D"]
+script = ExtResource("1")
+level_id = "L_C3_Quay"
+protagonist = "alexei"
+mode = "side"
+art_manifest = "res://assets/environments/veltrava_quay/scene.json"
+ambience = "amb_veltrava_quay"
+music = "mus_c3p2_halves"
+footstep_surface = "snow"
+grade_preset = "quay"
+
+[node name="Playfield" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="KonradQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "konrad"
+hotspot_id = "konrad_quay"
+hotspot_offset = Vector2(18, 0)
+face_left = true
+
+[node name="TypistQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "typist"
+hotspot_id = "typist_quay"
+hotspot_offset = Vector2(14, 0)
+face_left = true
+
+[node name="GuardQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "border_officer"
+hotspot_id = "guard_quay"
+look_at_player = false
+
+[node name="KesslerQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "kessler"
+hotspot_id = "kessler_quay"
+face_left = true
+look_at_player = false
+
+[node name="VoronovaQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "voronova"
+hotspot_id = "voronova_quay"
+hotspot_offset = Vector2(14, 0)
+face_left = true
+look_at_player = false
+
+[node name="JournalistQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("3")
+char_id = "journalist"
+hotspot_id = "journalist_quay"
+hotspot_offset = Vector2(14, 0)
+face_left = true
+
+[node name="Halves" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3g_inspect_halves"
+kind = "inspect"
+hotspot_id = "bench"
+
+[node name="TalkKonrad" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3g_talk_konrad"
+kind = "dialogue"
+hotspot_id = "konrad_quay"
+npc_id = "konrad"
+radius = 38.0
+
+[node name="ChoiceSplit" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+objective_id = "c3g_choose"
+kind = "choice"
+hotspot_id = "konrad_quay"
+npc_id = "konrad"
+radius = 38.0
+
+[node name="Find_SootPrint" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_soot_print"
+explore_id = "veltrava.quay.soot_print"
+once = true
+radius = 20.0
+
+[node name="Find_FireEngine" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_fire_engine"
+explore_id = "veltrava.quay.fire_engine"
+once = true
+radius = 26.0
+
+[node name="ChatTypistQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "typist_quay"
+explore_id = "veltrava.quay.chat_typist"
+npc_id = "typist"
+once = true
+radius = 34.0
+
+[node name="Find_Lantern" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_lantern"
+explore_id = "veltrava.quay.lantern"
+once = true
+
+[node name="Find_Ice" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_ice"
+explore_id = "veltrava.quay.ice"
+once = true
+
+[node name="Find_Searchlights" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_searchlights"
+explore_id = "veltrava.quay.searchlights"
+once = true
+
+[node name="Find_Cars" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_cars"
+explore_id = "veltrava.quay.cars"
+once = true
+radius = 26.0
+
+[node name="ChatVoronovaQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "voronova_quay"
+explore_id = "veltrava.quay.chat_voronova"
+npc_id = "voronova"
+once = true
+radius = 34.0
+
+[node name="ChatJournalistQuay" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "chat"
+hotspot_id = "journalist_quay"
+explore_id = "veltrava.quay.chat_journalist"
+npc_id = "journalist"
+once = true
+radius = 34.0
+
+[node name="Find_BridgeArms" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_bridge_arms"
+explore_id = "veltrava.quay.bridge_arms"
+once = true

@@ -39,6 +39,13 @@ CROPS = {
     'L_M1_Plaza': (214, 92),
     'L_C3_Station': (120, 56),
     'L_C3_Hall': (150, 50),
+    # Chapter 3 part 2 (one level file, a look per scene): A night yard + Annahme, B green lamp over the sorting
+    # table, C fire front at the card cabinet, D booth / chute with the fire in the Karteisaal; the night quay
+    'L_C3_RegistryA': (150, 124),
+    'L_C3_RegistryB': (236, 124),
+    'L_C3_RegistryC': (320, 124),
+    'L_C3_RegistryD': (100, 124),
+    'L_C3_Quay': (225, 124),
 }
 ## warm silver-gelatine ramp: lifted black -> umber -> sepia -> cream highlight (sRGB)
 RAMP = [(0.00, (30, 22, 16)), (0.18, (58, 42, 30)), (0.40, (104, 79, 56)), (0.62, (156, 126, 92)),

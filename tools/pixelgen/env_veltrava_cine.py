@@ -1002,9 +1002,11 @@ def int_alexei():
         p.put(p.box(400 + k * 17, 240, 410 + k * 17, 241), 'M', 3.8)
     for (sx, sy) in ((282, 240), (286, 241)):                       # wrapped sugar cubes
         p.put(p.box(sx, sy, sx + 4, sy + 2), 'S', 5.0)
+    t3_room_details(p, lamp, nl)
     # ---- sash + glass hole, then everything that stands in front of the glass
     paint_sash(p)
     g = punch_glass(p)
+    t3_second_glass(p, lamp)
     # tea glass in a nickel-silver holder (podstakannik): handle left (toward Alexei), spoon, amber tea
     tx, ty = TEA
     holder = p.poly([(tx - 7, ty - 14), (tx + 7, ty - 14), (tx + 6, ty - 2), (tx + 8, ty), (tx - 8, ty), (tx - 6, ty - 2)])
@@ -1039,6 +1041,108 @@ def int_alexei():
     p.L.amb_field(-np.clip(np.hypot((xx - 330) / 430, (yy - 190) / 260) - 0.35, 0, 1) * 2.2)
     p.resolve(band=2.6)
     return p.L
+
+
+# ---------------------------------------------------------------- t3 enrichment (round 8, feel_r8)
+def t3_room_details(p: Paint, lamp, nl):
+    """Round 8: the Soviet compartment was the plainest shot.  Painted under the sash / glass (nothing here
+    touches the glass opening, so the t2 match cut stays pixel-identical):
+      * a pleated pelmet over the window with a scalloped hem and a red cross-stitch band; the gathered curtains
+        get tie-backs, a lace edge toward the glass and deeper folds catching the wall lamp;
+      * the lower berths at both sides: green leatherette seat ends with buttons and piping; on the right one the
+        made-up bedding (folded grey blanket with its red stripe, a white pillow, the paper-wrapped linen set);
+        on the left Alexei's kit bag against the berth;
+      * the upper berths get their folded blankets; a striped carpet runner on the floor."""
+    yy, xx = p.yy, p.xx
+    # ---- pelmet: cream pleats from the rail down to a scalloped hem, a red cross-stitch band
+    pel = p.box(150, 56, 490, 70)
+    scallop = (yy - 66) < 3.2 * np.abs(np.sin((xx - 150) * math.pi / 14.0))
+    pel &= (yy < 66) | scallop
+    pleat = np.sin((xx - 150) * math.pi / 7.0)
+    p.put(pel, 'M', 3.0 + lamp * 3.6 + nl * 1.0 + pleat * 0.6)
+    p.put(p.box(150, 56, 490, 58), 'M', 2.0 + lamp * 2.0)
+    band = pel & (yy >= 60) & (yy <= 63)
+    stitch = (((xx.astype(int) + yy.astype(int)) % 4 == 0) | ((xx.astype(int) - yy.astype(int)) % 4 == 0))
+    p.put(band & stitch, 'R', 1.8 + lamp * 2.2)
+    p.add(pel & ~shift(pel, 0, -1), -0.9)                         # shadow under the hem
+    p.put(p.box(146, 54, 494, 56), 'X', 3.0 + lamp * 1.6)          # pelmet rail
+    # ---- curtains: tie-backs, lace edge toward the glass, deeper folds lit from the lamp side
+    for (xa, xb, inner) in ((118, 166, 165), (474, 522, 474)):
+        cm = p.box(xa, 84, xb, 236)
+        lit_side = 1.0 if xa > 300 else 0.55
+        folds = np.sin((xx - xa) * 1.35) * (1.0 + 0.4 * np.sin(yy / 23.0))
+        p.add(cm, folds * 0.45 * lit_side)
+        tie = cm & (np.abs(yy - (168 + 0.08 * (xx - xa) + 1.5 * np.sin((xx - xa) / (xb - xa) * math.pi))) < 1.4)
+        p.put(tie, 'R', 1.5 + lamp * 2.0)
+        p.put(tie & (np.abs(xx - (xa + xb) / 2) < 6), 'R', 2.6 + lamp * 1.6)        # the knot catches the light
+        lace = p.box(inner - 1, 86, inner + 1, 232) & (((yy.astype(int)) % 3) != 1)
+        p.put(lace, 'S', 4.2 + lamp * 1.6)
+        p.add(cm & (yy > 168) & (yy < 176), -0.7)                  # cloth pulled tight under the tie
+    # ---- lower berths at both sides: leatherette seat ends with buttons and piping
+    for (x0b, x1b) in ((0, 92), (492, VW)):
+        seat = p.box(x0b, 262, x1b, 318)
+        p.put(seat, 'P', 2.2 + lamp * 2.6 + nl * 0.6)
+        p.put(p.box(x0b, 262, x1b, 265), 'P', 4.0 + lamp * 1.5)    # piping on the seat edge
+        p.add(seat & (yy > 300), -0.8)
+        for bx in range(x0b + 10, x1b - 4, 18):
+            for by in (276, 292):
+                p.put(p.box(bx, by, bx + 2, by + 2), 'P', 0.8)
+                p.px(bx, by, 'P', 4.2)
+        p.put(p.box(x0b, 318, x1b, 324), 'I', 1.6 + lamp * 1.2)     # steel base
+    # right berth: folded blanket, pillow, linen packet
+    blanket = p.rr(512, 240, 600, 264, 3)
+    p.put(blanket, 'S', 1.8 + lamp * 2.6 + nl * 0.8)
+    p.put(blanket & ((yy.astype(int) - 240) % 6 == 0), 'S', 1.0)    # folds
+    p.put(blanket & (np.abs(xx - 556) < 3), 'R', 2.2 + lamp * 2.0)  # the red stripe of railway blankets
+    pillow = p.rr(600, 236, 636, 262, 6)
+    p.put(pillow, 'S', 4.4 + lamp * 1.8 + nl * 0.6)
+    p.add(pillow & (np.abs(xx - 618) < 1), -1.2)
+    linen = p.box(520, 230, 560, 240)
+    p.put(linen, 'M', 5.4 + lamp * 1.6)
+    p.put(linen & (np.abs(yy - 234.5) < 0.6), 'C', 3.0)            # printed band of the paper wrapper
+    p.put(p.box(538, 230, 542, 240), 'M', 3.2)                     # string
+    # left: Alexei's kit bag leaning against the berth
+    bag = p.rr(28, 270, 84, 314, 8)
+    p.put(bag, 'G', 1.2 + lamp * 1.4 + nl * 0.6)
+    p.put(bag & (yy < 276), 'G', 2.6)
+    p.put(p.line([(40, 270), (56, 258), (72, 270)], 0.8), 'W', 2.4)  # strap loop
+    p.put(p.box(52, 282, 60, 286), 'X', 3.0)                       # buckle
+    # upper berths: folded blankets on the rolled mattresses
+    for (x0b, x1b) in ((14, 120), (520, 626)):
+        fb = p.rr(x0b, 40, x1b, 50, 3)
+        p.put(fb, 'S', 2.0 + nl * 1.4 + lamp * 1.2)
+        p.put(fb & (np.abs(xx - (x0b + x1b) / 2) < 2), 'R', 2.0)
+    # carpet runner on the floor (red / green border, worn in the middle)
+    run = p.box(0, 334, VW, VH)
+    p.put(run, 'R', 0.6 + lamp * 0.9 + nl * 0.4)
+    p.put(run & ((yy >= 337) & (yy <= 338)), 'P', 2.2 + lamp)
+    p.put(run & (((xx.astype(int) // 6) % 2 == 0) & (yy >= 341) & (yy <= 342)), 'R', 1.8 + lamp)
+
+
+def t3_second_glass(p: Paint, lamp):
+    """A second glass holder on the table: the conductor brought two teas from the samovar; this one is empty,
+    the spoon standing in it, two sugar wrappers beside it (in front of the glass, like the tea glass)."""
+    yy, xx = p.yy, p.xx
+    tx, ty = 382, 236
+    holder = p.poly([(tx - 6, ty - 12), (tx + 6, ty - 12), (tx + 5, ty - 2), (tx + 7, ty), (tx - 7, ty),
+                     (tx - 5, ty - 2)])
+    hl = np.clip((xx - (tx - 6)) / 12, 0, 1)
+    p.put(holder, 'X', 2.2 + hl * 3.2)
+    # filigree: little arches round the holder
+    arches = holder & (yy < ty - 3) & (((xx.astype(int) - tx) % 3 == 0) & ((yy.astype(int) - ty) % 4 != 0))
+    p.put(arches, 'X', 1.2 + hl * 1.8)
+    p.put(holder & (np.abs(yy - (ty - 11.5)) < 0.6), 'X', 6.0)
+    p.put(p.box(tx - 8, ty - 1, tx + 8, ty + 1), 'X', 4.2)
+    p.put(p.line([(tx + 6, ty - 10), (tx + 10, ty - 9), (tx + 10, ty - 4), (tx + 6, ty - 3)], 0.6), 'X', 3.0)
+    glass = p.box(tx - 5, ty - 19, tx + 6, ty - 12)
+    p.put(glass, 'S', 2.6 + hl * 1.4)                                # empty: cold glass, a tea ring at the bottom
+    p.put(p.box(tx - 5, ty - 13, tx + 6, ty - 12), 'L', 2.2)
+    p.put(p.box(tx - 6, ty - 20, tx + 7, ty - 19), 'S', 5.4)
+    p.put(p.box(tx + 4, ty - 19, tx + 5, ty - 13), 'S', 6.0)
+    p.put(p.line([(tx - 2, ty - 26), (tx + 1, ty - 13)], 0.5), 'X', 5.0)   # the spoon standing in it
+    for (sx, sy) in ((tx + 12, ty + 2), (tx + 17, ty + 3)):
+        p.put(p.box(sx, sy, sx + 4, sy + 2), 'S', 5.2)
+        p.px(sx + 1, sy, 'R', 2.4)
 
 
 def paint_reach_a(p: Paint, lamp):
@@ -1196,6 +1300,15 @@ def roomflare(interior: np.ndarray, figure: np.ndarray, fig_xy, toward=(-1, -1))
     rimm = edge & inside_glass
     for c, v in enumerate((120, 128, 140)):
         a[..., c] += rimm * v
+    if toward[0] > 0:
+        # round 8 (t3): the passing station lamp throws the lit window, skewed, over the right curtain and wall
+        # and a band across the ceiling (warm: a sodium lamp, unlike the cold crossing)
+        sk = (xx - 470) * 0.55
+        proj = (xx >= 470) & (xx < 640) & (yy >= 96 + sk) & (yy < 214 + sk * 0.35) & inter & ~fm
+        cross = proj & ((np.abs(xx - 556) < 2) | (np.abs(yy - (150 + sk * 0.7)) < 1.5))     # the sash shadow
+        ceil = (yy < 44) & (np.abs(xx - (330 + (yy - 22) * 1.6)) < 70) & inter
+        for c, v in enumerate((96, 72, 44)):
+            a[..., c] += (proj & ~cross) * v + ceil * v * 0.45
     return quant_add(a, 8.0)
 
 
@@ -1292,6 +1405,16 @@ def write_layout():
         f.write(txt + '\n')
 
 
+def build_t3():
+    """Round 8 (feel_r8): rebuilds only Alexei's compartment (t3): int_alexei.png and roomflare_a.png."""
+    ia = int_alexei()
+    arr = ia.c if hasattr(ia, 'c') else ia
+    save(arr, 'trains/int_alexei.png')
+    fa = fig_alexei()
+    far = fa.c if hasattr(fa, 'c') else fa
+    save(roomflare(arr, far[:, :FIG_A[2]], FIG_A[:2], toward=(1, -1)), 'trains/roomflare_a.png')
+
+
 def main(argv=None):
     import argparse
     import time
@@ -1300,6 +1423,10 @@ def main(argv=None):
     args = ap.parse_args(argv)
     parts = [s.strip() for s in args.only.split(',') if s.strip()]
     t0 = time.time()
+    if parts == ['t3']:                    # round 8: only the Soviet compartment of LS_C3_Trains
+        build_t3()
+        print('env_veltrava_cine: t3 in %.1f s -> %s' % (time.time() - t0, OUT))
+        return
     # every part registers its LAYOUT entries; layout.json is always written from a complete build
     # (a partial --only run rebuilds the other parts' layout entries without writing their images)
     if 'trains' in parts:

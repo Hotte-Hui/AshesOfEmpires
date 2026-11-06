@@ -5,6 +5,22 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 8 (2026-11-06) — Chapter 3 part 2: the joint evidence check, the registry fire, the first co-op scene
+Planned with the user before they went to sleep („arbeite weiter … schaff neue Pläne“). Built by 9 parallel specialists
+from the contract `documentation/C3P2_DESIGN.md`, integrated and tested by the lead (evidence: TEST_REPORT.md §12).
+| Area | Now |
+|---|---|
+| Story (C3P2_DESIGN) | radio night (LS_C3_Radio: the same news in both hotel rooms, „begleitete Personen“ / „Begleitgut“, the note signed „– E.“); registry A (Alexei: emptied crates, the night book), B (Konrad: the two halves on one table, puzzle „Gegenprobe“, Blatt 7 with Konrad's own initials, choice c3d admit/pocket the plan), C/D (the fire: Alexei takes the file, the ramp door is bolted, Konrad pushes the desk, both climb out through the 1909 coal chute), the night quay (each keeps half; choice c3g split by language / swap / hide for Elena); 6 decisions on the end card |
+| In-level protagonist switch (§12.11) | two Story scenes may share one level file; control passes in place (no reload, no fade, camera glide ≈ 1.2 s), the other man stays as a story NPC, walks to his spot, talks; saves keep both; memories open each scene with its own protagonist |
+| New places | registry level (four looks of the same rooms: night with Konrad's torch, green lamp, smoke, fire; gated art, blockers, breathing fire light), night quay behind the Palais (fire engine, searchlights, the burning wing over the ice) |
+| Cinematics | LS_C3_Radio 30.8 s, LS_C3_Fire, LS_C3_Escape, LS_C3_Halves; memory film titles |
+| Puzzle | „Gegenprobe“ (CheckPuzzle): pair each paper of the freight chain with a registry entry by the one fact they share; keys, pad, mouse; hint, 150 % text |
+| Cast / sound | soot looks for both men and a night look for the typist (per-scene „looks“, portraits included), Konrad/Alexei carry the file, 32 synthesized sounds, fire and quay music, registry/fire/quay ambience; the porter's radio waltz louder near his booth, roof creaks and glass in the fire |
+| Exploration | 18 registry finds + 7 on the quay, a registry side task, the „Kartei“ mini-game, two history cards (1939 census, filtration) |
+| Feel | ambient walkers in the Palais, on the station platform and in the reading room (they give way to the player), car 3 thaws after the heating task, decal loops desynchronised, portraits for the evicted Berlin family, Voronova's hat, MemoryView fixes, toasts wait while a menu is open |
+| Fixes in integration | pad A now presses the focused button in every menu (Godot's built-in `ui_accept` has no pad button — controller players were stuck in menus); saves and memory snapshots from the shorter round-7 chain continue in the registry instead of failing (`SaveSystem.rebase_story`, test_save_rebase_r8); memory cards of the shared registry level count its finds |
+| Playtime (estimate) | main path ≈ 35 min; everything ≈ 2 h 50 min (116 finds, 27 chats, 10 mini-games, 6 tasks, 21 history cards; not measured with a human) |
+
 ## Round 7 (2026-11-05/06) — Chapter 3 finished, memories, side tasks, five new mini-games
 Requested by the user: finish what was started, a good 20–30 minutes of play, new mini-game ideas, improve everything,
 and revisit completed scenes („zurückreisen … wieder in die Gegenwart“). Built by 10 parallel specialists (+2 review

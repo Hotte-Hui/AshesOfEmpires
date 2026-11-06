@@ -8,6 +8,8 @@ extends Control
 ## with its area counter, kind "history" a quiet real-history notice (paper sound, no flourish).
 ## Memories (§12.10): set_memory(info) replaces the objective tracker by the badge „ERINNERUNG · place · date“
 ## with the hint how to return (pause key → „In die Gegenwart zurückkehren“); set_memory({}) removes it.
+## In-level protagonist switch (§12.11): show_protagonist(char_id) — a quiet name plate at the top centre („KONRAD
+## ADLER“ between copper rules) while the camera glides over; never a chapter card. Instant with reduced motion.
 
 const Kit := preload("res://scripts/ui/ui_kit.gd")
 
@@ -48,6 +50,10 @@ var _memory_kicker: Label
 var _memory_place: Label
 var _memory_hint: Control
 var _memory_hint_box: VBoxContainer
+var _who: PanelContainer                # §12.11 name plate of the protagonist who just took over
+var _who_label: Label
+var _who_tween: Tween
+var _who_wanted := false
 
 const MEMORY_ICON := "res://assets/ui/memories/icon_memory.png"
 
@@ -60,6 +66,7 @@ func _ready() -> void:
 	_build_memory_badge()
 	_build_prompt()
 	_build_chapter()
+	_build_switch_tag()
 	if _toast_layer == null:
 		set_toast_layer(self)
 	refresh()
@@ -374,6 +381,59 @@ func show_chapter_card(title: String, sub := "", kicker := "") -> void:
 	show_chapter(title, sub, kicker)
 
 
+# ================================================================ protagonist name plate (§12.11)
+func _build_switch_tag() -> void:
+	_who = Kit.panel("PlatePanel")
+	_who.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_who.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_who.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_who.offset_top = MARGIN.y
+	_who.visible = false
+	add_child(_who)
+	var row := Kit.hbox(14)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_who.add_child(row)
+	for i in 3:
+		if i == 1:
+			_who_label = Kit.label("", "KickerLabel")
+			_who_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			_who_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			row.add_child(_who_label)
+		else:
+			var r := Kit.rule(Kit.C_COPPER, 2, 46)
+			r.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			row.add_child(r)
+
+
+## The plate „VORNAME NACHNAME“ for `hold` s (plus fades): control has passed to this protagonist inside the level.
+func show_protagonist(char_id: String, hold := 2.6) -> void:
+	if _who == null or char_id == "" or char_id == "none":
+		return
+	_who_label.text = Kit.char_name(char_id).to_upper().replace("ß", "SS")
+	if _who_tween != null and _who_tween.is_valid():
+		_who_tween.kill()
+	var w := ceilf(_who.get_combined_minimum_size().x * 0.5)
+	_who.offset_left = -w
+	_who.offset_right = w
+	_who_wanted = true
+	_update_visibility()
+	var rm := Kit.reduced_motion()
+	_who.modulate.a = 1.0 if rm else 0.0
+	_who_tween = create_tween()
+	if not rm:
+		_who_tween.tween_property(_who, "modulate:a", 1.0, 0.45)
+	_who_tween.tween_interval(hold)
+	if not rm:
+		_who_tween.tween_property(_who, "modulate:a", 0.0, 0.9)
+	_who_tween.tween_callback(func() -> void:
+		_who_wanted = false
+		_update_visibility())
+
+
+func is_protagonist_tag_visible() -> bool:
+	return _who != null and _who.visible
+
+
 # ================================================================ toasts
 func set_toast_layer(layer: Control) -> void:
 	_toast_layer = layer
@@ -430,8 +490,7 @@ func _pump_toasts() -> void:
 func _blocked_for_toasts() -> bool:
 	if not _enabled:
 		return true
-	var top: Control = ui_root.top_modal() if ui_root != null and ui_root.has_method("top_modal") else null
-	return top != null and top.get("suppress_toasts") == true
+	return _blocked_by_modal()
 
 
 func _spawn_toast(text: String, kind: String) -> void:
@@ -534,8 +593,7 @@ func set_hud_visible(on: bool) -> void:
 func on_modal_changed(top: Control) -> void:
 	_suppressed = top != null
 	_update_visibility()
-	if top == null:
-		_pump_toasts()
+	_pump_toasts()          # the pump checks _blocked_for_toasts() itself (also when a toast-friendly modal is on top)
 
 
 func _update_visibility() -> void:
@@ -550,12 +608,16 @@ func _update_visibility() -> void:
 			_memory_box.position = MARGIN
 			Kit.appear(_memory_box, 0.4, Vector2(-18, 0))
 	_prompt.visible = play and _prompt_wanted
+	if _who != null:
+		_who.visible = play and _who_wanted
 	if not _enabled:
 		_chapter.visible = false
 	if _toast_box != null:
 		_toast_box.visible = (_enabled or (ui_root != null and ui_root.has_method("is_modal_open") and ui_root.is_modal_open())) 			and not _blocked_by_modal()
 
 
+## Round 8: toasts wait while ANY modal is open and come out when it closes. A modal that wants them on top
+## declares `suppress_toasts = false` (the dialogue box while docked at the bottom); true or no declaration = hold.
 func _blocked_by_modal() -> bool:
 	var top: Control = ui_root.top_modal() if ui_root != null and ui_root.has_method("top_modal") else null
-	return top != null and top.get("suppress_toasts") == true
+	return top != null and top.get("suppress_toasts") != false

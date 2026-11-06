@@ -47,6 +47,25 @@ def install():
     CHK.EXPECT_H.update(C3.EXPECT_H_C3)
     for cid, rows in C3.ROWS_C3.items():     # NPC rule: exactly the rows this cast ships
         CHK.NPC_MIN[cid] = list(rows)
+    voronova_hat_edge()
+
+
+# Round 8 (feel_r8): at 1x Lidia Voronova's dark karakul pirozhok ran into her grey hair (both dark in the
+# station's dawn light). The lowest row of the hat gets the light curl tips (hat tones 5 / 4 instead of 1 / 2):
+# a 1-px lighter fur edge between hat and hair, in both views (the talking / blinking variants derive from them).
+VORONOVA_HAT_EDGE = {
+    'VORONOVA_SIDE': (3, '. . . 4 5 4 5 4 5 4 . .'),
+    'VORONOVA_FRONT': (3, '. 4 5 4 5 4 5 4 5 4 .'),
+}
+
+
+def voronova_hat_edge():
+    """Patches the head bitmaps of chargen_cast_c3 in memory before voronova() is built (idempotent)."""
+    for name, (row, text) in VORONOVA_HAT_EDGE.items():
+        rows = getattr(C3, name)
+        if len(text.split()) != len(rows[row].split()):
+            raise ValueError(f'{name}: hat edge row has the wrong width')
+        rows[row] = text
 
 
 def set_out(root):

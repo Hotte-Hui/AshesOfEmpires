@@ -2359,6 +2359,18 @@
  ],
  "actors": [
   {
+   "scene": "res://scenes/actors/AmbientWalkers.tscn",
+   "pos": [0, 0],
+   "props": {"data": "res://assets/environments/veltrava_station/walkers.json"},
+   "note": "round 8 ambient walkers (feel_r8): travellers and a porter on the platform"
+  },
+  {
+   "scene": "res://scenes/levels/veltrava_station/StationThaw.tscn",
+   "pos": [0, 0],
+   "props": {},
+   "note": "round 8 (feel_r8): side-task payoff -- once veltrava.task.heating.thaw is found the leak heater_leak_23 stops, a hand wipes a peephole in car 3 and waves, the frost recedes (thaw/*.png)"
+  },
+  {
    "scene": "res://scenes/levels/veltrava_station/StationPigeons.tscn",
    "pos": [
     478,

@@ -1,0 +1,11 @@
+{
+ "locale": "de",
+ "area": "history_c3p2",
+ "note": "Reale-Geschichte-Karten aus Kapitel 3, Teil 2 (data/explore/c3p2_history_reich.json, c3p2_history_soviet.json). Außerhalb der Fiktion, sachlicher dokumentarischer Ton, 450–800 Zeichen, keine Erfolgssprache, jede Karte steht für sich. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen je Karte; Quellen in den Datendateien.",
+ "strings": {
+  "hist.reich.census_1939.title": "Die Ergänzungskarte von 1939",
+  "hist.reich.census_1939.text": "Am 17. Mai 1939 zählte das Deutsche Reich seine Einwohner. Jeder Haushalt füllte zusätzlich eine „Ergänzungskarte für Angaben über Abstammung und Vorbildung“ aus: Für jede Person war anzugeben, ob einer ihrer vier Großeltern „Volljude“ war. So erfasste der Staat rund 277 500 Menschen jüdischer Herkunft mit Namen, Geburtsdatum und Anschrift, um sie den Rassengesetzen zu unterwerfen. Die Karten kamen später zum Reichssippenamt. Götz Aly und Karl Heinz Roth zeigten 1984 in „Die restlose Erfassung“, wie Zählen, Karteien und Sortieren die Verfolgung vorbereiteten. Die erhaltenen Karten liegen heute im Bundesarchiv. Dort helfen sie, die Namen der Verfolgten zu dokumentieren.",
+  "hist.soviet.filtration.title": "Filtration: die Prüfung der Heimkehrer",
+  "hist.soviet.filtration.text": "Nach dem Krieg kehrten Millionen Sowjetbürger aus Deutschland zurück: befreite Kriegsgefangene und die als „Ostarbeiter“ verschleppten Zwangsarbeiter. Mehr als vier Millionen durchliefen 1945/46 die Prüf- und Filtrationslager des NKWD. Für alle galt eine Schuldvermutung; in langen Verhören mussten sie beweisen, keine Verräter zu sein. Viele Zivilisten durften danach heim, viele frühere Soldaten mussten zurück in die Armee oder in Arbeitsbataillone. Über 200 000 ehemalige Kriegsgefangene wurden dem NKWD übergeben, viele kamen in den Gulag. Als Opfer des NS-Regimes galten die Heimkehrer bis zum Ende der Sowjetunion nicht. Erst in der Perestroika begannen die ersten, öffentlich davon zu erzählen."
+ }
+}

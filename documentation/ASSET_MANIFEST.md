@@ -56,6 +56,14 @@ edit the part of the owning area and re-run the script.
 - [minigames_r7_relay](#part-minigames_r7_relay)
 - [tasks](#part-tasks)
 - [memories](#part-memories)
+- [c3p2_story](#part-c3p2_story)
+- [env_c3p2_archive](#part-env_c3p2_archive)
+- [env_c3p2_night](#part-env_c3p2_night)
+- [c3p2_cine](#part-c3p2_cine)
+- [c3p2_puzzle](#part-c3p2_puzzle)
+- [c3p2_cast_audio](#part-c3p2_cast_audio)
+- [explore_c3p2](#part-explore_c3p2)
+- [feel_r8](#part-feel_r8)
 - [ui](#part-ui)
 - [explore_system](#part-explore_system)
 - [photo_mode](#part-photo_mode)
@@ -2285,6 +2293,624 @@ py -3 -P tools/audiogen/memories_audio.py
 Remembered lines are first person, past tense, in the protagonists' voices; they only state what the player did
 (the decision taken, the puzzle solved) — nothing new is invented. Dates are months („Januar 1964“, „Februar 1964“),
 no invented days. No reward language; the finds counter is the same neutral counter as elsewhere.
+
+---
+<a id="part-c3p2_story"></a>
+
+## Asset manifest part — Chapter 3, part 2 „Der eiserne Frieden" (registry, fire, quay) — story stream, round 8
+
+Date for all entries: **2026-11-06**. Everything below is original work for this project, written by hand or produced by
+deterministic scripts in this repository; no downloaded images, sounds or samples, no AI image services. Licence:
+project-owned, same as the game. Binding design: `documentation/C3P2_DESIGN.md`.
+
+### Story, presentation and code
+| Path | Kind | How it was made |
+|---|---|---|
+| `documentation/C3P2_DESIGN.md` | design contract | hand-written |
+| `data/v3/*.json` (part-2 entries: 5 scenes, 5 quests, 19 objectives, 10 items, 7 conversations, `pz_c3_check`, 4 cinematics, 5 events), `data/v3/locale_de.json` (`world.c3c`–`c3g`, `obj.c3c_`–`obj.c3g_`, `choice.c3d.*`, `choice.c3g.*`, `item.c3_*` of part 2, `dlg.c3p2.*`) | story data, German texts | hand-written; applied to the JSON files by a one-off formatting script (byte-identical round trip of the existing records) |
+| `data/chapters/c3.json` (levels, entry spawns, chapter cards, `switches`, palette `registry`, grades `registry`/`registry_fire`/`quay`, line expressions/variants, option texts, reactions, puzzle UI and cinematic registry of part 2) | presentation rules | hand-written |
+| `data/locale/de_c3p2_dialogue.json`, `de_c3p2_cinematics.json`, `de_c3p2_ui.json` | German texts (variants, reactions, cinematic lines, check-puzzle UI, memory and task place names) | hand-written |
+| `scripts/core/chapter_ext.gd` (`choice.<objective>` conditions, `level_key` / `same_level` / `scenes_of_level`) | GDScript | hand-written |
+| `scripts/story/story_engine.gd` (`LOCKED_CINEMATICS` += 4 ids — validator list only) | GDScript | hand-written one-line extension |
+| `scenes/levels/L_C3_Registry.tscn`, `L_C3_Quay.tscn` | level shells (story interactables, NPC nodes on named hotspots) | hand-written |
+| `assets/environments/veltrava_registry/scene.json`, `assets/environments/veltrava_quay/scene.json` | **placeholder** art manifests (no images: spawns, hotspots, walk band, blockers) — replaced by the registry / quay art streams, which keep every name | hand-written |
+| `assets/environments/veltrava_registry/explore_hotspots.json`, `assets/environments/veltrava_quay/explore_hotspots.json` | empty append-only targets for the exploration stream | hand-written |
+| `scripts/core/autoplay.gd`, `scripts/core/inputplay.gd` (part-2 routes, check puzzle by keys, saves in `user://e2e/saves`) | E2E drivers | hand-written extensions |
+| `tests/test_c3p2_routes.gd`, edits of the chain tests, `tests/support/test_kit.gd` | tests | hand-written |
+| `tests/reference/make_python_reference.py` → `tests/reference/python_reference.json.gz` | parity fixture | generator extended by hand; fixture generated from the unmodified preproduction reference engine on `data/v3` |
+| `tools/docs/gen_quest_db_c3.py` → `documentation/QUEST_DATABASE.md` §11 | documentation generator | extended by hand |
+
+---
+<a id="part-env_c3p2_archive"></a>
+
+## Asset manifest part -- env_c3p2_archive (Chapter 3 part 2, the commission's registry, L_C3_Registry)
+
+All files below are **original works generated procedurally** by the scripts in `tools/pixelgen/`
+(`env_c3p2_archive.py` drives `env_c3p2_archive_room.py`, `_props.py`, `_fx.py`, helpers `env_c3p2_archive_kit.py`,
+`env_c3p2_archive_layout.py`, the shared read-only `pg.py` and -- read-only -- the tone-space painter, light bake and
+bitmap fonts of `env_veltrava_hall_kit.py`).  No pixels were copied, traced, sampled, downloaded or AI-generated; no
+third-party assets, fonts or textures are embedded.
+
+* Licence / rights: project-owned original artwork (generated for this project), freely redistributable with the
+  game.  Provenance: deterministic generator (a re-run reproduces every file byte-for-byte; checked 2026-11-06),
+  re-run with `py -3 -P tools/pixelgen/env_c3p2_archive.py [--preview=DIR]`.  Machine-readable list:
+  `assets/environments/veltrava_registry/provenance.json`.
+* Date: 2026-11-06 (round 8).  Owner: registry art stream.
+* Palette: `registry` of data/chapters/c3.json (night, slate, oak, lamp green, paper, brass, snow, fire, red, skin),
+  checked at build time; every room look is palette-pure (tests/test_c3p2_archive_art.gd).
+* The level (C3P2_DESIGN 5.1, side view 1920 x 360, feet y 300): the snowy Wirtschaftshof (gate with the
+  trilingual delivery sign, the east-wing facade with one lit window, bracket lamp, the handcart with the emptied
+  crates of wagon 4, the cast hatch "1909", ramp and the iron-clad ramp door), the Annahme (chute door "1909",
+  oak standing desk with the intake book and the day's card box, red fire case with hose and axe, electric fire
+  bell, the glazed porter's booth with key board, the 1909 Kurhaus plan, Bakelite radio, thermos and night book),
+  the Karteisaal (bucket stand, Rohrpost receiver, rows of card cabinets with a rolling ladder, sorting table under
+  the green lamp, stamp board, the card bank with drawer C-17 and Elena's wine-red scarf on the chair), the
+  Planarchiv (office-green walls, the wall of framed Annex C sheets with Blatt 7 askew, plan chests "KORDON-17",
+  drafting table) and the Magazin (bare brick, the enamel plate of the Kurhaus boiler house, mobile shelving with
+  the C-17 unit, the cassation list, delegation shelves, the barred service-stair door with a steel fire door).
+  A 1964 cellar without sprinklers: fire case, buckets, extinguisher, fire bell.
+* Looks (one opaque room layer each, gated in scene.json, applied by scripts/levels/c3p2_archive/registry_level.gd):
+  A night with Konrad's torch (until c3c_talk_konrad) - B the green lamp on - C smoke under the vaults, the Magazin
+  and Planarchiv burning, the ramp door shut (after c3d_choose) - D the fire in the Karteisaal (after
+  c3e_reach_konrad, cross-fades live).  Story patches: seal wire taken, scarf taken, halves on the table, the file
+  taken, Blatt 7 pocketed (choice c3d_choose = pocket_plan), fire case smashed with the cut hose, desk pushed off
+  the chute door.  FX: yard snow, snow through the door gaps, dust in the lamp light, flames (binary alpha +
+  emission), embers and ash (no brightness flicker; ember fades are slower than 3 Hz), smoke veils, rolling smoke,
+  plumes, heat shimmer, the ringing fire bell; life: a guard's boots passing a high window like a pendulum.
+* Insignia (TECHNICAL_ARCHITECTURE 12.4): `props/cart.png` / `props/cart_open.png` (railway stencil on the crates:
+  neutral winged wheel + "МПС") and `patches/insignia_magazin_*.png` (delegation plates: fictional gear-and-wheat
+  emblem / fictional Reichssiegel) are the neutral defaults; their `*_hist.png` twins carry the hammer and sickle
+  and the hooked cross as small in-world stamps of the two delegations, chosen at runtime by `Symbols.pick()` --
+  iconography of the regimes inside the critical narrative only, never decoration.
+* Screenshots: documentation/screenshots/c3p2_archive_*.png (contact sheets for both protagonists and both symbol
+  settings, the live C -> D cross-fade, the insignia comparison, seven full-size views).
+
+| File | Generator | Content |
+|---|---|---|
+| `assets/environments/veltrava_registry/fg_frame.png` | `tools/pixelgen/env_c3p2_archive_props.py` | foreground silhouettes (bollard, cast-iron columns, boxes, cables), parallax 1.25 |
+| `assets/environments/veltrava_registry/fx/ash_c0.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | falling ash (look c) |
+| `assets/environments/veltrava_registry/fx/ash_c1.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | falling ash (look c) |
+| `assets/environments/veltrava_registry/fx/ash_c2.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | falling ash (look c) |
+| `assets/environments/veltrava_registry/fx/ash_d0.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | falling ash (look d) |
+| `assets/environments/veltrava_registry/fx/ash_d1.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | falling ash (look d) |
+| `assets/environments/veltrava_registry/fx/bell_ringing.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | fire bell ringing: the striker against the dome (4 frames, small motion, no flashing) |
+| `assets/environments/veltrava_registry/fx/dust_lamp.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | dust motes in the light of the green lamp |
+| `assets/environments/veltrava_registry/fx/embers_c0.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | rising embers (look c) |
+| `assets/environments/veltrava_registry/fx/embers_c1.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | rising embers (look c) |
+| `assets/environments/veltrava_registry/fx/embers_d0.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | rising embers (look d) |
+| `assets/environments/veltrava_registry/fx/embers_d1.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | rising embers (look d) |
+| `assets/environments/veltrava_registry/fx/flames_bank.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_bank), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_bank_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_bank) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_c17.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_c17), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_c17_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_c17) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_chests.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_chests), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_chests_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_chests) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_door.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_door), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_door_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_door) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_fallen.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_fallen), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_fallen_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_fallen) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_frame_a.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_frame_a), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_frame_a_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_frame_a) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_frame_b.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_frame_b), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_frame_b_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_frame_b) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_frame_c.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_frame_c), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_frame_c_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_frame_c) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_front_c.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_front_c), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_front_c_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_front_c) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_front_d.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_front_d), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_front_d_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_front_d) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_rows.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_rows), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_rows_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_rows) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_shelves.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_shelves), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_shelves_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_shelves) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_table.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_table), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_table_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_table) -- emission strip |
+| `assets/environments/veltrava_registry/fx/flames_units.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_units), 16 frames |
+| `assets/environments/veltrava_registry/fx/flames_units_e.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | flames (flames_units) -- emission strip |
+| `assets/environments/veltrava_registry/fx/heat_c.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | heat shimmer above the fire front |
+| `assets/environments/veltrava_registry/fx/heat_d.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | heat shimmer above the fire front |
+| `assets/environments/veltrava_registry/fx/plume_door.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke squeezing out above the ramp door |
+| `assets/environments/veltrava_registry/fx/plume_front_c.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rising from the fire front (C) |
+| `assets/environments/veltrava_registry/fx/plume_front_d.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rising from the fire front (D) |
+| `assets/environments/veltrava_registry/fx/plume_service.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke pouring from the service stairs |
+| `assets/environments/veltrava_registry/fx/roll_c0.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rolling along under the vaults toward the Annahme |
+| `assets/environments/veltrava_registry/fx/roll_c1.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rolling along under the vaults toward the Annahme |
+| `assets/environments/veltrava_registry/fx/roll_c2.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rolling along under the vaults toward the Annahme |
+| `assets/environments/veltrava_registry/fx/roll_d0.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rolling along under the vaults toward the Annahme |
+| `assets/environments/veltrava_registry/fx/roll_d1.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke rolling along under the vaults toward the Annahme |
+| `assets/environments/veltrava_registry/fx/snow_gap.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | snow blowing through the gaps of the shut ramp door |
+| `assets/environments/veltrava_registry/fx/snow_yard.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | falling snow over the yard (24 frames, 8 fps) |
+| `assets/environments/veltrava_registry/life/guard_feet.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | a guard's boots passing the high window of the Karteisaal, turning, passing back (80 frames, 8 fps) |
+| `assets/environments/veltrava_registry/outside.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | light wells behind the high windows: snow heap, grating shadow, street-lamp glow (unlit) |
+| `assets/environments/veltrava_registry/patches/blatt7_pocketed_c.png` | `tools/pixelgen/env_c3p2_archive.py` | look c with the story change "blatt7_pocketed" |
+| `assets/environments/veltrava_registry/patches/blatt7_pocketed_c_e.png` | `tools/pixelgen/env_c3p2_archive.py` | look c with the story change "blatt7_pocketed" -- emission mask |
+| `assets/environments/veltrava_registry/patches/blatt7_pocketed_c_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look c with the story change "blatt7_pocketed" -- normal map |
+| `assets/environments/veltrava_registry/patches/blatt7_pocketed_d.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "blatt7_pocketed" |
+| `assets/environments/veltrava_registry/patches/blatt7_pocketed_d_e.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "blatt7_pocketed" -- emission mask |
+| `assets/environments/veltrava_registry/patches/blatt7_pocketed_d_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "blatt7_pocketed" -- normal map |
+| `assets/environments/veltrava_registry/patches/case_broken_d.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "case_broken" |
+| `assets/environments/veltrava_registry/patches/case_broken_d_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "case_broken" -- normal map |
+| `assets/environments/veltrava_registry/patches/desk_pushed_d.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "desk_pushed" |
+| `assets/environments/veltrava_registry/patches/desk_pushed_d_e.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "desk_pushed" -- emission mask |
+| `assets/environments/veltrava_registry/patches/desk_pushed_d_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look d with the story change "desk_pushed" -- normal map |
+| `assets/environments/veltrava_registry/patches/file_taken_c.png` | `tools/pixelgen/env_c3p2_archive.py` | look c with the story change "file_taken" |
+| `assets/environments/veltrava_registry/patches/file_taken_c_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look c with the story change "file_taken" -- normal map |
+| `assets/environments/veltrava_registry/patches/halves_b.png` | `tools/pixelgen/env_c3p2_archive.py` | look b with the story change "halves" |
+| `assets/environments/veltrava_registry/patches/halves_b_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look b with the story change "halves" -- normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_a.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look a), neutral emblems |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_a_hist.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look a), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_a_hist_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look a), neutral emblems -- historical, normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_a_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look a), neutral emblems -- normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_b.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look b), neutral emblems |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_b_hist.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look b), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_b_hist_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look b), neutral emblems -- historical, normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_b_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look b), neutral emblems -- normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_c.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look c), neutral emblems |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_c_e.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look c), neutral emblems -- emission mask |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_c_hist.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look c), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_c_hist_e.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look c), neutral emblems -- historical, emission |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_c_hist_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look c), neutral emblems -- historical, normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_c_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look c), neutral emblems -- normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_d.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look d), neutral emblems |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_d_e.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look d), neutral emblems -- emission mask |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_d_hist.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look d), neutral emblems -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_d_hist_e.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look d), neutral emblems -- historical, emission |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_d_hist_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look d), neutral emblems -- historical, normal map |
+| `assets/environments/veltrava_registry/patches/insignia_magazin_d_n.png` | `tools/pixelgen/env_c3p2_archive.py` | Magazin delegation plates (look d), neutral emblems -- normal map |
+| `assets/environments/veltrava_registry/patches/scarf_taken_b.png` | `tools/pixelgen/env_c3p2_archive.py` | look b with the story change "scarf_taken" |
+| `assets/environments/veltrava_registry/patches/scarf_taken_b_n.png` | `tools/pixelgen/env_c3p2_archive.py` | look b with the story change "scarf_taken" -- normal map |
+| `assets/environments/veltrava_registry/props/cart.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) |
+| `assets/environments/veltrava_registry/props/cart_hist.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_registry/props/cart_hist_n.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) -- historical, normal map |
+| `assets/environments/veltrava_registry/props/cart_n.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire dangling, red C-17 tag) -- normal map |
+| `assets/environments/veltrava_registry/props/cart_open.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) |
+| `assets/environments/veltrava_registry/props/cart_open_hist.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_registry/props/cart_open_hist_n.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) -- historical, normal map |
+| `assets/environments/veltrava_registry/props/cart_open_n.png` | `tools/pixelgen/env_c3p2_archive_props.py` | handcart with the emptied crates of courier wagon 4 (seal wire taken, red C-17 tag) -- normal map |
+| `assets/environments/veltrava_registry/room.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry at night: yard in the snow, Annahme, Karteisaal under the green lamp, Planarchiv, Magazin |
+| `assets/environments/veltrava_registry/room_a.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry at night, before the green lamp is switched on (Konrad's torch in the aisle) |
+| `assets/environments/veltrava_registry/room_a_e.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry at night, before the green lamp is switched on (Konrad's torch in the aisle) -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_registry/room_a_n.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry at night, before the green lamp is switched on (Konrad's torch in the aisle) -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_registry/room_e.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry at night: yard in the snow, Annahme, Karteisaal under the green lamp, Planarchiv, Magazin -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_registry/room_fire_c.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry on fire (C): smoke under the vaults, the Magazin and Planarchiv burning, ramp door shut |
+| `assets/environments/veltrava_registry/room_fire_c_e.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry on fire (C): smoke under the vaults, the Magazin and Planarchiv burning, ramp door shut -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_registry/room_fire_c_n.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry on fire (C): smoke under the vaults, the Magazin and Planarchiv burning, ramp door shut -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_registry/room_fire_d.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry on fire (D): the fire in the Karteisaal, smoke low, ramp door shut |
+| `assets/environments/veltrava_registry/room_fire_d_e.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry on fire (D): the fire in the Karteisaal, smoke low, ramp door shut -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_registry/room_fire_d_n.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry on fire (D): the fire in the Karteisaal, smoke low, ramp door shut -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_registry/room_n.png` | `tools/pixelgen/env_c3p2_archive_room.py` | registry at night: yard in the snow, Annahme, Karteisaal under the green lamp, Planarchiv, Magazin -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_registry/scene.json` | `tools/pixelgen/env_c3p2_archive.py` | art manifest (TECHNICAL_ARCHITECTURE 3.1 + the registry gates) |
+| `assets/environments/veltrava_registry/shafts.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | cold light falling from the high windows (soft veil, plain alpha) |
+| `assets/environments/veltrava_registry/smoke_c.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke under the vaults (smoke_c): sooty grey, lit orange from below near the fire |
+| `assets/environments/veltrava_registry/smoke_d.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | smoke under the vaults (smoke_d): sooty grey, lit orange from below near the fire |
+| `assets/environments/veltrava_registry/torch_beam.png` | `tools/pixelgen/env_c3p2_archive_fx.py` | Konrad's torch: soft cone of light into the aisle (look A, plain alpha) |
+
+---
+<a id="part-env_c3p2_night"></a>
+
+## Asset manifest part -- env_c3p2_night (Chapter 3 part 2, the night quay, L_C3_Quay)
+
+All files below are **original works generated procedurally** by the scripts in `tools/pixelgen/`
+(`env_c3p2_quay.py` drives `env_c3p2_quay_far.py`, `env_c3p2_quay_near.py` and `env_c3p2_quay_life.py`; the shared
+helpers are `env_c3p2_quay_kit.py` and the read-only `env_veltrava_lib.py` / `pg.py`).  No pixels were copied, traced,
+sampled, downloaded or AI-generated; no third-party assets, fonts or textures are embedded; the pixel fonts are the
+hand-defined Veltrava fonts of `env_veltrava_lib.py`.
+
+* Licence / rights: project-owned original artwork, freely redistributable with the game.  Provenance: deterministic
+  generator with fixed seeds (a re-run reproduces every file byte for byte on the same Python/Pillow build), re-run
+  with `py -3 -P tools/pixelgen/env_c3p2_quay.py` (`--preview=DIR` adds CPU composites, no Godot lighting).
+  Machine-readable list of every file: `assets/environments/veltrava_quay/provenance.json`.
+  The generator never touches `assets/environments/veltrava_quay/explore_hotspots.json` (exploration stream).
+* Date: 2026-11-06 (round 8).
+* Design contract: `documentation/C3P2_DESIGN.md` §5.2 -- every spawn, hotspot and zone name/position of the story
+  shell is kept (`bench` 760, `konrad_quay` 800, `typist_quay` 330, `guard_quay` 1050, `kessler_quay` 1180,
+  `voronova_quay` 1330, `journalist_quay` 1560, `SP_C3_Quay` (560, 300); walk band y 296-306).
+* Painting model: geometry is drawn as (material, tone, height) and one "night bake" (`env_c3p2_quay_kit.resolve`)
+  applies the scene's light fields to every lit plane and prop (six balustrade lanterns, the pylon and shelter
+  lamps, five burning souterrain windows, the engine's headlight): cold ladder under the night sky, warm ladder in
+  lamplight, amber/red ladder in the fire light, all colours from the Veltrava palette of `data/chapters/c3.json`
+  (+ its skin ramp) -- stable under the post-grade palette snap (grade `quay`).  Emissive glass/flames also write
+  `_e` maps (added unshaded); `glow_air.png` is a soft additive halo layer.
+* Palette: `veltrava` only (checked by the generator and by `tests/test_c3p2_env_art.gd`).
+* Insignia (TECHNICAL_ARCHITECTURE §12.4): only the fender pennants of the two delegation cars.  `props/car_ussr.png`
+  (neutral: red with the fictional gear-and-wheat badge) / `props/car_ussr_hist.png` (star, hammer and sickle);
+  `props/car_reich.png` (neutral: grey with the fictional Reichssiegel) / `props/car_reich_hist.png` (the historical
+  pennant).  Chosen at runtime by `Symbols.pick()`; in-world iconography of the regimes inside the critical narrative
+  only, never on people.  No life strip has a `_hist` twin.
+* Content: nobody is heroised, nobody is a caricature.  The firemen, the woken neighbours, the two aides and the
+  two drivers who share one lighter are anonymous working people; the delegation heads and the cast are the level's
+  NPCs (not painted).  No injury, no gore; the fire is shown through light, flames in the windows, smoke and steam.
+* Accessibility: the searchlights sweep at 6.7 s / 8 s per sweep; flame strips change shape at <= 6 fps (flicker
+  <= 3 Hz); the blue beacon turns once a second without a flash; Godot light flicker <= 0.22; nothing flashes the
+  screen.
+
+| File(s) under `assets/environments/veltrava_quay/` | Generator | Content |
+|---|---|---|
+| `sky.png` | env_c3p2_quay_far.py | overcast snow night, faint cold glow over the Line (p 0.02) |
+| `far_bank.png` (+ `_e`) | env_c3p2_quay_far.py | the far bank: hills, double fence, six floodlight masts with cold pools, five watchtowers (two with searchlights) (p 0.10) |
+| `river.png` (+ `_e`) | env_c3p2_quay_far.py | the frozen river: drifts, pressure ridges, the open black lead; the three-arch bridge with the city arms, eight lamps, the barrier and the guard hut of the Line (p 0.30) |
+| `oldtown.png` (+ `_e`) | env_c3p2_quay_far.py | the old town beyond the river bend: gables with warm windows, the church tower with a lit clock, the embankment with lamps (p 0.45) |
+| `pall.png` | env_c3p2_quay_far.py | the smoke of the wing gathering under the clouds, fire-lit near the source, drifting right (p 1) |
+| `wing.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the corner of the burning east wing (Kurhaus 1909): fire behind the bars of five souterrain windows, soot plumes, dark upper windows mirroring the fire, one lit dormer, the yard railing with the open gate, the iron coal hatch, coal dust and two body prints in the snow |
+| `promenade.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the quay: snow, hydrant and hose lines, tyre tracks, footprints of two men from the hatch to the bench, the balustrade with six lanterns, two snowed-in benches, the bridgehead pylon with the great lantern and the city arms, the ramp wall, tram stop (lines 7 / 12) and shelter with a commission poster, catenary poles and wire |
+| `glow_air.png` | env_c3p2_quay_near.py | soft additive halos (lanterns, fire windows, headlight), alpha in dithered steps |
+| `fg.png` | env_c3p2_quay_near.py | low dark snow banks and bollards along the bottom edge (p 1.25, below y 318) |
+| `props/fire_engine.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | ladder truck of the Veltrava fire brigade, turntable ladder at a first-floor window, FEUERWEHR lettering, the city arms on the door |
+| `props/car_reich.png`, `props/car_reich_hist.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the German delegation car with its fender pennant (neutral / historical) |
+| `props/car_ussr.png`, `props/car_ussr_hist.png` (+ `_n`, `_e`) | env_c3p2_quay_near.py | the Soviet delegation car with its fender pennant (neutral / historical) |
+| `props/bench_file.png` (+ `_n`) | env_c3p2_quay_near.py | the bench at x 760: the file burst open, two fans of sheets, the red C-17 tag and its string, sheets in the snow, soot smudges |
+| `props/trestle.png` (+ `_n`) | env_c3p2_quay_near.py | the commission guard's striped trestle barrier |
+| `life/hose_team.png`, `ladder_man`, `pump_man` (+ maps) | env_c3p2_quay_life.py | firemen: the jet into the first window, a man on the ladder, the machinist at the pump |
+| `life/onlookers.png` (+ maps) | env_c3p2_quay_life.py | woken neighbours behind the trestle (a woman in a coat over her nightdress, an old man pointing, a boy on tiptoe) |
+| `life/aide_kessler.png`, `life/aide_voronova.png` (+ maps) | env_c3p2_quay_life.py | the two aides waiting apart (briefcase and watch / folder and cold hands) |
+| `life/drivers.png` (+ maps) | env_c3p2_quay_life.py | the two chauffeurs share one lighter between the cars, then smoke |
+| `life/beacon.png` (+ `_e`) | env_c3p2_quay_life.py | the blue rotating lamp on the cab |
+| `life/fire_win_1..5.png` (+ `_e`) | env_c3p2_quay_life.py | flames licking out of the souterrain windows |
+| `life/embers_1..3.png` (+ `_e`) | env_c3p2_quay_life.py | sparks rising over three windows (emission only) |
+| `life/searchlight_a.png`, `searchlight_b.png` (+ `_e`) | env_c3p2_quay_life.py | the searchlight beams sweeping the ice, with snow glinting in the light (emission only) |
+| `life/town_win_1..6.png` (+ `_e`) | env_c3p2_quay_life.py | old-town windows lighting up as people wake (60 s loop) |
+| `fx/smoke_1..3.png`, `fx/smoke_ladder.png` | env_c3p2_quay_life.py | continuous smoke columns (seamless periodic turbulence) |
+| `fx/steam_jet.png` | env_c3p2_quay_life.py | steam where the jet hits the fire |
+| `fx/chimney_1..4.png` | env_c3p2_quay_life.py | old-town chimney smoke |
+| `fx/exhaust_ussr.png` | env_c3p2_quay_life.py | the idling Soviet car's exhaust |
+| `scene.json`, `provenance.json` | env_c3p2_quay.py | art manifest (TECHNICAL_ARCHITECTURE §3.1) incl. `explore_sites` suggestions; file provenance |
+
+Screenshots (Forward+, real GPU, `res://tests/visual/c3_station_shots.tscn -- --scene=L_C3_Quay`):
+`documentation/screenshots/c3p2_night_cam0000.png`, `_cam0480`, `_cam0960`, `_cam1280`, the contact sheet
+`c3p2_night_contact.png` (six cameras) and `c3p2_night_symbols_neutral_vs_hist.png` (the car pennants).
+
+---
+<a id="part-c3p2_cine"></a>
+
+## Asset manifest part — c3p2_cine (Chapter 3 part 2: LS_C3_Radio, LS_C3_Fire, LS_C3_Escape, LS_C3_Halves)
+
+* **Date:** 2026-11-06 (round 8)
+* **Area owner:** cinematics stream (C3P2_DESIGN.md §2.9)
+* **Scenes / code:** `scenes/cinematics/ch3_radio/` (`Ch3Radio.tscn`, `ch3_radio.gd`), `ch3_fire/`, `ch3_escape/`,
+  `ch3_halves/` (the paths registered by the story stream in `data/chapters/c3.json` → `cinematics`) on the shared
+  base `scenes/cinematics/c3p2_common/c3p2_cinematic.gd`, which extends the unchanged round-6 runtime
+  `ch3_common/c3_cinematic.gd` (§12.5 contract: `finished` exactly once, idempotent `skip()`, `configure(ctx)`,
+  `seek()`/`advance()`, cue list, reduced motion) with the c3p2 asset root, `choice(objective)` (the inner lines
+  and the bench choreography follow `ctx.choices`: c3a/c3b in the radio film, c3d/c3g at the quay), a subtitle
+  scheduler (lines follow each other, about-the-note lines after the note) and flame/puff/snow helpers; dev switch
+  `--cine-choices=c3g_choose=swap_halves,…` for captures. Played by `ChapterExt.play_cinematic()`.
+* **Generators:** `py -3 -P tools/pixelgen/env_c3p2_cine.py [--only radio,fire,escape,halves]` (~45 s, figures
+  cached) writes every texture and `assets/cinematics/c3p2/layout.json` (anchors shared with the runtimes: the
+  dial/match cut, walker paths and footprints projected through the square's pinhole camera, flame anchors, hatch,
+  window and board geometry; `tests/test_c3p2_cinematics.gd` checks them). Modules: `env_c3p2_cine_kit.py` (ramps,
+  re-quantiser, glows, flame/smoke/ember sheets, pencil block letters), `env_c3p2_cine_radio.py`,
+  `env_c3p2_cine_fire.py` (fire + escape), `env_c3p2_cine_quay.py` (halves), `env_c3p2_cine_figs.py`. Round-6 tools
+  imported read-only: `env_veltrava_cine` (Paint, masks, light helpers), `env_veltrava_cine_kit` (trilingual pixel
+  fonts, dithered puffs), `env_veltrava_cine_figs` (figure renderer), `chargen_portrait2_*` (the portrait specs).
+  Sound: `py -3 -P tools/audiogen/c3p2_cine_audio.py` → `assets/audio/sfx/c3p2cine_*.wav` (on the DSP helpers of
+  `c3_cine_audio.py`, read-only). Offline layer preview (review tool, not a test):
+  `py -3 -P tests/visual/c3p2cine_preview.py OUT.png radio|fire|escape|halves`; in-game review with
+  `tests/visual/c3cine_harness.tscn --c3-id=LS_C3_…` (shots / seq / run modes).
+* **Figures:** Konrad and Alexei close up (at the radios without hats, at the sorting table, on the quay bench)
+  are sculpted and lit with the signed-distance pipeline of the dialogue portraits through
+  `env_veltrava_cine_figs.render()` with the specs `konrad()` / `alexei()` (faces, hats, hair, coats as in the
+  portraits; seen from behind, lit by the dial, the green lamp or the fire). Smaller and action poses (crawling out
+  of the hatch, lying in the snow, the hands, walking, the walkers on the square, Alexei backlit by the fire) are
+  painted silhouettes with rim light. The arsonist is a backlit silhouette from behind in a long coat and porter's
+  cap — never a face.
+* **Determinism:** fixed seeds (`np.random.default_rng(n)`, `zlib.crc32(name)` for audio); two full builds are
+  byte-identical (md5 over all 80 PNG + layout.json + 27 WAV, checked 2026-11-06).
+* **Licence / provenance (all files below):** original procedural pixel art and synthesized audio made for ASHES OF
+  EMPIRES: THE LAST WINTER by these generators (AI-authored code, project-owned, same licence as the game). No
+  downloaded, copied or traced images, fonts or samples. The radio voices are wordless formant babble (the words are
+  the subtitles). No insignia anywhere in these films (no `_hist` variants needed).
+* **Palettes / grade:** night/snow/lamp ramps of the round-6 cinematics, the `registry` ramps of
+  `data/chapters/c3.json` (oak, green lamp, paper, brass, fire), the protagonists' portrait ramps; grade `c3_cine`.
+* **Names:** the German delegation's hotel is labelled „Hotel Europa“ as in the station level and LS_C3_Close (the
+  design table says „Bellevue“; kept Europa for continuity — see the round-8 open issues).
+
+### Art — `assets/cinematics/c3p2/radio/` (LS_C3_Radio, 30.8 s)
+| File | Use |
+|---|---|
+| `square_bg`, `square_glow`, `win_konrad`, `win_alexei`, `steam` (6) | r1/r6: the station square from the station roof (pinhole projection, supersampled facades re-quantised): Hotel Europa (mansard, arches, sign) and Hotel Nord (flat roof, roof letters) facing each other, tram rails, lamp pools, the advertising column, lime trees, the palais with its dome and dark east wing (one dim window high up); the two lit windows with a man at his radio; steam of the 23.40 |
+| `door_konrad`, `door_alexei`, `walker_konrad`, `walker_alexei` (4) | r6: both hotel doors open at once, warm light on the snow; the two men walking out (paths and footprints in layout.json converge on the east wing) |
+| `room_alexei`, `room_konrad`, `radio`, `dial_glow`, `lamp_glow`, `magic_eye` (3) | r2/r3: the two rooms around one window/table geometry — Hotel Nord (painted plaster, cotton curtains, doily, the tea glass in its holder, the quilted coat and ushanka on the hook, Hotel Europa across with Konrad's lit window) and Hotel Europa (damask, wainscot, velvet curtains, brass desk lamp, notepad, his hat, coat and scarf on the stand, Hotel Nord across with Alexei's lit window); the same Bakelite set („Komet“, round dial with the two Veltrava marks, cloth grille, piano keys) at the same place — the needle is drawn at runtime and sweeps across the cut |
+| `fig_alexei`, `fig_konrad` (2 frames: breath), `arm_alexei` (4), `hand_konrad` (5), `steam_tea` (6) | the men from behind without hats (roll-neck / jacket); Alexei's arm to the tuning knob; Konrad's pencil hand (4 writing frames + stopped) |
+| `doors`, `note_fold`, `note_close` | r4: split screen at floor level — room 214 (oxblood, plain) and room 317 (cream panels, brass kick plate), the corridor light in both gaps; the folded note; the note unfolded in pencil block letters, Russian above German (text copied from `de_c3p2_cinematics.json`) |
+| `cafe`, `cafe_glow` | r5: Café „Korridor“ after closing — chairs upside down on the marble tables, Elena's table with an untouched glass of tea, reversed gold lettering, the station clock across the square (hands at runtime: 0.10) |
+
+### Art — `assets/cinematics/c3p2/fire/` (LS_C3_Fire, 12 s)
+| File | Use |
+|---|---|
+| `f1_bg`, `lamp_cone`, `f1_konrad` (2: head down / looks up) | the card hall under the brick vault: oak card cabinets with brass label holders, the high barred window, the sorting table with the two halves laid side by side and the red thread of the check, drawer C-17 and Elena's wine-red scarf; the green-shaded lamp's cone (flickers at runtime); Konrad from behind |
+| `f2_bg`, `f2_door` (4), `f2_glow` | the Magazin aisle in one-point perspective, archive boxes and the red C-17 tags; the service door: the figure in the lit doorway, half through, the empty doorway, shut |
+| `f3_bg`, `f3_warm` | the iron-clad ramp door from inside (planks, straps, rivets, lock box), snow blown in under it; the runtime draws the cold gap light, the passing shadow and the bolt's shadow |
+| `f4_bg`, `f4_glow`, `f4_alexei` (2) | the same hall burning (smoke under the vault, scorched drawer fronts); Alexei from behind against the fire (ushanka, fur collar, quilted coat, satchel strap) |
+| `flame`, `flame_s`, `flame_big`, `flame_wide`, `smoke`, `ember` (8/8/8/8/8/4 frames) | fire sheets (palette `fire`), dithered smoke puffs, embers |
+
+### Art — `assets/cinematics/c3p2/escape/` (LS_C3_Escape, 16 s)
+| File | Use |
+|---|---|
+| `e1_bg`, `e1_light`, `e1_file` (2) | up the brick coal chute with its steel slide toward the square of snow light; Konrad's sooty hands shoving the tied file |
+| `e2_bg`, `e2_lamp`, `e2_hatch` (3), `e2_konrad` (4) | the yard: rusticated base of the east wing, a souterrain window glowing, the bracket lamp, the iron hatch frame in the snow; the lid closed / lifting / open with „1909“; Konrad out to the shoulders, to the waist, on hands and knees (two steps) |
+| `e3a_bg`, `e3a_glow`, `e3a_hands` (4) | looking down into the hatch: Alexei's hand out of the smoke, Konrad's hand takes it, the pull |
+| `e3b_bg`, `e3b_hatch` (2), `e3b_men` (2) | low at the snow: the lid slammed, both men on their backs, heads together, the file between them, Konrad's hat in the snow |
+| `e4_bg`, `e4_window` (3), `e4_glow`, `smoke`, `breath` (6) | the east wing from the lane (pilasters, pediments, mansard, the one lit window high up, the yard gate); a souterrain window dark / bursting / burning; smoke lit from below; breath clouds |
+
+### Art — `assets/cinematics/c3p2/halves/` (LS_C3_Halves, 21 s)
+| File | Use |
+|---|---|
+| `h1_bg`, `h1_glow`, `fig_alexei`, `fig_konrad` (2 each), `stacks` (3), `arms` (2×3), `list_fold` (4) | the quay bench from behind: the balustrade, the frozen river with the fire's glow, the Line with fence and two watchtowers (searchlight beams at runtime); the men; the Russian pages (with the list of names), the German pages, the list; arms reaching near / across / holding; the list folded into Konrad's coat |
+| `h2_bg`, `h2_glow`, `walk_alexei`, `walk_konrad` (6 each) | the promenade with its lanterns and their bench; the two walking apart (Konrad mirrored at runtime) |
+| `h3_bg`, `h3_glow`, `h3_dawn`, `flame_s`, `smoke` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the first grey of dawn (faded in at runtime) |
+| `board_bg`, `board_glow`, `glyphs` | the departures board (trilingual header, four standing rows) and the split-flap glyph atlas (glyphs + mid-flap) from which the runtime flips „DIENSTAG · 23.40 · KORDON-17 · GLEIS 5“ in |
+
+### Sound — `assets/audio/sfx/` (`tools/audiogen/c3p2_cine_audio.py`, 44.1 kHz / 16-bit stereo)
+| File | Content |
+|---|---|
+| `c3p2cine_interval` (3.8 s) | Radio Veltrava's interval signal: an original four-note celesta motif (G E A D), twice, through the set, across the square |
+| `c3p2cine_news_ru`, `c3p2cine_news_de` (6.9 / 6.8 s) | announcer babble (two voices) through a small loudspeaker with hum and static |
+| `c3p2cine_tune` (1.25 s) | the dial turned: heterodyne whistle, static, a fragment of a voice |
+| `c3p2cine_pencil` (2.0 s, looped) | graphite strokes on a pad; stopped at the line's „Begleitgut“ |
+| `c3p2cine_corridor`, `c3p2cine_cafe`, `c3p2cine_doors`, `c3p2cine_snowsteps` | steps on a runner and two notes slid under two doors; the empty café (fridge hum, wall clock); two hotel doors at once and the wind; two men walking in snow |
+| `c3p2cine_lamp`, `c3p2cine_ignite`, `c3p2cine_service_door`, `c3p2cine_steps_out`, `c3p2cine_bolt`, `c3p2cine_roar` | the green lamp's buzz with crackles at the flicker dips; the boxes catching; a door shut in the stairwell; steps outside, muffled; the iron bolt slid home; the fire's roar and crackle |
+| `c3p2cine_chute`, `c3p2cine_hatch_open`, `c3p2cine_cough_k`, `c3p2cine_pull`, `c3p2cine_hatch_slam`, `c3p2cine_cough_both`, `c3p2cine_burst`, `c3p2cine_brigade` | scraping up the chute on the three shoves; the lid flipping open; coughing; the pull; the lid slamming; both coughing in the snow; seven souterrain windows bursting (one every 0.42 s); fire-brigade bells approaching |
+| `c3p2cine_quay`, `c3p2cine_steps_apart`, `c3p2cine_ice`, `c3p2cine_board` | wind over the ice with the fire far off; two walkers diverging; the river ice booming and creaking; a split-flap row flipping in the station hall |
+Re-used (unchanged): `wind_gust`, `paper_rustle_1..3`.
+
+### Checks
+`tests/test_c3p2_cinematics.gd` (20 cases, ~1100 checks): registration; contract and planned lengths; `finished`
+exactly once (skip/skip, skip before play, natural end, fast-forward, replay); inner lines for every c3a×c3b and
+c3d×c3g combination, spoken in order, non-overlapping, inside the film, ≤ 22.5 characters per second, German text
+present; skip stops the cues; reduced/full motion; shot order; no missing texture and layout keys in sync with the
+scripts (dial = match cut); every cued sound exists and every loop is stopped; sound/picture timings shared with the
+audio generator (lamp dips, chute shoves, window bursts); frames a pure function of t (seek away and back); the match
+cut on the dial; who takes which pages per c3g; reduced motion halves the travel; fire light never strobes (≤ 3 Hz,
+small frame-to-frame changes). In-game: real-time runs 30.8 / 12.0 / 16.0 / 21.0 s wall time, `finished` once,
+~4.2 ms frames (harness `--c3-mode=run`).
+
+---
+<a id="part-c3p2_puzzle"></a>
+
+## Asset manifest part — Chapter 3 part 2, joint evidence check „Gegenprobe“ (puzzle UI stream, round 8)
+
+Date for all entries: **2026-11-06**. Everything below is original work for this project, produced by a deterministic
+generator in this repository or written by hand; no downloaded images, fonts or sounds, no AI image services, no tracing
+of references. Licence: project-owned, same as the game. Contract: `documentation/C3P2_DESIGN.md` §2.7.
+
+### Board art — `tools/pixelgen/gen_ui_c3p2.py` (`py -3 -P tools/pixelgen/gen_ui_c3p2.py [--preview=DIR]`)
+Drawn 1:1, shown at x3 with nearest filtering; text-free (every word is set in HD by the UI from Loc keys). Palette: the
+UI / archive ramps of `gen_ui_c3.py` (paper, ink, red, slate, amber) — no new hues. Fixed seeds, identical output on
+every run.
+
+| Path | Kind | How it was made |
+|---|---|---|
+| `assets/ui/puzzle/c3p2_row_weighbill.png`, `…_departures.png`, `…_travel_order.png`, `…_timetable.png` | evidence strips of Alexei's four papers (the rows) | cut by the generator from this project's own inspect documents (`assets/ui/documents/veltrava_station_weighbill/departures/travel_order.png`, `karsk_timetable.png`, themselves generated by `tools/pixelgen/gen_*`); crop rects from the documents' `marks` metadata; 1 px mount outline + photo corners drawn |
+| `assets/ui/puzzle/c3p2_mark_<row>.png` | „matching marks“ shown after the solution | procedural pencil strokes (loops, underlines) around the shared fact of each pair, positioned from the same `marks` metadata; red pencil on paper, amber chalk on the black departure board |
+| `assets/ui/puzzle/c3p2_card_in_c17_44.png`, `…_out_2340.png`, `…_par_4.png`, `…_january.png` | registry index cards (the tray) | procedural: dithered paper, red series edge, glyph box with a distinct shape glyph (ring / cross / star / bowtie — never colour coded) |
+| `assets/ui/puzzle/c3p2_slot.png` | empty row slot | procedural (same language as `c3_slot.png`) |
+| `assets/ui/puzzle/c3p2_bracket.png` | red pencil brace over the four rows (Kordon-17) | procedural curve |
+| `assets/ui/puzzle/c3p2_board.json` | sizes, text rects, strip sources, mark rects, layout constants, measured surface colours, solution self-check | written by the generator |
+
+### UI, texts, tests
+| Path | Kind | How it was made |
+|---|---|---|
+| `scenes/ui/CheckPuzzle.tscn`, `scripts/ui/check_puzzle.gd` | puzzle modal (keys / mouse incl. drag and drop / pad, Lupe at 125–150 %, success choreography) | hand-written, follows `scripts/ui/protocol_puzzle.gd` |
+| `data/locale/de_c3p2_ui.json` (`ui.c3p2.check.*` keys the design leaves to the UI: state, slot captions, tooltips, stamp, Lupe, Kordon brace, error, continue) | German texts | hand-written |
+| `tests/test_c3p2_puzzle_ui.gd` | unit tests | hand-written |
+
+World note: fictional registry intake book checked against a fictional freight chain; not real documents.
+
+---
+<a id="part-c3p2_cast_audio"></a>
+
+## Asset manifest — Chapter 3 part 2: cast looks and sound (round 8)
+
+Area owner: c3p2 cast/audio specialist · Date: **2026-11-06, round 8** · Engine target: Godot 4.7.2
+Contract: `documentation/C3P2_DESIGN.md` §6 (characters: existing ids only, a soot look for the fire scenes and the
+quay, a carry row with the file, Frau Brunner in her coat over the nightdress) and §8 (audio). Extends
+`characters_r7.md`, `portraits_r7.md` and `c3.md` (Veltrava sound); everything listed there stays valid.
+
+### Provenance & licence (applies to every file below)
+* **Original work, generated procedurally** by the project's own Python scripts (numpy + Pillow; no AI models, no
+  network, no samples, no third-party art or recordings, no image or audio inputs).
+* Characters: the looks are rendered by the project's own paper-doll rig and portrait pipeline from the base
+  characters' own specs (same poses, same heads) plus hand-chosen soot ramps, smear positions and costume parts.
+* Sound: synthesised (noise shaping, modal impacts, stick-slip creaks, additive instruments, generated impulse
+  responses). Voices are unintelligible by construction (prosody profiles over random vowel targets — no words, no
+  language, no real broadcast). The night waltz and the interval signal are original compositions (the interval
+  signal is the game's own two-language motif V). The 1964 brigade horns are a generic two-tone of a fourth, not a
+  recording or a brand.
+* Licence: project-owned original assets, no attribution needed. No insignia on any new sprite.
+* Deterministic: every generator reproduces byte-identical files (verified 2026-11-06: all 32 WAVs rebuilt and
+  md5-compared; all 18 look files rebuilt into a scratch directory and byte-compared).
+
+### Reproduce
+```bash
+py -3 -P tools/pixelgen/characters_c3p2.py --portraits   # 3 looks: sheets, normal maps, living portraits, checks
+py -3 -P tools/pixelgen/characters_c3p2.py --check       # validators only (characters_check + look contract)
+py -3 -P tools/audiogen/c3p2_audio.py                    # 32 WAVs + .import + analysis + numeric checks
+py -3 -P tools/audiogen/c3p2_audio.py --list             # names and where each is wired
+## then the shared, locked import (TECHNICAL_ARCHITECTURE §1)
+```
+**Re-run `characters_c3p2.py --portraits` whenever `alexei`, `konrad` or `typist` (sheet or portrait) change** —
+the looks derive from them and must keep the same silhouette (checked).
+
+### Characters — looks (`tools/pixelgen/chargen_cast_c3p2.py`, `chargen_portrait_c3p2.py`, runner `characters_c3p2.py`)
+A *look* is a sheet directory, not a character: dialogue speaker and NPC `char_id` stay `alexei` / `konrad` /
+`typist`; the runtime picks the directory per scene (`data/chapters/c3.json` `"looks"` — integration notes, round 8).
+
+| Directory | Base | What | Rows |
+|---|---|---|---|
+| `assets/characters/alexei_soot/` | `alexei` | after the smoke: blackened coat hem (ragged 2–4 px band under a 3-px dust band), sooty cuffs and hands, smoke-grey face with two dark smears (cheek, jaw), coal dust on the legs, greyed scarf, two ash flakes on the ushanka. Silhouette pixel-identical to `alexei` in every shared row | the 15 rows of `alexei` (same indices) + `carry_side` (8-frame walk, the file C-17 clamped under the near arm, ground speed = walk_side 34.5 px/s) + `carry_idle_side` (8-frame idle with the file) |
+| `assets/characters/konrad_soot/` | `konrad` | the same for Konrad (forehead smear under the brim, beige scarf greyed, ash on the hat); his folder and tube stay | 15 rows of `konrad` + the two carry rows (35.0 px/s) |
+| `assets/characters/typist_night/` | `typist` | Frau Brunner at the quay, 2.20 at night: dark aubergine-brown wool coat (knee length, collar up) over the pale nightdress (hem to the ankles), nightdress collar at the throat, felt boots, near hand holding the coat shut (gesture: hand to the collar); no pencil, no pad, no sleeve protectors | the 9 rows of `typist` |
+
+Each directory: `sheet.png`, `sheet_n.png` (normal map), `sheet.json` (TECHNICAL_ARCHITECTURE §4 contract, base rows
+first), `portrait.png` (4 × 112 strip), `portrait_anim.png` (living portrait grid, 6 rows) and `portrait.json`
+(round-2 contract + `"look_of": <base id>`). Portraits: soot smears placed in head-local coordinates (they follow every
+expression), grimy collar, ash on the hat, the rim light turned warm (the fire behind them), a smoky backdrop glowing
+from the left (`c3p2_smoke`); `typist_night` on the quay's night backdrop (`c3p2_quay`) with the fire's glow.
+Backdrops are registered in memory in `chargen_portrait2_paint.BG` — no `chargen_portrait2*.py` file is changed.
+Review images: `assets/characters/_preview/c3p2_*` (git-ignored, `.gdignore`).
+
+### Sound (`tools/audiogen/c3p2_audio.py`) — 44.1 kHz / 16-bit PCM, lossless import, loops carry a `smpl` chunk
+Measured on the delivered files (RMS / sample peak in dBFS):
+
+| File | Content | Length | RMS / peak | Wired |
+|---|---|---|---|---|
+| `amb/amb_veltrava_registry.wav` | souterrain at night: cellar room tone, the city far off, wind and snow at the high windows, radiator ticks + one gurgle, the porter's radio low in the glazed booth (the night waltz), a guard's steps crossing the yard snow above, the house settling, one far goods train | 60 s loop, stereo | −26.0 / −8.8 | `L_C3_Registry.tscn` ambience (scenes A, B) |
+| `amb/amb_veltrava_fire.wav` | the registry burning: breathing roar, crackle (tamed around 3 kHz so the text stays in front), ember hiss, sap squeals, timber groaning and splitting, heat-cracked panes, debris far off, the palais' electric fire bell muffled through brick (10-s spells, 5-s pauses), the brigade's hand bell outside once | 60 s loop, stereo | −24.3 / −3.0 | `c3.json` switches C / D `"ambience"` |
+| `amb/amb_veltrava_quay.wav` | the quay before dawn: wind over the frozen river, the burning wing far left, the ladder engine's pump idling, hose spray, river ice singing (dispersive chirps) and booming, the engine's bell, a second brigade's two-tone horn far across the town, boots in the snow | 60 s loop, stereo | −24.0 / −3.0 | `L_C3_Quay.tscn` ambience |
+| `music/mus_c3p2_fire.wav` | tense, not action: bowed A drone, a heartbeat pulse that leans on Bb in the middle, violas rising A→Bb→B→C and falling back, flickering string harmonics, low brass breathing, the V motif begun and broken off twice; no drums | 66.7 s loop (72 bpm, 80 beats), stereo | −21.0 / −6.9 | to wire: `c3.json` switches C / D `"music"` (integration notes) |
+| `music/mus_c3p2_halves.wav` | quiet: the two-language motif V divided — piano first half / viola second half (with Veltrava's Bb), then swapped (piano with B), then the piano alone and no answer; open-fifth drone, slow pads, celesta snow | 102.9 s loop (56 bpm, 96 beats), stereo | −23.0 / −5.1 | `L_C3_Quay.tscn` music (LS_C3_Halves keeps it) |
+| `sfx/c3p2_fire_low/_mid/_high.wav` | fire beds in three intensities (smouldering crackle → steady fire → a room ablaze) | 20 s loops, stereo | −33.4 / −26.4 / −21.6, peaks −3.0 | cinematics (`loop` cue), level scripts (`Audio.sfx_loop`) |
+| `sfx/c3p2_yard_night.wav` | the snowy yard at night: soft wind, flakes, the bracket lamp's hum, the town, a far train | 30 s loop, stereo | −27.0 / −6.4 | registry yard (level script) / LS_C3_Escape bed |
+| `sfx/c3p2_radio_waltz.wav` | the porter's radio close up (same waltz, valve-set speaker) | 60 s loop, mono | −24.0 / −12.7 | `exp_radio` / registry level script |
+| `sfx/c3p2_radio_interval.wav` | Radio Veltrava's interval signal (V on a music box, twice) | 4.0 s mono | −19.3 / −8.0 | LS_C3_Radio r1 (optional; the cinematic has its own `c3p2cine_*`) |
+| `sfx/c3p2_radio_news_ru.wav`, `_de.wav` | newsreader murmur through the set (two prosody profiles, no words) | 6.5 s mono | −20.8 / −9.0 | LS_C3_Radio r2 / r3 (optional) |
+| `sfx/c3p2_radio_tune.wav` | the dial: static, heterodyne whistle, fragments, the carrier settles | 1.4 s mono | −21.4 / −10.0 | LS_C3_Radio match cut (optional) |
+| `sfx/c3p2_note_slide.wav` | a folded note pushed under a door | 1.7 s | −32.9 / −12.0 | LS_C3_Radio r4 |
+| `sfx/c3p2_fire_catch.wav` | the C-17 stacks catching: whoomph, paper crackling up, first roar | 5.4 s | −27.4 / −6.0 | LS_C3_Fire f2 |
+| `sfx/c3p2_bolt.wav` | the ramp door's iron bolt drawn home outside (heard through oak) | 3.6 s | −30.8 / −5.0 | LS_C3_Fire f3, `c3e_try_ramp` |
+| `sfx/c3p2_desk_push.wav` | the oak intake desk dragged off the chute door | 4.4 s | −23.2 / −5.0 | `dlg_c3f_desk` („Drei!“) |
+| `sfx/c3p2_door_jam.wav` | the jammed 1909 iron door: latch, grinding, a shoulder, a few centimetres | 4.0 s | −28.7 / −5.0 | `dlg_c3f_chute` |
+| `sfx/c3p2_hatch_open.wav`, `_slam.wav` | the coal hatch in the yard: rusty hinge, lid on the snowy stone; slammed on the smoke | 6.0 / 5.7 s | −31.5 / −4.0, −28.7 / −3.0 | LS_C3_Escape e2 / e3 |
+| `sfx/c3p2_window_burst.wav` | the souterrain windows bursting, glass on the yard, flame breathing out | 6.7 s | −25.3 / −4.0 | LS_C3_Escape e4 |
+| `sfx/c3p2_roof_creak_1..3.wav` | burning timber under load (the third ends splitting) | 4.6–6.0 s | −27…−30 / −7…−9 | fire scenes (random variant via `Audio.sfx("c3p2_roof_creak")`) |
+| `sfx/c3p2_glass_1..3.wav` | heat-cracked panes and falling shards | 4.8 s | −40…−43 / −6.0 | fire scenes (`Audio.sfx("c3p2_glass")`) |
+| `sfx/c3p2_fire_bell.wav` | the ladder engine's brass bell rung by hand across the yard | 7.6 s | −23.2 / −6.0 | LS_C3_Escape e4, quay |
+| `sfx/c3p2_sirens_far.wav` | two brigades' two-tone horns of 1964 crossing the town far away | 10 s | −23.6 / −9.0 | LS_C3_Escape e4, LS_C3_Halves h3 |
+
+Level windows enforced by the generator and `tests/test_c3p2_cast_audio.gd`: ambiences −28…−21 dBFS RMS, peak ≤ −2.5;
+music −25…−19, peak ≤ −0.8; sfx loops −36…−19, peak ≤ −2.5; one-shots −45…−9, peak ≤ −2.5, ending in silence.
+Loops: `smpl` loop = whole file (imported as `LOOP_FORWARD`, checked), level continuous across the loop point
+(|Δ RMS over 50 ms| ≤ 3 dB, the seam step an ordinary step; measured: registry 0.4 dB / 1.2× median step, fire 1.2 dB
+/ 2.7×, quay 0.8 dB / 1.0×, music 0.1 and 0.6 dB, fire beds ≤ 0.9 dB / ≤ 2.1×, yard 1.9 dB / 0.5×, waltz 1.8 dB / 0.2×). Spectral balance was checked by band shares (the quay and the yard
+were de-hissed: 4–8 kHz share 21 % → 5 %; the fire ambience's 2–4 kHz crackle band 20 % → 11 %).
+Spectrograms + `c3p2_analysis.json`: `assets/audio/_preview/` (git-ignored).
+
+### Tests
+`tests/test_c3p2_cast_audio.gd` — looks follow their base (rows, indices, fps, variants, silhouette, visible soot,
+carry rows and their ground speed), load and play on `SpriteRig`, living portraits (contract, talk/blink rows,
+differ from the base); every WAV's format, loop chunk, import loop mode and length; levels and seams measured on the
+PCM; wiring (level ambience/music ids, switch settings, an optional `"looks"` table, every c3p2 sound a round-8
+cinematic cue names).
+
+---
+<a id="part-explore_c3p2"></a>
+
+## Asset manifest — Chapter 3 part 2 exploration: registry and quay finds, „Die Pforte“, „Die Suchkartei“ (area: explore_c3p2)
+
+Owner: exploration c3p2 specialist · Date: 2026-11-06 · Engine: Godot 4.7.2 · Contract: documentation/C3P2_DESIGN.md §7,
+TECHNICAL_ARCHITECTURE §12.1/§12.3/§12.8/§12.9 (user request this round: Chapter 3 part 2, content, look, feel, fun).
+
+Everything listed here is **original work**, written for this game or generated procedurally by the project scripts
+below on 2026-11-06. No pixel, sample or melody was taken from `documentation/references/` or any other source; no
+downloads, no AI media, no recordings. Colours come from `data/chapters/c3.json` palette `registry` (night, slate, oak,
+lamp_green, paper, brass, snow, red) plus one documented extra: the violet office ink of the Russian clerks' cards
+(`VIOLET` #3E2C5E / #5C4488 / #8068B0 in the generator). Pixel fonts: the hand-made bitmaps of
+`tools/pixelgen/mg_r7_v_kit.py` (SMALL 5×7, Latin + Cyrillic) and `tools/pixelgen/env_veltrava_lib.py` (FONT_S 3×5,
+Latin + Cyrillic) — no font file is read or traced. No regime insignia anywhere (§12.4): the tracing index is the
+neutral commission's, its drawer carries only „SUCHKARTEI“. Historical model: 1950s/60s office card-index cabinets
+(oak drawers, brass label holders, card rods, guide cards with coloured tabs) and Soviet office practice of violet ink.
+Licence: original project work (same terms as the rest of the game).
+
+### Content (text, data)
+
+| File | What |
+|---|---|
+| `data/explore/c3p2_registry.json` | 18 registry entries (level key `L_C3_RegistryA`): Alexei, scene A — gate sign, two tracks (secret), handcart, coal hatch 1909, his own index card („Begleitperson“, card `hist.soviet.filtration`), the side task „Die Pforte“ (thermos → radio + ten-Kronen note → key board → the porter's note); Konrad, scene B — fire bucket, his own card („Anfrage Berlin“, card `hist.reich.census_1939`), rolling ladder, stamps and seal pliers „Zange 7“, the tracing index (mini-game), boots at the window, plan chests (Blatt 7 missing), Kesselhaus 1909 plaque, cassation list („Serie C-17 … erledigt“) |
+| `data/explore/c3p2_quay.json` | 10 quay entries (Alexei): two soot hands (secret), the ladder engine (Storz/Bogdanov adapter), lantern, ice, searchlights, two cars and one lighter, the bridge of the city arms; chats with Frau Brunner, Lidia Voronova, Nils Ekdahl |
+| `data/explore/c3p2_history_reich.json`, `c3p2_history_soviet.json` | the two real-history cards with their sources (fact-checked 06.11.2026, ≥ 2 independent web sources each + literature) |
+| `data/locale/de_explore_c3p2.json`, `de_history_c3p2.json` | all German texts (finds, chats, task, mini-game, place labels; the two cards) |
+| `assets/environments/veltrava_registry/explore_hotspots.json`, `veltrava_quay/explore_hotspots.json` | the exp_* hotspots (shared, append-only blocks) |
+
+### Mini-game „Die Suchkartei“ (`scenes/ui/minigames/Kartei.tscn`)
+
+| Asset | Generator | What |
+|---|---|---|
+| `assets/ui/minigames/kartei/kartei_back.png` (400×136) | `py -3 -P tools/pixelgen/gen_mg_c3p2_kartei.py` | the card-hall floor at night (oak parquet, the green lamp's pool, cold edges) with the fallen drawer: back wall, dark inner bottom, side walls, shadow |
+| `kartei_front.png` (400×136) | same | the drawer's front panel drawn over the cards: brass label holder „SUCHKARTEI“, cup handle, rod nut |
+| `kartei_tabs.png` (15 × 22×36) | same | guide cards „B·Б“, „K·К“, „V·В“ (pressboard, coloured tabs) and the upper part of the twelve cards (origin letter, year/number, handwriting) |
+| `kartei_faces.png` (9 × 46×30) | same | the nine floor cards in full: code as written, origin in the card's script, handwriting, result stamp |
+| `kartei_closeup.png` (200×120) | same | close-up for the find (DiscoveryView): the drawer in order, Teodor Wanek's card („Anschrift übermittelt“) on top |
+| `world_drawer.png` (2 × 34×12) | same | world cue in L_C3_Registry beside drawer C-17: the fallen drawer with scattered cards / empty |
+| `kartei_layout.json` | same | canvas, slots, cells, atlas order, floor spots; the rule itself is `scripts/ui/minigames/kartei_logic.gd` |
+| `assets/audio/sfx/mg_c3p2_card_take.wav` | `py -3 -P tools/audiogen/mg_audio_c3p2.py` | a card lifted off the parquet (paper flick + slide), 0.22 s |
+| `mg_c3p2_card_file.wav` | same | a card slipped between its neighbours, the soft tick on the rod, 0.3 s |
+| `mg_c3p2_rattle.wav` | same | a refused card: the drawer jolts, the cards rattle once, the rod rings quietly, 0.45 s |
+| `mg_c3p2_drawer_shut.wav` | same | the drawer slid home: rumble on the runners, a muffled knock, 0.75 s |
+
+Scripts (no assets): `scripts/ui/minigames/kartei_game.gd` (modal, extends `minigame_base.gd`: auto mode, `demo_solve()`
+by synthetic keys, hints after two refusals following Settings `puzzle_hints`, Esc puts a held card back or gives up,
+keyboard + pad + mouse, compact ×2 layout above 100 % text, high-contrast cursor), `kartei_logic.gd` (pure rule),
+`kartei_spot.gd` (registry find spot: Story gates in the game, the remembered scene in memories), `kartei_world_cue.gd`.
+Deterministic: seeds are crc32 of names; re-running the generators reproduces the files byte for byte.
+
+---
+<a id="part-feel_r8"></a>
+
+## Asset manifest — Feel & polish pass, round 8 (area: feel_r8)
+
+Owner: feel_r8 specialist · Date: 2026-11-06 · Engine: Godot 4.7.2. Everything below is **original work** made by
+project scripts from the game's own art pipelines (no downloads, no traced or sampled material, no AI image/audio
+models). All generators are deterministic (fixed seeds / pure colour and geometry rules) and rewrite byte-identical
+files. No asset of this round carries an insignia.
+
+### 1. Ambient walkers (Palais, station, Berlin reading room)
+| File | Size / format | Generator | Notes |
+|---|---|---|---|
+| `assets/environments/veltrava_hall/walkers/secretary.png` | 320×504 RGBA (sheet of `typist`) | `tools/pixelgen/walkers_r8.py` | Delegation secretary: navy cardigan, blue-black hair, dark skirt. |
+| `assets/environments/veltrava_hall/walkers/pressman.png` | 320×504 (sheet of `journalist`) | same | Second press man: grey tweed coat, dark hair, burgundy scarf. |
+| `assets/environments/veltrava_hall/walkers/delegate.png` | 320×504 (sheet of `clerk`) | same | Elderly delegate with his files: dark brown suit, grey hair, navy tie. |
+| `assets/environments/veltrava_station/walkers/traveller_woman.png` | 320×504 (sheet of `berlin_mother`) | same | Traveller with her suitcase: bottle-green coat, brown felt hat, dark hair. |
+| `assets/environments/veltrava_station/walkers/traveller_man.png` | 320×504 (sheet of `berlin_father`) | same | Traveller carrying a crate: grey-blue coat, dark cap, camel scarf. |
+| `assets/environments/veltrava_station/walkers/porter.png` | 320×504 (sheet of `porter`) | same | Veltrava station porter: brown uniform, dark hair, ruddy skin. |
+| `assets/environments/berlin_archive/walkers/reader.png` | 320×504 (sheet of `clerk`) | same | Older reader: brown tweed jacket, grey hair. |
+| `assets/environments/berlin_archive/walkers/student.png` | 320×504 (sheet of `typist`) | same | Student: wine-red cardigan, fair hair. |
+| `assets/environments/<env>/walkers.json` (3) | JSON | hand-written data | Paths, speeds, pauses, give-way settings; schema in `scripts/actors/ambient_walker.gd`. |
+
+Method: `walkers_r8.py` calls the existing cast function (`chargen_cast` / `chargen_cast_new` / `chargen_cast_c3`) with a
+few entries of its material table swapped (same keys and order → same material indices) and renders the rows of the
+shipped `sheet.json` through `chargen_body.render`. The tool checks that the unmodified pipeline reproduces every source
+sheet byte for byte (`--check`) and that every variant's silhouette is identical to its source, so the runtime reuses
+the character's own `sheet_n.png` and `sheet.json`; only the diffuse changes. Runtime: `scripts/actors/ambient_walker.gd`
++ `scenes/actors/AmbientWalkers.tscn` (one actor entry in each `scene.json`).
+
+### 2. Station side-task payoff („Wagen drei ist kalt“)
+| File | Size / format | Generator | Notes |
+|---|---|---|---|
+| `assets/environments/veltrava_station/thaw/car3_thaw.png` (+ `_n`, `_e`) | 820×19 RGBA, 5 frames of 164×19 | `tools/pixelgen/env_veltrava_station_thaw.py` | Window band of car 3 (layer `train_near` x 357..520, y 25..43): frame 0 = the painted layer (no seam), 1-3 the frost recedes from the top (hash-dithered edge), 4 thawed: lamp on in compartment 4 (typists, coats off), compartment 5 coat on the hook, compartment 6 the man with his samovar tea. `_n` = crop of `train_near_n.png`, `_e` = lit glass glow like `train_near_e.png`. |
+| `assets/environments/veltrava_station/thaw/car3_peephole.png` (+ `_n`, `_e`) | 180×19 RGBA, 10 frames of 18×19 | same | Window 6 incl. its frame: frosted, a blurred hand wipes a circle (4 frames), a face, waving with the raised palm of `actors/window_life.png` frame 3 (2 frames), face, hand down. |
+
+Palette: only colours already painted in the car-3 windows (veltrava ramps). Runtime: `scripts/levels/veltrava_station/
+station_thaw.gd` + `scenes/levels/veltrava_station/StationThaw.tscn` (actor in the station `scene.json`); the pipe knock
+reuses `assets/audio/sfx/berlin_radiator_knock.wav`.
+
+### 3. Portraits of the evicted Berlin family
+| File | Size / format | Generator | Notes |
+|---|---|---|---|
+| `assets/characters/berlin_father/portrait.png`, `portrait_anim.png`, `portrait.json` | 448×112 strip, 448×672 grid | `tools/pixelgen/chargen_portrait2.py berlin_father` (spec in `chargen_portrait2_berlin.py`) | Tired forties: grey tweed flat cap (new SDF builder `flat_cap`, no badge), short dark hair, bags under the eyes, stubble; brown coat, grey knitted scarf. Four expressions × rest / talk / blink rows, like the round-2 cast. |
+| `assets/characters/berlin_mother/portrait.png`, `portrait_anim.png`, `portrait.json` | same | `... berlin_mother` | Worried late thirties: small dark felt pillbox with a wine ribbon (new builder `pillbox`), auburn hair swept into a low chignon (`hair_swept` of the C3 module), plum coat, oatmeal knitted scarf. |
+
+Both match their sprites (`chargen_cast.py`: coat, hat and hair colours) and the Berlin look of Konrad / Emil / the
+porter (rim `#6e8fa6`, background `berlin`).
+
+### 4. Voronova's hat edge
+`assets/characters/voronova/sheet.png` (only this file changed; `sheet_n.png` and `sheet.json` are identical): the
+lowest row of the karakul pirozhok uses the light curl-tip tones (hat ramp 5/4 instead of 1/2) in the side and front
+head bitmaps, a 1-px lighter fur edge so the hat no longer merges with her grey hair at 1×. Patched in memory by
+`tools/pixelgen/characters_c3.py` (`voronova_hat_edge()`, called from `install()`); run
+`py -3 -P tools/pixelgen/characters_c3.py voronova`.
+
+### 5. LS_C3_Trains t3 — the Soviet compartment
+`assets/cinematics/ch3/trains/int_alexei.png` and `roomflare_a.png` only (`py -3 -P tools/pixelgen/env_veltrava_cine.py
+--only t3`): a pleated pelmet with scalloped hem and red cross-stitch band, curtain tie-backs and lace edges, the lower
+berths with leatherette buttons and piping, made-up bedding on the right berth (folded blanket with the red stripe,
+white pillow, paper-wrapped linen), Alexei's kit bag, folded blankets on the upper berths, a carpet runner, a second
+(empty) tea glass in a filigree holder with the spoon standing in it; the room flare of the passing station lamp now
+throws the warm, skewed window (with the sash shadow) over the right curtain and wall and a band across the ceiling.
+The glass opening is untouched (t2 match cut), timing unchanged (25.5 s).
+
+### 6. Text
+`data/locale/de_feel_r8.json`: the two reasons a main-menu memory cannot be opened (no recorded state / incomplete
+record); the save-check reasons come from `de_system.json` (`sys.save.err.*`).
 
 ---
 <a id="part-ui"></a>
