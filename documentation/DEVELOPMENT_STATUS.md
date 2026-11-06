@@ -5,6 +5,20 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 10 (2026-11-06/07) — the user's playtest feedback, a cinematics overhaul, Chapter 4 part 2
+The user played round 9 and sent screenshots; the round answered them and extended the game in parallel (round 10 in a
+git worktree, merged afterwards). Evidence: TEST_REPORT.md §14.
+| Area | Now |
+|---|---|
+| Screenshot feedback | archive reading room: the pinned note no longer covers the AUFBAU poster; the eagle above the archive portal (LS_A1_ToM1) redrawn as a dark relief (neutral + _hist); parade: figures drawn at their real on-screen size (no upscaled blocks), ranks and files marching in step, a varied crowd without interpenetration or popping, detailed procedural tanks and half-tracks, tribune detail, the far avenue in p8 filled with the parade itself, p7 reframed |
+| Cinematics overhaul (LS_C3_Trains → finale, 13 films) | continuous arms and real hands everywhere, people and detail where places were empty; LS_C3_Trains 25.5 s → 36 s (villages, a halt, a crossing, a truss bridge, a new high shot of both trains, a crane up to the whole city of Veltrava); extras on platforms and in the palace; the C3-part-2 rig reworked; the C4 stamp fists, Fengler as a full figure, Konrad larger; the finale's arms as 3D chains. Before/after sheets for every film went to the user for a keep / revert decision |
+| Texts | the repeated fiction notes („(fiktiv)“, „fiktive … – kein echtes …“, „(alternative Geschichte)“) under titles, puzzle subtitles, an objective, the menu footer and every history card are gone (user request); the intro disclaimer and the credits keep it |
+| Save migration | `SaveSystem.fill_flag_defaults()` fills missing Story flags in every older save and memory snapshot before validation; first new flag `people_protected` |
+| Chapter 4 part 2 (C4P2_DESIGN) | the archive path and the transport path joined: Karsk depot, Berlin Ostbahnhof, the depot showcase with the join of card 0417, Kolonnenstraße 14; decision c4g publish_now / protect_first echoing a1, m1, c3b, c3d, c3g, c4d; JoinPuzzle (the two halves) and HousePuzzle (a way through the tenement); five match-cut films (Depot, Steam, Book, Express, Clock); new cast with living portraits; music and ambiences; exploration with tasks, mini-games and four history cards (propiska, foreign correspondents, Schriftleitergesetz, Blockleiter); board cards; memories |
+| Polish | unused cast cues wired or dropped; the board strip pages its threads; env generators keep walker rigs and actor blocks (`env_keep.py`, now also env_berlin.py); chapter-switch grades applied on load; palette cap 128 |
+| Found in integration | the overhaul and round 10 both added a `loop_frame` helper (renamed in the C4P2 films); a degenerate light polygon in LS_C3_Radio (the first E2E batch logged „triangulation failed“; inset clamped); two more fiction notes in chapter titles |
+| Playtime (estimate) | main path ≈ 64 min; everything ≈ 4 h 35 min (185 finds, 46 chats, 14 mini-games, 11 tasks, 29 history cards, 8 decisions; `tools/docs/estimate_playtime.py`, not measured with a human) |
+
 ## Round 9 (2026-11-06) — Chapter 4 part 1 „Stimmen unter Beton“, the evidence board „Die Akte C-17“, feel pass 2
 Planned before the user went to sleep. Built by 9 parallel specialists from the contract `documentation/C4_DESIGN.md`;
 then four review lenses (text & history, code & saves, art & UI, completeness) found 42 issues, each checked by a second
@@ -120,8 +134,8 @@ of quality content first. Delivered by 16 parallel specialists + integration (ev
 | Content safety | fictional-history disclaimer at new game; fictional insignia only (no real party symbols); no glorification | disclaimer seen in the real-input run; content rules given to every asset generator; spot checks of screens and strings (no full editorial review yet) |
 
 ## Windows build
-`builds/windows/AshesOfEmpires.exe` (109 MB Godot runtime, icon embedded) + `AshesOfEmpires.pck` (409 MB after
-round 9, mostly lossless audio and art) + `AshesOfEmpires.console.exe` (log output). Rebuild:
+`builds/windows/AshesOfEmpires.exe` (109 MB Godot runtime, icon embedded) + `AshesOfEmpires.pck` (499 MB after
+round 10, mostly lossless audio and art) + `AshesOfEmpires.console.exe` (log output). Rebuild:
 `godot --headless --path . --export-release "Windows Desktop" builds/windows/AshesOfEmpires.exe`. Start with
 `Spiel starten.cmd` in the project root.
 
@@ -135,8 +149,8 @@ round 9, mostly lossless audio and art) + `AshesOfEmpires.console.exe` (log outp
   chain two interactions; duplicate NPCs over baked prop figures in Karsk.
 
 ## Not done (honest list — see NEXT_STEPS.md)
-- Playable: Chapters 1–3 and Chapter 4 part 1. Chapter 4 part 2, Chapters 5–6 and the ending matrix exist only as
-  design documents (STORY_BIBLE §6–8); new Story flags (trust, people protected …) need a save migration first.
+- Playable: Chapters 1–4. Chapters 5–6 and the ending matrix exist only as design documents (STORY_BIBLE §6–8);
+  saves fill missing Story flags with their defaults since round 10.
 - No human has played or listened to the game yet; all judgements are automated, numeric (audio) or screenshot-based.
 - Controller input is tested only synthetically (pad A confirms in menus since round 8), never with a physical
   controller; no click-to-walk in the world.

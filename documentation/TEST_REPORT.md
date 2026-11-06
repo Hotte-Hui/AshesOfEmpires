@@ -205,3 +205,20 @@ still can. The real-input driver then pressed Esc after the film had ended and o
 the film is still running. (2) `Game._on_load_slot` returned before the level was loaded, so the autoplay's siding
 check saw the previous level; it now awaits the load. The review lenses' own fixes are listed in DEVELOPMENT_STATUS.
 Not covered: a human playtest and listening pass (NEXT_STEPS §2), a physical controller.
+
+## 14. Round 10 (2026-11-06/07) — screenshot feedback, cinematics overhaul, Chapter 4 part 2
+All runs on this machine (RTX 4090, Forward+, windowed 1080p). Eight choices per route now (a1 / m1 / c3a / c3b / c3d /
+c3g / c4d / c4g); the drivers keep their saves in `user://e2e/saves`.
+| Layer | Result |
+|---|---|
+| Unit (`tests/run_all.gd`) | **73 files, 810 cases, 112,540 checks — all passed** (new: test_save_migration_r10, test_c4p2_routes, the C4P2 art / cast / cinematics / puzzle / explore tests, test_hall_avenue, test_parade_vehicles, test_memory_npcs, test_env_generators_keep, test_switch_grade); one reported pending item (a cine stand-in figure, see NEXT_STEPS) |
+| Autoplay, played in full (… / name_marta / publish_now) | **PASS** 614 s — every cinematic watched, incl. the reworked films and LS_C4P2_Depot / Steam / Book / Express / Clock |
+| Autoplay, skip (… / protect_marta / protect_first) | **PASS** 141 s |
+| Autoplay, skip + exploration | **PASS** 302 s |
+| Autoplay, skip + memories | **PASS** 148 s |
+| Real input, skip | **INPUTPLAY_PASS** 744 s — JoinPuzzle and HousePuzzle solved by keys, „Fortsetzen“ resumes in L_C4P2_BerlinB before the last decision |
+| Real input, skip + exploration + memories | **INPUTPLAY_PASS** 2090 s — 231/231 finds and chats over all levels, every task, mini-game and history card, memory trips by keys only |
+| E2E logs | 0 script errors, 0 warnings — except 22 engine messages „Invalid polygon data, triangulation failed“ from one light polygon in LS_C3_Radio (ap_full, ip_play, exe); fixed (inset clamped) and re-verified: LS_C3_Radio played in real time with 0 errors, test_c3p2 green |
+| Exported .exe (499 MB pack) after the fix, real input, skip + memories | **INPUTPLAY_PASS** 755s, 0 errors, 0 warnings |
+| The user's saves, settings, photos and memories profile | unchanged (md5) after every run |
+Not covered: a human playtest and listening pass, a physical controller.

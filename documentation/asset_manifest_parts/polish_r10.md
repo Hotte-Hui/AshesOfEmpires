@@ -31,6 +31,19 @@ every output folder diffed against the repo, byte for byte:
 Guard: `tests/test_env_generators_keep.gd` (sources never sweep PNGs by extension; actors, walker rigs and thaw art
 present; every provenance row real, no generator claims `walkers/` or `thaw/`).
 
+**`env_berlin.py` (round 10, lead).** It never deleted files (`walkers/` and `walkers.json` of `walkers_r8.py` were
+safe) but wrote `berlin_archive/scene.json` from scratch; now `KEEP.merge_scene` / `KEEP.write_json`, the plan
+document JSON through `KEEP.lf_json` and `env_berlin.md` with LF. Proof in scratch copies of `tools/` +
+`assets/environments/berlin_archive` (the repo untouched), diffed byte for byte:
+* **before** (round-9 code): 94/94 PNGs identical, but `scene.json` lost the AmbientWalkers actor (11 → 10 actors);
+  `assets/ui/documents/berlin_plans.json` and `env_berlin.md` came out with CRLF line ends.
+* **after** (two consecutive runs): all 193 files of the folder (94 PNGs, every `.import`, `walkers/`, `walkers.json`,
+  `scene.json` with its 11 actors) byte-identical to the repo, likewise the 10 documents and the manifest part.
+* **injected**, third run: a hand actor at index 3 and a hand key after `windows` stay in place, a hand-edited value
+  of a generator key comes back to the generator's, hand PNGs in `walkers/` and `props/` stay.
+Guard: `test_env_generators_keep.gd` `MERGE_ONLY` (the env_keep calls, no `os.remove(` / `rmtree(` /
+`json.dump(scene`; the berlin walkers' sheets and rigs exist).
+
 ## Reproduce
 ```bash
 py -3 -P tools/pixelgen/env_keep.py --selftest

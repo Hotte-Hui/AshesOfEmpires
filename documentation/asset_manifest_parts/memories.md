@@ -21,9 +21,13 @@ Contract: `documentation/TECHNICAL_ARCHITECTURE.md` §12.10.
 | `assets/ui/memories/L_C4_AnnexA.png` | 320×180 RGB | same, `src/raw_L_C4_AnnexA.png` | crop (130,128): the tram loop Süd 8 at dawn, the lit timetable case, Konrad and Marta at tram 74 (round 9 fix, camera 120). |
 | `assets/ui/memories/L_C4_TunnelsB.png` | 320×180 RGB | same, `src/raw_L_C4_TunnelsB.png` | crop (218,128): the transfer siding, wagon 24 318 with the fresh stencil C-17/45, Alexei at x 1712 facing Lev at his siding post (round 9 fix, camera 1280; the harness loads each scene as a memory of itself). |
 | `assets/ui/memories/L_C4_AnnexB.png` | 320×180 RGB | same, `src/raw_L_C4_AnnexB.png` | crop (262,128): Nebenstelle Süd, the tube station, the bench „Warten bis zum Aufruf“ under the number 17, the counter „Auskunft · Abgleich“ with Fengler behind it, Konrad (round 9 fix, camera 1200). |
+| `assets/ui/memories/L_C4P2_KarskA.png` | 320×180 RGB | same, `src/raw_L_C4P2_KarskA.png` | crop (228,128): the depot's coal stage at dawn, Alexei, Kolonne 4 shovelling on the trestle and below it, Maria in her green headscarf, the guard at the barrel fire (round 10, camera 160). |
+| `assets/ui/memories/L_C4P2_BerlinA.png` | 320×180 RGB | same, `src/raw_L_C4P2_BerlinA.png` | crop (310,124): Ostbahnhof, platform K — the courier car „Kurier · C-17“, the green car „Di – Kordon“, the dining car, Ekdahl facing Konrad on the platform (round 10, camera 139). |
+| `assets/ui/memories/L_C4P2_KarskB.png` | 320×180 RGB | same, `src/raw_L_C4P2_KarskB.png` | crop (0,130): the showcase for the press — „ВОССТАНОВИМ ВМЕСТЕ“ on the tarpaulin, Alexei (press look) facing Ekdahl at the signal post, the model locomotive in its welcome arch (top edge just under the banner), the brass band, the minder, the canteen table (round 10, camera 878 = the left edge of the scene's camera zone; at 1000 Ekdahl, x 996, falls outside the frame). |
+| `assets/ui/memories/L_C4P2_BerlinB.png` | 320×180 RGB | same, `src/raw_L_C4P2_BerlinB.png` | crop (84,124): the courtyard of Kolonnenstraße 14 at night — Konrad facing Hanna at the stair door „Aufg. B“, the lit windows of the households, the old man with the coal scuttle, the lodge window with Frau Kuhnert and the card box (round 10, camera 1099). |
 | `assets/ui/memories/icon_memory.png` | 39×39 RGBA (13×13 drawn ×3) | same | Pocket watch at nine o'clock, amber arc + arrow tip on the rim (time running back). UI kit palette. |
 | `assets/ui/memories/manifest.json` | JSON | same | Files, sizes, crops, sources. |
-| `assets/ui/memories/src/raw_<scene>.png` (14) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
+| `assets/ui/memories/src/raw_<scene>.png` (18) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
 | `assets/audio/sfx/mem_rewind.wav` | 2.9 s, 44.1 kHz 16-bit stereo | `tools/audiogen/memories_audio.py` | Pocket-clock ticks time-reversed and speeding up (winding back), reversed airy swell with a soft release, faint tape-wow drone sinking 196→176 Hz, hushed low settle. Peak −5 dBFS, RMS −26 dBFS. No chime, no fanfare. |
 | `assets/audio/sfx/mem_return.wav` | 2.6 s, same format | same | The same clock forward, fast at first, settling into tick-tock; the swell from its peak fading out; drone rising back. Peak −5 dBFS, RMS −31 dBFS. |
 
@@ -42,6 +46,9 @@ py -3 -P tools/audiogen/memories_audio.py
 # then the shared --import (lock .import_lock)
 ```
 `--mt-survey=1` captures a 320-px camera sweep per level (to choose the spots in `SHOTS` / `CROPS`).
+Chapter 4 part 2 (round 10, lead): `--scene=L_C4P2_KarskA --char=alexei --mt-only=L_C4P2_KarskA,L_C4P2_BerlinA,L_C4P2_KarskB,L_C4P2_BerlinB` (each scene loaded as a memory of itself: Ekdahl at the signal, Hanna still in the
+courtyard, Wendt and Lev not yet there), raws copied to `src/`, the generator run (the 14 older prints and the icon
+came out byte-identical), then the locked import.
 
 ## 2. Code / data
 * `scripts/core/memories.gd` (helper), `scripts/core/game.gd` (memory mode, transitions, films), `scripts/core/memory_drive.gd`

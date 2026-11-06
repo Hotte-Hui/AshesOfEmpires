@@ -1,14 +1,25 @@
 # NEXT STEPS — Ashes of Empires: The Last Winter
 
-State after round 9 (2026-11-06): Chapters 1–3 complete, Chapter 4 part 1 „Stimmen unter Beton“ playable (Karsk tunnels
-and transfer siding with Lev Sokolov, Berlin tram loop Süd 8 with Marta Vogel and the registry annex „Nebenstelle Süd“,
-decision c4d: name Marta or protect her). New: the evidence board „Die Akte C-17“ in the journal, feel pass 2 (quay
-walkers, the blanket task, distinct umlauts, 150 % text fit). 151 finds, 35 chats, 12 mini-games, 9 tasks, 25 history
-cards, 7 decisions. Main path ≈ 49 min, everything ≈ 3 h 40 min (estimates from `tools/docs/estimate_playtime.py`; no
-human playtest yet). Open work, in priority order. The user asked to stop after round 9; round 10 below is a plan, not
-started.
+State after round 10 (2026-11-07): Chapters 1–4 complete — Chapter 4 part 2 joined the archive and the transport
+path (Karsk depot, Berlin Ostbahnhof, Kolonnenstraße 14; decision c4g). The user's screenshot feedback and a
+cinematics overhaul (13 films) are in; saves fill missing Story flags with defaults. 185 finds, 46 chats, 14
+mini-games, 11 tasks, 29 history cards, 8 decisions. Main path ≈ 64 min, everything ≈ 4 h 35 min (estimates; no
+human playtest yet). Open work, in priority order.
 
-## 1. Round 10 (proposal): save migration, Chapter 4 part 2, polish from the round-9 reports
+## 1. Round 11 (proposal): Chapter 5 „Der Preis des Friedens“, part 1 — and the user's verdict on the films
+- **First, the user's keep / revert list** for the reworked cinematics (before/after sheets sent 2026-11-06): revert
+  single films or shots from git (`4e9ba05` = round 9) where the user prefers the old version.
+- **Chapter 5 part 1** (STORY_BIBLE §6 row 5, FUTURE_CHAPTER_ARCS „Kapitel 5“): the infrastructure also has real
+  civilian use; an abrupt collapse would endanger residents, silence would too — contract `C5_DESIGN.md` first; the
+  c4g decision (publish_now / protect_first) and `people_protected` drive the opening; the Hanna thread (house 14).
+- **Open polish:** the photographer in a C4P2 film is drawn from a stand-in until its rig spec exists; close-ups for
+  the Chapter-3-part-2 / Chapter-4 items that open their board picture; `env_c4_tunnels.py` / `env_c3p2_archive.py`
+  through `env_keep.py` before anyone adds walkers there; hi-res capture frames for L_M1_HallReveal / L_M1_Parade.
+- **Budget:** the user asked to keep rounds cheap — one workflow at a time, art directors only where the user looks
+  (cinematics, places), lean final checks instead of 12-agent review phases, before/after sheets instead of repeated
+  captures. No fiction disclaimers in new texts.
+
+## 1b. Round 10 (done 2026-11-07, plan as it was): save migration, Chapter 4 part 2, polish from the round-9 reports
 - **Save migration first (prerequisite for every later chapter):** v3 payloads fill missing Story flags with their
   defaults before `validate_save_json`, with tests on saves of every earlier shape (round 7 / 8 / 9 forms, finished
   playthroughs, memory snapshots) and on the user's real saves (copies). Only then add the STORY_BIBLE §7 flags
@@ -28,10 +39,11 @@ started.
     „ROTE FÄDEN: 7 · 1/3“; F, pad X, a click or the wheel turn the pages). Still open: close-ups for the
     Chapter-3-part-2 / Chapter-4 items that still open their board picture instead of a document;
   - **done (round 10) for hall / station / quay:** the generator hazard — `tools/pixelgen/env_keep.py`: a generator
-    removes only the PNGs its own last run recorded and merges `scene.json` / `provenance.json`. Still open:
-    `env_berlin.py` (it rewrites `berlin_archive/scene.json` and would drop the round-8 AmbientWalkers actor — use
-    `KEEP.merge_scene` / `KEEP.write_json` and keep `walkers/`), and `env_c4_tunnels.py` / `env_c3p2_archive.py`
-    before anyone adds walkers or actors to their folders;
+    removes only the PNGs its own last run recorded and merges `scene.json` / `provenance.json`. **Done (round 10,
+    lead):** `env_berlin.py` (`KEEP.merge_scene` / `KEEP.write_json`: `berlin_archive/scene.json` keeps the round-8
+    AmbientWalkers actor; it deletes nothing, so `walkers/` stays; its plan JSON and manifest part are written with LF —
+    a re-run in a scratch copy is byte-identical, `polish_r10.md`). Still open: `env_c4_tunnels.py` /
+    `env_c3p2_archive.py` before anyone adds walkers or actors to their folders;
   - films: the stamp fists in LS_C4_Stamp are blocky, Konrad is small in s4 / n4, Fengler appears only as hands;
   - InspectView: the notice and plan captions move into the record card at 150 % (by design, check readability);
   - **done (round 10):** Game applies a switch's `"grade"` on a level load (`Game._apply_switch_grade`, unless the

@@ -818,8 +818,10 @@ func _draw_cafe_light() -> void:
 		var cx := (x0 + x1) * 0.5
 		var kk := a * clampf(1.0 - absf(cx - sx) / 150.0, 0.0, 1.0)
 		var c := Color(0.20 * kk, 0.18 * kk, 0.13 * kk, 1.0)
-		# on the floor: the pane's light skewed toward the camera
-		_cafe_light.draw_colored_polygon(PackedVector2Array([Vector2(x0 + 4, 264), Vector2(x1 - 4, 264),
+		# on the floor: the pane's light skewed toward the camera (the inset never crosses over on a narrow sliver,
+		# which would make a bow-tie polygon that cannot be triangulated)
+		var ins := minf(4.0, (x1 - x0) * 0.25)
+		_cafe_light.draw_colored_polygon(PackedVector2Array([Vector2(x0 + ins, 264), Vector2(x1 - ins, 264),
 			Vector2(x1 + (x1 - 320) * 0.5, 352), Vector2(x0 + (x0 - 320) * 0.5, 352)]), c)
 		# on the ceiling above the window, faint
 		_cafe_light.draw_colored_polygon(PackedVector2Array([Vector2(x0, 52), Vector2(x1, 52), Vector2(x1 + 20, 40),

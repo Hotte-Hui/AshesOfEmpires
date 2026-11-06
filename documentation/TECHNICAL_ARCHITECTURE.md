@@ -596,6 +596,9 @@ Revisit a completed scene, look at everything again, return to the present — o
   (registry, tunnels, annex) evaluate `show_after` / `hide_after` inside a memory through the level's
   `objective_done` rule (only objectives of scenes before the memory scene count; `StoryNPC._done`); single-scene levels
   keep the live Story, because their conversation twins stand at the NPC spots.
+  Chapter 4 part 2 (round 10, lead): `SHOTS` / `CROPS` for `L_C4P2_KarskA`, `L_C4P2_BerlinA`, `L_C4P2_KarskB`,
+  `L_C4P2_BerlinB` (`--scene=L_C4P2_KarskA --char=alexei`); KarskB's camera stands at the left edge of its zone (878)
+  so Ekdahl at the signal post is in the print.
 - **Tests / checks.** `tests/test_memories.gd` (unlocks, profile, echo plans for every objective, round trip on the
   live autoloads byte-identical, save guard, view/HUD/pause/save screen headless). GPU check run without touching
   the player's files: `godot --path . -- --memory-demo=all|game|c3|menu|films|view [--memory-shots=DIR]`

@@ -12,11 +12,14 @@ Produces
 Optional flags: --scene-only, --docs-only, --no-preview
 (The X1/match-cut stills of env_berlin_stills.py now belong to the transition work and are NOT rebuilt here;
  run `--stills` only if you own them.)
+Shared folder (round 10, env_keep.py): a run deletes nothing (it only writes its own files, so walkers/ and walkers.json
+of walkers_r8.py / the feel passes stay) and merges scene.json over the old one -- the round-8 "actors" entry
+AmbientWalkers and any key added by hand stay, an unchanged scene.json stays byte for byte; the plan document JSON and
+the manifest part are written with LF on every platform (byte-identical re-runs, .gitattributes).
 """
 from __future__ import annotations
 
 import copy
-import json
 import os
 import sys
 import time
@@ -28,6 +31,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import env_berlin_kit as kit          # noqa: E402
 import env_berlin_layout as L         # noqa: E402
+import env_keep as KEEP               # noqa: E402  (round 10: the folder is shared)
 import pg                             # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -248,8 +252,8 @@ def build_scene(preview=True):
                                  'with plain alpha it reads as dithered motes'},
     }
     sj = os.path.join(ENV_DIR, 'scene.json')
-    with open(sj, 'w', encoding='utf-8') as f:
-        json.dump(scene, f, indent=1, ensure_ascii=False)
+    scene = KEEP.merge_scene(scene, KEEP.read_json(sj))   # keeps the AmbientWalkers actor (round 8) and later keys
+    KEEP.write_json(sj, scene)   # same content as before: the file stays byte for byte
     record(sj, 'env_berlin.py', 'art manifest (TECHNICAL_ARCHITECTURE 3.1, 12.2 hotspots, actors)')
 
     # ---- checks
@@ -475,7 +479,7 @@ def write_manifest():
               'pigeons, mouse, clocks, radiator, radio, papers, tube, anim) |',
               '| `tests/visual/berlin_env_capture.gd/.tscn`, `tests/visual/berlin_actors_check.gd` | hand-written | '
               'visual harness (no post) and headless actor/decal behaviour check |', '']
-    with open(MANIFEST, 'w', encoding='utf-8') as f:
+    with open(MANIFEST, 'w', encoding='utf-8', newline='\n') as f:   # LF on every platform
         f.write('\n'.join(lines))
 
 
@@ -489,8 +493,10 @@ def main(argv):
     if '--scene-only' not in argv:
         import env_berlin_docs as ED
         print('[env_berlin] documents ...')
-        for path, desc in ED.build_all(DOC_DIR, PREV_DIR if preview else None):
+        docs = ED.build_all(DOC_DIR, PREV_DIR if preview else None)
+        for path, desc in docs:
             record(path, 'env_berlin_docs.py', desc)
+        KEEP.lf_json([path for path, _desc in docs])   # the repo's LF form on every platform (byte-identical)
         if '--stills' in argv:
             import env_berlin_stills as ES
             print('[env_berlin] cinematic stills ...')

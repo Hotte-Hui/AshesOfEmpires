@@ -31,9 +31,10 @@ const EXPECTED := [["L_A1_Railyard", "a1_completed", "alexei", 1, false],
 	# Chapter 4 part 2 (C4P2_DESIGN.md §7): again two level files, two scenes each, Karsk and Berlin alternating
 	["L_C4P2_KarskA", "c4e_completed", "alexei", 4, false], ["L_C4P2_BerlinA", "c4f_completed", "konrad", 4, false],
 	["L_C4P2_KarskB", "c4g_completed", "alexei", 4, false], ["L_C4P2_BerlinB", "c4h_completed", "konrad", 4, false]]
-## Round 9: the memory prints of Chapter 4 are made by the lead after the art lands (C4_DESIGN §7) — reported, not
-## failed, while missing. Round 10: the same for the four scenes of Chapter 4 part 2 (C4P2_DESIGN §7).
-const PENDING_PRINTS: Array = ["L_C4P2_KarskA", "L_C4P2_BerlinA", "L_C4P2_KarskB", "L_C4P2_BerlinB"]
+## Prints the lead makes after the art lands (C4_DESIGN §7, C4P2_DESIGN §7) — reported, not failed, while missing.
+## Empty: the Chapter 4 prints exist since round 9, the four Chapter-4-part-2 prints since round 10 (lead), so every
+## print is checked (exists, 320x180).
+const PENDING_PRINTS: Array = []
 
 
 class MockGame extends Node:
@@ -146,7 +147,7 @@ func _scene_table() -> bool:
 		kit.eq(bool(s[i]["side"]), e[4], "%s side-level flag" % e[0])
 		var thumb := str(s[i]["thumb"])
 		if PENDING_PRINTS.has(e[0]) and not ResourceLoader.exists(thumb):
-			print("      pending (round 10): memory print %s" % thumb)
+			print("      pending: memory print %s" % thumb)
 		else:
 			kit.ok(ResourceLoader.exists(thumb), "%s print exists (%s)" % [e[0], thumb])
 		var tex = load(thumb) if ResourceLoader.exists(thumb) else null

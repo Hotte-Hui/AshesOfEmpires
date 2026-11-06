@@ -25,6 +25,7 @@ Berliner Bauarchiv. Beide stoßen unabhängig voneinander auf dieselbe rätselha
 | Signalrätsel | 1–3 Karten legen, Rücktaste zurück, Enter prüfen | — |
 | Planrätsel / „Linie 74“ | Pfeiltasten verschieben, R drehen, Enter bestätigen | LB/RB drehen |
 | „Die Nummernkette“ | 1–4 Schild aufhängen, Rücktaste zurück, L Gegenlicht, Enter Probefahrt | A / B / X / Y |
+| Kartenhälften / Weg durchs Haus | Pfeiltasten bewegen, R drehen, Enter prüfen | Steuerkreuz, LB/RB, A |
 | Protokoll / Gegenprobe | 1–4 Belege zuordnen, Rücktaste zurück, Enter prüfen | A / X / Y |
 | Fotomodus | P | rechter Stick (R3) |
 | Erinnerungen (Zeitreise) | Esc → „Erinnerungen“ | Start → „Erinnerungen“ |
@@ -32,7 +33,7 @@ Berliner Bauarchiv. Beide stoßen unabhängig voneinander auf dieselbe rätselha
 Alle Tasten lassen sich unter *Einstellungen → Steuerung* neu belegen. Dort gibt es auch Untertitel,
 Textgröße, Textgeschwindigkeit, hohen Kontrast, reduzierte Bewegung und alle Lautstärken.
 
-## Inhalt der spielbaren Fassung (Kapitel 1–3 und Kapitel 4, erster Teil)
+## Inhalt der spielbaren Fassung (Kapitel 1–4)
 1. **Kapitel 1 – „Das letzte Signal“** (Karsk, Alexei): Gespräch mit Irina, Bleisiegel, Fahrplan, Signalrätsel,
    Frachtbuch, erste Entscheidung.
 2. **Übergang:** Der Waggon C-17 wird an einen Güterzug nach Westen gekoppelt – je nach Entscheidung steht Irina neben
@@ -56,22 +57,25 @@ Textgröße, Textgeschwindigkeit, hohen Kontrast, reduzierte Bewegung und alle L
    der Linie 74 mit: Ihre Umleitungen liegen genau über den Schächten, die er selbst gezeichnet hat („Linie 74“). In der
    Nebenstelle Süd unter dem Viertel der Großen Halle liegt Schublade Süd 8 mit 212 geräumten Haushalten – und
    Registrator Fengler will einen Namen. Die siebte Entscheidung.
-7. **Ende:** die Montage, die Endkarte mit allen sieben Entscheidungen und der Abspann mit allen Quellen.
+7. **Kapitel 4, zweiter Teil:** Die Spur der Archive und die Spur der Transporte laufen zusammen – im Lokdepot von
+   Karsk, am Berliner Ostbahnhof und in der Kolonnenstraße 14. Die beiden Hälften von Karte 0417 finden zueinander, und
+   die achte Entscheidung fragt: sofort veröffentlichen oder zuerst die Menschen schützen?
+8. **Ende:** die Montage, die Endkarte mit allen acht Entscheidungen und der Abspann mit allen Quellen.
 
-**Erkunden (optional):** 151 Entdeckungen und 35 Gespräche – Details, Verstecke, Easter Eggs, Nebengespräche – und
-**25 Karten „Reale Geschichte“**: was nach dem Krieg über NS-Staat und Sowjetunion aufgedeckt, bewiesen oder
+**Erkunden (optional):** 185 Entdeckungen und 46 Gespräche – Details, Verstecke, Easter Eggs, Nebengespräche – und
+**29 Karten „Reale Geschichte“**: was nach dem Krieg über NS-Staat und Sowjetunion aufgedeckt, bewiesen oder
 zugegeben wurde (Wannsee-Protokoll, Reichsbahn-Fahrpläne, Germania, Katyn, Nowotscherkassk, Kyschtym, die
 Zwangsrepatriierungen nach Jalta, die Auslieferungen von 1940, das Simultandolmetschen in Nürnberg, Befehl Nr. 270, die Sondersiedlungen, die „Ostarbeiter“,
 die Denunziationen …), sachlich.
 Die Quellen stehen im Abspann und unter „Mitwirkende“.
 
-**Aufgaben:** neun kleine Nebenaufgaben (ansprechen → suchen → zurückbringen), eine in fast jedem begehbaren Ort,
+**Aufgaben:** elf kleine Nebenaufgaben (ansprechen → suchen → zurückbringen), eine in fast jedem begehbaren Ort,
 im Tagebuch unter „Aufgaben“.
 
 **Minispiele (optional):** Rangieren und ein Schachproblem in Karsk, der Morsetaster im Stellwerk, das Radio des
 Pförtners und die Rohrpost im Archiv, das Blatt im Schnee auf dem Paradeplatz, die Fallblatttafel am Bahnhof
 Veltrava, die Garderobe und das Relaispult der Dolmetscheranlage im Palais, die Kartei in der Registratur, der Hebelrahmen
-im Dienststollen und die Lüftungsklappen der Nebenstelle Süd.
+im Dienststollen, die Lüftungsklappen der Nebenstelle Süd und die Drehscheibe im Lokdepot.
 
 **Die Akte C-17:** Im Tagebuch (Reiter „Akte“) hängen alle Beweise beider Männer an einer Pinnwand. Rote Fäden
 verbinden, was zusammengehört („derselbe Stempel“, „dieselbe Wagennummer“), und die Zusammenfassung „Was die Akte
@@ -82,8 +86,8 @@ Sepia, in der man alles in Ruhe ansieht, verpasste Funde nachholt und Gespräche
 dabei nicht; „In die Gegenwart zurückkehren“ bringt einen genau dorthin zurück, wo man war. Nach dem Durchspielen
 auch aus dem Hauptmenü, dazu die Filmsequenzen zum Wiedersehen.
 
-**Spielzeit (geschätzt, nicht mit Testspielern gemessen):** Hauptweg ca. 50 Minuten; mit Aufgaben, Minispielen und
-allen Entdeckungen gut dreieinhalb Stunden.
+**Spielzeit (geschätzt, nicht mit Testspielern gemessen):** Hauptweg gut eine Stunde; mit Aufgaben, Minispielen und
+allen Entdeckungen etwa viereinhalb Stunden.
 
 **Historische Hoheitszeichen:** Hakenkreuz, Reichsadler, Hammer und Sichel erscheinen als Bildsprache der beiden
 Regime in kritischem Zusammenhang (Sozialadäquanzklausel, § 86 Abs. 4 StGB). Unter *Einstellungen* lassen sie sich
@@ -93,7 +97,7 @@ abschalten; dann zeigt das Spiel fiktive Embleme.
 - Engine: **Godot 4.7.2** (GDScript, Forward+). Projektstruktur und Verträge: `documentation/TECHNICAL_ARCHITECTURE.md`.
 - Tests:
   - Unit-Tests: `godot --headless --path . --script res://tests/run_all.gd`
-  - Komplettdurchlauf über die Story-API: `godot --headless --path . -- --autoplay=share_with_irina,preserve_evidence,… (7 Entscheidungen) [--autoplay-skip] [--autoplay-explore]`
+  - Komplettdurchlauf über die Story-API: `godot --headless --path . -- --autoplay=share_with_irina,preserve_evidence,… (8 Entscheidungen) [--autoplay-skip] [--autoplay-explore]`
   - Komplettdurchlauf nur über simulierte Tastendrücke: `godot --path . -- --inputplay=keep_private,request_explanation [--inputplay-skip] [--inputplay-explore] [--inputplay-shots=ORDNER]`
   - `--autoplay-explore` / `--inputplay-explore` besuchen zusätzlich jede Entdeckung und jedes Nebengespräch.
 - Assets neu erzeugen (deterministisch): `py -3 -P tools/pixelgen/env_karsk.py`, `env_berlin.py`, `characters.py`,

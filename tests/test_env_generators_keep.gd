@@ -10,10 +10,15 @@ extends RefCounted
 ##  * the folders: every hand-added actor names a real scene (and walker data whose sheets and rigs exist), the
 ##    station's thaw art exists, every provenance row names a file that exists, and no generator's own row claims
 ##    a file of walkers/ or thaw/ (its next run would delete it).
+## Round 10 lead pass: env_berlin.py (berlin_archive, the round-8 AmbientWalkers actor + walkers/) — it deletes nothing
+## and keeps no provenance.json, so it only needs the scene merge and the byte-stable writer (MERGE_ONLY); its re-run
+## in a scratch copy is byte-identical (documentation/asset_manifest_parts/polish_r10.md).
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const GENS := {"env_veltrava_hall": "veltrava_hall", "env_veltrava_station": "veltrava_station",
 	"env_c3p2_quay": "veltrava_quay"}
+## generators that never delete a file (no own-record removal needed) but rewrite a shared scene.json
+const MERGE_ONLY := {"env_berlin": "berlin_archive"}
 ## provenance "generator" prefixes of each generator's own rows (env_keep FAMILY)
 const FAMILY := {"veltrava_hall": ["tools/pixelgen/env_veltrava_hall"],
 	"veltrava_station": ["tools/pixelgen/env_veltrava_station.py", "tools/pixelgen/env_veltrava_station_life.py"],
@@ -52,39 +57,49 @@ func _sources() -> bool:
 		for call in ["import env_keep as KEEP", "KEEP.remove_own_pngs(", "KEEP.merge_scene(", "KEEP.write_json(sj,",
 				"KEEP.merge_rows("]:
 			kit.ok(src.contains(call), "%s uses %s" % [g, call])
+	for g in MERGE_ONLY:
+		var src := FileAccess.get_file_as_string("res://tools/pixelgen/%s.py" % g)
+		if not kit.ok(src != "", "%s.py readable" % g):
+			continue
+		for bad in ["os.remove(", "rmtree(", "json.dump(scene"]:
+			kit.ok(not src.contains(bad), "%s: no %s (it deletes nothing, scene.json goes through env_keep)" % [g, bad])
+		for call in ["import env_keep as KEEP", "KEEP.merge_scene(", "KEEP.write_json(sj,", "KEEP.lf_json("]:
+			kit.ok(src.contains(call), "%s uses %s" % [g, call])
 	return true
 
 
 func _actors() -> bool:
 	var walkers_seen := 0
-	for g in GENS:
-		var env: String = "res://assets/environments/%s/" % GENS[g]
+	var folders: Dictionary = GENS.duplicate()
+	folders.merge(MERGE_ONLY)
+	for g in folders:
+		var env: String = "res://assets/environments/%s/" % folders[g]
 		var scene = _json(env + "scene.json")
-		if not kit.ok(scene is Dictionary, "%s scene.json parses" % GENS[g]):
+		if not kit.ok(scene is Dictionary, "%s scene.json parses" % folders[g]):
 			continue
 		var scenes: Array = []
 		for a in scene.get("actors", []):
 			var path := str((a as Dictionary).get("scene", ""))
 			scenes.append(path.get_file())
-			kit.ok(ResourceLoader.exists(path), "%s: actor scene %s exists" % [GENS[g], path])
+			kit.ok(ResourceLoader.exists(path), "%s: actor scene %s exists" % [folders[g], path])
 			var data := str((a as Dictionary).get("props", {}).get("data", ""))
 			if data == "":
 				continue
 			var w = _json(data)
-			if not kit.ok(w is Dictionary, "%s: walker data %s parses" % [GENS[g], data]):
+			if not kit.ok(w is Dictionary, "%s: walker data %s parses" % [folders[g], data]):
 				continue
 			for wk in w.get("walkers", []):
 				walkers_seen += 1
 				var sheet := str((wk as Dictionary).get("sheet", ""))
 				if sheet != "":
-					kit.ok(FileAccess.file_exists(env + sheet), "%s: walker sheet %s" % [GENS[g], sheet])
+					kit.ok(FileAccess.file_exists(env + sheet), "%s: walker sheet %s" % [folders[g], sheet])
 				var rig := str((wk as Dictionary).get("rig", ""))
-				if kit.ok(rig != "" and FileAccess.file_exists(env + rig), "%s: walker rig %s" % [GENS[g], rig]):
+				if kit.ok(rig != "" and FileAccess.file_exists(env + rig), "%s: walker rig %s" % [folders[g], rig]):
 					var base := rig.get_basename()
 					kit.ok(FileAccess.file_exists(env + base + ".png") and FileAccess.file_exists(env + base + "_n.png"),
-						"%s: the rig's sheet and normal map %s(.png / _n.png)" % [GENS[g], base])
-		kit.ok("AmbientWalkers.tscn" in scenes, "%s: the ambient walkers' actor is in scene.json" % GENS[g])
-	kit.ok(walkers_seen >= 11, "walkers checked in the three folders (%d)" % walkers_seen)
+						"%s: the rig's sheet and normal map %s(.png / _n.png)" % [folders[g], base])
+		kit.ok("AmbientWalkers.tscn" in scenes, "%s: the ambient walkers' actor is in scene.json" % folders[g])
+	kit.ok(walkers_seen >= 13, "walkers checked in the four folders (%d)" % walkers_seen)
 	var st = _json("res://assets/environments/veltrava_station/scene.json")
 	var names: Array = []
 	for a in (st.get("actors", []) if st is Dictionary else []):

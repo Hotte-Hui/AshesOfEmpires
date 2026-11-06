@@ -175,6 +175,54 @@
     180
    ],
    "source": "src/raw_L_C4_AnnexB.png"
+  },
+  {
+   "crop": [
+    228,
+    128
+   ],
+   "file": "L_C4P2_KarskA.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4P2_KarskA.png"
+  },
+  {
+   "crop": [
+    310,
+    124
+   ],
+   "file": "L_C4P2_BerlinA.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4P2_BerlinA.png"
+  },
+  {
+   "crop": [
+    0,
+    130
+   ],
+   "file": "L_C4P2_KarskB.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4P2_KarskB.png"
+  },
+  {
+   "crop": [
+    84,
+    124
+   ],
+   "file": "L_C4P2_BerlinB.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C4P2_BerlinB.png"
   }
  ],
  "generator": "tools/pixelgen/gen_ui_memories.py"

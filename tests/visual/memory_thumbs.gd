@@ -35,6 +35,15 @@ const SHOTS := {
 	"L_C4_TunnelsB": [1280, 0, 1712, 300, false],
 	"L_C4_AnnexA": [120, 0, 330, 300, false],
 	"L_C4_AnnexB": [1200, 0, 1580, 300, false],
+	# Chapter 4 part 2 (round 10): again two level files, two Story scenes each, every camera inside its scene's
+	# camera_zones rect: Alexei at the coal stage with Kolonne 4, Maria and the guard at the barrel fire; Konrad facing
+	# Ekdahl at the dining car beside the courier car C-17; Alexei facing Ekdahl at the signal post (camera at the
+	# zone's left edge 878 — at 1000 Ekdahl, x 996, falls outside), the model locomotive, the band; Konrad facing
+	# Hanna at the stair door of the courtyard (the remembered state: Hanna still down, Wendt not yet there)
+	"L_C4P2_KarskA": [160, 0, 470, 300, false],
+	"L_C4P2_BerlinA": [139, 0, 735, 300, true],
+	"L_C4P2_KarskB": [878, 0, 949, 300, false],
+	"L_C4P2_BerlinB": [1099, 0, 1235, 300, false],
 }
 
 var out_dir := ""

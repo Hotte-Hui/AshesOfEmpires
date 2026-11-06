@@ -54,6 +54,16 @@ CROPS = {
     'L_C4_AnnexA': (130, 128),
     'L_C4_TunnelsB': (218, 128),
     'L_C4_AnnexB': (262, 128),
+    # Chapter 4 part 2 (round 10, lead; two level files, two scenes each): A the coal stage at dawn — Alexei, Kolonne 4
+    # shovelling, Maria in her headscarf, the guard at the barrel fire; B the Corridor platform — the courier car
+    # „C-17“, the green car „Di – Kordon“, the dining car and Ekdahl facing Konrad; C the showcase for the press —
+    # „ВОССТАНОВИМ ВМЕСТЕ“ on the tarpaulin, Alexei facing Ekdahl at the signal post, the model locomotive in its arch
+    # (top edge under the banner), the band, the minder, the canteen table; D the courtyard at night — Konrad and
+    # Hanna at the stair door „Aufg. B“, the lit windows of the households, the lodge window with Frau Kuhnert
+    'L_C4P2_KarskA': (228, 128),
+    'L_C4P2_BerlinA': (310, 124),
+    'L_C4P2_KarskB': (0, 130),
+    'L_C4P2_BerlinB': (84, 124),
 }
 ## warm silver-gelatine ramp: lifted black -> umber -> sepia -> cream highlight (sRGB)
 RAMP = [(0.00, (30, 22, 16)), (0.18, (58, 42, 30)), (0.40, (104, 79, 56)), (0.62, (156, 126, 92)),

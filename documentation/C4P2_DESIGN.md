@@ -909,3 +909,6 @@ are unchanged.
   at the barrel fire in front of him), the press minder (smokes), the man at the kiosk (reads), Kuhnert (card box).
 * Evidence board: the „?“ column never grows past two sub-columns (`UNKNOWN_MAX_COLS`). The 11 new items have card
   pictures — detail crops of their inspect close-ups (`gen_ui_board.py` `DOC_CROPS`).
+* Memories (§7): the four prints `assets/ui/memories/L_C4P2_*.png` are made (lead, after the art landed; no longer
+  pending in `tests/test_memories.gd`). KarskB's camera stands at the left edge of its zone (878, not 1000) so Ekdahl
+  at the signal post is in the print; `documentation/asset_manifest_parts/memories.md` has the crops.
