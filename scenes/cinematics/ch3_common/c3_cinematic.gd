@@ -14,6 +14,9 @@ extends Node2D
 ##   --cine-t=SECONDS        after play(): jump to SECONDS and freeze (deterministic --capture frames)
 ##   --cine-rm=0|1           force reduced motion off/on for this run
 ##   --cine-flags=a=1,b=0    merge story flags into configure(ctx) (to capture the line variants)
+## Cue keys (_make_cues): t, say+dur, sfx+db+pv (short one-shots through Audio), bed+db (a longer sound on the
+## scene's own player: faded out by skip(), gone with the scene), amb+fade, music+fade ("" stops), loop+key+db+fade
+## (a looping SFX bed, stopped by a later {loop_stop: key} cue, by skip() and when the scene leaves the tree).
 
 signal finished
 
@@ -54,6 +57,9 @@ var _frozen := false
 var _dev_flags: Dictionary = {}
 var _rm_cli := -1
 var _configured := false
+var _loops_on: Dictionary = {}
+var _dissolve_mats: Array = []
+var _beds: Array = []
 
 
 func _ready() -> void:
@@ -71,6 +77,11 @@ func _exit_tree() -> void:
 	_cam_taken = false
 	if _live() and t < _sub_until:
 		_hide_subtitle()
+	_stop_loops(0.4)
+	for b in _beds:
+		if is_instance_valid(b):
+			(b as AudioStreamPlayer).stop()
+	_beds.clear()
 
 
 # ------------------------------------------------------------------ contract
@@ -88,6 +99,7 @@ func configure(ctx: Dictionary) -> void:
 
 
 func play() -> void:
+	_fade_beds(0.2)
 	t = 0.0
 	_cue_i = 0
 	_finished = false
@@ -112,6 +124,8 @@ func skip() -> void:
 	_apply(t)
 	if _live() and was < _sub_until:
 		_hide_subtitle()   # a line of ours would otherwise linger over the next level's fade-in
+	_stop_loops(0.5)
+	_fade_beds(0.35)
 	_finish()
 
 
@@ -216,6 +230,49 @@ func _run_cue(c: Dictionary) -> void:
 			Audio.stop_music(float(c.get("fade", 2.0)))
 		else:
 			Audio.play_music(str(c["music"]), float(c.get("fade", 2.0)))
+	if c.has("bed"):
+		_play_bed(str(c["bed"]), float(c.get("db", 0.0)))
+	if c.has("loop"):
+		var key := str(c.get("key", c["loop"]))
+		Audio.sfx_loop(str(c["loop"]), key, float(c.get("db", 0.0)), float(c.get("fade", 0.5)))
+		_loops_on[key] = true
+	if c.has("loop_stop"):
+		var k2 := str(c["loop_stop"])
+		Audio.stop_sfx_loop(k2, float(c.get("fade", 0.8)))
+		_loops_on.erase(k2)
+
+
+func _play_bed(id: String, db: float) -> void:
+	var path := "res://assets/audio/sfx/%s.wav" % id
+	if not ResourceLoader.exists(path):
+		return
+	var pl := AudioStreamPlayer.new()
+	pl.name = "Bed_" + id
+	pl.bus = "SFX" if AudioServer.get_bus_index("SFX") >= 0 else "Master"
+	pl.stream = load(path)
+	pl.volume_db = db
+	add_child(pl)
+	pl.play()
+	pl.finished.connect(pl.queue_free)
+	_beds.append(pl)
+
+
+func _fade_beds(fade: float) -> void:
+	for b in _beds:
+		if is_instance_valid(b) and (b as AudioStreamPlayer).playing:
+			var tw := create_tween()
+			tw.tween_property(b, "volume_db", -60.0, fade)
+			tw.tween_callback((b as AudioStreamPlayer).stop)
+	_beds.clear()
+
+
+func _stop_loops(fade: float) -> void:
+	if _loops_on.is_empty():
+		return
+	if _live():
+		for k in _loops_on.keys():
+			Audio.stop_sfx_loop(str(k), fade)
+	_loops_on.clear()
 
 
 func _say(key: String, dur: float) -> void:
@@ -294,6 +351,37 @@ func tex(rel: String) -> Texture2D:
 	if not missing.has(path):
 		missing.append(path)
 	return null
+
+
+## Ordered-dither dissolve material for a shot group (one Bayer cell per WORLD pixel: px_scale = k).
+## Every material made here is updated by set_dissolve(); `add` = additive twin for glows.
+const _DISSOLVE := preload("res://scenes/cinematics/ch3_common/c3_dissolve.gdshader")
+const _DISSOLVE_ADD := preload("res://scenes/cinematics/ch3_common/c3_dissolve_add.gdshader")
+
+
+func dissolve_material(add := false) -> ShaderMaterial:
+	var m := ShaderMaterial.new()
+	m.shader = _DISSOLVE_ADD if add else _DISSOLVE
+	m.set_shader_parameter("progress", 1.0)
+	m.set_shader_parameter("px_scale", _px_scale())
+	_dissolve_mats.append(m)
+	return m
+
+
+func set_dissolve(mats: Array, progress: float) -> void:
+	var k := _px_scale()
+	for m in mats:
+		(m as ShaderMaterial).set_shader_parameter("progress", progress)
+		(m as ShaderMaterial).set_shader_parameter("px_scale", k)
+
+
+func _px_scale() -> float:
+	if not _live():
+		return 1.0
+	var v = Game.get("view")
+	if v and v.has_method("is_hires") and v.is_hires():
+		return maxf(1.0, float(v.get("world_scale")))
+	return 1.0
 
 
 static func additive() -> CanvasItemMaterial:

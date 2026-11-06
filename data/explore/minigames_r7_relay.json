@@ -1,0 +1,17 @@
+{
+ "area": "veltrava",
+ "doc": "TECHNICAL_ARCHITECTURE §12.1/§12.8 — the Chapter-3 mini-game find „Das Relaispult“ (owner minigames_r7_relay): Konrad keeps the commission's interpretation desk for a few minutes of the session (scenes/ui/minigames/RelayDesk.tscn). Hotspot exp_relay_desk in assets/environments/veltrava_hall/explore_hotspots.json, interactable Find_RelayDesk (scripts/ui/minigames/relay_spot.gd: open after c3b_arrival until c3b_inspect_booth, and in a memory) and the desk prop in scenes/levels/L_C3_Hall.tscn. Texts: data/locale/de_minigames_r7_relay.json (Konrad's voice). The find links the existing real-history card on simultaneous interpreting at Nuremberg (shown once, whichever find comes first).",
+ "entries": [
+  {
+   "id": "veltrava.hall.relay",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.relay.title",
+   "text_key": "explore.veltrava.hall.relay.text",
+   "prompt_key": "explore.veltrava.hall.relay.prompt",
+   "image": "res://assets/ui/minigames/relay/find_relay.png",
+   "history": ["hist.reich.nuremberg_interpreters"],
+   "minigame": "res://scenes/ui/minigames/RelayDesk.tscn"
+  }
+ ]
+}

@@ -1,9 +1,10 @@
 extends "res://scenes/cinematics/ch3_common/c3_cinematic.gd"
 ## LS_C3_ToHall (~6 s) — Alexei's station hands over to Konrad's palais on a single time (C3_DESIGN §2.9).
-##   k1 0-3 s  the wrought-iron platform clock at 9:39:57, snow, drifting steam; the minute hand jumps to
-##             9:40 with a clack
-##   k2 3-6 s  match cut to the gilded Jugendstil wall clock of the palais at 9:40 (same face, same centre,
-##             same hand angles), a soft bell bridges the cut; Konrad's silhouette walks in below it
+##   k1 0-3 s  the cast-iron platform clock under the glazed canopy at 9:39:57, snow, drifting steam; the
+##             seconds hand ticks, the minute hand jumps to 9:40 with a clack (railway clock)
+##   k2 3-6 s  match cut to the gilded Jugendstil clock of the palais at 9:40 (same dial, same centre, same hand
+##             angles), its pendulum swinging, a soft chime bridges the cut; Konrad's silhouette walks in below it
+## Sound: the station ambience gives way to the palais; mus_veltrava keeps playing (both levels use it).
 ## Subtitle: cin.c3.tohall.time.  Art: assets/cinematics/ch3/tohall/ (tools/pixelgen/env_veltrava_cine.py).
 
 const FX := preload("res://scenes/cinematics/ch3_common/pixel_fx.gd")
@@ -18,6 +19,8 @@ const LEN_MIN := 40.0
 const LEN_SEC := 43.0
 const LINE_TIME := "cin.c3.tohall.time"
 const SEC_TICKS := [0.4, 1.4, 2.4]       # :58, :59, :00 (+ the minute jump)
+const STEP0 := 3.55                      # Konrad's first footfall under the palais clock
+const STEP := 0.55
 
 var k1: Node2D
 var k2: Node2D
@@ -29,6 +32,8 @@ var _steam_tex: Texture2D
 var _pendulum: Sprite2D
 var _konrad: Sprite2D
 var _dust: Node2D
+var _glass1: Sprite2D
+var _glass2: Sprite2D
 var _layout: Dictionary = {}
 
 
@@ -46,21 +51,18 @@ func get_shot_id() -> String:
 
 
 func _make_cues() -> Array:
-	return [
-		{"t": 0.0, "music": "", "fade": 2.0},
-		{"t": 0.0, "amb": "amb_karsk_yard", "fade": 1.0},
-		{"t": 0.4, "sfx": "type_tick", "db": -14.0},
-		{"t": 1.4, "sfx": "type_tick", "db": -14.0},
-		{"t": 2.4, "sfx": "type_tick", "db": -5.0, "pv": 0.0},
-		{"t": 2.42, "sfx": "card_place", "db": -12.0},
-		{"t": CUT, "sfx": "tram_bell", "db": -15.0, "pv": 0.0},
-		{"t": CUT, "amb": "amb_berlin_archive", "fade": 0.7},
+	var c: Array = [
+		{"t": 0.0, "amb": "amb_veltrava_station", "fade": 0.8},
+		{"t": SEC_TICKS[0], "sfx": "c3cine_clock_tick", "db": -10.0, "pv": 0.02},
+		{"t": SEC_TICKS[1], "sfx": "c3cine_clock_tick", "db": -10.0, "pv": 0.02},
+		{"t": SEC_TICKS[2], "sfx": "c3cine_clock_clack", "db": -6.0, "pv": 0.0},     # the minute hand jumps
+		{"t": CUT, "sfx": "c3cine_palais_chime", "db": -8.0, "pv": 0.0},
+		{"t": CUT, "amb": "amb_veltrava_palais", "fade": 0.7},
 		{"t": 3.25, "say": LINE_TIME, "dur": 2.6},
-		{"t": 3.95, "sfx": "step_wood", "db": -17.0},
-		{"t": 4.5, "sfx": "step_wood", "db": -16.0},
-		{"t": 5.05, "sfx": "step_wood", "db": -15.0},
-		{"t": 5.6, "sfx": "step_wood", "db": -15.0},
 	]
+	for k in 4:
+		c.append({"t": STEP0 + k * STEP, "sfx": "c3cine_step_marble", "db": -13.0 + k * 0.8, "pv": 0.04})
+	return c
 
 
 func _build() -> void:
@@ -81,6 +83,7 @@ func _build() -> void:
 	_hands1.name = "Hands"
 	_hands1.draw.connect(_draw_hands.bind(_hands1, false))
 	k1.add_child(_hands1)
+	_glass1 = sprite("tohall/k1_glass.png", Vector2.ZERO, k1, 1, true)
 	_snow = FX.new()
 	_snow.name = "Snow"
 	k1.add_child(_snow)
@@ -99,6 +102,7 @@ func _build() -> void:
 	_hands2.name = "Hands"
 	_hands2.draw.connect(_draw_hands.bind(_hands2, true))
 	k2.add_child(_hands2)
+	_glass2 = sprite("tohall/k2_glass.png", Vector2.ZERO, k2, 1, true)
 	_dust = Node2D.new()
 	_dust.name = "Dust"
 	_dust.draw.connect(_draw_dust)
@@ -125,12 +129,15 @@ func _apply(time: float) -> void:
 	# Konrad: a foreground silhouette entering from the left under the clock
 	if _konrad.texture:
 		var w := float(_konrad.texture.get_width()) / 2.0
-		var u := ramp01(time, 3.55, DUR + 0.5)
-		var x := lerpf(-w - 4.0, 250.0 - w * 0.5, u) if not rm else lerpf(-w * 0.4, 150.0 - w * 0.5, ramp01(time, 3.4, DUR + 1.0))
+		# constant walking pace (he enters from the left edge and is under the clock as the shot ends)
+		var v := 58.0 if not rm else 38.0
+		var x := -w + 30.0 + (time - (STEP0 - 0.35)) * v
 		var y := float(_layout.get("konrad_y", 360 - _konrad.texture.get_height()))
-		var step := int(floor((time - 3.55) / 0.275))
-		_konrad.position = Vector2(roundf(x), y + (1.0 if step % 2 == 1 else 0.0))
-		_konrad.frame = 1 if step % 2 == 1 else 0
+		var ph := fposmod((time - STEP0) / STEP, 1.0)
+		var up := ph > 0.5                       # the body rises between the footfalls
+		_konrad.visible = time >= STEP0 - 0.35
+		_konrad.position = Vector2(roundf(x), y + (0.0 if up else 1.0))
+		_konrad.frame = 1 if up else 0
 
 
 ## Clock time shown (in seconds after 9:00:00) — railway clock: the seconds tick, the minute jumps at :00.

@@ -20,8 +20,11 @@ from env_veltrava_lib import (Layer, NI, SL, IR, CR, PA, LA, SK, SN, RD, CLEAR, 
 
 SUN = (575, 103)                      # screen position of the hazy dawn sun (sky layer, parallax 0)
 SKY_LADDER = [SL[2], SL[3], SK[0], SK[1], SK[2], SK[3], SK[4], SK[5], LA[4], SN[4]]
-SKY_STOPS = [(0, 0.3), (24, 0.95), (50, 1.8), (76, 2.65), (100, 3.45), (120, 4.2), (140, 4.9), (158, 5.5),
-             (176, 6.0), (200, 6.4), (360, 6.5)]
+# polish pass (Forward+ on the PC): the in-game pipeline (canvas modulate + grade + palette snap) darkens the
+# far planes by ~25 %, so the visible sky band (y 27..150 under the canopy edge) starts one ramp step lighter
+# than the cloud pass had it: a luminous winter-morning sky instead of a night sky (value group 'light').
+SKY_STOPS = [(0, 1.8), (24, 2.45), (50, 3.15), (76, 3.8), (100, 4.5), (120, 5.15), (140, 5.75), (158, 6.15),
+             (176, 6.4), (200, 6.5), (360, 6.5)]
 
 
 def sky_index(y):
@@ -45,6 +48,10 @@ def make_sky():
     T += np.clip(1 - d2, 0, 1) ** 1.2 * 1.0
     hb = np.clip(1 - np.abs(yy - 132) / 24.0, 0, 1) * np.clip(1 - np.abs(xx - SUN[0]) / 440.0, 0, 1)
     T += hb * 0.6
+    # dawn band right across the sky: the low sun lights the haze above the roofs (rose-cream, warmer and
+    # wider toward the sun); it is what makes the frame read as morning, not dusk
+    dawn = np.clip(1 - np.abs(yy - 128) / 34.0, 0, 1) ** 1.4 * (0.45 + 0.55 * np.clip(1 - np.abs(xx - SUN[0]) / 620.0, 0, 1))
+    T += dawn * 0.75
     T = np.minimum(T, 7.7)
     dd = np.sqrt((xx - SUN[0]) ** 2 + ((yy - SUN[1]) * 1.1) ** 2)
     T[dd < 9.0] = np.maximum(T[dd < 9.0], 7.9)
@@ -96,10 +103,12 @@ def band_cloud(L, circles, sun_boost=0.0, flat_bottom=None, light=(1, 1), seed=0
     tone = np.full((h, w), 1.0, np.float32)       # lit rim (bottom-right, facing the low sun)
     tone[b1b & ~b1] = 0.65
     tone[b1] = 0.25
-    tone[b2] = -0.35
-    tone[b3] = -0.8                               # shaded core
+    # polish pass: softer cores -- morning stratocumulus is only a little darker than the sky around it
+    # (the cloud pass's -0.8 cores made dark storm banks that read as dusk)
+    tone[b2] = -0.2
+    tone[b3] = -0.5                               # shaded core
     cy_m = float(np.mean([c[1] for c in circles]))
-    base = sky_index(cy_m) * 0.75 + sky_index(Y) * 0.25 - 0.1
+    base = sky_index(cy_m) * 0.75 + sky_index(Y) * 0.25 + 0.05
     d = np.sqrt(((X - SUN[0]) / 300.0) ** 2 + ((Y - SUN[1]) / 120.0) ** 2)
     boost = np.clip(1 - d, 0, 1) ** 1.1 * (1.5 + sun_boost)
     T = np.minimum(base + tone + boost * np.clip(tone + 0.5, 0, 2.0) * 0.8, 7.85)
@@ -442,6 +451,9 @@ def make_city():
     chimneys.append((943, 82))
     tone_box(L, 96, 112, 16, 102, CF, top=CF['top'])
     dome(L, 104, 112, 8, 9, CP, lantern=8, onion=True)
+    # polish pass: atmospheric perspective -- the mansard city sits half a ramp step lighter (hazier) so the
+    # warm station building in front of it and the pale old town behind it read as three separate planes
+    ladder_shift(L, [SL[1], SL[2], SL[3], SL[4], SL[5], SK[2], SK[3]], 0.55)
     fog_base(L, [SL[2], SL[3], SL[4], SK[1], SK[2], SK[3]], 150, B, 1.6)
     return L, chimneys
 
@@ -479,9 +491,10 @@ def make_station():
     W = layer_w(p, 16)
     L = Layer(W, 360, 'station')
     B = 216
-    # backlit by the low sun behind it: front faces in cool shade (slate), cornice tops and right edges
-    # catch warm light (cream), snow on every ledge
-    C = dict(deep=SL[1], sh=SL[2], body=SL[3], lit=SL[4], rim=CR[4], top=CR[3], hi=CR[3], joint=SL[2],
+    # backlit by the low sun behind it: the sandstone front is in shade (polish pass: warm cream sandstone in
+    # shadow instead of slate, so the building separates from the cold blue city haze behind it and the frame
+    # gets its dawn warmth), cornice tops and right edges catch the warm light, snow on every ledge
+    C = dict(deep=NI[3], sh=CR[0], body=CR[1], lit=CR[2], rim=CR[4], top=CR[3], hi=CR[3], joint=CR[0],
              roof=SL[1], roof_sh=SL[0], win=SL[0], glass=SL[0])
     CP = dict(sh=PA[1], body=PA[2], lit=PA[3], rim=PA[4], top=PA[4])
     E = {'chimneys': []}
@@ -671,4 +684,5 @@ def make_station():
     for k in range(10):                                                    # barrel roof of the hall (patina)
         L.hline(hx0 + 20 + k, 61 - 16 - k, hx1 - hx0 - 40 - 2 * k, CP['body'] if k % 3 else CP['sh'], 0.6)
     fog_base(L, [SL[1], SL[2], SL[3], SL[4], SL[5]], 150, B + 6, 1.0)
+    fog_base(L, [CR[0], CR[1], CR[2], CR[3]], 158, B + 6, 1.0)
     return L, E

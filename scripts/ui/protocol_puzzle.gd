@@ -37,7 +37,7 @@ const BLUE_INK_L := Color("3e546b")
 const SUCCESS_GUARD_MS := 600
 ## Longest reading beat before the solved modal closes by itself. The real-input driver
 ## (scripts/core/inputplay.gd) waits 8 s for `closed` after the correct order — stay well inside that.
-const SUCCESS_BEAT_MAX := 5.5
+const SUCCESS_BEAT_MAX := 7.0
 
 var suppress_toasts := true
 var obj_id := ""
@@ -197,7 +197,7 @@ func _apply_layout() -> void:
 	_actions.columns = 4 if wide else 2
 	_controls.alignment = BoxContainer.ALIGNMENT_BEGIN if wide else BoxContainer.ALIGNMENT_CENTER
 	for b in [_undo_btn, _reset_btn, _check_btn, _close_btn]:
-		b.custom_minimum_size.x = 196 if wide else 0
+		b.custom_minimum_size.x = 172 if wide else 0
 		b.size_flags_horizontal = Control.SIZE_FILL if wide else Control.SIZE_EXPAND_FILL
 
 
@@ -298,7 +298,7 @@ func _build_plan() -> Control:
 		var wrap: bool = k in ["soviet", "observer_se", "observer_ch"]
 		if k == "title" or k == "subtitle":
 			r = r.grow_individual(0, 6, 0, 6)
-		_overlay(h, Kit.t(sp[0]).to_upper(), r, sp[1], sp[2], sp[3], sp[4], wrap).name = "Plan_" + k
+		_overlay(h, Kit.t(sp[0]).to_upper().replace("ß", "SS"), r, sp[1], sp[2], sp[3], sp[4], wrap).name = "Plan_" + k
 	# the only printed numbers: 1, 2, 12 inside their rings
 	var tags: Dictionary = _m("plan", "tags", {})
 	for t in tags:
@@ -312,7 +312,7 @@ func _build_log() -> Control:
 	var size := _size_of("log", Vector2i(168, 160))
 	var h := _sheet(ART + str(_m("log", "file", "c3_log.png")), size)
 	var title := _rect(_m("log", "title", [38, 4, 112, 11]))
-	_overlay(h, Kit.t("ui.c3.protocol.log_title").to_upper(), title, "fv_button", 18, BLUE_INK).name = "LogTitle"
+	_overlay(h, Kit.t("ui.c3.protocol.log_title").to_upper().replace("ß", "SS"), title, "fv_button", 18, BLUE_INK).name = "LogTitle"
 	var agenda := _rect(_m("log", "agenda", [22, 17, 138, 9]))
 	_overlay(h, Kit.t("ui.c3.protocol.log.agenda"), agenda, "fv_type_bold", 17, INK).name = "LogAgenda"
 	var cols: Dictionary = _m("log", "cols", {"time": 22, "mic": 46, "channel": 60, "remark": 30, "note": 30, "right": 160})
@@ -320,7 +320,7 @@ func _build_log() -> Control:
 	for k in ["time", "mic", "channel"]:
 		var x := float(cols.get(k, 22)) * PX
 		var r := Rect2(x, head.position.y, size.x - x - 24, head.size.y)
-		_overlay(h, Kit.t("ui.c3.protocol.log.col." + k).to_upper(), r, "fv_button", 14, BLUE_INK_L).name = "LogHead_" + k
+		_overlay(h, Kit.t("ui.c3.protocol.log.col." + k).to_upper().replace("ß", "SS"), r, "fv_button", 14, BLUE_INK_L).name = "LogHead_" + k
 	# rows: [{entry, kind (a time/mic/channel · b remark · n note), y}] at a fixed pitch of 8 art px
 	var rows: Array = _m("log", "rows", [])
 	var pitch := float(_m("log", "pitch", 8)) * PX
@@ -410,7 +410,7 @@ func _build_slots(parent: Control) -> void:
 		frame.stretch_mode = TextureRect.STRETCH_SCALE
 		frame.size = cs
 		b.add_child(frame)
-		var cap := Kit.label(Kit.t("ui.c3.protocol.slot", {"n": i + 1}).to_upper(), "KickerLabel", 21, Kit.C_TEXT_DIM)
+		var cap := Kit.label(Kit.t("ui.c3.protocol.slot", {"n": i + 1}).to_upper().replace("ß", "SS"), "KickerLabel", 21, Kit.C_TEXT_DIM)
 		cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		cap.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		cap.size = cs
@@ -555,7 +555,7 @@ func _build_notes() -> Control:
 	var v := Kit.vbox(16)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(v)
-	var kick := Kit.label(Kit.t("ui.c3.protocol.notes").to_upper(), "KickerLabel")
+	var kick := Kit.label(Kit.t("ui.c3.protocol.notes").to_upper().replace("ß", "SS"), "KickerLabel")
 	v.add_child(kick)
 	_state_label = Kit.label("", "DimLabel")
 	v.add_child(_state_label)
@@ -581,7 +581,7 @@ func _build_notes() -> Control:
 	_success_box.add_theme_stylebox_override("panel", _paper_box())
 	var sv := Kit.vbox(12)
 	_success_box.add_child(sv)
-	sv.add_child(_make_stamp(Kit.t("ui.c3.protocol.stamp").to_upper()))
+	sv.add_child(_make_stamp(Kit.t("ui.c3.protocol.stamp").to_upper().replace("ß", "SS")))
 	_success_label = Kit.wrap_label(Kit.t("ui.c3.protocol.success"), "TypeLabel")
 	Kit.scalable(_success_label, 24)
 	sv.add_child(_success_label)
@@ -711,7 +711,7 @@ func take_back(i: int) -> bool:
 	return true
 
 
-## Backspace / „Zurück": takes back the card laid last.
+## Backspace / „Rückgängig“: takes back the card laid last.
 func undo() -> bool:
 	if _done or history.is_empty():
 		return false

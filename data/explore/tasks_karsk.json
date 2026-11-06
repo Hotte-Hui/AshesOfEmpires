@@ -1,0 +1,68 @@
+{
+ "area": "karsk",
+ "doc": "Side task (Aufgabe, TECHNICAL_ARCHITECTURE §12.9) of L_A1_Railyard, owner: tasks. Steps: the grandmother's chat karsk.family (karsk.json) opens it; the signal box call (new hotspot exp_task_signalbox), the tea vendor (chain on ChatVendor) and the return to the grandmother (chain on ChatFamily). Texts: data/locale/de_tasks.json. Checked by tests/test_tasks.gd.",
+ "entries": [
+  {
+   "id": "karsk.task.train.signalbox",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.task.train.signalbox.title",
+   "text_key": "explore.karsk.task.train.signalbox.text",
+   "prompt_key": "explore.karsk.task.train.signalbox.prompt",
+   "requires": ["karsk.family"]
+  },
+  {
+   "id": "karsk.task.train.vendor",
+   "kind": "chat",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.task.train.vendor.title",
+   "text_key": "explore.karsk.task.train.vendor.text",
+   "prompt_key": "explore.karsk.task.train.vendor.prompt",
+   "requires": ["karsk.task.train.signalbox"],
+   "lines": [
+    {"speaker": "alexei", "key": "explore.karsk.task.train.vendor.l1", "expr": "neutral"},
+    {"speaker": "vendor", "key": "explore.karsk.task.train.vendor.l2", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.vendor.l3", "expr": "determined"},
+    {"speaker": "vendor", "key": "explore.karsk.task.train.vendor.l4", "expr": "surprised"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.vendor.l5", "expr": "neutral"},
+    {"speaker": "vendor", "key": "explore.karsk.task.train.vendor.l6", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.vendor.l7", "expr": "concerned"},
+    {"speaker": "vendor", "key": "explore.karsk.task.train.vendor.l8", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "karsk.task.train.return",
+   "kind": "chat",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.task.train.return.title",
+   "text_key": "explore.karsk.task.train.return.text",
+   "prompt_key": "explore.karsk.task.train.return.prompt",
+   "requires": ["karsk.task.train.vendor"],
+   "lines": [
+    {"speaker": "babushka", "key": "explore.karsk.task.train.return.l1", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.return.l2", "expr": "concerned"},
+    {"speaker": "babushka", "key": "explore.karsk.task.train.return.l3", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.return.l4", "expr": "determined"},
+    {"speaker": "babushka", "key": "explore.karsk.task.train.return.l5", "expr": "surprised"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.return.l6", "expr": "neutral"},
+    {"speaker": "babushka", "key": "explore.karsk.task.train.return.l7", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.karsk.task.train.return.l8", "expr": "neutral"},
+    {"speaker": "babushka", "key": "explore.karsk.task.train.return.l9", "expr": "neutral"}
+   ]
+  }
+ ],
+ "tasks": [
+  {
+   "id": "karsk.task.train",
+   "level": "L_A1_Railyard",
+   "title_key": "task.karsk.train.title",
+   "summary_key": "task.karsk.train.summary",
+   "steps": [
+    {"explore_id": "karsk.family", "hint_key": "task.karsk.train.hint.family"},
+    {"explore_id": "karsk.task.train.signalbox", "hint_key": "task.karsk.train.hint.signalbox"},
+    {"explore_id": "karsk.task.train.vendor", "hint_key": "task.karsk.train.hint.vendor"},
+    {"explore_id": "karsk.task.train.return", "hint_key": "task.karsk.train.hint.return"}
+   ]
+  }
+ ]
+}

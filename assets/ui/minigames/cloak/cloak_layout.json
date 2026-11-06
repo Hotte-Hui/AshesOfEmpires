@@ -1,0 +1,92 @@
+{
+ "doc": "tools/pixelgen/gen_mg_cloak.py -- art px; the game draws x3.",
+ "size": [
+  320,
+  150
+ ],
+ "counter_y": 116,
+ "hooks_x": [
+  70,
+  122,
+  174,
+  226,
+  278
+ ],
+ "hook_numbers": [
+  "12",
+  "7",
+  "31",
+  "44",
+  "27"
+ ],
+ "coats": [
+  "loden",
+  "camel",
+  "elena",
+  "navy",
+  "karakul"
+ ],
+ "coat_cell": [
+  40,
+  78
+ ],
+ "coat_top": 46,
+ "shelf_y": 30,
+ "hats_x": [
+  64,
+  106,
+  148,
+  190,
+  232,
+  274
+ ],
+ "hats": [
+  "ticket",
+  "karakul",
+  "beret",
+  "pin",
+  "ushanka",
+  "green"
+ ],
+ "hat_cell": [
+  28,
+  16
+ ],
+ "tokens": [
+  "12",
+  "31",
+  "7",
+  "44",
+  "27"
+ ],
+ "token_cell": [
+  14,
+  14
+ ],
+ "token_at": [
+  226,
+  104
+ ],
+ "guests": [
+  "imhof",
+  "orlova",
+  "duval",
+  "bauer"
+ ],
+ "guest_cell": [
+  64,
+  72
+ ],
+ "wenzel_cell": [
+  46,
+  60
+ ],
+ "wenzel_at": [
+  2,
+  58
+ ],
+ "world_wenzel_cell": [
+  20,
+  30
+ ]
+}

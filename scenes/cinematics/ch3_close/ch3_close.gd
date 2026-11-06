@@ -1,10 +1,10 @@
 extends "res://scenes/cinematics/ch3_common/c3_cinematic.gd"
 ## LS_C3_Close (~12 s) — the night after the palais (C3_DESIGN §2.9).  Quiet, ominous, no spectacle.
-##   n1 0-6 s   platform 5, 23:40: the special train with dark windows pulls away without stopping; its red
-##              tail lamps recede under the canopy lamps into the snow, the split-flap board turns to
-##              „ABGEFAHREN“
+##   n1 0-6 s   platform 5, 23:40: the special train with dark windows pulls away without a whistle; its red
+##              tail lamps recede under the canopy lamps into the snow; the split-flap indicator clears its
+##              row as if the train had never been listed
 ##   n2 6-12 s  the station square: two hotel façades, one lit window each, far apart; Konrad and Alexei
-##              step to their windows; one distant whistle; both turn toward it
+##              step to their windows; one distant whistle (the same as in Karsk); both turn toward it
 ## Subtitles: cin.c3.close.train, cin.c3.close.after.  Art: assets/cinematics/ch3/close/.
 ## The departing train is drawn at runtime in the same pinhole projection the generator used for the
 ## platform (PROJ == LAYOUT['close']['proj']), as plain 1 px polygons -> it shrinks without scaled sprites.
@@ -59,15 +59,11 @@ func _make_cues() -> Array:
 	return [
 		{"t": 0.0, "music": "", "fade": 2.5},
 		{"t": 0.0, "amb": "amb_transition", "fade": 1.5},
-		{"t": 0.15, "sfx": "metal_clank_3", "db": -12.0},
+		{"t": 0.05, "bed": "c3cine_depart_night", "db": -2.0},             # no whistle: it simply leaves
 		{"t": 0.8, "say": LINE_TRAIN, "dur": 4.8},
-		{"t": 1.3, "sfx": "wind_gust", "db": -15.0},
-		{"t": 2.2, "sfx": "metal_clank_2", "db": -20.0},
-		{"t": 4.45, "sfx": "card_place", "db": -9.0, "pv": 0.12},
-		{"t": 4.6, "sfx": "card_place", "db": -11.0, "pv": 0.12},
-		{"t": 4.75, "sfx": "card_place", "db": -12.0, "pv": 0.12},
-		{"t": 4.95, "sfx": "card_place", "db": -10.0, "pv": 0.05},
-		{"t": 8.4, "sfx": "train_horn_far", "db": -2.0, "pv": 0.0},
+		{"t": 1.3, "sfx": "wind_gust", "db": -16.0},
+		{"t": BOARD_FLIP[0] - 0.05, "sfx": "c3cine_flaps", "db": -4.0, "pv": 0.03},  # the row clears
+		{"t": 8.4, "bed": "cine_a1m1_whistle_far", "db": -4.0},            # one whistle: the one from Karsk
 		{"t": 9.0, "say": LINE_AFTER, "dur": 3.0},
 		{"t": 10.2, "sfx": "wind_gust", "db": -18.0},
 	]
@@ -147,7 +143,7 @@ func _apply(time: float) -> void:
 	_snow1.set_time(time * (0.6 if rm else 1.0))
 	_snow2.set_time(time * (0.6 if rm else 1.0))
 	_life.queue_redraw()
-	# split-flap board: two blurred flap frames, then "ABGEFAHREN" (one clean change with reduced motion)
+	# split-flap board: two flap frames, then the cleared row (one clean change with reduced motion)
 	if _board.texture:
 		var f := 0
 		if time >= BOARD_FLIP[1]:

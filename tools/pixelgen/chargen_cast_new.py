@@ -49,7 +49,7 @@ def librarian():
                 heads=HD.librarian(lg), boots=boot_bitmaps('boot', style='lady'), hands=make_hands('skin'),
                 lean=1.0, stoop=4.0,
                 style=dict(stride=4.0, swing=14.0, bob=1, walk_lean=1.5, lift=2.2, idle_feet=(1.0, -1.0),
-                           hold_f=(-10.0, 120.0), arm_f_idle=(-10.0, 120.0), arm_n_idle=(4.0, 14.0),
+                           talk_front_arm='r', hold_f=(-10.0, 120.0), arm_f_idle=(-10.0, 120.0), arm_n_idle=(4.0, 14.0),
                            gesture='push_glasses', work='stamp'))
     spec.hooks = {'side': [('coat', librarian_coat_side), ('coat', book_side), ('head', librarian_chain_side),
                            ('front', stamp_side)],

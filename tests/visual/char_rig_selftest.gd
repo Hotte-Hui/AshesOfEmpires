@@ -4,12 +4,17 @@ extends Node
 ##   godot --headless --path C:/Spiele/AshesOfEmpires res://tests/visual/CharRigSelftest.tscn
 ## Checks: every sheet loads and its variant rows exist; idle variants appear while `anim` stays the base
 ## name; play_once returns to the base; turn_to mirrors after the front frame; NPC idle_anim override,
-## talk start / release on a resting frame, wander playback scaled by ground_speed. Exit code 0 = pass.
+## talk start / release on a resting frame, wander playback scaled by ground_speed.
+## Round 7: the Chapter-3 cast is in the list (same row set as the round-2 NPCs), talk_front / talk_back exist,
+## view_hint maps "*_side" requests to the facing view, a walking turn shows walk_front and survives row
+## changes, turning back mid-turn cancels, front-on NPCs talk front-on, wanderers turn softly, the player
+## turns softly. Exit code 0 = pass.
 
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 const NPC := preload("res://scripts/actors/npc.gd")
 const IDS := ["alexei", "konrad", "irina", "emil", "worker_a", "babushka", "child_a", "berlin_father",
-	"berlin_mother", "berlin_child", "clerk", "guard", "librarian", "porter", "vendor", "worker_b"]
+	"berlin_mother", "berlin_child", "clerk", "guard", "librarian", "porter", "vendor", "worker_b",
+	"elena", "border_officer", "conductor", "voronova", "kessler", "typist", "journalist"]
 
 var fails: PackedStringArray = []
 
@@ -38,8 +43,11 @@ func _run() -> void:
 		var r: Node2D = SpriteRig.new()
 		root.add_child(r)
 		_check(r.load_character(id), "%s: load_character failed" % id)
-		for a in ["idle_side", "walk_side", "talk_side", "idle_front"]:
+		for a in ["idle_side", "walk_side", "talk_side", "idle_front", "talk_front", "blink_side", "look_side",
+				"gesture_side"]:
 			_check(r.has_anim(a), "%s: missing %s" % [id, a])
+		_check(int(r.sheet["anims"]["talk_side"].get("frames", 0)) == 8, "%s: talk_side is not 8 frames" % id)
+		_check(int(r.sheet["anims"]["idle_side"].get("frames", 0)) == 8, "%s: idle_side is not 8 frames" % id)
 		var anims: Dictionary = r.sheet.get("anims", {})
 		for a in anims:
 			for v in anims[a].get("variants", []):
@@ -93,6 +101,30 @@ func _run() -> void:
 	_check(rig.is_turning() and not rig.is_flipped(), "turn did not hold the front frame")
 	_step(rig, 0.3)
 	_check(rig.is_flipped() and not rig.is_turning(), "turn did not finish")
+	# 4b. walking turn: the walk_front frame at the walk phase, kept through a row change; back mid-turn cancels
+	var cols: int = rig.sprite.hframes
+	var wf_row := int(rig.sheet["anims"]["walk_front"]["row"])
+	rig.play("walk_side")
+	_step(rig, 0.25)
+	_check(rig.turn_to(false, 0.1, "walk_front"), "walking turn refused")
+	_check(int(rig.sprite.frame / cols) == wf_row, "walking turn does not show walk_front")
+	rig.play("idle_side")
+	_check(rig.is_turning() and int(rig.sprite.frame / cols) == wf_row, "row change replaced the turn frame")
+	_check(rig.turn_to(true), "turning back refused")
+	_check(not rig.is_turning() and rig.is_flipped(), "turning back mid-turn did not cancel the turn")
+	_check(int(rig.sprite.frame / cols) == int(rig.sheet["anims"]["idle_side"]["row"]), "cancelled turn left a stale frame")
+	# 4c. view_hint: side requests follow the facing view
+	rig.view_hint = "front"
+	rig.play("talk_side")
+	_check(rig.anim == "talk_front", "view_hint front: talk_side played %s" % rig.anim)
+	rig.view_hint = "back"
+	rig.play("idle_side")
+	_check(rig.anim == "idle_back", "view_hint back: idle_side played %s" % rig.anim)
+	rig.play("talk_side")
+	_check(rig.anim == "talk_back", "view_hint back: talk_side played %s" % rig.anim)
+	rig.view_hint = ""
+	rig.play("talk_side")
+	_check(rig.anim == "talk_side", "no view_hint: talk_side played %s" % rig.anim)
 	rig.queue_free()
 
 	# 5. NPC: idle override, talking, release on a resting frame, wander playback scaling
@@ -148,7 +180,49 @@ func _run() -> void:
 	var gs2: float = walker.rig.ground_speed("walk_side")
 	_check(walker.rig.anim == "walk_side", "wanderer not walking")
 	_check(absf(walker.rig.speed_scale - 20.0 / gs2) < 0.01, "wander playback not scaled by ground_speed")
+	# soft turn at the end of the path
+	var g3 := 0
+	while not walker.rig.is_turning() and g3 < 200:
+		walker._process(0.05)
+		g3 += 1
+	_check(walker.rig.is_turning(), "wanderer did not turn softly at the end of its path")
 	walker.queue_free()
+	# front-on NPC that does not turn to talk: talks facing the camera
+	var front_npc: Node2D = NPC.new()
+	front_npc.char_id = "border_officer"
+	front_npc.idle_anim = "idle_front"
+	front_npc.turn_to_talk = false
+	front_npc.look_at_player = false
+	root.add_child(front_npc)
+	_check(front_npc.rig.anim == "idle_front", "front npc idle is %s" % front_npc.rig.anim)
+	front_npc.set_talking(true)
+	_check(front_npc.rig.anim == "talk_front", "front-on npc talks with %s" % front_npc.rig.anim)
+	front_npc.set_talking(false)
+	var g4 := 0
+	while front_npc.rig.anim != "idle_front" and g4 < 40:
+		front_npc.rig._process(0.05)
+		front_npc._process(0.05)
+		g4 += 1
+	_check(front_npc.rig.anim == "idle_front", "front-on npc did not settle back (%s)" % front_npc.rig.anim)
+	front_npc.queue_free()
+	# the player turns softly: in-between frame first, mirrored afterwards; instant flip on request
+	var PlayerScript := load("res://scripts/actors/player.gd")
+	var pl: Node2D = PlayerScript.new()
+	pl.setup("konrad", "oblique", Vector2(100, 300), "concrete")
+	root.add_child(pl)
+	pl.face(-1.0)
+	_check(pl.rig.is_turning() and not pl.rig.is_flipped(), "player flipped instantly instead of turning")
+	_step(pl.rig, 0.3)
+	_check(pl.rig.is_flipped() and not pl.rig.is_turning(), "player turn did not finish")
+	pl.face(1.0, false)
+	_check(not pl.rig.is_flipped() and not pl.rig.is_turning(), "instant face() did not flip at once")
+	pl.face_point(Vector2(102, 340))
+	_check(pl.get_view() == "front" and pl.rig.view_hint == "front", "player does not face the camera for a target below")
+	pl.rig.play("talk_side")
+	_check(pl.rig.anim == "talk_front", "player facing the camera talks with %s" % pl.rig.anim)
+	pl.face_point(Vector2(60, 302))
+	_check(pl.get_view() == "side" and pl.rig.view_hint == "", "player does not face sideways for a target beside it")
+	pl.queue_free()
 
 	if fails.is_empty():
 		print("CHAR_RIG_SELFTEST PASS")

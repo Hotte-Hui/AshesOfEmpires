@@ -4,7 +4,8 @@ extends Control
 ## * exposes the panels as properties: hud, dialogue, inspect, signal_puzzle, blueprint_puzzle, journal,
 ##   discovery (DiscoveryView, §12 exploration finds + real-history cards), pause_menu, main_menu,
 ##   settings_menu, saveload_menu, credits, confirm, subtitles, fade, photo (PhotoMode, added in _ready),
-##   end_credits (EndCredits, added in _ready; play_end_credits() rolls it after the demo end card)
+##   end_credits (EndCredits, added in _ready; play_end_credits() rolls it after the demo end card),
+##   memories (MemoryView, added in _ready; open_memories("game"|"menu"), §12.10 „Erinnerungen“)
 ## * modal stack: push_modal()/pop_modal(); the top modal gets input first (in _input, before the GUI);
 ##   pausing modals set get_tree().paused (all UI runs with PROCESS_MODE_ALWAYS)
 ## * applies theme.tres / theme_hc.tres and live text scaling from Settings
@@ -41,6 +42,9 @@ var photo: Control = null
 ## End credits (scenes/ui/EndCredits.tscn), instanced in _ready (not part of UIRoot.tscn); see play_end_credits().
 const END_CREDITS_SCENE := "res://scenes/ui/EndCredits.tscn"
 var end_credits: Control = null
+## Memories (scenes/ui/MemoryView.tscn, §12.10), instanced in _ready (not part of UIRoot.tscn); open_memories().
+const MEMORY_SCENE := "res://scenes/ui/MemoryView.tscn"
+var memories: Control = null
 
 ## true while a cinematic runs (HUD hidden, letterbox); set through set_cinematic().
 var cinematic_mode := false
@@ -56,6 +60,7 @@ func _ready() -> void:
 	_apply_theme()
 	_add_photo_mode()
 	_add_end_credits()
+	_add_memory_view()
 	for c in get_children():
 		if c is Control and "ui_root" in c:
 			c.set("ui_root", self)
@@ -294,6 +299,23 @@ func open_photo() -> bool:
 	if photo == null or cinematic_mode or is_modal_open():
 		return false
 	return photo.open()
+
+
+func _add_memory_view() -> void:
+	if memories != null or not ResourceLoader.exists(MEMORY_SCENE):
+		return
+	memories = (load(MEMORY_SCENE) as PackedScene).instantiate() as Control
+	memories.name = "MemoryView"
+	add_child(memories)
+	move_child(memories, confirm.get_index())   # under the confirm dialog, above the menus
+
+
+## §12.10 „Erinnerungen“: context "game" (from the pause menu; unlock = this playthrough) or "menu" (main menu;
+## unlock = completed at least once). Not during a cinematic.
+func open_memories(context := "game") -> void:
+	if memories == null or cinematic_mode or is_open(memories):
+		return
+	memories.open(context)
 
 
 func open_settings() -> void:

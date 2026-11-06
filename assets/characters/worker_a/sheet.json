@@ -84,6 +84,12 @@
    "frames": 6,
    "fps": 6,
    "loop": true
+  },
+  "talk_front": {
+   "row": 9,
+   "frames": 8,
+   "fps": 7,
+   "loop": true
   }
  },
  "ground_speed": {

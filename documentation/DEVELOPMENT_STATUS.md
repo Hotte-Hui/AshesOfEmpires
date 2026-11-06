@@ -5,6 +5,21 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 7 (2026-11-05/06) — Chapter 3 finished, memories, side tasks, five new mini-games
+Requested by the user: finish what was started, a good 20–30 minutes of play, new mini-game ideas, improve everything,
+and revisit completed scenes („zurückreisen … wieder in die Gegenwart“). Built by 10 parallel specialists (+2 review
+passes), integrated and tested by the lead (evidence: TEST_REPORT.md §11).
+| Area | Now |
+|---|---|
+| Chapter 3 „Der eiserne Frieden“ | merged from the cloud branch `kapitel-3` (story data, director extension, Veltrava station + Palais, 7 characters, protocol puzzle, audio, 27 finds, 3 history cards); `.gitattributes` keeps LF so cloud and PC see identical files |
+| C3 cinematics | LS_C3_Trains (25.5 s: Konrad's saloon car, flare match cut, Alexei's compartment, both trains meeting on the bridge at dawn), LS_C3_ToHall (6 s, clock match cut), LS_C3_Close (12 s, the dark special train, two hotel windows, „Derselbe Pfiff“); 14 new SFX |
+| Erinnerungen (§12.10) | pause menu → MemoryView (thumbnails, finds counter, locked cards without spoilers) → „Zeitreise“ transition into a completed scene in memory mode (sepia grade, badge); Story is snapshotted and never changes, story interactables replay read-only, finds made there are kept, no saving inside; „In die Gegenwart zurückkehren“ restores level, position and HUD; also from the main menu via a global profile; rewatchable films |
+| Aufgaben (§12.9) | five optional side tasks, one per walkable level (Karsk train, Berlin mittens, plaza photo, station heating, Palais buffet), 3–5 steps each, explore `requires`/`explore_chain`, journal tab „Aufgaben“, HUD task mark, toasts; drivers complete all of them |
+| New mini-games (§12.8) | „Der Morsetaster“ (Karsk signal box), „Rohrpost“ (Berlin archive), „Die Fallblatttafel“ (station), „Die Garderobe“ and „Das Relaispult“ (Palais) — 9 optional mini-games in total |
+| Texts / facts | all 23 open C3 review findings handled (incl. the false-equivalence fixes), third logic pass across all branch combinations, 1964 time notation („23.40“) in data and in the drawn documents, the three new history cards fact-checked on the web with sources |
+| Art | station and Palais polished on the GPU (Forward+): value structure, light, ambient life (station: 12 actor loops, viaduct train; Palais: 11 life loops), both insignia settings; Chapter-3 cast rebuilt on the round-2 rig and living portraits; soft player turn, `talk_front`, individual portrait faces; skin ramps for the Veltrava palettes |
+| Playtime (estimate, `tools/docs/estimate_playtime.py`) | main path ≈ 24 min; with all 91 finds, 24 chats, 9 mini-games, 5 tasks and 19 history cards well over two hours for a completionist (not measured with a human) |
+
 ## Round 6 (2026-11-05 night) — plaza task
 - Plaza mini-game "Das Blatt im Schnee" (secure the carbon copy "WER FEHLT?" while the guards watch the parade),
   two quiet easter eggs (frost heart, cat trail), a portrait for the press photographer. Plaza: 18 finds/chats.

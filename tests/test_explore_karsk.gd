@@ -171,6 +171,10 @@ func _references() -> bool:
 	for f in finds:
 		var who := "%s (%s)" % [f["name"], f["explore_id"]]
 		kit.ok(str(f["parent"]).ends_with("Playfield"), "%s sits under Playfield (hotspot snapping + y-sort)" % who)
+		if str(f["explore_id"]).begins_with("karsk.task."):   # §12.9 side tasks: tasks_karsk.json, checked by tests/test_tasks.gd
+			continue
+		if str(f["explore_id"]) == "karsk.morse":   # round-7 mini-game find: minigames_r7_kb.json, checked by tests/test_minigames_r7_kb.gd
+			continue
 		if not kit.ok(entries.has(f["explore_id"]), "%s: explore_id exists in karsk.json" % who):
 			continue
 		var ek := str(entries[f["explore_id"]].get("kind", ""))

@@ -1,16 +1,20 @@
 """characters_c3.py -- builds the Chapter 3 cast through the EXISTING character pipeline.
 
-    python3 -P tools/pixelgen/characters_c3.py                 (all seven C3 ids: sheets, portraits, previews,
-                                                               then the validator)
-    python3 -P tools/pixelgen/characters_c3.py elena kessler   (selected ids)
-    python3 -P tools/pixelgen/characters_c3.py --check         (validate only)
-    python3 -P tools/pixelgen/characters_c3.py --out=DIR       (review run: write everything below DIR)
+    py -3 -P tools/pixelgen/characters_c3.py                 (all seven C3 ids: sheets, previews, validator)
+    py -3 -P tools/pixelgen/characters_c3.py elena kessler   (selected ids)
+    py -3 -P tools/pixelgen/characters_c3.py --portraits     (additionally the dialogue portraits through
+                                                             chargen_portrait2 -- the C3 speakers are
+                                                             registered there by chargen_portrait_c3)
+    py -3 -P tools/pixelgen/characters_c3.py --check         (validate only)
+    py -3 -P tools/pixelgen/characters_c3.py --out=DIR       (review run: write everything below DIR)
 
-Imports characters.py (ANIMS, build_sheet, ground_speed, previews), chargen_portrait.py and
-characters_check.py and extends their tables IN MEMORY with the new ids (chargen_cast_c3 /
-chargen_portrait_c3); none of the existing generators is modified and only the new ids are built.
+Imports characters.py (ANIMS, ROWS, build_sheet, ground_speed, previews) and characters_check.py and extends
+their tables IN MEMORY with the new ids (chargen_cast_c3); only the new ids are built.
+Round 7: the cast is on the round-2 rig (8-frame idle / talk, variants, front views); the first-generation
+portrait generator this runner used to call no longer exists (portraits: chargen_portrait_c3 on the
+round-2 pipeline).
 Outputs (TECHNICAL_ARCHITECTURE section 4):
-    assets/characters/<id>/sheet.png, sheet_n.png, sheet.json, portrait.png, portrait.json
+    assets/characters/<id>/sheet.png, sheet_n.png, sheet.json  (+ portrait.png, portrait_anim.png, portrait.json)
     assets/characters/_preview/c3_*            (review images; the folder is .gdignore'd and git-ignored)
 Deterministic: no randomness, no network.
 """
@@ -29,8 +33,6 @@ sys.path.insert(0, HERE)
 import characters as CH                   # noqa: E402  existing runner (ANIMS, ROWS, build_sheet, previews)
 import characters_check as CHK            # noqa: E402  existing validator
 import chargen_cast_c3 as C3              # noqa: E402
-import chargen_portrait as PT             # noqa: E402
-import chargen_portrait_c3 as PT3         # noqa: E402
 from chargen_body import CELL_H, CELL_W   # noqa: E402
 
 C3_IDS = list(C3.CAST_C3)
@@ -38,26 +40,12 @@ REFERENCE = ['alexei', 'konrad', 'irina', 'emil']      # existing cast shown nex
 
 
 # ----------------------------------------------------------------------------------- install
-def _dispatch(name, orig):
-    def fn(style, _name=name, _orig=orig):
-        over = (style or {}).get('anims_c3', {})
-        if _name in over:
-            return over[_name](style)
-        return _orig(style)
-    fn.c3 = True
-    return fn
-
-
 def install():
     """Extend the existing pipeline's tables in memory (idempotent)."""
-    CH.CAST.update(C3.CAST_C3)              # same dict object as chargen_cast.CAST
+    CH.CAST.update(C3.CAST_C3)
     CH.ROWS.update(C3.ROWS_C3)
-    for name, (view, fn, fps, loop) in list(CH.ANIMS.items()):
-        if not getattr(fn, 'c3', False):
-            CH.ANIMS[name] = (view, _dispatch(name, fn), fps, loop)
-    PT.PORTRAITS.update(PT3.PORTRAITS_C3)
     CHK.EXPECT_H.update(C3.EXPECT_H_C3)
-    for cid, rows in C3.ROWS_C3.items():     # NPC rule: exactly the rows C3_DESIGN section 5 requires
+    for cid, rows in C3.ROWS_C3.items():     # NPC rule: exactly the rows this cast ships
         CHK.NPC_MIN[cid] = list(rows)
 
 
@@ -186,8 +174,8 @@ def check_c3(ids=None) -> list[str]:
             fails.append(f'{cid}: cell/origin differ from the contract')
         t = meta['anims'].get('talk_side')
         if t:
-            if t['frames'] != 4:
-                fails.append(f'{cid}: talk_side has {t["frames"]} frames, expected 4')
+            if t['frames'] != 8:
+                fails.append(f'{cid}: talk_side has {t["frames"]} frames, expected 8 (round-2 rhythm)')
             rr = t['row']
             fr = [a[rr * CELL_H:(rr + 1) * CELL_H, f * CELL_W:(f + 1) * CELL_W] for f in range(t['frames'])]
             moved = max((fr[0] ^ fr[k]).sum() for k in range(1, len(fr)))
@@ -200,8 +188,15 @@ def check_c3(ids=None) -> list[str]:
             fails.append(f'{cid}: portrait strip missing')
         else:
             meta_p = json.load(open(pj, encoding='utf-8'))
-            if meta_p != {'size': [112, 112], 'expressions': ['neutral', 'concerned', 'determined', 'surprised']}:
+            if meta_p.get('size') != [112, 112] or                     meta_p.get('expressions') != ['neutral', 'concerned', 'determined', 'surprised']:
                 fails.append(f'{cid}: portrait.json {meta_p} differs from the contract')
+            anim = meta_p.get('anim') or {}
+            if anim.get('file') != 'portrait_anim.png' or not os.path.exists(os.path.join(d, 'portrait_anim.png')):
+                fails.append(f'{cid}: no living portrait (portrait_anim.png + anim block, round-2 contract)')
+            else:
+                ga = Image.open(os.path.join(d, 'portrait_anim.png'))
+                if ga.size != (448, 112 * len(anim.get('rows', []))):
+                    fails.append(f'{cid}: portrait_anim.png size {ga.size} does not match its rows')
             im = Image.open(pp)
             if im.size != (448, 112):
                 fails.append(f'{cid}: portrait strip size {im.size} != (448, 112)')
@@ -270,7 +265,10 @@ def main(argv):
     preview_talk(sheets)
     preview_walk_gif(sheets)
     preview_relight(ids)
-    PT3.build(ids, CH.OUT, CH.PREV, reference=REFERENCE)
+    if 'portraits' in opts:
+        import chargen_portrait2 as PG          # the C3 speakers are registered by chargen_portrait_c3
+        PG.set_out(CH.OUT)
+        PG.main(list(ids))
     return run_checks(ids)
 
 

@@ -15,7 +15,7 @@ const DIR := "res://data/explore/"
 const KINDS := ["detail", "secret", "easter_egg", "chat"]
 const SIDES := ["reich", "soviet"]
 const MAX_IMAGE := Vector2i(320, 200)
-const FIXED_CARDS := ["hist.reich.germania", "hist.reich.evictions", "hist.reich.schwerbelastungskoerper",
+const FIXED_CARDS := ["hist.soviet.repatriation", "hist.soviet.handover_1940", "hist.reich.nuremberg_interpreters", "hist.reich.germania", "hist.reich.evictions", "hist.reich.schwerbelastungskoerper",
 	"hist.reich.wannsee", "hist.reich.reichsbahn", "hist.reich.generalplan_ost", "hist.reich.t4",
 	"hist.reich.forced_labor", "hist.soviet.secret_protocol", "hist.soviet.katyn", "hist.soviet.deportations",
 	"hist.soviet.novocherkassk", "hist.soviet.kyshtym", "hist.soviet.gulag", "hist.soviet.great_terror",

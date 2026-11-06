@@ -4,6 +4,8 @@ extends "res://scripts/ui/ui_modal.gd"
 ## read-only when saving. Save/load/delete ask for confirmation where something could be lost.
 ## Loading hands over to Game through `load_requested(slot)` when connected (Game loads + switches level);
 ## stand-alone it calls Saves.load() itself and emits `loaded(slot)`.
+## While saving is blocked (Saves/Game.save_block_key(), §12.10: inside a memory) the save screen says why and
+## every slot is read-only; loading stays possible (a loaded save becomes the new present).
 
 signal load_requested(slot: String)
 signal loaded(slot: String)
@@ -16,6 +18,8 @@ var in_game := true
 var _title: Label
 var _list: VBoxContainer
 var _empty_note: Label
+var _block_note: Label
+var _blocked := ""            # Loc key why saving is impossible now ("" = allowed)
 var _primary: Button
 var _delete: Button
 var _back: Button
@@ -39,6 +43,10 @@ func _ready() -> void:
 	_title = Kit.label("", "HeadingLabel")
 	v.add_child(_title)
 	v.add_child(HSeparator.new())
+	_block_note = Kit.wrap_label("", "BodyLabel")
+	Kit.scalable(_block_note, 28)
+	_block_note.visible = false
+	v.add_child(_block_note)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -136,8 +144,19 @@ func _err_text(s: Dictionary) -> String:
 	return ""
 
 
+## Loc key why saving is impossible right now ("" = allowed).
+func blocked_key() -> String:
+	var k = Kit.call_svc("Saves", "save_block_key", [], null)
+	if k == null:
+		k = Kit.call_svc("Game", "save_block_key", [], "")
+	return str(k) if k != null else ""
+
+
 # ================================================================ list
 func refresh() -> void:
+	_blocked = blocked_key() if mode == "save" else ""
+	_block_note.text = Kit.t(_blocked) if _blocked != "" else ""
+	_block_note.visible = _blocked != ""
 	_slots = collect_slots()
 	for c in _list.get_children():
 		c.queue_free()
@@ -184,13 +203,13 @@ func _make_row(s: Dictionary) -> Button:
 	left.custom_minimum_size.x = 420
 	left.alignment = BoxContainer.ALIGNMENT_CENTER
 	h.add_child(left)
-	var name_l := Kit.label(str(s["label"]).to_upper(), "SpeakerLabel", 25)
+	var name_l := Kit.label(str(s["label"]).to_upper().replace("ß", "SS"), "SpeakerLabel", 25)
 	left.add_child(name_l)
 	var tag := ""
 	if not s["valid"] and s["exists"]:
-		tag = Kit.t("ui.saveload.invalid").to_upper()
+		tag = Kit.t("ui.saveload.invalid").to_upper().replace("ß", "SS")
 	elif mode == "save" and s["kind"] != "manual":
-		tag = Kit.t("ui.saveload.readonly").to_upper()
+		tag = Kit.t("ui.saveload.readonly").to_upper().replace("ß", "SS")
 	if tag != "":
 		left.add_child(Kit.label(tag, "HintLabel", 18))
 	var mid := Kit.vbox(2)
@@ -244,7 +263,7 @@ func _can_primary(s: Dictionary) -> bool:
 	if s.is_empty():
 		return false
 	if mode == "save":
-		return s["kind"] == "manual" and Kit.has_svc("Saves", "save")
+		return _blocked == "" and s["kind"] == "manual" and Kit.has_svc("Saves", "save")
 	return s["exists"] and s["valid"]
 
 

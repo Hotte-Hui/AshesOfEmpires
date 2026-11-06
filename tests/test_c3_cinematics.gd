@@ -3,7 +3,9 @@ extends RefCounted
 ## tree and driven headless.  finished fires exactly once per run (skip; skip twice; natural end; skip after
 ## the end; replay), the inner lines follow configure(ctx).flags for all flag combinations, the spoken keys
 ## exist in the locale, reduced motion runs, every texture exists and the runtime layout matches the art
-## generator's assets/cinematics/ch3/layout.json.  Owner: cinematics stream.
+## generator's assets/cinematics/ch3/layout.json; every sound a cue plays exists; the rail-joint beat of the car
+## equals the beat cut into the bed sounds (tools/audiogen/c3_cine_audio.py); reduced motion keeps the cars
+## still; the dawn dissolve completes.  Owner: cinematics stream.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const ChapterExt := preload("res://scripts/core/chapter_ext.gd")
@@ -32,6 +34,11 @@ func run() -> Array:
 	kit.run_case("reduced_motion_and_full_motion_run", _reduced)
 	kit.run_case("shot_sequence", _shots)
 	kit.run_case("assets_present_and_layout_in_sync", _assets)
+	kit.run_case("layout_has_everything_the_runtime_reads", _layout_keys)
+	kit.run_case("every_cue_sound_exists", _sounds)
+	kit.run_case("rail_joints_match_the_bed_sounds", _joints)
+	kit.run_case("reduced_motion_keeps_the_cars_still", _still)
+	kit.run_case("dawn_dissolve_completes", _dawn)
 	kit.cleanup()
 	return kit.failures
 
@@ -272,4 +279,125 @@ func _assets() -> bool:
 	var cl = load("res://scenes/cinematics/ch3_close/ch3_close.gd")
 	for k in ["vpx", "vpy", "f", "eye"]:
 		kit.eq(float(L["close"]["proj"][k]), float(cl.PROJ[k]), "platform projection %s: runtime == generator" % k)
+	return true
+
+
+func _layout() -> Dictionary:
+	var p := "res://assets/cinematics/ch3/layout.json"
+	if not FileAccess.file_exists(p):
+		return {}
+	var L = JSON.parse_string(FileAccess.get_file_as_string(p))
+	return L if L is Dictionary else {}
+
+
+func _layout_keys() -> bool:
+	var L := _layout()
+	if not kit.ok(not L.is_empty(), "layout.json readable"):
+		return true
+	var tr: Dictionary = L.get("trains", {})
+	for k in ["fig_konrad", "fig_alexei", "glow_lamp", "glow_tea", "steam_tea", "sweep", "spoon", "towers_de",
+			"towers_su", "glints", "chimneys", "walker", "smoke", "train_de", "train_su", "pole"]:
+		kit.ok(tr.has(k), "layout trains.%s" % k)
+	for side in ["train_de", "train_su"]:
+		var d: Dictionary = tr.get(side, {})
+		kit.ok(d.has("chimney") and d.has("headlamp") and d.has("front") and d.has("y"), "%s anchors" % side)
+	kit.eq(int(tr.get("smoke", {}).get("frames", 0)), 8, "smoke atlas frames")
+	var th: Dictionary = L.get("tohall", {})
+	for k in ["center", "dial_r", "pendulum", "konrad_y", "steam_frames"]:
+		kit.ok(th.has(k), "layout tohall.%s" % k)
+	var cl: Dictionary = L.get("close", {})
+	for k in ["proj", "board", "win_konrad", "win_alexei", "lamp", "ember", "steam_frames"]:
+		kit.ok(cl.has(k), "layout close.%s" % k)
+	var wk: Array = cl.get("win_konrad", [0, 0])
+	var wa: Array = cl.get("win_alexei", [0, 0])
+	kit.ok(float(wk[0]) < 214.0 and float(wa[0]) > 428.0, "the lit windows sit in the two different hotels, far apart")
+	kit.ok(float(wk[1]) > 46.0 and float(wa[1]) > 46.0 and float(wk[1]) < 300.0 and float(wa[1]) < 300.0,
+		"both lit windows inside the letterboxed picture")
+	return true
+
+
+## every sound named by a cue resolves to a file (variants id_1.. count, like Audio.sfx does)
+func _sounds() -> bool:
+	for id in SCENES:
+		var s := _make(id)
+		for c in s.get("_cues"):
+			var d: Dictionary = c
+			if d.has("sfx"):
+				var n := str(d["sfx"])
+				var ok := ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % n) \
+					or ResourceLoader.exists("res://assets/audio/sfx/%s_1.wav" % n)
+				kit.ok(ok, "%s: sfx %s exists" % [id, n])
+			if d.has("amb") and str(d["amb"]) != "":
+				kit.ok(ResourceLoader.exists("res://assets/audio/amb/%s.wav" % str(d["amb"])), "%s: amb %s" % [id, d["amb"]])
+			if d.has("music") and str(d["music"]) != "":
+				kit.ok(ResourceLoader.exists("res://assets/audio/music/%s.wav" % str(d["music"])),
+					"%s: music %s" % [id, d["music"]])
+			if d.has("loop"):
+				kit.ok(ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % str(d["loop"])), "%s: loop %s" % [id, d["loop"]])
+			if d.has("bed"):
+				kit.ok(ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % str(d["bed"])), "%s: bed %s" % [id, d["bed"]])
+		_drop(s)
+	return true
+
+
+## the visual knocks of both cars (ch3_trains.gd JOINT) and the knocks cut into the bed sounds must agree
+func _joints() -> bool:
+	var tr = load("res://scenes/cinematics/ch3_trains/ch3_trains.gd")
+	var J: Dictionary = tr.JOINT
+	var src := FileAccess.get_file_as_string("res://tools/audiogen/c3_cine_audio.py")
+	if not kit.ok(src != "", "tools/audiogen/c3_cine_audio.py readable"):
+		return true
+	var rx := RegEx.new()
+	rx.compile("JOINT_(DE|SU) = \\(([0-9.]+), ([0-9.]+)\\)")
+	var found := {}
+	for m in rx.search_all(src):
+		found[m.get_string(1)] = [float(m.get_string(2)), float(m.get_string(3))]
+	kit.ok(found.has("DE") and found.has("SU"), "audio generator declares JOINT_DE / JOINT_SU")
+	if found.has("DE"):
+		kit.ok(absf(float(J["k"][0]) - found["DE"][0]) < 0.001 and absf(float(J["k"][1]) - found["DE"][1]) < 0.001,
+			"saloon car: visual joints == c3cine_ride_de joints")
+	if found.has("SU"):
+		# the Soviet bed starts at the cut (CUT), its joints are relative to that start
+		var cut := float(tr.CUT)
+		kit.ok(absf(float(J["a"][0]) - cut - found["SU"][0]) < 0.001 and absf(float(J["a"][1]) - found["SU"][1]) < 0.001,
+			"Soviet car: visual joints == c3cine_ride_su joints")
+	return true
+
+
+func _still() -> bool:
+	for rm in [1, 0]:
+		var s: Node = load(SCENES["LS_C3_Trains"]).instantiate()
+		s.set("use_director", false)
+		s.set("reduced_motion_override", rm)
+		(Engine.get_main_loop() as SceneTree).root.add_child(s)
+		kit.track(s)
+		s.play()
+		var moved := 0
+		var tt := 0.0
+		while tt < 17.5:
+			s.seek(tt)
+			if s.get("room_k").position.y != 0.0 or s.get("room_a").position.y != 0.0 or s.get("ext").position.y != 0.0:
+				moved += 1
+			tt += 0.02
+		if rm == 1:
+			kit.eq(moved, 0, "reduced motion: no knocks, no roll")
+		else:
+			kit.ok(moved > 20, "full motion: the car knocks over the joints (%d frames)" % moved)
+		_drop(s)
+	return true
+
+
+func _dawn() -> bool:
+	var s := _make("LS_C3_Trains")
+	s.play()
+	s.seek(16.0)
+	kit.ok(not s.get("dawn").visible, "dawn hidden during t3")
+	s.seek(19.0)
+	kit.ok(s.get("dawn").visible, "dawn visible in t4")
+	kit.ok(not s.get("win").visible, "the compartment is gone once the dissolve has completed")
+	for m in s.get("_dawn_mats"):
+		kit.eq(float((m as ShaderMaterial).get_shader_parameter("progress")), 1.0, "dissolve finished")
+	s.skip()
+	kit.ok(s.get("dawn").visible, "skip lands on the dawn's final frame")
+	_drop(s)
 	return true

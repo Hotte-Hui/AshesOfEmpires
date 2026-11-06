@@ -1,14 +1,17 @@
 extends "res://scripts/ui/ui_modal.gd"
-## Journal / dossier with six paper index tabs: Ziele, Beweise, Personen, Entscheidungen, Entdeckungen,
+## Journal / dossier with seven paper index tabs: Ziele, Aufgaben, Beweise, Personen, Entscheidungen, Entdeckungen,
 ## Geschichte. Data comes from Story.journal() (objectives with state, evidence items, people met, decisions); the
 ## parser accepts arrays or dictionaries for every section and falls back to Story.objective_state/inventory/
 ## choice_history + data/v3 when journal() is missing. Locked objectives are never listed (no false promises).
 ## Exploration (§12, Explore autoload): "Entdeckungen" lists found entries per area with found/total and opens a
 ## find again in the DiscoveryView; "Geschichte" lists the real-history cards found so far (re-readable, archive
 ## style) and shows the unknown ones only as a count. The header shows the overall exploration progress.
+## Side tasks (§12.9): "Aufgaben" lists the started tasks — open ones first with the current hint, then the
+## finished ones — each with its place, summary and the steps done so far (re-readable in the DiscoveryView).
+## Tasks nobody has asked for yet stay hidden; only the current place says that someone here still needs help.
 ## Q / E (LB / RB) switch tabs, J / Tab / Esc close. "Ansehen" opens the InspectView on top.
 
-const TABS := ["objectives", "evidence", "people", "decisions", "discoveries", "history"]
+const TABS := ["objectives", "tasks", "evidence", "people", "decisions", "discoveries", "history"]
 
 var suppress_toasts := true
 var current_tab := "objectives"
@@ -19,6 +22,7 @@ var _subtitle: Label
 var _progress: Label
 var _data: Dictionary = {}
 var _group := ButtonGroup.new()
+var _tab_counts: Dictionary = {}    # tab id -> counter shown on the index tab (0 = none)
 
 
 func _ready() -> void:
@@ -84,7 +88,7 @@ func open(tab := "") -> void:
 	_subtitle.text = "  ·  ".join(parts)
 	var pr := Kit.explore_progress()
 	_progress.text = Kit.t("ui.journal.progress", {"n": pr["found"], "total": pr["total"], "h": pr["cards_found"],
-		"ht": pr["cards_total"]}).to_upper() if int(pr["total"]) > 0 else ""
+		"ht": pr["cards_total"]}).to_upper().replace("ß", "SS") if int(pr["total"]) > 0 else ""
 	_progress.visible = _progress.text != ""
 	open_modal()
 	show_tab(current_tab)
@@ -103,8 +107,45 @@ func _update_tab_titles() -> void:
 			n = int(pr["found"])
 		elif id == "history":
 			n = int(pr["cards_found"])
-		var t := Kit.t("ui.journal.tab." + id).to_upper()
-		(_tab_buttons[id] as Button).text = t + ("   %d" % n if n > 0 else "")
+		elif id == "tasks":
+			n = int((_ex_call("task_counts", [""], {"active": 0}) as Dictionary).get("active", 0))
+		_tab_counts[id] = n
+	_fit_tabs()
+
+
+## Seven index tabs with their counters must stay inside the 1500 px sheet: the label size steps down from the
+## theme's 24 px (counters three spaces after the label, as before); if even 19 px is too wide, the counters
+## move closer and the lead-in before the first tab shrinks.
+func _fit_tabs() -> void:
+	var row: Control = (_tab_buttons[TABS[0]] as Button).get_parent()
+	var pad: Control = row.get_child(0) if row != null and row.get_child_count() > 0 else null
+	var sep := float(row.get_theme_constant("separation")) if row is BoxContainer else 6.0
+	for variant in [["   ", 30.0, [24, 22, 21, 20, 19]], ["  ", 12.0, [21, 20, 19, 18, 17, 16]]]:
+		var avail: float = 1500.0 - float(variant[1]) - sep * float(TABS.size())
+		for fs in variant[2]:
+			var total := 0.0
+			for id in TABS:
+				var b: Button = _tab_buttons[id]
+				var n := int(_tab_counts.get(id, 0))
+				b.text = Kit.t("ui.journal.tab." + id).to_upper().replace("ß", "SS") + ((str(variant[0]) + str(n)) if n > 0 else "")
+				b.add_theme_font_size_override("font_size", int(fs))
+				total += _tab_width(b, int(fs))
+			if pad != null:
+				pad.custom_minimum_size.x = float(variant[1])
+			if total <= avail:
+				return
+
+
+## Width a tab needs at font size fs: measured text + the widest of its paper tab frames.
+func _tab_width(b: Button, fs: int) -> float:
+	var f: Font = b.get_theme_font("font", "PaperTabButton")
+	var w := f.get_string_size(b.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x if f != null else 0.0
+	var frame := 0.0
+	for st in ["normal", "pressed", "hover", "hover_pressed", "focus"]:
+		var sb: StyleBox = b.get_theme_stylebox(st, "PaperTabButton")
+		if sb != null:
+			frame = maxf(frame, sb.get_minimum_size().x)
+	return w + frame
 
 
 func show_tab(id: String) -> void:
@@ -115,6 +156,8 @@ func show_tab(id: String) -> void:
 	match id:
 		"objectives":
 			_body = _build_objectives()
+		"tasks":
+			_body = _build_tasks()
 		"evidence":
 			_body = _build_list_detail("evidence")
 		"people":
@@ -305,7 +348,7 @@ func _build_objectives() -> Control:
 			chapter = o["chapter"]
 			if v.get_child_count() > 0:
 				v.add_child(Kit.rule(Color(0, 0, 0, 0), 14))
-			var k := Kit.label(str(chapter).to_upper(), "PaperKicker")
+			var k := Kit.label(str(chapter).to_upper().replace("ß", "SS"), "PaperKicker")
 			v.add_child(k)
 		var row := Kit.hbox(18)
 		var done: bool = o["state"] == "complete"
@@ -319,7 +362,7 @@ func _build_objectives() -> Control:
 		if done:
 			l.add_theme_color_override("font_color", Kit.C_INK_DIM)
 		row.add_child(l)
-		var tag := Kit.label(Kit.t("ui.journal.state." + str(o["state"])).to_upper(), "PaperKicker" if not done else "HintLabel", 19)
+		var tag := Kit.label(Kit.t("ui.journal.state." + str(o["state"])).to_upper().replace("ß", "SS"), "PaperKicker" if not done else "HintLabel", 19)
 		if done:
 			tag.add_theme_color_override("font_color", Kit.C_INK_DIM)
 		tag.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -382,7 +425,7 @@ func _show_detail(detail: VBoxContainer, kind: String, e: Dictionary) -> void:
 				var k := minf(640.0 / t2.get_width(), 330.0 / t2.get_height())
 				img.custom_minimum_size = (t2.get_size() * k).floor()
 			detail.add_child(img)
-		var kick := Kit.label(Kit.t("ui.inspect.kicker." + str(e.get("category", "document"))).to_upper(), "PaperKicker")
+		var kick := Kit.label(Kit.t("ui.inspect.kicker." + str(e.get("category", "document"))).to_upper().replace("ß", "SS"), "PaperKicker")
 		detail.add_child(kick)
 		var n := Kit.wrap_label(str(e["name"]), "TypeHeading")
 		Kit.scalable(n, 34)
@@ -454,7 +497,7 @@ func _build_decisions() -> Control:
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(col)
 		if str(d["chapter"]) != "":
-			col.add_child(Kit.label(str(d["chapter"]).to_upper(), "PaperKicker"))
+			col.add_child(Kit.label(str(d["chapter"]).to_upper().replace("ß", "SS"), "PaperKicker"))
 		if str(d["prompt"]) != "":
 			var p := Kit.wrap_label(str(d["prompt"]), "TypeDim")
 			Kit.scalable(p, 24)
@@ -469,7 +512,7 @@ func _build_decisions() -> Control:
 		Kit.scalable(l, 29)
 		row.add_child(l)
 		col.add_child(row)
-		h.add_child(_stamp(Kit.t("ui.journal.stamp").to_upper()))
+		h.add_child(_stamp(Kit.t("ui.journal.stamp").to_upper().replace("ß", "SS")))
 	return s
 
 
@@ -592,7 +635,7 @@ func _actions_of(detail: VBoxContainer) -> HBoxContainer:
 
 func _group_head(text: String, count: String) -> Control:
 	var head := Kit.hbox(12)
-	var al := Kit.wrap_label(text.to_upper(), "PaperKicker")
+	var al := Kit.wrap_label(text.to_upper().replace("ß", "SS"), "PaperKicker")
 	al.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(al)
 	var cl := Kit.label(count, "TypeDim")
@@ -678,7 +721,7 @@ func _show_find_detail(detail: VBoxContainer, e: Dictionary) -> void:
 			pic.custom_minimum_size = (t2.get_size() * k).floor()
 		detail.add_child(pic)
 	var kind := str(e.get("kind", "detail"))
-	var kick := Kit.wrap_label((Kit.explore_kind_label(kind) + "  ·  " + Kit.explore_place(e)).to_upper(), "PaperKicker")
+	var kick := Kit.wrap_label((Kit.explore_kind_label(kind) + "  ·  " + Kit.explore_place(e)).to_upper().replace("ß", "SS"), "PaperKicker")
 	detail.add_child(kick)
 	var n := Kit.wrap_label(Kit.explore_title(e), "TypeHeading")
 	Kit.scalable(n, 34)
@@ -724,6 +767,208 @@ func _show_find_detail(detail: VBoxContainer, e: Dictionary) -> void:
 func _reopen_find(id: String) -> void:
 	if ui_root != null and ui_root.get("discovery") != null:
 		ui_root.discovery.open(id)
+
+
+# ================================================================ side tasks (§12.9)
+## Started tasks as journal rows: open ones first, then finished ones; inside each group the most recent place
+## first (like the objectives), then data order. Pure — `ex` is the Explore service or any object with
+## tasks_for / task_state; `rank` maps a level id to its story position.
+## Row: {id, title_key, summary_key, level, state ("active"|"done"), step, total, hint_key, done_steps}.
+static func task_rows(ex: Object, rank: Callable) -> Array:
+	var rows: Array = []
+	if ex == null or not ex.has_method("tasks_for") or not ex.has_method("task_state"):
+		return rows
+	var order := 0
+	for t in ex.tasks_for(""):
+		var tid := str(t.get("id", ""))
+		var st: Dictionary = ex.task_state(tid)
+		var s := str(st.get("state", ""))
+		if s != "active" and s != "done":
+			continue
+		var steps = t.get("steps", [])
+		rows.append({"id": tid, "title_key": str(t.get("title_key", "")), "summary_key": str(t.get("summary_key", "")),
+			"level": str(t.get("level", "")), "state": s, "step": int(st.get("step", 0)),
+			"total": (steps as Array).size() if steps is Array else 0, "hint_key": str(st.get("hint_key", "")),
+			"done_steps": (st.get("done_steps", []) as Array).duplicate(), "_rank": float(rank.call(str(t.get("level", "")))),
+			"_order": order})
+		order += 1
+	rows.sort_custom(func(a, b):
+		if a["state"] != b["state"]:
+			return a["state"] == "active"
+		if a["_rank"] != b["_rank"]:
+			return a["_rank"] > b["_rank"]
+		return a["_order"] < b["_order"])
+	return rows
+
+
+## Story position of a level; side levels (L_M1_Plaza) sit right after the quest scene of their chapter (L_M1_*).
+func _task_rank(level: String) -> float:
+	var r := _level_rank(level)
+	if r < 999:
+		return float(r)
+	var parts := level.split("_")
+	if parts.size() >= 2:
+		var qs := Kit.quests()
+		for i in qs.size():
+			if str(qs[i].get("scene", "")).begins_with(parts[0] + "_" + parts[1] + "_"):
+				return float(i) + 0.5
+	return 999.0
+
+
+func _task_place(level: String) -> String:
+	var k := "ui.tasks.place." + level
+	if Kit.has_key(k):
+		return Kit.t(k)
+	return Kit.explore_place({"level": level})
+
+
+func _current_level() -> String:
+	var g = Kit.svc("Game")
+	if g != null:
+		var lvl = g.get("level")
+		if lvl != null and is_instance_valid(lvl) and lvl.get("level_id") != null:
+			return str(lvl.get("level_id"))
+	var st = Kit.svc("Story")
+	if st != null and st.get("current_scene") != null:
+		return str(st.get("current_scene"))
+	return ""
+
+
+## Tasks of the current place nobody has asked for yet (only counted, never named).
+func _tasks_waiting_here() -> int:
+	var lvl := _current_level()
+	if lvl == "":
+		return 0
+	var n := 0
+	for t in _ex_call("tasks_for", [lvl], []):
+		if str((_ex_call("task_state", [str(t.get("id", ""))], {}) as Dictionary).get("state", "")) == "not_started":
+			n += 1
+	return n
+
+
+func _waiting_line(n: int) -> Label:
+	var l := _dim_line(Kit.t("ui.tasks.here_one") if n == 1 else Kit.t("ui.tasks.here", {"n": n}))
+	l.add_theme_font_override("font", Kit.font("fv_serif_italic"))
+	return l
+
+
+## "Aufgaben": open tasks first with the current hint, then the finished ones.
+func _build_tasks() -> Control:
+	var rows := task_rows(Kit.explore(), _task_rank)
+	var here := _tasks_waiting_here()
+	if rows.is_empty():
+		var v := Kit.vbox(18)
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		var e := _empty("ui.journal.empty.tasks")
+		(e as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		v.add_child(e)
+		if here > 0:
+			var w := _waiting_line(here)
+			w.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			v.add_child(w)
+		return v
+	var parts := _list_split()
+	var list: VBoxContainer = parts[1]
+	var detail: VBoxContainer = parts[2]
+	var first: Button = null
+	var first_r: Dictionary = {}
+	var group := ""
+	for r in rows:
+		if str(r["state"]) != group:
+			group = str(r["state"])
+			if list.get_child_count() > 0:
+				list.add_child(Kit.rule(Color(0, 0, 0, 0), 16))
+			var g := group
+			var cnt := rows.filter(func(x): return str(x["state"]) == g).size()
+			list.add_child(_group_head(Kit.t("ui.tasks.kicker." + group), str(cnt)))
+			list.add_child(Kit.rule(Color(0, 0, 0, 0), 6))
+		var b := Kit.button(Kit.t(str(r["title_key"])), "PaperListButton")
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.icon = Kit.tex("res://assets/ui/icons/%s.png" % ("mark_done" if str(r["state"]) == "done" else "mark_open"))
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		b.focus_entered.connect(_show_task_detail.bind(detail, r))
+		b.mouse_entered.connect(b.grab_focus)
+		b.pressed.connect(_reopen_task_step.bind(r))
+		list.add_child(b)
+		if first == null:
+			first = b
+			first_r = r
+	if here > 0:
+		list.add_child(Kit.rule(Color(0, 0, 0, 0), 16))
+		list.add_child(_waiting_line(here))
+	_show_task_detail(detail, first_r)
+	if first != null and is_open:
+		first.grab_focus.call_deferred()
+	return parts[0]
+
+
+func _show_task_detail(detail: VBoxContainer, r: Dictionary) -> void:
+	for c in detail.get_children():
+		c.queue_free()
+	if r.is_empty():
+		return
+	var done: bool = str(r["state"]) == "done"
+	var kick := Kit.wrap_label((Kit.t("ui.tasks.kicker." + str(r["state"])) + "  ·  " + _task_place(str(r["level"]))).to_upper().replace("ß", "SS"),
+		"PaperKicker")
+	detail.add_child(kick)
+	var n := Kit.wrap_label(Kit.t(str(r["title_key"])), "TypeHeading")
+	Kit.scalable(n, 34)
+	detail.add_child(n)
+	var sep := HSeparator.new()
+	sep.theme_type_variation = "PaperSeparator"
+	detail.add_child(sep)
+	var s := Kit.wrap_label(Kit.t(str(r["summary_key"])), "TypeLabel")
+	Kit.scalable(s, 27)
+	detail.add_child(s)
+	detail.add_child(Kit.rule(Color(0, 0, 0, 0), 6))
+	if not done and str(r["hint_key"]) != "":
+		detail.add_child(Kit.label(Kit.t("ui.tasks.next").to_upper().replace("ß", "SS"), "PaperKicker"))
+		var row := Kit.hbox(14)
+		var mark := Kit.sprite("icons/mark_open.png")
+		mark.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		row.add_child(mark)
+		var h := Kit.wrap_label(Kit.t(str(r["hint_key"])), "TypeLabel")
+		h.add_theme_font_override("font", Kit.font("fv_serif_italic"))
+		Kit.scalable(h, 27)
+		h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(h)
+		detail.add_child(row)
+	if not done:   # a finished task lists its steps below; no progress line needed
+		detail.add_child(_dim_line(Kit.t("ui.tasks.steps", {"n": int(r["step"]) + 1, "total": r["total"]})))
+	var steps: Array = r.get("done_steps", [])
+	if not steps.is_empty():
+		detail.add_child(Kit.rule(Color(0, 0, 0, 0), 4))
+		detail.add_child(Kit.label(Kit.t("ui.tasks.all_steps" if done else "ui.tasks.done_steps").to_upper().replace("ß", "SS"), "PaperKicker"))
+		for sid in steps:
+			var e: Dictionary = _ex_call("entry", [str(sid)], {})
+			var srow := Kit.hbox(12)
+			var tick := Kit.sprite("icons/mark_done.png")
+			tick.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+			tick.modulate = Color(1, 1, 1, 0.7)
+			srow.add_child(tick)
+			var sl := _dim_line(Kit.explore_title(e) if not e.is_empty() else str(sid))
+			sl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			srow.add_child(sl)
+			detail.add_child(srow)
+		var b := Kit.button(Kit.t("ui.explore.reopen"), "", 260)
+		b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		b.pressed.connect(_reopen_task_step.bind(r))
+		var act := _actions_of(detail)
+		if act != null:
+			act.add_child(b)
+		else:
+			detail.add_child(b)
+	else:
+		_actions_of(detail)
+
+
+## Opens the most recent finished step of a task again (find page or the chat's notebook summary).
+func _reopen_task_step(r: Dictionary) -> void:
+	var steps: Array = r.get("done_steps", [])
+	if steps.is_empty():
+		return
+	_reopen_find(str(steps[steps.size() - 1]))
 
 
 ## "Geschichte": the real-history cards found so far (re-readable), unknown ones only as a count.
@@ -811,7 +1056,7 @@ func _show_card_detail(detail: VBoxContainer, c: Dictionary) -> void:
 	var band := Kit.hbox(14)
 	band.custom_minimum_size.y = 36
 	v.add_child(band)
-	var bl := Kit.label(Kit.t("ui.history.kicker").to_upper(), "KickerLabel", 20, Color("dee5dc"))
+	var bl := Kit.label(Kit.t("ui.history.kicker").to_upper().replace("ß", "SS"), "KickerLabel", 20, Color("dee5dc"))
 	bl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(bl)
 	v.add_child(Kit.rule(Color(0, 0, 0, 0), 22))
@@ -840,7 +1085,7 @@ func _show_card_detail(detail: VBoxContainer, c: Dictionary) -> void:
 	var srcs = []   # sources are listed in the planned end-credits scene, not on the cards (user decision 2026-11-05)
 	if srcs is Array and not srcs.is_empty():
 		v.add_child(Kit.rule(Color(0, 0, 0, 0), 10))
-		var sk := Kit.label("%s: %d" % [Kit.t("ui.history.sources").to_upper(), srcs.size()], "HintLabel", 0, dim)
+		var sk := Kit.label("%s: %d" % [Kit.t("ui.history.sources").to_upper().replace("ß", "SS"), srcs.size()], "HintLabel", 0, dim)
 		Kit.scalable(sk, 18)
 		v.add_child(sk)
 	var b := Kit.button(Kit.t("ui.history.read"), "", 240)

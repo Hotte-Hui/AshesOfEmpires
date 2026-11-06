@@ -379,7 +379,7 @@ static func key_name(code: int) -> String:
 		if lab != 0:
 			shown = lab
 	var s := OS.get_keycode_string(shown)
-	return s.to_upper() if s.length() == 1 else s
+	return s.to_upper().replace("ß", "SS") if s.length() == 1 else s
 
 
 static func pad_button_name(b: int) -> String:

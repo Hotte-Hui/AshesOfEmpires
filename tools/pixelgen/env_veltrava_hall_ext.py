@@ -442,38 +442,47 @@ def build_saal_near():
     lay = kit.TLayer(w, SAAL_H, RP, 'saal_near')
     H = SAAL_H
     cx = 200
-    # carpet floor of the hall (wine red, darker toward the booths), opaque from the dais down
-    t = np.linspace(2.0, 1.4, H - 38)[:, None] + np.zeros((1, w))
+    # carpet floor of the hall (deep wine, darker toward the booths), opaque from the dais down; a paler
+    # centre field inside the horseshoe so the white table reads against it
+    t = np.linspace(1.8, 1.2, H - 38)[:, None] + np.zeros((1, w))
     lay.put(np.ones((H - 38, w), bool), 0, 38, 'R', t, flat=False)
     for x in range(0, w, 2):                                                  # carpet border pattern
-        lay.px(x, 41, 'B', 2.4)
-    # presidium table (far end), arms of the horseshoe (perspective), secretariat table (open end)
+        lay.px(x, 41, 'B', 2.2)
+    # presidium table (far end), arms of the horseshoe (perspective), secretariat table (open end):
+    # white cloths over green baize, microphones and papers on them, delegates seated on the outside
     pt0, pt1, py = cx - 46, cx + 46, 38
-    lay.rect(pt0, py, pt1 - pt0, 3, 'G', 5.0)
-    lay.rect(pt0, py, pt1 - pt0, 1, 'G', 6.0)
-    lay.rect(pt0, py + 3, pt1 - pt0, 1, 'G', 3.0)
+    yb = H - 2
+    for y in range(py + 4, yb):                                               # the floor inside the U
+        f = (y - py) / (yb - py)
+        a = int(round(cx - 44 - 34 * f)) + 3
+        b = int(round(cx + 44 + 34 * f)) - 3
+        lay.rect(a, y, b - a, 1, 'D', 2.6 + 0.3 * ((y // 3) % 2))
+    lay.rect(pt0, py, pt1 - pt0, 3, 'P', 6.0)
+    lay.rect(pt0, py, pt1 - pt0, 1, 'P', 6.8)
+    lay.rect(pt0, py + 3, pt1 - pt0, 2, 'G', 3.4)
     for k in range(9):                                                        # presidium (facing the hall)
         dx = pt0 + 6 + k * 10
-        tiny_delegate(lay, dx, py - 4, 'down', s=1, suit='I', t=1.2 if k != 4 else 2.0)
-        lay.px(dx, py, 'P', 6.4)                                              # papers
-    yb = H - 2
+        tiny_delegate(lay, dx, py - 5, 'down', s=2, suit='I', t=1.2 if k != 4 else 2.0)
+        lay.px(dx + 2, py, 'S', 2.0)                                          # microphone
+        lay.px(dx - 1, py + 1, 'P', 7.0)                                      # papers
     for side in (-1, 1):
         for y in range(py + 3, yb):
             f = (y - py) / (yb - py)
             xin = cx + side * (46 + 34 * f)
-            wd = 2 + int(round(2 * f))
+            wd = 3 + int(round(2 * f))
             x0 = int(round(xin)) if side > 0 else int(round(xin)) - wd
-            lay.rect(x0, y, wd, 1, 'G', 5.0)
-            lay.px(x0 + (wd - 1 if side < 0 else 0), y, 'G', 3.2)
-            lay.px(x0 + (0 if side < 0 else wd - 1), y, 'G', 6.0)
+            lay.rect(x0, y, wd, 1, 'P', 6.0)
+            lay.px(x0 + (wd - 1 if side < 0 else 0), y, 'P', 4.6)             # inner edge in shadow
+            lay.px(x0 + (0 if side < 0 else wd - 1), y, 'G', 3.4)             # baize skirt (outer edge)
         # delegates along the outer side of each arm (facing inward), mics, papers
         for k in range(5):
             f = (k + 0.7) / 5.4
             y = int(round(py + 3 + f * (yb - py - 5)))
             xin = cx + side * (46 + 34 * f)
-            xo = int(round(xin + side * (5 + 2 * f)))
-            tiny_delegate(lay, xo, y - 2, 'side', s=2 if f > 0.55 else 1, suit='I', t=1.4)
-            lay.px(int(round(xin + side * 1)), y, 'P', 6.6)
+            xo = int(round(xin + side * (6 + 2 * f)))
+            tiny_delegate(lay, xo, y - 3, 'side', s=2, suit='I', t=1.4 + 0.4 * (k % 2))
+            lay.px(int(round(xin + side * 1)), y, 'P', 7.0)
+            lay.px(int(round(xin + side * 2)), y - 1, 'S', 2.0)
     # secretariat table at the open end, three staff, a typewriter
     sy = H - 9
     lay.rect(cx - 12, sy, 24, 3, 'P', 5.8)

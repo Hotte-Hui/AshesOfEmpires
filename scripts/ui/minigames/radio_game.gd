@@ -75,7 +75,7 @@ func _build_play(area: Control) -> void:
 	_porter_label = Kit.label("", "KickerLabel")
 	_porter_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	side.add_child(_porter_label)
-	var ml := Kit.label(Kit.t("mg.radio.listen").to_upper(), "DimLabel")
+	var ml := Kit.label(Kit.t("mg.radio.listen").to_upper().replace("ß", "SS"), "DimLabel")
 	ml.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	side.add_child(ml)
 	_meter = View.new()
@@ -185,7 +185,7 @@ func _vol(p: AudioStreamPlayer, lin: float) -> void:
 
 func _update_labels() -> void:
 	if _porter_label:
-		_porter_label.text = (Kit.t("mg.radio.porter") + " · " + Kit.t("mg.radio.porter." + logic.porter)).to_upper()
+		_porter_label.text = (Kit.t("mg.radio.porter") + " · " + Kit.t("mg.radio.porter." + logic.porter)).to_upper().replace("ß", "SS")
 		var c := Kit.C_TEXT_DIM
 		if logic.porter == "lowering":
 			c = Kit.C_AMBER

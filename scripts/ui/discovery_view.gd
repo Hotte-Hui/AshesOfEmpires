@@ -453,7 +453,7 @@ func _notebook(e: Dictionary, width: float, min_h: float) -> PanelContainer:
 	var ic := Kit.ex_sprite(Kit.explore_kind_icon(kind))
 	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	hrow.add_child(ic)
-	var kick := Kit.label(Kit.explore_kind_label(kind).to_upper(), "PaperKicker")
+	var kick := Kit.label(Kit.explore_kind_label(kind).to_upper().replace("ß", "SS"), "PaperKicker")
 	kick.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	hrow.add_child(kick)
 	# the place reads like the dateline of a notebook entry (top right, in the writer's ink)
@@ -578,14 +578,14 @@ func _build_card(cid: String) -> Control:
 	var band := Kit.hbox(18)
 	band.custom_minimum_size.y = 36
 	v.add_child(band)
-	var bl := Kit.label(Kit.t("ui.history.kicker").to_upper(), "KickerLabel", 22, C_ARCH_BAND)
+	var bl := Kit.label(Kit.t("ui.history.kicker").to_upper().replace("ß", "SS"), "KickerLabel", 22, C_ARCH_BAND)
 	bl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(bl)
 	var gap := Control.new()
 	gap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	band.add_child(gap)
-	var side := Kit.label(Kit.history_side_label(str(c.get("side", ""))).to_upper(), "HintLabel", 20, C_ARCH_BAND_DIM)
+	var side := Kit.label(Kit.history_side_label(str(c.get("side", ""))).to_upper().replace("ß", "SS"), "HintLabel", 20, C_ARCH_BAND_DIM)
 	side.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	band.add_child(side)
 	v.add_child(Kit.rule(Color(0, 0, 0, 0), 34))
@@ -619,7 +619,7 @@ func _build_card(cid: String) -> Control:
 	var srcs = c.get("sources", []) if SHOW_SOURCES else []
 	if srcs is Array and not srcs.is_empty():
 		body.add_child(Kit.rule(Color(0, 0, 0, 0), 14))
-		var sk := Kit.label(Kit.t("ui.history.sources").to_upper(), "HintLabel", 0, dim)
+		var sk := Kit.label(Kit.t("ui.history.sources").to_upper().replace("ß", "SS"), "HintLabel", 0, dim)
 		Kit.scalable(sk, 20)
 		body.add_child(sk)
 		for s in srcs:

@@ -339,6 +339,10 @@ func _scene_nodes() -> bool:
 		if kind != "discover" and kind != "chat":
 			continue
 		var eid := str(p.get("explore_id", ""))
+		if eid.begins_with("berlin.task."):   # §12.9 side tasks: tasks_berlin.json, checked by tests/test_tasks.gd
+			continue
+		if eid == "berlin.rohrpost":   # round-7 mini-game find: minigames_r7_kb.json, checked by tests/test_minigames_r7_kb.gd
+			continue
 		var e := _entry(eid)
 		if not kit.ok(not e.is_empty(), "%s: explore_id '%s' exists in berlin.json" % [n["name"], eid]):
 			continue

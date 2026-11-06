@@ -174,7 +174,7 @@ func _build_panel() -> void:
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	head.add_child(icon)
-	var title := Kit.label(Kit.t("ui.photo.title").to_upper(), "KickerLabel")
+	var title := Kit.label(Kit.t("ui.photo.title").to_upper().replace("ß", "SS"), "KickerLabel")
 	Kit.scalable(title, 24)
 	title.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	head.add_child(title)

@@ -18,9 +18,15 @@ const MAX_REPORTED := 25
 const LEGACY_ORDER := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal",
 	"a1_inspect_ledger", "a1_choose", "m1_inspect_plan_a", "m1_inspect_plan_b", "m1_align_plans", "m1_talk_emil",
 	"m1_choose"]
-## The only non-additive change of data/v3 against the preproduction package: Chapter 3 is inserted between
-## the archive and the montage (documentation/C3_DESIGN.md §1). Everything else is an addition.
-const EXPECTED_DELTA := ["scenes/scenes[L_M1_Archive]/next_scene: \"L_X1_Montage\" -> \"L_C3_Station\""]
+## The non-additive changes of data/v3 against the preproduction package: Chapter 3 is inserted between the
+## archive and the montage (documentation/C3_DESIGN.md §1), and the Great Hall shot list describes the reveal as
+## built (scripts/levels/hall/hall_reveal.gd: h1 5.5 s, h2 9 s, h3 9.5 s). Everything else is an addition.
+const EXPECTED_DELTA := ["scenes/scenes[L_M1_Archive]/next_scene: \"L_X1_Montage\" -> \"L_C3_Station\"",
+	"cinematics/sequences[LS_M1_Hall]/shots[h1]/duration_s: 3 -> 5.5",
+	"cinematics/sequences[LS_M1_Hall]/shots[h2]/duration_s: 5 -> 9",
+	"cinematics/sequences[LS_M1_Hall]/shots[h3]/duration_s: 3 -> 9.5",
+	"cinematics/sequences[LS_M1_Hall]/shots[h3]/shot: \"Return to office workbench\" -> \"Slow low-angle push and tilt up to the dome; a neighbour draws the curtains above the waiting family; held final frame (the parade and the return to the workbench follow)\"",
+	"cinematics/sequences[LS_M1_Hall]/shots[h3]/camera: \"fixed\" -> \"low_angle_push\""]
 
 var kit: Kit
 var fx: Dictionary = {}

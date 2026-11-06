@@ -213,6 +213,39 @@ GESTURES = {
     # hug the toy closer, sway
     'hug': [{}, {'dx': 0.5}, {'dx': 0.8, 'head': (0, 1)}, {'dx': 0.8, 'head': (0, 1), 'face': 'blink'},
             {'dx': 0.4}, {}],
+    # ---- round 7, Chapter-3 cast
+    # tuck a loose strand back behind the ear (Elena, end of a long day): hand to the temple, tilt, back
+    'tuck_hair': [
+        {}, {'arm_n': (24, 70)}, {'arm_n': (40, 118), 'head': (0, 1)}, {'arm_n': (44, 132), 'head': (0, 1)},
+        {'arm_n': (46, 136), 'head': (0, 1), 'face': 'blink'}, {'arm_n': (40, 120)}, {'arm_n': (22, 64)}, {},
+    ],
+    # a railwayman's touch to the cap (conductor; stooped, so the arm stays close to the body)
+    'touch_cap': [
+        {}, {'arm_n': (12, 100)}, {'arm_n': (30, 132), 'head': (0, 1)}, {'arm_n': (36, 142), 'head': (0, 1)},
+        {'arm_n': (38, 144), 'head': (0, 1), 'face': 'blink'}, {'arm_n': (34, 138), 'head': (0, 1)},
+        {'arm_n': (12, 96)}, {},
+    ],
+    # straighten up: chin up, shoulders back, settle (Kessler -- the near hand keeps the briefcase)
+    'straighten': [
+        {}, {'lean': -0.8, 'shrug': 0.5}, {'lean': -1.6, 'shrug': 0.8, 'head': (0, -1), 'breath': 1},
+        {'lean': -1.6, 'shrug': 0.8, 'head': (0, -1), 'breath': 1}, {'lean': -1.0, 'face': 'blink'},
+        {'lean': -0.4}, {},
+    ],
+    # glance at the steno pad / notebook held in the near hand: it comes up, the head bends, a blink
+    'read_pad': [
+        {}, {'arm_n': (14, 82)}, {'arm_n': (18, 100), 'head': (0, 1), 'lean': 1.5},
+        {'arm_n': (18, 104), 'head': (0, 1), 'lean': 2.0}, {'arm_n': (18, 104), 'head': (0, 1), 'lean': 2.0,
+                                                          'face': 'blink'},
+        {'arm_n': (18, 100), 'head': (0, 1), 'lean': 1.5}, {'arm_n': (12, 76)}, {},
+    ],
+    # jot a word into the notebook: pad up, two small pencil strokes (far hand), back (journalist)
+    'jot': [
+        {}, {'arm_n': (16, 84)}, {'arm_n': (20, 98), 'arm_f': (10, 92), 'head': (0, 1), 'lean': 1.5},
+        {'arm_n': (20, 98), 'arm_f': (12, 98), 'head': (0, 1), 'lean': 1.5},
+        {'arm_n': (20, 98), 'arm_f': (10, 92), 'head': (0, 1), 'lean': 1.5},
+        {'arm_n': (20, 98), 'arm_f': (12, 98), 'head': (0, 1), 'lean': 1.5, 'face': 'blink'},
+        {'arm_n': (14, 80)}, {},
+    ],
 }
 
 WORKS = {
@@ -344,18 +377,85 @@ def talk_side(style=None):
             P['arm_f'] = s['talk_f'][i % len(s['talk_f'])]
         elif s['hold_f'] is not None:
             P['arm_f'] = s['hold_f']
+        # round 7 (Chapter-3 cast): optional per-frame hands / head / face / lean sequences
+        for key, pkey in (('talk_hand_n', 'hand_n'), ('talk_hand_f', 'hand_f'), ('talk_head', 'head'),
+                          ('talk_face', 'face'), ('talk_lean', 'lean')):
+            seq = s.get(key)
+            if seq is not None:
+                P[pkey] = seq[i % len(seq)]
         frames.append(P)
     return frames
 
 
 # ----------------------------------------------------------------------------------- front / back
 def idle_front(style=None):
+    """8 frames @5 fps.  Optional style keys `front_l` / `front_r` (abd, swing, flex) lock an arm (props held
+    against the body in the front view, round 7)."""
     s = st(style)
     breath = [0, 0, 1, 1, 1, 0, 0, 0]
     a = s['front_abd']
-    return [dict(bob=0, foot_l=(0.0, 0.0), foot_r=(0.0, 0.0), arm_l=(a, 0.0, 6.0 + breath[i] * 2),
-                 arm_r=(a, 0.0, 6.0 + breath[i] * 2), breath=breath[i], face='base', phase=i, lag=0.0,
-                 bounce=0) for i in range(8)]
+    out = [dict(bob=0, foot_l=(0.0, 0.0), foot_r=(0.0, 0.0), arm_l=(a, 0.0, 6.0 + breath[i] * 2),
+                arm_r=(a, 0.0, 6.0 + breath[i] * 2), breath=breath[i], face='base', phase=i, lag=0.0,
+                bounce=0) for i in range(8)]
+    for P in out:
+        for side in ('l', 'r'):
+            if s.get('front_' + side) is not None:
+                P['arm_' + side] = s['front_' + side]
+    return out
+
+
+# talk_front (round 7): (abd, swing, flex) of the gesturing arm, face, head offset -- rest, lift, open-hand beat
+# with a nod, settle, second smaller beat, rest (same rhythm as TALK_DEFAULT, so both views read alike).
+# Front: the forearm comes up IN FRONT of the body (negative flex turns it inwards, swing foreshortens the
+# upper arm); back: the elbow bends out to the side (a hand in front of the body would be hidden by the back).
+TALK_FRONT = [
+    ((6.0, 0.0, 6.0), 'base', (0, 0)),
+    ((4.0, 0.45, -60.0), 'talk', (0, 0)),
+    ((3.0, 0.75, -100.0), 'base', (0, 0)),
+    ((2.0, 0.85, -122.0), 'talk', (0, 1)),     # beat + nod
+    ((3.0, 0.75, -100.0), 'base', (0, 0)),
+    ((4.0, 0.5, -70.0), 'talk', (0, 0)),
+    ((3.0, 0.65, -92.0), 'base', (0, 0)),
+    ((5.0, 0.15, -18.0), 'talk', (0, 0)),
+]
+TALK_BACK = [
+    ((7.0, 0.0, 8.0), 'base', (0, 0)),
+    ((9.0, 0.35, 28.0), 'base', (0, 0)),
+    ((12.0, 0.7, 50.0), 'base', (0, 0)),
+    ((13.0, 0.8, 58.0), 'base', (0, 1)),
+    ((12.0, 0.7, 50.0), 'base', (0, 0)),
+    ((9.0, 0.45, 34.0), 'base', (0, 0)),
+    ((11.0, 0.6, 44.0), 'base', (0, 0)),
+    ((7.0, 0.1, 12.0), 'base', (0, 0)),
+]
+
+
+def talk_front(style=None, back=False):
+    """Talking while facing the camera (or away from it): one forearm rises with an open hand and beats twice,
+    the head nods on the first beat, the mouth alternates (front heads have a 'talk' face; back heads keep
+    their base).  style['talk_front_arm'] = 'l' | 'r' picks the free arm (screen side in the FRONT view; the
+    back view mirrors it so it stays the same hand).  Arms locked by front_l / front_r stay locked."""
+    s = st(style)
+    frames = idle_front(style)
+    side = s.get('talk_front_arm', 'l')
+    if back:
+        side = 'r' if side == 'l' else 'l'
+    seq = s.get('talk_back_seq' if back else 'talk_front_seq') or (TALK_BACK if back else TALK_FRONT)
+    out = []
+    for i, P in enumerate(frames):
+        arm, face, head = seq[i % len(seq)]
+        P = dict(P)
+        if arm is not None and (s.get('front_' + side) is None or s.get('talk_front_free')):
+            P['arm_' + side] = arm
+        P['face'] = 'base' if back else face
+        P['head'] = head
+        P['breath'] = 1 if i in (2, 3, 4) else 0
+        out.append(P)
+    return out
+
+
+def talk_back(style=None):
+    return talk_front(style, back=True)
 
 
 def blink_front(style=None):
@@ -368,9 +468,13 @@ def blink_front(style=None):
 def walk_front(style=None, back=False):
     s = st(style)
     L = s['lift']
-    # (depth dy, lift) for the left leg; right = shifted by 4
-    leg = [(0.0, 0.0), (-0.5, 0.0), (-1.0, 0.0), (-1.5, 0.0), (-2.0, 0.8), (-1.5, L * 0.75), (-1.0, L * 0.9),
-           (-0.4, L * 0.4)]
+    # (depth dy, lift) for the left leg; right = shifted by 4.  Round 7: the supporting foot stays ON the
+    # origin row for the whole stance (frames 0-3) -- the old depth travel (-0.5 .. -2 px) lifted both feet off
+    # the ground line mid-stride, so the figure floated 1-2 px above its own position; only the swinging foot
+    # leaves the ground now (lift, passing, reach), frames 0 and 4 are double support, the step towards /
+    # away from the camera is read from the alternating legs and the body bob.
+    leg = [(0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, L * 0.75), (0.0, L * 0.9),
+           (0.0, L * 0.35)]
     bob = [0, s['bob'], 0, s['up'], 0, s['bob'], 0, s['up']]
     frames = []
     a = s['front_abd']

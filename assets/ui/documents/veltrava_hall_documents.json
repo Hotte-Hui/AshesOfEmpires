@@ -19,7 +19,7 @@
    "hotspot": "booth_2",
    "title_key": "item.c3_carbon.name",
    "description_key": "item.c3_carbon.description",
-   "describes": "Elena's desk blotter from interpreter booth 2, lightly rubbed with a pencil. Pale in the graphite: '§ 4 – Personen.' (underlined twice) / 'Vom Sekretariat,' / 'nicht von einer Delegation.' / 'Wer hat den Text geliefert?'. Faint older entry '10:09 - Mik. 12'; mirrored ink blots; the pencil lies across the corner.",
+   "describes": "Elena's desk blotter from interpreter booth 2, lightly rubbed with a pencil. Pale in the graphite: '§ 4 – Personen.' (underlined twice) / 'Vom Sekretariat,' / 'nicht von einer Delegation.' / 'Wer hat den Text geliefert?'. Faint older entry '10.09 - Mik. 12'; mirrored ink blots; the pencil lies across the corner.",
    "marks": {
     "line_1": {
      "rect": [
@@ -70,11 +70,11 @@
      "rect": [
       198,
       168,
-      70,
+      69,
       11
      ],
-     "text": "10:09 - Mik. 12",
-     "note": "older, faint impression; matches the booth log (10:09, microphone 12)"
+     "text": "10.09 - Mik. 12",
+     "note": "older, faint impression; matches the booth log (10.09, microphone 12)"
     },
     "rubbing": {
      "rect": [

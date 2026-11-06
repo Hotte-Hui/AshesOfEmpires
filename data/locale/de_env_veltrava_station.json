@@ -2,8 +2,8 @@
  "locale": "de",
  "area": "env_veltrava_station",
  "strings": {
-  "doc.veltrava.weighbill.alt": "Wiegekarte im Messingrahmen von Kurierwagen 4: Ladung „Akten, Anlage C“, Gewicht 2 410 kg, Plombe C-17/44 mit dem runden Gegensiegel der Kommission. Empfänger: Sekretariat der Kommission.",
-  "doc.veltrava.departures.alt": "Abfahrtstafel mit Fallblättern: vier Tageszüge, darunter eine frisch eingeschobene Zeile – 23:40, Kordon-17, Gleis 5, Zuggattung: Leerfahrt.",
+  "doc.veltrava.weighbill.alt": "Wiegekarte im Messingrahmen von Kurierwagen 4: Ladung „Akten, Anlage C“, Gewicht 2410 kg, Plombe C-17/44 mit dem runden Gegensiegel der Kommission. Empfänger: Sekretariat der Kommission.",
+  "doc.veltrava.departures.alt": "Abfahrtstafel mit Fallblättern: vier Tageszüge, darunter eine frisch eingeschobene Zeile – 23.40, Kordon-17, Gleis 5, Zuggattung: Leerfahrt.",
   "doc.veltrava.travel_order.alt": "Dienstreiseauftrag auf grauem Dienstpapier, Stempel und Unterschriften. Ein nachträglich eingetippter Zusatz lautet „Begleitperson Kurierwagen 4“ – auf Russisch mit dem Vermerk Fracht, auf Deutsch mit dem Vermerk Akten."
  }
 }

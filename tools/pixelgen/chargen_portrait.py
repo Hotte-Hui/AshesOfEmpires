@@ -2,7 +2,8 @@
 
 The first-generation ellipsoid bust generator that lived here was replaced on 2026-11-04 by the second
 generation pipeline in chargen_portrait2.py (+ _sdf / _anat / _paint / _face / _cast modules): signed-distance
-sculpted busts, hand-designed eye / brow / mouth features, talking-mouth and blink frames, nine speakers.
+sculpted busts, hand-designed eye / brow / mouth features, talking-mouth and blink frames; since round 7 all
+seventeen speakers (the Chapter-3 seven are registered by chargen_portrait_c3).
 The old implementation is in the git history.
 
 tools/pixelgen/characters.py still calls `chargen_portrait.main(ids)` for every id in `PORTRAITS`; this
@@ -29,7 +30,8 @@ def _up_to_date(cid: str) -> bool:
     outs = [os.path.join(d, n) for n in ('portrait.png', 'portrait_anim.png', 'portrait.json')]
     if not all(os.path.exists(p) for p in outs):
         return False
-    newest_src = max(os.path.getmtime(p) for p in glob.glob(os.path.join(HERE, 'chargen_portrait2*.py')))
+    srcs = glob.glob(os.path.join(HERE, 'chargen_portrait2*.py')) + [os.path.join(HERE, 'chargen_portrait_c3.py')]
+    newest_src = max(os.path.getmtime(p) for p in srcs if os.path.exists(p))
     return min(os.path.getmtime(p) for p in outs) >= newest_src
 
 

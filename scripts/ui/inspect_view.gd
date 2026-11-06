@@ -78,7 +78,7 @@ func _ready() -> void:
 	_kicker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_kicker.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	head.add_child(_kicker)
-	_stamp = _make_stamp(Kit.t("ui.inspect.stamp").to_upper())
+	_stamp = _make_stamp(Kit.t("ui.inspect.stamp").to_upper().replace("ß", "SS"))
 	head.add_child(_stamp)
 	_name = Kit.wrap_label("", "TypeHeading")
 	Kit.scalable(_name, 36)
@@ -147,7 +147,7 @@ func open(id: String) -> void:
 	_caption.custom_minimum_size.x = _doc_holder.custom_minimum_size.x - 12
 	var cat := str(def.get("category", "document"))
 	var kick_key := "ui.inspect.kicker." + cat
-	_kicker.text = (Kit.t(kick_key) if Kit.has_key(kick_key) else Kit.t("ui.inspect.kicker.document")).to_upper()
+	_kicker.text = (Kit.t(kick_key) if Kit.has_key(kick_key) else Kit.t("ui.inspect.kicker.document")).to_upper().replace("ß", "SS")
 	_name.text = Kit.t(str(def["name_key"])) if def.has("name_key") else Kit.t("ui.inspect.unknown")
 	_desc.text = Kit.t(str(def["description_key"])) if def.has("description_key") else ""
 	var sc := Kit.scene_def(str(def.get("scene", "")))

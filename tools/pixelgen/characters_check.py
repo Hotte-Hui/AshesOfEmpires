@@ -52,7 +52,9 @@ def orphans(a: np.ndarray) -> int:
 
 def main():
     fails, notes = [], []
-    ids = sorted(d for d in os.listdir(OUT) if os.path.isdir(os.path.join(OUT, d)) and not d.startswith('_'))
+    # portrait-only speakers (e.g. the plaza photographer) have no sprite sheet
+    ids = sorted(d for d in os.listdir(OUT) if os.path.isdir(os.path.join(OUT, d)) and not d.startswith('_')
+                 and os.path.exists(os.path.join(OUT, d, 'sheet.json')))
     for cid in ids:
         d = os.path.join(OUT, cid)
         meta = json.load(open(os.path.join(d, 'sheet.json'), encoding='utf-8'))
@@ -118,9 +120,10 @@ def main():
                 if cell[oy + 1:, :].any():
                     fails.append(f'{cid}:{name}[{f}] has pixels below the origin row')
                 ys, xs = np.nonzero(cell)
-                # front / back walks move the planted foot in depth (drawn higher while it is behind)
-                grounded = (name.split('_')[0] in ('idle', 'talk', 'blink', 'look', 'gesture', 'work', 'walk',
-                                                   'inspect', 'interact') and name not in ('walk_front', 'walk_back'))
+                # one foot is always on the origin row -- also in the front / back walks since round 7 (their
+                # planted foot used to travel 1-2 px up in depth, which lifted the whole figure mid-stride)
+                grounded = name.split('_')[0] in ('idle', 'talk', 'blink', 'look', 'gesture', 'work', 'walk',
+                                                  'inspect', 'interact')
                 if grounded and 'hop' not in name and ys.max() != oy:
                     # hops / heel rises may lift both feet for a frame: allow 2 px for gesture rows only
                     if not (name.startswith('gesture') and oy - ys.max() <= 2):

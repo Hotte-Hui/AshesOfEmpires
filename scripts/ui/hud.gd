@@ -6,6 +6,8 @@ extends Control
 ## prompt mark optional finds — amber spark = not yet discovered, dimmed text + tick = already discovered
 ## (Interactable.prompt_state()); toasts of kind "discovery" (detected from ui.toast.discovery) show the find
 ## with its area counter, kind "history" a quiet real-history notice (paper sound, no flourish).
+## Memories (§12.10): set_memory(info) replaces the objective tracker by the badge „ERINNERUNG · place · date“
+## with the hint how to return (pause key → „In die Gegenwart zurückkehren“); set_memory({}) removes it.
 
 const Kit := preload("res://scripts/ui/ui_kit.gd")
 
@@ -40,6 +42,14 @@ var _chapter_tween: Tween
 var _toast_layer: Control = null
 var _toast_box: VBoxContainer
 var _toast_queue: Array = []
+var _memory: Dictionary = {}
+var _memory_box: PanelContainer
+var _memory_kicker: Label
+var _memory_place: Label
+var _memory_hint: Control
+var _memory_hint_box: VBoxContainer
+
+const MEMORY_ICON := "res://assets/ui/memories/icon_memory.png"
 
 
 func _ready() -> void:
@@ -47,6 +57,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	Kit.full_rect(self)
 	_build_objectives()
+	_build_memory_badge()
 	_build_prompt()
 	_build_chapter()
 	if _toast_layer == null:
@@ -66,7 +77,7 @@ func _build_objectives() -> void:
 	v.add_child(head)
 	var ic := Kit.sprite("icons/icon_objective.png")
 	head.add_child(ic)
-	_objective_kicker = Kit.label(Kit.t("ui.hud.objective").to_upper(), "KickerLabel")
+	_objective_kicker = Kit.label(Kit.t("ui.hud.objective").to_upper().replace("ß", "SS"), "KickerLabel")
 	_objective_kicker.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	head.add_child(_objective_kicker)
 	_objective_list = Kit.vbox(4)
@@ -104,7 +115,7 @@ func set_objectives(ids: Array) -> void:
 		Kit.fit_width(l, 640.0)
 		if id in fresh and had_previous and is_inside_tree():
 			_flash(l)
-	_objective_kicker.text = Kit.t("ui.hud.objective" if ids.size() <= 1 else "ui.hud.objectives").to_upper()
+	_objective_kicker.text = Kit.t("ui.hud.objective" if ids.size() <= 1 else "ui.hud.objectives").to_upper().replace("ß", "SS")
 	_objective_box.reset_size()
 	_shrink_objectives.call_deferred()
 	_update_visibility()
@@ -119,6 +130,65 @@ func _flash(l: Label) -> void:
 	var tw := l.create_tween()
 	tw.tween_property(l, "modulate", Color(1.35, 1.15, 0.9, 1.0), 0.35)
 	tw.tween_property(l, "modulate", Color.WHITE, 1.4)
+
+
+# ================================================================ memory badge (§12.10)
+func _build_memory_badge() -> void:
+	_memory_box = Kit.panel("PlatePanel")
+	_memory_box.position = MARGIN
+	_memory_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_memory_box.visible = false
+	add_child(_memory_box)
+	var h := Kit.hbox(18)
+	_memory_box.add_child(h)
+	var ic := TextureRect.new()
+	ic.texture = Kit.optional_tex(MEMORY_ICON)
+	ic.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	ic.visible = ic.texture != null
+	h.add_child(ic)
+	var v := Kit.vbox(4)
+	h.add_child(v)
+	_memory_kicker = Kit.label(Kit.t("ui.memories.badge").to_upper().replace("ß", "SS"), "KickerLabel")
+	v.add_child(_memory_kicker)
+	_memory_place = Kit.label("", "ObjectiveLabel")
+	Kit.scalable(_memory_place, 27)
+	v.add_child(_memory_place)
+	_memory_hint_box = Kit.vbox(0)
+	v.add_child(_memory_hint_box)
+
+
+## info = Game.memory_info() ({} = not inside a memory).
+func set_memory(info: Dictionary) -> void:
+	_memory = info.duplicate() if info != null else {}
+	if not _memory.is_empty():
+		var parts: Array = []
+		for k in ["place", "date"]:
+			if str(_memory.get(k, "")) != "":
+				parts.append(str(_memory[k]))
+		_memory_place.text = "  ·  ".join(parts)
+		_memory_kicker.text = Kit.t("ui.memories.badge").to_upper().replace("ß", "SS")
+		_rebuild_memory_hint()
+		_memory_box.reset_size()
+	_update_visibility()
+
+
+func is_memory_badge_visible() -> bool:
+	return _memory_box != null and _memory_box.visible
+
+
+func _rebuild_memory_hint() -> void:
+	if _memory_hint != null and is_instance_valid(_memory_hint):
+		_memory_hint_box.remove_child(_memory_hint)   # out of the layout at once (the badge must not keep its height)
+		_memory_hint.queue_free()
+	var k := Kit.action_key_text("pause")
+	var key := "ui.memories.badge_hint_menu" if bool(_memory.get("from_menu", false)) else "ui.memories.badge_hint"
+	_memory_hint = Kit.controls_row([[k if k != "" else Kit.key_name(KEY_ESCAPE), Kit.t(key)]], BoxContainer.ALIGNMENT_BEGIN)
+	_memory_hint_box.add_child(_memory_hint)
+	_memory_box.reset_size()
+	_memory_box.reset_size.call_deferred()
 
 
 # ================================================================ interaction prompt
@@ -184,7 +254,7 @@ func _target_state() -> String:
 	return str(_prompt_target.prompt_state())
 
 
-## "new": amber spark after the verb; "found": dimmed verb + tick; "": plain story prompt.
+## "new": amber spark after the verb; "task": side-task mark (§12.9); "found": dimmed verb + tick; "": plain story prompt.
 func _apply_prompt_state(state: String) -> void:
 	_prompt_state = state
 	match state:
@@ -196,6 +266,11 @@ func _apply_prompt_state(state: String) -> void:
 			_prompt_mark.texture = Kit.ex_tex("icons/mark_seen.png")
 			_prompt_mark.visible = _prompt_mark.texture != null
 			_prompt_text.add_theme_color_override("font_color", Kit.C_TEXT if Kit.high_contrast() else Kit.C_TEXT_DIM)
+		"task":   # §12.9: the next step of a side task (falls back to the "new" spark)
+			var tt: Texture2D = Kit.optional_tex("res://assets/ui/tasks/mark_task.png")
+			_prompt_mark.texture = tt if tt != null else Kit.ex_tex("icons/mark_new.png")
+			_prompt_mark.visible = _prompt_mark.texture != null
+			_prompt_text.remove_theme_color_override("font_color")
 		_:
 			_prompt_mark.visible = false
 			_prompt_text.remove_theme_color_override("font_color")
@@ -204,6 +279,8 @@ func _apply_prompt_state(state: String) -> void:
 func refresh_prompt_key() -> void:
 	if _prompt_key == null:
 		return
+	if not _memory.is_empty() and _memory_hint_box != null:
+		_rebuild_memory_hint()
 	var k := Kit.action_key_text(_prompt_action)
 	_prompt_key.text = k if k != "" else "?"
 	_prompt_keycap.visible = k != ""
@@ -275,7 +352,7 @@ func show_chapter(title: String, sub := "", kicker := "", hold := 3.6) -> void:
 	if kicker == "":
 		var who = Kit.svc("Story").get("active_character") if Kit.svc("Story") != null else null
 		kicker = Kit.char_name(str(who)) if who != null and str(who) != "" and str(who) != "none" else ""
-	_chapter_kicker.text = kicker.to_upper()
+	_chapter_kicker.text = kicker.to_upper().replace("ß", "SS")
 	_chapter_kicker.visible = kicker != ""
 	_chapter_title.text = title
 	_chapter_sub.text = sub
@@ -325,7 +402,7 @@ func toast(text: String, kind := "") -> void:
 
 
 func _guess_kind(text: String) -> String:
-	for pair in [["ui.toast.evidence", "evidence"], ["ui.toast.discovery", "discovery"], ["ui.toast.history", "history"]]:
+	for pair in [["ui.toast.evidence", "evidence"], ["ui.toast.discovery", "discovery"], ["ui.toast.history", "history"], ["ui.toast.task_new", "task_new"], ["ui.toast.task_done", "task_done"]]:
 		if not Kit.has_key(pair[0]):
 			continue
 		var prefix := Kit.t(pair[0]).split("{")[0]
@@ -378,6 +455,8 @@ func _spawn_toast(text: String, kind: String) -> void:
 			body = body.substr(0, m.get_start())
 	elif kind == "history":
 		body = _strip_prefix(text, "ui.toast.history")
+	elif kind == "task_new" or kind == "task_done":
+		body = _strip_prefix(text, "ui.toast." + kind)
 	var p := Kit.panel("PlatePanel")
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var h := Kit.hbox(16)
@@ -396,8 +475,10 @@ func _spawn_toast(text: String, kind: String) -> void:
 		kick_text = Kit.t("ui.explore.toast.discovery_kicker")
 	elif kind == "history":
 		kick_text = Kit.t("ui.history.kicker")
+	elif kind == "task_new" or kind == "task_done":
+		kick_text = Kit.t("ui.toast." + kind).split("{")[0].strip_edges().trim_suffix(":")
 	if kick_text != "":
-		var kl := Kit.label(kick_text.to_upper(), "KickerLabel")
+		var kl := Kit.label(kick_text.to_upper().replace("ß", "SS"), "KickerLabel")
 		if kind == "history":
 			kl.add_theme_color_override("font_color", Kit.C_TEXT_DIM)
 		if counter != "":
@@ -459,7 +540,15 @@ func on_modal_changed(top: Control) -> void:
 
 func _update_visibility() -> void:
 	var play := _enabled and not _suppressed
-	_objective_box.visible = play and not _objective_ids.is_empty()
+	_objective_box.visible = play and not _objective_ids.is_empty() and _memory.is_empty()
+	if _memory_box != null:
+		var was := _memory_box.visible
+		_memory_box.visible = play and not _memory.is_empty()
+		if _memory_box.visible and not was and is_inside_tree():
+			# Kit.appear slides back to the position it finds: shown again while an earlier slide still runs (a
+			# panel opened and closed quickly), the badge would otherwise stay shifted to the left for good
+			_memory_box.position = MARGIN
+			Kit.appear(_memory_box, 0.4, Vector2(-18, 0))
 	_prompt.visible = play and _prompt_wanted
 	if not _enabled:
 		_chapter.visible = false

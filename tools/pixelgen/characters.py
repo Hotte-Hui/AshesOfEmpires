@@ -4,6 +4,7 @@
     py -3 -P tools/pixelgen/characters.py alexei vendor (some characters)
     py -3 -P tools/pixelgen/characters.py --portraits   (additionally run the portrait generator;
                                                          portraits are owned by chargen_portrait*)
+    py -3 -P tools/pixelgen/characters.py --out=DIR     (review run: everything below DIR/assets/characters)
 
 Outputs (contract: documentation/TECHNICAL_ARCHITECTURE.md section 4):
     assets/characters/<id>/sheet.png, sheet_n.png, sheet.json
@@ -57,13 +58,17 @@ ANIMS = {
     'gesture_side': ('side', A.gesture_side, 7, False),
     'work_side': ('side', A.work_side, 6, True),
     'blink_front': ('front', A.blink_front, 9, False),
+    'talk_front': ('front', A.talk_front, 7, True),      # round 7: talking while facing the camera
+    'talk_back': ('back', A.talk_back, 7, True),         # round 7: talking with the back to the camera
 }
 VARIANTS = {
     'idle_side': (['blink_side', 'blink_side', 'look_side', 'gesture_side'], [2.2, 5.5]),
     'idle_front': (['blink_front'], [2.5, 6.0]),
 }
+# Rows are looked up by name everywhere; new rows are APPENDED so existing row indices never move.
 PROTAG = ['idle_side', 'walk_side', 'idle_front', 'walk_front', 'idle_back', 'walk_back', 'inspect_side',
-          'interact_side', 'talk_side', 'blink_side', 'look_side', 'gesture_side', 'blink_front']
+          'interact_side', 'talk_side', 'blink_side', 'look_side', 'gesture_side', 'blink_front',
+          'talk_front', 'talk_back']
 NPC = ['idle_side', 'walk_side', 'idle_front', 'talk_side', 'blink_side', 'look_side', 'gesture_side',
        'blink_front']
 ROWS = {
@@ -85,6 +90,9 @@ ROWS = {
     'vendor': NPC + ['work_side'],
     'worker_b': NPC + ['work_side'],
 }
+# every NPC with a front view can also talk facing the camera (round 7; appended, see above)
+ROWS = {k: (list(v) + ['talk_front'] if 'idle_front' in v and 'talk_front' not in v else list(v))
+        for k, v in ROWS.items()}
 
 
 def ground_speed(spec, anim):
@@ -131,7 +139,7 @@ def build_sheet(cid: str):
     os.makedirs(d, exist_ok=True)
     Image.fromarray(sheet, 'RGBA').save(os.path.join(d, 'sheet.png'))
     Image.fromarray(nsheet, 'RGBA').save(os.path.join(d, 'sheet_n.png'))
-    with open(os.path.join(d, 'sheet.json'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(d, 'sheet.json'), 'w', encoding='utf-8', newline='\n') as f:
         json.dump(meta, f, indent=1)
     if cid in CAST_HIST:
         # same rows / poses with the historical insignia -> sheet_hist.png (resolved by Symbols.pick at runtime)
@@ -270,7 +278,17 @@ def preview_relight(sheets: dict):
     up(o, 3).save(os.path.join(PREV, 'normal_relight_test.png'))
 
 
+def set_out(root):
+    """Review run: write sheets and previews below <root>/assets/characters instead of the project."""
+    global OUT, PREV
+    OUT = os.path.join(os.path.abspath(root), 'assets', 'characters')
+    PREV = os.path.join(OUT, '_preview')
+
+
 def main(argv):
+    for a in argv[1:]:
+        if a.startswith('--out='):
+            set_out(a[6:])
     os.makedirs(PREV, exist_ok=True)
     open(os.path.join(PREV, '.gdignore'), 'a').close()
     args = [a for a in argv[1:] if not a.startswith('--')]

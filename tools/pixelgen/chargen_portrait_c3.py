@@ -1,837 +1,775 @@
-"""chargen_portrait_c3 -- 112x112 dialogue portraits (bust, 3/4 view facing right) for the Chapter 3 cast.
+"""chargen_portrait_c3 -- dialogue portraits of the Chapter 3 cast on the round-2 portrait pipeline.
 
-Same method as chargen_portrait.py (whose primitives are imported, nothing there is modified):
-analytic ellipsoid busts ray-cast into per-group depth buffers, 2.5D cast shadows, one warm key light
-(front-right-top), deep ambient, cool back rim, posterised ramps with an ordered-dither band, selective
-outlines; eyes / brows / mouths are hand-designed pixel stamps placed at projected 3D landmarks.
-Additions here:
-  * two new looks: 'veltrava' (slate-blue dawn station) and 'palais' (navy-teal conference palace)
-  * per-character stamp sets (Elena has her own eyes / brows / mouths and creases), and per-expression
-    head poses (small turns / tilts) so the four expressions act instead of only swapping features
-Expressions: neutral, concerned, determined, surprised (portrait.json contract).
-Deterministic: no randomness, nothing sampled from reference images.
+Round 7 (2026-11-06).  The first version of this module (cloud session, round 1) imported the first-generation
+ellipsoid-bust API of chargen_portrait.py, which master had already replaced by the round-2 pipeline -- it no
+longer imported at all, and its static 4-frame strips had no talking mouth and no blink.  This version
+registers the seven Chapter-3 speakers in chargen_portrait2_cast.CAST, so chargen_portrait2 builds them like
+every other speaker: signed-distance sculpted busts, hand-designed eye / brow / mouth features, 4 expressions x
+6 states (rest, talk half / open, blink ...) in portrait_anim.png + the static portrait.png strip.
+
+    py -3 -P tools/pixelgen/chargen_portrait2.py elena kessler     (some C3 speakers)
+    py -3 -P tools/pixelgen/chargen_portrait2.py --jobs=8          (every speaker, one process each)
+
+Every face is its own: nose, chin / jaw, eye shape and brows differ per person (head params, eye_shapes(),
+brow_pts), see documentation/asset_manifest_parts/portraits_r7.md.  Costumes follow C3_DESIGN.md section 5.
+No regime insignia: the border officer's cap badge is the Free City's bridge, the conductor's the railway's
+winged wheel (no state emblem).  Deterministic: no randomness, no image inputs.
 """
 from __future__ import annotations
 
-import json
-import math
-import os
-
 import numpy as np
-from PIL import Image
 
-import chargen_portrait as PT
-from chargen_portrait import (BERLIN_FEAT, EXPRESSIONS, H, W, Look, Scene, add_head, background, cloth_folds,
-                              dither_mask, face_colors, feat, head_frame, hexc, local_coords, project, ramp, rotm,
-                              shade_portrait, stamp)
+import chargen_portrait2_cast as PC
+import chargen_portrait2_face as FC
+import chargen_portrait2_sdf as S
+from chargen_portrait2_cast import (BROWS_STD, FEMALE, MOUTH_STD, POSES_STD, SKIN_TH, _female_eyes, _local,
+                                    _rgb, band_on, coat_layers, ear_detail, eye_bags, glasses, hair_short,
+                                    lapels, layered_front, moustache, pass_fur, pass_grain, pass_knit,
+                                    pass_strands, peaked_cap, rollneck, scarf_wrap, skin_styles, strap,
+                                    stubble, surface_buttons, tie, tie_knot_collar, wrinkles)
+from chargen_portrait2_paint import MatStyle, ramp
 
-# ----------------------------------------------------------------------------------- looks
-LOOK_VELTRAVA = dict(bg=ramp('#05070D', '#0A0F19', '#101724', '#172131', '#1F2B3D'),
-                     rim=ramp('#3C4C68', '#94A4C4'), glow=(98, 30, 70))
-LOOK_PALAIS = dict(bg=ramp('#05080A', '#0A1215', '#101B1F', '#172528', '#1F2F31'),
-                   rim=ramp('#33515C', '#88A8B8'), glow=(100, 32, 72))
+E = S.Ellipsoid
 
-SKIN_V = ramp('#0A0E1A', '#1A1C2E', '#3C2C3C', '#6C4446', '#A06650', '#D09260', '#F0C482')
-SKIN_W = ramp('#0A0E1A', '#1B1C2E', '#3E2D3E', '#704648', '#A46A55', '#D49767', '#F2C98C')   # women
-SKIN_P = ramp('#090E14', '#191C28', '#3C2C38', '#6E4644', '#A2684E', '#D2945E', '#F0C47E')   # palais
-
-VELTRAVA_FEAT = dict(BERLIN_FEAT, white_dk='#3A3C4E', white_dk2='#282A3A', lid_dk='#3A2C3C',
-                     crease_dk='#2E2638')
-PALAIS_FEAT = dict(BERLIN_FEAT, white_dk='#383E48', white_dk2='#262C36', lid_dk='#382C36')
-
-GENERIC = dict(eyes=PT.EYES, brows=PT.BROWS, mouths=PT.MOUTHS, creases=PT.CREASES)
+# ----------------------------------------------------------------------------------- palettes
+# dawn station: navy core, violet shadow, warm lamp half-tones; palace: navy-teal core, cool daylight
+SKIN_VELTRAVA = ramp('#0a0e18', '#1c1c2b', '#392a39', '#5f3c45', '#8b5a51', '#b57c63', '#d6a27f', '#edc8a1')
+SKIN_PALAIS = ramp('#081014', '#1a1c27', '#382a35', '#5e3b41', '#8a594f', '#b47b61', '#d5a07d', '#ecc6a0')
+SKIN_OLD = ramp('#0a0e18', '#1e1c2a', '#3c2c39', '#624148', '#8e6058', '#b6846f', '#d6aa8f', '#ecceb3')
+RIM_V = '#7f93b4'          # slate dawn
+RIM_P = '#7fa2ae'          # palace window light
 
 
-# ----------------------------------------------------------------------------------- rendering
-def draw_features_c3(img, sc, info, expr, cols, skin_mask, stamps, extra=None, creases=True, nostril=True,
-                     mouth=True):
-    val = info['val']
-
-    def lit_at(x, y):
-        xi, yi = int(np.clip(round(x), 0, W - 1)), int(np.clip(round(y), 0, H - 1))
-        return val[yi, xi] > 0.30
-
-    for side in ('near', 'far'):
-        x, y, z = project(sc, 'eye_' + side[0])
-        rows, anc = stamps['eyes'][side][expr]
-        stamp(img, rows, x, y, face_colors(cols, lit_at(x, y)), mask=skin_mask, anchor=anc)
-        x, y, z = project(sc, 'brow_' + side[0])
-        rows, anc = stamps['brows'][side][expr]
-        stamp(img, rows, x, y, face_colors(cols, lit_at(x, y)), mask=skin_mask, anchor=anc)
-    if mouth:
-        x, y, z = project(sc, 'mouth')
-        rows, anc = stamps['mouths'][expr]
-        stamp(img, rows, x, y, face_colors(cols, lit_at(x, y)), mask=skin_mask, anchor=anc)
-    for where, rows, anc in (stamps['creases'][expr] if creases else []):
-        if where == 'brow_mid':
-            xn, yn, _ = project(sc, 'brow_n')
-            xf, yf, _ = project(sc, 'brow_f')
-            x, y = (xn + xf) / 2 + 0.5, (yn + yf) / 2 + 1
-        else:
-            x, y, _ = project(sc, where)
-        stamp(img, rows, x, y, face_colors(cols, lit_at(x, y)), mask=skin_mask, anchor=anc)
-    if nostril:
-        x, y, _ = project(sc, 'nostril')
-        stamp(img, 'nn', x, y, {'n': cols['nostril']}, mask=skin_mask, anchor=(1, 0))
-    if extra:
-        extra(img, sc, info, expr, cols, skin_mask, lit_at)
+def lip_of(sk, warm=0):
+    """Lip ramp derived from a skin ramp: same dark end, a little redder in the mid tones."""
+    base = [np.asarray(c, int) for c in sk]
+    out = []
+    for i, c in enumerate(base):
+        if 2 <= i <= 6:
+            c = c + np.array([10 + warm, -6, -4]) * (1 if i < 6 else 0.5)
+        out.append('#%02x%02x%02x' % tuple(int(v) for v in np.clip(c, 0, 255)))
+    return ramp(*out)
 
 
-def finish_c3(sc, look_d, ramps, expr, feat_cols, extra=None, creases=True, stamps=None, pre=None, **kw):
-    """Composite, shade, background, features.  `pre(img, sc, info)` runs before the feature stamps
-    (cloth textures); `extra` runs after them (spectacles, badges, props)."""
-    sc.composite()
-    look = Look(rim_cols=look_d['rim'])
-    img, info = shade_portrait(sc, look, ramps)
-    out = background(look_d['bg'], look_d.get('glow'))
-    occ = info['occ']
-    out[occ] = img[occ]
-    if pre:
-        pre(out, sc, info)
-    skin_mask = np.zeros((H, W), bool)
-    if 'skin' in sc.mat_names:
-        skin_mask = (sc.mat == sc.mat_names.index('skin')) & (sc.grp == sc.order.index('head'))
-    draw_features_c3(out, sc, info, expr, feat_cols, skin_mask, stamps or GENERIC, extra, creases=creases, **kw)
-    return out, info
+def look_v(**kw):
+    d = dict(key=(0.58, -0.42, 0.70), rim=(-0.80, -0.34, -0.50), ambient=0.07, bg='veltrava', glow=(0.80, 0.22))
+    d.update(kw)
+    return d
 
 
-def shoulders(sc, cx=54.0, yaw=20.0, mat='coat', width=1.0, drop=0.0, z=0.0, arm_mat=None):
-    """add_shoulders with the upper arms in their own groups ('arm_n' viewer-left, 'arm_f') so arm
-    details (armbands) can be addressed."""
-    bf = (np.array([cx, 0.0, z]), rotm(yaw, 0.0, 0.0), 1.0)
-    B = dict(frame=bf, group='body', mat=mat)
-    sc.ellipsoid((0, 108 + drop, -6), (33 * width, 30, 18), k=0, **B)
+def look_p(**kw):
+    d = dict(key=(0.56, -0.44, 0.71), rim=(-0.80, -0.30, -0.50), ambient=0.08, bg='palais', glow=(0.78, 0.20))
+    d.update(kw)
+    return d
+
+
+# ----------------------------------------------------------------------------------- head items
+def homburg(M, hp, tilt=(4.0, -2.0), y0=-12.8, z0=-5.0, band_r=(17.2, 21.4), crown_h=15.5, brim_w=8.6):
+    """Homburg: stiff felt crown with ONE centre dent (gutter crown, no front pinches), grosgrain band and
+    a brim curled up evenly all round (bound edge).  Hat frame origin = centre of the band's lower edge."""
+    felt, band, brim_m = M('felt'), M('ribbon'), M('brim')
+    hf = S.Frame((0.0, y0, z0), S.rot(0, tilt[0], tilt[1]))
+    rx, rz = band_r
+
+    def tap(P):
+        s_ = 1.0 + 0.10 * np.clip(-P[:, 1] / crown_h, 0, 1)
+        off = np.zeros_like(P)
+        off[:, 0] = P[:, 0] - P[:, 0] * s_
+        off[:, 2] = P[:, 2] - P[:, 2] * s_
+        return off
+
+    base = S.Warp(S.EllipticCylinder((0, -(crown_h - 4.0) / 2, 0), rx, rz, (crown_h + 4.0) / 2, felt, e=3.6),
+                  tap, lip=1.12)
+    crown = S.Sub(base, S.RoundCone((0, -crown_h - 1.2, -rz * 0.55), (0, -crown_h - 0.6, rz * 0.55), 2.6, 2.6,
+                                    felt), k=2.2)
+    bandn = S.EllipticCylinder((0, -2.2, 0), rx + 0.45, rz + 0.45, 2.0, band, e=0.4)
+
+    def curl(P):
+        x, z = P[:, 0], P[:, 2]
+        r = np.sqrt((x / (rx + brim_w)) ** 2 + (z / (rz + brim_w + 1.0)) ** 2)
+        off = np.zeros_like(P)
+        off[:, 1] = -2.4 * np.clip(r - 0.72, 0, 1) ** 1.5 * 6.0      # edge rolls up all round
+        return off
+
+    brimn = S.Warp(S.EllipticCylinder((0, 0.3, 0.4), rx + brim_w, rz + brim_w + 1.0, 0.75, brim_m, e=0.65),
+                   curl, lip=1.35)
+    hat = S.Union([crown, bandn, brimn])
+    inner = S.Offset(base, -0.7)
+    allowed = S.Union([inner, S.Fn(lambda P: -(P[:, 1] - 1.6), felt)])
+    return dict(node=S.Xform(hat, frame=hf), clip=S.Xform(allowed, frame=hf))
+
+
+def pirozhok(M, hp, tilt=(-2.0, -3.0), y0=-13.4, z0=-4.6, r=(17.0, 20.6), h=9.4, seed=91):
+    """Karakul 'pirozhok': a brimless oval fur toque, flat crown with a lengthwise crease, worn level."""
+    m = M('karakul')
+    hf = S.Frame((0.0, y0, z0), S.rot(0, tilt[0], tilt[1]))
+    rx, rz = r
+    def taper(P):
+        s_ = 1.0 - 0.07 * np.clip(-P[:, 1] / h, 0, 1)
+        off = np.zeros_like(P)
+        off[:, 0] = P[:, 0] - P[:, 0] / s_
+        off[:, 2] = P[:, 2] - P[:, 2] / s_
+        return off
+
+    body = S.Warp(S.EllipticCylinder((0, -h / 2 + 0.4, 0), rx + 0.6, rz + 0.6, h / 2 + 0.4, m, e=2.6), taper,
+                  lip=1.12)
+    body = S.Sub(body, S.RoundCone((0, -h - 0.6, -rz * 0.7), (0, -h - 0.6, rz * 0.7), 1.6, 1.6, m), k=1.6)
+    body = S.Displace(body, lambda P: S.vnoise3(P, 1.1, seed) + 0.5 * S.vnoise3(P, 2.4, seed + 3), amp=0.7,
+                      lipschitz=1.4)
+    inner = S.Offset(S.EllipticCylinder((0, -h / 2, 0), rx, rz, h / 2 + 0.4, m, e=2.0), -0.6)
+    allowed = S.Union([inner, S.Fn(lambda P: -(P[:, 1] - 1.0), m)])
+    return dict(node=S.Xform(body, frame=hf), clip=S.Xform(allowed, frame=hf))
+
+
+def hair_swept(M, hp, mat='hair', hairline=-13.4, thick=2.4, part_x=6.0, nape_bun=(-0.5, 6.5, -21.5),
+               bun_r=(7.4, 6.4, 5.8), seed=95):
+    """Hair parted on the far side and swept back over the ears into a low chignon at the nape (Elena):
+    a full shell over the skull, a swell where it sweeps back over the near ear, the chignon behind."""
+    m = M(mat)
+    sc, sr = np.array(hp['skull_c']), np.array(hp['skull_r'])
+    shell = S.Offset(E(sc + np.array([0.0, -0.5, 0.0]), sr, m), thick, m)
+
+    def region(P):
+        x, y, z = P[:, 0], P[:, 1], P[:, 2]
+        # the hairline dips a little towards the temples and rises at the parting
+        front = np.minimum(y - hairline - 0.16 * np.abs(x) + 1.4 * np.exp(-((x - part_x) / 2.5) ** 2), z - 5.5)
+        side = np.minimum(y - 7.0, z + 3.0)              # covers the ear and sweeps back
+        return np.maximum(np.maximum(front, side), y - 12.5)
+
+    hairn = S.Inter(shell, S.Fn(region, m))
+    swell = S.Inter(E((-9.8, -6.5, -1.0), (5.0, 6.8, 9.0), m),
+                    S.Fn(lambda P: np.minimum(P[:, 2] - 2.5, hairline + 2.0 - P[:, 1]), m))
+    bun = S.Displace(E(nape_bun, bun_r, m), lambda P: S.vnoise3(P, 1.7, seed), amp=0.35)
+    return S.Union([hairn, swell, bun], k=[1.6, 1.8])
+
+
+def hair_curls(M, hp, mat='hair', hairline=-13.2, nape=7.0, thick=2.4, seed=97):
+    """Short set hair in soft curls (a 1960s office perm): a thick lumpy cap ending above the collar."""
+    m = M(mat)
+    sc, sr = np.array(hp['skull_c']), np.array(hp['skull_r'])
+    shell = S.Offset(E(sc + np.array([0, -0.6, -0.4]), sr, m), thick, m)
+
+    def region(P):
+        x, y, z = P[:, 0], P[:, 1], P[:, 2]
+        front = np.minimum(y - hairline - 0.08 * np.abs(x), z - 5.5)
+        side = np.minimum(y - 2.5, z + 1.0)
+        ear = np.maximum(np.maximum(y + 2.5, -y + 9.0), np.maximum(z + 1.0, -8.5 - z))
+        return np.maximum(np.maximum(np.maximum(front, side), y - nape), -ear)
+
+    node = S.Inter(shell, S.Fn(region, m))
+    return S.Displace(node, lambda P: S.vnoise3(P, 1.5, seed) + 0.45 * S.vnoise3(P, 3.0, seed + 1), amp=1.15,
+                      lipschitz=1.5)
+
+
+def hair_tousled(M, hp, mat='hair', hairline=-14.6, thick=1.8, seed=99):
+    """Fair tousled hair, bareheaded: fuller on top, a loose forelock, short at the neck (journalist)."""
+    m = M(mat)
+    sc, sr = np.array(hp['skull_c']), np.array(hp['skull_r'])
+    shell = S.Offset(E(sc + np.array([0.0, -1.4, 0.4]), sr * np.array([1.0, 1.03, 1.0]), m), thick, m)
+
+    def region(P):
+        x, y, z = P[:, 0], P[:, 1], P[:, 2]
+        front = np.minimum(y - hairline + 0.9 * np.clip(x - 2.0, 0, 6) * 0.25, z - 7.5)
+        side = np.minimum(y - 1.0, z + 2.0)
+        ear = np.maximum(np.maximum(y + 3.0, -y + 9.0), np.maximum(z + 2.0, -9.0 - z))
+        return np.maximum(np.maximum(np.maximum(front, side), y - 8.0), -ear)
+
+    node = S.Inter(shell, S.Fn(region, m))
+    lock = E((3.5, -14.6, 12.0), (4.6, 2.2, 3.0), m, R=S.rot(0, -20, 18))
+    node = S.Union([node, lock], k=1.6)
+    return S.Displace(node, lambda P: S.vnoise3(P * np.array([1.0, 0.7, 1.0], np.float32), 1.9, seed), amp=0.7,
+                      lipschitz=1.35)
+
+
+def temple_wave(M, hp, mat='hair', seed=107):
+    """A soft wave of hair over the near temple and ear, below a hat brim (Voronova)."""
+    m = M(mat)
+    w = E((-11.6, -5.0, 1.0), (3.4, 5.6, 6.6), m, R=S.rot(0, 0, -12))
+    w = S.Inter(w, S.Fn(lambda P: P[:, 2] - 6.0, m))
+    return S.Displace(w, lambda P: S.vnoise3(P, 1.6, seed), amp=0.4)
+
+
+def fur_collar(M, mat='karakul', y=-1.0, r=13.2, tube=4.6, seed=93):
+    """Karakul shawl collar: a fur roll round the neck that runs down both lapels (torso-local)."""
+    m = M(mat)
+    parts = []
+    for i in range(13):
+        a = np.radians(-150 + i * 25.0)
+        parts.append(E((r * np.sin(a), y + 1.6 * (1 - np.cos(a)), -1.5 + (r - 1.0) * np.cos(a)),
+                       (tube + 1.2, tube, tube + 0.5), m))
+    for sx in (1, -1):
+        parts.append(S.RoundCone((sx * 6.0, y + 6.0, 11.0), (sx * 3.4, y + 26.0, 13.0), 4.2, 2.6, m))
+    node = S.Union(parts, k=2.6)
+    return S.Displace(node, lambda P: S.vnoise3(P, 1.3, seed), amp=0.6, lipschitz=1.3)
+
+
+# ----------------------------------------------------------------------------------- 2D passes
+def pass_curls(mat='karakul', seed=101, frame='hf', light=1, dark=1):
+    """Tight karakul / perm curls: little C-shaped clusters (a lit pixel over a dark one) on a coarse lattice,
+    so the pile reads as curls, not as noise."""
+    def fn(spec, G, tone, v):
+        M = G['M']
+        if mat not in M.names:
+            return tone
+        m = (G['d'].mat == M.names.index(mat)) & (tone >= 1)
+        ys, xs = np.nonzero(m)
+        if not len(xs):
+            return tone
+        tone = tone.copy()
+        r = PC._hash2(xs // 2, ys // 2, seed)
+        sub = ((xs + (ys // 2) % 2) % 2 == 0) & (ys % 2 == 0)
+        for x, y, rv, s_ in zip(xs, ys, r, sub):
+            if not s_:
+                continue
+            if rv < 0.55 and tone[y, x] >= 2:
+                tone[y, x] += light
+                if y + 1 < tone.shape[0] and m[y + 1, x] and tone[y + 1, x] >= 2:
+                    tone[y + 1, x] -= dark
+        return tone
+    return fn
+
+
+def pass_badge(at, rows, cols, frame='hf'):
+    """Small cap badge drawn as absolute pixels on the cap band (projected from the head frame)."""
+    def fn(spec, G, rgb, v, expr, row):
+        from chargen_portrait2 import zoom_pt
+        p = zoom_pt({'zoom': G.get('zoom', 1.0)}, G[frame].to_view(at))
+        x0, y0 = int(np.floor(p[0])), int(np.floor(p[1]))
+        h, w = rgb.shape[:2]
+        for j, r in enumerate(rows):
+            for i, ch in enumerate(r):
+                if ch == '.':
+                    continue
+                x, y = x0 - len(r) // 2 + i, y0 - len(rows) // 2 + j
+                if 0 <= x < w and 0 <= y < h and G['d'].hit[y, x]:
+                    rgb[y, x] = _rgb(cols[ch])
+        return rgb
+    return fn
+
+
+def pass_armband(x_range, y_range, white='#d9dde2', white_d='#7e8794', stripe='#46628c', stripe_d='#22324c',
+                 mats=('coat',), frame='tf'):
+    """The commission's white armband with a slate-blue stripe on the near upper arm (torso frame box)."""
+    def fn(spec, G, rgb, v, expr, row):
+        M = G['M']
+        ids = [M.names.index(n) for n in mats if n in M.names]
+        m = np.isin(G['d'].mat, ids)
+        if not m.any():
+            return rgb
+        L = _local(G, frame, m)
+        ys, xs = np.nonzero(m)
+        on = (L[:, 0] > x_range[0]) & (L[:, 0] < x_range[1]) & (L[:, 1] > y_range[0]) & (L[:, 1] < y_range[1])
+        band_lo = y_range[0] + (y_range[1] - y_range[0]) * 0.62
+        for x, y, o, ly in zip(xs, ys, on, L[:, 1]):
+            if o:
+                lit = v[y, x] > 0.28
+                if ly > band_lo:
+                    rgb[y, x] = _rgb(stripe if lit else stripe_d)
+                else:
+                    rgb[y, x] = _rgb(white if lit else white_d)
+        return rgb
+    return fn
+
+
+def pencil_ear(spec, G, rgb, v, expr, row):
+    """Frau Brunner's pencil behind the near ear: a short yellow stroke with a dark point."""
+    lm = G['lmv']['ear_r']
+    x0, y0 = int(np.floor(lm[0])) + 1, int(np.floor(lm[1])) - 5
+    h, w = rgb.shape[:2]
+    cols = ['#d8b04c', '#c9a23a', '#c9a23a', '#a8842c', '#e0cfa0', '#3a2c20']
+    for k, c in enumerate(cols):
+        x, y = x0 + k, y0 + k // 2
+        if 0 <= x < w and 0 <= y < h:
+            rgb[y, x] = _rgb(c)
+    return rgb
+
+
+def loose_strand(spec, G, cv, expr, mouth_state, blink, v):
+    """One strand escaped from Elena's chignon at the near temple (end of a long day -- not glamour)."""
+    PC.head_line(G, cv, [(-9.2, -11.0, 9.4), (-10.0, -6.5, 9.0), (-9.4, -2.5, 9.2)], -2,
+                 allow_mats=('skin', 'ear'))
+
+
+def cheek_hollow(spec, G, cv, expr, mouth_state, blink, v):
+    """Gaunt cheeks under the cheekbones (conductor, Kessler): a short darker stroke."""
     for sx in (-1, 1):
-        sc.ellipsoid((sx * 26 * width, 94 + drop, -7), (16 * width, 9.5, 13), k=7, **B)
-    am = arm_mat or mat
-    for sx, g in ((-1, 'arm_n'), (1, 'arm_f')):
-        sc.ellipsoid((sx * 35 * width, 114 + drop, -6), (10.5, 26, 12), k=0, frame=bf, group=g, mat=am)
-    sc.ellipsoid((0, 92 + drop, -16), (28 * width, 12, 10), k=6, **B)
-    return bf
+        PC.head_line(G, cv, [(sx * 9.6, 6.6, 9.6), (sx * 8.6, 10.6, 9.4)], -1)
 
 
-def mat_mask(sc, name, group=None):
-    if name not in sc.mat_names:
-        return np.zeros((H, W), bool)
-    m = sc.mat == sc.mat_names.index(name)
-    if group is not None:
-        m &= sc.grp == sc.order.index(group) if group in sc.order else False
-    return m
+def chin_cleft(spec, G, cv, expr, mouth_state, blink, v):
+    PC.head_line(G, cv, [(0.2, 21.0, 15.2), (0.2, 23.6, 14.6)], -1)
 
 
-def tone_shift(img, sc, info, ramps, name, sel, d):
-    """Re-colour pixels of material `name` in `sel` with their tone shifted by d."""
-    R = np.stack(ramps[name])
-    t = np.clip(info['tone'] + d, 0, len(R) - 1)
-    m = sel & mat_mask(sc, name)
-    img[m] = R[t][m]
+# ----------------------------------------------------------------------------------- shared
+def groups_std(extra=None):
+    g = {'skin': 0, 'lip': 0, 'ear': 0, 'hair': 0, 'neck': 1, 'coat': 4, 'coat_lapel': 8, 'shirt': 5, 'body': 4}
+    g.update(extra or {})
+    return g
 
 
-def hash2(xx, yy, a=73, b=151, mod=23):
-    return (xx * a + yy * b + (xx * yy) % 7 * 31) % mod
+def coat_style(ramp_, th, rim, dither=0.05):
+    return {'coat': MatStyle(ramp_, th, dither=dither, rim=rim), 'coat_lapel': MatStyle(ramp_, th, rim=rim)}
 
 
-def wrinkles(img, sc, skin_mask, lit_at, ramp_):
-    """Age lines: crow's feet at the near eye and a nasolabial fold (cf. Emil)."""
-    R = np.stack(ramp_)
-    x, y, _ = project(sc, 'eye_n')
-    stamp(img, ['c.', '.c', 'c.'], x - 6, y, {'c': R[2]}, mask=skin_mask)
-    x, y, _ = project(sc, 'nostril')
-    stamp(img, ['c..', '.c.', '.c.', '..c'], x - 5, y + 1, {'c': R[2] if not lit_at(x - 4, y + 2) else R[3]},
-          mask=skin_mask)
-
-
-def spectacles(img, sc, lit_at, frame_c, glint, glint2, rx=(4, 3), ry=3.4, temple=True, thin=False):
-    """Round / oval spectacles over both eyes, bridge, temple arm (cf. Emil), optionally thin."""
-    for side, r in (('n', rx[0]), ('f', rx[1])):
-        x, y, _ = project(sc, 'eye_' + side)
-        cx, cy = int(round(x)), int(round(y))
-        n = 40 if thin else 48
-        for a in np.linspace(0, 2 * np.pi, n, endpoint=False):
-            px_ = int(round(cx + 0.5 + math.cos(a) * (r + 0.6)))
-            py_ = int(round(cy + 0.5 + math.sin(a) * ry))
-            if thin and math.sin(a) > 0.55:
-                continue                     # half-rimmed: no lower rim line
-            if 0 <= px_ < W and 0 <= py_ < H:
-                img[py_, px_] = frame_c
-        if lit_at(cx + 2, cy - 1):
-            img[cy - 2, cx + r - 2] = glint
-            img[cy - 1, cx + r - 1] = glint2
-        else:
-            img[cy - 2, cx + r - 2] = glint2
-    xn, yn, _ = project(sc, 'eye_n')
-    xf, yf, _ = project(sc, 'eye_f')
-    for t in np.linspace(0, 1, 8):
-        bx = int(round(xn + rx[0] + 0.6 + (xf - rx[1] - 0.6 - xn - rx[0] - 0.6) * t))
-        by = int(round(yn - 1 + (yf - yn) * t))
-        img[by, bx] = frame_c
-    if temple:
-        xe, ye, _ = project(sc, 'ear')
-        sk = sc.mat_names.index('skin') if 'skin' in sc.mat_names else -1
-        for t in np.linspace(0, 1, 14):
-            bx = int(round(xn - rx[0] - 0.6 + (xe + 2 - xn + rx[0] + 0.6) * t))
-            by = int(round(yn - 1 + (ye - 2 - yn + 1) * t))
-            if 0 <= bx < W and 0 <= by < H and sc.mat[by, bx] == sk:
-                img[by, bx] = frame_c
+TH6 = [0.05, 0.12, 0.22, 0.36, 0.54, 0.76]
+# softer planes for the women's faces (flatter brow ridge, rounder blocks, shallower sockets, thinner jaw line,
+# fuller cheek pads) -- applied on top of chargen_portrait2_cast.FEMALE
+SOFT = dict(brow_r=(10.8, 1.8, 2.4), brow_c=(0.0, -3.4, 12.4), fore_rad=7.5, mid_rad=6.8, socket_r=(4.0, 2.4, 1.6),
+            jaw_r=(2.0, 2.4, 2.4), malar_r=(4.6, 4.2, 4.0), malar_c=(7.0, 8.0, 12.4))
+TH7 = [0.04, 0.10, 0.19, 0.31, 0.46, 0.64, 0.84]
 
 
 # =================================================================================== ELENA
-# Her own feature stamps: almond eyes with a heavier upper lid (tired, attentive), a soft lower-lid
-# shadow 'u', finer arched brows, a smaller mouth with natural lips (no lipstick).
-ELENA_EYES = {
-    'near': {
-        'neutral': ('''
-            .LLLLLL.
-            LLwWIIWl
-            ..wWICl.
-            ...ccc..''', (4, 1)),
-        'concerned': ('''
-            ...LLLL.
-            .LLwWIIl
-            ..wWICl.
-            ...cccc.''', (4, 1)),
-        'determined': ('''
-            .LLLLLL.
-            ..LLIIL.
-            ..wWICl.
-            ...cc...''', (4, 1)),
-        'surprised': ('''
-            ..LLLL..
-            .LwWWWL.
-            .wWIIWl.
-            .wWICWl.
-            ..cccc..''', (4, 2)),
-    },
-    'far': {
-        'neutral': ('''
-            .LLLL
-            lWIIL
-            .wICl
-            ..cc.''', (2, 1)),
-        'concerned': ('''
-            ..LLL
-            lLWIL
-            .wICl
-            ..cc.''', (2, 1)),
-        'determined': ('''
-            .LLLL
-            .LIIL
-            .wICl
-            ..c..''', (2, 1)),
-        'surprised': ('''
-            .LLL.
-            lWWWL
-            lWIIL
-            .wICl
-            ..cc.''', (2, 2)),
-    },
-}
-ELENA_BROWS = {
-    'near': {
-        'neutral': ('''
-            ....bBBb..
-            ..bBb..bBB
-            .bb.......''', (5, 1)),
-        'concerned': ('''
-            ........bB
-            ......bBB.
-            ...bBBb...
-            .bb.......''', (5, 2)),
-        'determined': ('''
-            ...bBBb...
-            .bBb..bBBB''', (5, 1)),
-        'surprised': ('''
-            ...bBBBb..
-            ..b....bBb
-            .b.......b''', (5, 4)),
-    },
-    'far': {
-        'neutral': ('''
-            .bBb.
-            B...b''', (2, 1)),
-        'concerned': ('''
-            Bb...
-            .bBb.
-            ....b''', (2, 2)),
-        'determined': ('''
-            BBBb.
-            ...bb''', (2, 1)),
-        'surprised': ('''
-            .bBb.
-            b...b''', (2, 4)),
-    },
-}
-ELENA_MOUTHS = {
-    'neutral': ('''
-        .mMMMMm.
-        ..uuuu..''', (4, 0)),
-    'concerned': ('''
-        ..mMMm..
-        .mM..Mm.
-        ..uuu...''', (4, 0)),
-    'determined': ('''
-        mMMMMMMm
-        ..ssss..''', (4, 0)),
-    'surprised': ('''
-        ..MMM...
-        .MDDDM..
-        ..MDM...
-        ...u....''', (4, 1)),
-}
-ELENA_CREASES = {
-    'neutral': [],
-    'concerned': [('brow_mid', '''
-        c.
-        c.''', (1, 0))],
-    'determined': [('brow_mid', '''
-        c.c''', (1, 0))],
-    'surprised': [],
-}
-ELENA_STAMPS = dict(eyes=ELENA_EYES, brows=ELENA_BROWS, mouths=ELENA_MOUTHS, creases=ELENA_CREASES)
-# per-expression head pose: (yaw, pitch, roll, dx, dy) -- small changes so the head acts
-ELENA_POSE = {
-    'neutral': (25.0, 2.0, -3.0, 0.0, 0.0),        # attentive, listening, slight tilt
-    'concerned': (22.0, 6.0, -6.0, -0.5, 1.0),     # chin lowered, more tilt
-    'determined': (28.0, -1.0, -1.0, 0.5, -0.5),   # level gaze, turned towards the listener
-    'surprised': (24.0, -3.5, -2.0, -1.0, -1.0),   # head pulled back
-}
-
-
-def elena_portrait(expr):
-    sc = Scene()
-    yaw, pitch, roll, dx, dy = ELENA_POSE[expr]
-    jd = 1.2 if expr == 'surprised' else 0.0
-    fr = head_frame((53.0 + dx, 50.0 + dy, 0.0), yaw=yaw, pitch=pitch, roll=roll, scale=1.12)
-    add_head(sc, fr, dict(jaw_w=12.2, crown_w=18.0, nose_len=0.9, nose_w=0.82, chin=0.84, jaw_drop=jd,
-                          lip_w=0.88, lip_l=1.12, face_h=0.93))
-
-    def face(L):
-        x, y, z = L[..., 0], L[..., 1], L[..., 2]
-        return (z > 0.5) & (y > -11.6 + 0.024 * x * x)
-
-    def hair_clip(L):
-        return ~face(L) & (L[..., 1] < 10.0)
-    Hh = dict(frame=fr, group='hair')
-    # hair swept back from a side parting (far side), covering the upper ears, into a low chignon
-    sc.ellipsoid((0, -7.8, -2.6), (20.0, 21.9, 23.2), mat='hair', k=0, clip=hair_clip, **Hh)
-    sc.ellipsoid((-6.0, -15.5, 9.0), (11.0, 5.5, 10.0), mat='hair', k=4.0, clip=hair_clip, **Hh)   # wave
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 16.8, -3.0, -4.0), (5.2, 10.0, 11.5), mat='hair', k=4.0,
-                     clip=lambda L: ~face(L) & (L[..., 1] < 7.0), **Hh)                         # over the ears
-    B = dict(frame=fr, group='bun')
-    sc.ellipsoid((0.0, 10.0, -23.5), (11.0, 8.4, 8.6), mat='hair2', k=0, **B)                     # chignon
-    sc.ellipsoid((0.0, 3.5, -20.5), (13.0, 7.5, 7.0), mat='hair2', k=4.0, **B)
-    bf = shoulders(sc, cx=56.0, yaw=18.0, mat='coat', width=0.84, drop=4.0)
-    C_ = dict(frame=bf, group='collar')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 12.0, 90, 1.0), (8.0, 8.0, 8.6), mat='coat2', k=3, **C_)
-    sc.ellipsoid((0, 85, -9), (15, 9, 7), mat='coat2', k=3, **C_)
-    S = dict(frame=bf, group='scarf')
-    sc.ellipsoid((0, 81.5, 0.5), (11.8, 6.2, 11.0), mat='scarf', k=0, **S)                       # high wrap
-    sc.ellipsoid((0, 86.5, 2.0), (13.2, 5.6, 12.0), mat='scarf', k=3.0, **S)
-    sc.ellipsoid((-3.5, 91.0, 9.5), (7.6, 5.6, 5.0), mat='scarf', k=3, **S)
-    sc.ellipsoid((3.5, 100.0, 12.0), (4.4, 10.5, 2.4), R=rotm(0, 0, 8), mat='scarf2', k=1.2, **S)  # end
-    L_ = dict(frame=bf, group='lapel')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 12.5, 104, 15.0), (4.8, 15, 1.3), R=rotm(0, 0, sx * -22), mat='coat2', k=0, **L_)
-    ramps = {
-        'skin': SKIN_W,
-        'hair': ramp('#040407', '#09080C', '#110E12', '#1A1418', '#261C1E', '#352624', '#48342E'),
-        'hair2': ramp('#040407', '#0A080C', '#130F13', '#1D1619', '#2A1E1F', '#3A2A27', '#4E3A32'),
-        'coat': ramp('#05070C', '#0C1016', '#161A22', '#22262E', '#33363E', '#4A4C52', '#66666A'),
-        'coat2': ramp('#05070C', '#0A0E14', '#13171E', '#1E222A', '#2E3138', '#43454C', '#5E5E64'),
-        'scarf': ramp('#0A0508', '#1A0910', '#320E18', '#4E1622', '#6E202E', '#902C38', '#AE4244'),
-        'scarf2': ramp('#0A0508', '#16080E', '#2C0C16', '#46141E', '#641C2A', '#842834', '#A23C40'),
-    }
-
-    def pre(img, sc, info):
-        # hair: fine strands swept back towards the chignon (darker lines in head-local space)
-        Lh = local_coords(sc, fr)
-        hm = mat_mask(sc, 'hair')
-        strands = hm & ((((Lh[..., 1] - 0.45 * Lh[..., 2]) % 4.2) < 0.9) & (info['tone'] >= 2))
-        tone_shift(img, sc, info, ramps, 'hair', strands, -1)
-        sheen = hm & ((((Lh[..., 1] - 0.45 * Lh[..., 2]) % 4.2) > 2.6) & (((Lh[..., 1] - 0.45 * Lh[..., 2]) % 4.2) < 3.2)
-                      & (info['tone'] >= 4))
-        tone_shift(img, sc, info, ramps, 'hair', sheen, +1)
-        # side parting on the far side: a darker line from the hairline back over the crown
-        part = hm & (np.abs(Lh[..., 0] - 7.0 + 0.03 * Lh[..., 2]) < 0.8) & (Lh[..., 1] < -13)
-        tone_shift(img, sc, info, ramps, 'hair', part, -2)
-        # chignon: twisted coil
-        bm_ = mat_mask(sc, 'hair2')
-        coil = bm_ & ((((Lh[..., 0] * 0.9 + Lh[..., 1] * 1.1) % 3.8) < 0.9))
-        tone_shift(img, sc, info, ramps, 'hair2', coil, -1)
-        tone_shift(img, sc, info, ramps, 'hair2', bm_ & ((((Lh[..., 0] * 0.9 + Lh[..., 1] * 1.1) % 3.8) > 2.6)), +1)
-        # wool coat: a few soft folds
-        cloth_folds(img, sc, info, 'coat', ramps, bf, [(-24, 100, -21, 112), (22, 99, 19, 112)])
-        # commission armband on her left (near) upper arm: white band with a slate-blue stripe
-        arm = (sc.grp == sc.order.index('arm_n')) if 'arm_n' in sc.order else np.zeros((H, W), bool)
-        yy = np.mgrid[0:H, 0:W][0]
-        white = ramp('#3A404C', '#5E6672', '#8A929E', '#B4BAC2', '#D4D8DC', '#E8EAEC', '#F4F5F6')
-        slate = ramp('#0E1420', '#18243A', '#22324E', '#2E4466', '#3E5880', '#54709A', '#6C88B0')
-        Wr, Sr = np.stack(white), np.stack(slate)
-        t = np.clip(info['tone'] + 1, 0, 6)
-        bandw = arm & (yy >= 101) & (yy < 112) & ~((yy >= 105) & (yy < 108))
-        bands = arm & (yy >= 105) & (yy < 108)
-        img[bandw] = Wr[t][bandw]
-        img[bands] = Sr[t][bands]
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        # a loose strand escaping at the near temple (end of a long day) -- not glamour
-        x, y, _ = project(sc, 'forehead')
-        stamp(img, ['h..', 'h..', '.h.', '.h.', '..h'], x - 8, y + 6, {'h': hexc('#1A1418')}, mask=skin_mask)
-
-    out, info = finish_c3(sc, LOOK_VELTRAVA, ramps, expr,
-                          feat(VELTRAVA_FEAT, iris='#2C2830', lip='#A8645A', lip_dk='#4A2C34', mouth='#3E1E24',
-                               mouth2='#6A3836', brow='#1E1416', brow2='#3E2C28', lid='#9E6450', lash='#120C12'),
-                          extra, creases=True, stamps=ELENA_STAMPS, pre=pre)
-    return out
+def elena():
+    """Elena Weiss (30s): slim oval face, fine straight nose, small firm chin, alert eyes with a lifted outer
+    corner and fine arched brows; dark hair swept back into a low chignon, one strand loose; wine-red scarf
+    wrapped high, charcoal wool coat, the commission's white armband with the slate stripe."""
+    sk = SKIN_VELTRAVA
+    styles = skin_styles(sk, RIM_V, lip_of(sk, warm=6))
+    styles.update(coat_style(ramp('#06070b', '#0d0e13', '#16171d', '#212229', '#2d2e36', '#3c3d45', '#504f56'),
+                             TH6, RIM_V))
+    styles.update({
+        'hair': MatStyle(ramp('#050406', '#0e0b0d', '#1a1415', '#271d1c', '#372923', '#4a382d'),
+                         [0.05, 0.12, 0.24, 0.40, 0.60], rim='#5a6a86', wrap=0.2),
+        'scarf': MatStyle(ramp('#0c0406', '#1d080d', '#330d16', '#4e1420', '#6c1c2b', '#8a2737', '#a63a45'),
+                          TH6, dither=0.03, rim='#8a7a96'),
+        'shirt': MatStyle(ramp('#0b0c10', '#1a1b21', '#2a2b33'), [0.1, 0.3], rim=RIM_V),
+    })
+    head = dict(FEMALE)
+    head.update(SOFT)
+    head.update(skull_r=(15.2, 16.4, 19.6), mid_h=(10.4, 6.4, 10.8), cheek_c=(9.8, 2.2, 10.2), cheek_r=(3.6, 2.6, 3.4),
+                jaw_angle=(9.0, 13.4, -4.4), low_r=(10.0, 9.6, 11.6),
+                chin_c=(0.0, 21.0, 11.4), chin_h=(3.4, 2.8, 2.9), chin_rad=2.8, chin_pt=(3.0, 21.8, 9.6),
+                nose_root=(0.0, -1.2, 15.6), nose_tip=(0.0, 8.6, 19.3), nose_r=(1.1, 1.5), tip_r=1.95,
+                ala_x=2.0, ala_r=(1.3, 1.3, 1.6), eye_x=6.4, lip_up_r=(3.8, 1.25, 1.4), lip_lo_r=(3.3, 1.6, 1.5),
+                brow_r=(11.2, 2.0, 2.8), neck_r=(6.4, 7.8))
+    return dict(
+        id='elena', city='veltrava', look=look_v(),
+        head=head, zoom=1.18, smooth=2,
+        head_pos=(55.0, 55.0, 0.0), yaw=31.0, pitch=1.0, roll=-1.0,
+        torso_pos=(55.5, 90.5, -0.5), torso_yaw=14.0, torso=dict(width=0.88, depth=0.94, slope=1.4),
+        poses={'neutral': (0, 0, 0), 'concerned': (-2, 3, -2), 'determined': (2, -1, 1), 'surprised': (3, -3, 1)},
+        head_items=[lambda M, hp: hair_swept(M, hp)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.26, v_top=5.0, lapel=True, collar_h=6.0, collar_r=(11.6, 13.2)),
+            lambda M, t: scarf_wrap(M, y=-7.0, r=9.8, tube=4.4, ends=True,
+                                    end_pts=[(-1.0, -3.0, 11.6), (-3.0, 7.0, 13.2), (-3.6, 17.0, 14.0)], seed=7),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck'),
+        groups=groups_std({'scarf': 6}),
+        tone_passes=[pass_strands('hair', seed=14), pass_knit('scarf', ribs=28), pass_grain('coat', 0.05, seed=12)],
+        rgb_passes=[pass_armband((-40.0, -21.0), (24.0, 34.0))],
+        eye=dict(iris='#3e2f28', iris_d='#241a16', sclera='#c7beb2', sclera_d='#6c6a76', lash='#0e080c',
+                 pupil='#08070a', catch='#f2ead8'),
+        brow=dict(col='#1c1214', col_l='#3a2a26'),
+        mouth=dict(line='#46191f', corner='#5e2a2c', inner='#1a0a0d', teeth='#bcaea0', tongue='#733035'),
+        features=dict(
+            eyes=FC.eye_shapes(_female_eyes(), 'lift'),
+            extra=[ear_detail],
+            brows={'neutral': dict(arch=1.1), 'concerned': dict(lift_inner=2.0, lift_outer=-0.4, arch=0.6),
+                   'determined': dict(lift_inner=-1.4, arch=0.4, dy=0.4),
+                   'surprised': dict(dy=-1.8, arch=1.5, lift_inner=0.4)},
+            brow_thick=((2, 1, 1), (1, 1, 1)), brow_pts=((1.8, -4.1, 17.0), (10.2, -3.9, 13.2)), nostril='small',
+            mouth={'neutral': dict(corner_drop=0.1), 'concerned': dict(corner_drop=0.8),
+                   'determined': dict(corner_drop=0.4), 'surprised': dict(parted=2)},
+        ),
+        priority={'scarf': 1},
+    )
 
 
 # =================================================================================== BORDER OFFICER
-def border_officer_portrait(expr):
-    sc = Scene()
-    jd = 2.2 if expr == 'surprised' else 0.0
-    fr = head_frame((53.0, 54.0, 0.0), yaw=26.0, pitch=2.0, roll=-1.5, scale=1.2)
-    add_head(sc, fr, dict(jaw_w=15.2, crown_w=19.0, nose_len=1.05, nose_w=1.12, chin=1.04, jaw_drop=jd,
-                          lip_w=1.0, lip_l=0.9))
-    E = dict(frame=fr, group='head')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 10.5, 12.5, 7.0), (5.4, 5.2, 5.6), mat='skin', k=3, **E)            # jowls
-    sc.ellipsoid((0, -2.0, -4.0), (19.2, 17.0, 20.6), mat='hair', group='hair', frame=fr,
-                 clip=lambda L: (L[..., 2] < 4.0) & (L[..., 1] > -14.0) & (L[..., 1] < 8.0))
-    sc.ellipsoid((0, 10.4, 18.6), (7.0, 2.5, 3.2), mat='stache', group='stache', frame=fr)
-    Hc = dict(frame=fr, group='hat')
-    sc.ellipsoid((0, -16.6, -1.0), (19.4, 3.4, 20.6), mat='capband', k=0, **Hc)
-    sc.ellipsoid((0, -22.5, -2.5), (22.0, 7.0, 23.6), mat='cap', k=2.0, **Hc)
-    sc.ellipsoid((0, -27.6, -2.5), (20.6, 3.0, 22.4), mat='cap', k=2.5, **Hc)
-    sc.ellipsoid((0, -14.2, 14.0), (15.5, 1.7, 10.0), R=rotm(0, -18, 0), mat='visor', k=0,
-                 clip=lambda L: L[..., 2] > 6.0, **Hc)
-    bf = shoulders(sc, cx=57.0, yaw=20.0, mat='coat', width=0.98, drop=4.0)
-    C_ = dict(frame=bf, group='collar')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 11.5, 87, 2), (10.5, 10.5, 10.0), mat='coat2', k=3, **C_)
-    sc.ellipsoid((0, 84, -9), (16, 10, 7), mat='coat2', k=3, **C_)
-    L_ = dict(frame=bf, group='lapel')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 12.0, 104, 15.5), (5.4, 17, 1.4), R=rotm(0, 0, sx * -20), mat='coat2', k=0, **L_)
-    sc.ellipsoid((0, 91, 9.5), (5.5, 3.2, 5.0), mat='tie', group='shirt', frame=bf)
-    ramps = {
-        'skin': SKIN_V,
-        'hair': ramp('#0C0E12', '#1E2026', '#34363A', '#525250', '#76746E', '#9A968C', '#BAB4A6'),
-        'stache': ramp('#0C0C10', '#1C1A1E', '#302C2C', '#4A4440', '#6A625A', '#8A8074', '#A89C8C'),
-        'cap': ramp('#04070D', '#0A1220', '#122036', '#1C2E4A', '#2A4062', '#3E567C', '#587094'),
-        'capband': ramp('#030408', '#070A12', '#0C121E', '#131C2C', '#1C283C', '#283650', '#384864'),
-        'visor': ramp('#020305', '#05070A', '#0A0D12', '#11151C', '#1C222C', '#3A4452', '#7A8696'),
-        'coat': ramp('#04070D', '#0A1220', '#13213A', '#1E3250', '#2E466A', '#445E84', '#5E769A'),
-        'coat2': ramp('#04070D', '#091020', '#111D34', '#1A2C48', '#283E60', '#3C5478', '#566C90'),
-        'shirt': ramp('#14161C', '#2A2C34', '#4A4C52', '#76766E', '#A4A090', '#C8C2AA', '#E0D8BE'),
-        'tie': ramp('#04050A', '#0A0C14', '#10141E', '#18202C', '#22303E', '#2E4050', '#3C5262'),
-    }
-
-    def pre(img, sc, info):
-        cloth_folds(img, sc, info, 'coat', ramps, bf, [(-26, 100, -22, 112), (24, 99, 20, 112)])
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        # Free City badge on the cap band: a small bridge of three arches, white on slate
-        o, R = fr[0], fr[1]
-        p = o + R @ (np.array([0.0, -17.0, 20.2]) * fr[2])
-        stamp(img, ['.wwwww.', 'w.w.w.w', 'ssssss.'], p[0] + 1, p[1], {'w': hexc('#D8DCE0'), 's': hexc('#5C7090')},
-              anchor=(3, 1))
-        # coat buttons (silver)
-        for (bx, by) in ((62, 106), (64, 111)):
-            if sc.mat[by, bx] >= 0:
-                img[by, bx] = hexc('#9CA2AA')
-        wrinkles(img, sc, skin_mask, lit_at, SKIN_V)
-
-    out, info = finish_c3(sc, LOOK_VELTRAVA, ramps, expr, feat(VELTRAVA_FEAT, brow='#3A3430', brow2='#6A625A'),
-                          extra, pre=pre, mouth=(expr == 'surprised'))
-    return out
+def border_officer():
+    """Frontier officer (50s): broad fleshy face, short wide nose, heavy jowls, a grey moustache, hooded
+    tired eyes under bushy brows; slate-blue cap with the Free City's bridge badge, greatcoat, armband."""
+    sk = SKIN_VELTRAVA
+    styles = skin_styles(sk, RIM_V, lip_of(sk))
+    slate = ramp('#05070c', '#0b111b', '#121b2a', '#1b273b', '#26354d', '#344663', '#465a7a', '#5c7092')
+    styles.update(coat_style(slate, TH7, RIM_V))
+    styles.update({
+        'cap': MatStyle(ramp('#05070c', '#0b111b', '#141e2e', '#1e2b40', '#2a3a54', '#3a4c68'),
+                        [0.06, 0.14, 0.27, 0.45, 0.66], dither=0.04, rim='#6e88aa'),
+        'cap_band': MatStyle(ramp('#030407', '#080b12', '#0e1420', '#161e2e', '#20293c'), [0.08, 0.2, 0.4, 0.65],
+                             rim='#4a5f78'),
+        'visor': MatStyle(ramp('#030304', '#0b0b0f', '#1a1a22', '#3a3c46', '#7d8190'), [0.1, 0.3, 0.55, 0.8],
+                          rim='#7d8fa6', spec=1.4, spec_pow=18.0),
+        'cord': MatStyle(ramp('#0a0c10', '#1c2028', '#343a46', '#566070', '#7c8696'), [0.08, 0.2, 0.42, 0.65],
+                         rim='#9aa6b8'),
+        'shirt': MatStyle(ramp('#121318', '#2a2c33', '#4a4c53', '#73747a', '#9c9b9c', '#c1bdb5'),
+                          [0.05, 0.12, 0.24, 0.42, 0.62], rim='#9eb2c2'),
+        'tie': MatStyle(ramp('#050508', '#0c0f16', '#151b26', '#1f2836'), [0.08, 0.2, 0.45], rim=RIM_V),
+        'hair': MatStyle(ramp('#0a0909', '#1c1817', '#302926', '#4a4240', '#6e6864', '#96928c'),
+                         [0.04, 0.10, 0.2, 0.36, 0.58], rim='#a8b8c4', wrap=0.3),
+        'moustache': MatStyle(ramp('#0a0909', '#1c1817', '#302926', '#45403c', '#5e5852', '#7a746c'),
+                              [0.04, 0.10, 0.2, 0.36, 0.58], rim='#8a98a8', wrap=0.3),
+        'button': MatStyle(ramp('#1a1c20', '#3c4048', '#6a707a', '#9aa0a8', '#c8ccd0'), [0.06, 0.16, 0.32, 0.55],
+                           rim='#c8ccd0', spec=0.8),
+    })
+    head = dict(mid_h=(12.8, 7.0, 11.8), cheek_c=(11.2, 3.4, 9.6), cheek_r=(5.2, 3.6, 4.4), malar_r=(4.6, 3.8, 3.8),
+                jaw_angle=(12.8, 15.8, -3.6), low_r=(13.0, 11.2, 13.0), chin_h=(5.2, 3.2, 3.4), chin_c=(0.0, 21.8, 12.0),
+                nose_root=(0.0, -1.0, 15.2), nose_tip=(0.0, 8.6, 19.0), tip_r=2.8, nose_r=(1.6, 2.3), ala_x=3.2,
+                ala_r=(2.0, 1.7, 2.1), brow_r=(12.8, 3.0, 3.6), neck_r=(9.4, 10.6), lip_up_r=(4.4, 1.0, 1.3),
+                jaw_extra=[('ellipsoid', ((9.8, 17.6, 7.4), (4.8, 4.2, 4.0), 'skin', 2.4)),
+                           ('ellipsoid', ((-9.8, 17.6, 7.4), (4.8, 4.2, 4.0), 'skin', 2.4))],
+                extra=moustache(c=(0.0, 12.6, 17.6), r=(4.2, 1.2, 1.6), droop=0.6))
+    return dict(
+        id='border_officer', city='veltrava', look=look_v(),
+        head=head, zoom=1.10,
+        head_pos=(55.0, 57.0, 0.0), yaw=27.0, pitch=4.0, roll=-1.0,
+        torso_pos=(55.0, 94.0, -0.5), torso_yaw=12.0, torso=dict(width=1.12, depth=1.12, slope=0.9),
+        poses=POSES_STD,
+        head_items=[lambda M, hp: peaked_cap(M, hp, y0=-13.0, tilt=(4.0, -1.0)),
+                    lambda M, hp: hair_short(M, hp, hairline=-13.6, front_z=8.0, burn_y=3.5)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.30, v_top=3.0, lapel=True, collar_h=7.0, collar_r=(12.8, 14.4)),
+            lambda M, t: tie_knot_collar(M),
+            lambda M, t: tie(M, mat='tie', top=(0.2, 3.4, 10.0), bot=(0.6, 24.0, 13.8)),
+            lambda M, t: surface_buttons(M, t, 2.6, [(-7.8, 10.0), (7.8, 10.0), (-8.6, 18.0), (8.6, 18.0)], r=1.15),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck'),
+        groups=groups_std({'moustache': 9, 'cap': 2, 'cap_band': 2, 'cord': 2, 'visor': 3, 'tie': 5, 'button': 7}),
+        tone_passes=[pass_grain('coat', 0.05, seed=16), pass_grain('cap', 0.05, seed=17), pass_strands('hair'),
+                     pass_strands('moustache', seed=18)],
+        rgb_passes=[pass_armband((-42.0, -22.0), (26.0, 36.0)),
+                    pass_badge((0.0, -16.2, 21.6), ['.w.w.', 'wwwww', 's...s'],
+                               {'w': '#d8dde2', 's': '#5c7090'})],
+        eye=dict(iris='#5d6a72', iris_d='#363f46', sclera='#c0b8ae', sclera_d='#6e6a74', lash='#140c10',
+                 pupil='#0b0a0e', catch='#f2ead8'),
+        brow=dict(col='#2a2422', col_l='#4c4440'),
+        mouth=dict(line='#3a1c20', corner='#5a2c2c', inner='#1c0c0e', teeth='#b2a593', tongue='#6c3034'),
+        features=dict(
+            eyes=FC.eye_shapes(FC.EYES, 'hooded', 'narrow'),
+            extra=[ear_detail, wrinkles(forehead=1, crow=True, naso=True, under=False), eye_bags()],
+            brows={**BROWS_STD, 'neutral': dict(arch=0.2, lift_inner=-0.2)},
+            brow_thick=((3, 3, 2), (2, 2, 2)), brow_pts=((1.4, -4.0, 17.2), (11.0, -3.0, 13.2)), nostril='wide',
+            mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.6)}),
+        priority={'button': 3, 'cord': 2, 'visor': 1, 'moustache': 1},
+    )
 
 
 # =================================================================================== CONDUCTOR
-def conductor_portrait(expr):
-    sc = Scene()
-    jd = 2.0 if expr == 'surprised' else 0.0
-    fr = head_frame((52.0, 55.0, 0.0), yaw=24.0, pitch=7.0, roll=-2.0, scale=1.18)
-    add_head(sc, fr, dict(jaw_w=14.6, crown_w=18.8, nose_len=1.15, nose_w=1.15, chin=1.0, jaw_drop=jd,
-                          lip_w=1.0, lip_l=0.9))
-    E = dict(frame=fr, group='head')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 10.0, 12.0, 8.0), (5.0, 5.4, 5.4), mat='skin', k=3, **E)            # jowls
-    sc.ellipsoid((0, -2.0, -4.0), (19.0, 17.0, 20.6), mat='hair', group='hair', frame=fr,
-                 clip=lambda L: (L[..., 2] < 5.0) & (L[..., 1] > -14.0) & (L[..., 1] < 9.0))
-    St = dict(frame=fr, group='stache')
-    sc.ellipsoid((0, 10.8, 18.4), (7.6, 2.8, 3.4), mat='stache', **St)                       # walrus moustache
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 5.2, 12.6, 17.2), (2.6, 2.8, 2.6), mat='stache', k=1.5, **St)
-    Hc = dict(frame=fr, group='hat')
-    sc.ellipsoid((0, -16.4, -1.0), (19.2, 3.4, 20.4), mat='capband', k=0, **Hc)
-    sc.ellipsoid((0, -23.0, -1.5), (19.8, 8.0, 21.2), mat='cap', k=2.0, **Hc)
-    sc.ellipsoid((0, -29.0, -1.5), (18.4, 2.8, 19.8), mat='cap', k=2.5, **Hc)
-    sc.ellipsoid((0, -14.0, 14.5), (15.0, 1.7, 9.5), R=rotm(0, -22, 0), mat='visor', k=0,
-                 clip=lambda L: L[..., 2] > 6.0, **Hc)
-    bf = shoulders(sc, cx=56.0, yaw=18.0, mat='coat', width=0.94, drop=7.0)
-    C_ = dict(frame=bf, group='collar')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 10.5, 87, 3), (9.5, 8.6, 9.0), mat='coat2', k=3, **C_)
-    sc.ellipsoid((0, 84, -9), (15, 9, 7), mat='coat2', k=3, **C_)
-    sc.ellipsoid((0, 90.0, 7.5), (4.6, 2.0, 4.6), mat='shirt', group='shirt', frame=bf)
-    sc.ellipsoid((-16, 112, 18.5), (2.4, 24, 1.0), R=rotm(0, 0, -32), mat='strap', group='strap', frame=bf)
-    ramps = {
-        'skin': SKIN_V,
-        'hair': ramp('#0E1014', '#22262C', '#3E4248', '#62666A', '#8C8E8C', '#B4B4AC', '#D4D2C6'),
-        'stache': ramp('#101216', '#262A30', '#44484C', '#6A6C6C', '#929290', '#B8B6AE', '#D6D2C6'),
-        'cap': ramp('#030409', '#070A14', '#0D1222', '#151C32', '#202A46', '#30405E', '#465478'),
-        'capband': ramp('#020306', '#05070C', '#090C14', '#0F141E', '#161D2A', '#22293A', '#30384C'),
-        'visor': ramp('#020305', '#05070A', '#0A0D12', '#11151C', '#1C222C', '#3A4452', '#7A8696'),
-        'coat': ramp('#030409', '#070A15', '#0D1324', '#151E36', '#212C4A', '#323E60', '#4A5474'),
-        'coat2': ramp('#030409', '#060914', '#0B1120', '#131B30', '#1E2842', '#2E3A58', '#444E6E'),
-        'shirt': ramp('#14161C', '#2A2C34', '#4A4C52', '#76766E', '#A4A090', '#C8C2AA', '#E0D8BE'),
-        'tie': ramp('#04050A', '#0A0C14', '#10141E', '#18202C', '#22303E', '#2E4050', '#3C5262'),
-        'strap': ramp('#060506', '#110C0E', '#1E1516', '#2E201C', '#423024', '#5A422E', '#76583A'),
-    }
-
-    def pre(img, sc, info):
-        cloth_folds(img, sc, info, 'coat', ramps, bf, [(-26, 100, -22, 112), (23, 99, 20, 112)])
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        # winged-wheel railway badge (brass) on the cap band: no state insignia
-        o, R = fr[0], fr[1]
-        p = o + R @ (np.array([0.0, -16.8, 20.0]) * fr[2])
-        stamp(img, ['bb.o.bb', '.bbObb.', 'bb.o.bb'], p[0] + 1, p[1],
-              {'b': hexc('#B88E40'), 'o': hexc('#7A5A24'), 'O': hexc('#E8C878')}, anchor=(3, 1))
-        # brass buttons on the coat front
-        for (bx, by) in ((61, 105), (63, 110)):
-            if sc.mat[by, bx] >= 0:
-                img[by, bx] = hexc('#D2A850')
-                if by + 1 < H:
-                    img[by + 1, bx] = hexc('#7A5A24')
-        wrinkles(img, sc, skin_mask, lit_at, SKIN_V)
-        # tired eyes: a soft bag under the near eye
-        x, y, _ = project(sc, 'eye_n')
-        R7 = np.stack(SKIN_V)
-        stamp(img, ['.ccc.'], x - 1, y + 3, {'c': R7[2] if not lit_at(x, y + 3) else R7[3]}, mask=skin_mask)
-
-    out, info = finish_c3(sc, LOOK_VELTRAVA, ramps, expr, feat(VELTRAVA_FEAT, brow='#7A7874', brow2='#A6A49E'),
-                          extra, pre=pre, mouth=(expr == 'surprised'), stamps=KIND_STAMPS)
-    return out
-
-
-# kind / tired variant of the generic brows: the outer ends droop (conductor)
-KIND_BROWS = {
-    'near': dict(PT.BROWS['near'], neutral=('''
-            ..bBBBBBb.
-            .bBb......
-            bb........''', (5, 1))),
-    'far': dict(PT.BROWS['far'], neutral=('''
-            BBBBb.
-            .....B''', (2, 1))),
-}
-KIND_STAMPS = dict(GENERIC, brows=KIND_BROWS)
+def conductor():
+    """Schaffner (60): a long tired face, a long nose with a drooping tip, a receding chin half hidden by a
+    full grey walrus moustache, gaunt cheeks, kind drooping eyes under grey brows; navy railway cap with the
+    winged-wheel badge (no state emblem), uniform coat with brass buttons, the strap of his bag."""
+    sk = SKIN_OLD
+    styles = skin_styles(sk, RIM_V, lip_of(sk))
+    navy = ramp('#04060a', '#090d16', '#0f1522', '#171f30', '#212b40', '#2d3954', '#3c4a68')
+    styles.update(coat_style(navy, TH6, RIM_V))
+    brass = ramp('#1a1208', '#3d2c12', '#6e5222', '#a07c36', '#d1ad5c', '#f0d890')
+    styles.update({
+        'cap': MatStyle(ramp('#04060a', '#0a0e18', '#121826', '#1a2234', '#252f44', '#323e56'),
+                        [0.06, 0.14, 0.27, 0.45, 0.66], dither=0.04, rim='#5d7ea4'),
+        'cap_band': MatStyle(ramp('#030305', '#08090e', '#0e1016', '#161820', '#20232e'), [0.08, 0.2, 0.4, 0.65],
+                             rim='#4a5f78'),
+        'visor': MatStyle(ramp('#030304', '#0b0b0f', '#1a1a22', '#3a3c46', '#7d8190'), [0.1, 0.3, 0.55, 0.8],
+                          rim='#7d8fa6', spec=1.4, spec_pow=18.0),
+        'cord': MatStyle(brass, [0.06, 0.15, 0.30, 0.50, 0.72], rim='#d1ad5c'),
+        'button': MatStyle(brass, [0.05, 0.12, 0.25, 0.42, 0.62], rim='#d1ad5c', spec=0.8),
+        'shirt': MatStyle(ramp('#121318', '#2a2c33', '#4a4c53', '#73747a', '#9c9b9c', '#c1bdb5'),
+                          [0.05, 0.12, 0.24, 0.42, 0.62], rim='#9eb2c2'),
+        'tie': MatStyle(ramp('#050508', '#0c0b10', '#16141a', '#221e25'), [0.08, 0.2, 0.45], rim=RIM_V),
+        'strap': MatStyle(ramp('#0a0607', '#1b0f0c', '#2e1a12', '#472918', '#633a22', '#7d4f30'),
+                          [0.05, 0.12, 0.24, 0.40, 0.6], rim='#6a6a76'),
+        'hair': MatStyle(ramp('#121316', '#2e2f33', '#56575a', '#808080', '#a8a6a2', '#cbc8c0', '#e2ded6'),
+                         [0.03, 0.08, 0.16, 0.28, 0.44, 0.66], rim='#c2ccd4', wrap=0.45, lift=0.3),
+        'moustache': MatStyle(ramp('#121316', '#2e2f33', '#56575a', '#808080', '#a8a6a2', '#cbc8c0', '#e2ded6'),
+                              [0.03, 0.08, 0.16, 0.28, 0.44, 0.66], rim='#c2ccd4', wrap=0.45, lift=0.3),
+    })
+    head = dict(mid_h=(11.4, 7.6, 11.4), skull_r=(15.8, 17.2, 20.4), cheek_c=(10.6, 2.6, 9.8), cheek_r=(4.2, 2.6, 3.6),
+                malar_r=(3.2, 2.8, 2.8), jaw_angle=(10.8, 16.4, -4.0), low_r=(11.2, 11.8, 12.4),
+                chin_c=(0.0, 22.8, 10.8), chin_h=(4.0, 3.4, 3.0), chin_pt=(3.6, 23.8, 9.0),
+                nose_root=(0.0, -1.4, 15.6), nose_tip=(0.0, 10.6, 19.6), tip_r=2.6, nose_r=(1.5, 2.1), ala_x=2.6,
+                ala_y=11.4, ala_r=(1.7, 1.5, 1.9), brow_r=(12.4, 2.8, 3.4), mouth_y=15.6, lip_up=(0.0, 14.8, 16.2),
+                lip_up_r=(4.0, 0.9, 1.2), lip_lo=(0.0, 16.9, 15.6), lip_lo_r=(3.4, 1.1, 1.2),
+                ear_r=(1.9, 6.8, 3.9), ear_c=(15.8, 3.8, -5.6),
+                jaw_extra=[('ellipsoid', ((8.6, 18.6, 7.6), (3.8, 3.6, 3.4), 'skin', 2.2)),
+                           ('ellipsoid', ((-8.6, 18.6, 7.6), (3.8, 3.6, 3.4), 'skin', 2.2))],
+                extra=moustache(c=(0.0, 13.4, 17.6), r=(5.4, 1.9, 2.0), droop=2.4)
+                + [('sub', ((10.4, 9.0, 9.6), (2.4, 3.2, 2.0), 1.6)), ('sub', ((-10.4, 9.0, 9.6), (2.4, 3.2, 2.0), 1.6))])
+    return dict(
+        id='conductor', city='veltrava', look=look_v(),
+        head=head, zoom=1.10,
+        head_pos=(54.0, 59.0, 0.0), yaw=27.0, pitch=6.0, roll=-2.0,
+        torso_pos=(54.0, 96.0, -2.0), torso_yaw=13.0, torso=dict(width=0.98, depth=1.04, slope=1.8),
+        poses={'neutral': (0, 0, 0), 'concerned': (-2, 3, -2), 'determined': (1, -2, 1), 'surprised': (2, -5, 1)},
+        head_items=[lambda M, hp: peaked_cap(M, hp, y0=-13.2, tilt=(1.0, -2.0)),
+                    lambda M, hp: hair_short(M, hp, hairline=-13.0, front_z=8.0, burn_y=4.5, thick=1.2)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.22, v_top=4.0, lapel=False, collar_h=8.5, collar_r=(12.2, 13.8)),
+            lambda M, t: tie_knot_collar(M),
+            lambda M, t: tie(M, mat='tie', top=(0.2, 3.6, 10.2), bot=(0.5, 20.0, 13.2)),
+            lambda M, t: band_on(M, t, 3.3, (6.0, 20.0), -40.0, 2.6, 'strap', y_range=(2.0, 60.0)),
+            lambda M, t: surface_buttons(M, t, 2.6, [(1.8, 12.0), (1.8, 19.0), (2.0, 26.0)], r=1.1),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck'),
+        groups=groups_std({'moustache': 9, 'cap': 2, 'cap_band': 2, 'cord': 2, 'visor': 3, 'strap': 7, 'button': 7,
+                           'tie': 5}),
+        tone_passes=[pass_grain('coat', 0.05, seed=19), pass_grain('cap', 0.05, seed=20), pass_strands('hair'),
+                     pass_strands('moustache', seed=21)],
+        rgb_passes=[pass_badge((0.0, -16.6, 21.4), ['b.w.b', '.www.', 'b.w.b'],
+                               {'w': '#e0bc66', 'b': '#a07c36'})],
+        eye=dict(iris='#5a6670', iris_d='#353e46', sclera='#bdb5aa', sclera_d='#6c6a70', lash='#140c10',
+                 pupil='#0b0a0e', catch='#f0e8d6'),
+        brow=dict(col='#7a7874', col_l='#aaa69e'),
+        mouth=dict(line='#3a1c20', corner='#5a2c2c', inner='#1c0c0e', teeth='#a89a86', tongue='#6c3034'),
+        features=dict(
+            eyes=FC.eye_shapes(FC.EYES, 'droop', 'hooded'),
+            extra=[ear_detail, wrinkles(forehead=3, under=True), eye_bags(), cheek_hollow],
+            brows={**BROWS_STD, 'neutral': dict(arch=0.7, lift_inner=0.8)},
+            brow_thick=((3, 2, 2), (2, 2, 1)), brow_pts=((1.6, -3.6, 17.2), (10.6, -2.4, 13.2)),
+            mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.6)}),
+        priority={'button': 3, 'cord': 2, 'visor': 1, 'moustache': 1, 'strap': 1},
+    )
 
 
 # =================================================================================== VORONOVA
-def voronova_portrait(expr):
-    sc = Scene()
-    jd = 1.8 if expr == 'surprised' else 0.0
-    fr = head_frame((53.0, 55.0, 0.0), yaw=22.0, pitch=3.0, roll=-1.0, scale=1.14)
-    add_head(sc, fr, dict(jaw_w=14.2, crown_w=18.6, nose_len=0.95, nose_w=1.02, chin=0.96, jaw_drop=jd,
-                          lip_w=1.0, lip_l=1.05, face_h=0.96))
-    E = dict(frame=fr, group='head')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 10.0, 11.5, 7.5), (5.0, 5.0, 5.4), mat='skin', k=3, **E)
-    sc.ellipsoid((0, -5.0, -3.0), (19.4, 18.5, 21.4), mat='hair', group='hair', frame=fr,
-                 clip=lambda L: ((L[..., 2] < 3.0) | (L[..., 1] < -10.5)) & (L[..., 1] > -16.0) & (L[..., 1] < 6.0))
-    Hh = dict(frame=fr, group='hat')
-    sc.ellipsoid((0, -20.0, -1.5), (19.2, 7.4, 22.6), mat='fur', k=0, **Hh)
-    sc.ellipsoid((0, -26.0, -1.5), (17.6, 4.0, 21.2), mat='fur', k=3, **Hh)
-    for sz in (-1, 1):
-        sc.ellipsoid((0, -27.0, sz * 11.0), (16.0, 3.4, 9.0), mat='fur', k=2.0, **Hh)          # front / back peaks
-    bf = shoulders(sc, cx=56.0, yaw=18.0, mat='coat', width=0.98, drop=6.0)
-    C_ = dict(frame=bf, group='collar')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 15.0, 92, 4), (13.0, 11.0, 12.0), mat='fur2', k=4, **C_)
-    sc.ellipsoid((0, 86, -7), (19, 11, 9), mat='fur2', k=4, **C_)
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 8.0, 106, 13), (6.0, 14.0, 4.5), R=rotm(0, 0, sx * -14), mat='fur2', k=3, **C_)
-    ramps = {
-        'skin': SKIN_W,
-        'hair': ramp('#0E0E12', '#22201E', '#3A3430', '#58504A', '#7A6E64', '#9A8C80', '#B8A898'),
-        'fur': ramp('#060608', '#101014', '#1C1C22', '#2C2C34', '#424248', '#5E5E64', '#7E7E84'),
-        'fur2': ramp('#060608', '#0E0E12', '#1A1A20', '#2A2A30', '#3E3E44', '#58585E', '#76767C'),
-        'coat': ramp('#070506', '#140D0C', '#241814', '#38261C', '#503628', '#6A4A36', '#866046'),
-    }
+def voronova():
+    """Lidia Voronova (50s): a broad face with a square jaw and strong cheekbones, a short broad nose, level
+    heavy brows, steady hooded eyes; grey-streaked hair under a dark karakul pirozhok, karakul shawl collar
+    on a heavy dark-brown coat."""
+    sk = SKIN_OLD
+    styles = skin_styles(sk, RIM_V, lip_of(sk, warm=14))
+    brown = ramp('#070504', '#110c0a', '#1c1410', '#291e17', '#38291f', '#4a3729', '#5f4735')
+    styles.update(coat_style(brown, TH6, RIM_V))
+    styles.update({
+        'karakul': MatStyle(ramp('#050404', '#0e0b0a', '#1a1513', '#29211d', '#3a302a', '#4e4239', '#67584c'),
+                            TH6, dither=0.05, rim='#8a8e9e'),
+        'hair': MatStyle(ramp('#0e0d0e', '#262426', '#423f40', '#666262', '#8a8580', '#aca69e'),
+                         [0.04, 0.10, 0.2, 0.36, 0.58], rim='#a8b0bc', wrap=0.35),
+        'shirt': MatStyle(ramp('#0c0b0c', '#1c1a1c', '#2e2b2c', '#45403f'), [0.08, 0.2, 0.45], rim=RIM_V),
+    })
+    head = dict(FEMALE)
+    head.update(SOFT)
+    head.update(brow_r=(11.4, 2.1, 2.7))
+    head.update(skull_r=(16.0, 16.6, 20.0), mid_h=(12.4, 6.8, 11.6), cheek_c=(11.0, 2.8, 10.0), cheek_r=(5.0, 3.4, 4.2),
+                malar_r=(5.0, 4.4, 4.0), jaw_angle=(10.8, 14.2, -4.0), jaw_r=(2.5, 2.9, 2.8), low_r=(11.6, 10.0, 12.4),
+                chin_c=(0.0, 20.6, 11.6), chin_h=(4.2, 2.8, 3.0), chin_rad=2.6, chin_pt=(3.8, 21.6, 9.8),
+                nose_root=(0.0, -1.0, 15.2), nose_tip=(0.0, 8.4, 18.8), tip_r=2.5, nose_r=(1.5, 2.1), ala_x=2.8,
+                ala_r=(1.8, 1.6, 1.9), brow_r=(12.4, 2.6, 3.4), lip_up_r=(4.2, 1.25, 1.4), lip_lo_r=(3.7, 1.7, 1.6),
+                neck_r=(7.4, 8.8),
+                jaw_extra=[('ellipsoid', ((9.0, 17.6, 7.6), (4.2, 3.6, 3.6), 'skin', 2.2)),
+                           ('ellipsoid', ((-9.0, 17.6, 7.6), (4.2, 3.6, 3.6), 'skin', 2.2))])
+    return dict(
+        id='voronova', city='veltrava', look=look_v(),
+        head=head, zoom=1.12, smooth=2,
 
-    def pre(img, sc, info):
-        # karakul: tight curls -> scattered light and dark flecks on the fur surfaces
-        yy, xx = np.mgrid[0:H, 0:W]
-        h = hash2(xx, yy)
-        for name in ('fur', 'fur2'):
-            m = mat_mask(sc, name) & (info['tone'] >= 1)
-            tone_shift(img, sc, info, ramps, name, m & (h < 4), +1)
-            tone_shift(img, sc, info, ramps, name, m & (h >= 4) & (h < 8), -1)
-        cloth_folds(img, sc, info, 'coat', ramps, bf, [(-27, 100, -23, 112), (25, 99, 21, 112)])
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        wrinkles(img, sc, skin_mask, lit_at, SKIN_W)
-
-    out, info = finish_c3(sc, LOOK_VELTRAVA, ramps, expr,
-                          feat(VELTRAVA_FEAT, brow='#4A3E38', brow2='#6E6058', lip='#A46A5C'), extra, pre=pre)
-    return out
+        head_pos=(55.0, 57.0, 0.0), yaw=28.0, pitch=3.0, roll=0.0,
+        torso_pos=(55.0, 93.5, -0.5), torso_yaw=11.0, torso=dict(width=1.08, depth=1.12, slope=1.0),
+        poses={'neutral': (0, 0, 0), 'concerned': (-1, 3, -1), 'determined': (1, -2, 0), 'surprised': (2, -3, 1)},
+        head_items=[lambda M, hp: pirozhok(M, hp),
+                    lambda M, hp: PC.hair_bun(M, hp, bun=(-1.0, 4.0, -21.5), bun_r=5.6, hairline=-13.8, thick=1.8,
+                                              seed=53),
+                    lambda M, hp: temple_wave(M, hp)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.26, v_top=4.0, lapel=False, collar=False),
+            lambda M, t: fur_collar(M, y=-2.0, r=13.0),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck'),
+        groups=groups_std({'karakul': 2}),
+        tone_passes=[pass_curls('karakul', seed=103, light=2, dark=1), pass_strands('hair', seed=22),
+                     pass_grain('coat', 0.05, seed=23)],
+        eye=dict(iris='#4e4a42', iris_d='#2e2b26', sclera='#c0b8ac', sclera_d='#6c6a70', lash='#120c0e',
+                 pupil='#0a0908', catch='#f0e8d6'),
+        brow=dict(col='#3c3836', col_l='#625c56'),
+        mouth=dict(line='#42191d', corner='#5c2a2a', inner='#1a0a0b', teeth='#b6a896', tongue='#733033'),
+        features=dict(
+            eyes=FC.eye_shapes(_female_eyes(), 'hooded'),
+            extra=[ear_detail, wrinkles(forehead=1, crow=True, naso=False, under=False)],
+            brows={**BROWS_STD, 'neutral': dict(arch=0.15, lift_inner=-0.2),
+                   'concerned': dict(lift_inner=1.6, lift_outer=-0.3, arch=0.2)},
+            brow_thick=((2, 2, 1), (2, 1, 1)), brow_pts=((1.6, -4.3, 17.2), (10.6, -4.2, 13.4)),
+            mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.3)}),
+        priority={'karakul': 1},
+    )
 
 
 # =================================================================================== KESSLER
-def kessler_portrait(expr):
-    sc = Scene()
-    jd = 1.6 if expr == 'surprised' else 0.0
-    fr = head_frame((53.0, 55.0, 0.0), yaw=26.0, pitch=-2.0, roll=0.0, scale=1.2)
-    add_head(sc, fr, dict(jaw_w=13.8, crown_w=18.6, nose_len=1.12, nose_w=0.9, chin=1.06, jaw_drop=jd,
-                          lip_w=0.9, lip_l=0.78, face_h=1.0))
-    sc.ellipsoid((0, -4.0, -4.0), (18.9, 18.5, 20.6), mat='hair', group='hair', frame=fr,
-                 clip=lambda L: (L[..., 2] < 3.0) & (L[..., 1] > -16.0) & (L[..., 1] < 8.0))
-    Hh = dict(frame=fr, group='hat')
-    sc.ellipsoid((0, -22.0, -1.0), (17.8, 8.5, 19.0), mat='hat', k=0, **Hh)
-    sc.ellipsoid((0, -29.0, -1.5), (15.0, 7.0, 16.4), mat='hat', k=4, **Hh)
-    for sx in (-1, 1):                                                                 # centre gutter crease
-        sc.ellipsoid((sx * 5.4, -33.5, -2.0), (6.4, 3.0, 13.4), mat='hat', k=2.5, **Hh)
-    sc.ellipsoid((0, -16.8, -1.0), (18.2, 2.6, 19.6), mat='band', k=0.4, **Hh)
-    sc.ellipsoid((0, -14.6, 1.0), (26.0, 1.9, 27.6), R=rotm(0, -5, 0), mat='brim', k=0, **Hh)
-    sc.ellipsoid((0, -15.6, 1.0), (26.6, 2.4, 28.2), R=rotm(0, -5, 0), mat='brim', k=0,
-                 clip=lambda L: (L[..., 0] / 26.6) ** 2 + (L[..., 2] / 28.2) ** 2 > 0.84, **Hh)  # curled edge
-    bf = shoulders(sc, cx=57.0, yaw=20.0, mat='coat', width=0.9, drop=5.0)
-    C_ = dict(frame=bf, group='collar')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 10.5, 87, 2.5), (9.6, 9.0, 9.4), mat='velvet', k=3, **C_)
-    sc.ellipsoid((0, 84, -9), (15, 9, 7), mat='velvet', k=3, **C_)
-    sc.ellipsoid((0, 90.5, 9.0), (6.4, 3.0, 5.4), mat='shirt', group='shirt', frame=bf)
-    sc.ellipsoid((0.4, 97, 13.5), (2.0, 6.5, 1.2), mat='tie', group='tie', frame=bf)
-    L_ = dict(frame=bf, group='lapel')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 12.0, 104, 15.5), (5.0, 17, 1.4), R=rotm(0, 0, sx * -20), mat='coat2', k=0, **L_)
-    ramps = {
-        'skin': SKIN_P,
-        'hair': ramp('#0C0E12', '#1E2024', '#34363A', '#525452', '#76766E', '#9A988C', '#B8B4A6'),
-        'hat': ramp('#040406', '#0A0A0E', '#121216', '#1C1C22', '#2A2A30', '#3E3C40', '#565256'),
-        'brim': ramp('#030304', '#08080A', '#0E0E12', '#18181C', '#242428', '#363438', '#4C484C'),
-        'band': ramp('#020203', '#050506', '#08080A', '#0E0E10', '#141418', '#1E1E22', '#28282E'),
-        'coat': ramp('#040608', '#0A0E12', '#12171C', '#1C2228', '#2A3036', '#3E4448', '#56585A'),
-        'coat2': ramp('#040608', '#090C10', '#10141A', '#191E24', '#262C32', '#383E44', '#4E5256'),
-        'velvet': ramp('#020304', '#050608', '#090B0E', '#0F1216', '#161A1E', '#20252A', '#2C3236'),
-        'shirt': ramp('#14161C', '#2A2C34', '#4A4C52', '#80807A', '#B0AC9C', '#D4CEB6', '#ECE4CA'),
-        'tie': ramp('#040408', '#0A0A10', '#12121A', '#1A1A26', '#242434', '#302E44', '#3E3A54'),
-    }
-
-    def pre(img, sc, info):
-        cloth_folds(img, sc, info, 'coat', ramps, bf, [(-25, 100, -22, 112), (24, 99, 21, 112)])
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        # thin steel half-rim spectacles (lighter, finer than Emil's): upper rim + glints
-        spectacles(img, sc, lit_at, frame_c=hexc('#4A5056'), glint=hexc('#E8ECEE'), glint2=hexc('#9EAAB2'),
-                   rx=(4, 3), ry=3.0, thin=True, temple=False)
-        Rk = np.stack(SKIN_P)
-        x, y, _ = project(sc, 'nostril')
-        stamp(img, ['c..', '.c.', '.c.', '..c'], x - 5, y + 1, {'c': Rk[2] if not lit_at(x - 4, y + 2) else Rk[3]},
-              mask=skin_mask)
-
-    out, info = finish_c3(sc, LOOK_PALAIS, ramps, expr, feat(PALAIS_FEAT, brow='#4A4442', brow2='#7A746E',
-                                                             lip='#A06858', iris='#3A4450'),
-                          extra, pre=pre)
-    return out
+def kessler():
+    """Gerhard Kessler (50s): a narrow ascetic face, a sharp aquiline nose, a pointed chin, thin lips, cool
+    narrow eyes behind thin rimless glasses, straight thin brows; black homburg, charcoal overcoat, white
+    shirt, dark tie.  A civil servant -- no badges, no pins."""
+    sk = SKIN_PALAIS
+    styles = skin_styles(sk, RIM_P, lip_of(sk, warm=-4))
+    char = ramp('#050607', '#0b0c0f', '#131519', '#1c1f24', '#272a30', '#34383f', '#454950')
+    styles.update(coat_style(char, TH6, RIM_P))
+    felt = ramp('#040405', '#09090b', '#111114', '#1a1a1e', '#242429', '#303036', '#3e3e45', '#4e4e56')
+    fth = [0.03, 0.08, 0.15, 0.25, 0.38, 0.55, 0.75]
+    styles.update({
+        'felt': MatStyle(felt, fth, dither=0.04, rim='#6a8494'),
+        'brim': MatStyle(felt, fth, dither=0.0, rim='#6a8494'),
+        'ribbon': MatStyle(ramp('#020203', '#060608', '#0c0c10', '#141418', '#1e1e24'), [0.06, 0.16, 0.32, 0.55],
+                           rim='#4a5a66'),
+        'shirt': MatStyle(ramp('#14161a', '#30343a', '#585c60', '#868884', '#b2b2aa', '#d6d4c8', '#ecebe0'),
+                          [0.05, 0.12, 0.24, 0.40, 0.58, 0.80], rim='#a8c0c8'),
+        'tie': MatStyle(ramp('#050508', '#0c0b12', '#15131c', '#201d28'), [0.08, 0.2, 0.45], rim=RIM_P),
+        'hair': MatStyle(ramp('#0c0d10', '#25262b', '#45464b', '#6b6b6e', '#8f8e8c', '#b2aea7'),
+                         [0.04, 0.10, 0.2, 0.36, 0.58], rim='#a8b8c4', wrap=0.35),
+    })
+    head = dict(skull_r=(15.8, 17.0, 20.6), mid_h=(11.0, 7.4, 11.6), fore_h=(11.4, 9.4, 12.0),
+                cheek_c=(10.2, 2.8, 10.0), cheek_r=(4.0, 2.6, 3.6), malar_r=(3.2, 3.0, 2.8),
+                jaw_angle=(10.2, 15.8, -4.2), jaw_r=(2.3, 2.7, 2.6), low_r=(10.6, 11.6, 12.2),
+                chin_c=(0.0, 22.8, 11.6), chin_h=(3.2, 3.6, 3.0), chin_rad=2.2, chin_pt=(2.8, 24.0, 10.0),
+                nose_root=(0.0, -1.6, 15.8), nose_tip=(0.0, 9.6, 20.6), tip_r=1.85, nose_r=(1.2, 1.5), ala_x=2.1,
+                ala_r=(1.3, 1.3, 1.6), brow_r=(11.8, 2.4, 3.2), lip_up_r=(3.9, 0.85, 1.1), lip_lo_r=(3.3, 0.95, 1.1),
+                neck_r=(7.6, 8.8),
+                extra=[('ellipsoid', ((0.0, 3.6, 18.4), (1.25, 1.9, 1.15), 'skin', 0.9))])
+    return dict(
+        id='kessler', city='palais', look=look_p(),
+        head=head, zoom=1.14,
+        head_pos=(55.0, 54.0, 0.0), yaw=29.0, pitch=0.0, roll=0.0,
+        torso_pos=(55.0, 90.0, -0.5), torso_yaw=13.0, torso=dict(width=0.96, depth=0.98, slope=1.3),
+        poses={'neutral': (0, 0, 0), 'concerned': (-1, 3, -1), 'determined': (1, -2, 0), 'surprised': (2, -3, 1)},
+        head_items=[lambda M, hp: homburg(M, hp),
+                    lambda M, hp: hair_short(M, hp, hairline=-14.4, front_z=8.0, burn_y=1.5, thick=0.8)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.40, v_top=3.0, lapel=True, collar_h=8.0, collar_r=(12.0, 13.6)),
+            lambda M, t: tie_knot_collar(M),
+            lambda M, t: tie(M, mat='tie', top=(0.4, 4.0, 12.4), bot=(1.0, 24.0, 13.8)),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck'),
+        groups=groups_std({'felt': 2, 'ribbon': 2, 'brim': 3, 'tie': 5}),
+        tone_passes=[pass_grain('felt', 0.06, seed=24), pass_grain('coat', 0.05, seed=25), pass_strands('hair')],
+        rgb_passes=[glasses('round', rim='#6c747c', rim_hi='#d8dee2', glare='#d0dce0', lens_r=(3.6, 2.8))],
+        eye=dict(iris='#5d7484', iris_d='#36444e', sclera='#c4bcb2', sclera_d='#6e6a74', lash='#120c10',
+                 pupil='#0a0a0e', catch='#f2ead8'),
+        brow=dict(col='#46464a', col_l='#6e6e70'),
+        mouth=dict(line='#3a1a1e', corner='#55282a', inner='#1a0a0d', teeth='#b2a593', tongue='#6c3034'),
+        features=dict(
+            eyes=FC.eye_shapes(FC.EYES, 'narrow'),
+            extra=[ear_detail, wrinkles(forehead=1, crow=True, naso=True, under=False), cheek_hollow],
+            brows={'neutral': dict(arch=0.1), 'concerned': dict(lift_inner=1.4, lift_outer=-0.2, arch=0.1),
+                   'determined': dict(lift_inner=-1.6, arch=0.0, dy=0.5),
+                   'surprised': dict(dy=-1.4, arch=0.8, lift_inner=0.3)},
+            brow_thick=((2, 1, 1), (1, 1, 1)), brow_pts=((1.8, -4.0, 17.0), (10.0, -3.8, 13.4)), nostril='small',
+            mouth={'neutral': dict(corner_drop=0.5), 'concerned': dict(corner_drop=0.9),
+                   'determined': dict(corner_drop=0.7), 'surprised': dict(parted=1)},
+        ),
+        priority={'brim': 2, 'ribbon': 2, 'tie': 1},
+    )
 
 
 # =================================================================================== TYPIST
-def typist_portrait(expr):
-    sc = Scene()
-    jd = 2.0 if expr == 'surprised' else 0.0
-    fr = head_frame((53.0, 53.0, 0.0), yaw=22.0, pitch=4.0, roll=-3.0, scale=1.12)
-    add_head(sc, fr, dict(jaw_w=13.4, crown_w=18.2, nose_len=0.92, nose_w=0.96, chin=0.92, jaw_drop=jd,
-                          lip_w=1.0, lip_l=1.12, face_h=0.95))
-    E = dict(frame=fr, group='head')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 10.2, 5.0, 11.0), (6.4, 5.6, 6.4), mat='skin', k=4, **E)            # round cheeks
-
-    def face(L):
-        x, y, z = L[..., 0], L[..., 1], L[..., 2]
-        return (z > 2.0) & (y > -10.5 + 0.02 * x * x + 1.6 * np.sin(x * 0.85))        # curly fringe line
-
-    def hair_clip(L):
-        return ~face(L) & (L[..., 1] < 7.0)
-    Hh = dict(frame=fr, group='hair')
-    sc.ellipsoid((0, -8.0, -2.0), (21.6, 22.8, 23.4), mat='hair', k=0, clip=hair_clip, **Hh)
-    for (cx_, cy_, cz_) in ((-19, -8, 6), (-21, 2, -4), (-17, 6, -15), (-9, -22, 11), (3, -25, 9),
-                            (14, -19, 8), (20, -7, 0), (-11, -16, -20), (6, -20, -19), (-3, -3, -25),
-                            (-3, -15, 17), (8, -14, 17)):
-        sc.ellipsoid((cx_, cy_, cz_), (6.4, 5.8, 6.4), mat='hair', k=0, clip=hair_clip, **Hh)      # set curls
-    bf = shoulders(sc, cx=56.0, yaw=18.0, mat='coat', width=0.88, drop=5.0)
-    sc.ellipsoid((0, 88, 4), (11.0, 6.0, 10.5), mat='blouse', group='blouse', frame=bf)
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 5.2, 91.0, 12.0), (5.4, 3.2, 2.0), R=rotm(0, 0, sx * 18), mat='blouse', k=1.2,
-                     group='collar', frame=bf)
-    L_ = dict(frame=bf, group='lapel')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 9.5, 106, 14.5), (4.2, 15, 1.3), R=rotm(0, 0, sx * -14), mat='coat2', k=0, **L_)
-    ramps = {
-        'skin': SKIN_W,
-        'hair': ramp('#0E0A0A', '#201612', '#34241A', '#4A3424', '#644630', '#80603E', '#9C7A50'),
-        'coat': ramp('#0E0C0A', '#221C16', '#3A3022', '#584A34', '#76644A', '#94805E', '#B09C76'),
-        'coat2': ramp('#0E0C0A', '#1E1814', '#342A1E', '#50432E', '#6C5A42', '#8A7656', '#A6906C'),
-        'blouse': ramp('#14161C', '#2C2E36', '#4E5056', '#82827A', '#B2AE9E', '#D6D0B8', '#EEE6CC'),
-    }
-
-    def pre(img, sc, info):
-        # knitted cardigan: vertical rib lines
-        xx = np.mgrid[0:H, 0:W][1]
-        rib = mat_mask(sc, 'coat') & (xx % 3 == 0) & (info['tone'] >= 2)
-        tone_shift(img, sc, info, ramps, 'coat', rib, -1)
-        # set curls: small rings in head-local space (dark ring, light centre)
-        Lh = local_coords(sc, fr)
-        u = Lh[..., 0] + 40.0
-        v = Lh[..., 1] + 40.0 + 0.6 * Lh[..., 2]
-        off = (np.floor(u / 5.5) % 2) * 2.75
-        du = (u % 5.5) - 2.75
-        dv = ((v + off) % 5.5) - 2.75
-        d = np.sqrt(du * du + dv * dv)
-        hm = mat_mask(sc, 'hair')
-        tone_shift(img, sc, info, ramps, 'hair', hm & (d > 1.6) & (d < 2.5), -1)
-        tone_shift(img, sc, info, ramps, 'hair', hm & (d < 0.9) & (info['tone'] >= 2), +1)
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        # pencil behind the near ear: yellow shaft, dark tip, pointing back and up
-        x, y, _ = project(sc, 'ear')
-        for k in range(9):
-            px_, py_ = int(round(x + 7 - k)), int(round(y - 3 - k * 0.55))
-            if 0 <= px_ < W and 0 <= py_ < H:
-                img[py_, px_] = hexc('#D0A040') if k < 7 else hexc('#3A2E28')
-                if k < 7 and 0 <= py_ + 1 < H:
-                    img[py_ + 1, px_] = hexc('#8C6424')
-        # grey strands at the temple
-        Lh = local_coords(sc, fr)
-        grey = mat_mask(sc, 'hair') & (np.abs(Lh[..., 0] + 15) < 3) & (Lh[..., 1] > -12) & ((Lh[..., 1] % 3) < 1)
-        img[grey] = hexc('#8C847A')
-
-    out, info = finish_c3(sc, LOOK_PALAIS, ramps, expr, feat(PALAIS_FEAT, lip='#AC6A5C', brow='#3A2820',
-                                                             brow2='#5A4030'), extra, pre=pre,
-                          creases=(expr != 'neutral'))
-    return out
+def typist():
+    """Frau Brunner (40s, Swiss): a round friendly face, full cheeks, a small slightly upturned nose, a soft
+    round chin, wide-open eyes with lifted arched brows; brown hair in a short set perm, a pencil behind the
+    ear; oatmeal cardigan over a white blouse."""
+    sk = SKIN_PALAIS
+    styles = skin_styles(sk, RIM_P, lip_of(sk, warm=18))
+    styles['cheek'] = MatStyle(lip_of(sk, warm=16), SKIN_TH, rim=RIM_P, outline=sk[0], wrap=0.18, lift=0.24, ao=0.75)
+    oat = ramp('#0c0a07', '#1d1810', '#30281c', '#45392a', '#5c4d3a', '#76644c', '#917d60')
+    styles.update({
+        'cardigan': MatStyle(oat, TH6, dither=0.03, rim=RIM_P),
+        'coat': MatStyle(oat, TH6, dither=0.03, rim=RIM_P),
+        'coat_lapel': MatStyle(oat, TH6, rim=RIM_P),
+        'shirt': MatStyle(ramp('#14161a', '#30343a', '#585c60', '#868884', '#b2b2aa', '#d6d4c8', '#ecebe0'),
+                          [0.05, 0.12, 0.24, 0.40, 0.58, 0.80], rim='#a8c0c8'),
+        'hair': MatStyle(ramp('#0a0605', '#1a100c', '#2c1c14', '#40291c', '#583a28', '#704c34', '#8a6244'),
+                         [0.04, 0.10, 0.2, 0.34, 0.52, 0.74], rim='#8aa0a8', wrap=0.25),
+        'button': MatStyle(ramp('#0e0a08', '#2a1f18', '#4f3c2c', '#7a6046'), [0.08, 0.25, 0.5], rim=RIM_P),
+    })
+    head = dict(FEMALE)
+    head.update(SOFT)
+    head.update(skull_r=(15.8, 16.2, 19.8), mid_h=(11.8, 6.4, 11.4), cheek_c=(10.4, 3.8, 10.4), cheek_r=(5.0, 3.6, 4.4),
+                malar_r=(5.2, 4.6, 4.2), jaw_angle=(10.4, 13.6, -3.8), low_r=(11.8, 9.6, 12.6),
+                chin_c=(0.0, 20.2, 11.6), chin_h=(4.0, 2.7, 3.0), chin_rad=2.8, chin_pt=(3.6, 21.0, 10.0),
+                nose_root=(0.0, -0.6, 15.2), nose_tip=(0.0, 7.8, 18.6), tip_r=2.25, nose_r=(1.2, 1.7), ala_x=2.2,
+                ala_y=9.0, ala_r=(1.5, 1.4, 1.7), eye_x=6.6, mouth_y=13.8, lip_up=(0.0, 13.1, 16.2),
+                lip_up_r=(4.0, 1.3, 1.5), lip_lo=(0.0, 15.2, 15.8), lip_lo_r=(3.5, 1.7, 1.6), brow_r=(11.4, 2.0, 2.8),
+                extra=PC.blush(c=(9.0, 6.6, 11.2)),
+                jaw_extra=[('ellipsoid', ((0.0, 24.6, 7.6), (6.0, 2.4, 4.4), 'skin', 2.6))])
+    return dict(
+        id='typist', city='palais', look=look_p(),
+        head=head, zoom=1.16, smooth=2,
+        head_pos=(55.0, 57.0, 0.0), yaw=30.0, pitch=2.0, roll=2.0,
+        torso_pos=(55.5, 92.0, -0.5), torso_yaw=12.0, torso=dict(width=0.96, depth=1.06, slope=1.4),
+        poses={'neutral': (0, 0, 0), 'concerned': (-2, 3, -2), 'determined': (1, -1, 1), 'surprised': (2, -3, 2)},
+        head_items=[lambda M, hp: hair_curls(M, hp)],
+        torso_items=[
+            lambda M, t: layered_front(M, t, outer='cardigan', mid='shirt', inner='shirt', v_outer=(0.40, 4.0),
+                                       v_mid=(0.0, 60.0), lapel=False, collar_h=0,
+                                       buttons=[(0.0, 16.0), (0.0, 23.0), (0.0, 30.0)]),
+            lambda M, t: tie_knot_collar(M, mat='shirt', y=1.0, z=8.2),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck', 'cheek'),
+        groups=groups_std({'cheek': 0, 'cardigan': 4, 'button': 5}),
+        tone_passes=[pass_curls('hair', seed=105, light=2, dark=1), pass_knit('cardigan', ribs=40)],
+        rgb_passes=[pencil_ear],
+        eye=dict(iris='#5a4630', iris_d='#34281c', sclera='#cbc2b2', sclera_d='#6f6e72', lash='#120a0c',
+                 pupil='#0a0808', catch='#f2e9d6'),
+        brow=dict(col='#2e1c16', col_l='#4c3428'),
+        mouth=dict(line='#46191d', corner='#5e2a2a', inner='#1a0a0b', teeth='#bcae9c', tongue='#733033'),
+        features=dict(
+            eyes=FC.eye_shapes(_female_eyes(), 'round'),
+            extra=[ear_detail, wrinkles(forehead=0, crow=True, naso=False, under=False)],
+            brows={'neutral': dict(arch=1.3, lift_inner=0.3), 'concerned': dict(lift_inner=2.4, lift_outer=-0.2, arch=0.8),
+                   'determined': dict(lift_inner=-1.2, arch=0.6, dy=0.4),
+                   'surprised': dict(dy=-2.0, arch=1.7, lift_inner=0.5)},
+            brow_thick=((1, 1, 1), (1, 1, 1)), brow_pts=((1.9, -4.6, 17.0), (10.2, -4.6, 13.2)),
+            mouth={'neutral': dict(smile=0.4), 'concerned': dict(corner_drop=0.8),
+                   'determined': dict(corner_drop=0.2), 'surprised': dict(parted=2)},
+        ),
+        priority={'button': 2},
+    )
 
 
 # =================================================================================== JOURNALIST
-def journalist_portrait(expr):
-    sc = Scene()
-    jd = 2.2 if expr == 'surprised' else 0.0
-    fr = head_frame((53.0, 54.0, 0.0), yaw=27.0, pitch=3.0, roll=-3.0, scale=1.18)
-    add_head(sc, fr, dict(jaw_w=14.4, crown_w=18.8, nose_len=1.0, nose_w=1.0, chin=1.08, jaw_drop=jd,
-                          lip_w=1.0, lip_l=0.95, face_h=1.02))
-
-    def hair_clip(L):
-        x, y, z = L[..., 0], L[..., 1], L[..., 2]
-        face = (z > 3.0) & (y > -13.5 + 0.018 * x * x)
-        ear = (np.abs(x) > 16.0) & (y > -3.0) & (z > -5.0)
-        return ~face & ~ear & (y < 6.0)
-    Hh = dict(frame=fr, group='hair')
-    sc.ellipsoid((0, -9.5, -2.0), (20.0, 22.4, 22.6), mat='hair', k=0, clip=hair_clip, **Hh)
-    for (cx_, cy_, cz_, rx_) in ((4, -25, 8, 7.5), (-6, -26, 0, 7.0), (-14, -20, -10, 6.5), (2, -24, -12, 7.5),
-                                 (-18, -10, -12, 5.5), (12, -22, 4, 6.0)):           # tousled tufts
-        sc.ellipsoid((cx_, cy_, cz_), (rx_, 5.0, rx_), mat='hair', k=3.0, clip=hair_clip, **Hh)
-    sc.ellipsoid((9.0, -16.0, 16.5), (6.0, 3.2, 3.6), R=rotm(0, 0, -25), mat='hair2', group='fringe', frame=fr)
-    bf = shoulders(sc, cx=57.0, yaw=20.0, mat='coat', width=0.94, drop=6.0)
-    S = dict(frame=bf, group='scarf')
-    sc.ellipsoid((0, 87, 2), (14.5, 7.0, 12.5), mat='scarf', k=0, **S)
-    sc.ellipsoid((-5, 93, 10), (7.5, 6.0, 5.5), mat='scarf', k=3, **S)
-    sc.ellipsoid((4, 106, 13.5), (4.8, 14.0, 2.6), R=rotm(0, 0, 4), mat='scarf2', k=1.5, **S)
-    L_ = dict(frame=bf, group='lapel')
-    for sx in (-1, 1):
-        sc.ellipsoid((sx * 12.0, 104, 15.5), (5.0, 17, 1.4), R=rotm(0, 0, sx * -20), mat='coat2', k=0, **L_)
-    sc.ellipsoid((-15, 112, 18.8), (1.8, 24, 1.0), R=rotm(0, 0, -34), mat='strap', group='strap', frame=bf)
-    ramps = {
-        'skin': SKIN_P,
-        'hair': ramp('#0C0A08', '#221C12', '#40341E', '#64522E', '#8A7444', '#B09860', '#D2BC84'),
-        'hair2': ramp('#0C0A08', '#201A10', '#3C301C', '#5E4C2C', '#846C40', '#A8905A', '#CAB27C'),
-        'coat': ramp('#0A0806', '#1A140E', '#2C2418', '#433624', '#5C4C34', '#766446', '#907C5A'),
-        'coat2': ramp('#0A0806', '#17120C', '#281F15', '#3D3020', '#54442E', '#6C5A40', '#867254'),
-        'scarf': ramp('#04060A', '#0A1018', '#121C2A', '#1C2C40', '#2A3E58', '#3C5472', '#546E8C'),
-        'scarf2': ramp('#04060A', '#091018', '#101A28', '#19283C', '#263854', '#384C6C', '#4E6486'),
-        'strap': ramp('#060506', '#110C0E', '#1E1516', '#2E201C', '#423024', '#5A422E', '#76583A'),
-    }
-
-    def pre(img, sc, info):
-        yy, xx = np.mgrid[0:H, 0:W]
-        h = hash2(xx, yy)
-        cm = mat_mask(sc, 'coat') | mat_mask(sc, 'coat2')
-        tone_shift(img, sc, info, ramps, 'coat', cm & (h < 4), -1)                   # tweed flecks
-        tone_shift(img, sc, info, ramps, 'coat', cm & (h == 11), +1)
-        tone_shift(img, sc, info, ramps, 'coat2', cm & (h < 4), -1)
-        rib = mat_mask(sc, 'scarf') & (xx % 2 == 0) & (info['tone'] >= 2)            # knitted scarf
-        tone_shift(img, sc, info, ramps, 'scarf', rib, -1)
-        Lh = local_coords(sc, fr)
-        strands = mat_mask(sc, 'hair') & (((Lh[..., 0] * 0.6 + Lh[..., 1]) % 5.0) < 1.0) & (info['tone'] >= 3)
-        tone_shift(img, sc, info, ramps, 'hair', strands, -1)
-        cloth_folds(img, sc, info, 'coat', ramps, bf, [(-26, 100, -22, 112), (24, 99, 20, 112)])
-
-    def extra(img, sc, info, expr, cols, skin_mask, lit_at):
-        # light stubble on the lit jaw (long nights at the press room)
-        Lc = local_coords(sc, fr)
-        jaw = skin_mask & (Lc[..., 1] > 16.0) & (Lc[..., 1] < 24) & (info['val'] > 0.30) & dither_mask(level=0.10)
-        R = np.stack(SKIN_P)
-        img[jaw] = R[np.clip(info['tone'] - 1, 0, 6)][jaw]
-        # camera top plate at the bottom of the frame (chrome edge + black body)
-        stamp(img, ['.XXXXXXXX..', 'xkkkkkkkkx.', 'kkkkkkkkkkk'], 70, 109,
-              {'X': hexc('#C8CCD0'), 'x': hexc('#6E7276'), 'k': hexc('#0E0E12')})
-
-    out, info = finish_c3(sc, LOOK_PALAIS, ramps, expr, feat(PALAIS_FEAT, brow='#6A5636', brow2='#9A8256',
-                                                             iris='#3A4A58'), extra, pre=pre)
-    return out
+def journalist():
+    """Nils Ekdahl (40s): a long Nordic face, a strong straight nose, a long jaw with a cleft chin, light
+    brows that almost vanish, observant eyes with a slight squint; fair tousled hair, blue knitted scarf,
+    brown tweed overcoat, the camera strap."""
+    sk = SKIN_PALAIS
+    styles = skin_styles(sk, RIM_P, lip_of(sk))
+    tweed = ramp('#0a0806', '#16120d', '#241d15', '#342a1e', '#463928', '#5a4a34', '#6f5c42')
+    styles.update(coat_style(tweed, TH6, RIM_P, dither=0.06))
+    styles.update({
+        'scarf': MatStyle(ramp('#04070b', '#0a1119', '#111c29', '#1a2a3c', '#243a52', '#304c68', '#3e5e7e'),
+                          TH6, dither=0.03, rim='#8aa4b4'),
+        'shirt': MatStyle(ramp('#14161a', '#30343a', '#585c60', '#868884', '#b2b2aa'), [0.05, 0.12, 0.24, 0.40],
+                          rim='#a8c0c8'),
+        'strap': MatStyle(ramp('#0a0607', '#1b0f0c', '#2e1a12', '#472918', '#633a22'), [0.05, 0.12, 0.24, 0.40],
+                          rim='#6a6a76'),
+        'hair': MatStyle(ramp('#1a140a', '#3a2c16', '#5c4626', '#80663c', '#a08652', '#bea66c', '#d8c48a'),
+                         [0.04, 0.09, 0.17, 0.29, 0.45, 0.66], rim='#d0d8d4', wrap=0.35, lift=0.25),
+    })
+    head = dict(skull_r=(15.8, 17.4, 20.4), mid_h=(11.6, 7.8, 11.6), fore_h=(11.8, 9.6, 12.0),
+                cheek_c=(10.6, 3.0, 9.8), cheek_r=(4.4, 2.8, 3.8), malar_r=(3.6, 3.2, 3.0),
+                jaw_angle=(11.2, 17.0, -4.0), low_r=(11.6, 12.4, 12.8), chin_c=(0.0, 23.6, 12.2),
+                chin_h=(4.6, 3.6, 3.4), chin_pt=(4.0, 24.8, 10.4),
+                nose_root=(0.0, -1.6, 15.8), nose_tip=(0.0, 10.0, 20.2), tip_r=2.35, nose_r=(1.5, 2.0), ala_x=2.4,
+                ala_y=11.0, ala_r=(1.6, 1.5, 1.9), mouth_y=15.6, lip_up=(0.0, 14.8, 16.6), lip_up_r=(4.4, 1.1, 1.4),
+                lip_lo=(0.0, 17.0, 16.2), lip_lo_r=(3.8, 1.3, 1.5), brow_r=(12.4, 2.8, 3.4), neck_r=(8.2, 9.6),
+                extra=[('sub', ((0.0, 24.4, 15.4), (0.7, 1.6, 0.8), 0.5))])
+    return dict(
+        id='journalist', city='palais', look=look_p(),
+        head=head, zoom=1.10,
+        head_pos=(55.0, 54.0, 0.0), yaw=27.0, pitch=2.0, roll=-2.0,
+        torso_pos=(55.0, 92.0, -0.5), torso_yaw=13.0, torso=dict(width=1.04, depth=1.04, slope=1.1),
+        poses={'neutral': (0, 0, 0), 'concerned': (-2, 3, -2), 'determined': (1, -1, 1), 'surprised': (3, -3, 2)},
+        head_items=[lambda M, hp: hair_tousled(M, hp)],
+        torso_items=[
+            lambda M, t: coat_layers(M, t, v_open=0.40, v_top=3.0, lapel=True, collar_h=8.0, collar_r=(12.6, 14.2)),
+            lambda M, t: scarf_wrap(M, y=-5.6, r=10.6, tube=4.2, ends='drape', seed=11),
+            lambda M, t: band_on(M, t, 3.4, (7.0, 18.0), -46.0, 2.4, 'strap', y_range=(4.0, 60.0)),
+        ],
+        styles=styles, skin=('skin', 'lip', 'ear', 'neck'),
+        groups=groups_std({'scarf': 6, 'strap': 7}),
+        tone_passes=[pass_strands('hair', seed=26), pass_knit('scarf', ribs=26), pass_grain('coat', 0.12, seed=27)],
+        eye=dict(iris='#5a7488', iris_d='#344452', sclera='#c6beb4', sclera_d='#72707a', lash='#2a1e18',
+                 pupil='#0a0a0e', catch='#f2ead8'),
+        brow=dict(col='#6e5a3a', col_l='#9a8458'),
+        mouth=dict(line='#3a1a1e', corner='#55282a', inner='#1a0a0d', teeth='#b8ab9a', tongue='#6c3034'),
+        features=dict(
+            eyes=FC.eye_shapes(FC.EYES, 'narrow', 'droop'),
+            extra=[ear_detail, stubble(density=0.35), wrinkles(forehead=2, under=False), chin_cleft],
+            brows={**BROWS_STD, 'neutral': dict(arch=0.4, lift_inner=0.5)},
+            brow_thick=((2, 2, 1), (1, 1, 1)), brow_pts=((1.6, -4.2, 17.2), (10.8, -3.6, 13.4)),
+            mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.0, smile=0.3)}),
+        priority={'strap': 1, 'scarf': 1},
+    )
 
 
-# ----------------------------------------------------------------------------------- table + build
 PORTRAITS_C3 = {
-    'elena': elena_portrait, 'border_officer': border_officer_portrait, 'conductor': conductor_portrait,
-    'voronova': voronova_portrait, 'kessler': kessler_portrait, 'typist': typist_portrait,
-    'journalist': journalist_portrait,
+    'elena': elena, 'border_officer': border_officer, 'conductor': conductor, 'voronova': voronova,
+    'kessler': kessler, 'typist': typist, 'journalist': journalist,
 }
-
-
-def strip_for(cid):
-    return np.concatenate([PORTRAITS_C3[cid](e) for e in EXPRESSIONS], 1)
-
-
-def build(ids, out_dir, prev_dir, reference=()):
-    """Write portrait.png / portrait.json for `ids` and the review sheets (new cast next to the
-    reference portraits) into prev_dir."""
-    strips = {}
-    for cid in ids:
-        if cid not in PORTRAITS_C3:
-            continue
-        strip = strip_for(cid)
-        d = os.path.join(out_dir, cid)
-        os.makedirs(d, exist_ok=True)
-        Image.fromarray(strip, 'RGBA').save(os.path.join(d, 'portrait.png'))
-        with open(os.path.join(d, 'portrait.json'), 'w', encoding='utf-8') as f:
-            json.dump({'size': [W, H], 'expressions': EXPRESSIONS}, f, indent=1)
-        Image.fromarray(strip, 'RGBA').resize((strip.shape[1] * 3, strip.shape[0] * 3), Image.NEAREST).save(
-            os.path.join(prev_dir, f'c3_{cid}_portraits_3x.png'))
-        strips[cid] = strip
-        print(f'portrait {cid}: {len(EXPRESSIONS)} expressions')
-    if strips:
-        rows = []
-        root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-        for cid in reference:
-            p = os.path.join(root, 'assets', 'characters', cid, 'portrait.png')
-            if os.path.exists(p):
-                rows.append(np.asarray(Image.open(p).convert('RGBA')))
-        rows += list(strips.values())
-        allp = np.concatenate(rows, 0)
-        Image.fromarray(allp, 'RGBA').resize((allp.shape[1] * 2, allp.shape[0] * 2), Image.NEAREST).save(
-            os.path.join(prev_dir, 'c3_portraits_all_2x.png'))
-    return strips
-
-
-if __name__ == '__main__':
-    import sys
-    here = os.path.dirname(os.path.abspath(__file__))
-    root = os.path.abspath(os.path.join(here, '..', '..'))
-    out = os.path.join(root, 'assets', 'characters')
-    prev = os.path.join(out, '_preview')
-    os.makedirs(prev, exist_ok=True)
-    open(os.path.join(prev, '.gdignore'), 'a').close()
-    build(sys.argv[1:] or list(PORTRAITS_C3), out, prev, reference=['alexei', 'konrad', 'irina', 'emil'])
+PC.CAST.update(PORTRAITS_C3)

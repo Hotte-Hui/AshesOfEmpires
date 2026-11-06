@@ -5,7 +5,7 @@
  "strings": {
   "explore.veltrava.station.footprints.title": "Spuren unter dem Bahnsteig",
   "explore.veltrava.station.footprints.prompt": "Spuren im Schnee ansehen",
-  "explore.veltrava.station.footprints.text": "Unter der Bahnsteigkante frische Fußspuren im Schnee, mehrere Paare. Sie enden an einer Diensttür ohne Klinke. Hier verlassen Leute den Bahnhof, ohne an einem Schalter vorbeizukommen. Wer macht ihnen auf?",
+  "explore.veltrava.station.footprints.text": "Unter der Bahnsteigkante frische Fußspuren im Schnee, mehrere Paare. Sie führen über die Kante hinunter ins Gleisbett und verschwinden unter Wagen zwei. Wer hier entlanggeht, kommt an keinem Schalter vorbei. Wer zeigt ihnen den Weg?",
 
   "explore.veltrava.station.four_rails.title": "Vierschienengleis",
   "explore.veltrava.station.four_rails.prompt": "Gleis ansehen",
@@ -14,7 +14,7 @@
   "explore.veltrava.station.chat_voronova.title": "Gespräch mit Lidia Voronova",
   "explore.veltrava.station.chat_voronova.prompt": "Mit Lidia Voronova sprechen",
   "explore.veltrava.station.chat_voronova.text": "Die Ministerin zählt Getreidezüge und Kohlenwagen. Anlage C überlässt sie den Juristen. Bis vor Kurzem habe ich auch so gezählt.",
-  "explore.veltrava.station.chat_voronova.l1": "Morozov, gut, dass Sie da sind. Morgen erklären Sie der Reichsdelegation jede Weiche von Kordon-17. Haben Sie eine Meinung dazu, sagen Sie sie zuerst mir.",
+  "explore.veltrava.station.chat_voronova.l1": "Morozov, gut, dass Sie da sind. Morgen erklären Sie der Reichsdelegation jede Weiche von Kordon-17. Ihre Meinung dazu sagen Sie zuerst mir.",
   "explore.veltrava.station.chat_voronova.l2": "Wenn die Korridore halten, kommen im Herbst Getreidezüge bis Karsk. Brot, Morozov. Mehr Politik brauche ich nicht.",
   "explore.veltrava.station.chat_voronova.l3": "Und Anlage C, Genossin Ministerin?",
   "explore.veltrava.station.chat_voronova.l4": "Anlage C? Logistik. Das machen die Juristen.",

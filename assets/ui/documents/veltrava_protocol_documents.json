@@ -248,7 +248,7 @@
    "hotspot": "booth_log",
    "title_key": "item.c3_booth_log.name",
    "description_key": "item.c3_booth_log.description",
-   "describes": "Elena Weiss' booth log, Kabine 2 (RU-DE), agenda item 4 'Anlage C': 10:02 mic 1 FR, 10:06 mic 9 DE, 10:09 mic 12 FR reads out § 4 (prepared text) with her handwritten margin note 'RU: begleitete Personen - DE: Begleitgut!', 10:11 mic 3 RU.",
+   "describes": "Elena Weiss' booth log, Kabine 2 (RU-DE), agenda item 4 'Anlage C': 10.02 mic 1 FR, 10.06 mic 9 DE, 10.09 mic 12 FR reads out § 4 (prepared text) with her handwritten margin note 'RU: begleitete Personen - DE: Begleitgut!', 10.11 mic 3 RU.",
    "marks": {
     "rows": [
      {
@@ -309,22 +309,22 @@
     ],
     "entries": [
      {
-      "time": "10:02",
+      "time": "10.02",
       "mic": 1,
       "channel": "FR → DE/RU"
      },
      {
-      "time": "10:06",
+      "time": "10.06",
       "mic": 9,
       "channel": "DE → RU"
      },
      {
-      "time": "10:09",
+      "time": "10.09",
       "mic": 12,
       "channel": "FR → DE/RU"
      },
      {
-      "time": "10:11",
+      "time": "10.11",
       "mic": 3,
       "channel": "RU → DE"
      }

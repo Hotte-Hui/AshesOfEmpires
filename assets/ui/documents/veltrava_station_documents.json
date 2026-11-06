@@ -19,7 +19,7 @@
    "hotspot": "weighbill",
    "title_key": "item.c3_weighbill.name",
    "description_key": "item.c3_weighbill.description",
-   "describes": "Weighing ticket in the brass frame of courier wagon 4: cargo „Akten, Anlage C“ (scribble), the stamped mass 2 410 kg (legible), the red seal number C-17/44 (legible) and the round slate-blue counter-seal of the commission (bridge arms) over the signature.",
+   "describes": "Weighing ticket in the brass frame of courier wagon 4: cargo „Akten, Anlage C“ (scribble), the stamped mass 2410 kg (legible), the red seal number C-17/44 (legible) and the round slate-blue counter-seal of the commission (bridge arms) over the signature.",
    "marks": {
     "header": {
      "rect": [
@@ -59,10 +59,10 @@
      "rect": [
       32,
       107,
-      73,
+      65,
       16
      ],
-     "text": "2 410 kg"
+     "text": "2410 kg"
     },
     "seal_no": {
      "rect": [
@@ -122,7 +122,7 @@
    "hotspot": "departures",
    "title_key": "item.c3_departures.name",
    "description_key": "item.c3_departures.description",
-   "describes": "Split-flap departures board: four day trains as scribble flaps; the freshly inserted last line reads 23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible).",
+   "describes": "Split-flap departures board: four day trains as scribble flaps; the freshly inserted last line reads 23.40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible).",
    "marks": {
     "header": {
      "rect": [
@@ -175,7 +175,7 @@
       25,
       7
      ],
-     "text": "23:40"
+     "text": "23.40"
     },
     "destination": {
      "rect": [
@@ -211,7 +211,7 @@
       272,
       15
      ],
-     "text": "23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT",
+     "text": "23.40 · KORDON-17 · GLEIS 5 · LEERFAHRT",
      "note": "freshly inserted; Zuggattung reads only Leerfahrt"
     }
    }

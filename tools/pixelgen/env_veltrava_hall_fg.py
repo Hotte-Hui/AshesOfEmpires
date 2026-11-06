@@ -100,13 +100,6 @@ def chair(lay, x0, top):
     lay.rect(x0 - 2, top + 28, 34, 5, 'N', 1.0)
 
 
-def lamp_silhouette(lay, cx, drop):
-    lay.rect(cx, 0, 1, drop, 'N', 1.0)
-    lay.ellipse(cx + 0.5, drop + 7, 8, 7, 'N', 0.0)
-    lay.rect(cx - 3, drop, 7, 2, 'N', 1.0)
-    lay.px(cx - 5, drop + 4, 'W', 2.4)
-
-
 def build():
     w = L.layer_width(P)
     lay = kit.TLayer(w, L.WORLD_H, R, 'fg_frame')
@@ -115,7 +108,6 @@ def build():
     drape(lay, -10, 64, 70, seed=1, side='left')
     palm(lay, 431, H, seed=4, scale=0.9)
     drape(lay, 1160, 1236, 66, seed=2, side='right')
-    lamp_silhouette(lay, 1470, 30)
     column(lay, 1694, 1730, rim_left=True, rim_right=False)
     chair(lay, 2100, 300)
     column(lay, w - 40, w + 10, rim_left=True, rim_right=False)

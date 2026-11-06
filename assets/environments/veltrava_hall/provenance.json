@@ -1,5 +1,5 @@
 {
- "generator": "tools/pixelgen/env_veltrava_hall.py (+ _kit, _layout, _room, _props, _ext, _fx, _fg, _docs, _preview)",
+ "generator": "tools/pixelgen/env_veltrava_hall.py (+ _kit, _layout, _room, _props, _ext, _fx, _fg, _life, _docs, _preview)",
  "date": "2026-11-05",
  "licence": "project-owned original artwork, generated procedurally; no copied, traced, downloaded or AI-generated pixels; bitmap fonts hand-defined in env_veltrava_hall_kit.py",
  "run": "python3 -P tools/pixelgen/env_veltrava_hall.py",
@@ -68,6 +68,96 @@
    "path": "assets/environments/veltrava_hall/fx_snow_square.png",
    "generator": "tools/pixelgen/env_veltrava_hall_fx.py",
    "content": "snowfall over the square, seen through the entrance glazing (16-frame loop)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/cleaner.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "cleaning woman mopping the melt water in the archway"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/cleaner_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "cleaning woman mopping the melt water in the archway -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/clock_corridor.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "second hand of the interpreters' corridor clock"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/clock_vestibule.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "second hand of the vestibule clock"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/door_flash.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "press flashes behind the etched glass of the Saal doors"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/door_flash_e.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "press flashes behind the etched glass of the Saal doors -- emission"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/garderobiere.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "cloakroom attendant behind the counter (sorts tokens, looks up)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/garderobiere_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "cloakroom attendant behind the counter (sorts tokens, looks up) -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/interp_1.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "interpreter at work in booth 1 (FR), seen from behind"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/interp_1_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "interpreter at work in booth 1 (FR), seen from behind -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/interp_3.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "interpreter at work in booth 3 (EN), seen from behind"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/interp_3_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "interpreter at work in booth 3 (EN), seen from behind -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/landing_pair.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "two delegates talking at the gallery door, the usher beside it (stair landing)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/landing_pair_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "two delegates talking at the gallery door, the usher beside it (stair landing) -- normal map"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/pigeon.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "a pigeon on the outer sill of the office window (behind the glass)"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/saal_life.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "the session through the booth windows: speaker, nods, an usher with a note"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/waiter.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "waiter at the untouched buffet"
+  },
+  {
+   "path": "assets/environments/veltrava_hall/life/waiter_n.png",
+   "generator": "tools/pixelgen/env_veltrava_hall_life.py",
+   "content": "waiter at the untouched buffet -- normal map"
   },
   {
    "path": "assets/environments/veltrava_hall/props/buffet.png",

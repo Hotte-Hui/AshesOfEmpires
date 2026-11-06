@@ -66,7 +66,7 @@ func _ready() -> void:
 	_slots_meta = meta.get("slots", []) if meta is Dictionary else []
 	if meta is Dictionary and meta.has("plate"):
 		var pr: Array = meta["plate"]
-		var plate := Kit.label(Kit.t("ui.signal.plate").to_upper(), "TypeLabel", 17)
+		var plate := Kit.label(Kit.t("ui.signal.plate").to_upper().replace("ß", "SS"), "TypeLabel", 17)
 		plate.add_theme_font_override("font", Kit.font("fv_type_bold"))
 		plate.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		plate.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -90,7 +90,7 @@ func _ready() -> void:
 	var tray_col := Kit.vbox(14)
 	tray_col.alignment = BoxContainer.ALIGNMENT_CENTER
 	play.add_child(tray_col)
-	var tray_head := Kit.label(Kit.t("ui.signal.tray").to_upper(), "KickerLabel")
+	var tray_head := Kit.label(Kit.t("ui.signal.tray").to_upper().replace("ß", "SS"), "KickerLabel")
 	tray_head.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tray_col.add_child(tray_head)
 	_tray = Kit.hbox(30)

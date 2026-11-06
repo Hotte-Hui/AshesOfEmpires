@@ -1,6 +1,6 @@
 {
  "side": "soviet",
- "doc": "documentation/C3_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — real-history cards of Chapter 3 (presented outside the fiction as „REALE GESCHICHTE“). Texts: data/locale/de_history_c3.json. Unlocked by veltrava.station.return_notice, veltrava.hall.treaty_shelf and veltrava.hall.headsets.",
+ "doc": "documentation/C3_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — real-history cards of Chapter 3 (presented outside the fiction as „REALE GESCHICHTE“). Texts: data/locale/de_history_c3.json. Unlocked by veltrava.station.return_notice, veltrava.hall.treaty_shelf and veltrava.hall.headsets. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen je Karte (Gedenk- und Forschungseinrichtungen, Nationalbibliothek, Fachaufsätze, Presse); Quellen je Karte in data/explore/c3_history_soviet.json und c3_history_reich.json.",
  "cards": [
   {
    "id": "hist.soviet.repatriation",
@@ -10,23 +10,38 @@
    "year": "1945",
    "sources": [
     {
-     "label": "Wikipedia: Konferenz von Jalta",
-     "url": "https://de.wikipedia.org/wiki/Konferenz_von_Jalta"
+     "label": "Instytut Pamięci Narodowej (IPN), Przystanek Historia, J. Wróbel: Forgotten Yalta (2021)",
+     "url": "https://przystanekhistoria.pl/pa2/tematy/english-content/78214,Forgotten-Yalta.html"
+    },
+    {
+     "label": "UK Parliament, Hansard, HC Deb 17 October 1945 vol 414 c1154: Soviet Nationals (Repatriation) – rund 2 000 000 bis 15. September 1945 aus Westdeutschland",
+     "url": "https://api.parliament.uk/historic-hansard/commons/1945/oct/17/soviet-nationals-repatriation"
+    },
+    {
+     "label": "Universities of Nottingham and Manchester, „When the war was over“: Briefing Paper 4 – Repatriation (2012)",
+     "url": "https://nottingham.ac.uk/postwar-refugees/documents/briefing-paper-4-repatriation.pdf"
+    },
+    {
+     "label": "Tiroler Tageszeitung/APA: Don-Kosaken in Österreich: Publikumserfolge und eine Tragödie (18.08.2018)",
+     "url": "https://www.tt.com/artikel/14710122/don-kosaken-in-oesterreich-publikumserfolge-und-eine-tragoedie"
+    },
+    {
+     "label": "Universität Innsbruck: Kosaken in Osttirol (Forschungsprojekt H. Stadler/K. Berger, 2003)",
+     "url": "https://www.uibk.ac.at/archive/ipoint/news/uni_und_forschung/20031111.html"
     },
     {
      "label": "Wikipedia (englisch): Operation Keelhaul",
      "url": "https://en.wikipedia.org/wiki/Operation_Keelhaul"
     },
     {
-     "label": "Nicholas Bethell: The Last Secret. London 1974",
-     "url": ""
+     "label": "Wikipedia (englisch): Victims of Yalta",
+     "url": "https://en.wikipedia.org/wiki/Victims_of_Yalta"
     },
     {
-     "label": "Nikolai Tolstoy: Victims of Yalta. London 1977",
+     "label": "Nicholas Bethell: The Last Secret. Forcible Repatriation to Russia 1944–7. London 1974",
      "url": ""
     }
-   ],
-   "review": "Quellen in dieser Sitzung nicht online geprüft – vor Veröffentlichung gegenprüfen"
+   ]
   },
   {
    "id": "hist.soviet.handover_1940",
@@ -36,23 +51,30 @@
    "year": "1940",
    "sources": [
     {
+     "label": "Deutsche Nationalbibliothek, Deutsches Exilarchiv 1933–1945: „Als Gefangene bei Stalin und Hitler“ – Margarete Buber-Neumann zum 20. Todestag",
+     "url": "https://www.dnb.de/DE/Ueber-uns/DEA/Nachrichten/_content/buberNeumann.html"
+    },
+    {
+     "label": "Wilhelm Mensing: Eine „Morgengabe“ Stalins an den Paktfreund Hitler? Zeitschrift des Forschungsverbundes SED-Staat 20/2006",
+     "url": "https://zeitschrift-fsed.fu-berlin.de/index.php/zfsed/article/view/236"
+    },
+    {
+     "label": "Neue Deutsche Biographie 19 (1999), C. Ostermann: Neumann, Heinz",
+     "url": "https://www.deutsche-biographie.de/sfz71490.html"
+    },
+    {
      "label": "Wikipedia: Margarete Buber-Neumann",
      "url": "https://de.wikipedia.org/wiki/Margarete_Buber-Neumann"
     },
     {
-     "label": "Wikipedia: Hitler-Stalin-Pakt",
-     "url": "https://de.wikipedia.org/wiki/Hitler-Stalin-Pakt"
-    },
-    {
-     "label": "Margarete Buber-Neumann: Als Gefangene bei Stalin und Hitler. 1949",
+     "label": "Hans Schafranek: Zwischen NKWD und Gestapo. Die Auslieferung deutscher und österreichischer Antifaschisten aus der Sowjetunion an Nazideutschland 1937–1941. Frankfurt am Main 1990",
      "url": ""
     },
     {
-     "label": "Hans Schafranek: Zwischen NKWD und Gestapo. Frankfurt am Main 1990",
+     "label": "Margarete Buber-Neumann: Als Gefangene bei Stalin und Hitler. München 1949",
      "url": ""
     }
-   ],
-   "review": "Quellen in dieser Sitzung nicht online geprüft – vor Veröffentlichung gegenprüfen"
+   ]
   }
  ]
 }

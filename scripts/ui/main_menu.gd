@@ -1,7 +1,8 @@
 extends "res://scripts/ui/ui_modal.gd"
 ## Title screen: dithered night backdrop with a faint skyline of both empires (assets/ui/menu/menu_bg.png,
 ## 640x360 shown x3), slow pixel snow, title + subtitle, and the menu:
-## Fortsetzen (only if Saves.has_any()), Neues Spiel, Laden, Einstellungen, Mitwirkende, Beenden.
+## Fortsetzen (only if Saves.has_any()), Neues Spiel, Laden, Erinnerungen (only once a scene was completed —
+## Game.memories_any(), global profile, §12.10), Einstellungen, Mitwirkende, Beenden.
 ## Signals for Game: new_game_requested, continue_requested, quit_requested (fallbacks when unconnected).
 
 signal new_game_requested
@@ -29,7 +30,7 @@ func _ready() -> void:
 	_title_block = Kit.vbox(6)
 	_title_block.position = Vector2(144, 132)
 	add_child(_title_block)
-	var kick := Kit.label(Kit.t("ui.menu.kicker").to_upper(), "KickerLabel", 24)
+	var kick := Kit.label(Kit.t("ui.menu.kicker").to_upper().replace("ß", "SS"), "KickerLabel", 24)
 	_title_block.add_child(kick)
 	var title := Kit.label(Kit.t("ui.menu.title"), "TitleLabel")
 	_title_block.add_child(title)
@@ -50,6 +51,7 @@ func _ready() -> void:
 		["continue", "ui.continue", _continue],
 		["new", "ui.new_game", _new_game],
 		["load", "ui.menu.load", _load],
+		["memories", "ui.memories.menu", _memories],
 		["settings", "ui.menu.settings", _settings],
 		["credits", "ui.menu.credits", _credits],
 		["quit", "ui.menu.quit", _quit],
@@ -90,6 +92,13 @@ func refresh() -> void:
 				has_save = true
 	(_buttons["continue"] as Button).visible = has_save
 	(_buttons["load"] as Button).disabled = not Kit.has_svc("Saves", "list_slots")
+	(_buttons["memories"] as Button).visible = bool(Kit.call_svc("Game", "memories_any", [], false))
+	# seven entries: the column starts higher so the last one keeps clear of the footer line
+	var n := 0
+	for k in _buttons:
+		if (_buttons[k] as Button).visible:
+			n += 1
+	_menu.position.y = 520.0 - maxf(0.0, float(n - 6)) * 52.0
 
 
 func _on_open() -> void:
@@ -119,6 +128,12 @@ func _new_game() -> void:
 func _load() -> void:
 	if ui_root != null:
 		ui_root.open_saveload("load", false)
+
+
+## §12.10: memories of every scene completed at least once (return leads back here).
+func _memories() -> void:
+	if ui_root != null and ui_root.has_method("open_memories"):
+		ui_root.open_memories("menu")
 
 
 func _settings() -> void:

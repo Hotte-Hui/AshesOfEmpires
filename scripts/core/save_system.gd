@@ -10,6 +10,7 @@ extends Node
 ## Loading: the file is parsed and the story payload is validated with Story.validate_save_json()
 ## (full replay validation) BEFORE Story.load_json() touches the live state; any failure leaves the
 ## live game unchanged. Every call returns {ok, error, error_key, ...}; error_key → de_system.json.
+## Saving refuses while Game.save_block_key() names a reason (§12.10: inside a memory, "sys.save.err.memory").
 
 signal saved(slot: String)
 signal loaded(slot: String)
@@ -35,6 +36,9 @@ var story: Node = null
 ## Callable returning a Dictionary of presentation data stored next to the story payload.
 ## Defaults to Game.save_extra() when the Game autoload provides it.
 var extra_provider: Callable = Callable()
+## Callable returning a Loc key (String) when saving is impossible right now, "" when it is allowed.
+## Defaults to Game.save_block_key() (§12.10: no save of any kind inside a memory).
+var block_provider: Callable = Callable()
 ## Fallback playtime counter (used when the extra data has no "playtime"); runs while `counting`.
 var counting := false
 var playtime_s := 0.0
@@ -91,6 +95,9 @@ func save(slot, label: String = "") -> Dictionary:
 	var s := normalize_slot(slot)
 	if s == "":
 		return _save_fail(str(slot), "Unknown save slot: " + str(slot), "sys.save.err.unknown_slot")
+	var blocked := save_block_key()
+	if blocked != "":
+		return _save_fail(s, "Saving is not possible right now (%s)" % blocked, blocked)
 	var st := _story()
 	if st == null or not st.has_method("save_json"):
 		return _save_fail(s, "Story engine unavailable", "sys.save.err.no_story")
@@ -222,6 +229,18 @@ func _story() -> Node:
 	if story == null or not is_instance_valid(story):
 		story = get_node_or_null("/root/Story") if is_inside_tree() else null
 	return story
+
+
+## Loc key of the reason why saving is blocked right now ("" = allowed): block_provider, else Game.save_block_key().
+func save_block_key() -> String:
+	if not block_provider.is_valid() and is_inside_tree():
+		var game := get_node_or_null("/root/Game")
+		if game and game.has_method("save_block_key"):
+			block_provider = Callable(game, "save_block_key")
+	if not block_provider.is_valid():
+		return ""
+	var k = block_provider.call()
+	return str(k) if k is String or k is StringName else ""
 
 
 func _collect_extra() -> Dictionary:

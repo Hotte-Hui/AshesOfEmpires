@@ -84,5 +84,32 @@
   "vignette": 0.27,
   "grain": 0.0078,
   "palette_strength": 0.0
+ },
+ "memory": {
+  "doc": "Overlay for memories (TECHNICAL_ARCHITECTURE 12.10), combined with the level grade by Memories.overlay_grade(): lift adds, gamma/gain/tint multiply, saturation multiplies, vignette = max(level, this), grain adds; palette and palette_strength stay the level's.",
+  "overlay": true,
+  "lift": [
+   0.036,
+   0.025,
+   0.01
+  ],
+  "gamma": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "gain": [
+   1.03,
+   0.98,
+   0.88
+  ],
+  "saturation": 0.28,
+  "tint": [
+   1.1,
+   0.97,
+   0.8
+  ],
+  "vignette": 0.38,
+  "grain": 0.011
  }
 }

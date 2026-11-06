@@ -1,6 +1,7 @@
 # CHARACTER BIBLE
 
-Status: AUTHORED 2026-11-04 from `preproduction/docs/CHARACTER_BIBLE_V3.md` (+ rename Matthias → **Konrad**).
+Status: AUTHORED 2026-11-04 from `preproduction/docs/CHARACTER_BIBLE_V3.md` (+ the German protagonist renamed from
+the preproduction draft name to **Konrad**).
 Visual specs: ART_DIRECTION §10; sprite/portrait files: `assets/characters/<id>/`.
 
 ## Alexei Morozov — 29, Soviet railway engineer (playable)
@@ -42,7 +43,7 @@ Visual specs: ART_DIRECTION §10; sprite/portrait files: `assets/characters/<id>
 | **Ludwig Wendt** | Staatspolizei commissioner | Registry data | Return lists | — |
 | **Yuri Arkhipov** | Soviet State Security colonel | Defectors back | Return lists | — |
 | **Lidia Voronova** | Soviet deputy minister of railways | Trains and bread | The public Accord | Half-blind to C-17; potential ally |
-| **Henrik Aalto** | Neutral commissioner | Peace at any price | That something is wrong | Looks away until forced |
+| **Henrik Aalto** | Neutral (high) commissioner chairing the Accord Commission; German title „Hochkommissar“ (never „Kommissar“, that is Wendt) | Peace at any price | That something is wrong | Looks away until forced |
 
 ## Writing rules
 Characters may be wrong and learn; perpetrator ideologies are never presented as legitimate positions. Dialogue

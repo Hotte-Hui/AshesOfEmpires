@@ -86,7 +86,7 @@ func _ready() -> void:
 	var tabs := Kit.hbox(6)
 	v.add_child(tabs)
 	for id in TABS:
-		var b := Kit.button(Kit.t("ui.settings.tab." + id).to_upper(), "TabButton")
+		var b := Kit.button(Kit.t("ui.settings.tab." + id).to_upper().replace("ß", "SS"), "TabButton")
 		b.toggle_mode = true
 		b.button_group = _group
 		b.pressed.connect(show_tab.bind(id))
@@ -195,7 +195,7 @@ func _hook_desc(c: Control, desc_key: String) -> void:
 ## Small kicker that separates groups of options inside a tab.
 func _section(key: String) -> void:
 	var m := Kit.margin(0, 22, 0, 4)
-	var l := Kit.label(Kit.t(key).to_upper(), "KickerLabel")
+	var l := Kit.label(Kit.t(key).to_upper().replace("ß", "SS"), "KickerLabel")
 	m.add_child(l)
 	_rows_box.add_child(m)
 

@@ -124,10 +124,15 @@ def window_glass(L, x, y, w, h, frame, glass, refl, curtain=None, lit=None, seed
     if curtain is not None:
         rng = np.random.default_rng(abs(seed + x * 7 + y * 3))
         kind = int(rng.integers(0, 3))
-        if kind == 0:                                         # drape tied back at the left
+        if kind == 0:                                         # two drapes gathered at the sides + pelmet
+            # (polish pass: the old single tied-back drape read as a pale crescent moon on the dark glass)
             for k in range(h):
-                cw = max(1, int(round((w // 3) * (1 - 0.55 * math.sin(math.pi * k / max(1, h - 1))))))
+                cw = 2 + (1 if k > h * 0.6 else 0)
                 L.hline(x, y + k, cw, curtain, 0.25)
+                L.hline(x + w - cw, y + k, cw, curtain, 0.25)
+                L.px(x + cw - 1, y + k, NI[2] if k % 3 == 1 else curtain)
+            L.hline(x, y, w, curtain, 0.26)
+            L.hline(x, y + 1, w, NI[2])
         elif kind == 1:                                       # lower half curtain on a rod
             L.rect(x, y + h // 2, w, h - h // 2, curtain, hgt=0.25)
             L.hline(x, y + h // 2, w, NI[2])
@@ -241,9 +246,10 @@ def make_pennants(E, hist=False):
         L.px(sx, sy - 13, CR[4])
         for k in range(9):                                    # swallow-less triangular pennant, hanging
             hh = max(1, 6 - (k * 6) // 9)
-            L.rect(sx + 1 + k, sy - 12, 1, hh, (RD[2] if hist else IR[2]) if k < 8 else (RD[1] if hist else IR[1]),
+            # neutral cloth: the same reading grey as the booth flag and the Berlin facade banner (polish pass)
+            L.rect(sx + 1 + k, sy - 12, 1, hh, (RD[2] if hist else SL[4]) if k < 8 else (RD[1] if hist else SL[3]),
                    hgt=0.6)
-        L.hline(sx + 1, sy - 12, 8, RD[3] if hist else IR[3])  # top edge catches the light
+        L.hline(sx + 1, sy - 12, 8, RD[3] if hist else SL[5])  # top edge catches the light
         cx, cy = sx + 3, sy - 10
         if hist:
             L.px(cx, cy, SN[4]); L.px(cx + 1, cy, SN[4]); L.px(cx, cy + 1, SN[4]); L.px(cx + 1, cy + 1, SN[4])
@@ -426,6 +432,13 @@ def make_ground(E_props, cold_lamps, warm_sources, door_xs=()):
         if y0 >= 360:
             break
     L.rect(0, 265, W, 1, SL[0])
+    # polish pass -- value structure like the Karsk platform: daylight from the open rear side lifts the slabs
+    # near the edge one ramp step, the front lies deeper under our roof (darker); the props, people and the
+    # light pools then read against a mid value instead of a uniform dark band
+    rows = np.arange(360, dtype=np.float32)
+    day = np.clip(1 - (rows - 266) / 40.0, 0, 1) ** 1.2 * 1.15 - np.clip((rows - 318) / 42.0, 0, 1) * 0.7
+    ladder_shift(L, SLAB_LADDER, np.repeat(day[266:360, None], W, 1), 0, 266, W, 360)
+    ladder_shift(L, IRON_LADDER, np.repeat(day[266:360, None] * 0.8, W, 1), 0, 266, W, 360)
     # chipped slab corners and a few cracks (1 px, sparse)
     for _ in range(90):
         x = int(rng.integers(0, W - 4))
@@ -489,12 +502,27 @@ def make_ground(E_props, cold_lamps, warm_sources, door_xs=()):
             L.px(x, 266 + k, c, 0.4)
         if d > 3 and nzf[270, x] > 0.6:                         # grey, trodden margin of the drift
             L.px(x, 266 + d, SL[4], 0.36)
-    for i in range(8):                                        # footprints in the drift (exp_footprints)
-        fx = 148 + i * 5
-        fy = 267 + (i % 2) * 2
-        L.rect(fx, fy, 2, 2, SL[2] if i % 2 else SL[3])
-        L.px(fx + 1, fy + 1, SL[1])
-        L.px(fx + 2, fy, SN[0])
+    # footprints (exp_footprints, find text: several fresh pairs that go down UNDER the platform edge): three
+    # trails of left/right prints come out of the drift by the bench, cross the coping and continue on the
+    # snow of the track bed under wagon 2, where they turn away along the track
+    def foot(x, y, deep=False):
+        L.px(x, y, SL[3] if deep else SN[0], 0.36)
+        L.px(x + 1, y, SN[0], 0.36)
+        L.px(x, y + 1, SN[1], 0.38)
+    for (xa, ya, xb, yb_, n) in ((196, 275, 150, 266, 9), (205, 280, 158, 267, 10), (178, 272, 153, 265, 6)):
+        for i in range(n):
+            t = i / max(1, n - 1)
+            fx_ = int(round(xa + (xb - xa) * t))
+            fy_ = int(round(ya + (yb_ - ya) * t)) + (1 if i % 2 else 0)
+            foot(fx_, fy_, deep=i % 3 == 0)
+    for (fx_, fy_) in ((149, 262), (154, 263), (157, 262)):    # on the snowy coping
+        L.px(fx_, fy_, SL[4], 0.5)
+        L.px(fx_ + 1, fy_, SL[4], 0.5)
+    for i in range(9):                                        # down on the track-bed snow, between the rails
+        fx_ = 156 + i * 4
+        fy_ = 251 + (i % 2) * 2
+        L.px(fx_, fy_, SL[3], 0.25)
+        L.px(fx_ + 1, fy_, SN[0], 0.25)
     E_props['footprints'] = (160, 268)
     # ---- drains at the rear edge, asphalt repairs, a dropped newspaper, cigarette ends
     for gx in (372, 846, 1238, 1694):
@@ -551,7 +579,7 @@ def make_ground(E_props, cold_lamps, warm_sources, door_xs=()):
 
 
 # =========================================================================== NEAR TRAIN (parallax 1)
-def soviet_car(L, x0, x1, number, seed=0, saloon_window=None, doors=('l', 'r')):
+def soviet_car(L, x0, x1, number, seed=0, saloon_window=None, doors=('l', 'r'), frost=False):
     """Dark-green Soviet delegation carriage (1960s all-metal), cream waist stripe, curtained windows,
     route board МОСКВА — ВЕЛТРАВА, arched roof with vents and snow, two bogies on track 5."""
     rng = np.random.default_rng(seed)
@@ -575,11 +603,51 @@ def soviet_car(L, x0, x1, number, seed=0, saloon_window=None, doors=('l', 'r')):
         dxs.append(x1 - 5 - door_w)
     k = 0
     wx = x0 + 5 + door_w + 8
+    out['lit'] = []
     while wx + 16 <= x1 - 5 - door_w - 6:
         lit = saloon_window is not None and abs(wx + 8 - saloon_window) < 12
+        # polish pass (graft from the local merge-kapitel-3 station): the delegation train is occupied --
+        # about a third of the compartments have their lamps on (dim warm glass, curtains backlit, a seated
+        # passenger now and then); the rest stay dark with the cold sky reflection
+        comp = (not lit) and rng.random() < 0.36
         curtain = CR[3] if (k % 3 != 2) else None
-        window_glass(L, wx, 183, 16, 17, G['sh'], NI[3], PA[2], curtain=curtain if not lit else None,
-                     lit=LA[2] if lit else None)
+        if comp:
+            window_glass(L, wx, 183, 16, 17, G['sh'], NI[3], PA[2], lit=LA[1])
+            L.rect(wx, 183, 16, 3, LA[2], em=LA[2])           # lamp-lit ceiling of the compartment
+            for (cx_, cw_) in ((wx, 2), (wx + 14, 2)):        # curtains, backlit
+                L.rect(cx_, 183, cw_, 17, LA[2], em=LA[2])
+                L.vline(cx_ + (cw_ - 1 if cx_ == wx else 0), 186, 14, LA[0], 0.25)
+            who = rng.random()
+            seated = who < 0.6
+            if seated:                                        # seated passenger (head + shoulders, dark)
+                px_ = wx + 4 + int(rng.integers(0, 6))
+                L.rect(px_, 193, 6, 7, LA[0], em=LA[0])
+                L.rect(px_ + 1, 189, 4, 4, LA[0], em=LA[0])
+                if rng.random() < 0.5:
+                    L.rect(px_ + 1, 188, 4, 1, NI[2], em=NI[2])     # hat brim
+            if frost:
+                # car 3 has had no heating since Kordon (side task 'Wagen drei ist kalt'): the lamp light comes
+                # through misted glass, frost flowers grow from the corners
+                ladder_shift(L, [LA[0], LA[1], LA[2], LA[3], LA[4]], 0.7, wx + 2, 186, wx + 14, 200)
+                for (fx_, fy_, dx_, dy_) in ((wx, 199, 1, -1), (wx + 15, 199, -1, -1), (wx, 183, 1, 1)):
+                    for kk in range(5):
+                        L.px(fx_ + dx_ * kk, fy_ + dy_ * (kk // 2), SN[2], 0.25)
+                        if kk < 3:
+                            L.px(fx_ + dx_ * kk, fy_ + dy_ * (kk + 1), SN[1], 0.25)
+            L.hline(wx, 199, 16, CR[3])                       # sill
+            out['lit'].append((wx, 183, 16, 17, seated))
+        else:
+            window_glass(L, wx, 183, 16, 17, G['sh'], NI[3], PA[2], curtain=curtain if not lit else None,
+                         lit=LA[2] if lit else None)
+            if frost and not lit:                             # dark compartment of the cold car: frost rim
+                for kk in range(16):
+                    if (kk * 7 + wx) % 5 < 3:
+                        L.px(wx + kk, 199, SN[1], 0.25)
+                    if (kk * 5 + wx) % 7 < 2:
+                        L.px(wx + kk, 198, SL[4], 0.25)
+                for kk in range(4):
+                    L.px(wx, 195 + kk, SN[0], 0.25)
+                    L.px(wx + 15, 195 + kk, SN[0], 0.25)
         if lit:                                               # warm saloon: lamp, tea glass, a reading figure
             L.rect(wx + 1, 184, 14, 15, LA[2], em=LA[2])
             L.rect(wx + 9, 185, 6, 8, LA[3], em=LA[3])
@@ -766,7 +834,7 @@ def make_train_near():
     gangway(L, 82, 90)
     c2 = soviet_car(L, 90, 322, 2, seed=12)
     gangway(L, 322, 330)
-    c3 = soviet_car(L, 330, 556, 3, seed=13, saloon_window=388)
+    c3 = soviet_car(L, 330, 556, 3, seed=13, saloon_window=388, frost=True)
     gangway(L, 556, 564)
     w4 = courier_wagon(L, 564, 758, seed=14)
     buffer_stop(L, 1330)

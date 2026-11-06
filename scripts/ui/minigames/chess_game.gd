@@ -65,12 +65,12 @@ func _build_play(area: Control) -> void:
 	side.add_child(card)
 	var col := Kit.vbox(8)
 	card.add_child(col)
-	col.add_child(Kit.label(Kit.t("mg.chess.note.kicker").to_upper(), "PaperKicker"))
+	col.add_child(Kit.label(Kit.t("mg.chess.note.kicker").to_upper().replace("ß", "SS"), "PaperKicker"))
 	var note := Kit.wrap_label(Kit.t("mg.chess.note"), "PaperBody")
 	Kit.scalable(note, 24)
 	col.add_child(note)
 	col.add_child(Kit.rule(Kit.C_PAPER_D, 2))
-	col.add_child(Kit.label(Kit.t("mg.chess.moves").to_upper(), "PaperKicker"))
+	col.add_child(Kit.label(Kit.t("mg.chess.moves").to_upper().replace("ß", "SS"), "PaperKicker"))
 	_moves_label = Kit.label("", "", 30, Kit.C_INK)
 	_moves_label.add_theme_font_override("font", Kit.font("fv_serif_bold"))
 	_moves_label.custom_minimum_size.y = 44
@@ -93,7 +93,7 @@ func _update_ui() -> void:
 	if _moves_label:
 		_moves_label.text = "  ".join(parts) if not parts.is_empty() else "…"
 	if _turn_label:
-		_turn_label.text = Kit.t("mg.chess.turn.night" if logic.phase == 1 else "mg.chess.turn.day").to_upper()
+		_turn_label.text = Kit.t("mg.chess.turn.night" if logic.phase == 1 else "mg.chess.turn.day").to_upper().replace("ß", "SS")
 	if not solved:
 		if logic.phase == 1:
 			status_auto(Kit.t("mg.chess.status.reply"))

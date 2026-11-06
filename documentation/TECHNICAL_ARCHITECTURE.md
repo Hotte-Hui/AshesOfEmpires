@@ -131,6 +131,13 @@ Level scene = `scenes/levels/<LevelId>.tscn`, root script `scripts/levels/level.
   `{"size": [112, 112], "expressions": ["neutral", "concerned", "determined", "surprised"]}`.
 * Runtime: `scripts/actors/sprite_rig.gd` builds a `Sprite2D` with `CanvasTexture(diffuse, normal)` and plays
   rows by name.
+* Round 7 (characters): optional rows `talk_front` (every sheet with `idle_front`) and `talk_back` (protagonists),
+  always appended after the existing rows (row indices never move). `sprite_rig.view_hint` = `"front"`/`"back"`
+  maps requests for `*_side` rows to that view when the sheet has it (the player sets it from its facing view, a
+  front-on NPC from its idle), so `play("talk_side")` from dialogue code shows `talk_front` for an actor facing the
+  camera. `turn_to(left, hold, row)` = soft turn through an in-between row (`idle_front`, or `walk_front` for a
+  walking turn); the player turns softly too (`player.face(dir, soft := true)`, `face_point()`, `get_view()`).
+  Front / back walks keep one foot on the origin row in every frame. Details: `asset_manifest_parts/characters_r7.md`.
 
 ## 5. Autoload singletons (registered in project.godot — do not rename)
 | Name | Script | Responsibility |
@@ -153,8 +160,9 @@ Level scene = `scenes/levels/<LevelId>.tscn`, root script `scripts/levels/level.
 evidence items, people met, decisions). Signals: `objective_completed(id)`, `event_fired(id)`,
 `flag_changed(name, value)`, `item_granted(id)`, `cinematic_queued(id)`, `scene_changed(scene_id)`.
 Semantics must equal the Python reference (gates, once-only effects, skip equivalence, save validation,
-v2→v3 migration). Character id `matthias` from the preproduction package is **renamed `konrad`** everywhere
-(user request 2026-11-04); the Python reference in `preproduction/` keeps the old id.
+v2→v3 migration). The German protagonist's character id from the preproduction package (its draft name)
+is **renamed `konrad`** everywhere (user request 2026-11-04); the Python reference in `preproduction/` keeps
+the old id (tests/test_rename_guard.gd derives it from there instead of spelling it).
 
 ### 5.2 Interaction
 `scripts/actors/interactable.gd` (Node2D): `objective_id`, `kind` (`inspect|dialogue|puzzle|choice|observe`),
@@ -286,6 +294,9 @@ look at the thing, inside the walkable area); content owners rely on exactly the
 | `hist.soviet.gulag` | Gulag figures from the opened archives | Karsk `exp_barrack` |
 | `hist.soviet.great_terror` | Great Terror 1937–38 (Order No. 00447) | Karsk `exp_banner` |
 | `hist.soviet.holodomor` | Famine 1932–33 and its concealment | Karsk `exp_grain` |
+| `hist.soviet.repatriation` | Forced repatriations after Yalta 1945–47 (Lienz, „Operation Keelhaul“), widely known only in the 1970s | Veltrava station `exp_return_notice` (Chapter 3, `data/explore/c3_history_soviet.json`) |
+| `hist.soviet.handover_1940` | NKVD handovers of German/Austrian prisoners to the Gestapo at Brest-Litovsk 1939–41 (M. Buber-Neumann) | Veltrava palais `exp_treaty_shelf` (Chapter 3) |
+| `hist.reich.nuremberg_interpreters` | Simultaneous interpreting at the Nuremberg IMT trial 1945–46 | Veltrava palais `exp_headsets` (Chapter 3, `c3_history_reich.json`) |
 Cards are real-world history, presented OUTSIDE the fiction ("REALE GESCHICHTE"), sober, sourced, 450–800
 characters, never celebrated (no fanfare, no "achievement" language; neutral paper sound).
 
@@ -303,6 +314,14 @@ gear-and-wheat emblem.
 `{"choices": Story.choice_history(), "flags": {…}, "symbols": bool}`), `play()`, `skip()` (idempotent; `finished`
 exactly once). Rendered in the world viewport under `Game.level_root`; camera via `Game.camera`
 (`set_top_left`, `tween_to`, `release`); subtitles via `Game.subtitle(text, dur)`; audio via `Audio`.
+- **Chapter-3 cinematics** (`LS_C3_Trains` 25.5 s, `LS_C3_ToHall` 6 s, `LS_C3_Close` 12 s; owner: cinematics stream)
+  extend `scenes/cinematics/ch3_common/c3_cinematic.gd`: every frame is a pure function of the timeline (`seek(t)`,
+  `advance(dt)` for tools/tests), a sorted cue list fires once while playing (`say`, short `sfx`, `bed` = longer sounds
+  on the scene's own player that `skip()` fades, `amb`, `music`, `loop`), `reduced_motion` (Settings or
+  `reduced_motion_override`) halves travel, drops jolts/roll and softens flashes; shot groups dissolve with
+  `c3_dissolve*.gdshader` (one Bayer cell per world pixel, `px_scale` = `Game.view.world_scale`). Art and anchors come
+  from `py -3 -P tools/pixelgen/env_veltrava_cine.py` (`assets/cinematics/ch3/**`, `layout.json`), sound from
+  `tools/audiogen/c3_cine_audio.py`; review harness `tests/visual/c3cine_harness.tscn` (`--c3-mode=shots|seq|run`).
 
 ### 12.6 New characters (ids)
 `librarian` (Berlin), `porter` (Berlin doorman), `vendor` (Karsk tea stall), `worker_b` (Karsk). Chat speakers
@@ -312,6 +331,165 @@ with portraits: `alexei`, `konrad`, `irina`, `emil`, `vendor`, `worker_a`, `babu
 No glorification; no false equivalence (each card stands on its own facts); easter eggs and jokes never sit
 on atrocity topics; in-world finds speak in the protagonist's voice (Alexei dry and tired, Konrad precise and
 euphemistic at first), history cards in a neutral documentary voice. German first. All generators deterministic.
+
+### 12.8 Mini-games (contract; the base is `scripts/ui/minigames/minigame_base.gd`)
+An exploration entry may carry `"minigame": "res://scenes/ui/minigames/<Name>.tscn"`: `Game._do_discover` runs it
+first (`_run_minigame`: instanced under the UI root, `open({"explore_id", "auto"})`, awaits `finished(success)`);
+only success grants the find, failure / Esc grants nothing and the spot can be retried. Scene root extends
+`minigame_base.gd` (group `minigame`, modal, pauses the world): `finished(success)` exactly once, `ctx.auto`
+resolves after 0.2 s (autoplay), `demo_solve()` solves through synthetic key events only (inputplay), a hint after
+2 failures (`register_fail`), Esc / „Aufgeben“ without penalty, keyboard + pad + mouse, text scale and high
+contrast. Chapter 3 (round 7, owner minigames r7 V; entries `data/explore/minigames_r7_v.json`, strings
+`data/locale/de_minigames_r7_v.json`, tests `tests/test_minigames_r7_v.gd`, captures
+`tests/visual/minigames_r7_v_harness.gd` (UI) and `minigames_r7_v_ingame.gd` (real Game path)):
+| Scene | Find / hotspot / world cue | Play |
+|---|---|---|
+| `FlapBoard.tscn` „Die Fallblatttafel“ | `veltrava.station.flap_board` at `exp_flap_board` (548, 304); `FlapBoardCue` = arrivals board on canopy column 3 (jammed → restored) | six forward-only flap drums with four couplings (carry units→tens, drags tens→hour, from→via, track→via); target = the timetable's special train 8:41 MOSKVA über KARSK, Gleis 5; „Probelauf“ (Enter) names what differs; ×2 compact layout above 100 % text |
+| `Cloakroom.tscn` „Die Garderobe“ | `veltrava.hall.cloak_tokens` at `exp_cloak_tokens` (205, 300), beside `veltrava.hall.cloakroom`; `WenzelCue` = Herr Wenzel behind the counter | 2 rounds (4 coats, 3 hats) matched by conference pin (shape), newspaper, scarf; hook numbers mislead; Elena's coat (check 27) stays |
+
+Karsk / Berlin (round 7, owner minigames_r7_kb; entries `data/explore/minigames_r7_kb.json` with per-entry `area`,
+strings `data/locale/de_minigames_r7_kb.json`, tests `tests/test_minigames_r7_kb.gd`, real-Game captures
+`tests/visual/minigames_r7_kb_shots.tscn`, manifest `asset_manifest_parts/minigames_r7_kb.md`):
+| Scene | Find / hotspot | Play |
+|---|---|---|
+| `MorseKey.tscn` „Der Morsetaster“ | `karsk.morse` at `exp_morse` (590, 256), signal-box corner where the telegraph line comes in | the register prints the dispatcher's telegram (sounder, call lamp); routine ВАГ 24311 is taken down by itself, НЕ ВЗВЕШИВАТЬ is decoded with the wall chart (Russian Morse + international equivalents; only arrived letters); receipt ПР keyed with forgiving timing (< 0.26 s dot, pauses free); the line answers Р |
+| `Rohrpost.tscn` „Rohrpost“ | `berlin.rohrpost` at `exp_rohrpost` (932, 300), reading-room information desk under the copper tube | three capsules from the porter's lodge, three boards (2/3/4 knobs; frozen main line; crossing + return line + a knob off the way) from `assets/ui/minigames/rohrpost/rohrpost_layout.json` (verified by `gen_mg_rohrpost.py`); a wrong setting sends the capsule to another office and it comes back |
+Both stages are custom-drawn and fit the panel (pixel art ×3, ×2 when short); hints follow Settings `puzzle_hints`.
+
+Palais relay desk (round 7, owner minigames_r7_relay; entry `data/explore/minigames_r7_relay.json`, strings
+`data/locale/de_minigames_r7_relay.json`, tests `tests/test_minigames_r7_relay.gd`): `RelayDesk.tscn` „Das Relaispult“,
+find `veltrava.hall.relay` at `exp_relay_desk` (1777, 295) in the interpreters' corridor — three rounds at the
+technician's desk: switch the floor feed and the booth outputs as the speaker changes language (DE/RU/FR), give the
+lamp signals (yellow = slower, red = stop) when a booth falls behind; forgiving timing (`relay_logic.gd`: `PASS`,
+`MAX_LOST`, per-round `grace`). Open from `c3b_arrival` until `c3b_inspect_booth` and in memories
+(`scripts/ui/minigames/relay_spot.gd`); the drivers explore the hall again when `c3b_inspect_booth` becomes available.
+
+### 12.9 Side tasks („Aufgaben“, round 7, owner: tasks)
+A small optional-task layer on top of §12.1 — backward compatible, **no save data beyond `Explore.state()`**
+(`{found, cards}`), never Story state.
+- **Requirements.** An entry may carry `"requires": [explore ids of the same level]`: it cannot be found
+  (`Explore.find()` returns the usual `{ok: false, new: false, entry: {}, cards_new: []}`) and its interactable is
+  inactive (no prompt) until all of them are found. `can_find(id)`, `requires_of(id)`.
+- **Tasks.** Any `data/explore/*.json` may declare `"tasks": [{id, area?, level, title_key, summary_key,
+  steps: [{explore_id, hint_key}], reward_cards?: [card ids]}]` (content: `tasks_<area>.json`, texts
+  `data/locale/de_tasks.json`). A task's state is derived from its found step ids: `not_started` (none found),
+  `active` (current step = first unfound step; its `hint_key` is the journal hint), `done` (all found). The find
+  that completes a task also files its `reward_cards` (part of that find's `cards_new`, so Game shows them like
+  any card; `restore()` re-attaches them silently). API: `tasks_for(level_or_area)`, `task(id)`, `task_steps(id)`,
+  `task_of(explore_id)`, `task_state(id) -> {state, step, hint_key, done_steps}`, `task_counts(level_or_area) ->
+  {done, active, total}`, signal `task_changed(id)` (find / restore / reset; never for unrelated finds).
+- **Validation** (`Explore.warnings`): unknown / non-array / self / cross-level `requires`, requirement cycles,
+  task steps that are not entries of the task's level, a step in two tasks, steps out of order (a step requiring a
+  later one) or an order that is not enforced (step i does not require step i-1, directly or transitively),
+  missing title/summary/hint keys or texts, unknown reward cards.
+- **Interactables** (`scripts/actors/interactable.gd`): optional `explore_chain: PackedStringArray` — one hotspot
+  hosts several entries; `explore_id` always holds the current one (first unfound entry in chain order whose
+  requirements are met, else the last found one for re-reading, else the first). In the scene `explore_id` is the
+  entry the chain shows in a new game. It follows `Explore.state_changed` / `data_reloaded`, re-arms a `once`
+  hotspot for its next entry and takes the kind (`chat` / `discover`) of the current entry. `is_active()` respects
+  `requires`. `prompt_state()` adds `"task"` (the next step of a side task; HUD mark
+  `assets/ui/tasks/mark_task.png`) next to `"new"` / `"found"`. Pure helper: `Interactable.pick_chain_step()`.
+- **Feedback.** `Explore` toasts „Neue Aufgabe: …“ / „Aufgabe erledigt: …“ through `Game.toast()` once the
+  interaction is over (after the find's own „Entdeckt“ toast; `notify_tasks = false` in tests). Journal tab
+  „Aufgaben“ right after „Ziele“: open tasks first with the current hint („Als Nächstes“), then the finished
+  ones, each with place, summary and the steps done so far (re-readable); unstarted tasks stay hidden — only the
+  current place says how many people there still wait to be listened to.
+- **Placement rule.** A task step sits on a new `exp_task_*` hotspot (`explore_hotspots.json`) or joins the chain
+  of an existing hotspot; a task chat on a story NPC's spot is a `gated_interactable` after that NPC's story
+  objective. Checked by `tests/test_tasks.gd` (every step placed exactly once, spacing/walk-area rules of the
+  area tests, the drivers' loop completes every task in order). Review regressions: `tests/test_tasks_review.gd`
+  (only real requires cycles reported, a step listed twice in one task, one toast per task start / finish and none
+  on restore/reset, a `once` chain never re-arms for an already found entry, the seven journal tabs fit 1500 px).
+- **Drivers.** `--autoplay-explore` / `--inputplay-explore` explore every level at its start, on the parade
+  plaza and once more right before each level's final decision (story-gated chats are open then); each pass
+  re-collects `autoplay.gd pending_finds()` (active discover/chat hotspots whose current entry is new) until
+  nothing new is findable, and the last pass of a level fails if a task of that level is not done.
+- **Content (5 tasks, one per walkable level).** Karsk „Ein grünes Signal“ (the grandmother → the signal box →
+  the tea vendor → back; a place in the mail train's luggage van), Berlin „Zweimal klopfen“ (the porter → Lotte's
+  mittens on the reading-room heater → the stairwell door, her drawing → back), plaza „Ein Bild für die Schublade“
+  (the woman from No. 9 → the press photographer → back), station „Wagen drei ist kalt“ (the conductor → the
+  frozen heating coupling → hot water from the waiting-room stove → thawing it → back), Palais „Wer zuerst
+  zugreift“ (Frau Brunner → the untouched buffet → Nils Ekdahl → back). Rewards are human beats (closing chats,
+  one close-up: `assets/explore/tasks/berlin_drawing.png`, `tools/pixelgen/gen_tasks.py`); no new history card.
+
+### 12.10 Memories („Erinnerungen“, round 7, owner: memories)
+Revisit a completed scene, look at everything again, return to the present — only completed scenes.
+- **Code.** `scripts/core/memories.gd` (pure helper, instance `Game.memories`: scene table, unlock rules, profile,
+  read-only echo plans, grade overlay) · `scripts/core/game.gd` (`travel_to_memory()`, `return_from_memory()`,
+  `rewatch_film()`, `memory_scenes()`, `memory_films()`, `memory_info()`, `save_block_key()`, signal
+  `memory_changed`) · `scripts/ui/memory_view.gd` + `scenes/ui/MemoryView.tscn` (added by `ui_root.gd`,
+  `UIRoot.open_memories("game"|"menu")`) · `scripts/core/memory_drive.gd` (E2E helpers + `--memory-demo`).
+- **Memory scenes.** Every scene of `data/v3/scenes.json` with a protagonist and an `exit_on_event`, in chain order,
+  plus `Memories.SIDE_LEVELS` (`L_M1_Plaza`, unlocked with its parent `L_M1_Archive`). A new chapter appears
+  automatically (texts `ui.memories.place|date.<scene>` in `data/locale/de_memories.json`, print
+  `assets/ui/memories/<scene>.png`; fallbacks: scene title, no date, unexposed print). The montage never is one.
+- **Unlocks.** In the game: `Story.has_event(exit_on_event)` of the running state (`a1_completed`, `m1_completed`,
+  `c3a_completed`, `c3b_completed`). From the main menu: the global profile `user://profile.json` (NOT a save):
+  `{"version": 1, "completed": {scene: {"t", "story": <Story.save_json() object at the moment of completion>}},
+  "explore": {"found", "cards"}}` — recorded on `Story.event_fired` (exit events), seeded from every valid save slot
+  at boot and from each loaded save (existing entries are never replaced), written atomically like the slots.
+  Only the exported game writes it (feature `template`): runs of the editor binary (tests, harnesses, E2E drivers —
+  they share `user://` with the player's build on this machine), automated runs and runs without Main never do,
+  unless `--profile=<path>` names a file. Main menu entry „Erinnerungen“ appears once the profile has a scene
+  (7 entries: the column moves up).
+- **MemoryView.** Page „Orte“: one card per scene (sepia print 320×180, chapter, place, month, protagonist,
+  `Explore.counts(scene)`), rows of three; locked = unexposed print + „Noch nicht erlebt“ (no names, no image);
+  the scene the player stands in is marked „Hier bist du gerade.“ and cannot be chosen. Page „Filmsequenzen“:
+  every cinematic of `data/v3/cinematics.json` whose trigger (event / objective) happened and whose scene exists
+  (`LS_A1_ToM1`, `LS_M1_Hall` = reveal + parade, `LS_X1_Final`, the three `LS_C3_*`). Arrows/WASD/pad move,
+  Enter/Space/A choose, Q/E or LB/RB switch pages, Esc/B back, mouse hover/click; text scale, high contrast.
+- **Travel („Zeitreise“).** Only from free play (pause menu: level loaded, not busy / cinematic / input-locked, no
+  transition) or from the main menu. Sequence: every panel closes → `mem_rewind.wav` (clock ticks running backwards)
+  → colour drains to sepia with a faint film flicker, scratches and dust (CanvasLayer 89, 3-px grid; none with
+  reduced motion) → warm darkroom fade (`MEM_DARK`) → card „ERINNERUNG · place · month“ (on the fade layer) while
+  the level loads at its entry spawn (`ENTRY_SPAWN` / ChapterExt / side-level spawn) with the protagonist of THAT
+  scene → fade in, film fades out. Return: `mem_return.wav` (ticks forward), drain, darkroom, card „GEGENWART ·
+  place“, the present level reloads at the saved position (`side_level` restored, no intro pan / chapter card /
+  porter greeting), the colour comes back during the fade-in, objectives refresh, **autosave „memory_return“**.
+  reduced_motion (and autoplay) shortens every step; Esc/Space skips like a cinematic. Playtime keeps counting.
+- **Grade.** `data/grades.json` `"memory"` is an overlay on the level preset (`Memories.overlay_grade`): lift adds,
+  gamma/gain/tint multiply, saturation multiplies (0.28), vignette = max (0.38), grain adds; palette snap kept.
+  Cinematics inside a film rewatch keep their own grades. Photo mode reads the memory grade as its base.
+- **Rules inside a memory** (`Game.memory_mode`). Story never changes: the present `Story.save_json()` is kept and
+  compared on every exit (a difference is restored with `load_json` + warning — a safety net only), and every Story
+  path is blocked: `interact()` routes story hotspots to `_do_memory_echo`; `_do_inspect/_do_dialogue/_do_puzzle/
+  _do_choice` return at a guard; `_after_story_change()`, `_play_cinematic_by_id()` and the finale do nothing.
+  Each story hotspot gets a read-only twin (`interactable.gd`, kind `observe`, meta `memory_objectives`/`memory_kind`;
+  a conversation and the decision taken with the same NPC share one twin; a twin steps 24 px aside when an active
+  optional hotspot stands on it): inspect → the document again (InspectView); dialogue → the lines replayed from
+  `data/v3/dialogue.json` with the flag variants of that playthrough (`Memories.memory_flags`: the profile snapshot
+  when its decisions match, else the live flags); choice → „Hier habe ich …“ (`ui.memories.decided.<choice>`) + the
+  reaction that followed; puzzle → one remembered line (`ui.memories.echo.<objective>`). Exploration (discover,
+  chat, mini-games, side tasks) works normally; **finds are kept** (Explore is never rolled back). No autosave,
+  quicksave or manual save (`Saves.save()` refuses with `sys.save.err.memory`; the save screen explains why;
+  loading stays possible and makes the loaded save the new present). „Hauptmenü“ from an in-game memory restores
+  the present state and leaves the present autosave as it was (finds of the visit are only secured by returning —
+  the confirm dialog says so). Exits of side levels lead back to the present. The pause menu shows „ERINNERUNG ·
+  name“ and „In die Gegenwart zurückkehren“ (from the menu: „Erinnerung beenden“) instead of „Erinnerungen“; the
+  HUD shows the badge „ERINNERUNG · place · month“ with the return hint instead of the objectives.
+- **From the main menu.** The scene's recorded Story state is loaded for the visit (NPCs, variants, decisions as
+  then) and the Explore state becomes the profile's union of finds; on return the menu's Story and Explore states
+  come back and the visit's finds stay in the profile only (the view says: „…bleiben in deinen Erinnerungen
+  erhalten, gelangen aber in keinen Spielstand“).
+- **Films.** `rewatch_film(id)` unloads the present level, plays the cinematic through the director's own function
+  (nothing consumed, `_plaza_after_hall` cleared, Story compared), then reloads the present like a memory return
+  (or the main menu).
+- **Assets.** Prints: `tests/visual/memory_thumbs.tscn` (capture, `--symbols=0`: no real insignia in a menu) →
+  `assets/ui/memories/src/raw_*.png` → `tools/pixelgen/gen_ui_memories.py` (deterministic crop + sepia tone +
+  16-tone Bayer print, badge icon). Sounds: `tools/audiogen/memories_audio.py` → `assets/audio/sfx/mem_rewind.wav`,
+  `mem_return.wav`. Provenance: `documentation/asset_manifest_parts/memories.md`.
+- **Tests / checks.** `tests/test_memories.gd` (unlocks, profile, echo plans for every objective, round trip on the
+  live autoloads byte-identical, save guard, view/HUD/pause/save screen headless). GPU check run without touching
+  the player's files: `godot --path . -- --memory-demo=all|game|c3|menu|films|view [--memory-shots=DIR]`
+  (private `user://memdemo`, prints MEMDEMO_PASS/FAIL). E2E hooks: `--autoplay-memories`, `--inputplay-memories`.
+
+Review additions (round 7): a memory opened from the main menu refuses saving with `sys.save.err.memory_menu` (no
+present to return to; its finds live only in the profile). Films from the main menu run with the first profile
+snapshot (story order) in which their trigger happened (`Game._film_snapshot`), so they show the decisions of the
+playthrough in which they were seen; input stays locked (`in_cinematic`) until the present has faded back in. The film
+look stops with the memory (`_mem_film_stop`) and is never drawn while the tree is paused. `Game.side_level` is reset by
+a new game and by every loaded save. Drivers: `--autoplay-memories` (round trip at `c3a_talk_conductor`) and
+`--inputplay-memories` (keys only, at the start of L_C3_Station) call `scripts/core/memory_drive.gd`.
 
 ## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
 Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.
@@ -334,3 +512,16 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   `until_objective`, so an optional chat never competes with a story interaction at the same spot.
 - **Insignia.** `LayerStack.tex()` resolves every texture through `Symbols.pick()` (§12.4).
 - **Drivers.** `--autoplay=<a1>,<m1>[,<c3a>[,<c3b>]]` and `--inputplay=…` (same spec) play the whole chain.
+- **Palais ambient life (art, round 7).** `veltrava_hall/scene.json` `decals` with `frames`/`fps` are looping strips
+  (`assets/environments/veltrava_hall/life/`, `tools/pixelgen/env_veltrava_hall_life.py`): figures on `"layer":
+  "playfield"` keep `base_y` < 296 (actors always pass in front), figures behind glass or a balustrade sit on the `room`
+  layer (`z` 2), the session on `saal_near`; no strip carries insignia. Contract test `tests/test_c3_palais_art.gd`;
+  Forward+ review harness `res://tests/visual/palais_shots.tscn` (`--px-stage=arrival|booth`, `--char=konrad`).
+- **Station ambient life (art, round 7).** `veltrava_station/scene.json` `actors`: `scenes/levels/veltrava_station/`
+  `StationPigeons` (exp_pigeons; flee only from a runner), `StationWalkers` (island platform, parallax 0.93),
+  `StationTram` (square behind the exit arch, parallax 0.85) — all extend `scripts/levels/karsk/karsk_actor.gd` — plus the
+  generic `KarskTrain` (viaduct, parallax 0.2), `KarskWindowLife`, `KarskBreath` configured by props; sprites from
+  `tools/pixelgen/env_veltrava_station_life.py`. Named decal hook `heater_leak_23` (steam leak between wagons 2 and 3,
+  side task „Wagen drei ist kalt“): `level.backdrop.decals_by_name["heater_leak_23"].visible = false` stops it.
+  Contract test `tests/test_c3_station_art.gd`; Forward+ harness `res://tests/visual/c3_station_shots.tscn`
+  (`--scene=L_C3_Station --capture=<dir>/boot.png --frames=100000 --vs-out=<dir> [--symbols=0|1] [--vs-seconds=N]`).

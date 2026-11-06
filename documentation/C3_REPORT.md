@@ -44,6 +44,22 @@ Der Autoplay-Treiber prüft auf jeder Route, dass die zur Entscheidungskombinati
 | Bildprüfung | Bahnhof (Kamera 0/640/1280 mit Figuren), Palais (0/640/1280 mit Figuren), Rätsel (offen, gelöst, 125/150 %, Kontrast), Dokumente über die echte Inspektionsansicht, alle Figuren im Lineup und als Porträts – angesehen und mit den Kapitel-1/2-Screenshots verglichen |
 | Determinismus | Figuren-, Palais-, Bahnhofs- und Rätsel-Generatoren zweimal gebaut: byteidentisch |
 
+## 4a. Stand nach Runde 7 (auf dem PC, 2026-11-06) – die Punkte 1–6 aus §4 sind erledigt
+1. **Filmsequenzen** – fertig: LS_C3_Trains (25,5 s: Konrads Salonwagen, Abgleich durch den Lichtblitz, Alexeis Abteil,
+   Morgengrauen über der Brücke), LS_C3_ToHall (6 s), LS_C3_Close (12 s); Grafik `py -3 -P tools/pixelgen/env_veltrava_cine.py`
+   → `assets/cinematics/ch3/**` + `layout.json`, Ton `tools/audiogen/c3_cine_audio.py` → `assets/audio/sfx/c3cine_*`;
+   `tests/test_c3_cinematics.gd` grün (17 Fälle). Übergang 2→3: X1-Montage → Nachtfahrt → Kapitelkarte → Bahnhof.
+2. **Bahnhof** – Politur-Pass mit Forward+ auf dem PC (RTX 4090), beide Hoheitszeichen-Einstellungen, Umgebungsleben
+   (`env_veltrava_station_life.py`, 12 Figuren-Schleifen, Viadukt-Zug); Bilder `documentation/screenshots/c3_station_*`.
+3. **Textprüfung** – alle 23 Befunde bearbeitet (18 wörtlich, 5 abgewandelt), dritter Prüfblick (Logik über alle
+   Branch-Kombinationen) nachgeholt; Uhrzeiten 1964 („23.40“) auch in den gezeichneten Dokumenten.
+4. **Geschichtskarten** – im Netz gegengeprüft (je ≥ 2 Quellen), korrigiert, `review`-Marker entfernt.
+5. **`merge-kapitel-3`** – nur noch Vergleichsstand; die Cloud-Fassung ist maßgeblich (Bahnhof-Pass hat Einzelheiten verglichen).
+6. **GPU-Prüfung** – Bahnhof, Palais, Figuren und Filmsequenzen auf dem PC mit Forward+ geprüft; Palais-Pass mit
+   11 Lebens-Schleifen (Garderobiere, Putzfrau, Delegierte, Dolmetscher in den Kabinen …), Bilder `c3_palais_*`.
+Neu in Runde 7 für Kapitel 3: Minispiele „Die Fallblatttafel“, „Die Garderobe“, „Das Relaispult“, Aufgaben „Wagen drei
+ist kalt“ (Bahnhof) und am Buffet (Palais), Erinnerungen an beide Szenen. Offen bleibt Punkt 7 (menschlicher Spieltest).
+
 ## 4. Was offen ist
 1. **Filmsequenzen (`LS_C3_Trains`, `LS_C3_ToHall`, `LS_C3_Close`)** – nicht fertig. Auf Branch `c3-cine` (nicht in `kapitel-3` gemergt)
    liegen die lauffähigen §12.5-Szenen (`scenes/cinematics/ch3_*`, `ch3_common`, Vertragstest `tests/test_c3_cinematics.gd`:

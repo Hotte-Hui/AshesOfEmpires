@@ -120,7 +120,7 @@ func _ready() -> void:
 
 ## Sets the header texts (Loc keys).
 func set_texts(kicker_key: String, title_key: String, subtitle_key: String, instruction_key: String) -> void:
-	_kicker.text = Kit.t(kicker_key).to_upper()
+	_kicker.text = Kit.t(kicker_key).to_upper().replace("ß", "SS")
 	_title.text = Kit.t(title_key)
 	_subtitle.text = Kit.t(subtitle_key)
 	_instr.text = Kit.t(instruction_key)

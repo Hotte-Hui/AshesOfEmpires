@@ -11,6 +11,7 @@ import math
 
 import numpy as np
 
+import chargen_anim as A
 import chargen_heads as HD
 from chargen_body import Coat, Skirt, Spec, M, make_hands
 from chargen_core import (Bitmap, Light, Material, add, capsule, ellipse, make_ramp, poly, put_bitmap,
@@ -288,7 +289,7 @@ def alexei():
                           width_f=6.0, waist_f=4.6, hem_f=5.0, R=2.4, cyl=0.65, folds=0.6, hunch=0.3),
                 heads=HD.alexei(lg), boots=boot_bitmaps('boot', style='heavy'), hands=make_hands('skin'),
                 lean=2.0, arm_r=(1.85, 1.55), leg_r=(1.8, 1.6),
-                style=dict(stride=6.9, swing=24.0, bob=1, walk_lean=3.0, gesture='blow_hands',
+                style=dict(stride=6.9, swing=24.0, bob=1, walk_lean=3.0, gesture='blow_hands', talk_front_arm='r',
                            arm_n_idle=(6.0, 12.0), arm_f_idle=(-5.0, 10.0)))
     spec.hooks = {'side': [('coat', alexei_coat_side), ('coat', satchel_side), ('head', alexei_scarf_side),
                            ('head', alexei_flaps_side), ('front', _puff)],
@@ -565,7 +566,7 @@ def irina():
                 heads=HD.irina(lg), boots=boot_bitmaps('boot', sole='galosh', style='valenki'),
                 hands=make_hands('skin'), lean=1.0,
                 style=dict(stride=4.3, swing=18.0, bob=1, walk_lean=2.0, hold_n=(6.0, 30.0), lift=2.6,
-                           idle_feet=(1.0, -1.0), arm_f_idle=(-3.0, 10.0), gesture='shift',
+                           talk_front_arm='r', idle_feet=(1.0, -1.0), arm_f_idle=(-3.0, 10.0), gesture='shift',
                            talk_n=[(6.0, 30.0), (10.0, 52.0), (14.0, 74.0), (16.0, 80.0), (12.0, 66.0),
                                    (8.0, 44.0), (12.0, 60.0), (6.0, 34.0)],
                            talk_f=[(-3.0, 10.0)] * 2 + [(4.0, 40.0), (8.0, 56.0), (6.0, 50.0)] + [(-3.0, 10.0)] * 3))
@@ -901,6 +902,7 @@ def berlin_father():
                 heads=HD.berlin_father(lg), boots=boot_bitmaps('boot', style='shoe'), hands=make_hands('skin'),
                 lean=3.0, arm_r=(1.65, 1.4),
                 style=dict(stride=4.6, swing=0.0, bob=1, walk_lean=2.5, hold_n=(26.0, 66.0), hold_f=(26.0, 66.0),
+                           talk_front_seq=[(None, f, h) for _a, f, h in A.TALK_FRONT],
                            lift=2.6, dx=-2.5, gesture='hitch', front_abd=4.0))
     spec.hooks = {'side': [('front', crate_side), ('coat', father_coat_side), ('head', father_scarf_side)],
                   'front': [('coat', father_coat_front), ('head', father_scarf_front), ('front', crate_front)]}

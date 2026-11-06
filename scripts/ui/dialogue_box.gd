@@ -123,7 +123,7 @@ func _build() -> void:
 	_speaker = Kit.label("", "SpeakerLabel")
 	_speaker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(_speaker)
-	_history_btn = Kit.button(Kit.t("ui.dlg.history").to_upper() + "  ·  H", "SmallButton")
+	_history_btn = Kit.button(Kit.t("ui.dlg.history").to_upper().replace("ß", "SS") + "  ·  H", "SmallButton")
 	_history_btn.focus_mode = Control.FOCUS_NONE
 	_history_btn.pressed.connect(toggle_history)
 	head.add_child(_history_btn)
@@ -136,7 +136,7 @@ func _build() -> void:
 	_text.custom_minimum_size = Vector2(800, 0)
 	Kit.scalable(_text, 34)
 	v.add_child(_text)
-	_choice_kicker = Kit.label(Kit.t("ui.dlg.decision").to_upper(), "KickerLabel")
+	_choice_kicker = Kit.label(Kit.t("ui.dlg.decision").to_upper().replace("ß", "SS"), "KickerLabel")
 	_choice_kicker.visible = false
 	v.add_child(_choice_kicker)
 	_choices_box = Kit.vbox(2)
@@ -217,7 +217,7 @@ func show_line(speaker_id: String, text: String, expression := "neutral") -> voi
 	_clear_choices()
 	_speaker_id = speaker_id
 	var line := Kit.resolve(text)
-	_speaker.text = Kit.char_name(speaker_id).to_upper()
+	_speaker.text = Kit.char_name(speaker_id).to_upper().replace("ß", "SS")
 	_speaker.visible = speaker_id != ""
 	_set_portrait(speaker_id, expression)
 	_text.text = line
@@ -376,7 +376,7 @@ func _mouth_for_text() -> int:
 	if n <= 0:
 		return MOUTH_REST
 	var ch := _text.text.substr(n - 1, 1)
-	if ch == " " or ch == "\n" or LABIALS.contains(ch) or not (ch.to_upper() != ch.to_lower() or ch.is_valid_int()):
+	if ch == " " or ch == "\n" or LABIALS.contains(ch) or not (ch.to_upper().replace("ß", "SS") != ch.to_lower() or ch.is_valid_int()):
 		return MOUTH_REST
 	if VOWELS.contains(ch):
 		return MOUTH_HALF if _p_mouth == MOUTH_OPEN else MOUTH_OPEN
@@ -621,7 +621,7 @@ func toggle_history() -> void:
 		var v := Kit.vbox(2)
 		var sp := str(e.get("speaker", ""))
 		if sp != "":
-			v.add_child(Kit.label(Kit.char_name(sp).to_upper(), "SpeakerLabel", 22))
+			v.add_child(Kit.label(Kit.char_name(sp).to_upper().replace("ß", "SS"), "SpeakerLabel", 22))
 		var l := Kit.wrap_label(str(e.get("text", "")), "DimLabel" if e.get("choice", false) else "BodyLabel")
 		Kit.scalable(l, 26 if e.get("choice", false) else 29)
 		v.add_child(l)

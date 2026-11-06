@@ -2,10 +2,10 @@
 
 Three evidence documents of C3_DESIGN 2.5 (items ev_c3_weighbill / ev_c3_departures / ev_c3_travel_order):
     veltrava_station_weighbill.png     the weighing ticket in the brass frame of courier wagon 4
-    veltrava_station_departures.png    the departures board with the inserted 23:40 line
+    veltrava_station_departures.png    the departures board with the inserted 23.40 line
     veltrava_station_travel_order.png  Alexei's travel order with the typed addendum (RU / DE)
 Text is scribble (the UI overlays HD text) EXCEPT the story-critical figures, which are legible pixel glyphs:
-„2 410 kg" and „C-17/44" (weighbill), „23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT" (departures) and the addendum
+„2410 kg" and „C-17/44" (weighbill), „23.40 · KORDON-17 · GLEIS 5 · LEERFAHRT" (departures) and the addendum
 „Begleitperson Kurierwagen 4" in Russian and German (travel order; RU says freight, DE says files).
 Writes assets/ui/documents/veltrava_station_*.png + veltrava_station_documents.json (schema of
 karsk_documents.json: entries keyed by item_id, pixel rects of the key marks) and the alt texts
@@ -246,14 +246,14 @@ def make_weighbill():
         else:                                                                  # Abgang / Bestimmung
             scribble_print(L, fx + 58, ry, 70, SL[0], rng, wear=0.05)
             scribble_print(L, fx + 134, ry, 50, SL[0], rng, wear=0.05)
-    # the MASS: boxed weighing field, big stamped digits (legible): 2 410 kg
+    # the MASS: boxed weighing field, big stamped digits (legible): 2410 kg
     bx, by, bw, bh = fx + 8, fy + 84, 104, 30
     L.rect(bx, by, bw, bh, CR[5]); L.rect(bx, by, bw, 1, SL[2]); L.rect(bx, by + bh - 1, bw, 1, SL[2])
     L.rect(bx, by, 1, bh, SL[2]); L.rect(bx + bw - 1, by, 1, bh, SL[2])
     scribble_print(L, bx + 3, by + 3, 60, SL[3], rng, wear=0.15)            # 'Bruttogewicht' label
-    mw = stamp_text(L, bx + 6, by + 11, '2 410', NI[1], rng, holes=0.08, scale=2, glyphs=FONT_L_PLAIN0)
+    mw = stamp_text(L, bx + 6, by + 11, '2410', NI[1], rng, holes=0.08, scale=2, glyphs=FONT_L_PLAIN0)
     kw = text(L, bx + 6 + mw + 4, by + 18, 'kg', NI[1], font='l', rng=rng, wear=0.05)
-    marks['mass'] = {'rect': [bx + 6, by + 11, mw + 6 + kw, 16], 'text': '2 410 kg'}
+    marks['mass'] = {'rect': [bx + 6, by + 11, mw + 6 + kw, 16], 'text': '2410 kg'}
     # seal number: PLOMBE C-17/44 — red stamp (the story's C-17 red), legible
     sx, sy = fx + 120, fy + 82
     scribble_print(L, sx, sy, 40, SL[3], rng, wear=0.15)                      # 'Plombe Nr.' label
@@ -298,14 +298,14 @@ def make_weighbill():
         'objective': 'c3a_inspect_weighbill', 'hotspot': 'weighbill', 'title_key': 'item.c3_weighbill.name',
         'description_key': 'item.c3_weighbill.description',
         'describes': 'Weighing ticket in the brass frame of courier wagon 4: cargo „Akten, Anlage C“ (scribble), '
-                     'the stamped mass 2 410 kg (legible), the red seal number C-17/44 (legible) and the round '
+                     'the stamped mass 2410 kg (legible), the red seal number C-17/44 (legible) and the round '
                      'slate-blue counter-seal of the commission (bridge arms) over the signature.'})
 
 
 # =========================================================================== DEPARTURES (Abfahrtstafel)
 def make_departures():
     """Close-up of the mechanical split-flap departures board: four day trains (scribble flaps) and the freshly
-    inserted night line 23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible)."""
+    inserted night line 23.40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible)."""
     W, H = 300, 190
     L = Layer(W, H, 'veltrava_station_departures')
     rng = np.random.default_rng(302)
@@ -360,12 +360,12 @@ def make_departures():
     for x in range(bx + 4, bx + bw - 4, 7):
         L.vline(x, ry, 13, IR[2])
     L.hline(bx + 4, ry - 1, bw - 8, SN[1])                                   # bright edge of the fresh slip
-    parts = [('23:40', cols[0] + 3), ('KORDON-17', cols[1] + 3), ('GLEIS 5', cols[2] + 3), ('LEERFAHRT', cols[3] + 3)]
+    parts = [('23.40', cols[0] + 3), ('KORDON-17', cols[1] + 3), ('GLEIS 5', cols[2] + 3), ('LEERFAHRT', cols[3] + 3)]
     for (s, x) in parts:
         w = text(L, x, ry + 3, s, SN[4], font='l', rng=rng, wear=0.0)
-        key = {'23:40': 'time', 'KORDON-17': 'destination', 'GLEIS 5': 'track', 'LEERFAHRT': 'category'}[s]
+        key = {'23.40': 'time', 'KORDON-17': 'destination', 'GLEIS 5': 'track', 'LEERFAHRT': 'category'}[s]
         marks[key] = {'rect': [x, ry + 3, w, 7], 'text': s}
-    marks['night_line'] = {'rect': [bx + 4, ry - 1, bw - 8, 15], 'text': '23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT',
+    marks['night_line'] = {'rect': [bx + 4, ry - 1, bw - 8, 15], 'text': '23.40 · KORDON-17 · GLEIS 5 · LEERFAHRT',
                            'note': 'freshly inserted; Zuggattung reads only Leerfahrt'}
     for i in range(2):                                                        # empty flap rows below (dashes)
         ey = ry + 18 + i * 16
@@ -392,7 +392,7 @@ def make_departures():
         'objective': 'c3a_inspect_departures', 'hotspot': 'departures', 'title_key': 'item.c3_departures.name',
         'description_key': 'item.c3_departures.description',
         'describes': 'Split-flap departures board: four day trains as scribble flaps; the freshly inserted last '
-                     'line reads 23:40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible).'})
+                     'line reads 23.40 · KORDON-17 · GLEIS 5 · LEERFAHRT (legible).'})
 
 
 # =========================================================================== TRAVEL ORDER (Dienstreiseauftrag)
@@ -493,10 +493,10 @@ def make_travel_order():
 # =========================================================================== build
 ALT_TEXTS = {
     'doc.veltrava.weighbill.alt': 'Wiegekarte im Messingrahmen von Kurierwagen 4: Ladung „Akten, Anlage C“, '
-                                  'Gewicht 2 410 kg, Plombe C-17/44 mit dem runden Gegensiegel der Kommission. '
+                                  'Gewicht 2410 kg, Plombe C-17/44 mit dem runden Gegensiegel der Kommission. '
                                   'Empfänger: Sekretariat der Kommission.',
     'doc.veltrava.departures.alt': 'Abfahrtstafel mit Fallblättern: vier Tageszüge, darunter eine frisch eingeschobene '
-                                   'Zeile – 23:40, Kordon-17, Gleis 5, Zuggattung: Leerfahrt.',
+                                   'Zeile – 23.40, Kordon-17, Gleis 5, Zuggattung: Leerfahrt.',
     'doc.veltrava.travel_order.alt': 'Dienstreiseauftrag auf grauem Dienstpapier, Stempel und Unterschriften. Ein '
                                      'nachträglich eingetippter Zusatz lautet „Begleitperson Kurierwagen 4“ – auf '
                                      'Russisch mit dem Vermerk Fracht, auf Deutsch mit dem Vermerk Akten.',
@@ -511,10 +511,10 @@ def build_all():
            'note': 'Pixel art drawn 1:1, shown at 3x (nearest). Text is scribble except the story-critical figures '
                    '(legible pixel glyphs). All rects are [x, y, w, h] in document pixels.',
            'documents': docs}
-    with open(os.path.join(DOC_DIR, 'veltrava_station_documents.json'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(DOC_DIR, 'veltrava_station_documents.json'), 'w', encoding='utf-8', newline='\n') as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
     os.makedirs(os.path.dirname(LOC_PATH), exist_ok=True)
-    with open(LOC_PATH, 'w', encoding='utf-8') as f:
+    with open(LOC_PATH, 'w', encoding='utf-8', newline='\n') as f:
         json.dump({'locale': 'de', 'area': 'env_veltrava_station', 'strings': ALT_TEXTS}, f, indent=1,
                   ensure_ascii=False)
         f.write('\n')

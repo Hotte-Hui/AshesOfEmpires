@@ -142,6 +142,43 @@ def cinematics_on(trigger_type, trigger_id):
     return [s['id'] for s in SEQUENCES if s.get(trigger_type) == trigger_id]
 
 
+def _requires_closure(q, oid):
+    objs = {o['id']: o for o in q['objectives']}
+    seen, todo = set(), list(objs[oid].get('requires', []))
+    while todo:
+        r = todo.pop()
+        if r not in seen:
+            seen.add(r)
+            todo += objs[r].get('requires', [])
+    return seen
+
+
+def fallback_choice(node_id, q, dialogue_obj):
+    """The id of an earlier choice that makes the base line of node_id unreachable in normal play, or None.
+    That is the case when every option of a choice completed before the dialogue (any choice of an earlier quest
+    of the single chain, or one this objective requires) raises a flag with default 0 that a single-condition
+    variant `{flag: ">=1"}` of the node tests: one variant then always matches (first match wins) and the base
+    text is only a fallback for level starts without a save (C3_TEXT_REVIEW Befund 23)."""
+    tested = set()
+    for v in CH.get('line_variants', {}).get(node_id, []):
+        w = v.get('when') or {}
+        if len(w) == 1:
+            (flag, spec), = w.items()
+            if str(spec).replace(' ', '') in ('>=1', '>0'):
+                tested.add(flag)
+    if not tested:
+        return None
+    before = [o for x in QUESTS[:QUESTS.index(q)] for o in x['objectives']]
+    before += [o for o in q['objectives'] if o['id'] in _requires_closure(q, dialogue_obj['id'])]
+    for o in before:
+        if o['type'] != 'choice' or not o.get('choices'):
+            continue
+        if all(any(f in tested and FLAGS.get(f, {}).get('default') == 0 and spec.get('delta', 0) > 0
+                   for f, spec in c.get('effects', {}).items()) for c in o['choices']):
+            return o['id']
+    return None
+
+
 def table(head, rows):
     out = ['| ' + ' | '.join(head) + ' |', '|' + '---|' * len(head)]
     out += ['| ' + ' | '.join(r) + ' |' for r in rows]
@@ -237,7 +274,10 @@ def c3_block():
     out += ['### 11.4 Dialogues', '',
             'Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = portrait expression '
             '(`line_expr`). *Variants* replace the line text when their condition holds (first match wins, '
-            '`line_variants`); the base text is the canonical `data/v3` line.', '']
+            '`line_variants`); the base text is the canonical `data/v3` line. Where the variants cover every option '
+            'of an earlier mandatory choice, one of them always matches in normal play and the base line is marked '
+            '*fallback only* (heard only when a level is started without a save, e.g. `--scene=`); the variants are '
+            'then the lines the player actually hears and are written against the following line.', '']
     for q in C3_QUESTS:
         for o in q['objectives']:
             if o['type'] != 'dialogue':
@@ -249,6 +289,9 @@ def c3_block():
             for node in dlg['nodes']:
                 var = ['%s: „%s“ (%s)' % (when_text(v.get('when')), t(v['key']), code(v['key']))
                        for v in CH.get('line_variants', {}).get(node['id'], [])]
+                fb = fallback_choice(node['id'], q, o)
+                if fb:
+                    var.append('*base line = fallback only: every option of %s sets one of these flags*' % code(fb))
                 rows.append(['%s%s' % (code(node['id']), ' (end)' if node.get('end') else ''), node['speaker'],
                              CH.get('line_expr', {}).get(node['id'], 'neutral'), code(node['text_key']),
                              t(node['text_key']), '<br>'.join(var) if var else '—'])
@@ -404,7 +447,7 @@ def main():
         print('up to date')
         return
     if new != text:
-        DOC.write_text(new, encoding='utf-8')
+        DOC.write_text(new, encoding='utf-8', newline='\n')   # LF on every platform (.gitattributes)
         print('updated %s' % DOC.relative_to(ROOT))
     else:
         print('%s already up to date' % DOC.relative_to(ROOT))

@@ -8,8 +8,16 @@ extends CharacterBody2D
 ## (60-360 Hz), on the pixel grid chosen by the world camera (WorldCamera.draw_pos_for: keeps its screen pixel
 ## while camera and player move together -> no 1-px vibration; keeps its world pixel while standing). The sprite
 ## material is assigned by scripts/render/pixel_view.gd, as for every world sprite.
+## Round 7: turning around is soft like the NPCs' (a short front-facing in-between frame, the walk_front frame
+## while walking so the stride continues; movement itself still reverses at once), and the player faces the
+## person or thing it interacts with -- sideways, or towards / away from the camera in oblique levels when the
+## other one stands below / above. The rig's view_hint follows the facing view, so the dialogue's
+## "talk_side" / "idle_side" requests show talk_front / idle_front (or the back rows) when facing the camera.
 
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
+const TURN_STAND := 0.12        ## s the in-between (front) frame is shown when turning on the spot
+const TURN_WALK := 0.07         ## s while walking / running (about one stride frame)
+const FACE_VERTICAL := 2.0      ## oblique: |dy| (depth-scaled) > |dx| * this -> face the camera / away from it
 
 var char_id := "alexei"
 var mode := "oblique"
@@ -65,10 +73,42 @@ func get_facing() -> float:
 	return _facing
 
 
-func face(dir_x: float) -> void:
-	if absf(dir_x) > 0.01:
-		_facing = signf(dir_x)
-		rig.set_flip(_facing < 0.0)
+func get_view() -> String:
+	return _dir
+
+
+## Face left / right. soft = a short turn (front in-between frame) like the NPCs; false = instant flip.
+func face(dir_x: float, soft := true) -> void:
+	if absf(dir_x) <= 0.01 or rig == null:
+		return
+	var f := signf(dir_x)
+	if f == _facing and (rig.is_flipped() == (f < 0.0) or rig.is_turning()):
+		return
+	_facing = f
+	if soft:
+		var moving := velocity.length() > 1.0
+		rig.turn_to(f < 0.0, TURN_WALK if moving else TURN_STAND, "walk_front" if moving else "")
+	else:
+		rig.set_flip(f < 0.0)
+
+
+## Facing view: "side" | "front" (towards the camera) | "back". Keeps the rig's view_hint in step.
+func _set_dir(d: String) -> void:
+	_dir = d
+	if rig:
+		rig.view_hint = "" if d == "side" else d
+
+
+## Turn towards a point before talking / using something: sideways, or (oblique levels) towards or away from
+## the camera when the point lies clearly below / above.
+func face_point(p: Vector2) -> void:
+	var d := p - global_position
+	if mode == "oblique" and absf(d.y) * 1.6 > absf(d.x) * FACE_VERTICAL and absf(d.y) > 4.0:
+		_set_dir("front" if d.y > 0.0 else "back")
+		return
+	_set_dir("side")
+	if absf(d.x) > 0.5:
+		face(d.x)
 
 
 func _physics_process(delta: float) -> void:
@@ -116,9 +156,9 @@ func _physics_step(_delta: float) -> void:
 		position.y = floor_y
 	if inp.length() > 0.1:
 		if mode == "oblique" and absf(inp.y) > absf(inp.x) * 1.4:
-			_dir = "back" if inp.y < 0.0 else "front"
+			_set_dir("back" if inp.y < 0.0 else "front")
 		else:
-			_dir = "side"
+			_set_dir("side")
 			face(inp.x)
 		rig.play("walk_" + _dir)
 		var gs: float = rig.ground_speed(rig.anim)
@@ -133,7 +173,7 @@ func _physics_step(_delta: float) -> void:
 
 
 func play_action(a: String) -> void:
-	_dir = "side"
+	_set_dir("side")
 	rig.play(a, true)
 
 
@@ -165,10 +205,27 @@ func try_interact() -> bool:
 		return false
 	if Time.get_ticks_msec() < Game.interact_ready_at:
 		return true     # swallow: same press that just closed the previous interaction
-	if focus.global_position.x != global_position.x:
-		face(focus.global_position.x - global_position.x)
+	face_point(_look_target(focus))
 	Game.interact(focus)
 	return true
+
+
+## Where to look when using `it`: the NPC it names (npc_id; the hotspot itself often sits beside the person),
+## else the hotspot.
+func _look_target(it: Node) -> Vector2:
+	var who := str(it.get("npc_id")) if it.get("npc_id") != null else ""
+	if who != "":
+		var best: Node2D = null
+		var best_d := 1e9
+		for n in get_tree().get_nodes_in_group("npcs"):
+			if n is Node2D and str(n.get("char_id")) == who and (n as Node2D).is_visible_in_tree():
+				var dd := (n as Node2D).global_position.distance_to(global_position)
+				if dd < best_d:
+					best_d = dd
+					best = n
+		if best != null and best_d < 160.0:
+			return best.global_position
+	return (it as Node2D).global_position
 
 
 func _on_frame(a: String, f: int) -> void:

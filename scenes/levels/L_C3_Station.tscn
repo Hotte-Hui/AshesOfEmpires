@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/actors/gated_interactable.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/flap_world_cue.gd" id="r7v_flap_cue"]
+[ext_resource type="Texture2D" path="res://assets/ui/minigames/flap/world_flap_board.png" id="r7v_flap_tex"]
 
 [node name="L_C3_Station" type="Node2D"]
 script = ExtResource("1")
@@ -197,6 +199,7 @@ script = ExtResource("2")
 kind = "discover"
 hotspot_id = "exp_stove"
 explore_id = "veltrava.station.stove"
+explore_chain = PackedStringArray("veltrava.task.heating.kettle", "veltrava.station.stove")
 once = true
 
 [node name="Find_Exchange" type="Node2D" parent="Playfield"]
@@ -220,3 +223,39 @@ hotspot_id = "exp_footprints"
 explore_id = "veltrava.station.footprints"
 once = true
 radius = 18.0
+
+[node name="TaskConductor" type="Node2D" parent="Playfield"]
+script = ExtResource("4")
+kind = "chat"
+hotspot_id = "conductor"
+explore_id = "veltrava.task.heating.ask"
+explore_chain = PackedStringArray("veltrava.task.heating.ask", "veltrava.task.heating.return")
+npc_id = "conductor"
+once = true
+radius = 34.0
+after_objective = "c3a_talk_conductor"
+
+[node name="TaskCoupling" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_task_coupling"
+explore_id = "veltrava.task.heating.coupling"
+explore_chain = PackedStringArray("veltrava.task.heating.coupling", "veltrava.task.heating.thaw")
+once = true
+radius = 24.0
+
+[node name="Find_FlapBoard" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_flap_board"
+explore_id = "veltrava.station.flap_board"
+once = true
+radius = 26.0
+
+[node name="FlapBoardCue" type="Sprite2D" parent="Playfield"]
+position = Vector2(546, 267)
+texture = ExtResource("r7v_flap_tex")
+centered = false
+offset = Vector2(-42, -236)
+hframes = 3
+script = ExtResource("r7v_flap_cue")

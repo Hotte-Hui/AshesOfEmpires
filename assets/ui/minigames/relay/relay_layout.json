@@ -1,0 +1,437 @@
+{
+ "_doc": "Relay desk layout in ART px (relay_desk.png is 1:1; the game draws it x3). Written by tools/pixelgen/gen_mg_relay.py -- do not edit by hand. floor = Saalanzeige (lamp, kicker, speech, right block, progress groove); cols = sources Saal, Kabine 1-3 (plate, booth window, name/out/via text boxes, meter window); rows = channels DE, RU, FR, EN (tag, code chip, name and state boxes, icon spot); lamps = yellow, red (centre, radius, label box); body = everything under the floor display.",
+ "size": [
+  568,
+  152
+ ],
+ "floor": {
+  "rect": [
+   2,
+   1,
+   564,
+   36
+  ],
+  "lamp": [
+   19,
+   19
+  ],
+  "kicker": [
+   34,
+   4,
+   394,
+   9
+  ],
+  "speech": [
+   34,
+   13,
+   394,
+   21
+  ],
+  "right": [
+   438,
+   4,
+   122,
+   22
+  ],
+  "progress": [
+   441,
+   30,
+   118,
+   2
+  ]
+ },
+ "rows_panel": [
+  2,
+  39,
+  128,
+  112
+ ],
+ "rows_head": [
+  6,
+  43,
+  120,
+  31
+ ],
+ "crossbar": [
+  134,
+  79,
+  320,
+  72
+ ],
+ "body": [
+  0,
+  38,
+  568,
+  114
+ ],
+ "cols": [
+  {
+   "x": 134,
+   "w": 80,
+   "plate": [
+    135,
+    39,
+    78,
+    38
+   ],
+   "window": [
+    139,
+    43,
+    20,
+    24
+   ],
+   "name": [
+    162,
+    41,
+    43,
+    8
+   ],
+   "out": [
+    162,
+    49,
+    48,
+    12
+   ],
+   "via": [
+    162,
+    61,
+    48,
+    7
+   ],
+   "meter": null,
+   "socket_x": 174
+  },
+  {
+   "x": 214,
+   "w": 80,
+   "plate": [
+    215,
+    39,
+    78,
+    38
+   ],
+   "window": [
+    219,
+    43,
+    20,
+    24
+   ],
+   "name": [
+    242,
+    41,
+    43,
+    8
+   ],
+   "out": [
+    242,
+    49,
+    48,
+    12
+   ],
+   "via": [
+    242,
+    61,
+    48,
+    7
+   ],
+   "meter": [
+    219,
+    69,
+    72,
+    5
+   ],
+   "socket_x": 254
+  },
+  {
+   "x": 294,
+   "w": 80,
+   "plate": [
+    295,
+    39,
+    78,
+    38
+   ],
+   "window": [
+    299,
+    43,
+    20,
+    24
+   ],
+   "name": [
+    322,
+    41,
+    43,
+    8
+   ],
+   "out": [
+    322,
+    49,
+    48,
+    12
+   ],
+   "via": [
+    322,
+    61,
+    48,
+    7
+   ],
+   "meter": [
+    299,
+    69,
+    72,
+    5
+   ],
+   "socket_x": 334
+  },
+  {
+   "x": 374,
+   "w": 80,
+   "plate": [
+    375,
+    39,
+    78,
+    38
+   ],
+   "window": [
+    379,
+    43,
+    20,
+    24
+   ],
+   "name": [
+    402,
+    41,
+    43,
+    8
+   ],
+   "out": [
+    402,
+    49,
+    48,
+    12
+   ],
+   "via": [
+    402,
+    61,
+    48,
+    7
+   ],
+   "meter": [
+    379,
+    69,
+    72,
+    5
+   ],
+   "socket_x": 414
+  }
+ ],
+ "rows": [
+  {
+   "y": 79,
+   "h": 18,
+   "socket_y": 88,
+   "tag": [
+    6,
+    80,
+    120,
+    16
+   ],
+   "code": [
+    8,
+    82,
+    21,
+    12
+   ],
+   "name": [
+    32,
+    81,
+    74,
+    8
+   ],
+   "state": [
+    32,
+    89,
+    74,
+    7
+   ],
+   "icon": [
+    108,
+    84
+   ]
+  },
+  {
+   "y": 97,
+   "h": 18,
+   "socket_y": 106,
+   "tag": [
+    6,
+    98,
+    120,
+    16
+   ],
+   "code": [
+    8,
+    100,
+    21,
+    12
+   ],
+   "name": [
+    32,
+    99,
+    74,
+    8
+   ],
+   "state": [
+    32,
+    107,
+    74,
+    7
+   ],
+   "icon": [
+    108,
+    102
+   ]
+  },
+  {
+   "y": 115,
+   "h": 18,
+   "socket_y": 124,
+   "tag": [
+    6,
+    116,
+    120,
+    16
+   ],
+   "code": [
+    8,
+    118,
+    21,
+    12
+   ],
+   "name": [
+    32,
+    117,
+    74,
+    8
+   ],
+   "state": [
+    32,
+    125,
+    74,
+    7
+   ],
+   "icon": [
+    108,
+    120
+   ]
+  },
+  {
+   "y": 133,
+   "h": 18,
+   "socket_y": 142,
+   "tag": [
+    6,
+    134,
+    120,
+    16
+   ],
+   "code": [
+    8,
+    136,
+    21,
+    12
+   ],
+   "name": [
+    32,
+    135,
+    74,
+    8
+   ],
+   "state": [
+    32,
+    143,
+    74,
+    7
+   ],
+   "icon": [
+    108,
+    138
+   ]
+  }
+ ],
+ "lamps": [
+  {
+   "centre": [
+    477,
+    67
+   ],
+   "r": 13,
+   "label": [
+    495,
+    55,
+    67,
+    24
+   ]
+  },
+  {
+   "centre": [
+    477,
+    123
+   ],
+   "r": 13,
+   "label": [
+    495,
+    111,
+    67,
+    24
+   ]
+  }
+ ],
+ "lamps_panel": [
+  458,
+  39,
+  108,
+  112
+ ],
+ "zones": [
+  0.45,
+  0.75
+ ],
+ "cells": {
+  "pin": [
+   15,
+   17
+  ],
+  "pin_origin": [
+   7,
+   11
+  ],
+  "lamp": [
+   30,
+   30
+  ],
+  "icon": [
+   9,
+   9
+  ],
+  "booth": [
+   20,
+   24
+  ],
+  "interpreter": [
+   56,
+   56
+  ]
+ },
+ "world_desk": {
+  "cell": [
+   44,
+   38
+  ],
+  "frames": 4,
+  "feet": [
+   22,
+   38
+  ]
+ }
+}

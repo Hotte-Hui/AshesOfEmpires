@@ -13,7 +13,7 @@
    360
   ]
  },
- "canvas_modulate": "#C9CED8",
+ "canvas_modulate": "#D5D3D6",
  "layers": [
   {
    "name": "sky",
@@ -63,6 +63,22 @@
    "emission": true,
    "lit": true,
    "emission_strength": 0.35
+  },
+  {
+   "name": "viaduct",
+   "file": "viaduct.png",
+   "pos": [
+    0,
+    107
+   ],
+   "parallax": [
+    0.2,
+    0.0
+   ],
+   "z": -86,
+   "normal": true,
+   "emission": false,
+   "lit": true
   },
   {
    "name": "city",
@@ -372,7 +388,7 @@
    "name": "column_5",
    "file": "props/column_5.png",
    "pos": [
-    1069,
+    1065,
     18
    ],
    "base_y": 266,
@@ -431,7 +447,7 @@
    "file": "props/luggage_cart.png",
    "pos": [
     397,
-    262
+    261
    ],
    "base_y": 290,
    "collision": [
@@ -883,7 +899,7 @@
    ],
    "radius": 30,
    "document": "res://assets/ui/documents/veltrava_station_departures.png",
-   "desc": "Departures board bolted to the canopy column; last row 23:40 KORDON-17, Gleis 5."
+   "desc": "Departures board bolted to the canopy column; last row 23.40 KORDON-17, Gleis 5."
   },
   "control": {
    "kind": "dialogue",
@@ -950,7 +966,7 @@
     270
    ],
    "radius": 26,
-   "desc": "Porter cart with trunks and suitcases (travel labels)."
+   "desc": "Porter cart: the delegation case No. 14, tied with cord, a wooden toy horse strapped on top with a trouser belt; trunk with travel labels, hat box."
   },
   "exp_pigeons": {
    "kind": "discover",
@@ -959,7 +975,7 @@
     268
    ],
    "radius": 26,
-   "desc": "Pigeon corner at the platform edge; more pigeons roost on the canopy girder."
+   "desc": "Pigeon corner at the platform edge (StationPigeons actor): two tug at a sandwich, a third waits; more roost on the canopy girder."
   },
   "exp_bogie": {
    "kind": "discover",
@@ -995,16 +1011,16 @@
     236
    ],
    "radius": 26,
-   "desc": "Newspaper kiosk ZEITUNGEN · ГАЗЕТЫ · JOURNAUX."
+   "desc": "Newspaper kiosk ZEITUNGEN · ГАЗЕТЫ · JOURNAUX; the same photo on three front pages (Moscow, Berlin, the city paper)."
   },
   "exp_poster": {
    "kind": "discover",
    "mark": [
     1095,
-    220
+    218
    ],
    "radius": 26,
-   "desc": "Commission welcome poster (WILLKOMMEN / ДОБРО ПОЖ. / BIENVENUE) on the column."
+   "desc": "Commission poster „DREI KORRIDORE – EIN FRIEDEN“ on the column, peeling: one drawing pin left (top left), three corners hanging."
   },
   "exp_return_notice": {
    "kind": "discover",
@@ -1013,7 +1029,7 @@
     216
    ],
    "radius": 26,
-   "desc": "Notice case with the trilingual notice „Büro für Rückführung“."
+   "desc": "Notice case with the trilingual notice „Büro für Rückführung“ (Zimmer 4) and a 23.40 slip."
   },
   "exp_stove": {
    "kind": "discover",
@@ -1022,7 +1038,7 @@
     228
    ],
    "radius": 26,
-   "desc": "Waiting-room door; the green tiled stove glows behind the glass."
+   "desc": "Waiting-room door; the green tiled stove glows behind the glass, two porters warm their hands, coal scuttle at its foot."
   },
   "exp_exchange": {
    "kind": "discover",
@@ -1031,7 +1047,7 @@
     230
    ],
    "radius": 26,
-   "desc": "Exchange office WECHSELSTUBE · ОБМЕН ВАЛЮТЫ · CHANGE with rate board."
+   "desc": "Exchange office WECHSELSTUBE · ОБМЕН ВАЛЮТЫ · CHANGE; chalk rate board RM / RBL / VKR, every rate corrected."
   },
   "exp_tram": {
    "kind": "discover",
@@ -1040,7 +1056,7 @@
     220
    ],
    "radius": 30,
-   "desc": "Exit arch: the snowy station square with tram line 7."
+   "desc": "Exit arch: the snowy station square, tram line 7 waiting (StationTram actor) with its hand-written trilingual line board."
   },
   "exp_footprints": {
    "kind": "discover",
@@ -1050,7 +1066,7 @@
     266
    ],
    "radius": 18,
-   "desc": "Footprints in the blown snow at the platform edge, leading to the tracks."
+   "desc": "Several pairs of footprints cross the drift at the platform edge, step over the coping and go on in the snow of the track bed under wagon 2."
   }
  },
  "lights": [
@@ -2091,14 +2107,14 @@
     160
    ],
    "parallax": 1.0,
-   "z": -17,
+   "z": -14,
    "emission": false,
    "frame_size": [
     80,
     104
    ],
    "lit": false,
-   "note": "snow on the square, seen only through the exit arch"
+   "note": "snow on the square, seen only through the exit arch (in front of the tram actor at z -17)"
   },
   {
    "type": "anim_sprite",
@@ -2162,25 +2178,6 @@
    "frames": 6,
    "fps": 5,
    "pos": [
-    316,
-    202
-   ],
-   "parallax": 1.0,
-   "z": -15,
-   "emission": false,
-   "frame_size": [
-    28,
-    56
-   ],
-   "lit": false,
-   "alpha": 0.85
-  },
-  {
-   "type": "anim_sprite",
-   "file": "fx/heater_steam.png",
-   "frames": 6,
-   "fps": 5,
-   "pos": [
     550,
     202
    ],
@@ -2218,8 +2215,8 @@
    "frames": 8,
    "fps": 4,
    "pos": [
-    65,
-    67
+    110,
+    72
    ],
    "parallax": 0.3,
    "z": -79,
@@ -2236,44 +2233,8 @@
    "frames": 8,
    "fps": 4,
    "pos": [
-    125,
-    70
-   ],
-   "parallax": 0.3,
-   "z": -79,
-   "emission": false,
-   "frame_size": [
-    30,
-    54
-   ],
-   "lit": false
-  },
-  {
-   "type": "anim_sprite",
-   "file": "fx/chimney_smoke_far.png",
-   "frames": 8,
-   "fps": 4,
-   "pos": [
-    193,
-    70
-   ],
-   "parallax": 0.3,
-   "z": -79,
-   "emission": false,
-   "frame_size": [
-    30,
-    54
-   ],
-   "lit": false
-  },
-  {
-   "type": "anim_sprite",
-   "file": "fx/chimney_smoke_far.png",
-   "frames": 8,
-   "fps": 4,
-   "pos": [
-    246,
-    80
+    272,
+    79
    ],
    "parallax": 0.3,
    "z": -79,
@@ -2299,24 +2260,6 @@
    "frame_size": [
     30,
     54
-   ],
-   "lit": false
-  },
-  {
-   "type": "anim_sprite",
-   "file": "fx/chimney_smoke.png",
-   "frames": 8,
-   "fps": 4,
-   "pos": [
-    360,
-    41
-   ],
-   "parallax": 0.55,
-   "z": -69,
-   "emission": false,
-   "frame_size": [
-    40,
-    72
    ],
    "lit": false
   },
@@ -2357,42 +2300,6 @@
    "lit": false
   },
   {
-   "type": "anim_sprite",
-   "file": "fx/chimney_smoke.png",
-   "frames": 8,
-   "fps": 4,
-   "pos": [
-    1082,
-    43
-   ],
-   "parallax": 0.55,
-   "z": -69,
-   "emission": false,
-   "frame_size": [
-    40,
-    72
-   ],
-   "lit": false
-  },
-  {
-   "type": "anim_sprite",
-   "file": "fx/pigeons.png",
-   "frames": 8,
-   "fps": 5,
-   "pos": [
-    462,
-    263
-   ],
-   "parallax": 1.0,
-   "z": -11,
-   "emission": false,
-   "frame_size": [
-    52,
-    14
-   ],
-   "lit": false
-  },
-  {
    "type": "fog_band",
    "y": 142,
    "height": 26,
@@ -2427,6 +2334,390 @@
    "alpha": 0.12,
    "parallax": 0.95,
    "z": -38
+  }
+ ],
+ "decals": [
+  {
+   "name": "heater_leak_23",
+   "file": "fx/heater_steam.png",
+   "pos": [
+    316,
+    202
+   ],
+   "z": -15,
+   "parallax": [
+    1.0,
+    1.0
+   ],
+   "lit": false,
+   "normal": false,
+   "frames": 6,
+   "fps": 7,
+   "alpha": 0.9,
+   "note": "steam leak of the frozen stop cock between wagons 2 and 3 (exp_task_coupling)"
+  }
+ ],
+ "actors": [
+  {
+   "scene": "res://scenes/levels/veltrava_station/StationPigeons.tscn",
+   "pos": [
+    478,
+    279
+   ],
+   "props": {
+    "sprite": "res://assets/environments/veltrava_station/actors/pigeons_sheet.png",
+    "bread": "res://assets/environments/veltrava_station/actors/bread.png",
+    "bread_pos": [
+     476,
+     279
+    ],
+    "spots": [
+     [
+      472,
+      279
+     ],
+     [
+      481,
+      280
+     ],
+     [
+      492,
+      277
+     ],
+     [
+      462,
+      281
+     ],
+     [
+      503,
+      279
+     ]
+    ],
+    "tuggers": 2,
+    "scare_radius": 13.0,
+    "run_radius": 52.0,
+    "roost_y": 26.0
+   },
+   "note": "exp_pigeons: two tug at a sandwich, a third waits at the edge; they tolerate a walking observer and only fly up when somebody runs past or steps right into them"
+  },
+  {
+   "scene": "res://scenes/levels/veltrava_station/StationWalkers.tscn",
+   "pos": [
+    0,
+    232
+   ],
+   "props": {
+    "parallax": 0.93,
+    "z": -39.0,
+    "span": [
+     560.0,
+     1440.0
+    ],
+    "count": 6,
+    "sheets": [
+     {
+      "file": "res://assets/environments/veltrava_station/actors/walker_official.png",
+      "cell": [
+       23,
+       37
+      ],
+      "frames": 18,
+      "speed": [
+       17.0,
+       23.0
+      ]
+     },
+     {
+      "file": "res://assets/environments/veltrava_station/actors/walker_woman_scarf.png",
+      "cell": [
+       22,
+       36
+      ],
+      "frames": 18,
+      "speed": [
+       17.0,
+       23.0
+      ]
+     },
+     {
+      "file": "res://assets/environments/veltrava_station/actors/walker_traveller.png",
+      "cell": [
+       23,
+       37
+      ],
+      "frames": 18,
+      "speed": [
+       17.0,
+       23.0
+      ]
+     },
+     {
+      "file": "res://assets/environments/veltrava_station/actors/walker_railwayman.png",
+      "cell": [
+       22,
+       36
+      ],
+      "frames": 18,
+      "speed": [
+       13.0,
+       16.0
+      ]
+     },
+     {
+      "file": "res://assets/environments/veltrava_station/actors/walker_woman_fur.png",
+      "cell": [
+       23,
+       37
+      ],
+      "frames": 18,
+      "speed": [
+       17.0,
+       23.0
+      ]
+     },
+     {
+      "file": "res://assets/environments/veltrava_station/actors/walker_soviet_staff.png",
+      "cell": [
+       22,
+       36
+      ],
+      "frames": 18,
+      "speed": [
+       17.0,
+       23.0
+      ]
+     },
+     {
+      "file": "res://assets/environments/veltrava_station/actors/porter_barrow.png",
+      "cell": [
+       40,
+       36
+      ],
+      "frames": 16,
+      "speed": [
+       9.0,
+       11.0
+      ],
+      "barrow": true
+     }
+    ],
+    "rng_seed": 931,
+    "pause_spots": [
+     [
+      990.0,
+      2.5,
+      5.0
+     ],
+     [
+      1180.0,
+      3.0,
+      6.0
+     ]
+    ]
+   },
+   "note": "island platform between tracks 4 and 5; seen between wagon 4 and the concourse (cam 480-1280)"
+  },
+  {
+   "scene": "res://scenes/levels/veltrava_station/StationTram.tscn",
+   "pos": [
+    1668,
+    238
+   ],
+   "props": {
+    "sprite": "res://assets/environments/veltrava_station/actors/tram.png",
+    "parallax": 0.85,
+    "z": -17.0,
+    "stop_x": 1668.0,
+    "leave_x": 1800.0,
+    "enter_x": 1540.0,
+    "wait": [
+     34.0,
+     46.0
+    ],
+    "away": [
+     7.0,
+     11.0
+    ],
+    "speed": 22.0
+   },
+   "note": "exp_tram: „Vor dem Ausgang wartet die Straßenbahn“ -- it waits most of the time, leaves, the next one rolls in"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskTrain.tscn",
+   "pos": [
+    0,
+    109
+   ],
+   "props": {
+    "loco": "res://assets/environments/veltrava_station/actors/viaduct_loco.png",
+    "wagons": [
+     "res://assets/environments/veltrava_station/actors/viaduct_wag_box.png",
+     "res://assets/environments/veltrava_station/actors/viaduct_wag_tank.png",
+     "res://assets/environments/veltrava_station/actors/viaduct_wag_flat.png"
+    ],
+    "puff": "res://assets/environments/veltrava_station/actors/viaduct_puff.png",
+    "parallax": 0.2,
+    "z": -85.0,
+    "span": [
+     -60.0,
+     952.0
+    ],
+    "speed": 13.0,
+    "interval": [
+     55.0,
+     75.0
+    ],
+    "first_delay": 6.0,
+    "chimney": [
+     4.0,
+     -10.0
+    ],
+    "wagons_min": 6.0,
+    "wagons_max": 10.0
+   },
+   "note": "reuses scenes/levels/karsk/KarskTrain.tscn (generic: sprites + timing are props)"
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    119,
+    183
+   ],
+   "props": {
+    "sprite": "res://assets/environments/veltrava_station/actors/window_life.png",
+    "cell": [
+     16,
+     17
+    ],
+    "mode": "small",
+    "z": -15.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskWindowLife.tscn",
+   "pos": [
+    191,
+    183
+   ],
+   "props": {
+    "sprite": "res://assets/environments/veltrava_station/actors/window_life.png",
+    "cell": [
+     16,
+     17
+    ],
+    "mode": "small",
+    "z": -15.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    616,
+    290
+   ],
+   "props": {
+    "points": [
+     [
+      613,
+      249
+     ]
+    ],
+    "sprite": "res://assets/environments/veltrava_station/actors/breath_puff.png",
+    "interval": 4.2
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    1208,
+    286
+   ],
+   "props": {
+    "points": [
+     [
+      1205,
+      245
+     ]
+    ],
+    "sprite": "res://assets/environments/veltrava_station/actors/breath_puff.png",
+    "interval": 5.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    346,
+    300
+   ],
+   "props": {
+    "points": [
+     [
+      343,
+      259
+     ]
+    ],
+    "sprite": "res://assets/environments/veltrava_station/actors/breath_puff.png",
+    "interval": 4.8
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    1300,
+    280
+   ],
+   "props": {
+    "points": [
+     [
+      1297,
+      239
+     ]
+    ],
+    "sprite": "res://assets/environments/veltrava_station/actors/breath_puff.png",
+    "interval": 5.2
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    1342,
+    280
+   ],
+   "props": {
+    "points": [
+     [
+      1331,
+      237
+     ],
+     [
+      1351,
+      238
+     ]
+    ],
+    "sprite": "res://assets/environments/veltrava_station/actors/breath_puff.png",
+    "interval": 5.0
+   }
+  },
+  {
+   "scene": "res://scenes/levels/karsk/KarskBreath.tscn",
+   "pos": [
+    206,
+    282
+   ],
+   "props": {
+    "points": [
+     [
+      199,
+      255
+     ],
+     [
+      215,
+      254
+     ]
+    ],
+    "sprite": "res://assets/environments/veltrava_station/actors/breath_puff.png",
+    "interval": 5.6
+   }
   }
  ],
  "notes": {
@@ -2464,6 +2755,8 @@
   "insignia": "Only pennants_reich (layer) and props flag_ussr / flag_reich carry insignia; neutral file + _hist variant, resolved by Symbols.pick in layer_stack.gd (TECHNICAL_ARCHITECTURE 12.4).",
   "npc_anchors": "conductor, elena_control, konrad_queue, voronova, elena_cafe, control are NOT painted; the German queue (2 figures) and island figures are baked away from the anchors.",
   "light_on_layer": "pos of a light with on_layer != playfield is given like a layer pos (where it appears at camera x 0); it scrolls with that layer.",
-  "warm_focal": "cam 0: saloon window of car 3 (Voronova); cam 640: booth lamp at counter 2; cam 1280: Café Korridor."
+  "warm_focal": "cam 0: saloon window of car 3 (Voronova); cam 640: booth lamp at counter 2; cam 1280: Café Korridor.",
+  "polish_2026_11_06": "Forward+ polish on the PC: dawn sky one ramp step lighter with a rose-cream band, canvas modulate #D5D3D6, sandstone station building and concourse (value groups like Karsk), glazed canopy roof lights, occupied compartments (car 3 frosted, no heating), platform lit from the open side, fluted fg columns + low fg silhouettes, fewer smoke ribbons; props match their find texts (poster, kiosk, exchange, notice, luggage, stove, footprints); ambient actors (pigeons, island walkers, tram, viaduct train, window life, breath) and the decal hook heater_leak_23.",
+  "actors": "scenes/levels/veltrava_station/*.tscn (station_pigeons / station_walkers / station_tram, all extend scripts/levels/karsk/karsk_actor.gd) + the generic Karsk actors KarskTrain, KarskWindowLife, KarskBreath configured by props; sprites in actors/ (tools/pixelgen/env_veltrava_station_life.py)."
  }
 }

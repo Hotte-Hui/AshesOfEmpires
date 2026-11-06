@@ -1,0 +1,28 @@
+{
+ "area": "minigames_r7_kb",
+ "_doc": "Round-7 mini-game finds (TECHNICAL_ARCHITECTURE 12.1 / 12.8), owner: minigames_r7_kb. Each entry carries its own area so the journal lists it with Karsk / Berlin; the find is granted after the mini-game in 'minigame' is solved (Game._do_discover -> _run_minigame). Texts: data/locale/de_minigames_r7_kb.json. Placed by ExpMorse (L_A1_Railyard, hotspot exp_morse) and ExpRohrpost (L_M1_Archive, hotspot exp_rohrpost). Checked by tests/test_minigames_r7_kb.gd.",
+ "entries": [
+  {
+   "id": "karsk.morse",
+   "area": "karsk",
+   "kind": "detail",
+   "level": "L_A1_Railyard",
+   "title_key": "explore.karsk.morse.title",
+   "text_key": "explore.karsk.morse.text",
+   "prompt_key": "explore.karsk.morse.prompt",
+   "image": "res://assets/ui/minigames/morse/find_telegram.png",
+   "minigame": "res://scenes/ui/minigames/MorseKey.tscn"
+  },
+  {
+   "id": "berlin.rohrpost",
+   "area": "berlin",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.rohrpost.title",
+   "text_key": "explore.berlin.rohrpost.text",
+   "prompt_key": "explore.berlin.rohrpost.prompt",
+   "image": "res://assets/ui/minigames/rohrpost/find_capsules.png",
+   "minigame": "res://scenes/ui/minigames/Rohrpost.tscn"
+  }
+ ]
+}

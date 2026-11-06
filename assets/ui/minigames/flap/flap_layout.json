@@ -1,0 +1,273 @@
+{
+ "doc": "tools/pixelgen/gen_mg_flap.py -- art px; the game draws x3. rects [x, y, w, h].",
+ "size": [
+  252,
+  110
+ ],
+ "hatch_size": [
+  252,
+  34
+ ],
+ "face_h": 18,
+ "split": 9,
+ "row_y": [
+  33,
+  55,
+  77
+ ],
+ "row_lamp": [
+  7,
+  7,
+  3,
+  4
+ ],
+ "drums": [
+  {
+   "id": "hour",
+   "chars": 2,
+   "x": 13,
+   "w": 20,
+   "sheet_row": 0,
+   "flaps": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23"
+   ]
+  },
+  {
+   "id": "tens",
+   "chars": 1,
+   "x": 37,
+   "w": 11,
+   "sheet_row": 1,
+   "flaps": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+   ]
+  },
+  {
+   "id": "units",
+   "chars": 1,
+   "x": 49,
+   "w": 11,
+   "sheet_row": 2,
+   "flaps": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+   ]
+  },
+  {
+   "id": "from",
+   "chars": 9,
+   "x": 63,
+   "w": 83,
+   "sheet_row": 3,
+   "flaps": [
+    "",
+    "BERLIN",
+    "WIEN",
+    "PRAG",
+    "KORDON",
+    "MINSK",
+    "MOSKVA",
+    "ZÜRICH",
+    "STOCKHOLM",
+    "HELSINKI"
+   ]
+  },
+  {
+   "id": "via",
+   "chars": 8,
+   "x": 149,
+   "w": 74,
+   "sheet_row": 4,
+   "flaps": [
+    "",
+    "KORDON",
+    "MINSK",
+    "KARSK",
+    "PRAG",
+    "LINZ",
+    "SMOLENSK",
+    "KIEW"
+   ]
+  },
+  {
+   "id": "track",
+   "chars": 1,
+   "x": 226,
+   "w": 11,
+   "sheet_row": 5,
+   "flaps": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+   ]
+  }
+ ],
+ "start": [
+  17,
+  2,
+  7,
+  3,
+  0,
+  1
+ ],
+ "target": [
+  8,
+  4,
+  1,
+  6,
+  3,
+  4
+ ],
+ "static_rows": [
+  [
+   11,
+   0,
+   5,
+   4,
+   0,
+   0
+  ],
+  [
+   14,
+   3,
+   0,
+   2,
+   5,
+   1
+  ]
+ ],
+ "new_flap": [
+  "via",
+  "KARSK"
+ ],
+ "hatch_drums": {
+  "hour": [
+   13,
+   9,
+   20,
+   17
+  ],
+  "tens": [
+   37,
+   9,
+   11,
+   17
+  ],
+  "units": [
+   49,
+   9,
+   11,
+   17
+  ],
+  "from": [
+   63,
+   9,
+   83,
+   17
+  ],
+  "via": [
+   149,
+   9,
+   74,
+   17
+  ],
+  "track": [
+   226,
+   9,
+   11,
+   17
+  ]
+ },
+ "axle_y": 17,
+ "couplings": [
+  {
+   "from": "units",
+   "to": "tens",
+   "kind": "carry",
+   "rect": [
+    44,
+    5,
+    9,
+    8
+   ]
+  },
+  {
+   "from": "tens",
+   "to": "hour",
+   "kind": "drag",
+   "rect": [
+    28,
+    20,
+    14,
+    10
+   ]
+  },
+  {
+   "from": "from",
+   "to": "via",
+   "kind": "drag",
+   "rect": [
+    141,
+    20,
+    13,
+    10
+   ]
+  },
+  {
+   "from": "track",
+   "to": "via",
+   "kind": "drag",
+   "rect": [
+    218,
+    20,
+    13,
+    10
+   ]
+  }
+ ],
+ "world_frame": [
+  84,
+  41
+ ]
+}

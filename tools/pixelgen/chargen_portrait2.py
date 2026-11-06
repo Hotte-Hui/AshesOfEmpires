@@ -3,6 +3,8 @@
     py -3 -P tools/pixelgen/chargen_portrait2.py                 # all speakers (+ previews)
     py -3 -P tools/pixelgen/chargen_portrait2.py konrad irina    # some speakers
     py -3 -P tools/pixelgen/chargen_portrait2.py --preview konrad # only preview sheets (no asset writes)
+    py -3 -P tools/pixelgen/chargen_portrait2.py --jobs=8         # one process per speaker (same output)
+    py -3 -P tools/pixelgen/chargen_portrait2.py --out=DIR        # review run into DIR (an assets/characters dir)
 
 Pipeline per frame (deterministic numpy, no image inputs, no AI):
   1. sculpt   -- signed-distance head (chargen_portrait2_anat), hats / hair / garments (chargen_portrait2_cast)
@@ -35,6 +37,7 @@ sys.path.insert(0, HERE)
 
 import chargen_portrait2_anat as A   # noqa: E402
 import chargen_portrait2_cast as C   # noqa: E402
+import chargen_portrait_c3 as C3     # noqa: E402,F401  registers the Chapter-3 speakers in C.CAST
 import chargen_portrait2_face as FC  # noqa: E402
 import chargen_portrait2_paint as P  # noqa: E402
 import chargen_portrait2_sdf as S    # noqa: E402
@@ -186,10 +189,12 @@ def draw_features(spec, G, cv, expr, mouth_state, blink, v):
     # ---- brows
     BR = F.get('brows', {})
     e = BR.get(expr, BR.get('neutral', {}))
+    # round 7: brow geometry per speaker (head-local inner / outer end; default = the shared round-2 brow)
+    (bix, biy, biz), (box, boy, boz) = F.get('brow_pts', ((1.6, -3.9, 17.0), (10.4, -3.4, 13.4)))
     for side in ('r', 'l'):
         sgn = -1 if side == 'r' else 1
-        inner = zoom_pt(spec, hf.to_view((sgn * 1.6, -3.9 + e.get('dy', 0), 17.0)))
-        outer = zoom_pt(spec, hf.to_view((sgn * 10.4, -3.4 + e.get('dy', 0), 13.4)))
+        inner = zoom_pt(spec, hf.to_view((sgn * bix, biy + e.get('dy', 0), biz)))
+        outer = zoom_pt(spec, hf.to_view((sgn * box, boy + e.get('dy', 0), boz)))
         li = e.get('lift_inner', 0.0) * (1.0 if side == 'r' else 0.9)
         lo = e.get('lift_outer', 0.0)
         x0, y0 = inner[0], inner[1]
@@ -199,10 +204,15 @@ def draw_features(spec, G, cv, expr, mouth_state, blink, v):
         thick = (bt[0] if side == 'r' else bt[1]) if bt else ((2, 2, 1) if side == 'r' else (2, 1, 1))
         FC.brow(cv, x0 + (0 if side == 'r' else 0), y0, length, rise=rise, arch=e.get('arch', 0.6),
                 thick=thick, inner_left=(side == 'l'), key='b', lift_inner=li, lift_outer=lo)
-    # ---- nose: nostril + tip
+    # ---- nose: nostril + tip (round 7: 'small' = one dark pixel, 'wide' = a broader wing shadow)
+    nst = F.get('nostril', 'std')
     nx, ny = ipt(lmv['nostril_r'])
     cv.rel(nx, ny, -2)
-    cv.rel(nx + 1, ny, -1)
+    if nst != 'small':
+        cv.rel(nx + 1, ny, -1)
+    if nst == 'wide':
+        cv.rel(nx - 1, ny, -1)
+        cv.rel(nx, ny - 1, -1)
     fx2, fy2 = ipt(lmv['nostril_l'])
     cv.rel(fx2, fy2, -1)
     # ---- mouth
@@ -284,9 +294,39 @@ def preview(cid, frames, exprs, tag='portraits_v2'):
     Image.fromarray(up(sheet, 3)).save(os.path.join(PREV_DIR, f'{tag}_{cid}_3x.png'))
 
 
+def set_out(char_dir):
+    """Write portraits / previews below another assets/characters directory (review runs)."""
+    global CHAR_DIR, PREV_DIR
+    CHAR_DIR = os.path.abspath(char_dir)
+    PREV_DIR = os.path.join(CHAR_DIR, '_preview')
+
+
+def _job(args):
+    cid, write, char_dir = args
+    set_out(char_dir)
+    spec, frames, grid = build_char(cid, write=write)
+    preview(cid, frames, spec.get('expressions', EXPRESSIONS))
+    return cid
+
+
 def main(argv):
+    """[ids] [--preview] [--jobs=N] [--out=DIR (an assets/characters directory)]"""
     only_preview = '--preview' in argv
+    jobs = 1
+    for a in argv:
+        if a.startswith('--jobs='):
+            jobs = max(1, int(a[7:]))
+        elif a.startswith('--out='):
+            set_out(a[6:])
     ids = [a for a in argv if not a.startswith('--')] or list(C.CAST)
+    if jobs > 1 and len(ids) > 1:
+        # one process per speaker: every frame is a pure function of its spec, so the output is identical
+        # to a sequential run
+        import multiprocessing as mp
+        with mp.Pool(min(jobs, len(ids))) as pool:
+            for cid in pool.imap(_job, [(c, not only_preview, CHAR_DIR) for c in ids]):
+                pass
+        return
     for cid in ids:
         spec, frames, grid = build_char(cid, write=not only_preview)
         preview(cid, frames, spec.get('expressions', EXPRESSIONS))

@@ -1,0 +1,154 @@
+{
+ "area": "veltrava",
+ "doc": "Side tasks (Aufgaben, TECHNICAL_ARCHITECTURE §12.9) of L_C3_Station and L_C3_Hall, owner: tasks. Station: the conductor asks after his story talk (gated node TaskConductor, chain ask + return), the heating coupling between wagons 2 and 3 (new hotspot exp_task_coupling, chain coupling + thaw), hot water from the waiting-room stove (chain on Find_Stove after veltrava.station.stove). Palais: Frau Brunner after her chat (chain on ChatTypist), the buffet (chain on Find_Buffet after veltrava.hall.buffet), Nils Ekdahl (chain on ChatJournalist after his chat). File name deliberately not veltrava_*.json (those are counted by tests/test_c3_assets.gd). Texts: data/locale/de_tasks.json. Checked by tests/test_tasks.gd.",
+ "entries": [
+  {
+   "id": "veltrava.task.heating.ask",
+   "kind": "chat",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.task.heating.ask.title",
+   "text_key": "explore.veltrava.task.heating.ask.text",
+   "prompt_key": "explore.veltrava.task.heating.ask.prompt",
+   "lines": [
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.ask.l1", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.heating.ask.l2", "expr": "neutral"},
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.ask.l3", "expr": "concerned"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.heating.ask.l4", "expr": "concerned"},
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.ask.l5", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.heating.ask.l6", "expr": "determined"}
+   ]
+  },
+  {
+   "id": "veltrava.task.heating.coupling",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.task.heating.coupling.title",
+   "text_key": "explore.veltrava.task.heating.coupling.text",
+   "prompt_key": "explore.veltrava.task.heating.coupling.prompt",
+   "requires": ["veltrava.task.heating.ask"]
+  },
+  {
+   "id": "veltrava.task.heating.kettle",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.task.heating.kettle.title",
+   "text_key": "explore.veltrava.task.heating.kettle.text",
+   "prompt_key": "explore.veltrava.task.heating.kettle.prompt",
+   "requires": ["veltrava.task.heating.coupling"]
+  },
+  {
+   "id": "veltrava.task.heating.thaw",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.task.heating.thaw.title",
+   "text_key": "explore.veltrava.task.heating.thaw.text",
+   "prompt_key": "explore.veltrava.task.heating.thaw.prompt",
+   "requires": ["veltrava.task.heating.kettle"]
+  },
+  {
+   "id": "veltrava.task.heating.return",
+   "kind": "chat",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.task.heating.return.title",
+   "text_key": "explore.veltrava.task.heating.return.text",
+   "prompt_key": "explore.veltrava.task.heating.return.prompt",
+   "requires": ["veltrava.task.heating.thaw"],
+   "lines": [
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.return.l1", "expr": "surprised"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.heating.return.l2", "expr": "neutral"},
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.return.l3", "expr": "neutral"},
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.return.l4", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.heating.return.l5", "expr": "neutral"},
+    {"speaker": "conductor", "key": "explore.veltrava.task.heating.return.l6", "expr": "neutral"},
+    {"speaker": "alexei", "key": "explore.veltrava.task.heating.return.l7", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "veltrava.task.buffet.ask",
+   "kind": "chat",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.task.buffet.ask.title",
+   "text_key": "explore.veltrava.task.buffet.ask.text",
+   "prompt_key": "explore.veltrava.task.buffet.ask.prompt",
+   "requires": ["veltrava.hall.chat_typist"],
+   "lines": [
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.ask.l1", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.veltrava.task.buffet.ask.l2", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.ask.l3", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.ask.l4", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.veltrava.task.buffet.ask.l5", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.ask.l6", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "veltrava.task.buffet.take",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.task.buffet.take.title",
+   "text_key": "explore.veltrava.task.buffet.take.text",
+   "prompt_key": "explore.veltrava.task.buffet.take.prompt",
+   "requires": ["veltrava.task.buffet.ask"]
+  },
+  {
+   "id": "veltrava.task.buffet.journalist",
+   "kind": "chat",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.task.buffet.journalist.title",
+   "text_key": "explore.veltrava.task.buffet.journalist.text",
+   "prompt_key": "explore.veltrava.task.buffet.journalist.prompt",
+   "requires": ["veltrava.task.buffet.take"],
+   "lines": [
+    {"speaker": "journalist", "key": "explore.veltrava.task.buffet.journalist.l1", "expr": "surprised"},
+    {"speaker": "konrad", "key": "explore.veltrava.task.buffet.journalist.l2", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.task.buffet.journalist.l3", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.veltrava.task.buffet.journalist.l4", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.task.buffet.journalist.l5", "expr": "neutral"},
+    {"speaker": "journalist", "key": "explore.veltrava.task.buffet.journalist.l6", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "veltrava.task.buffet.return",
+   "kind": "chat",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.task.buffet.return.title",
+   "text_key": "explore.veltrava.task.buffet.return.text",
+   "prompt_key": "explore.veltrava.task.buffet.return.prompt",
+   "requires": ["veltrava.task.buffet.journalist"],
+   "lines": [
+    {"speaker": "konrad", "key": "explore.veltrava.task.buffet.return.l1", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.return.l2", "expr": "surprised"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.return.l3", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.veltrava.task.buffet.return.l4", "expr": "concerned"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.return.l5", "expr": "neutral"},
+    {"speaker": "typist", "key": "explore.veltrava.task.buffet.return.l6", "expr": "determined"}
+   ]
+  }
+ ],
+ "tasks": [
+  {
+   "id": "veltrava.task.heating",
+   "level": "L_C3_Station",
+   "title_key": "task.veltrava.heating.title",
+   "summary_key": "task.veltrava.heating.summary",
+   "steps": [
+    {"explore_id": "veltrava.task.heating.ask", "hint_key": "task.veltrava.heating.hint.ask"},
+    {"explore_id": "veltrava.task.heating.coupling", "hint_key": "task.veltrava.heating.hint.coupling"},
+    {"explore_id": "veltrava.task.heating.kettle", "hint_key": "task.veltrava.heating.hint.kettle"},
+    {"explore_id": "veltrava.task.heating.thaw", "hint_key": "task.veltrava.heating.hint.thaw"},
+    {"explore_id": "veltrava.task.heating.return", "hint_key": "task.veltrava.heating.hint.return"}
+   ]
+  },
+  {
+   "id": "veltrava.task.buffet",
+   "level": "L_C3_Hall",
+   "title_key": "task.veltrava.buffet.title",
+   "summary_key": "task.veltrava.buffet.summary",
+   "steps": [
+    {"explore_id": "veltrava.task.buffet.ask", "hint_key": "task.veltrava.buffet.hint.ask"},
+    {"explore_id": "veltrava.task.buffet.take", "hint_key": "task.veltrava.buffet.hint.take"},
+    {"explore_id": "veltrava.task.buffet.journalist", "hint_key": "task.veltrava.buffet.hint.journalist"},
+    {"explore_id": "veltrava.task.buffet.return", "hint_key": "task.veltrava.buffet.hint.return"}
+   ]
+  }
+ ]
+}

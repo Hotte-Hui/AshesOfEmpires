@@ -8,8 +8,13 @@ extends Node2D
 ##   with a "variant_gap" [min, max] in seconds. At the end of a loop the rig occasionally shows one variant
 ##   and returns to the base row. `anim` keeps the logical (base) name, so callers that re-request the same
 ##   animation every frame (player.gd) never cancel a variant.
-## * Soft turns: turn_to(left) shows the front-facing frame for a moment before mirroring (NPCs).
+## * Soft turns: turn_to(left) shows the front-facing frame for a moment before mirroring (NPCs, and since
+##   round 7 the player: turn_to(left, hold, "walk_front") keeps the stride while walking). Row changes during
+##   the turn keep the turn frame on screen; turning back mid-turn cancels it.
 ## * play_once(name, then): one-shot row that returns to `then` afterwards.
+## * view_hint (round 7): "front" / "back" -- requests for "*_side" rows play the matching "*_front" /
+##   "*_back" row when the sheet has it. Dialogue code asks for "talk_side" / "idle_side" without knowing
+##   how the actor stands; an actor facing the camera now talks facing the camera (talk_front).
 ## Normal maps: the sprite is mirrored with flip_h (never a negative scale), so Godot negates the normal
 ## map's x for flipped draws and lights keep wrapping around the correct side (verified in
 ## tests/visual/char_light_test.tscn).
@@ -23,7 +28,7 @@ const FALLBACK := {
 	"talk_side": "idle_side", "inspect_side": "interact_side", "interact_side": "idle_side",
 	"walk_side": "idle_side", "talk_front": "talk_side", "work_side": "idle_side",
 	"gesture_side": "idle_side", "look_side": "idle_side", "blink_side": "idle_side",
-	"blink_front": "idle_front",
+	"blink_front": "idle_front", "talk_back": "idle_back",
 }
 
 var char_id := ""
@@ -32,6 +37,7 @@ var sprite: Sprite2D
 var anim := ""                  ## logical animation (what callers asked for)
 var speed_scale := 1.0
 var variants_enabled := true    ## occasional idle variants (blink / glance / gesture)
+var view_hint := ""             ## "" | "front" | "back": maps "*_side" requests to that view (see header)
 var _row_anim := ""             ## row actually shown (== anim, or one of its variants)
 var _frame := 0
 var _t := 0.0
@@ -43,6 +49,7 @@ var _var_wait := 0.0
 var _once_then := ""
 var _turn_left := false
 var _turn_t := -1.0
+var _turn_row := ""             ## row shown while turning (idle_front, or walk_front for a walking turn)
 var _rng := RandomNumberGenerator.new()
 
 
@@ -104,8 +111,17 @@ func resolve(a: String) -> String:
 	return a
 
 
+## "talk_side" -> "talk_front" while view_hint is "front" (only when the sheet has that row).
+func view_row(a: String) -> String:
+	if view_hint != "" and a.ends_with("_side"):
+		var v := a.trim_suffix("_side") + "_" + view_hint
+		if has_anim(v):
+			return v
+	return a
+
+
 func play(a: String, restart := false) -> void:
-	a = resolve(a)
+	a = resolve(view_row(a))
 	if a == anim and not restart:
 		return
 	anim = a
@@ -140,19 +156,27 @@ func is_flipped() -> bool:
 
 
 ## Soft turn: shows the front-facing frame for `hold` seconds, then mirrors (falls back to an instant flip
-## when the sheet has no front row). Returns true when a turn was started.
-func turn_to(left: bool, hold := 0.14) -> bool:
+## when the sheet has no front row). `row` picks the in-between frame: "" = idle_front frame 0, "walk_front" =
+## the walk_front frame at the current walk phase (a turn while walking keeps the stride). Returns true when
+## a turn was started or is running; turning back to the current facing mid-turn cancels the turn.
+func turn_to(left: bool, hold := 0.14, row := "") -> bool:
 	if left == _flip and _turn_t < 0.0:
 		return false
-	if _turn_t >= 0.0 and left == _turn_left:
-		return true
-	var front := "idle_front" if has_anim("idle_front") else ""
+	if _turn_t >= 0.0:
+		if left == _turn_left:
+			return true
+		if left == _flip:            # changed its mind mid-turn: back to the current facing at once
+			_turn_t = -1.0
+			_show()
+			return true
+	var front := row if row != "" and has_anim(row) else ("idle_front" if has_anim("idle_front") else "")
 	if front == "" or hold <= 0.0:
 		set_flip(left)
 		return true
 	_turn_left = left
 	_turn_t = hold
-	_show_cell(front, 0)
+	_turn_row = front
+	_show()
 	return true
 
 
@@ -196,6 +220,10 @@ func _roll_variant_wait() -> void:
 
 
 func _show() -> void:
+	if _turn_t >= 0.0 and _turn_row != "":
+		var n := int(_row(_turn_row).get("frames", 1))
+		_show_cell(_turn_row, (_frame % maxi(1, n)) if _turn_row.begins_with("walk") else 0)
+		return
 	_show_cell(_row_anim, _frame)
 
 

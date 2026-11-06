@@ -108,6 +108,18 @@
    "fps": 9,
    "loop": false,
    "variant_of": "idle_front"
+  },
+  "talk_front": {
+   "row": 13,
+   "frames": 8,
+   "fps": 7,
+   "loop": true
+  },
+  "talk_back": {
+   "row": 14,
+   "frames": 8,
+   "fps": 7,
+   "loop": true
   }
  },
  "ground_speed": {

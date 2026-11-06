@@ -2,6 +2,9 @@
 
 Area owner: chars-portraits specialist · Date: **2026-11-04** · Engine target: Godot 4.7.2
 
+> **Round 7 (2026-11-06):** 17 speakers (the Chapter-3 seven are on this pipeline now), individual noses / chins /
+> eyes / brows, Babushka's kerchief, cap clip fix -- see `portraits_r7.md`.
+
 ## Provenance & licence (applies to every file below)
 * **Original work, generated procedurally** by the project's own Python scripts (numpy + Pillow; no AI image
   models, no network, no third-party art, no image inputs). Facial features (eyes, lids, brows, mouths,

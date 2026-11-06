@@ -1,0 +1,73 @@
+{
+ "files": [
+  {
+   "file": "icon_memory.png",
+   "scale": 3,
+   "size": [
+    39,
+    39
+   ]
+  },
+  {
+   "crop": [
+    236,
+    126
+   ],
+   "file": "L_A1_Railyard.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_A1_Railyard.png"
+  },
+  {
+   "crop": [
+    196,
+    146
+   ],
+   "file": "L_M1_Archive.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_M1_Archive.png"
+  },
+  {
+   "crop": [
+    214,
+    92
+   ],
+   "file": "L_M1_Plaza.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_M1_Plaza.png"
+  },
+  {
+   "crop": [
+    120,
+    56
+   ],
+   "file": "L_C3_Station.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_Station.png"
+  },
+  {
+   "crop": [
+    150,
+    50
+   ],
+   "file": "L_C3_Hall.png",
+   "size": [
+    320,
+    180
+   ],
+   "source": "src/raw_L_C3_Hall.png"
+  }
+ ],
+ "generator": "tools/pixelgen/gen_ui_memories.py"
+}

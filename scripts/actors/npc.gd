@@ -5,6 +5,8 @@ extends Node2D
 ## Optional simple routine: wander between two x positions (civilians), or stay (story NPCs).
 ## `idle_anim` overrides the idle row, e.g. "work_side" (vendor pouring tea, librarian stamping cards,
 ## worker warming his hands) or "idle_front" (porter facing the hall).
+## Round 7: an NPC idling front-on (idle_anim "idle_front") that does not turn to talk talks facing the
+## camera (talk_front, via the rig's view_hint); wanderers turn softly at the ends of their path.
 
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 const TexelLightLib := preload("res://scripts/render/texel_light.gd")
@@ -40,6 +42,7 @@ func _ready() -> void:
 	TexelLightLib.apply_tree(rig)        # light once per texel, like the player (high-res world path)
 	rig.variants_enabled = idle_variants
 	rig.set_flip(face_left)
+	_rest_view()
 	modulate = tint
 	add_to_group("npcs")
 	_home = position
@@ -54,12 +57,19 @@ func _idle_name() -> String:
 	return "idle_side"
 
 
+## View the NPC rests in: front-on idles keep talking front-on (unless they turn to the player).
+func _rest_view() -> void:
+	if rig:
+		rig.view_hint = "front" if _idle_name().ends_with("_front") and not (talking and turn_to_talk) else ""
+
+
 func set_talking(on: bool) -> void:
 	if on:
 		_releasing = false
 		if not talking:
 			talking = true
 			rig.speed_scale = 1.0
+			_rest_view()
 			if turn_to_talk:
 				_face_player(true)
 			if rig.is_turning():
@@ -72,10 +82,11 @@ func set_talking(on: bool) -> void:
 	talking = false
 	_talk_after_turn = false
 	# leave the talk loop on a resting frame so the hand never snaps down mid-gesture
-	if rig.anim == "talk_side" and not (rig.current_frame() in TALK_REST_FRAMES):
+	if rig.anim.begins_with("talk_") and not (rig.current_frame() in TALK_REST_FRAMES):
 		_releasing = true
 		_release_timeout = 0.8
 	else:
+		_rest_view()
 		rig.play(_idle_name())
 
 
@@ -98,6 +109,7 @@ func _process(delta: float) -> void:
 		_release_timeout -= delta
 		if rig.current_frame() in TALK_REST_FRAMES or _release_timeout <= 0.0:
 			_releasing = false
+			_rest_view()
 			rig.play(_idle_name())
 		return
 	if talking:
@@ -120,6 +132,8 @@ func _process(delta: float) -> void:
 				_dir = -_dir
 				position.x = _home.x + signf(position.x - _home.x) * wander
 				_pause = randf_range(1.5, 4.0)
+				rig.play(_idle_name())
+				rig.turn_to(_dir < 0.0, 0.22)      # turn round softly while pausing at the end of the path
 		return
 	if look_at_player:
 		_face_player(false)

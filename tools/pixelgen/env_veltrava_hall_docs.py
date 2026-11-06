@@ -5,7 +5,7 @@ veltrava_hall_carbon.png   ev_c3_carbon 'Durchschrift aus Kabine 2': Elena's des
                            from the (missing) protocol notebook, shows pale:
                                '§ 4 - Personen.' / 'Vom Sekretariat,' / 'nicht von einer Delegation.' /
                                'Wer hat den Text geliefert?'
-                           faintly, older: '10:09 - Mik. 12' (matches the booth log), mirrored ink blots.
+                           faintly, older: '10.09 - Mik. 12' (matches the booth log), mirrored ink blots.
 veltrava_hall_documents.json   metadata (schema of karsk_documents.json)
 data/locale/de_env_veltrava_hall.json   German alt text
 Pixel art 1:1, shown at 3x.  The handwriting is drawn from hand-defined stroke skeletons (no fonts).
@@ -165,7 +165,7 @@ def carbon():
     # 'Personen' underlined twice
     ul = kit.stroke_mask(W, H, [[(118, 69), (200, 67)], [(121, 72), (196, 71)]], 0.55)
     note |= ul
-    old, _ = hand_line('10:09 - Mik. 12', 196, 178, 4.6, seed=77)
+    old, _ = hand_line('10.09 - Mik. 12', 196, 178, 4.6, seed=77)
     oldm = kit.stroke_mask(W, H, old, 0.5)
     # pencil rubbing: an irregular region of diagonal graphite strokes over the note
     cxr, cyr = 150, 104
@@ -198,8 +198,8 @@ def carbon():
     lay.put(old_in & ~rub, 0, 0, 'P', 5.0, flat=True)
     lay.put(np.roll(old_in, 1, axis=0) & ~old_in & pad, 0, 0, 'P', 4.6, flat=True)
     marks['note'] = {'rect': bbox_of(note), 'note': "Elena's last note, pressed through and revealed by the rubbing"}
-    marks['old_entry'] = {'rect': bbox_of(oldm), 'text': '10:09 - Mik. 12',
-                          'note': 'older, faint impression; matches the booth log (10:09, microphone 12)'}
+    marks['old_entry'] = {'rect': bbox_of(oldm), 'text': '10.09 - Mik. 12',
+                          'note': 'older, faint impression; matches the booth log (10.09, microphone 12)'}
     marks['rubbing'] = {'rect': bbox_of(rub), 'note': 'graphite rubbing'}
     # the pencil that did it (hexagonal, gold lacquer), lying across the lower right corner
     p0, p1 = (206, 158), (284, 128)
@@ -247,7 +247,7 @@ def build_all(doc_dir, locale_path):
             'describes': "Elena's desk blotter from interpreter booth 2, lightly rubbed with a pencil. Pale "
                          "in the graphite: '§ 4 – Personen.' (underlined twice) / 'Vom Sekretariat,' / "
                          "'nicht von einer Delegation.' / 'Wer hat den Text geliefert?'. Faint older entry "
-                         "'10:09 - Mik. 12'; mirrored ink blots; the pencil lies across the corner.",
+                         "'10.09 - Mik. 12'; mirrored ink blots; the pencil lies across the corner.",
             'marks': marks,
         }],
     }
@@ -263,7 +263,7 @@ def build_all(doc_dir, locale_path):
                 'Elenas Schreibunterlage aus Kabine 2, mit Bleistift leicht schraffiert. In der grauen '
                 'Schraffur steht hell ihre durchgedrückte Handschrift: „§ 4 – Personen. Vom Sekretariat, '
                 'nicht von einer Delegation. Wer hat den Text geliefert?“ – „Personen“ ist zweimal '
-                'unterstrichen. Am Rand, schwächer, ein älterer Eintrag: „10:09 – Mik. 12“. Daneben '
+                'unterstrichen. Am Rand, schwächer, ein älterer Eintrag: „10.09 – Mik. 12“. Daneben '
                 'liegt der Bleistift. Das Protokollheft, das auf der Unterlage lag, fehlt.',
         },
     }

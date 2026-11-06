@@ -1,0 +1,26 @@
+{
+ "area": "veltrava",
+ "doc": "Chapter-3 mini-game finds (owner: minigames r7, TECHNICAL_ARCHITECTURE §12.8): the find is granted only after its mini-game is solved (Game._do_discover → _run_minigame). Texts: data/locale/de_minigames_r7_v.json. Hotspots in assets/environments/veltrava_station|veltrava_hall/explore_hotspots.json (exp_flap_board, exp_cloak_tokens); interactables and world cues in scenes/levels/L_C3_Station.tscn and L_C3_Hall.tscn. The cloakroom find stands next to veltrava.hall.cloakroom (text agent) without changing it.",
+ "entries": [
+  {
+   "id": "veltrava.station.flap_board",
+   "kind": "detail",
+   "level": "L_C3_Station",
+   "title_key": "explore.veltrava.station.flap_board.title",
+   "text_key": "explore.veltrava.station.flap_board.text",
+   "prompt_key": "explore.veltrava.station.flap_board.prompt",
+   "image": "res://assets/ui/minigames/flap/flap_closeup.png",
+   "minigame": "res://scenes/ui/minigames/FlapBoard.tscn"
+  },
+  {
+   "id": "veltrava.hall.cloak_tokens",
+   "kind": "detail",
+   "level": "L_C3_Hall",
+   "title_key": "explore.veltrava.hall.cloak_tokens.title",
+   "text_key": "explore.veltrava.hall.cloak_tokens.text",
+   "prompt_key": "explore.veltrava.hall.cloak_tokens.prompt",
+   "image": "res://assets/ui/minigames/cloak/cloak_closeup.png",
+   "minigame": "res://scenes/ui/minigames/Cloakroom.tscn"
+  }
+ ]
+}

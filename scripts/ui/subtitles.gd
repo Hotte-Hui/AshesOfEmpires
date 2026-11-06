@@ -48,7 +48,7 @@ func show_subtitle(text: String, duration := 0.0, speaker := "", force := false)
 	var body := Kit.resolve(text).replace("[", "[lb]")
 	var bb := "[center]"
 	if speaker != "":
-		bb += "[color=#dca16e]%s[/color]   " % Kit.char_name(speaker).to_upper()
+		bb += "[color=#dca16e]%s[/color]   " % Kit.char_name(speaker).to_upper().replace("ß", "SS")
 	bb += body + "[/center]"
 	_label.text = bb
 	var w := clampf(body.length() * 17.0 * Kit.text_scale() + 60.0, 420.0, 1400.0)

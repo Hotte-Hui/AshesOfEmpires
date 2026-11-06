@@ -34,6 +34,9 @@ const ENVS := {
 }
 ## C3_DESIGN §6: number of exploration entries per level and the real-history cards with their find spot
 const ENTRY_COUNTS := {"L_C3_Station": 15, "L_C3_Hall": 12}
+## Further Chapter-3 entry files checked like data/explore/veltrava_*.json (not part of ENTRY_COUNTS): the
+## mini-game finds of tests/test_minigames_r7_v.gd.
+const EXTRA_ENTRY_FILES := ["minigames_r7_v.json"]
 const HISTORY_AT := {"hist.soviet.repatriation": "exp_return_notice", "hist.soviet.handover_1940": "exp_treaty_shelf",
 	"hist.reich.nuremberg_interpreters": "exp_headsets"}
 
@@ -350,11 +353,12 @@ func _explore_entries() -> bool:
 		kit.ok(FileAccess.file_exists(EXPLORE_DIR + f), "%s%s missing (C3_DESIGN §6)" % [EXPLORE_DIR, f])
 	var per_level := {}
 	for id in entries:
-		if not str(entry_file[id]).begins_with("veltrava_"):
+		if not (str(entry_file[id]).begins_with("veltrava_") or EXTRA_ENTRY_FILES.has(str(entry_file[id]))):
 			continue
 		var e: Dictionary = entries[id]
 		var lvl := str(e.get("level", ""))
-		per_level[lvl] = per_level.get(lvl, 0) + 1
+		if str(entry_file[id]).begins_with("veltrava_"):
+			per_level[lvl] = per_level.get(lvl, 0) + 1
 		kit.ok(KINDS.has(e.get("kind")), "%s: kind %s is one of %s" % [id, Kit.fmt(e.get("kind")), KINDS])
 		if not kit.ok(LEVELS.has(lvl), "%s: level %s is L_C3_Station or L_C3_Hall" % [id, Kit.fmt(lvl)]):
 			continue
@@ -428,6 +432,6 @@ func _explore_interactables() -> bool:
 	for xid in placed:
 		kit.eq(placed[xid].size(), 1, "explore entry %s placed by exactly one interactable %s" % [xid, placed[xid]])
 	for id in entries:
-		if str(entry_file[id]).begins_with("veltrava_"):
+		if str(entry_file[id]).begins_with("veltrava_") or EXTRA_ENTRY_FILES.has(str(entry_file[id])):
 			kit.ok(placed.has(id), "veltrava entry %s is placed by an interactable" % id)
 	return true

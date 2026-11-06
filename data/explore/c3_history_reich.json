@@ -1,6 +1,6 @@
 {
  "side": "reich",
- "doc": "documentation/C3_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — real-history cards of Chapter 3 (presented outside the fiction as „REALE GESCHICHTE“). Texts: data/locale/de_history_c3.json. Unlocked by veltrava.station.return_notice, veltrava.hall.treaty_shelf and veltrava.hall.headsets.",
+ "doc": "documentation/C3_DESIGN.md §6, TECHNICAL_ARCHITECTURE §12.3 — real-history cards of Chapter 3 (presented outside the fiction as „REALE GESCHICHTE“). Texts: data/locale/de_history_c3.json. Unlocked by veltrava.station.return_notice, veltrava.hall.treaty_shelf and veltrava.hall.headsets. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen je Karte (Gedenk- und Forschungseinrichtungen, Nationalbibliothek, Fachaufsätze, Presse); Quellen je Karte in data/explore/c3_history_soviet.json und c3_history_reich.json.",
  "cards": [
   {
    "id": "hist.reich.nuremberg_interpreters",
@@ -10,6 +10,14 @@
    "year": "1945",
    "sources": [
     {
+     "label": "United States Holocaust Memorial Museum, Holocaust Encyclopedia: Translation in the Courtroom",
+     "url": "https://encyclopedia.ushmm.org/content/en/article/translation-in-the-courtroom"
+    },
+    {
+     "label": "The National WWII Museum, K. Guise: Translating and Interpreting the Nuremberg Trials (2020)",
+     "url": "https://www.nationalww2museum.org/war/articles/translating-and-interpreting-nuremberg-trials"
+    },
+    {
      "label": "Wikipedia: Nürnberger Prozess gegen die Hauptkriegsverbrecher",
      "url": "https://de.wikipedia.org/wiki/Nürnberger_Prozess_gegen_die_Hauptkriegsverbrecher"
     },
@@ -17,8 +25,7 @@
      "label": "Francesca Gaiba: The Origins of Simultaneous Interpretation. The Nuremberg Trial. Ottawa 1998",
      "url": ""
     }
-   ],
-   "review": "Quellen in dieser Sitzung nicht online geprüft – vor Veröffentlichung gegenprüfen"
+   ]
   }
  ]
 }

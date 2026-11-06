@@ -246,7 +246,7 @@ func _reset_state() -> void:
 func _on_board_changed() -> void:
 	var off: Vector2i = _board.offset
 	_state_label.text = Kit.t("ui.blueprint.state", {"rot": _board.rotation_steps * 90,
-		"x": ("%+d" % off.x), "y": ("%+d" % off.y)}).to_upper()
+		"x": ("%+d" % off.x), "y": ("%+d" % off.y)}).to_upper().replace("ß", "SS")
 	_refresh_hint()
 
 

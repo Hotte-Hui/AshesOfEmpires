@@ -165,7 +165,7 @@ func _update_labels() -> void:
 		var st := str(logic.guard_state(g)[0])
 		var lab: Label = _guard_labels[g]
 		lab.text = (Kit.t("mg.leaflet.guard." + ("left" if g == 0 else "right")) + " · "
-			+ Kit.t("mg.leaflet.guard." + st)).to_upper()
+			+ Kit.t("mg.leaflet.guard." + st)).to_upper().replace("ß", "SS")
 		var c := Kit.C_TEXT_DIM
 		match st:
 			"turn":
@@ -176,7 +176,7 @@ func _update_labels() -> void:
 				c = Kit.C_STAMP
 		lab.add_theme_color_override("font_color", c)
 	if _wind_label:
-		_wind_label.text = (Kit.t("mg.leaflet.wind") + " · " + Kit.t("mg.leaflet.wind." + ("gust" if logic.gusting else "calm"))).to_upper()
+		_wind_label.text = (Kit.t("mg.leaflet.wind") + " · " + Kit.t("mg.leaflet.wind." + ("gust" if logic.gusting else "calm"))).to_upper().replace("ß", "SS")
 	if solved:
 		return
 	var states := [str(logic.guard_state(0)[0]), str(logic.guard_state(1)[0])]

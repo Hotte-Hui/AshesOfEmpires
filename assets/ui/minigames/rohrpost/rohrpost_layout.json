@@ -1,0 +1,392 @@
+{
+ "_doc": "Rohrpost mini-game: the three boards of the archive house tube system. Geometry in ART px (rohrpost_board_N.png is stored x3): grid origin [ML, MT], cell size, grid size. tiles: \"c,r\" -> h | v | NE | NW | SE | SW (curve between the two sides) | x (crossing, no junction) | D (diverter). diverters: cell, states = side pairs the knob connects (cycled by turning; frames of rohrpost_knob.png follow knob_frames), start = index of the setting when the board opens. stations: where a side of a cell leads out of the grid. source: where the capsule from the porter's lodge enters. frozen: cells a capsule cannot pass. solution: the unique fewest-change setting (written by gen_mg_rohrpost.py after verify()).",
+ "cell": 22,
+ "grid": [
+  8,
+  5
+ ],
+ "origin": [
+  52,
+  16
+ ],
+ "board_size": [
+  286,
+  142
+ ],
+ "knob_frames": [
+  "WE",
+  "NS",
+  "NE",
+  "ES",
+  "SW",
+  "WN"
+ ],
+ "mouth": [
+  10,
+  6
+ ],
+ "knob_size": 18,
+ "capsule_size": 12,
+ "lamp_size": 8,
+ "boards": [
+  {
+   "id": 1,
+   "note": "mg.tube.board.1",
+   "content": "mg.tube.content.1",
+   "source": {
+    "cell": [
+     0,
+     3
+    ],
+    "side": "W"
+   },
+   "target": "lesesaal",
+   "stations": [
+    {
+     "id": "lesesaal",
+     "cell": [
+      7,
+      1
+     ],
+     "side": "E"
+    },
+    {
+     "id": "abt3",
+     "cell": [
+      7,
+      2
+     ],
+     "side": "E"
+    },
+    {
+     "id": "registratur",
+     "cell": [
+      7,
+      3
+     ],
+     "side": "E"
+    }
+   ],
+   "tiles": {
+    "2,1": "SE",
+    "3,1": "h",
+    "4,1": "h",
+    "5,1": "D",
+    "6,1": "h",
+    "7,1": "h",
+    "2,2": "v",
+    "5,2": "NE",
+    "6,2": "h",
+    "7,2": "h",
+    "0,3": "h",
+    "1,3": "h",
+    "2,3": "D",
+    "3,3": "h",
+    "4,3": "h",
+    "5,3": "h",
+    "6,3": "h",
+    "7,3": "h"
+   },
+   "diverters": [
+    {
+     "cell": [
+      2,
+      3
+     ],
+     "states": [
+      "WE",
+      "WN",
+      "NE"
+     ],
+     "start": 0
+    },
+    {
+     "cell": [
+      5,
+      1
+     ],
+     "states": [
+      "WE",
+      "SW",
+      "ES"
+     ],
+     "start": 1
+    }
+   ],
+   "frozen": [],
+   "solution": [
+    1,
+    0
+   ]
+  },
+  {
+   "id": 2,
+   "note": "mg.tube.board.2",
+   "content": "mg.tube.content.2",
+   "source": {
+    "cell": [
+     0,
+     2
+    ],
+    "side": "W"
+   },
+   "target": "lesesaal",
+   "stations": [
+    {
+     "id": "lesesaal",
+     "cell": [
+      7,
+      2
+     ],
+     "side": "E"
+    },
+    {
+     "id": "direktion",
+     "cell": [
+      3,
+      0
+     ],
+     "side": "N"
+    },
+    {
+     "id": "kantine",
+     "cell": [
+      2,
+      4
+     ],
+     "side": "S"
+    }
+   ],
+   "tiles": {
+    "1,0": "SE",
+    "2,0": "h",
+    "3,0": "D",
+    "4,0": "h",
+    "5,0": "h",
+    "6,0": "SW",
+    "1,1": "v",
+    "6,1": "v",
+    "0,2": "h",
+    "1,2": "D",
+    "2,2": "h",
+    "3,2": "h",
+    "4,2": "h",
+    "5,2": "h",
+    "6,2": "D",
+    "7,2": "h",
+    "1,3": "v",
+    "1,4": "NE",
+    "2,4": "SW"
+   },
+   "diverters": [
+    {
+     "cell": [
+      1,
+      2
+     ],
+     "states": [
+      "WE",
+      "WN",
+      "SW"
+     ],
+     "start": 0
+    },
+    {
+     "cell": [
+      3,
+      0
+     ],
+     "states": [
+      "WE",
+      "WN",
+      "NE"
+     ],
+     "start": 1
+    },
+    {
+     "cell": [
+      6,
+      2
+     ],
+     "states": [
+      "WE",
+      "NE",
+      "WN"
+     ],
+     "start": 2
+    }
+   ],
+   "frozen": [
+    [
+     4,
+     2
+    ]
+   ],
+   "solution": [
+    1,
+    0,
+    1
+   ]
+  },
+  {
+   "id": 3,
+   "note": "mg.tube.board.3",
+   "content": "mg.tube.content.3",
+   "source": {
+    "cell": [
+     0,
+     3
+    ],
+    "side": "W"
+   },
+   "target": "lesesaal",
+   "stations": [
+    {
+     "id": "lesesaal",
+     "cell": [
+      7,
+      0
+     ],
+     "side": "E"
+    },
+    {
+     "id": "registratur",
+     "cell": [
+      7,
+      2
+     ],
+     "side": "E"
+    },
+    {
+     "id": "planarchiv",
+     "cell": [
+      5,
+      4
+     ],
+     "side": "S"
+    },
+    {
+     "id": "loge",
+     "cell": [
+      0,
+      1
+     ],
+     "side": "W"
+    },
+    {
+     "id": "direktion",
+     "cell": [
+      2,
+      0
+     ],
+     "side": "N"
+    },
+    {
+     "id": "kantine",
+     "cell": [
+      1,
+      4
+     ],
+     "side": "S"
+    }
+   ],
+   "tiles": {
+    "1,0": "SE",
+    "2,0": "D",
+    "3,0": "h",
+    "4,0": "D",
+    "5,0": "h",
+    "6,0": "h",
+    "7,0": "h",
+    "0,1": "h",
+    "1,1": "NW",
+    "4,1": "v",
+    "2,2": "SE",
+    "3,2": "h",
+    "4,2": "x",
+    "5,2": "h",
+    "6,2": "D",
+    "7,2": "h",
+    "0,3": "h",
+    "1,3": "D",
+    "2,3": "NW",
+    "4,3": "v",
+    "6,3": "v",
+    "1,4": "v",
+    "4,4": "NE",
+    "5,4": "D",
+    "6,4": "NW"
+   },
+   "diverters": [
+    {
+     "cell": [
+      1,
+      3
+     ],
+     "states": [
+      "WE",
+      "SW",
+      "ES"
+     ],
+     "start": 1
+    },
+    {
+     "cell": [
+      6,
+      2
+     ],
+     "states": [
+      "WE",
+      "SW",
+      "ES"
+     ],
+     "start": 0
+    },
+    {
+     "cell": [
+      5,
+      4
+     ],
+     "states": [
+      "WE",
+      "ES",
+      "SW"
+     ],
+     "start": 1
+    },
+    {
+     "cell": [
+      4,
+      0
+     ],
+     "states": [
+      "WE",
+      "SW",
+      "ES"
+     ],
+     "start": 1
+    },
+    {
+     "cell": [
+      2,
+      0
+     ],
+     "states": [
+      "WE",
+      "WN",
+      "NE"
+     ],
+     "start": 0
+    }
+   ],
+   "frozen": [],
+   "solution": [
+    0,
+    1,
+    0,
+    2,
+    0
+   ]
+  }
+ ]
+}

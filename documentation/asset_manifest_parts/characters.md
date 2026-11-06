@@ -4,6 +4,9 @@ Area owner: characters specialist (`chars-sprites`) · Updated: **2026-11-04, ro
 (Dialogue portraits `portrait.png/json` are owned by the portrait generator `chargen_portrait*` and are not
 listed here.)
 
+> **Round 7 (2026-11-06):** Chapter-3 cast on this rig, `talk_front` / `talk_back`, grounded front / back walks,
+> soft player turns -- see `characters_r7.md` (supersedes the row tables below where they differ).
+
 ## Provenance & licence (applies to every file below)
 * **Original work, generated procedurally** by the project's own Python scripts (Pillow + numpy; no AI image
   models, no network, no third-party art). All heads, hats, hands, boots and props are hand-designed pixel

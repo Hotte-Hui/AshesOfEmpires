@@ -4,6 +4,11 @@
 [ext_resource type="Script" path="res://scripts/actors/interactable.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/actors/story_npc.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/actors/gated_interactable.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/relay_spot.gd" id="mg_relay_spot"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/relay_world_desk.gd" id="mg_relay_desk"]
+[ext_resource type="Texture2D" path="res://assets/ui/minigames/relay/world_desk.png" id="mg_relay_tex"]
+[ext_resource type="Script" path="res://scripts/ui/minigames/cloak_world_cue.gd" id="r7v_cloak_cue"]
+[ext_resource type="Texture2D" path="res://assets/ui/minigames/cloak/world_wenzel.png" id="r7v_cloak_tex"]
 
 [node name="L_C3_Hall" type="Node2D"]
 script = ExtResource("1")
@@ -118,6 +123,7 @@ script = ExtResource("4")
 kind = "chat"
 hotspot_id = "typist"
 explore_id = "veltrava.hall.chat_typist"
+explore_chain = PackedStringArray("veltrava.hall.chat_typist", "veltrava.task.buffet.ask", "veltrava.task.buffet.return")
 npc_id = "typist"
 once = true
 radius = 34.0
@@ -127,6 +133,7 @@ script = ExtResource("4")
 kind = "chat"
 hotspot_id = "journalist"
 explore_id = "veltrava.hall.chat_journalist"
+explore_chain = PackedStringArray("veltrava.hall.chat_journalist", "veltrava.task.buffet.journalist")
 npc_id = "journalist"
 once = true
 radius = 34.0
@@ -164,6 +171,7 @@ script = ExtResource("2")
 kind = "discover"
 hotspot_id = "exp_buffet"
 explore_id = "veltrava.hall.buffet"
+explore_chain = PackedStringArray("veltrava.hall.buffet", "veltrava.task.buffet.take")
 once = true
 
 [node name="Find_Window" type="Node2D" parent="Playfield"]
@@ -200,3 +208,34 @@ kind = "discover"
 hotspot_id = "exp_headsets"
 explore_id = "veltrava.hall.headsets"
 once = true
+
+[node name="Find_RelayDesk" type="Node2D" parent="Playfield"]
+script = ExtResource("mg_relay_spot")
+kind = "discover"
+hotspot_id = "exp_relay_desk"
+explore_id = "veltrava.hall.relay"
+once = true
+after_objective = "c3b_arrival"
+until_objective = "c3b_inspect_booth"
+
+[node name="RelayDeskProp" type="Sprite2D" parent="Playfield"]
+position = Vector2(1777, 295)
+texture = ExtResource("mg_relay_tex")
+hframes = 4
+script = ExtResource("mg_relay_desk")
+
+[node name="Find_CloakTokens" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_cloak_tokens"
+explore_id = "veltrava.hall.cloak_tokens"
+once = true
+radius = 24.0
+
+[node name="WenzelCue" type="Sprite2D" parent="Playfield"]
+position = Vector2(232, 291)
+texture = ExtResource("r7v_cloak_tex")
+centered = false
+offset = Vector2(-10, -61)
+hframes = 3
+script = ExtResource("r7v_cloak_cue")

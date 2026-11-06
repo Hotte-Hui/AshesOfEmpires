@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 
+import chargen_portrait2_face as FC
 import chargen_portrait2_sdf as S
 from chargen_portrait2_paint import MatStyle, ramp
 
@@ -226,10 +227,13 @@ def konrad():
         id='konrad', city='berlin',
         look=dict(key=(0.54, -0.42, 0.72), rim=(-0.80, -0.35, -0.50), ambient=0.07, bg='berlin',
                   glow=(0.80, 0.18)),
-        head=dict(mid_h=(11.7, 7.0, 11.6), jaw_angle=(10.8, 15.4, -4.0), cheek_c=(10.4, 3.0, 10.2),
-                  malar_r=(3.8, 3.4, 3.2), chin_h=(4.6, 3.3, 3.4), low_r=(11.4, 11.2, 12.8)),
+        head=dict(mid_h=(11.2, 7.2, 11.6), jaw_angle=(10.2, 15.6, -4.0), cheek_c=(10.0, 3.0, 10.2),
+                  malar_r=(3.6, 3.2, 3.0), chin_h=(4.2, 3.6, 3.4), chin_c=(0.0, 22.8, 12.2), low_r=(10.8, 11.6, 12.6),
+                  # round 7: long straight narrow nose (draughtsman's profile)
+                  nose_root=(0.0, -1.6, 15.6), nose_tip=(0.0, 9.9, 19.9), nose_r=(1.3, 1.7), tip_r=2.1,
+                  ala_x=2.2, ala_r=(1.4, 1.4, 1.8)),
         zoom=1.18,
-        head_pos=(55.0, 53.0, 0.0), yaw=30.0, pitch=2.0, roll=0.0,
+        head_pos=(55.0, 53.0, 0.0), yaw=33.0, pitch=2.0, roll=0.0,
         torso_pos=(55.0, 89.0, -0.5), torso_yaw=14.0, torso=dict(width=0.98, depth=1.0, slope=1.2),
         poses={'neutral': (0, 0, 0), 'concerned': (-2, 4, -2), 'determined': (1, -1, 1), 'surprised': (2, -4, 1)},
         head_items=[lambda M, hp: fedora(M, hp, y0=-13.2), lambda M, hp: hair_short(M, hp)],
@@ -250,9 +254,11 @@ def konrad():
         mouth=dict(line='#3a1a1e', corner='#55282a', inner='#1a0a0d', teeth='#b9ab9c', tongue='#6e2f33'),
         features=dict(
             extra=[ear_detail],
+            eyes=FC.eye_shapes(FC.EYES, 'lift'),
             brows={'neutral': dict(arch=0.6), 'concerned': dict(lift_inner=2.2, lift_outer=-0.4, arch=0.3),
                    'determined': dict(lift_inner=-1.7, arch=0.0, dy=0.5),
                    'surprised': dict(dy=-1.8, arch=1.3, lift_inner=0.4)},
+            brow_thick=((2, 1, 1), (1, 1, 1)), brow_pts=((1.7, -4.1, 17.0), (10.2, -3.8, 13.4)),
             mouth={'neutral': dict(corner_drop=0.3), 'concerned': dict(corner_drop=1.0),
                    'determined': dict(corner_drop=0.6), 'surprised': dict(parted=2)},
         ),
@@ -519,10 +525,13 @@ def alexei():
         id='alexei', city='karsk',
         look=dict(key=(0.58, -0.40, 0.71), rim=(-0.80, -0.32, -0.50), ambient=0.07, bg='karsk',
                   glow=(0.82, 0.20)),
-        head=dict(jaw_angle=(11.6, 15.6, -4.0), brow_r=(12.4, 2.8, 3.5), nose_tip=(0.0, 9.0, 19.4),
-                  tip_r=2.6, ala_x=2.7, cheek_c=(10.9, 3.2, 9.8), chin_h=(5.0, 3.3, 3.4)),
+        head=dict(jaw_angle=(12.2, 15.2, -4.0), brow_r=(12.6, 2.8, 3.5), nose_tip=(0.0, 9.0, 19.4),
+                  tip_r=2.6, ala_x=2.7, cheek_c=(11.6, 2.6, 9.6), cheek_r=(5.0, 3.0, 4.0), malar_r=(4.4, 3.4, 3.4),
+                  mid_h=(12.6, 6.8, 11.6), low_r=(12.4, 10.8, 12.8), chin_h=(5.2, 3.2, 3.5), chin_rad=2.0,
+                  # round 7: a nose that was broken once (bump on the bridge, slightly off-centre)
+                  extra=[('ellipsoid', ((0.5, 3.4, 18.0), (1.5, 1.7, 1.3), 'skin', 0.9))]),
         zoom=1.16,
-        head_pos=(55.0, 55.0, 0.0), yaw=29.0, pitch=3.0, roll=0.0,
+        head_pos=(55.0, 55.0, 0.0), yaw=26.0, pitch=3.0, roll=0.0,
         torso_pos=(55.0, 91.0, -0.5), torso_yaw=12.0, torso=dict(width=1.05, depth=1.05, slope=1.0),
         poses={'neutral': (0, 0, 0), 'concerned': (-2, 4, -2), 'determined': (1, -1, 1), 'surprised': (2, -3, 1)},
         head_items=[lambda M, hp: ushanka(M, hp, flaps='down'),
@@ -545,9 +554,11 @@ def alexei():
         mouth=dict(line='#3a1a1c', corner='#552a28', inner='#1a0a0b', teeth='#b8ab98', tongue='#6e2f30'),
         features=dict(
             extra=[ear_detail, stubble(), eye_bags()],
-            brows={'neutral': dict(arch=0.5), 'concerned': dict(lift_inner=2.0, lift_outer=-0.3, arch=0.3),
+            eyes=FC.eye_shapes(FC.EYES, 'hooded'),
+            brows={'neutral': dict(arch=0.3), 'concerned': dict(lift_inner=2.0, lift_outer=-0.3, arch=0.2),
                    'determined': dict(lift_inner=-1.8, arch=0.0, dy=0.6),
-                   'surprised': dict(dy=-1.8, arch=1.2, lift_inner=0.4)},
+                   'surprised': dict(dy=-1.8, arch=1.0, lift_inner=0.4)},
+            brow_thick=((3, 2, 2), (2, 2, 1)), brow_pts=((1.5, -3.7, 17.2), (10.6, -3.2, 13.6)), nostril='wide',
             mouth={'neutral': dict(corner_drop=0.4), 'concerned': dict(corner_drop=1.0),
                    'determined': dict(corner_drop=0.6), 'surprised': dict(parted=2)},
         ),
@@ -613,6 +624,54 @@ def headscarf(M, hp, mat='kerchief', tie='nape', front_y=-12.6, seed=41, slope=1
         mh = M(hair_mat)
         hs = S.Offset(E(sc, sr, mh), 1.7, mh)
         out['soft'] = S.Inter(hs, S.Fn(lambda P: np.maximum(np.abs(region(P) - 1.1) - 1.4, P[:, 1] - 3.0), mh))
+    return out
+
+
+def kerchief_chin(M, hp, mat='kerchief', thick=1.7, seed=47, open_w=12.4, open_top=-13.4, open_bot=25.5,
+                  fold_amp=0.6, hair_mat='hair', hem_mat='kerchief_hem'):
+    """Round 7: a headscarf tied under the chin the way Karsk's grandmothers wear it (replaces the hood-like
+    tie='chin' wrap of round 2 for Babushka): the front edge sits at the HAIRLINE with a rolled hem and a strip
+    of grey hair under it, the open face is framed by the cloth down the cheeks to a knot under the chin with
+    two short tails, and the back corner falls over the nape -- forehead, brows and cheeks stay free."""
+    m, mh_ = M(mat), M(hem_mat)
+    sc, sr = np.array(hp['skull_c']), np.array(hp['skull_r'])
+    cloth = S.Union([
+        E(sc + np.array([0.0, -1.2, 0.4]), sr + thick + 1.2, m),                 # over the crown, standing off it
+        E((0.0, 4.0, -7.0), (sr[0] + thick + 0.8, 13.0, sr[2] - 1.0), m),        # over the ears / back of the head
+        E((0.0, 13.5, -1.5), (sr[0] - 0.6, 14.0, sr[2] - 3.5), m),               # down the cheeks to the chin
+        E((0.0, -15.0, 8.0), (10.0, 5.5, 7.0), m),                                # loose cloth over the forehead
+    ], k=3.0)
+    cy, hh = (open_top + open_bot) / 2.0, (open_bot - open_top) / 2.0
+
+    def opening(P):
+        """< 0 inside the face opening: a superellipse, flat along the hairline, narrowing to the chin."""
+        x, y = P[:, 0], P[:, 1]
+        w = open_w * (1.0 - 0.30 * np.clip((y - cy) / hh, 0.0, 1.0))
+        return (np.abs(x) / w) ** 2.4 + (np.abs(y - cy) / hh) ** 2.8 - 1.0
+
+    def region(P):
+        z, y = P[:, 2], P[:, 1]
+        return np.maximum(np.minimum(-opening(P) * 6.0, z - 1.5), y - 30.0)
+
+    node = S.Inter(cloth, S.Fn(region, m))
+    # the front edge is folded back: a plain rolled hem (own material, no print) that frames the face
+    hem = S.Inter(S.Offset(cloth, 1.7, mh_), S.Fn(lambda P: np.abs(region(P) + 1.3) - 1.6, mh_))
+    parts = [node, hem, E((0.0, 27.0, 11.0), (3.8, 3.0, 3.2), m)]                # knot under the chin
+    for sx in (1, -1):
+        parts.append(S.RoundCone((sx * 1.6, 28.2, 11.2), (sx * 7.4, 34.6, 13.2), 2.6, 1.7, m))
+    parts.append(S.RoundCone((0.0, 6.0, -sr[2] - 0.6), (0.0, 24.0, -sr[2] + 4.5), 8.6, 3.0, m))   # back corner
+    scarf = S.Union(parts, k=1.2)
+
+    def folds(P):
+        a = np.arctan2(P[:, 0], P[:, 1] - 27.0)
+        return np.sin(a * 7.0 + 0.9 * S.vnoise3(P, 4.0, seed))
+
+    scarf = S.Displace(scarf, folds, amp=fold_amp, lipschitz=1.3)
+    out = dict(node=scarf, clip=S.Union([S.Offset(cloth, -(0.7 + fold_amp)), S.Fn(lambda P: -region(P), m)]))
+    mh = M(hair_mat)
+    hs = S.Offset(E(sc, sr, mh), 1.3, mh)
+    out['soft'] = S.Inter(hs, S.Fn(lambda P: np.maximum(np.abs(opening(P) + 0.11) - 0.11, P[:, 1] - (open_top + 4.5)),
+                                   mh))
     return out
 
 
@@ -898,16 +957,18 @@ def irina():
         id='irina', city='karsk',
         look=dict(key=(0.58, -0.42, 0.70), rim=(-0.80, -0.32, -0.50), ambient=0.07, bg='karsk',
                   glow=(0.80, 0.22)),
-        head=dict(skull_r=(15.6, 16.4, 19.8), fore_h=(11.6, 8.6, 11.6), mid_h=(11.2, 6.6, 11.2),
-                  cheek_c=(10.0, 2.6, 10.0), cheek_r=(4.4, 2.9, 3.8), malar_r=(3.8, 3.4, 3.2),
-                  jaw_angle=(10.2, 14.6, -4.0), jaw_r=(2.4, 2.8, 2.8), chin_pt=(3.6, 22.2, 10.0),
-                  chin_c=(0.0, 21.3, 11.8), chin_h=(4.2, 3.0, 3.2), low_r=(11.0, 10.6, 12.4),
-                  nose_tip=(0.0, 8.5, 19.0), tip_r=2.2, nose_r=(1.3, 1.8), ala_x=2.2, ala_r=(1.5, 1.4, 1.8),
+        head=dict(skull_r=(15.6, 16.2, 19.8), fore_h=(11.6, 8.4, 11.6), mid_h=(11.6, 6.2, 11.2),
+                  cheek_c=(10.0, 2.6, 10.0), cheek_r=(4.4, 2.9, 3.8), malar_r=(4.4, 4.0, 3.8),
+                  jaw_angle=(10.0, 14.2, -4.0), jaw_r=(2.1, 2.5, 2.5), chin_pt=(3.6, 22.0, 10.0),
+                  chin_c=(0.0, 20.6, 11.8), chin_h=(4.2, 2.8, 3.2), low_r=(11.2, 9.8, 12.4),
+                  nose_tip=(0.0, 8.0, 18.9), tip_r=2.15, nose_r=(1.2, 1.7), ala_x=2.2, ala_r=(1.5, 1.4, 1.8),
                   mouth_y=14.2, lip_up=(0.0, 13.5, 16.3), lip_up_r=(4.1, 1.35, 1.5),
-                  lip_lo=(0.0, 15.6, 15.9), lip_lo_r=(3.6, 1.65, 1.6), brow_r=(11.6, 2.2, 3.0),
-                  adams_apple=False, scm=False, neck_r=(6.8, 8.2), ear_r=(1.5, 5.6, 3.3)),
-        zoom=1.18,
-        head_pos=(55.0, 56.0, 0.0), yaw=31.0, pitch=2.0, roll=-2.0,
+                  lip_lo=(0.0, 15.6, 15.9), lip_lo_r=(3.6, 1.7, 1.6), brow_r=(11.0, 1.9, 2.6),
+                  adams_apple=False, scm=False, neck_r=(6.8, 8.2), ear_r=(1.5, 5.6, 3.3),
+                  # round 7: softer planes, a rounder chin
+                  fore_rad=7.2, mid_rad=6.6, socket_r=(4.0, 2.5, 1.7), chin_rad=2.8),
+        zoom=1.18, smooth=2,
+        head_pos=(55.0, 56.0, 0.0), yaw=28.0, pitch=2.0, roll=-2.0,
         torso_pos=(55.5, 91.5, -0.5), torso_yaw=13.0, torso=dict(width=0.92, depth=0.98, slope=1.3),
         poses={'neutral': (0, 0, 0), 'concerned': (-2, 4, -3), 'determined': (1, -1, 1), 'surprised': (2, -3, 2)},
         head_items=[lambda M, hp: headscarf(M, hp, mat='kerchief', tie='nape', front_y=-12.2, fold_amp=0.85)],
@@ -928,12 +989,12 @@ def irina():
         brow=dict(col='#3a1f16', col_l='#5a3322'),
         mouth=dict(line='#46191d', corner='#5e2a2a', inner='#1a0a0b', teeth='#bcae9c', tongue='#733033'),
         features=dict(
-            eyes=_female_eyes(),
+            eyes=FC.eye_shapes(_female_eyes(), 'round'),
             extra=[ear_detail],
-            brows={'neutral': dict(arch=0.9), 'concerned': dict(lift_inner=2.2, lift_outer=-0.4, arch=0.5),
-                   'determined': dict(lift_inner=-1.6, arch=0.2, dy=0.5),
-                   'surprised': dict(dy=-1.8, arch=1.4, lift_inner=0.4)},
-            brow_thick=((2, 1, 1), (1, 1, 1)),
+            brows={'neutral': dict(arch=0.4), 'concerned': dict(lift_inner=2.2, lift_outer=-0.4, arch=0.3),
+                   'determined': dict(lift_inner=-1.6, arch=0.1, dy=0.5),
+                   'surprised': dict(dy=-1.8, arch=1.1, lift_inner=0.4)},
+            brow_thick=((2, 2, 1), (2, 1, 1)), brow_pts=((1.6, -4.0, 17.0), (10.6, -3.8, 13.4)),
             mouth={'neutral': dict(corner_drop=0.2), 'concerned': dict(corner_drop=0.9),
                    'determined': dict(corner_drop=0.5), 'surprised': dict(parted=2)},
         ),
@@ -1001,9 +1062,11 @@ def emil():
         mouth=dict(line='#3a1c20', corner='#5a2c2c', inner='#1c0c0e', teeth='#b2a593', tongue='#6c3034'),
         features=dict(
             extra=[ear_detail, wrinkles(forehead=2), eye_bags()],
-            brows={'neutral': dict(arch=0.8), 'concerned': dict(lift_inner=2.3, lift_outer=-0.5, arch=0.4),
+            eyes=FC.eye_shapes(FC.EYES, 'droop', 'hooded'),
+            brows={'neutral': dict(arch=0.8, lift_inner=0.6), 'concerned': dict(lift_inner=2.3, lift_outer=-0.5, arch=0.4),
                    'determined': dict(lift_inner=-1.5, arch=0.1, dy=0.5),
                    'surprised': dict(dy=-2.0, arch=1.4, lift_inner=0.5)},
+            brow_thick=((3, 3, 2), (2, 2, 2)), brow_pts=((1.5, -4.2, 17.4), (11.0, -3.0, 13.4)), nostril='wide',
             mouth={'neutral': dict(corner_drop=0.6), 'concerned': dict(corner_drop=1.2),
                    'determined': dict(corner_drop=0.8), 'surprised': dict(parted=2)},
         ),
@@ -1044,7 +1107,10 @@ def peaked_cap(M, hp, y0=-13.4, z0=-4.8, tilt=(5.0, 0.0), band_r=(17.2, 21.0), t
     cord = S.Inter(S.EllipticCylinder((0, -3.4, 0), rx + 0.45, rz + 0.45, 0.6, mk, e=0.3),
                    S.Fn(lambda P: 6.0 - P[:, 2], mk))
     hat = S.Union([band, crown, visor, cord])
-    allowed = S.Union([S.Offset(S.EllipticCylinder((0, -6.0, 0), rx, rz, 7.0, mc, e=1.0), -0.6),
+    # round 7: the head clip ends at the crown top (it reached 1.4 px above it, so hair showed through the top
+    # of the cap as a pale patch)
+    top = -h - 2.0
+    allowed = S.Union([S.Offset(S.EllipticCylinder((0, (top + 1.0) / 2, 0), rx, rz, (1.0 - top) / 2, mc, e=1.0), -0.6),
                        S.Fn(lambda P: -(P[:, 1] - 0.8), mc)])
     return dict(node=S.Xform(hat, frame=hf), clip=S.Xform(allowed, frame=hf))
 
@@ -1161,16 +1227,18 @@ def vendor():
                          [0.05, 0.12, 0.24, 0.40, 0.60], dither=0.03, rim=rim),
     })
     head = dict(FEMALE)
-    head.update(mid_h=(12.0, 6.8, 11.6), cheek_c=(10.6, 3.6, 10.0), cheek_r=(5.0, 3.6, 4.2),
+    head.update(mid_h=(12.6, 6.4, 11.6), cheek_c=(11.0, 3.6, 10.0), cheek_r=(5.4, 3.8, 4.4),
                 malar_r=(4.8, 4.2, 4.0), jaw_angle=(11.2, 14.6, -3.8), low_r=(12.4, 10.4, 12.6),
-                chin_h=(4.2, 2.8, 3.0), chin_c=(0.0, 21.0, 11.6), nose_tip=(0.0, 8.4, 18.8), tip_r=2.3,
-                neck_r=(7.6, 9.0), extra=blush())
+                chin_h=(4.2, 2.8, 3.0), chin_c=(0.0, 21.0, 11.6), nose_tip=(0.0, 8.0, 18.5), tip_r=2.55,
+                nose_r=(1.3, 1.9), ala_x=2.5, neck_r=(7.6, 9.0), extra=blush(), chin_rad=2.8,
+                fore_rad=7.2, mid_rad=6.6, jaw_r=(2.2, 2.6, 2.6),
+                jaw_extra=[('ellipsoid', ((0.0, 24.8, 7.2), (6.6, 2.6, 4.6), 'skin', 2.6))])
     return dict(
         id='vendor', city='karsk',
         look=dict(key=(0.60, -0.40, 0.70), rim=(-0.80, -0.32, -0.50), ambient=0.07, bg='karsk',
                   glow=(0.80, 0.24)),
-        head=head, zoom=1.16,
-        head_pos=(55.0, 56.0, 0.0), yaw=30.0, pitch=2.0, roll=2.0,
+        head=head, zoom=1.16, smooth=2,
+        head_pos=(55.0, 56.0, 0.0), yaw=25.0, pitch=2.0, roll=2.0,
         torso_pos=(55.5, 92.0, -0.5), torso_yaw=12.0, torso=dict(width=1.02, depth=1.1, slope=1.4),
         poses=POSES_STD,
         head_items=[lambda M, hp: headscarf(M, hp, mat='kerchief', tie='nape', front_y=-11.6, fold_amp=0.8,
@@ -1194,9 +1262,11 @@ def vendor():
         brow=dict(col='#2e211b', col_l='#4c382c'),
         mouth=dict(line='#46191d', corner='#5e2a2a', inner='#1a0a0b', teeth='#bcae9c', tongue='#733033'),
         abs_extra={'G': ('#e2b44c', '#9a7426')},
-        features=dict(eyes=_female_eyes(), extra=[ear_detail, gold_tooth, wrinkles(forehead=1, naso=True,
-                                                                                   crow=True, under=False)],
-                      brows={**BROWS_STD, 'neutral': dict(arch=0.9)}, mouth=MOUTH_STD),
+        features=dict(eyes=FC.eye_shapes(_female_eyes(), 'round', 'droop'),
+                      extra=[ear_detail, gold_tooth, wrinkles(forehead=1, naso=True, crow=True, under=False)],
+                      brows={**BROWS_STD, 'neutral': dict(arch=1.2, lift_inner=0.3)},
+                      brow_thick=((2, 1, 1), (1, 1, 1)), brow_pts=((1.9, -4.4, 17.0), (10.4, -4.2, 13.2)),
+                      mouth={**MOUTH_STD, 'neutral': dict(smile=0.5)}),
         priority={},
     )
 
@@ -1223,8 +1293,9 @@ def worker_a():
         'hair': MatStyle(ramp('#0b0a0b', '#191514', '#29221d', '#3d332a', '#544638'),
                          [0.06, 0.14, 0.28, 0.48], rim='#6b8a84'),
     })
-    head = dict(jaw_angle=(12.0, 15.8, -4.0), brow_r=(12.6, 3.0, 3.6), nose_tip=(0.0, 9.4, 19.2), tip_r=2.8,
-                ala_x=2.9, ala_r=(1.9, 1.6, 2.0), cheek_c=(11.0, 3.4, 9.6), chin_h=(5.2, 3.3, 3.4),
+    head = dict(jaw_angle=(12.0, 15.8, -4.0), brow_r=(12.6, 3.0, 3.6), nose_tip=(0.0, 9.0, 18.6), tip_r=3.0,
+                nose_root=(0.0, -1.0, 15.0), ala_x=3.3, ala_r=(2.0, 1.6, 2.0), cheek_c=(11.0, 3.4, 9.6),
+                chin_h=(5.2, 3.3, 3.4),
                 lip_up_r=(4.4, 1.1, 1.4), lip_lo_r=(3.9, 1.35, 1.5), neck_r=(8.8, 10.0))
     return dict(
         id='worker_a', city='karsk',
@@ -1252,7 +1323,10 @@ def worker_a():
         brow=dict(col='#2a211b', col_l='#45372b'),
         mouth=dict(line='#3a1a1c', corner='#552a28', inner='#1a0a0b', teeth='#ab9d86', tongue='#6e2f30'),
         features=dict(extra=[ear_detail, stubble(density=0.8), eye_bags(), wrinkles(forehead=2, under=False)],
-                      brows={**BROWS_STD, 'neutral': dict(arch=0.2, lift_inner=-0.4)}, mouth=MOUTH_STD),
+                      eyes=FC.eye_shapes(FC.EYES, 'narrow'),
+                      brows={**BROWS_STD, 'neutral': dict(arch=0.2, lift_inner=-0.4)},
+                      brow_thick=((3, 3, 2), (3, 2, 2)), brow_pts=((1.4, -3.4, 17.4), (10.8, -2.9, 13.6)),
+                      nostril='wide', mouth=MOUTH_STD),
         priority={'tie_string': 2},
     )
 
@@ -1273,11 +1347,15 @@ def babushka():
         'shirt': MatStyle(ramp('#0b0908', '#161210', '#221c18', '#302722'), [0.08, 0.2, 0.45], rim=rim),
         'shawl': MatStyle(ramp('#0d0e10', '#1d1f22', '#2f3236', '#44474b', '#5b5e61', '#73767a', '#8c8e90'),
                           [0.05, 0.12, 0.22, 0.35, 0.52, 0.72], dither=0.04, rim='#8aa4a6'),
+        'hair': MatStyle(ramp('#121316', '#2e2f33', '#56575a', '#808080', '#a8a6a2', '#cbc8c0'),
+                         [0.04, 0.10, 0.2, 0.36, 0.58], rim='#a8b8c4', wrap=0.4),
+        'kerchief_hem': MatStyle(ramp('#0a0c12', '#141925', '#1f2736', '#2b3648', '#3a4860', '#4d5e7a', '#647898',
+                                      '#8494b0'), [0.03, 0.07, 0.14, 0.24, 0.38, 0.56, 0.78], rim='#a8bcc8'),
     })
     head = dict(FEMALE)
-    head.update(nose_tip=(0.0, 9.3, 19.4), tip_r=2.6, ala_x=2.6, nose_r=(1.4, 2.0), mouth_y=14.8,
+    head.update(nose_tip=(0.0, 10.4, 19.2), tip_r=2.3, ala_x=2.3, ala_y=11.2, nose_r=(1.2, 1.6), mouth_y=14.8,
                 lip_up=(0.0, 14.3, 15.6), lip_up_r=(3.9, 0.9, 1.2), lip_lo=(0.0, 16.0, 15.2),
-                lip_lo_r=(3.4, 1.0, 1.2), muzzle_c=(0.0, 14.8, 10.6), chin_c=(0.0, 21.6, 11.4),
+                lip_lo_r=(3.4, 1.0, 1.2), muzzle_c=(0.0, 14.8, 10.6), chin_c=(0.0, 21.8, 11.6), chin_h=(3.4, 3.2, 3.0),
                 jaw_extra=[('ellipsoid', ((8.0, 17.4, 7.6), (4.0, 3.6, 3.6), 'skin', 2.2)),
                            ('ellipsoid', ((-8.0, 17.4, 7.6), (4.0, 3.6, 3.6), 'skin', 2.2))],
                 cheek_r=(4.0, 2.7, 3.6), malar_r=(3.4, 3.0, 2.8))
@@ -1289,18 +1367,17 @@ def babushka():
         head_pos=(56.0, 58.0, 0.0), yaw=32.0, pitch=10.0, roll=-3.0,
         torso_pos=(55.0, 95.0, -3.0), torso_yaw=14.0, torso=dict(width=0.98, depth=1.15, slope=2.0),
         poses={'neutral': (0, 0, 0), 'concerned': (-2, 4, -3), 'determined': (1, -1, 1), 'surprised': (2, -4, 1)},
-        head_items=[lambda M, hp: headscarf(M, hp, mat='kerchief', tie='chin', thick=1.9, fold_amp=0.7,
-                                            seed=47, hair=False)],
+        head_items=[lambda M, hp: kerchief_chin(M, hp, thick=1.8, fold_amp=0.6, seed=47)],
         torso_items=[
             lambda M, t: coat_layers(M, t, v_open=0.25, v_top=4.0, lapel=False, collar=False),
             lambda M, t: shawl(M, y=-1.0, r=14.0),
         ],
         styles=styles,
         skin=('skin', 'lip', 'ear', 'neck'),
-        groups={'skin': 0, 'lip': 0, 'ear': 0, 'neck': 1, 'kerchief': 2, 'coat': 4, 'coat_lapel': 8, 'shirt': 5,
-                'shawl': 6, 'body': 4},
-        tone_passes=[pass_knit('shawl', ribs=36), pass_folds('kerchief', knot=(0.0, 28.0, 9.0), mode='chin', n=7,
-                                                            seed=86, width=0.08)],
+        groups={'skin': 0, 'lip': 0, 'ear': 0, 'hair': 0, 'neck': 1, 'kerchief': 2, 'kerchief_hem': 3, 'coat': 4,
+                'coat_lapel': 8, 'shirt': 5, 'shawl': 6, 'body': 4},
+        tone_passes=[pass_knit('shawl', ribs=36), pass_folds('kerchief', knot=(0.0, 27.2, 9.4), mode='chin', n=7,
+                                                            seed=86, width=0.08), pass_strands('hair', seed=15)],
         rgb_passes=[pass_dots('kerchief')],
         eye=dict(iris='#5a6670', iris_d='#353e46', sclera='#bdb5aa', sclera_d='#6c6a70', lash='#140c10',
                  pupil='#0b0a0e', catch='#f0e8d6'),
@@ -1308,7 +1385,9 @@ def babushka():
         mouth=dict(line='#3a1c20', corner='#5a2c2c', inner='#1c0c0e', teeth='#9c8e7c', tongue='#6c3034'),
         features=dict(extra=[wrinkles(forehead=3), eye_bags(), wrinkles(forehead=0, crow=False, naso=True,
                                                                          under=False)],
+                      eyes=FC.eye_shapes(_female_eyes(), 'deep', 'droop'),
                       brows={**BROWS_STD, 'neutral': dict(arch=0.9, lift_inner=0.4)},
+                      brow_pts=((1.8, -4.4, 17.0), (10.4, -3.6, 13.0)),
                       brow_thick=((1, 1, 1), (1, 1, 1)),
                       mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.8)}),
         priority={},
@@ -1334,8 +1413,9 @@ def librarian():
                            rim='#d1ad5c', spec=0.5),
     })
     head = dict(FEMALE)
-    head.update(nose_tip=(0.0, 8.8, 19.4), tip_r=2.2, nose_r=(1.3, 1.9), lip_up_r=(3.9, 1.15, 1.4),
-                lip_lo_r=(3.4, 1.4, 1.5), jaw_angle=(10.4, 14.8, -4.0))
+    head.update(nose_tip=(0.0, 9.4, 19.8), tip_r=1.95, nose_r=(1.1, 1.5), ala_x=2.0, ala_r=(1.3, 1.3, 1.6),
+                lip_up_r=(3.7, 1.0, 1.3), lip_lo_r=(3.2, 1.2, 1.3), jaw_angle=(10.0, 14.8, -4.0),
+                chin_h=(3.6, 3.1, 3.0), chin_c=(0.0, 21.8, 11.6), mid_h=(10.8, 7.0, 11.0), fore_rad=7.0)
     return dict(
         id='librarian', city='berlin',
         look=dict(key=(0.56, -0.42, 0.71), rim=(-0.80, -0.35, -0.50), ambient=0.07, bg='archive',
@@ -1362,8 +1442,10 @@ def librarian():
                  pupil='#0a0808', catch='#f2e9d6'),
         brow=dict(col='#2e2729', col_l='#4a4040'),
         mouth=dict(line='#46191d', corner='#5e2a2a', inner='#1a0a0b', teeth='#bcae9c', tongue='#733033'),
-        features=dict(eyes=_female_eyes(), extra=[ear_detail, wrinkles(forehead=1, naso=True, under=True)],
-                      brows={**BROWS_STD, 'neutral': dict(arch=1.0)}, brow_thick=((2, 1, 1), (1, 1, 1)),
+        features=dict(eyes=FC.eye_shapes(_female_eyes(), 'hooded'),
+                      extra=[ear_detail, wrinkles(forehead=1, naso=True, under=True)],
+                      brows={**BROWS_STD, 'neutral': dict(arch=1.4)}, brow_thick=((1, 1, 1), (1, 1, 1)),
+                      brow_pts=((1.8, -4.7, 17.0), (10.0, -4.4, 13.2)), nostril='small',
                       mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.5)}),
         priority={'brooch': 3},
     )
@@ -1393,6 +1475,8 @@ def porter():
         'tie': MatStyle(ramp('#050508', '#0c0b10', '#16141a', '#221e25'), [0.08, 0.2, 0.45], rim=rim),
         'hair': MatStyle(ramp('#0c0d10', '#25262b', '#45464b', '#6b6b6e', '#8f8e8c', '#b2aea7'),
                          [0.04, 0.10, 0.2, 0.36, 0.58], rim='#a8b8c4', wrap=0.35),
+        'moustache': MatStyle(ramp('#121316', '#2e2f33', '#56575a', '#808080', '#a8a6a2', '#cbc8c0', '#e2ded6'),
+                              [0.03, 0.08, 0.16, 0.28, 0.44, 0.66], rim='#c2ccd4', wrap=0.45, lift=0.3),
     })
     head = dict(mid_h=(12.8, 7.2, 11.8), jaw_angle=(12.6, 16.0, -3.6), low_r=(12.8, 11.4, 13.0),
                 cheek_c=(11.2, 3.6, 9.6), cheek_r=(5.2, 3.6, 4.4), nose_tip=(0.0, 9.4, 19.8), tip_r=2.9,
@@ -1400,7 +1484,8 @@ def porter():
                 chin_h=(5.4, 3.4, 3.6), neck_r=(9.6, 10.8),
                 jaw_extra=[('ellipsoid', ((9.4, 18.4, 7.4), (4.6, 4.0, 4.0), 'skin', 2.4)),
                            ('ellipsoid', ((-9.4, 18.4, 7.4), (4.6, 4.0, 4.0), 'skin', 2.4)),
-                           ('ellipsoid', ((0.0, 26.4, 6.8), (7.4, 3.4, 5.6), 'skin', 2.8))])
+                           ('ellipsoid', ((0.0, 26.4, 6.8), (7.4, 3.4, 5.6), 'skin', 2.8))],
+                extra=moustache(c=(0.0, 12.8, 17.8), r=(5.0, 1.6, 1.9), droop=1.6))
     return dict(
         id='porter', city='berlin',
         look=dict(key=(0.56, -0.42, 0.71), rim=(-0.80, -0.35, -0.50), ambient=0.07, bg='berlin',
@@ -1421,17 +1506,20 @@ def porter():
         ],
         styles=styles,
         skin=('skin', 'lip', 'ear', 'neck'),
-        groups={'skin': 0, 'lip': 0, 'ear': 0, 'hair': 0, 'neck': 1, 'cap': 2, 'cap_band': 2, 'cord': 2,
-                'visor': 3, 'coat': 4, 'coat_lapel': 8, 'shirt': 5, 'tie': 5, 'button': 7, 'body': 4},
-        tone_passes=[pass_grain('coat', 0.05, seed=6), pass_grain('cap', 0.05, seed=7), pass_strands('hair')],
+        groups={'skin': 0, 'lip': 0, 'ear': 0, 'hair': 0, 'moustache': 9, 'neck': 1, 'cap': 2, 'cap_band': 2,
+                'cord': 2, 'visor': 3, 'coat': 4, 'coat_lapel': 8, 'shirt': 5, 'tie': 5, 'button': 7, 'body': 4},
+        tone_passes=[pass_grain('coat', 0.05, seed=6), pass_grain('cap', 0.05, seed=7), pass_strands('hair'),
+                     pass_strands('moustache', seed=12)],
         eye=dict(iris='#5d6a72', iris_d='#363f46', sclera='#c4bcb2', sclera_d='#726e78', lash='#140c10',
                  pupil='#0b0a0e', catch='#f2ead8'),
-        brow=dict(col='#5e5c5c', col_l='#8c8884'),
+        brow=dict(col='#8a8884', col_l='#bcb8b0'),
         mouth=dict(line='#3a1c20', corner='#5a2c2c', inner='#1c0c0e', teeth='#b2a593', tongue='#6c3034'),
         features=dict(extra=[ear_detail, wrinkles(forehead=2, under=True), eye_bags()],
+                      eyes=FC.eye_shapes(FC.EYES, 'hooded'),
                       brows={**BROWS_STD, 'neutral': dict(arch=0.3, lift_inner=-0.3)},
+                      brow_pts=((1.4, -3.9, 17.4), (11.0, -3.0, 13.4)), nostril='wide',
                       brow_thick=((3, 2, 2), (2, 2, 1)), mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.7)}),
-        priority={'button': 3, 'cord': 2, 'visor': 1},
+        priority={'button': 3, 'cord': 2, 'visor': 1, 'moustache': 1},
     )
 
 
@@ -1562,8 +1650,9 @@ def photographer():
                          rim='#9fb4c8', spec=1.8, spec_pow=22.0),
     })
     head = dict(mid_h=(12.0, 7.0, 11.6), jaw_angle=(11.6, 15.6, -3.8), cheek_c=(10.8, 3.2, 9.8),
-                chin_h=(5.0, 3.4, 3.4), nose_tip=(0.0, 9.6, 20.2), tip_r=2.7, low_r=(12.0, 11.2, 12.8),
-                brow_r=(12.6, 3.0, 3.6))
+                chin_h=(5.0, 3.4, 3.4), nose_tip=(0.0, 10.2, 20.0), tip_r=2.4, low_r=(12.0, 11.2, 12.8),
+                brow_r=(12.6, 3.0, 3.6), nose_r=(1.4, 1.8), ala_y=11.0,
+                extra=[('ellipsoid', ((0.0, 3.2, 18.8), (1.4, 2.2, 1.4), 'skin', 1.0))])
     return dict(
         id='photographer', city='berlin',
         look=dict(key=(0.56, -0.42, 0.71), rim=(-0.80, -0.35, -0.50), ambient=0.07, bg='berlin',
@@ -1592,7 +1681,9 @@ def photographer():
         brow=dict(col='#2e2420', col_l='#4c3e34'),
         mouth=dict(line='#3a1a1e', corner='#55282a', inner='#1a0a0d', teeth='#b2a593', tongue='#6c3034'),
         features=dict(extra=[ear_detail, stubble(density=0.65), eye_bags(), wrinkles(forehead=2, under=False)],
+                      eyes=FC.eye_shapes(FC.EYES, 'narrow', 'lift'),
                       brows={**BROWS_STD, 'neutral': dict(arch=0.5, lift_inner=0.4)},
+                      brow_pts=((1.6, -3.9, 17.2), (10.6, -3.9, 13.4)),
                       brow_thick=((3, 2, 2), (2, 2, 1)), mouth={**MOUTH_STD, 'neutral': dict(corner_drop=0.2)}),
         priority={'card': 3, 'chrome': 2, 'lens': 2, 'brim': 2, 'ribbon': 2, 'strap': 1},
     )

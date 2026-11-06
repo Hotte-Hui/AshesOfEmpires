@@ -435,7 +435,7 @@ func _title_page(vh: float, col: Dictionary) -> Control:
 	page.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var v := Kit.vbox(12)
 	page.add_child(v)
-	var kick := Kit.label(Kit.t("ui.menu.kicker").to_upper(), "KickerLabel", 24)
+	var kick := Kit.label(Kit.t("ui.menu.kicker").to_upper().replace("ß", "SS"), "KickerLabel", 24)
 	kick.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	Kit.scalable(kick, 24)
 	v.add_child(kick)
@@ -473,7 +473,7 @@ func _end_page(vh: float, col: Dictionary) -> Control:
 
 func _heading(text: String, col: Dictionary) -> Control:
 	var v := Kit.vbox(14)
-	var l := Kit.label(text.to_upper(), "HeadingLabel", 0, col["bright"])
+	var l := Kit.label(text.to_upper().replace("ß", "SS"), "HeadingLabel", 0, col["bright"])
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	Kit.scalable(l, 40)
 	v.add_child(l)
@@ -491,7 +491,7 @@ func _section(head: String, body: String, col: Dictionary, italic: bool) -> Cont
 	var row := Kit.hbox(16)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_child(_orn())
-	var h := Kit.label(head.to_upper(), "KickerLabel", 24)
+	var h := Kit.label(head.to_upper().replace("ß", "SS"), "KickerLabel", 24)
 	Kit.scalable(h, 24)
 	row.add_child(h)
 	row.add_child(_orn())
@@ -574,7 +574,7 @@ static func _side_heading(side: String, col: Dictionary) -> Control:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	m.add_child(row)
 	var key := "credits.end.side." + side
-	var l := Kit.label((Kit.t(key) if Kit.has_key(key) else side).to_upper(), "KickerLabel", 24, col["accent"])
+	var l := Kit.label((Kit.t(key) if Kit.has_key(key) else side).to_upper().replace("ß", "SS"), "KickerLabel", 24, col["accent"])
 	Kit.scalable(l, 24)
 	row.add_child(_line(col, 90, 2))
 	row.add_child(l)

@@ -10,8 +10,10 @@ import glob
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PARTS = os.path.join(ROOT, "documentation", "asset_manifest_parts")
 OUT = os.path.join(ROOT, "documentation", "ASSET_MANIFEST.md")
-ORDER = ["render-camera", "env_karsk", "karsk_skyline", "explore_karsk", "minigames", "env_berlin", "explore_berlin", "characters",
-         "portraits", "great_hall", "parade", "env_plaza", "explore_plaza", "plaza_polish", "trans_a1m1", "trans_finale", "ui", "explore_system", "photo_mode", "credits", "audio", "story"]
+ORDER = ["render-camera", "env_karsk", "karsk_skyline", "explore_karsk", "minigames", "minigames_r7_kb", "env_berlin", "explore_berlin",
+         "characters", "portraits", "characters_r7", "portraits_r7", "great_hall", "parade", "env_plaza", "explore_plaza", "plaza_polish",
+         "trans_a1m1", "trans_finale", "c3", "env_veltrava_station", "env_veltrava_hall", "c3_cine", "minigames_r7_v", "minigames_r7_relay",
+         "tasks", "memories", "ui", "explore_system", "photo_mode", "credits", "audio", "story"]
 
 HEADER = """# ASSET MANIFEST — Ashes of Empires: The Last Winter
 

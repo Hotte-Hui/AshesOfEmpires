@@ -3,13 +3,15 @@
 Run:  python3 -P tools/pixelgen/env_veltrava_hall.py            (deterministic, no network)
 
 Produces
-* assets/environments/veltrava_hall/   layers, props (+ *_hist flag variants), FX strips, scene.json,
+* assets/environments/veltrava_hall/   layers, props (+ *_hist flag variants), FX strips, the ambient-life
+                                       decal strips in life/ (env_veltrava_hall_life.py), scene.json,
                                        provenance.json
 * assets/ui/documents/veltrava_hall_carbon.png + veltrava_hall_documents.json   (ev_c3_carbon)
 * data/locale/de_env_veltrava_hall.json  alt texts of the hall documents
 Previews: tools/pixelgen/env_veltrava_hall_preview.py (cameras 0 / 640 / 1280, written outside the repo
-or into the git-ignored _preview/ folder).
-Flags: --scene-only, --docs-only, --preview[=DIR]
+or into the git-ignored _preview/ folder; layers + props only).  The real check is the Forward+ harness
+res://tests/visual/palais_shots.tscn (see its header).
+Flags: --scene-only (keeps the document entries of provenance.json), --docs-only, --preview[=DIR]
 """
 from __future__ import annotations
 
@@ -32,6 +34,7 @@ DOC_DIR = os.path.join(ROOT, 'assets', 'ui', 'documents')
 LOCALE = os.path.join(ROOT, 'data', 'locale', 'de_env_veltrava_hall.json')
 
 PRODUCED: list[tuple[str, str, str]] = []
+LF = chr(10)          # JSON is written with LF on every platform (byte-identical re-runs, .gitattributes)
 
 LIGHT_COLORS = {'warm': '#E9B46E', 'cold': '#A9C0D0', 'white': '#D3DEE6', 'red': '#A8382E'}
 # dynamic Godot lights (energy, radius, height, flicker) -- subtler than the bake, the art carries it
@@ -47,6 +50,8 @@ DYN = {
     'booth_3_lamp': (0.28, 46, 8, 0.0, 'warm'), 'saal_glow_1': (0.32, 64, 4, 0.0, 'white'),
     'saal_glow_2': (0.32, 64, 4, 0.0, 'white'), 'saal_glow_3': (0.32, 64, 4, 0.0, 'white'),
     'sign_ruhe': (0.18, 36, 6, 0.0, 'red'), 'sconce_interp': (0.25, 60, 14, 0.03, 'warm'),
+    'transom_1': (0.3, 84, 26, 0.0, 'white'), 'transom_2': (0.3, 84, 26, 0.0, 'white'),
+    'transom_3': (0.3, 84, 26, 0.0, 'white'),
 }
 CANVAS_MODULATE = '#C9CDCC'
 Z = {'ext_sky': -100, 'ext_town': -97, 'ext_river': -95, 'ext_square': -90, 'saal_far': -84, 'saal_near': -82,
@@ -116,6 +121,10 @@ def build_scene():
     fx_files, fx_entries = EFX.build_all(ENV_DIR, room)
     for (fp, desc) in fx_files:
         record(fp, 'env_veltrava_hall_fx.py', desc)
+    import env_veltrava_hall_life as ELF
+    life_files, decals = ELF.build_all(ENV_DIR, room, EX.NEAR_POS)
+    for (fp, desc) in life_files:
+        record(fp, 'env_veltrava_hall_life.py', desc)
     print('  scene built in %.1fs' % (time.time() - t0))
 
     os.makedirs(ENV_DIR, exist_ok=True)
@@ -186,6 +195,7 @@ def build_scene():
         'hotspots': {k: list(v) for k, v in L.HOTSPOTS.items()},
         'lights': lights,
         'fx': fx_entries,
+        'decals': decals,
         # ---- extension data (not required by the level contract; safe to ignore)
         'hotspot_info': hotspot_info,
         'npcs': {k: {'feet': list(v), 'facing': 'left' if k != 'voronova' else 'right'} for k, v in L.NPC_FEET.items()},
@@ -203,13 +213,17 @@ def build_scene():
             'Booth 2 (x 1622-1682): empty chair, headset dangling on its cable, pencil, blotter pad, lamp on.',
             'The evacuation plan shows a dashed staff corridor down to a cellar room (foreshadowing).',
             'No story character is painted into the art; NPC sprites stand at the npc anchors.',
+            'Ambient life = decals with frames in life/ (env_veltrava_hall_life.py): cloakroom attendant, cleaner '
+            'in the archway, delegates + usher on the stair landing, waiter beside the buffet, interpreters in '
+            'booths 1 and 3, the session in the Saal, press flashes behind the Saal doors, a pigeon outside the '
+            'office window, clock second hands.  Playfield figures keep base_y < 296; none stands on a hotspot.',
         ],
         'meta': {'mode': 'side', 'feet_y': L.WALK_Y, 'generator': 'tools/pixelgen/env_veltrava_hall.py',
                  'date': kit.DATE, 'palette_ramps': kit.PALAIS,
                  'palette_note': "'palais' = c3.json palettes.palais + daylight #D3DEE6 (cold near-white)"},
     }
     sj = os.path.join(ENV_DIR, 'scene.json')
-    with open(sj, 'w', encoding='utf-8') as f:
+    with open(sj, 'w', encoding='utf-8', newline=LF) as f:
         json.dump(scene, f, indent=1, ensure_ascii=False)
     record(sj, 'env_veltrava_hall.py', 'art manifest (TECHNICAL_ARCHITECTURE 3.1)')
 
@@ -288,16 +302,29 @@ def build_hotspot_info():
 
 
 # =========================================================================== provenance
-def write_provenance():
+def write_provenance(keep_docs: bool = False):
+    """keep_docs: a --scene-only run keeps the document entries of the previous provenance.json (the hall
+    documents are not rebuilt then)."""
+    files = [{'path': p, 'generator': 'tools/pixelgen/' + g, 'content': d} for p, g, d in sorted(PRODUCED)]
+    p = os.path.join(ENV_DIR, 'provenance.json')
+    if keep_docs and os.path.exists(p):
+        try:
+            with open(p, encoding='utf-8') as f:
+                old = json.load(f).get('files', [])
+        except (OSError, ValueError):
+            old = []
+        have = {e['path'] for e in files}
+        files += [e for e in old if not e.get('path', '').startswith('assets/environments/veltrava_hall/')
+                  and e.get('path') not in have]
+        files.sort(key=lambda e: e['path'])
     out = {'generator': 'tools/pixelgen/env_veltrava_hall.py (+ _kit, _layout, _room, _props, _ext, _fx, _fg, '
-                        '_docs, _preview)',
+                        '_life, _docs, _preview)',
            'date': kit.DATE,
            'licence': 'project-owned original artwork, generated procedurally; no copied, traced, downloaded or '
                       'AI-generated pixels; bitmap fonts hand-defined in env_veltrava_hall_kit.py',
            'run': 'python3 -P tools/pixelgen/env_veltrava_hall.py',
-           'files': [{'path': p, 'generator': 'tools/pixelgen/' + g, 'content': d} for p, g, d in sorted(PRODUCED)]}
-    p = os.path.join(ENV_DIR, 'provenance.json')
-    with open(p, 'w', encoding='utf-8') as f:
+           'files': files}
+    with open(p, 'w', encoding='utf-8', newline=LF) as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
 
 
@@ -313,8 +340,8 @@ def main(argv):
         print('[env_veltrava_hall] documents ...')
         for path, desc in ED.build_all(DOC_DIR, LOCALE):
             record(path, 'env_veltrava_hall_docs.py', desc)
-    if scene is not None and '--docs-only' not in argv and '--scene-only' not in argv:
-        write_provenance()
+    if scene is not None and '--docs-only' not in argv:
+        write_provenance(keep_docs='--scene-only' in argv)
     for a in argv:
         if a.startswith('--preview'):
             import env_veltrava_hall_preview as EV

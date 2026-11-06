@@ -16,6 +16,7 @@ WALK_BAND = (296, 306)
 WALK_X = (18, 1902)
 CEIL = 12              # ceiling / wall junction (ceiling band above)
 HORIZON = 196          # eye level used for floor and ceiling perspective
+TILE = 36              # marble chequer tile (unprojected px) in the vestibule and foyer
 
 # ---------------------------------------------------------------- rooms (x ranges)
 VEST = (0, 410)

@@ -263,6 +263,10 @@ BG = {
     'karsk': ('#0a141a', '#05090f', '#1d3236', '#3a5650'),
     'berlin': ('#151120', '#08070d', '#3b2a35', '#6a4a40'),
     'archive': ('#0d1a22', '#04090d', '#2a2a2a', '#6e5032'),
+    # round 7, Chapter 3: Veltrava station at a slate-blue dawn (lamp glow), the commission palace (navy-teal,
+    # cold window daylight)
+    'veltrava': ('#0c121d', '#05070d', '#22303f', '#5c6e86'),
+    'palais': ('#0a1417', '#04080a', '#1e3032', '#5e7468'),
 }
 
 

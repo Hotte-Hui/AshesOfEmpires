@@ -451,6 +451,20 @@ class Room:
             lay.rect(sx0, sy0 + 58, sx1 - sx0, 2, 'B', 4.0, hgt=0.7)
             bevel(lay, sx0 + 1, sy0 + 112, sx1 - sx0 - 2, sy1 - sy0 - 114, 'D', 3.0, hi=4.2, lo=1.6, hgt=0.4)
             self.frost(sx0, sy0 + 92, sx1 - sx0, 18, seed=30 + i)
+        # transom light above the revolving door (was a blank stucco panel): clear glass in a brass grid,
+        # the square and the falling snow show through, frost creeps up from the canopy
+        rx0_, rx1_ = L.REVOLVING
+        ty0, ty1 = fy1 + 4, L.DRUM_TOP - 16
+        lay.rect(rx0_, ty0 - 1, rx1_ - rx0_, ty1 - ty0 + 2, 'D', 3.2, hgt=0.5)
+        tg = np.zeros((ty1 - ty0, rx1_ - rx0_), bool)
+        tg[1:-1, 1:-1] = True
+        for bx in ((rx1_ - rx0_) // 3, 2 * (rx1_ - rx0_) // 3):
+            tg[:, bx - 1:bx + 1] = False
+        tg[(ty1 - ty0) // 2 - 1:(ty1 - ty0) // 2 + 1, :] = False
+        lay.put(~tg & (np.ones_like(tg)), rx0_, ty0, 'B', 3.2, hgt=0.6)
+        lay.put(kit.edge_of(np.ones_like(tg)) & ~tg, rx0_, ty0, 'D', 4.0, hgt=0.6)
+        self.cut_glass(tg, rx0_, ty0, shaft=0.5)
+        self.frost(rx0_ + 1, ty1 - 9, rx1_ - rx0_ - 2, 8, seed=44, rim=True)
         # mullions
         for (mx0, mx1) in ((ex0 + 1, ex0 + 4), (32, 36), (88, 92), (ex1 - 4, ex1 - 1)):
             lay.rect(mx0, fy1, mx1 - mx0, L.FLOOR - fy1, 'D', 3.4, hgt=0.6)
@@ -665,6 +679,65 @@ class Room:
         lay.rect(x, y + h - 2, w, 2, 'M', 3.0, hgt=0.5)
 
     # ------------------------------------------------------------------ cut walls between rooms
+    def open_arch(self, x0, x1, spring):
+        """Wide archway between two rooms: the cut wall (poche) only ABOVE the arch; through the opening the
+        back wall runs on (stucco, marble dado, skirting), under a deep coffered soffit with a keystone.
+        Reads as an open arch instead of a dark slot."""
+        lay = self.lay
+        w = x1 - x0
+        crown = spring - 14
+        # poche above the arch (near-black, faint coursing, a lighter cut edge)
+        lay.rect(x0, 0, w, crown, 'N', 1.4, hgt=0.9)
+        for yy in range(6, crown, 9):
+            lay.rect(x0 + 1, yy, w - 2, 1, 'N', 0.6, hgt=0.85)
+        for yy in range(6, crown, 18):
+            lay.rect(x0 + w // 2, yy - 8, 1, 8, 'N', 0.6, hgt=0.85)
+        lay.rect(x0, 0, 1, crown, 'W', 3.2, hgt=0.8)
+        lay.rect(x1 - 1, 0, 1, crown, 'W', 2.6, hgt=0.8)
+        # the back wall continues through the opening (same stucco gradient as base())
+        yy = np.arange(crown, L.FLOOR, dtype=np.float32)[:, None]
+        t = 4.7 + 1.25 * np.clip((yy - 40) / 160, 0, 1) ** 0.85 - 0.25 * np.clip((yy - 230) / 50, 0, 1)
+        t = t + np.zeros((1, w), np.float32) - 0.35
+        lay.put(np.ones((L.FLOOR - crown, w), bool), x0, crown, 'W', t, hgt=0.0, flat=False)
+        # coffered soffit seen from below: a band that bends down at both springings
+        for i in range(w):
+            u = (i + 0.5) / w
+            dy = int(round(12 * math.sin(math.pi * u) ** 0.5))
+            top = spring - dy
+            lay.rect(x0 + i, top - 2, 1, 2, 'M', 5.4, hgt=0.7)
+            lay.rect(x0 + i, top, 1, 6, 'M', 3.6, hgt=0.5)
+            lay.rect(x0 + i, top + 6, 1, 1, 'M', 2.4, hgt=0.3)
+            if i % 6 == 3:
+                lay.rect(x0 + i, top, 1, 6, 'M', 2.8, hgt=0.4)
+        lay.vgrad(x0, spring + 6, w, 30, 'W', 3.6, 5.0, hgt=0.0)            # shadow under the soffit
+        kx = x0 + w // 2
+        lay.rect(kx - 4, crown - 4, 8, 13, 'M', 5.4, hgt=1.0)                 # keystone (Jugendstil mask)
+        lay.rect(kx - 4, crown - 4, 8, 1, 'M', 6.6, hgt=1.0)
+        lay.rect(kx + 3, crown - 3, 1, 12, 'M', 3.4, hgt=0.9)
+        lay.rect(kx - 2, crown + 1, 4, 1, 'B', 4.2, hgt=1.0)
+        lay.px(kx - 2, crown + 4, 'M', 3.2); lay.px(kx + 1, crown + 4, 'M', 3.2)
+        lay.rect(kx - 1, crown + 7, 2, 1, 'M', 3.6)
+        # marble dado + skirting continue on the wall seen through the arch
+        top = 240
+        lay.rect(x0, top, w, L.FLOOR - top, 'M', 3.6, hgt=0.3)
+        lay.rect(x0, top, w, 1, 'M', 5.8, hgt=0.7)
+        lay.rect(x0, top + 1, w, 2, 'M', 4.6, hgt=0.6)
+        lay.rect(x0, top + 3, w, 1, 'M', 2.4, hgt=0.2)
+        recess(lay, x0 + 3, top + 7, w - 6, L.FLOOR - top - 17, 'M', 2.8, shadow=2.0, light=4.6, hgt=-0.1)
+        lay.rect(x0 + 4, top + 8, w - 8, L.FLOOR - top - 19, 'G', 3.0, hgt=0.05)
+        lay.rect(x0, L.FLOOR - 7, w, 7, 'G', 2.4, hgt=0.4)
+        lay.rect(x0, L.FLOOR - 7, w, 1, 'M', 4.6, hgt=0.5)
+        # pilaster jambs framing the opening on both room sides
+        for (jx, hi) in ((x0 - 5, True), (x1, False)):
+            lay.rect(jx, spring - 14, 5, L.FLOOR - spring + 14, 'M', 5.0 if hi else 4.2, hgt=0.6)
+            lay.rect(jx + (0 if hi else 4), spring - 14, 1, L.FLOOR - spring + 14, 'M', 6.4 if hi else 2.6,
+                     hgt=0.6)
+            lay.rect(jx - 1, spring - 18, 7, 4, 'M', 5.8, hgt=0.8)               # impost block
+            lay.rect(jx - 1, spring - 18, 7, 1, 'M', 6.8, hgt=0.85)
+            lay.rect(jx - 1, spring - 14, 7, 1, 'M', 3.0, hgt=0.6)
+            lay.rect(jx - 1, L.FLOOR - 12, 7, 12, 'M', 4.4, hgt=0.7)              # plinth
+            lay.rect(jx - 1, L.FLOOR - 12, 7, 1, 'M', 5.8, hgt=0.75)
+
     def arch_cut(self, x0, x1, lintel, opening=True):
         """Partition cut by the section plane (poche) with a round-arched or square opening."""
         lay = self.lay
@@ -711,6 +784,7 @@ class Room:
         self.stucco_panel(456, 96, 508, 176)
         self.stucco_panel(786, 96, 826, 214)
         self.photo_wall()
+        self.portrait_medallion(482, 122, 12, 16)
         self.staircase()
         self.chandelier(*L.CHANDELIER)
         self.buffet_wall()
@@ -791,11 +865,36 @@ class Room:
         steps = 16
         rise = (L.FLOOR - yt) / steps
         run = (xt - x0) / steps
-        # upper wall above the flight: raking stucco panel
-        rk = [(x0 + 16, L.FLOOR - 40), (xt - 6, yt - 36)]
-        for k in range(2):
-            lay.line(rk[0][0], rk[0][1] - 44 - k * 30, rk[1][0], rk[1][1] - 44 - k * 30, 'M', 4.4 - k * 0.4)
-            lay.line(rk[0][0], rk[0][1] - 43 - k * 30, rk[1][0], rk[1][1] - 43 - k * 30, 'W', 4.0)
+        # upper wall above the flight: a raking marble wainscot that climbs with the stair (verde panels in
+        # a cream frame, moulded top rail) + a brass wall rail on brackets -- instead of loose rake lines
+        slope = (L.FLOOR - yt) / (xt - x0)
+        dado_h = 36
+        for xx in range(x0 - 2, xt + 1):
+            ty = L.FLOOR - (xx - x0) * slope
+            top = int(round(ty - dado_h))
+            bot = int(round(ty)) + 2
+            lay.rect(xx, top, 1, bot - top, 'M', 2.7, hgt=0.3)
+            lay.px(xx, top, 'M', 4.8, hgt=0.7)
+            lay.px(xx, top + 1, 'M', 3.8, hgt=0.6)
+            lay.px(xx, top + 2, 'M', 2.0, hgt=0.2)
+            lay.px(xx, top - 1, 'W', 4.2, hgt=0.0)                         # contact shadow above the rail
+        for k in range(6):                                                  # raking verde panels
+            a = x0 + 8 + k * 29
+            b = a + 24
+            if b > xt - 4:
+                break
+            for xx in range(a, b):
+                ty = L.FLOOR - (xx - x0) * slope
+                p0 = int(round(ty - dado_h + 6))
+                p1 = int(round(ty - 7))
+                lay.rect(xx, p0, 1, p1 - p0, 'G', 2.9 + 0.5 * (((xx * 7 + k * 3) % 11) < 2), hgt=0.05)
+                lay.px(xx, p0 - 1, 'M', 1.8, hgt=0.0)
+                lay.px(xx, p1, 'M', 3.8, hgt=0.1)
+            ta = L.FLOOR - (a - x0) * slope
+            tb = L.FLOOR - (b - x0) * slope
+            lay.line(a - 1, ta - dado_h + 5, a - 1, ta - 8, 'M', 1.8)
+            lay.line(b, tb - dado_h + 5, b, tb - 8, 'M', 3.8)
+        self.pax_painting(538, 70, 70, 54)
         # spandrel (below the flight): panelled dark-marble wall in shadow
         span = []
         for i in range(steps):
@@ -884,17 +983,24 @@ class Room:
             lay.rect(xx, int(round(yy)), 1, 2, 'D', 4.0, hgt=0.9)
             lay.px(xx, int(round(yy)), 'D', 6.0, hgt=0.95)
             lay.px(xx, int(round(yy)) + 6, 'I', 1.2, hgt=0.6)                # lower rail
-        # landing balustrade (horizontal)
+        # landing balustrade (horizontal); its pixels are remembered (landing_front) so figures standing on
+        # the landing (env_veltrava_hall_life) can be drawn behind it
+        front = np.zeros((L.WORLD_H, L.WORLD_W), bool)
         for bx in range(xt + 2, lx1, 5):
             lay.rect(bx, yt - hr, 1, hr, 'I', 1.2, hgt=0.6)
+            front[yt - hr:yt, bx] = True
         for bx in range(xt + 4, lx1 - 2, 10):
             for a in range(0, 360, 30):
                 r_ = math.radians(a)
-                lay.px(int(round(bx + 2.5 + math.cos(r_) * 2.2)), int(round(yt - hr / 2 + math.sin(r_) * 3.2)),
-                       'I', 1.4, hgt=0.6)
+                qx, qy = int(round(bx + 2.5 + math.cos(r_) * 2.2)), int(round(yt - hr / 2 + math.sin(r_) * 3.2))
+                lay.px(qx, qy, 'I', 1.4, hgt=0.6)
+                front[qy, qx] = True
         lay.rect(xt - 1, yt - hr - 1, lx1 - xt + 1, 2, 'D', 4.0, hgt=0.9)
         lay.rect(xt - 1, yt - hr - 1, lx1 - xt + 1, 1, 'D', 6.0, hgt=0.95)
         lay.rect(xt, yt - 6, lx1 - xt, 1, 'I', 1.2, hgt=0.6)
+        front[yt - hr - 1:yt - hr + 1, xt - 1:lx1] = True
+        front[yt - 6, xt:lx1] = True
+        self.landing_front = front
         # newel post with a bronze torchere (switched off in the morning)
         nx = x0 - 10
         lay.rect(nx, L.FLOOR - 40, 8, 40, 'M', 5.0, hgt=0.8)
@@ -957,6 +1063,95 @@ class Room:
         lay.px(cx, bot, 'S', 6.0, unlit=True)
         self.lights.append({'name': 'chandelier', 'pos': (cx, cy0 + 40), 'kind': 'warm', 'energy': 1.55,
                             'radius': 220, 'height': 40, 'falloff': 1.35, 'pool': True})
+
+    def pax_painting(self, x, y, w, h):
+        """Large commissioned allegory over the stair (1953): a pale standing 'Pax' with a branch between two
+        kneeling groups, the three-arched bridge of the city arms behind -- academic, cool, a little empty.
+        A brass plate: PAX 1953."""
+        lay = self.lay
+        frame_box(lay, x, y, w, h, 'B', 3.0, 4.8, 1.6)
+        lay.rect(x - 1, y - 1, w + 2, 1, 'B', 5.4, hgt=0.75)
+        # sky: cold, pale toward a low horizon; a faint warm break above the bridge
+        sky = np.linspace(3.2, 5.2, int(h * 0.62))[:, None] + np.zeros((1, w))
+        lay.put(np.ones(sky.shape, bool), x, y, 'C', sky, hgt=0.3, flat=False, gain=0.7)
+        hy = y + int(h * 0.62)
+        lay.rect(x, hy, w, h - int(h * 0.62), 'M', 3.2, hgt=0.3)            # ground
+        lay.rect(x, hy, w, 1, 'M', 4.4, hgt=0.3)
+        for k in range(0, w, 3):
+            lay.px(x + k, hy + 4 + (k % 2), 'M', 2.6)
+        # the bridge (three arches) far behind, river line
+        by = hy - 5
+        lay.rect(x + 8, by, w - 16, 2, 'M', 4.2, hgt=0.3)
+        for k in range(3):
+            ax = x + 10 + k * (w - 20) // 3
+            lay.rect(ax, by + 2, 2, 4, 'M', 3.8)
+            lay.rect(ax + (w - 20) // 3 - 2, by + 2, 2, 4, 'M', 3.8)
+        lay.rect(x, hy - 1, w, 1, 'C', 5.6)
+        # Pax: a standing woman in white drapery on a low plinth, right arm raised with an olive branch,
+        # left hand open toward the kneeling groups; a paler patch of sky behind her (no halo)
+        cx = x + w // 2
+        lay.ellipse(cx + 0.5, y + 16, 12, 10, 'C', 5.2, flat=False, hgt=0.3)
+        lay.rect(cx - 5, y + h - 13, 11, 3, 'M', 4.6, hgt=0.5)                # plinth
+        lay.rect(cx - 5, y + h - 13, 11, 1, 'M', 5.6, hgt=0.55)
+        lay.rect(cx - 1, y + 6, 3, 2, 'D', 3.4, hgt=0.5)                     # hair (knot)
+        lay.rect(cx - 1, y + 8, 3, 3, 'P', 5.2, hgt=0.55)                    # face in profile
+        lay.px(cx + 2, y + 9, 'P', 5.2)
+        lay.px(cx, y + 11, 'P', 4.6)                                          # neck
+        robe = [(cx - 3, y + 12), (cx + 3, y + 12), (cx + 4, y + 20), (cx + 6, y + h - 13), (cx - 6, y + h - 13),
+                (cx - 3, y + 20)]
+        lay.poly(robe, 'P', 6.4, hgt=0.5)
+        for (a0, a1) in ((-1, -3), (1, 1), (2, 4)):                           # drapery folds
+            lay.line(cx + a0, y + 15, cx + a1, y + h - 14, 'P', 4.8)
+        lay.line(cx - 6, y + h - 14, cx + 6, y + h - 14, 'P', 5.0)
+        lay.line(cx + 3, y + 13, cx + 7, y + 7, 'P', 6.0)                     # raised right arm
+        lay.line(cx + 7, y + 7, cx + 8, y + 3, 'P', 5.6)
+        for (dx, dy) in ((8, 2), (9, 1), (10, 1), (9, 0), (11, 0), (7, 1), (10, 2)):
+            lay.px(cx + dx, y + dy, 'G', 5.4)                                 # olive branch
+        lay.line(cx - 3, y + 14, cx - 7, y + 20, 'P', 5.6)                    # left arm, open hand
+        # the two kneeling groups (east, west): heads, bowed backs, arms reaching toward her
+        for side in (-1, 1):
+            for k in range(3):
+                fx = cx + side * (12 + k * 7)
+                fy = y + h - 21 + k
+                lay.rect(fx - 2, fy + 2, 5, 7, 'D', 2.2 + k * 0.4, hgt=0.4)  # cloak
+                lay.rect(fx - 2 + (side > 0), fy, 3, 2, 'P', 3.6, hgt=0.45)   # head
+                lay.px(fx - 1 + (side > 0), fy - 1, 'D', 2.4)
+                lay.line(fx - side * 2, fy + 3, fx - side * 6, fy - 1, 'P', 3.6)  # reaching arm
+                lay.rect(fx - 3, fy + 8, 7, 1, 'D', 1.8)                      # kneeling hem
+        lay.rect(x, y + h - 9, w, 9, 'M', 2.8, hgt=0.3)                       # dark foreground
+        # varnish sheen (cold window light from the lunettes) + brass plate
+        for k in range(0, h, 2):
+            xx = x + w - 18 + k // 3
+            if xx < x + w:
+                lay.px(xx, y + k, 'C', 5.0, gain=0.6)
+        pw = kit.text_width('PAX  1953') + 6
+        lay.rect(x + (w - pw) // 2, y + h + 4, pw, 7, 'B', 3.0, hgt=0.6)
+        lay.rect(x + (w - pw) // 2, y + h + 4, pw, 1, 'B', 4.6, hgt=0.65)
+        lay.text('PAX  1953', x + (w - pw) // 2 + 3, y + h + 5, 'I', 1.0)
+
+    def portrait_medallion(self, cx, cy, rx, ry):
+        """Oval portrait of the commission's first president (fictional, unnamed) in a gilt frame."""
+        lay = self.lay
+        lay.ellipse(cx + 0.5, cy + 0.5, rx + 3, ry + 3, 'B', 3.0, hgt=0.7)
+        lay.ellipse(cx - 0.5, cy - 0.5, rx + 2, ry + 2, 'B', 4.6, hgt=0.75)
+        lay.ellipse(cx + 0.5, cy + 0.5, rx + 1.5, ry + 1.5, 'B', 2.4, hgt=0.6)
+        m, mx, my = lay.ellipse(cx + 0.5, cy + 0.5, rx, ry, 'D', 2.0, hgt=0.3)
+        t = np.linspace(2.2, 1.4, m.shape[0])
+        lay.put(m, mx, my, 'D', (t[:, None] + np.zeros((1, m.shape[1]))), flat=False)
+        # sitter: dark suit, white collar, silver hair, a sash of the commission (slate)
+        hx, hy = cx, cy - ry // 3
+        lay.poly([(cx - rx + 3, cy + ry), (cx - 5, cy + 2), (cx + 6, cy + 2), (cx + rx - 2, cy + ry)], 'I', 1.4,
+                 hgt=0.4)
+        lay.rect(cx - 2, cy + 1, 5, 3, 'P', 6.4, hgt=0.5)
+        lay.line(cx - 6, cy + 4, cx + 4, cy + ry - 1, 'C', 3.0)
+        lay.ellipse(hx + 0.5, hy + 0.5, 4.0, 5.0, 'P', 4.6, hgt=0.6, flat=False)
+        lay.rect(hx - 3, hy - 5, 7, 2, 'M', 6.0, hgt=0.6)
+        lay.px(hx - 4, hy - 3, 'M', 5.4); lay.px(hx + 4, hy - 3, 'M', 5.4)
+        lay.px(hx - 1, hy, 'P', 2.6); lay.px(hx + 2, hy, 'P', 2.6)
+        lay.px(hx + 1, hy + 3, 'P', 3.0)
+        lay.rect(cx - 5, cy + ry + 6, 11, 4, 'B', 3.4, hgt=0.6)               # name plate (unreadable)
+        lay.hline(cx - 3, cy + ry + 8, 7, 'I', 1.4)
+        stamp(lay, cx - 2, cy - ry - 8, ROSE)
 
     def buffet_wall(self):
         """Above the buffet: a large painting of Veltrava in winter (the old town and the bridge)."""
@@ -1110,6 +1305,7 @@ class Room:
         lay = self.lay
         x0, x1 = L.OFFICE
         self.wood_dado(x0, x1, top=214)
+        self.office_upper()
         # evacuation plan (Fluchtwegplan): the staff corridor down to the cellar archive
         ex0, ex1, ey0, ey1 = L.EVAC
         self.evac_plan(ex0, ey0, ex1 - ex0, ey1 - ey0)
@@ -1143,10 +1339,11 @@ class Room:
         self.corridor_map(1232, 128, 80, 52)
         # pendant lamp over the big table (switched off: the desk lamp is used)
         cx = (L.TABLE[0] + L.TABLE[1]) // 2
-        lay.rect(cx, L.CEIL + 14, 1, 170 - L.CEIL - 14, 'W', 3.0, hgt=0.4)
+        py0 = 106
+        lay.rect(cx, L.CEIL + 14, 1, py0 - L.CEIL - 14, 'W', 3.0, hgt=0.4)
         for i in range(6):
-            lay.rect(cx - 2 - i, 170 + i, 5 + 2 * i, 1, 'G', 3.0 + (i < 2) * 0.6, hgt=0.6)
-        lay.rect(cx - 7, 176, 15, 1, 'M', 5.4, hgt=0.5)
+            lay.rect(cx - 2 - i, py0 + i, 5 + 2 * i, 1, 'G', 3.0 + (i < 2) * 0.6, hgt=0.6)
+        lay.rect(cx - 7, py0 + 6, 15, 1, 'M', 5.4, hgt=0.5)
         # shelves behind the mimeograph: paper reams, stencil boxes, ink tins
         mx0, mx1 = L.MIMEO
         for (sy, items) in ((196, 'reams'), (220, 'boxes')):
@@ -1179,6 +1376,81 @@ class Room:
             lay.rect(fx0 + 2, yy + 10, 16, 1, 'W', 4.0, hgt=0.4)
             lay.rect(fx0 + 7, yy + 3, 6, 2, 'P', 5.0, hgt=0.5)
             lay.rect(fx0 + 8, yy + 7, 4, 1, 'W', 8.0, hgt=0.6)
+
+    def office_upper(self):
+        """Structure for the office's high wall: heating pipe on brackets, a walnut picture rail with the map
+        wires, the delegations' pigeonholes, the session indicator and the Saal monitor loudspeaker."""
+        lay = self.lay
+        x0, x1 = L.OFFICE
+        # heating pipe (painted iron) with brackets, a drop down beside the window
+        py_ = 66
+        lay.rect(x0, py_, x1 - x0, 3, 'M', 2.4, hgt=0.8)                    # painted to match the wall
+        lay.rect(x0, py_, x1 - x0, 1, 'M', 3.6, hgt=0.85)
+        lay.rect(x0, py_ + 3, x1 - x0, 1, 'W', 3.4, hgt=0.0)
+        for bx in range(x0 + 20, x1 - 10, 46):
+            lay.rect(bx, py_ - 2, 2, 7, 'M', 2.8, hgt=0.9)
+            lay.px(bx, py_ - 2, 'M', 4.0)
+        dx = L.OFFICE_WIN[1] + 14
+        lay.rect(dx, py_ + 2, 3, 214 - py_ - 2, 'M', 2.4, hgt=0.8)
+        lay.rect(dx, py_ + 2, 1, 214 - py_ - 2, 'M', 3.4, hgt=0.85)
+        lay.rect(dx + 3, py_ + 4, 1, 214 - py_ - 4, 'W', 3.4, hgt=0.0)
+        lay.rect(dx - 1, py_ + 1, 5, 3, 'M', 3.0, hgt=0.9)                  # elbow
+        # walnut picture rail with brass hooks; wires down to the corridor map
+        ry = 96
+        lay.rect(x0, ry, x1 - x0, 3, 'D', 3.6, hgt=0.7)
+        lay.rect(x0, ry, x1 - x0, 1, 'D', 5.0, hgt=0.75)
+        lay.rect(x0, ry + 3, x1 - x0, 1, 'W', 3.4, hgt=0.0)
+        for (ax, bx_) in ((1246, 1240), (1298, 1304)):
+            lay.px(ax, ry + 3, 'B', 4.4, hgt=0.9)
+            lay.line(ax, ry + 4, bx_, 127, 'B', 2.8, hgt=0.6)
+        # pigeonholes of the delegations (above the evacuation plan)
+        gx0, gy0, cw, ch, cols, rows_ = 1023, 126, 11, 15, 2, 3
+        W_ = cols * (cw + 2) + 2
+        H_ = rows_ * (ch + 2) + 2
+        lay.rect(gx0 - 1, gy0 - 5, W_ + 2, 5, 'D', 3.6, hgt=0.8)             # cornice
+        lay.rect(gx0 - 2, gy0 - 5, W_ + 4, 1, 'D', 5.0, hgt=0.85)
+        lay.rect(gx0, gy0, W_, H_, 'D', 3.0, hgt=0.6)
+        lay.rect(gx0 + W_, gy0 + 1, 1, H_, 'W', 3.0)
+        labels = ['SU', 'DR', 'S', 'CH', 'SF', 'K']
+        rng = np.random.default_rng(1964)
+        for r in range(rows_):
+            for c in range(cols):
+                cx_ = gx0 + 2 + c * (cw + 2)
+                cy_ = gy0 + 2 + r * (ch + 2)
+                recess(lay, cx_, cy_, cw, ch, 'D', 1.2, shadow=0.6, light=2.2, hgt=-0.3)
+                n = int(rng.integers(0, 5))
+                for k in range(n):                                          # papers / folders lying in it
+                    lay.rect(cx_ + 1, cy_ + ch - 2 - k * 2, cw - 2, 2, 'P', [5.6, 4.6, 6.2, 3.8][k % 4], hgt=0.4)
+                if r * cols + c < len(labels):
+                    t = labels[r * cols + c]
+                    lay.rect(cx_ + 1, cy_ - 1, cw - 2, 1, 'B', 3.8, hgt=0.7)
+                    lay.text(t, cx_ + (cw - kit.text_width(t)) // 2, cy_ + 1, 'P', 5.4)
+        # session indicator (SITZUNG lit) and the monitor loudspeaker for the Saal sound
+        ix, iy = 1330, 118
+        lay.rect(ix, iy, 46, 30, 'D', 2.2, hgt=0.6)
+        lay.rect(ix, iy, 46, 1, 'D', 4.2, hgt=0.65)
+        lay.rect(ix + 46, iy + 1, 1, 30, 'W', 3.0)
+        for k, (t, on) in enumerate((('SITZUNG', True), ('PAUSE', False), ('ENDE', False))):
+            yy = iy + 3 + k * 9
+            if on:
+                lay.rect(ix + 3, yy, 5, 5, 'R', 3.4, emis=True)
+                lay.px(ix + 4, yy + 1, 'A', 4.6, emis=True)
+            else:
+                lay.rect(ix + 3, yy, 5, 5, 'I', 1.6, hgt=0.7)
+                lay.px(ix + 4, yy + 1, 'S', 2.6)
+            lay.text(t, ix + 11, yy, 'P' if on else 'P', 5.6 if on else 3.4)
+        self.lights.append({'name': 'session_lamp', 'pos': (ix + 5, iy + 5), 'kind': 'warm', 'energy': 0.12,
+                            'radius': 22, 'height': 4})
+        sx_, sy_ = 1338, 154
+        lay.rect(sx_, sy_, 28, 18, 'D', 3.2, hgt=0.7)                         # loudspeaker cabinet
+        lay.rect(sx_, sy_, 28, 1, 'D', 4.8, hgt=0.75)
+        lay.rect(sx_ + 3, sy_ + 3, 22, 12, 'M', 2.6, hgt=0.3)                 # fabric grille
+        for k in range(sy_ + 4, sy_ + 14, 2):
+            lay.rect(sx_ + 4, k, 20, 1, 'M', 3.4, hgt=0.35)
+        for k in range(5):                                                    # Jugendstil fretwork
+            lay.px(sx_ + 6 + k * 4, sy_ + 9, 'D', 2.4)
+        lay.rect(sx_ + 28, sy_ + 1, 1, 18, 'W', 3.0)
+        lay.line(sx_ + 14, sy_, sx_ + 14, py_ + 3, 'I', 1.4)                 # cable up to the pipe run
 
     def evac_plan(self, x, y, w, h):
         lay = self.lay
@@ -1318,16 +1590,28 @@ class Room:
         lay = self.lay
         x0, x1 = L.INTERP
         self.wood_dado(x0, x1, top=236, panel_w=20)
-        # acoustic wall: quilted dark-green leather bays between walnut battens
+        # acoustic wall: diamond-tufted sage leather bays between walnut battens (each diamond a padded
+        # cushion: height field -> the normal map lets the lamps model the quilting)
         uy0, uy1 = 96, 232
-        lay.rect(x0, uy0, x1 - x0, uy1 - uy0, 'G', 3.4, hgt=0.3)
-        for yy in range(uy0 + 6, uy1, 12):
-            for xx in range(x0 + 6 + ((yy // 12) % 2) * 6, x1, 12):
-                lay.px(xx, yy, 'G', 1.6, hgt=0.2)                            # buttons
-                lay.px(xx - 1, yy - 1, 'G', 4.2, hgt=0.5)
-                lay.px(xx + 1, yy + 1, 'G', 2.4, hgt=0.3)
-        q = noise(x1 - x0, uy1 - uy0, 6, 77, octaves=2)
-        lay.amb_field(q * 0.4, x0, uy0)
+        hh, ww = uy1 - uy0, x1 - x0
+        yy_, xx_ = np.mgrid[0:hh, 0:ww].astype(np.float32)
+        P_ = 12.0
+        a_ = (xx_ + yy_) / P_
+        b_ = (xx_ - yy_) / P_
+        fa, fb = a_ - np.floor(a_), b_ - np.floor(b_)
+        da, db = np.minimum(fa, 1 - fa), np.minimum(fb, 1 - fb)
+        crease = np.minimum(da, db)
+        cushion = np.clip(crease * 2.4, 0, 1) ** 0.6
+        tone = 3.55 + cushion * 0.75 - (crease < 0.06) * 0.9
+        lay.put(np.ones((hh, ww), bool), x0, uy0, 'G', tone, hgt=0.1 + cushion * 0.45, flat=False)
+        button = (da < 0.07) & (db < 0.07)
+        lay.put(button, x0, uy0, 'G', 2.0, hgt=0.15)
+        q = noise(ww, hh, 6, 77, octaves=2)
+        lay.amb_field(q * 0.25, x0, uy0)
+        # three etched-glass transoms over the booths: frosted, lit from the daylit Saal behind (cold glow),
+        # Jugendstil lilies etched clear, the blurred shadows of the Saal chandeliers
+        for i, (b0, b1) in enumerate(L.BOOTHS):
+            self.etched_transom(b0 + 2, 104, b1 - b0 - 4, 54, i)
         for bx in range(x0 + 24, x1 - 10, 64):
             lay.rect(bx, uy0, 4, uy1 - uy0, 'D', 3.0, hgt=0.6)
             lay.rect(bx, uy0, 1, uy1 - uy0, 'D', 4.6, hgt=0.65)
@@ -1380,8 +1664,73 @@ class Room:
         self.fire_cabinet(*L.FIRE_CAB)
         self.staff_door(*L.STAFF_DOOR)
         self.sconce(1772, 198, 'sconce_interp', energy=0.3, radius=60)
+        self.agenda_board(1790, 116)
         lay.rect(x1 - 10, 0, 10, L.FLOOR, 'N', 1.0, hgt=0.9)                 # end wall
         lay.rect(x1 - 10, 0, 1, L.FLOOR, 'W', 3.0, hgt=0.8)
+
+    def agenda_board(self, x, y):
+        """Black felt board with white slide-in letters: the order of the day (procedure, not people)."""
+        lay = self.lay
+        rows = ['TAGESORDNUNG', '1 ERÖFFNUNG', '2 KORRIDORE', '3 GRENZVERKEHR', '4 ANLAGE C']
+        w = max(kit.text_width(r) for r in rows) + 8
+        h = 7 * len(rows) + 6
+        frame_box(lay, x, y, w, h, 'B', 3.0, 4.6, 1.6)
+        lay.rect(x, y, w, h, 'I', 0.8, hgt=0.4)
+        for yy in range(y + 1, y + h - 1, 2):                                # felt grooves
+            lay.rect(x + 1, yy, w - 2, 1, 'I', 1.2, hgt=0.38)
+        for i, r in enumerate(rows):
+            ty = y + 3 + i * 7
+            lay.text(r, x + 4, ty, 'P', 6.0 if i else 5.2)
+        lay.rect(x + 4, y + 9, w - 8, 1, 'P', 3.6)                            # rule under the heading
+        lay.px(x + w - 6, y + 3 + 4 * 7 + 1, 'R', 3.0)                        # a red pin at Anlage C (TOP 4)
+
+    def etched_transom(self, x, y, w, h, idx):
+        """Frosted Jugendstil transom between the corridor and the Grosser Saal (emissive cold glow)."""
+        lay = self.lay
+        rise = 14
+        outer = kit.arch_mask(w + 8, h + 5, rise + 4)
+        lay.put(outer, x - 4, y - 4, 'D', 3.0, hgt=0.7)                     # walnut surround
+        lay.put(kit.edge_of(outer), x - 4, y - 4, 'D', 4.6, hgt=0.75)
+        m = kit.arch_mask(w, h, rise)
+        yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+        t = 4.75 - yy / h * 0.6 + (pg.value_noise(w, h, 7, 300 + idx, octaves=2) - 0.5) * 0.12
+        # the blurred dark shape of a Saal chandelier behind the frosted glass
+        cxs = w / 2 - 0.5
+        blob = np.exp(-(((xx - cxs) / 9.0) ** 2 + ((yy - 24) / 6.0) ** 2))
+        t = t - blob * 0.55
+        lay.put(m, x, y, 'C', t, emis=True, flat=False, unlit=True)
+        mid = w // 2
+        bars = np.zeros((h, w), bool)
+        bars[:, mid - 1:mid + 1] = True
+        bars[int(h * 0.66):int(h * 0.66) + 2, :] = True
+        bars &= m
+        lay.put(bars, x, y, 'D', 3.4, hgt=0.6)
+        lay.put(kit.edge_of(m), x, y, 'D', 2.6, hgt=0.6)
+        # etched Jugendstil fan (clear rays read darker against the frost): rays from a half-sun at the
+        # foot of the lower panes, a ring in the arch, a bright etched rim
+        fy_ = int(h * 0.66)
+        for k in range(7):
+            a = math.pi * (k + 0.5) / 7
+            for r_ in range(5, int(min(w * 0.5, fy_)) - 2):
+                px_ = int(round(mid - 0.5 + math.cos(a) * r_ * (w * 0.5 / fy_)))
+                py_ = int(round(fy_ - math.sin(a) * r_))
+                if 0 <= px_ < w and 0 <= py_ < h and m[py_, px_] and not bars[py_, px_]:
+                    lay.px(x + px_, y + py_, 'C', 3.0, emis=True, unlit=True, crisp=True)
+        sun = (np.hypot((xx - mid + 0.5) * (fy_ / (w * 0.5)), yy - fy_) < 4.5) & (yy < fy_) & m & ~bars
+        lay.put(sun, x, y, 'C', 3.0, emis=True, unlit=True, crisp=True)
+        ring = (np.abs(np.hypot(xx - mid + 0.5, (yy - rise) * 1.1) - (w * 0.5 - 6)) < 0.6) & (yy < rise + 2) & m
+        lay.put(ring & ~bars, x, y, 'C', 3.0, emis=True, unlit=True, crisp=True)
+        for k in range(2, w - 2, 4):                                          # beaded band below the transom bar
+            if m[fy_ + 4, k] and not bars[fy_ + 4, k]:
+                lay.px(x + k, y + fy_ + 4, 'C', 3.0, emis=True, unlit=True, crisp=True)
+        inner = m & ~kit.erode(m, 2) & ~kit.edge_of(m)
+        lay.put(inner, x, y, 'C', 5.6, emis=True, unlit=True)
+        lay.rect(x - 6, y + h + 1, w + 12, 3, 'M', 5.2, hgt=0.7)              # sill
+        lay.rect(x - 6, y + h + 1, w + 12, 1, 'M', 6.2, hgt=0.75)
+        lay.rect(x - 6, y + h + 4, w + 12, 1, 'W', 3.0)
+        self.shaft_windows.append((m & ~bars, x, y, 0.5))
+        self.lights.append({'name': 'transom_%d' % (idx + 1), 'pos': (x + w / 2, y + h * 0.55), 'kind': 'white',
+                            'energy': 0.6, 'radius': 96, 'height': 26})
 
     def headset_cabinet(self, x0, x1):
         lay = self.lay
@@ -1457,6 +1806,8 @@ class Room:
         self.cut_glass(win, fx0, wy0, shaft=0.35)      # the daylit Saal throws cold light into the corridor
         lay.rect(fx0 + (fx1 - fx0) // 2, wy0, 1, wy1 - wy0, 'S', 1.4, hgt=-0.5)
         self.saal_windows.append((fx0, wy0, fx1, wy1))
+        self.lights.append({'name': 'booth_glow_%d' % (idx + 1), 'pos': (cx, gy1 + 6), 'kind': 'white',
+                            'energy': 0.5, 'radius': 66, 'height': 6})
         # desk top (seen slightly from above), console, microphone
         lay.rect(ix0, dy - 3, ix1 - ix0, 3, 'D', 4.0, hgt=0.6)
         lay.rect(ix0, dy - 3, ix1 - ix0, 1, 'D', 3.0, hgt=0.55)
@@ -1575,30 +1926,39 @@ class Room:
         ys = np.arange(H, dtype=np.float32)[:, None]
         xs = np.arange(W, dtype=np.float32)[None, :]
         f = np.maximum((ys - L.HORIZON) / (L.FLOOR - L.HORIZON), 1e-3)
-        # --- marble chequer (vestibule + foyer): cream and verde marble, per-room perspective
+        # --- marble chequer (vestibule + foyer): cream and sage-grey marble, per-room perspective.
+        # Low contrast on purpose (the Berlin hall uses half a tone step): the polish -- reflections of the
+        # walls, the lamps and the daylight -- carries the floor, not a loud black-and-white board.
         mx1 = L.PART2[0]
         vein = noise(W, H, 14, 91, octaves=3)
+        vein2 = noise(W, H, 5, 93, octaves=2)
         for (rx0, rx1) in ((0, L.ARCH1[1]), (L.ARCH1[1], mx1)):
             vp = (rx0 + rx1) / 2
             u = vp + (xs - vp) / f
-            col = np.floor(u / 30).astype(np.int32)
+            col = np.floor(u / L.TILE).astype(np.int32)
             joint = np.zeros_like(col, bool)
             joint[:, 1:] = col[:, 1:] != col[:, :-1]
             chk = ((col + rowidx[:, None]) % 2) == 0
             m = np.zeros((H, W), bool)
-            m[y0:, rx0:rx1] = True
+            m[y0 + 4:, rx0:rx1] = True
             light = m & chk
             dark = m & ~chk
-            tl = 4.5 + (np.abs(vein) < 0.03) * 0.8 - (vein > 0.25) * 0.4
-            td = 3.4 + (np.abs(vein) < 0.03) * 0.9
+            vn = (np.abs(vein) < 0.028) | (np.abs(vein2) < 0.012)
+            tl = 4.05 + vn * 0.55 - (vein > 0.24) * 0.3
+            td = 5.0 + vn * 0.6 - (vein < -0.24) * 0.4
             lay.put(light, 0, 0, 'M', tl, hgt=0.0, flat=True)
             lay.put(dark, 0, 0, 'G', td, hgt=0.0, flat=True)
-            lay.put(m & joint, 0, 0, 'M', 2.4, hgt=0.0, flat=True)
-        for i in range(len(rows) - 1):
-            lay.rect(0, y0 + rows[i], mx1, 1, 'M', 2.6, hgt=0.0)
-        # border strip along the wall + doormat in front of the revolving door
-        lay.rect(0, y0, mx1, 3, 'G', 2.2, hgt=0.0)
-        lay.rect(0, y0 + 3, mx1, 1, 'B', 3.4, hgt=0.0)
+            lay.put(m & joint & chk, 0, 0, 'M', 3.4, hgt=0.0, flat=True)
+            lay.put(m & joint & ~chk, 0, 0, 'G', 4.2, hgt=0.0, flat=True)
+        for i in range(1, len(rows) - 1):
+            ry = y0 + rows[i]
+            row = lay.rid[ry, 0:mx1]
+            seg = np.where(row == R['M'], 3.5, 4.3).astype(np.float32)
+            lay.put(np.ones((1, mx1), bool), 0, ry, None, seg[None, :])
+        # verde border band along the wall (with a brass inlay line) + doormat at the revolving door
+        lay.rect(0, y0, mx1, 4, 'G', 3.6, hgt=0.0)
+        lay.rect(0, y0, mx1, 1, 'G', 2.4, hgt=0.0)
+        lay.rect(0, y0 + 4, mx1, 1, 'B', 3.4, hgt=0.0)
         rx0, rx1 = L.REVOLVING
         for yy in range(y0 + 1, y0 + 14):
             k = yy - y0
@@ -1606,6 +1966,21 @@ class Room:
             b = rx1 + 6 + k // 2
             lay.rect(a, yy, b - a, 1, 'D', 3.4 + ((yy + a) % 2) * 0.6, hgt=0.0)
         lay.rect(rx0 - 13, y0 + 14, rx1 - rx0 + 26, 1, 'D', 1.6)
+        # melt water tracked in from the snow (revolving door -> cloakroom -> archway), and the freshly mopped,
+        # still glossy patch where the cleaner works in the archway (env_veltrava_hall_life.cleaner)
+        rngw = np.random.default_rng(1953)
+        for k in range(26):
+            sx = 96 + k * 12 + int(rngw.integers(-3, 4))
+            sy = y0 + 8 + int(rngw.integers(0, 8)) + (k % 2) * 2
+            if sx > 392:
+                break
+            lay.shade_rect(sx, sy, 3, 1, -0.7 + k * 0.012)
+            lay.shade_rect(sx + 1, sy - 1, 1, 1, 1.0)
+        for yy in range(y0 + 5, y0 + 18):
+            half = int(26 * math.sqrt(max(0.0, 1 - ((yy - y0 - 11) / 7.0) ** 2)))
+            for xx in range(404 - half, 404 + half):
+                if (xx + yy) % 2 == 0:
+                    lay.shade_rect(xx, yy, 1, 1, 0.55)
         # --- office: walnut herringbone parquet
         ox0, ox1 = L.PART2[0], L.PART3[1]
         for i in range(len(rows) - 1):
@@ -1629,14 +2004,43 @@ class Room:
         # --- interpreters' corridor: wine-dark carpet with a border
         ix0 = L.PART3[1]
         # wine-dark wool: painted on the walnut ramp (same base colour #331F16) so lamp light lifts it to a
-        # warm brown pool instead of a saturated red one; the wine accents are the border and the pile
-        lay.rect(ix0, y0, W - ix0, H - y0, 'D', 2.3, hgt=0.0, gain=0.9)
-        tex = pg.white_noise(W - ix0, H - y0, 5)
-        lay.put(tex > 0.7, ix0, y0, 'R', 1.9, hgt=0.0)
-        for (by, t) in ((y0 + 2, 2.4), (y0 + 3, 1.2), (y0 + 30, 2.2)):
-            lay.rect(ix0, by, W - ix0, 1, 'R', t, hgt=0.0)
+        # warm brown pool instead of a saturated red one.  A calm woven pattern in perspective (small
+        # lozenges on a grid, every row of the floor one course) instead of loose speckle; the wine accents
+        # are the border bands.
+        lay.rect(ix0, y0, W - ix0, H - y0, 'D', 2.2, hgt=0.0, gain=0.9)
+        vpc = (ix0 + W) / 2
+        uc = vpc + (xs - vpc) / f
+        cell = np.floor(uc / 12).astype(np.int32)
+        fu = (uc / 12) - cell
+        fv = np.zeros_like(fu)
+        for i in range(len(rows) - 1):
+            ra, rb = y0 + rows[i], y0 + rows[i + 1]
+            fv[ra:min(rb, H), :] = ((np.arange(ra, min(rb, H)) - ra + 0.5) / max(1, rb - ra))[:, None]
+        loz = (np.abs(fu - 0.5) + np.abs(fv - 0.5)) < 0.22
+        cm = np.zeros((H, W), bool)
+        cm[y0 + 6:, ix0:] = True
+        lay.put(cm & loz & (((cell + rowidx[:, None]) % 2) == 0), 0, 0, 'R', 1.75, hgt=0.0)
+        lay.put(cm & loz & (((cell + rowidx[:, None]) % 2) == 1), 0, 0, 'D', 2.9, hgt=0.0)
+        pile = pg.white_noise(W - ix0, H - y0, 5) > 0.93
+        lay.put(pile & cm[y0:, ix0:], ix0, y0, 'D', 2.7, hgt=0.0)
+        for (by, rmp, t) in ((y0 + 1, 'R', 2.2), (y0 + 2, 'R', 2.6), (y0 + 3, 'D', 1.4), (y0 + 5, 'R', 2.0),
+                             (y0 + 33, 'R', 2.2), (y0 + 34, 'R', 1.8)):
+            lay.rect(ix0, by, W - ix0, 1, rmp, t, hgt=0.0)
         for x in range(ix0, W, 6):
-            lay.px(x, y0 + 5, 'B', 2.2)
+            lay.px(x, y0 + 4, 'B', 2.4)
+        # thresholds where the floors meet (dark stone sill between two brass strips) so the change of
+        # material reads as a doorway, not as a seam; kept darker than both floors so it never glows
+        for (tx0, tx1) in (L.PART2, L.PART3):
+            vpt = (tx0 + tx1) / 2
+            for i in range(len(rows) - 1):
+                ra, rb = y0 + rows[i], min(H, y0 + rows[i + 1])
+                fr = (ra + 1 - L.HORIZON) / (L.FLOOR - L.HORIZON)
+                a = int(round(vpt + (tx0 + 2 - vpt) * fr))
+                b = int(round(vpt + (tx1 - 2 - vpt) * fr))
+                lay.rect(a, ra, b - a, rb - ra, 'D', 1.7, hgt=0.05)
+                lay.rect(a, ra, b - a, 1, 'D', 1.1, hgt=0.05)
+                lay.rect(a - 1, ra, 1, rb - ra, 'B', 2.6, hgt=0.12)
+                lay.rect(b, ra, 1, rb - ra, 'B', 2.2, hgt=0.12)
         # contact shadow along the wall
         lay.rect(0, y0, W, 1, 'W', 1.2)
         lay.shade_rect(0, y0 + 1, W, 3, -0.6)
@@ -1670,7 +2074,7 @@ class Room:
     def build(self):
         self.base()
         self.vestibule()
-        self.arch_cut(L.ARCH1[0], L.ARCH1[1], 92)
+        self.open_arch(L.ARCH1[0], L.ARCH1[1], 104)
         self.foyer()
         self.arch_cut(L.PART2[0], L.PART2[1], 196)
         self.office()

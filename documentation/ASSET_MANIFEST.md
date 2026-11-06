@@ -34,10 +34,13 @@ edit the part of the owning area and re-run the script.
 - [karsk_skyline](#part-karsk_skyline)
 - [explore_karsk](#part-explore_karsk)
 - [minigames](#part-minigames)
+- [minigames_r7_kb](#part-minigames_r7_kb)
 - [env_berlin](#part-env_berlin)
 - [explore_berlin](#part-explore_berlin)
 - [characters](#part-characters)
 - [portraits](#part-portraits)
+- [characters_r7](#part-characters_r7)
+- [portraits_r7](#part-portraits_r7)
 - [great_hall](#part-great_hall)
 - [parade](#part-parade)
 - [env_plaza](#part-env_plaza)
@@ -45,13 +48,20 @@ edit the part of the owning area and re-run the script.
 - [plaza_polish](#part-plaza_polish)
 - [trans_a1m1](#part-trans_a1m1)
 - [trans_finale](#part-trans_finale)
+- [c3](#part-c3)
+- [env_veltrava_station](#part-env_veltrava_station)
+- [env_veltrava_hall](#part-env_veltrava_hall)
+- [c3_cine](#part-c3_cine)
+- [minigames_r7_v](#part-minigames_r7_v)
+- [minigames_r7_relay](#part-minigames_r7_relay)
+- [tasks](#part-tasks)
+- [memories](#part-memories)
 - [ui](#part-ui)
 - [explore_system](#part-explore_system)
 - [photo_mode](#part-photo_mode)
 - [credits](#part-credits)
 - [audio](#part-audio)
 - [story](#part-story)
-- [c3](#part-c3)
 
 
 ---
@@ -549,6 +559,108 @@ The Reichssender plays the existing `assets/audio/sfx/berlin_radio_loop.wav` (au
   `godot --path . --script res://tests/visual/minigames_harness.gd -- --shots=<dir> [--only=shunting|chess|radio]`
 
 ---
+<a id="part-minigames_r7_kb"></a>
+
+## Asset manifest — round-7 mini-games „Der Morsetaster“ and „Rohrpost“ (area: minigames_r7_kb)
+
+Owner: minigames_r7_kb specialist · Date: 2026-11-06 · Engine: Godot 4.7.2 · Contract: TECHNICAL_ARCHITECTURE §12.1/§12.8
+(user request this round: more play time, new mini-game ideas).
+
+Everything listed here is **original work**, generated procedurally by the project scripts below on 2026-11-06. No
+pixel, sample or melody was taken from `documentation/references/` or any other source; no downloads, no AI media,
+no recordings. Colours come from `data/palettes.json` (`karsk` night/teal/sage/sky/stone/rust/copper/snow/wood,
+`archive` paper/ink/blue/amber/wood/night, `berlin` patina/snow) plus a polished-brass ramp and a violet stamp ink
+defined in the generators. The 5×7 / 3×5 pixel fonts (Latin capitals with umlauts, the full Russian alphabet, digits)
+are hand-made bitmaps in `tools/pixelgen/mg_r7_kb_lib.py`. No regime insignia, no flags, no emblems anywhere (§12.4):
+the Karsk desk shows a plain tea-glass holder, the archive board a plain brass plate.
+Historical model: the Morse registers (paper-tape inkers), sounders and keys of Soviet railway telegraphy, Russian
+Morse code with its international equivalents as printed on wall charts; the hand-switched house pneumatic-tube
+systems of large German offices. Licence: original project work (same terms as the rest of the game).
+
+### The two mini-games
+
+| Explore entry | Scene / scripts | Place (hotspot, world px) | Game |
+|---|---|---|---|
+| `karsk.morse` (detail, area `karsk`) | `scenes/ui/minigames/MorseKey.tscn` · `scripts/ui/minigames/morse_game.gd` + `morse_logic.gd` | L_A1_Railyard `exp_morse` [590, 256], right corner of the signal box where the telegraph line comes in (38 px from the side task's `exp_task_signalbox`) | The duty officer has gone for tea; the telegraph rings. The register prints the dispatcher's telegram on its tape, the sounder clicks, the call lamp flashes. Alexei takes the routine (ВАГ 24311) down by ear; the player decodes НЕ ВЗВЕШИВАТЬ („nicht verwiegen“) letter by letter with the wall chart АЗБУКА МОРЗЕ (7×6: Russian Morse with the international equivalents), then keys the receipt ПР (= принял) on the key: short = dot, held past the mark = dash, pauses never matter, a wrong element restarts only that letter. The line answers Р. Telegram line already on the form: П 2417 ОПОЗД 40 МИН (delay). |
+| `berlin.rohrpost` (detail, area `berlin`) | `scenes/ui/minigames/Rohrpost.tscn` · `scripts/ui/minigames/rohrpost_game.gd` + `rohrpost_logic.gd` | L_M1_Archive `exp_rohrpost` [932, 300], at the information desk of the reading room where the copper tube comes down from the ceiling | The house tube system's switch board (1938). Three capsules from the porter's lodge to the reading room, three boards of rising difficulty (2, 3, 4 knobs to turn; board 2 with a frozen main line, board 3 with a crossing, a return line and a knob that is not on the way). The capsule rushes through the brass tubes (whoosh); a wrong setting sends it to the registry, Abt. III, the director's office, the canteen, the plan archive or back to the lodge (each comes back with a small line), or jams it in a knob / the frozen line. Each delivered capsule shows what it brought: the porter's loan slip for a book about pigeons, the house management asking who turned up the heating, a sandwich for the librarian. |
+
+Contract (§12.8, shared base `minigame_base.gd`): `open(ctx)`, `ctx.auto` resolves after 0.2 s, `finished(success)`
+exactly once, Esc / „Aufgeben“ without penalty (nothing is ever lost), hints after two refusals — following the
+Settings `puzzle_hints` (0 never, 2 at once) and the current letter / board (Morse: the group's length, then the field
+glows; receipt: how to key, then the rhythm of П and Р; Rohrpost: follow the tube back from the reading room, then
+„Weiche n steht noch falsch“ with the knob ringed), `demo_solve()` plays through synthetic key events only (~25 s each).
+Keys — Morse: arrows/WASD/d-pad on the chart, Enter/Space/E/pad A write, R/pad Y repeats the letter; receipt: hold
+Space/Enter/E/pad A or the mouse on the key, R plays the receipt once. Rohrpost: arrows choose a knob (every knob
+reachable), Space/E/pad A turn, Enter/pad X/Y call the capsule, R puts the board's knobs back; mouse on knobs (right
+click turns back) and the button. Layout: one custom-drawn stage per game that fits the panel — pixel art ×3, or ×2
+(×1 as a last resort) when the panel is short (large text, hint plate); room for the hint is reserved so nothing
+jumps. Text scale: all drawn texts follow it; the Morse form moves up over the register and stacks its translations
+before any text shrinks, the Rohrpost side column switches to a compact list instead of shrinking below 100 %; board
+labels never go below their normal size. High contrast: white paper, black ink, yellow cursors and rings.
+All text: `data/locale/de_minigames_r7_kb.json` (`mg.morse.*`, `mg.tube.*`, find texts `explore.karsk.morse.*`,
+`explore.berlin.rohrpost.*`); entries: `data/explore/minigames_r7_kb.json`.
+
+### Generators
+
+* `tools/pixelgen/gen_mg_morse.py` — `py -3 -P tools/pixelgen/gen_mg_morse.py`, then import (shared lock).
+* `tools/pixelgen/gen_mg_rohrpost.py` — `py -3 -P tools/pixelgen/gen_mg_rohrpost.py`, then import. Holds the three
+  boards and verifies them before drawing (solvable, start not solved, a unique fewest-change setting with 2/3/4
+  changes); writes `rohrpost_layout.json`, the single source of the puzzle for `rohrpost_logic.gd`.
+* `tools/pixelgen/mg_r7_kb_lib.py` — shared canvas helpers and the pixel fonts of both generators.
+* `tools/audiogen/mg_audio_r7_kb.py` — `py -3 -P tools/audiogen/mg_audio_r7_kb.py` (numpy only). 44.1 kHz / 16-bit
+  mono WAV; loops are built periodic and carry a RIFF `smpl` chunk (import loop_mode detect).
+All deterministic (seeds = `crc32` of names): a re-run reproduces all 28 files byte for byte (checked 2026-11-06).
+UI art is drawn 1:1 and **stored ×3 nearest**; the two find close-ups are stored 1:1 (the DiscoveryView shows them ×3).
+
+### Files
+
+| Path | Size | Use |
+|---|---|---|
+| `assets/ui/minigames/morse/morse_desk.png` | 300×144 art (900×432) | The telegraph desk in the signal box: window onto the yard at dusk (wagon 24-311 under snow, lamp post), two-tone oil-paint wall, junction box and wiring, call-lamp plate ВЫЗОВ, calendar, oilcloth desk, duty log, tea glass, Morse register (paper reel, clockwork, inking wheel, electromagnet, tape table, tape spilling onto the desk), pencil |
+| `assets/ui/minigames/morse/morse_sounder.png` | 2 × 40×30 art | Sounder (Klopfer): armature up / down |
+| `assets/ui/minigames/morse/morse_key.png` | 2 × 54×24 art | Morse key: lever up / down |
+| `assets/ui/minigames/morse/morse_lamp.png` | 2 × 20×20 art | Call lamp, amber glass off / on |
+| `assets/ui/minigames/morse/morse_table.png` | 222×144 art (666×432) | Wall chart АЗБУКА МОРЗЕ: pinned paper card, 7×6 grid (letters, codes and equivalents drawn by the UI), pencil note ПРОВ. 1963, tea ring |
+| `assets/ui/minigames/morse/morse_tape.png` | 48×6 art | Tileable Morse tape for the strips glued onto the telegram form |
+| `assets/ui/minigames/morse/morse_layout.json` | — | Tape / sprite / form / chart positions in art px, the chart's sign order |
+| `assets/ui/minigames/morse/find_telegram.png` | 300×190 (1:1) | Close-up of the find: the telegram form with the glued strips, ПРИНЯЛ: ПР, the station's receiving stamp, pencil, tea glass |
+| `assets/ui/minigames/rohrpost/rohrpost_board_{1,2,3}.png` | 286×142 art (858×426) each | The switch board: enamel panel with an engraved plan grid in a wooden frame, brass tubes with flanges, diverter housings, station mouths, the crossing (board 3), the frozen line with frost and a red tag GESPERRT (board 2), brass plate HAUSROHRPOST 1938 |
+| `assets/ui/minigames/rohrpost/rohrpost_knob.png` | 6 × 18×18 art | Diverter knob with its brass channel W-E, N-S, N-E, E-S, S-W, W-N |
+| `assets/ui/minigames/rohrpost/rohrpost_capsule.png` | 2 × 12×12 art | The capsule (dark leather, brass caps, light rim) horizontal / vertical |
+| `assets/ui/minigames/rohrpost/rohrpost_lamp.png` | 2 × 8×8 art | Station pilot lamp off / on |
+| `assets/ui/minigames/rohrpost/rohrpost_layout.json` | — | The three boards (tiles, diverters, stations, frozen cells, verified solution) and the geometry |
+| `assets/ui/minigames/rohrpost/find_capsules.png` | 300×180 (1:1) | Close-up of the find: the opened capsule, its lid, the loan slip, the circular with its EINGANG stamp, the sandwich in parchment |
+| `assets/audio/sfx/mg_morse_down.wav` | 0.14 s | Sounder armature striking the lower stop |
+| `assets/audio/sfx/mg_morse_up.wav` | 0.11 s | Armature back against the upper stop |
+| `assets/audio/sfx/mg_morse_key_down.wav` | 0.15 s | Key contact closing (bakelite, brass, desk thump) |
+| `assets/audio/sfx/mg_morse_key_up.wav` | 0.14 s | Key spring lifting the lever |
+| `assets/audio/sfx/mg_morse_bell.wav` | 1.35 s | Call bell of the telegraph line (trembler bell + ring-out) |
+| `assets/audio/sfx/mg_morse_inker.wav` | 2.00 s LOOP | Clockwork of the register drawing the tape |
+| `assets/audio/sfx/mg_tube_turn.wav` | 0.30 s | Diverter knob into its next detent |
+| `assets/audio/sfx/mg_tube_bell.wav` | 1.20 s | Desk bell calling the porter's lodge |
+| `assets/audio/sfx/mg_tube_send.wav` | 1.05 s | Capsule dropped in far away, valve, the air takes it |
+| `assets/audio/sfx/mg_tube_rush.wav` | 2.00 s LOOP | Air rushing through a brass tube |
+| `assets/audio/sfx/mg_tube_arrive.wav` | 0.85 s | Capsule shooting out into the wicker basket |
+| `assets/audio/sfx/mg_tube_stuck.wav` | 0.90 s | Capsule jamming: thud, knock, escaping air |
+
+### Verification (2026-11-06)
+
+* `tests/test_minigames_r7_kb.gd` (17 cases, ~1340 checks): chart complete and unique with correct international
+  equivalents; telegram timeline (bell, one click/release per element, every letter arrives once, slower target words);
+  decoding and receipt accepted, refusals with reasons (too early, wrong letter, wrong element restarts the letter);
+  boards solvable with unique 2/3/4-change solutions matching the generator, knob-by-knob progress through the wrong
+  offices, jam / frozen / loop detection, continuous capsule path; both scenes: §12.8 contract, auto mode, keyboard play
+  to the solution through `modal_input`, every knob reachable by arrows, hint after two refusals, `puzzle_hints` 0/1/2,
+  Esc without a find, `finished` exactly once, `demo_solve` sends synthetic keys only; data, Loc keys (no overrides,
+  calm German typography), art sizes, layout files, audio format and loop chunks, placement (content-owned hotspots
+  inside the walk band, clear of story spots / finds / other mini-games, one Interactable each under Playfield).
+* `tests/visual/minigames_r7_kb_shots.tscn` (windowed, real Game path): boots Main into the level, puts the
+  protagonist on the find, captures the prompt, opens the find through `Game.interact()`, refuses twice by keys (hint),
+  runs `demo_solve()` while capturing every stage, checks `finished(true)`, the DiscoveryView and the recorded find.
+  `godot --path . res://tests/visual/minigames_r7_kb_shots.tscn -- --scene=L_A1_Railyard|L_M1_Archive
+  --capture=<dir>/boot.png --frames=100000 --r7-out=<dir> [--r7-ts=1.5] [--r7-hc=1] [--r7-tag=x]`
+
+---
 <a id="part-env_berlin"></a>
 
 ## Asset manifest part -- env_berlin (M1 Berliner Bauarchiv round 2, plan documents)
@@ -763,6 +875,9 @@ Area owner: characters specialist (`chars-sprites`) · Updated: **2026-11-04, ro
 (Dialogue portraits `portrait.png/json` are owned by the portrait generator `chargen_portrait*` and are not
 listed here.)
 
+> **Round 7 (2026-11-06):** Chapter-3 cast on this rig, `talk_front` / `talk_back`, grounded front / back walks,
+> soft player turns -- see `characters_r7.md` (supersedes the row tables below where they differ).
+
 ### Provenance & licence (applies to every file below)
 * **Original work, generated procedurally** by the project's own Python scripts (Pillow + numpy; no AI image
   models, no network, no third-party art). All heads, hats, hands, boots and props are hand-designed pixel
@@ -870,6 +985,9 @@ facings), `tests/visual/CharRigSelftest.tscn` (headless logic test).
 
 Area owner: chars-portraits specialist · Date: **2026-11-04** · Engine target: Godot 4.7.2
 
+> **Round 7 (2026-11-06):** 17 speakers (the Chapter-3 seven are on this pipeline now), individual noses / chins /
+> eyes / brows, Babushka's kerchief, cap clip fix -- see `portraits_r7.md`.
+
 ### Provenance & licence (applies to every file below)
 * **Original work, generated procedurally** by the project's own Python scripts (numpy + Pillow; no AI image
   models, no network, no third-party art, no image inputs). Facial features (eyes, lids, brows, mouths,
@@ -950,6 +1068,146 @@ godot --headless --path . res://tests/visual/portrait_harness.tscn -- --out=<dir
 panels, 9 speakers × neutral / concerned / determined / surprised / talk / blink) and single in-engine captures
 `portraits_dialogue_{konrad,alexei,vendor_talk,placeholder,docktop_emil}.png`. The older
 `<id>_portraits_3x.png` files show the first-generation portraits and are obsolete.
+
+---
+<a id="part-characters_r7"></a>
+
+## Asset manifest — characters, round 7 (Chapter-3 cast finished, talk_front, soft turns, grounded front walks)
+
+Area owner: characters specialist · Date: **2026-11-06, round 7** · Engine target: Godot 4.7.2
+Extends `characters.md` (round 2, still valid for everything not listed here). Portraits: `portraits_r7.md`.
+
+### Provenance & licence (applies to every file below)
+* **Original work, generated procedurally** by the project's own Python scripts (Pillow + numpy; no AI image
+  models, no network, no third-party art, no image inputs). Heads, hats, hands, boots and props are hand-designed
+  pixel maps written as ASCII in the generator source; bodies are rendered by the project's own paper-doll rig.
+* Licence: project-owned original asset. No third-party attribution. No regime insignia on any new sprite (the
+  border officer's cap badge is the Free City's bridge, the conductor's the railway's winged wheel).
+* Deterministic: re-running the generators reproduces byte-identical PNGs and JSON (verified 2026-11-06: all 23
+  sheets rebuilt into a scratch directory, 0 differing files; `sheet.json` is now always written with LF).
+
+### Reproduce
+```bash
+py -3 -P tools/pixelgen/characters.py               # the 16 round-1/2 sheets (+ previews)
+py -3 -P tools/pixelgen/characters_c3.py            # the 7 Chapter-3 sheets, then both validators
+py -3 -P tools/pixelgen/characters_c3.py --check    # validators only (characters_check + C3 contract)
+py -3 -P tools/pixelgen/characters.py --out=DIR     # review run (writes DIR/assets/characters)
+```
+
+### What changed
+| Item | Before | Now |
+|---|---|---|
+| Chapter-3 generator (`chargen_cast_c3.py`, `characters_c3.py`) | written against the round-1 rig (`digit_legend`, `faces`, `hand_bitmaps`, first-gen portrait API) -- did not import any more, the sheets were frozen round-1 art | ported to the round-2 API: chargen_heads-format heads (`HD.head_views`, side + front, blink / talk / glance-back variants), `make_hands` (Kessler: gloves), round-2 materials / textures (tweed, knit, fur) |
+| Chapter-3 rows | 6-frame idle, 4-frame talk, 2-4 rows, front view only for 3 of 7 | 9 rows each: `idle_side` (8, two-stage breathing), `walk_side`, `talk_side` (8: two beats + nod, per-frame hands / head), `idle_front`, `blink_side`, `look_side` (glance back), `gesture_side`, `blink_front`, `talk_front`; the first-contract rows keep their old order |
+| Chapter-3 gestures | none | Elena tucks a strand behind her ear, the officer rocks on his heels, the conductor touches his cap, Voronova straightens her collar, Kessler straightens up, Frau Brunner reads her pad, Ekdahl jots a note (`chargen_anim.GESTURES`: `tuck_hair`, `touch_cap`, `straighten`, `read_pad`, `jot`) |
+| Voronova | grey checker "karakul" that read as grey hair | dark brown karakul pirozhok with curl tips, grey hair under it, grey-brown karakul collar |
+| Front long coats (Elena, Kessler) | lower front lit like an apron | calmer hem below the waist (`calm_front_hem`) |
+| `talk_front` (all NPCs with a front view) + `talk_back` (protagonists) | did not exist (`talk_front` fell back to `talk_side`) | 8 frames: the free forearm rises in front of the body with an open hand, beat + nod, talking mouth; back view: the elbow moves out (a hand in front of the body would be hidden); per character `talk_front_arm` keeps props in the other hand (Berlin father: nod only) |
+| `walk_front` / `walk_back` | planted foot travelled 0.5-2 px up in depth -> the whole figure floated 1-2 px above the origin mid-stride | the supporting foot stays on the origin row for the whole stance, frames 0 / 4 are double support (validator now checks these rows too) |
+
+New rows are **appended** to the round-2 sheets (protagonists: rows 13-14, NPCs: last row), so every existing row
+keeps its index (verified: only `walk_front` / `walk_back` of Alexei / Konrad changed pixels; the leaflet
+mini-game's Konrad crop, the hall people and the cinematics read rows by name).
+
+### Files — `assets/characters/<id>/` (cell 32x56, origin [16,54], facing right)
+| id | rows | height | notes |
+|---|---|---|---|
+| `elena` | 9 | 44 px | charcoal coat, wine-red scarf, armband (white + slate stripe), notebook; gesture `tuck_hair` |
+| `border_officer` | 9 | 48 px | slate-blue greatcoat + belt, peaked cap with the bridge badge, armband, stamp; `rock_heels` |
+| `conductor` | 9 | 46 px | navy uniform coat, brass buttons, railway cap (winged wheel), white walrus moustache, bag, punch; `touch_cap` |
+| `voronova` | 9 | 45 px | dark-brown coat, karakul pirozhok + collar, leather folder; `touch_collar` |
+| `kessler` | 9 | 49 px | charcoal overcoat, homburg, gloves, briefcase, rimless glasses; `straighten` |
+| `typist` | 9 | 44 px | oatmeal cardigan, blouse collar, sleeve protectors, steno pad, pencil behind the ear; `read_pad` |
+| `journalist` | 9 | 48 px | tweed overcoat, blue scarf, camera on a strap, notebook; `jot` |
+| round-2 cast | +1 (`talk_front`), protagonists +2 (`talk_front`, `talk_back`) | unchanged | |
+
+### Runtime (round 7)
+* `scripts/actors/sprite_rig.gd`: `view_hint` ("front" / "back": `*_side` requests play the matching view row if
+  the sheet has it -- dialogue code keeps asking for `talk_side` / `idle_side`); `turn_to(left, hold, row)` with an
+  in-between row (`walk_front` keeps the stride), the turn frame survives row changes, turning back mid-turn cancels;
+  `talk_back` falls back to `idle_back`.
+* `scripts/actors/player.gd`: soft turns (0.12 s on the spot, 0.07 s while walking, movement still reverses at
+  once; `face(dir, false)` = instant), `face_point()` turns towards the NPC named by the interactable's `npc_id`
+  (oblique levels: towards / away from the camera when it stands clearly below / above), `_set_dir` keeps the rig's
+  `view_hint` in step; `get_view()`.
+* `scripts/actors/npc.gd`: front-on idles (`idle_anim = "idle_front"`) talk front-on unless they turn to the
+  player; talk release accepts any talk row; wanderers turn softly while pausing at the ends of their path.
+
+### Tests
+`tests/test_characters_r7.gd` (unit, run_all): C3 rows / frames / variants / normal maps, talk_front everywhere a
+front view exists, contract row indices, front / back walks grounded in every frame, living portraits for all 17
+speakers, rig view hint + turns, player soft turn + facing view, front-on NPC talk.
+`tests/visual/CharRigSelftest.tscn` (headless, extended: 23 ids + the round-7 behaviours),
+`tests/visual/CharLightTest.tscn` (normal-map mirroring, run with the C3 ids: PASS),
+`tests/visual/char_lineup.tscn` (new: real Main scene, any level, a row of characters idle / talking / front-on),
+`tests/visual/char_portraits.tscn` (new: the real DialogueBox for all 17 speakers, mouth / blink / expression checks).
+
+### Review images
+`documentation/screenshots/characters_r7_before.png`, `characters_r7_after.png` (same layout: idle side, idle
+front, talk beat, front / back walk with the origin line, 17 portraits), `characters_r7_ingame_station.png`,
+`characters_r7_ingame_palais_talk_front.png`, `characters_r7_dialogue_elena.png`; generator previews in
+`assets/characters/_preview/c3_*` (`.gdignore`).
+
+---
+<a id="part-portraits_r7"></a>
+
+## Asset manifest — dialogue portraits, round 7 (seventeen individual faces, Chapter-3 portraits alive)
+
+Area owner: characters specialist · Date: **2026-11-06, round 7** · Engine target: Godot 4.7.2
+Extends `portraits.md` (round 2; pipeline, file formats and runtime unchanged).
+
+### Provenance & licence (applies to every file below)
+* **Original work, generated procedurally** (numpy + Pillow; no AI image models, no network, no image inputs).
+  Facial features are hand-designed pixel stamps / parametric strokes in the generator source.
+* Licence: project-owned original asset. No regime insignia in any portrait (the officer's cap badge is the Free
+  City's bridge, the conductor's the railway's winged wheel).
+* Deterministic: verified 2026-11-06 (elena, babushka, porter rebuilt into a scratch directory: byte-identical).
+
+### Reproduce
+```bash
+py -3 -P tools/pixelgen/chargen_portrait2.py --jobs=9          # all 17 speakers, one process each (~2.5 min)
+py -3 -P tools/pixelgen/chargen_portrait2.py elena kessler     # some speakers
+py -3 -P tools/pixelgen/chargen_portrait2.py --out=DIR         # review run into another assets/characters dir
+```
+
+### What changed
+| Item | Before | Now |
+|---|---|---|
+| Chapter-3 portraits (elena, border_officer, conductor, voronova, kessler, typist, journalist) | first-generation ellipsoid busts from a module that no longer imported; static strips, no talking mouth, no blink; a flatter, different look | `chargen_portrait_c3.py` registers the seven in `chargen_portrait2_cast.CAST`: same SDF pipeline as the rest, 4 expressions x 6 states (`portrait_anim.png` + anim block), backgrounds `veltrava` (slate dawn) and `palais` (navy-teal) |
+| Faces | every speaker on the same sculpted base: same nose, chin, eye stamps and brow stroke | per speaker: head proportions and 3/4 angle, nose (length, projection, width, bump / hook / button / drooping tip), chin and jaw (pointed, square, receding, cleft, double), eye shapes (`chargen_portrait2_face.eye_shapes`: hooded / narrow / round / droop / lift / deep), brow geometry (`features['brow_pts']`, thickness, arch), nostril style; softer planes for the women (`SOFT`) |
+| Babushka | headscarf wrapped like a hood over forehead, ears and cheeks | `kerchief_chin`: front edge at the hairline with a plain rolled hem, open face framed down the cheeks to a knot with two tails under the chin, back corner over the nape |
+| Peaked caps (porter, officer, conductor) | the head clip reached 1.4 px above the crown -> hair showed through the cap top as a pale patch | clip ends at the crown top |
+| Porter | no moustache (his sprite has one) | white moustache, hooded eyes, bushy white brows |
+
+Speaker notes (face, in one line each): **Alexei** broad Slavic face, high cheekbones, once-broken nose, tired
+hooded eyes, heavy low brows · **Konrad** narrow long face, long straight nose, defined chin, fine brows, more in
+profile · **Irina** shorter rounder face, short slightly upturned nose, strong straight brows, wide eyes · **Emil**
+bulbous nose, jowls, kind drooping hooded eyes, bushy grey brows · **Vendor** broad round face, button nose, soft
+double chin, crinkled warm eyes, a ready smile · **Worker** flat broad nose, squint, heavy low brows ·
+**Babushka** long thin nose with a drooping tip, small pointed chin, deep-set kind eyes · **Librarian** thin long
+nose, narrow chin, hooded reading eyes, fine high brows · **Porter** fleshy, white moustache · **Photographer**
+hooked nose, wry squint · **Elena** slim oval face, fine nose, small chin, lifted eyes, fine arched brows ·
+**Officer** broad jowly face, short wide nose, hooded narrow eyes, trimmed dark moustache · **Conductor** long
+gaunt face, drooping nose, receding chin under a walrus moustache, droopy eyes · **Voronova** broad face, square
+jaw, short broad nose, level brows, steady hooded eyes, grey waves under the karakul · **Kessler** narrow ascetic
+face, aquiline nose, pointed chin, thin lips, narrow eyes behind thin rimless glasses · **Frau Brunner** round
+face, upturned small nose, round eyes, raised arched brows, a smile · **Ekdahl** long Nordic face, strong straight
+nose, cleft chin, almost invisible fair brows.
+
+### Generator scripts (round 7)
+| File | Change |
+|---|---|
+| `tools/pixelgen/chargen_portrait_c3.py` | rewritten: the seven Chapter-3 specs + builders (homburg, karakul pirozhok, swept hair with chignon, perm curls, tousled hair, karakul collar, temple wave) and passes (curls, cap badge, armband, pencil behind the ear, cheek hollows, chin cleft) |
+| `tools/pixelgen/chargen_portrait2.py` | imports chargen_portrait_c3; `brow_pts` / `nostril` features; `set_out` / `--out`; `--jobs` (one process per speaker) |
+| `tools/pixelgen/chargen_portrait2_face.py` | `eye_shapes(table, *kinds)` |
+| `tools/pixelgen/chargen_portrait2_cast.py` | individual faces for the ten round-2 speakers, `kerchief_chin`, peaked-cap clip fix, porter moustache |
+| `tools/pixelgen/chargen_portrait2_paint.py` | backgrounds `veltrava`, `palais` |
+| `tools/pixelgen/chargen_portrait.py` | shim: the C3 module counts for the "up to date" check |
+
+### Verification
+`tests/visual/char_portraits.tscn` (real DialogueBox, all 17 speakers: animation grid in use, mouth moves while
+typing and rests at the end, expression column follows the line; 102 screenshots, 0 failures);
+`tests/test_characters_r7.gd` (portrait.json contract + anim block, grid size, talk / blink rows differ from rest).
 
 ---
 <a id="part-great_hall"></a>
@@ -1465,6 +1723,570 @@ flicker. Grade preset `grade_preset = "finale"` (falls back to `default`).
 * `tests/visual/cine_finale_symcheck.gd` (headless): every neutral/_hist pair exists, imports and differs.
 
 ---
+<a id="part-c3"></a>
+
+## Asset manifest part — Chapter 3 „Der eiserne Frieden" (opening), branch `kapitel-3`
+
+Date for all entries: **2026-11-05** (work started 2026-11-04). Everything below is original work for this project, produced
+by deterministic generators in this repository or written by hand; no downloaded images, sounds or samples, no AI image
+services, no tracing of references. Licence: project-owned, same as the game. The real-history cards cite published
+books and encyclopaedia articles as sources (text written here, not copied); their facts could not be checked online in
+the cloud session and carry a `review` note in the data.
+
+### Story, presentation and code
+| Path | Kind | How it was made |
+|---|---|---|
+| `data/v3/*.json` (Chapter-3 entries), `data/v3/locale_de.json` (`*.c3*` keys) | story data, German texts | hand-written from `documentation/C3_DESIGN.md` |
+| `data/chapters/c3.json` | presentation rules (line variants, option texts, reactions, palettes, grades, UI/cinematic registry) | hand-written |
+| `data/locale/de_c3_dialogue.json`, `de_c3_characters.json`, `de_c3_cinematics.json`, `de_c3_ui.json` | German texts | hand-written |
+| `scripts/core/chapter_ext.gd`, `scripts/actors/story_npc.gd`, `scripts/actors/gated_interactable.gd` | GDScript | hand-written |
+| `scenes/levels/L_C3_Station.tscn`, `L_C3_Hall.tscn` | level scenes | generated once by a throw-away script from the hotspot contract, then hand-maintained |
+| `scripts/core/autoplay.gd`, `scripts/core/inputplay.gd` (Chapter-3 routes) | E2E drivers | hand-written extensions |
+| `tests/test_c3_*.gd`, `tests/reference/python_reference.json.gz` | tests, parity fixture | hand-written; fixture generated by `python3 -P tests/reference/make_python_reference.py` from the unmodified preproduction reference engine on `data/v3` |
+| `tools/docs/gen_quest_db_c3.py` → `documentation/QUEST_DATABASE.md` (C3 section) | documentation generator | hand-written |
+
+### Exploration content
+| Path | Kind | How it was made |
+|---|---|---|
+| `data/explore/veltrava_station.json` (12 finds, 1 secret, 2 chats), `veltrava_hall.json` (10 finds, 2 chats) | exploration entries | hand-written in the protagonists' voices |
+| `data/explore/c3_history_soviet.json` (2 cards), `c3_history_reich.json` (1 card) | real-history cards | hand-written, sourced (see `review` note) |
+| `data/locale/de_explore_veltrava.json`, `de_history_c3.json` | German texts | hand-written |
+
+### Characters — `tools/pixelgen/characters_c3.py` (+ `chargen_cast_c3.py`, `chargen_portrait_c3.py`)
+Rebuilt in round 7 on the round-2 rig and portrait pipeline (sheets: `chargen_cast_c3.py` + `characters_c3.py`; living
+portraits: `chargen_portrait_c3.py` through `chargen_portrait2.py`) — see `characters_r7.md` and `portraits_r7.md`.
+
+### Audio — `tools/audiogen/c3_audio.py` (synthesised, deterministic seeds `zlib.crc32(name)`)
+| File | Content | Length / level |
+|---|---|---|
+| `assets/audio/amb/amb_veltrava_station.wav` | station hall at dawn: crowd murmur (formant babble, no speech), standing loco breathing, steam, couplings, pigeons, footsteps, cart wheel, distant tram bell, two-tone chime, wind | 60 s loop, stereo 44.1 kHz 16-bit, RMS ≈ −24 dBFS, peak −5.4 |
+| `assets/audio/amb/amb_veltrava_palais.wav` | conference palace interior: room tone, murmur behind doors, typewriter bursts, mimeograph, clock, radiator ticks | 60 s loop, RMS ≈ −25 dBFS |
+| `assets/audio/music/mus_veltrava.wav` | chapter cue: restrained chamber texture, slow clockwork pulse over a bowed drone, hesitant two-voice motif; sits under dialogue | 90 s loop (listed in `Audio.LOOPING_MUSIC`), RMS ≈ −20 dBFS, peak −4.9 |
+
+### Environments — `tools/pixelgen/env_veltrava_station*.py` + `env_veltrava_lib.py`, `env_veltrava_hall*.py`
+| Path | Content | How it was made |
+|---|---|---|
+| `assets/environments/veltrava_station/**` (14 layers, 18 props, fx strips, `scene.json`) | Bahnhof Veltrava at dawn: old-town skyline, station building, dual-gauge tracks, both delegation trains, courier wagon 4, canopies, passport control, concourse with Café „Korridor“; flags as neutral `*.png` + `*_hist.png` | generated (deterministic, palette `veltrava` registered by `env_veltrava_lib.py`); polish pass 2026-11-06, see env_veltrava_station.md |
+| `assets/environments/veltrava_hall/**` (74 files: room, shafts, exteriors, Saal parallax, 15 props, fx, `scene.json`, `provenance.json`) | Palais der Kommission: vestibule, foyer, Protokollbüro, interpreters' corridor; flags neutral + `_hist` | generated (deterministic, palette `palais`) |
+| `assets/ui/documents/veltrava_station_weighbill.png`, `veltrava_station_departures.png`, `veltrava_station_travel_order.png` + `veltrava_station_documents.json` | inspect documents of the station (scribble glyphs + legible key figures) | `tools/pixelgen/env_veltrava_station_docs.py` |
+| `assets/ui/documents/veltrava_hall_carbon.png` + `veltrava_hall_documents.json` | the carbon-copy blotter from booth 2 | `tools/pixelgen/env_veltrava_hall_docs.py` |
+| `data/locale/de_env_veltrava_station.json`, `de_env_veltrava_hall.json` | alt texts of the documents | hand-written |
+
+### Puzzle UI — `tools/pixelgen/gen_ui_c3.py`
+`assets/ui/puzzle/c3_*` (plan, log sheet, 4 name cards, 4 glyphs, slot, arrow, `c3_protocol_board.json`),
+`assets/ui/documents/veltrava_protocol_seating.png`, `veltrava_protocol_booth_log.png` + `veltrava_protocol_documents.json` — generated,
+deterministic; HD text is overlaid by `scripts/ui/protocol_puzzle.gd` (hand-written, with `scenes/ui/ProtocolPuzzle.tscn`,
+`tests/test_c3_puzzle_ui.gd`, `tests/visual/ProtocolPuzzlePreview.tscn`).
+
+### Cinematics (open, branch `c3-cine` only)
+`scenes/cinematics/ch3_trains/**`, `ch3_tohall/**`, `ch3_close/**`, `ch3_common/**`, `tests/test_c3_cinematics.gd` (hand-written) and
+`tools/pixelgen/env_veltrava_cine.py` (generator, unfinished; no assets generated yet) — see `documentation/C3_REPORT.md` §4.
+
+---
+<a id="part-env_veltrava_station"></a>
+
+## Asset manifest — Bahnhof Veltrava, polish pass (area: env_veltrava_station)
+
+Owner: env_veltrava_station · Date: 2026-11-06 · Engine: Godot 4.7.2 (Forward+, checked on the PC with an RTX 4090)
+· Contract: TECHNICAL_ARCHITECTURE §3.1, §12.2 (actors), §12.4 (insignia), C3_DESIGN §4.1, C3_REPORT §4.2/§4.6.
+
+Everything here is **original work**, generated by the deterministic project scripts listed below (fixed seeds, no
+network); no downloads, no AI media, no tracing — the second, independent station version on the local branch
+`merge-kapitel-3` (worktree `C:/Spiele/AshesOfEmpires_c3`, commit `2260cf0`) was only *looked at* in the running game
+and its ideas re-drawn here (glazed roof, occupied lit compartments, sandstone concourse); no file of it was copied.
+Palette: `veltrava` (`data/chapters/c3.json`, registered by `tools/pixelgen/env_veltrava_lib.py`). Licence: original
+project work (same terms as the rest of the game).
+
+Rebuild: `py -3 -P tools/pixelgen/env_veltrava_station.py` (art + scene.json + documents + document alt texts).
+Two consecutive runs on the PC are **byte-identical** (115 files hashed). PNG bytes differ from the cloud build of
+2026-11-05 only by the Pillow/zlib encoder (the pixels of an unchanged generator were verified identical);
+JSON outputs are now written with LF on every platform.
+
+### What changed (all in `assets/environments/veltrava_station/**`, regenerated)
+
+| Area | Change (why) |
+|---|---|
+| Value structure / dawn | The cloud pass read as night on the PC: the far planes lost ~25 % to canvas modulate + grade + palette snap. Sky stops one ramp step lighter plus a rose-cream dawn band (`sky.png`), softer cloud cores (`clouds.png`), the mansard city hazed half a step (`city.png`), canvas modulate `#C9CED8` → `#D5D3D6`. Mean frame luminance now matches Karsk (73–79 vs 73), the sky is the light group, trains/canopy the dark frame. |
+| Station building (0.55) | Warm sandstone in shade (cream ramp) instead of slate → separates from the cold city haze and carries the warmth of the lit hall window. |
+| Concourse façade | Cream sandstone instead of a monotone dark-blue wall (was 70 % of the cam-1280 frame); shadow under the canopy eaves, warm café spill on the stone, dark wooden shopfront frames, readable incised lettering. |
+| Canopy (`canopy.png`) | Ridge-and-furrow roof lights in every bay (wired glass, snow patches, glazing bars) — idea from the worktree's glass shed; first track sign moved to x 226 (it hung under the HUD objective box at cam 0). |
+| Near train (`train_near.png`) | ~⅓ of the compartments lit with backlit curtains and seated passengers; car 3 frosted/misted (side task „Wagen drei ist kalt“: no heating since Kordon); the tied-back drape that read as a crescent moon replaced by side curtains + pelmet. |
+| Platform (`ground.png`) | Lit from the open side (lighter rear band, darker under the roof), warm reflections of the lit compartments in the wet slabs, footprint trails that cross the drift, step over the coping and continue in the track-bed snow (find `exp_footprints`). |
+| Foreground (`fg_frame.png`) | Fluted cast-iron columns with capitals, plinths, lamp rim light and a red fire-alarm box instead of plain black bars; three low near-camera silhouettes (crate barrow with mail sack, sand bin with shovel, suitcase pile). |
+| Props matching their find texts | poster „DREI KORRIDORE – EIN FRIEDEN“, peeling, one pin left (`column_5`); the same photo on three front pages (`kiosk`); RM / RBL / VKR chalk rates, corrected (concourse); „Büro für Rückführung“ no longer clipped, „Zimmer 4“ (concourse); strapped delegation case No. 14 with the wooden horse on a trouser belt (`luggage_cart`); two porters warming their hands at the stove, coal scuttle (concourse). |
+| Insignia (§12.4) | Neutral Reich flag/pennants are now a reading grey (like the Berlin facade banner) with the fictional Reichssiegel; `_hist` twins unchanged in design. Both settings captured in game. |
+| Smoke | 4 + 2 chimney ribbons instead of 6 + 4 (they read as scratches across the old town). |
+| Normal maps | Audit of all 18 props: no inverted/flat-broken maps (n.z ≥ 0.3 everywhere, cylinder normals on the columns, bevel normals elsewhere). |
+
+### New files
+
+| Path | Kind | How it was made |
+|---|---|---|
+| `assets/environments/veltrava_station/viaduct.png` (+ `_n`) | far river viaduct, parallax 0.2 | `tools/pixelgen/env_veltrava_station_life.py` `viaduct_layer()` |
+| `assets/environments/veltrava_station/actors/pigeons_sheet.png`, `bread.png` | 11-frame pigeon sheet (12×10), the sandwich | `pigeon_sheet()` (ASCII frames), `bread_sprite()` |
+| `…/actors/walker_{official,woman_scarf,traveller,railwayman,woman_fur,soviet_staff}.png` (+ `_e` for the lamp) | side-view walkers, 18 frames | `walker_sheet()` (procedural `_side_person`) |
+| `…/actors/porter_barrow.png` | porter pushing a luggage barrow, 16 frames | `porter_sheet()` |
+| `…/actors/tram.png` (+ `_e`) | tram 7 with lit windows and a hand-written trilingual line board | `tram_sprite()` |
+| `…/actors/viaduct_loco.png` (+ `_e`), `viaduct_wag_{box,tank,flat}.png`, `viaduct_puff.png` | small goods train for the viaduct | `viaduct_train()` |
+| `…/actors/window_life.png`, `breath_puff.png` | compartment silhouettes (4×16×17), breath puff (6×7×7) | `window_life_sheet()`, `breath_puff()` |
+| `scripts/levels/veltrava_station/station_pigeons.gd`, `station_walkers.gd`, `station_tram.gd` + `scenes/levels/veltrava_station/Station{Pigeons,Walkers,Tram}.tscn` | ambient actors (extend `scripts/levels/karsk/karsk_actor.gd`) | hand-written |
+| `tests/test_c3_station_art.gd` | actors/decal/insignia/palette/behaviour test | hand-written |
+| `tests/visual/c3_station_shots.gd` + `.tscn` | windowed capture harness (real Main, HUD hidden, both symbol settings) | hand-written |
+| `documentation/screenshots/c3_station_*.png` | before/after captures (Forward+), insignia comparison, before/worktree/after strip | captured with the harness |
+
+Reused unchanged (configured by scene.json props): `scenes/levels/karsk/KarskTrain.tscn` (viaduct train),
+`KarskWindowLife.tscn` (passengers in two lit compartments of wagon 2), `KarskBreath.tscn` (breath of the conductor,
+the border officer, Voronova, Konrad and the baked queue / bench figures). Sounds reused: `berlin_pigeon_coo`,
+`berlin_pigeon_flutter`, `tram_bell`, `cine_a1m1_tram_arrive`, `cine_a1m1_tram_depart`, `karsk_train_far`.
+
+### Ambient life (scene.json `actors`, `decals`)
+* **Pigeons** (`exp_pigeons`): two tug at the sandwich, a third waits, two more peck; a walking/standing observer is
+  tolerated, running past (or stepping into them) sends them up to the canopy girder; back 16–28 s later.
+* **Island walkers**: up to 6 of 7 people (travellers, delegation staff, railwayman with hand lamp, porter with barrow)
+  on the island platform, pausing at two spots; spawn and leave hidden behind wagon 4 / the concourse.
+* **Tram** in the square (seen through the exit arch): waits 34–46 s, leaves, the next one rolls in (bell).
+* **Viaduct train**: a small goods train crosses the river viaduct every 55–75 s (alternating direction).
+* **Decal hook** `heater_leak_23`: the steam leak of the frozen stop cock between wagons 2 and 3 (side task „Wagen
+  drei ist kalt“), named so the task code can stop it: `level.backdrop.decals_by_name["heater_leak_23"].visible = false`.
+
+---
+<a id="part-env_veltrava_hall"></a>
+
+## Asset manifest part -- env_veltrava_hall (Chapter 3, Palais der Kommission, L_C3_Hall)
+
+All files below are **original works generated procedurally** by the scripts in `tools/pixelgen/`
+(`env_veltrava_hall.py` drives `env_veltrava_hall_room.py`, `_props.py`, `_ext.py`, `_fg.py`, `_fx.py`, `_life.py`,
+helpers `env_veltrava_hall_kit.py`, `env_veltrava_hall_layout.py` and the shared, read-only `pg.py`; previews
+`env_veltrava_hall_preview.py`).  No pixels were copied, traced, sampled, downloaded or AI-generated; no third-party
+assets, fonts or textures are embedded; the bitmap fonts are hand-defined in `env_veltrava_hall_kit.py`.
+
+* Licence / rights: project-owned original artwork (generated for this project), freely redistributable with the
+  game.  Provenance: deterministic generator (a re-run reproduces every file byte-for-byte on the same Python/Pillow
+  build; the cloud build and this PC produced identical pixels, only the PNG compression bytes differ), re-run with `py -3 -P tools/pixelgen/env_veltrava_hall.py --scene-only` (the hall documents
+  in `assets/ui/documents/veltrava_hall_*` are rebuilt only without `--scene-only`; their owner decides).
+  Machine-readable list: `assets/environments/veltrava_hall/provenance.json`.
+* Dates: 2026-11-05 (cloud build, Compatibility renderer) · 2026-11-06 round 7 (Forward+ pass on this PC: calmer
+  marble floor, open archway, entrance transom, raking stair wainscot, the *PAX 1953* allegory and the president's
+  medallion, office wall structure (pipe, picture rail, delegations' pigeonholes, session indicator, Saal monitor
+  speaker), tufted acoustic wall and three etched transoms in the interpreters' corridor, the agenda board,
+  thresholds, the horseshoe table of the Saal readable through the booths, and the ambient life in `life/`).
+* Palettes: `palais` (data/chapters/c3.json + one cold near-white) for the interior and the Saal layers, the
+  Veltrava town palette for everything seen through the windows.  The life figures use the palais ramps for
+  clothes and the cast's four skin tones (as in `assets/characters`) so they sit with the story characters.
+* Insignia (TECHNICAL_ARCHITECTURE 12.4): `props/flag_ussr.png`, `props/flag_reich.png` and `saal_far.png` are the
+  neutral defaults (fictional gear-and-wheat emblem / fictional Reichssiegel); the `*_hist.png` twins carry the
+  historical flags and are chosen at runtime by `Symbols.pick()` -- in-world iconography of the regimes inside the
+  critical narrative only.  No life strip shows an insignia (the usher wears the commission's bridge badge).
+* Content: the people are working staff and delegates -- nobody heroic, nobody caricatured; the allegory *PAX 1953* is
+  the commission's own commissioned picture and is shown as cool and a little empty.
+
+| File | Generator | Content |
+|---|---|---|
+| `assets/environments/veltrava_hall/ext_river.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | frozen river, the three-arched bridge with a barrier, old-town roofs, dome and spire |
+| `assets/environments/veltrava_hall/ext_river_e.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | frozen river, the three-arched bridge with a barrier, old-town roofs, dome and spire -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/ext_sky.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | overcast winter morning sky (seen through every window) |
+| `assets/environments/veltrava_hall/ext_square.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | the snowy square in front of the palais: stucco houses, tram stop, lamp post, car |
+| `assets/environments/veltrava_hall/ext_square_e.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | the snowy square in front of the palais: stucco houses, tram stop, lamp post, car -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/ext_town.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | far river bank with the Line: double fence, watchtowers, floodlight masts (hazy) |
+| `assets/environments/veltrava_hall/fg_frame.png` | `tools/pixelgen/env_veltrava_hall_fg.py` | foreground framing silhouettes (columns, velvet drapes, palm, chair) |
+| `assets/environments/veltrava_hall/fx_dust_foyer.png` | `tools/pixelgen/env_veltrava_hall_fx.py` | dust motes in the foyer shafts (16-frame loop) |
+| `assets/environments/veltrava_hall/fx_dust_office.png` | `tools/pixelgen/env_veltrava_hall_fx.py` | dust motes in the office window shaft (16-frame loop) |
+| `assets/environments/veltrava_hall/fx_dust_vestibule.png` | `tools/pixelgen/env_veltrava_hall_fx.py` | dust motes in the entrance daylight (16-frame loop) |
+| `assets/environments/veltrava_hall/fx_glints.png` | `tools/pixelgen/env_veltrava_hall_fx.py` | slow crystal glints on the foyer chandelier (16-frame loop) |
+| `assets/environments/veltrava_hall/fx_snow_river.png` | `tools/pixelgen/env_veltrava_hall_fx.py` | snowfall in front of the river view (foyer + office windows, 16-frame loop) |
+| `assets/environments/veltrava_hall/fx_snow_square.png` | `tools/pixelgen/env_veltrava_hall_fx.py` | snowfall over the square, seen through the entrance glazing (16-frame loop) |
+| `assets/environments/veltrava_hall/life/cleaner.png` | `tools/pixelgen/env_veltrava_hall_life.py` | cleaning woman mopping the melt water in the archway |
+| `assets/environments/veltrava_hall/life/cleaner_n.png` | `tools/pixelgen/env_veltrava_hall_life.py` | cleaning woman mopping the melt water in the archway -- normal map |
+| `assets/environments/veltrava_hall/life/clock_corridor.png` | `tools/pixelgen/env_veltrava_hall_life.py` | second hand of the interpreters' corridor clock |
+| `assets/environments/veltrava_hall/life/clock_vestibule.png` | `tools/pixelgen/env_veltrava_hall_life.py` | second hand of the vestibule clock |
+| `assets/environments/veltrava_hall/life/door_flash.png` | `tools/pixelgen/env_veltrava_hall_life.py` | press flashes behind the etched glass of the Saal doors |
+| `assets/environments/veltrava_hall/life/door_flash_e.png` | `tools/pixelgen/env_veltrava_hall_life.py` | press flashes behind the etched glass of the Saal doors -- emission |
+| `assets/environments/veltrava_hall/life/garderobiere.png` | `tools/pixelgen/env_veltrava_hall_life.py` | cloakroom attendant behind the counter (sorts tokens, looks up) |
+| `assets/environments/veltrava_hall/life/garderobiere_n.png` | `tools/pixelgen/env_veltrava_hall_life.py` | cloakroom attendant behind the counter (sorts tokens, looks up) -- normal map |
+| `assets/environments/veltrava_hall/life/interp_1.png` | `tools/pixelgen/env_veltrava_hall_life.py` | interpreter at work in booth 1 (FR), seen from behind |
+| `assets/environments/veltrava_hall/life/interp_1_n.png` | `tools/pixelgen/env_veltrava_hall_life.py` | interpreter at work in booth 1 (FR), seen from behind -- normal map |
+| `assets/environments/veltrava_hall/life/interp_3.png` | `tools/pixelgen/env_veltrava_hall_life.py` | interpreter at work in booth 3 (EN), seen from behind |
+| `assets/environments/veltrava_hall/life/interp_3_n.png` | `tools/pixelgen/env_veltrava_hall_life.py` | interpreter at work in booth 3 (EN), seen from behind -- normal map |
+| `assets/environments/veltrava_hall/life/landing_pair.png` | `tools/pixelgen/env_veltrava_hall_life.py` | two delegates talking at the gallery door, the usher beside it (stair landing) |
+| `assets/environments/veltrava_hall/life/landing_pair_n.png` | `tools/pixelgen/env_veltrava_hall_life.py` | two delegates talking at the gallery door, the usher beside it (stair landing) -- normal map |
+| `assets/environments/veltrava_hall/life/pigeon.png` | `tools/pixelgen/env_veltrava_hall_life.py` | a pigeon on the outer sill of the office window (behind the glass) |
+| `assets/environments/veltrava_hall/life/saal_life.png` | `tools/pixelgen/env_veltrava_hall_life.py` | the session through the booth windows: speaker, nods, an usher with a note |
+| `assets/environments/veltrava_hall/life/waiter.png` | `tools/pixelgen/env_veltrava_hall_life.py` | waiter at the untouched buffet |
+| `assets/environments/veltrava_hall/life/waiter_n.png` | `tools/pixelgen/env_veltrava_hall_life.py` | waiter at the untouched buffet -- normal map |
+| `assets/environments/veltrava_hall/props/buffet.png` | `tools/pixelgen/env_veltrava_hall_props.py` | buffet: untouched Sekt and caviar on crushed ice |
+| `assets/environments/veltrava_hall/props/buffet_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | buffet: untouched Sekt and caviar on crushed ice -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/carbon_basket.png` | `tools/pixelgen/env_veltrava_hall_props.py` | wire basket of carbon copies on an oak cabinet (booth_log) |
+| `assets/environments/veltrava_hall/props/carbon_basket_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | wire basket of carbon copies on an oak cabinet (booth_log) -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/cloak_counter.png` | `tools/pixelgen/env_veltrava_hall_props.py` | cloakroom counter: bell, numbered tokens, lamp |
+| `assets/environments/veltrava_hall/props/cloak_counter_e.png` | `tools/pixelgen/env_veltrava_hall_props.py` | cloakroom counter: bell, numbered tokens, lamp -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/props/cloak_counter_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | cloakroom counter: bell, numbered tokens, lamp -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/easel_seating.png` | `tools/pixelgen/env_veltrava_hall_props.py` | seating-plan easel (horseshoe, mics 1/2/12) |
+| `assets/environments/veltrava_hall/props/easel_seating_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | seating-plan easel (horseshoe, mics 1/2/12) -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/flag_commission.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: commission |
+| `assets/environments/veltrava_hall/props/flag_commission_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: commission -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/flag_finland.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: finland |
+| `assets/environments/veltrava_hall/props/flag_finland_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: finland -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/flag_reich.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: reich (neutral default; *_hist = historical flag) |
+| `assets/environments/veltrava_hall/props/flag_reich_hist.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: reich -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_hall/props/flag_reich_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: reich (neutral default; *_hist = historical flag) -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/flag_sweden.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: sweden |
+| `assets/environments/veltrava_hall/props/flag_sweden_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: sweden -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/flag_switzerland.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: switzerland |
+| `assets/environments/veltrava_hall/props/flag_switzerland_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: switzerland -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/flag_ussr.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: ussr (neutral default; *_hist = historical flag) |
+| `assets/environments/veltrava_hall/props/flag_ussr_hist.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: ussr -- historical insignia variant (Symbols.pick, TECHNICAL_ARCHITECTURE 12.4) |
+| `assets/environments/veltrava_hall/props/flag_ussr_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | flag on a brass pole: ussr (neutral default; *_hist = historical flag) -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/mimeograph.png` | `tools/pixelgen/env_veltrava_hall_props.py` | stencil duplicator (mimeograph) on its stand, fresh copies |
+| `assets/environments/veltrava_hall/props/mimeograph_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | stencil duplicator (mimeograph) on its stand, fresh copies -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/palm_corridor.png` | `tools/pixelgen/env_veltrava_hall_props.py` | Kentia palm in a Jugendstil jardiniere |
+| `assets/environments/veltrava_hall/props/palm_corridor_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | Kentia palm in a Jugendstil jardiniere -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/palm_vest.png` | `tools/pixelgen/env_veltrava_hall_props.py` | Kentia palm in a Jugendstil jardiniere |
+| `assets/environments/veltrava_hall/props/palm_vest_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | Kentia palm in a Jugendstil jardiniere -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/protocol_table.png` | `tools/pixelgen/env_veltrava_hall_props.py` | the big table of the Protokollbuero (protocol_table) |
+| `assets/environments/veltrava_hall/props/protocol_table_e.png` | `tools/pixelgen/env_veltrava_hall_props.py` | the big table of the Protokollbuero (protocol_table) -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/props/protocol_table_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | the big table of the Protokollbuero (protocol_table) -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/saal_rope.png` | `tools/pixelgen/env_veltrava_hall_props.py` | brass stanchions with a velvet rope before the Saal doors |
+| `assets/environments/veltrava_hall/props/saal_rope_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | brass stanchions with a velvet rope before the Saal doors -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/props/typist_desk.png` | `tools/pixelgen/env_veltrava_hall_props.py` | typist desk: typewriter, carbon box, lamp, telephone |
+| `assets/environments/veltrava_hall/props/typist_desk_e.png` | `tools/pixelgen/env_veltrava_hall_props.py` | typist desk: typewriter, carbon box, lamp, telephone -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/props/typist_desk_n.png` | `tools/pixelgen/env_veltrava_hall_props.py` | typist desk: typewriter, carbon box, lamp, telephone -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/room.png` | `tools/pixelgen/env_veltrava_hall_room.py` | palais interior: vestibule, foyer + staircase, Protokollbuero, interpreters' corridor |
+| `assets/environments/veltrava_hall/room_e.png` | `tools/pixelgen/env_veltrava_hall_room.py` | palais interior: vestibule, foyer + staircase, Protokollbuero, interpreters' corridor -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/room_n.png` | `tools/pixelgen/env_veltrava_hall_room.py` | palais interior: vestibule, foyer + staircase, Protokollbuero, interpreters' corridor -- normal map (OpenGL +Y up) |
+| `assets/environments/veltrava_hall/saal_far.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | Grosser Saal head wall: windows, panelling, dais with six small flags, chandeliers |
+| `assets/environments/veltrava_hall/saal_far_e.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | Grosser Saal head wall: windows, panelling, dais with six small flags, chandeliers -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/saal_far_hist.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | same as saal_far with the historical USSR / Reich flags (Symbols.pick variant) |
+| `assets/environments/veltrava_hall/saal_far_hist_e.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | same as saal_far with the historical USSR / Reich flags (Symbols.pick variant) -- emission mask (unshaded glow) |
+| `assets/environments/veltrava_hall/saal_near.png` | `tools/pixelgen/env_veltrava_hall_ext.py` | the horseshoe table seen from the booths: presidium, delegates, secretariat table |
+| `assets/environments/veltrava_hall/scene.json` | `tools/pixelgen/env_veltrava_hall.py` | art manifest (TECHNICAL_ARCHITECTURE 3.1) |
+| `assets/environments/veltrava_hall/shafts.png` | `tools/pixelgen/env_veltrava_hall.py` | volumetric daylight-shaft veil (soft alpha, plain alpha blending) |
+
+---
+<a id="part-c3_cine"></a>
+
+## Asset manifest part — c3_cine (Chapter-3 cinematics LS_C3_Trains, LS_C3_ToHall, LS_C3_Close)
+
+* **Date:** 2026-11-05/06 (finishes the c3-cine work started in the cloud session of 2026-11-04/05)
+* **Area owner:** cinematics stream (C3_DESIGN.md §2.9, §7)
+* **Scenes / code:** `scenes/cinematics/ch3_trains/` (`Ch3Trains.tscn`, `ch3_trains.gd`), `ch3_tohall/`, `ch3_close/`,
+  shared `ch3_common/` (`c3_cinematic.gd` = the §12.5 contract: `finished` exactly once, idempotent `skip()`,
+  `configure(ctx)` picks the inner lines from the story flags, `seek()`/`advance()` for tools and tests, cue list for
+  subtitles/sound/loops, reduced motion; `pixel_fx.gd` = deterministic snow and 1 px Bresenham wires/hands;
+  `c3_dissolve*.gdshader` = ordered-dither dissolve, one Bayer cell per world pixel). Registered in
+  `data/chapters/c3.json` → `cinematics`, played by `ChapterExt.play_cinematic()`.
+* **Generators:** `py -3 -P tools/pixelgen/env_veltrava_cine.py [--only trains,tohall,close]` writes every texture and
+  `assets/cinematics/ch3/layout.json` (anchors shared with the runtimes; `tests/test_c3_cinematics.gd` checks the
+  match-cut geometry, the clock centre and the platform projection against it). Modules:
+  `env_veltrava_cine.py` (trains interiors + exterior + flare, build/main), `env_veltrava_cine_dawn.py` (t4),
+  `env_veltrava_cine_tohall.py`, `env_veltrava_cine_close.py`, `env_veltrava_cine_kit.py` (fonts via
+  `env_veltrava_lib`, rings, dial indices, dithered puffs), `env_veltrava_cine_figs.py` (the two protagonists).
+  Sound: `py -3 -P tools/audiogen/c3_cine_audio.py` → `assets/audio/sfx/c3cine_*.wav`.
+* **Figures:** Konrad and Alexei at the compartment windows (from behind), their faces in the black glass and
+  Konrad's profile are sculpted and lit with the signed-distance pipeline of the dialogue portraits
+  (`chargen_portrait2_anat/_cast/_paint/_sdf`, imported read-only, nothing there modified): the specs `konrad()` /
+  `alexei()` supply heads, hats, hair and coat materials, so the cinematic figures follow the portraits. Renders are
+  memoised on disk (`%TEMP%/ashes_c3cine_cache`, keyed by the pipeline sources + arguments, results byte-identical;
+  `ASHES_NO_CACHE=1` disables it).
+* **Determinism:** fixed seeds everywhere (`np.random.default_rng(n)`, `zlib.crc32(name)` for audio); two full builds
+  are byte-identical (checked with md5 over all PNG/WAV outputs).
+* **Licence / provenance (all files below):** original procedural pixel art and synthesized audio made for ASHES OF
+  EMPIRES: THE LAST WINTER by these generators (AI-authored code, project-owned, same licence as the game). No
+  downloaded, copied or traced images, fonts or samples. No real insignia anywhere in these cinematics (pennants and
+  flags are plain), so there are no `_hist` variants.
+* **Palettes:** `veltrava` and `palais` ramps of `data/chapters/c3.json` (registered by `env_veltrava_lib`) plus the
+  protagonists' material ramps of the portrait pipeline; grade `c3_cine` (no palette snap, light vignette and grain).
+
+### Art — `assets/cinematics/ch3/trains/` (LS_C3_Trains, 25.5 s)
+| File | Use |
+|---|---|
+| `ext_sky`, `ext_far_de`, `ext_far_su`, `ext_mid`, `ext_near` | the night plain behind the glass: overcast sky lit from the Line, the floodlit double fence with masts and watchtowers (seen from the west / from the east), the snow plain with birches and a cleared farm, the embankment streaks; tileable 640 px strips scrolled per layer |
+| `pole` | telegraph pole with crossarms and insulators (the runtime strings the sagging wires between poles) |
+| `int_konrad`, `fig_konrad` (4 frames: 2 head poses × breath), `refl_konrad`, `glow_lamp`, `patch_warm` | the German delegation's saloon car: mahogany panels, velvet curtains, the drafting tube on the rack, the reading lamp, the coffee cup with Konrad's hand on it; Konrad from behind; his lamp-lit face and the lamp mirrored in the glass; the light thrown onto the snow outside |
+| `int_alexei`, `fig_alexei` (4 frames), `refl_alexei`, `glow_tea`, `steam_tea` (6), `spoon` (2), `patch_cold` | the Soviet compartment: laminate walls, upper berths, the wall lamp, the tea glass in its holder with Alexei's hand at the handle, the spoon that tips with every rail joint, frost in the glass corners |
+| `sweep`, `flare`, `roomflare_k`, `roomflare_a` | the floodlit level crossing of the match cut (light band, the glass flooded, the room and the sitter's rim lit); `roomflare_*` also carries the weak flash of the passing lineside lamp |
+| `bridge_bg`, `bridge_fg`, `dawn_glow`, `fg_glow` | dawn over Veltrava: castle hill, cathedral, the patinated palais dome, onion church, town hall; the three-arch stone bridge (the commission's arms) with its lanterns; the half-frozen river with ice sheets, floes, cracks and the dawn in the open channel; the near bank promenade with fence, bench and a bare willow |
+| `train_de`, `train_su` (2 frames: pennants) | Konrad's train (grey-blue saloon cars, a salon car, pennants, engine running east) and Alexei's (green carriages, the sealed courier wagon 4 at its tail, engine running west) |
+| `smoke` (8 frames) | steam puffs (2×2 block dither), used for both plumes and the town's chimneys |
+| `walker` (6 frames) | a woman in a red-brown headscarf pulling a sled with a milk can along the bank |
+
+### Art — `assets/cinematics/ch3/tohall/` (LS_C3_ToHall, 6 s)
+| File | Use |
+|---|---|
+| `k1_bg`, `k1_clock`, `k1_glass`, `steam_puffs` (4) | the cast-iron platform clock under the glazed canopy (lattice girder, frosted panes with drifted snow, fretwork valance), the green carriage and the misty old town beyond; the crystal's glare (additive); drifting steam |
+| `k2_bg`, `k2_clock`, `k2_glass`, `pendulum` (8) | the gilded Jugendstil clock of the palais on its verde-antico panel between marble pilasters, the same dial geometry and index angles as the station clock (the match cut), its lyre pendulum |
+| `k2_konrad` (2 frames) | Konrad's silhouette walking in under the clock (warm chandelier rim, cold window rim, the drafting tube) |
+Hands are drawn at runtime (1 px Bresenham) from the shown time 9:39:57 → 9:40:00.
+
+### Art — `assets/cinematics/ch3/close/` (LS_C3_Close, 12 s)
+| File | Use |
+|---|---|
+| `n1_bg`, `n1_mid`, `n1_fg`, `board` (4 frames), `steam` (4) | platform 5 at 23:40 in one-point perspective (the pinhole `proj` the runtime uses to draw the departing special train as shrinking polygons): canopy, columns, lamps mirrored in the wet snow, the dual-gauge track, a goods train on the next track, the yard and the city at the vanishing point; the platform sign „5“ and a small clock at 23:40; the split-flap indicator (trilingual header) whose row clears after the departure |
+| `n2_bg`, `n2_win_konrad` (3), `n2_win_alexei` (3), `n2_lamp_glow` | the station square at night: Hotel Europa (mansard, balconies) and Hotel Nord (flat roof), snow on every ledge, the street into the old town with the palais dome, the lime trees and a parked car with someone smoking in it (runtime ember); the two lit windows where Konrad and Alexei step to the glass and turn toward the whistle |
+
+### Sound — `assets/audio/sfx/` (`tools/audiogen/c3_cine_audio.py`, 44.1 kHz / 16-bit stereo)
+| File | Content |
+|---|---|
+| `c3cine_ride_de.wav` (9.6 s) | the saloon car at night: rumble through the floor, padded rail joints (ta-tam every 1.55 s, in sync with the picture), wind at the glass, the panelling creaking |
+| `c3cine_ride_su.wav` (9.4 s) | the Soviet car: harder joints every 1.8 s, loose fittings rattling, the spoon clinking in the tea glass on every knock |
+| `c3cine_pass.wav` (1.2 s) | a lineside lamp post rushing past |
+| `c3cine_crossing.wav` (2.4 s) | the level crossing at speed: its bell swells and drops in pitch, the rush of air |
+| `c3cine_bridge.wav` (8.5 s) | two engines on the stone bridge at dawn: exhaust beats from both sides slowing, the hollow rumble of the arches, wheel clatter, the river valley echo |
+| `c3cine_whistle_de.wav` (3.0 s) | Konrad's engine answering across the river, lower than the Karsk whistle |
+| `c3cine_clock_tick.wav`, `c3cine_clock_clack.wav` | the seconds of the platform clock and the minute hand jumping to 9:40 |
+| `c3cine_palais_chime.wav` (3.0 s) | one soft strike of the palais clock's gong spring |
+| `c3cine_step_marble_1..3.wav` | leather heels on the marble of the foyer |
+| `c3cine_depart_night.wav` (6.5 s) | the special train pulling out without a whistle: cylinder hiss, couplings snatching, heavy beats receding |
+| `c3cine_flaps.wav` (1.0 s) | the split-flap indicator clearing its row |
+Re-used (unchanged): `cine_a1m1_whistle_far` (the Karsk whistle — heard again from Alexei's engine at dawn and as
+the one whistle over the night square: „Derselbe Pfiff“), `wind_gust`, `amb_veltrava_station`, `amb_veltrava_palais`,
+`amb_transition`, `mus_veltrava` (starts at dawn and carries on into the station level).
+
+### Checks
+`tests/test_c3_cinematics.gd` (17 cases): registration, contract (`finished` once for skip/skip, skip before play,
+natural end then skip, coarse fast-forward, replay), line variants for every flag combination, subtitles spoken in
+order and localised, no cues after skip, reduced motion (no knocks, no roll), shot order, every texture and every cue
+sound present, layout sync (glass/exterior box, clock centre, projection, runtime anchors), rail joints of the picture
+== joints cut into the bed sounds, the dawn dissolve completes. Visual review: `tests/visual/c3cine_harness.tscn`
+(`--c3-mode=shots|seq|run`).
+
+---
+<a id="part-minigames_r7_v"></a>
+
+## Asset manifest — Chapter-3 mini-games (area: minigames r7, Veltrava)
+
+Owner: minigames r7 (Veltrava) · Date: 2026-11-06 · Engine: Godot 4.7.2 · Contract: TECHNICAL_ARCHITECTURE §12.8
+(user request this round: more play time, new mini-game ideas, finish Chapter 3).
+
+Everything listed here is **original work**, generated procedurally by project scripts. No pixel, glyph, sample or
+melody was taken from `documentation/references/`, a font file or any external source; no downloads, no AI media.
+The three bitmap fonts (7×11 flap capitals, 5×7 sign letters incl. the Cyrillic of the station signs, 3×5 plate
+digits) are hand-made in `tools/pixelgen/mg_r7_v_kit.py`. Colours: `data/chapters/c3.json` palettes `veltrava`
+(station) and `palais` (palace) plus documented mixes of two palette entries (skin tones, camel, charcoal); the
+greens of scarves and the Soviet delegation pin use `veltrava.patina`. **No state insignia anywhere**: the
+"delegation pins" are a fictional conference system told apart by shape (square Reich delegation, triangle Soviet
+delegation, diamond observers, circle commission). The maker's plate "W. HOLUB · VELTRAVA" is fictional; no brands.
+Licence: original project work (same terms as the rest of the game).
+
+### The two mini-games
+
+| Explore entry | Scene / scripts | Place (hotspot, world px) | Game |
+|---|---|---|---|
+| `veltrava.station.flap_board` (detail, Alexei) | `scenes/ui/minigames/FlapBoard.tscn` · `flap_game.gd` + `flap_logic.gd` | `L_C3_Station` `exp_flap_board` [548, 304] below canopy column 3; world cue `FlapBoardCue` (`flap_world_cue.gd`) | The arrivals board ANKUNFT · ПРИБЫТИЕ · ARRIVÉE hangs in its top row at Alexei's own train. Six flap drums (hour 24, tens 6, units 10, from 10, via 8, platform 8 flaps) only fall forward; four couplings (units→tens carry on 9→0, tens→hour, from→via, track→via) make the order matter. Target = the printed timetable's special train **8:41 MOSKVA über KARSK, Gleis 5**. The line engages by itself; „Probelauf“ names what differs. The KARSK card is new (white, no yellowing) — Alexei's detail. |
+| `veltrava.hall.cloak_tokens` (detail, Konrad) | `scenes/ui/minigames/Cloakroom.tscn` · `cloak_game.gd` + `cloak_logic.gd` | `L_C3_Hall` `exp_cloak_tokens` [205, 300], beside the text agent's `veltrava.hall.cloakroom` (240); world cue `WenzelCue` (`cloak_world_cue.gd`) behind the counter | Session break; Herr Wenzel (garderobier since 1927) hung the coats on the wrong hooks. Round 1: four guests (Dr. Imhof, Frau Orlova, M. Duval, Herr Bauer), five coats; round 2: three of them come back for their hats, wearing their coats; six hats. Clues: pin shape, newspaper (Berlin / Moscow / Zurich), scarf colour, dictionary; the hook numbers mislead. Elena Weiss's charcoal coat with the wine-red scarf (check 27) stays — consistent with the cloakroom find and Frau Brunner's chat. |
+
+### Generators (deterministic; a re-run reproduces every file byte for byte — checked 2026-11-06, 28 files)
+
+* `py -3 -P tools/pixelgen/gen_mg_flap.py` → `assets/ui/minigames/flap/` (imports under the shared lock)
+* `py -3 -P tools/pixelgen/gen_mg_cloak.py` → `assets/ui/minigames/cloak/`
+* `tools/pixelgen/mg_r7_v_kit.py` — shared module of both (palettes, canvas, fonts); writes nothing itself
+* `py -3 -P tools/audiogen/mg_audio_r7_v.py` → `assets/audio/sfx/mg_flap_*`, `mg_cloak_*` (numpy only)
+
+Seeds are `crc32` of names; drawn 1:1, binary alpha, shown x3 (x2 in the compact layout above 100 % text scale).
+
+### Files
+
+| Path | Size (art px) | Use |
+|---|---|---|
+| `assets/ui/minigames/flap/flap_board.png` | 252×110 | Iron housing with rivets, trilingual header, date plate 12.02.1964, column labels, rows 2–3 (11:05 KORDON 1, 14:30 WIEN LINZ 2), empty windows of row 1, row lamps, maker's plate |
+| `…/flap/flap_faces.png` | 1992×108 (6 rows of 18 px faces) | Every flap card of every drum of row 1 (worn cards, the new KARSK card) |
+| `…/flap/flap_faces_hc.png` | same | High-contrast cards (white on black) |
+| `…/flap/flap_hatch.png` | 252×34 | Open service hatch: axle, brass end caps, bearing blocks, the brass carry pin and three bent wire hooks |
+| `…/flap/world_flap_board.png` | 3 × 84×41 | World prop for column 3: jammed (2 twitch frames), restored |
+| `…/flap/flap_closeup.png` | 240×96 | Find close-up (DiscoveryView): the restored line, the new KARSK card, the lit row lamp |
+| `…/flap/flap_layout.json` | — | Module rects, flap lists, start / target, static rows, couplings + hatch rects |
+| `assets/ui/minigames/cloak/cloak_back.png` | 320×150 | Green wall with damask stripes, token board (MARKEN, five pegs empty), walnut hat shelf, brass rail, hooks with plates 12 · 7 · 31 · 44 · 27, lamp glow |
+| `…/cloak/cloak_front.png` | 320×150 | Walnut counter with brass edge and panels, ledger, tray of polished spare plates, counter bell, lamp |
+| `…/cloak/cloak_coats.png` | 5 × 40×78 | Loden (square pin, Berlin paper), camel (diamond pin, green scarf, Zurich paper), charcoal lady's coat (circle pin, wine-red scarf, buttoned left), navy (circle pin, dictionary), dark brown with karakul collar (triangle pin, Moscow paper) |
+| `…/cloak/cloak_hats.png` | 6 × 28×16 | Grey homburg with tram ticket, karakul cap, wine-red knitted cap, grey homburg with the square pin, rabbit-fur ushanka, black homburg with green band |
+| `…/cloak/cloak_guests.png` | 6 × 4 cells of 64×72 | Busts of the four guests in the suit and in their coat, each neutral / pleased / puzzled |
+| `…/cloak/cloak_wenzel.png` | 3 × 46×60 | Herr Wenzel behind the counter (polishing, blink, talking) |
+| `…/cloak/cloak_tokens.png` | 5 × 14×14 | Brass coat checks 12, 31, 7, 44, 27 |
+| `…/cloak/world_wenzel.png` | 3 × 20×30 | Herr Wenzel at world scale for `L_C3_Hall` (idle, blink, plate to the light) |
+| `…/cloak/cloak_closeup.png` | 176×120 | Find close-up: the last coat on hook 31, the wine-red cap on the shelf |
+| `…/cloak/cloak_layout.json` | — | Hook / shelf / token / guest positions and cell sizes |
+| `assets/audio/sfx/mg_flap_clack_1..4.wav` | 0.12 s | One card falling onto the next (four pitches, Audio picks one) |
+| `assets/audio/sfx/mg_flap_turn.wav` | 0.12 s | Ratchet pawl over one tooth (the thumb on the drum) |
+| `assets/audio/sfx/mg_flap_rattle.wav` | 1.15 s | „Probelauf“: motor up, cards rattle past, nothing catches, motor down |
+| `assets/audio/sfx/mg_flap_engage.wav` | 0.95 s | The line engages: settling cascade, the stop, the lamp relay (understated) |
+| `assets/audio/sfx/mg_cloak_token.wav` | 0.6 s | Brass check on walnut |
+| `assets/audio/sfx/mg_cloak_coat.wav` | 0.8 s | Hanger off the brass rail, wool on wool |
+| `assets/audio/sfx/mg_cloak_hat.wav` | 0.45 s | Felt hat taken from the shelf |
+| `assets/audio/sfx/mg_cloak_bell.wav` | 1.6 s | Counter bell, struck once |
+
+All WAV: 44.1 kHz, 16-bit, mono, peak −4 … −9 dBFS.
+
+### Data and code (not assets, listed for completeness)
+
+`data/explore/minigames_r7_v.json` (2 entries, area `veltrava`), `data/locale/de_minigames_r7_v.json` (find texts in
+the protagonists' voices, all `mg.flap.*` / `mg.cloak.*` strings), `tests/test_minigames_r7_v.gd`, capture harnesses
+`tests/visual/minigames_r7_v_harness.gd` (UI over a screenshot, `--scale=1.5 --hc=1` variants) and
+`tests/visual/minigames_r7_v_ingame.gd` (real Main/Game path: prompt → mini-game → DiscoveryView → world cue).
+
+---
+<a id="part-minigames_r7_relay"></a>
+
+## Asset manifest — Chapter-3 mini-game „Das Relaispult“ (area: minigames_r7_relay)
+
+Owner: minigames_r7_relay specialist · Date: 2026-11-06 · Engine: Godot 4.7.2 · Contract: TECHNICAL_ARCHITECTURE §12.1/§12.8
+(user request this round: more play time, new mini-games, finish Chapter 3).
+
+Everything listed here is **original work**, generated procedurally by the two project scripts below on 2026-11-06.
+No pixel, sample, voice or melody was taken from `documentation/references/` or any other source; no downloads, no
+AI media, no recordings. Colours come from `data/chapters/c3.json` (palettes `palais` and `veltrava`) plus three
+lamp-glass ramps defined in the generator. No flags, no insignia, no text baked into the art (all text is Loc).
+The voices are prosody only (glottal source, vowel formants, consonant noise) — they speak no language and no words.
+Historical model: the booth-and-lamp systems of the post-war conferences (the real-history card
+`hist.reich.nuremberg_interpreters` tells the Nuremberg story outside the fiction; in the game world the trial never
+happened, so nothing in-world refers to it). Licence: original project work (same terms as the rest of the game).
+
+### The mini-game
+
+| Explore entry | Scene / scripts | Place | Game |
+|---|---|---|---|
+| `veltrava.hall.relay` (detail, area `veltrava`, links `hist.reich.nuremberg_interpreters`) | `scenes/ui/minigames/RelayDesk.tscn` · `scripts/ui/minigames/relay_game.gd` + `relay_logic.gd`; hotspot `scripts/ui/minigames/relay_spot.gd`; world prop `relay_world_desk.gd` | L_C3_Hall, interpreters' corridor, `exp_relay_desk` [1777, 300] between Kabine 3 and the fire box; prop `RelayDeskProp` (feet [1777, 295]) | The commission's sound technician has to go down to the Saal; Konrad keeps the interpretation desk. Four delegation channels (DE Reichsdelegation, RU Sowjetische Delegation, FR Vorsitz der Kommission, EN Beobachter) are plugged into the floor original or one of three booths (Kabine 1 · FR with German retour, Kabine 2 · RU↔DE, Kabine 3 · EN); booths that do not understand the floor take the relay of another booth and fall behind sooner. Yellow lamp: the speaker slows down; red: he stops a moment. Three rounds (Winterfahrplan · Lebensmittelzüge · Geschäftsordnung) with rising tempo and shorter warnings; a passage is repeated when less than 68 % got across or four threads were lost. The chair adjourns; the interpreter of Kabine 1 has the last word. Open after `c3b_arrival` until `c3b_inspect_booth` (the session) and in a memory of the palais (§12.10). |
+
+Contract (§12.8, shared base `minigame_base.gd`): `open(ctx)`, `ctx.auto` resolves at once, `finished(success)` exactly
+once, hint after two refusals (contextual: lamps after lost threads, guide lights on the right sockets after a wrong
+desk, the announcements as third hint; Settings `puzzle_hints` 0 off / 2 at once), Esc gives up without penalty,
+„Neu anfangen“ repeats the current round, `demo_solve()` plays the whole session through synthetic key events only
+(~140 s). Keys: ↑/↓ channel, ←/→ move its plug, 1–4 plug straight in, G (pad X) yellow, R (pad Y) red,
+Space/Enter/E (pad A) start/continue; mouse on sockets, tags, lamps and the display. Every state reads by text and
+shape as well as colour; desk labels follow the text-scale setting as far as their plates allow (a too long line
+shrinks instead of overflowing; the flavour subtitle gives way at 125/150 %); high contrast brightens needles,
+selection, guides and the dim texts; reduced motion stops all blinking. All text: `data/locale/de_minigames_r7_relay.json`.
+
+### Generators
+
+* `tools/pixelgen/gen_mg_relay.py` — `py -3 -P tools/pixelgen/gen_mg_relay.py`, then import (shared lock).
+  Deterministic (seeds = `crc32` of names; a re-run reproduces every file byte for byte). Drawn 1:1; the game draws
+  the desk x3 (nearest), the DiscoveryView shows the close-up x3, the prop lives at world scale.
+* `tools/audiogen/mg_audio_relay.py` — `py -3 -P tools/audiogen/mg_audio_relay.py` (numpy only, deterministic).
+  44.1 kHz / 16-bit mono WAV in `assets/audio/sfx/`; loops are built periodic and carry a RIFF `smpl` chunk.
+
+### Files
+
+| Path | Size (1:1 px) | Use |
+|---|---|---|
+| `assets/ui/minigames/relay/relay_desk.png` | 568×152 | The relay desk: walnut body, brass-framed floor display, four enamel channel tags, black crossbar field with 4×4 brass sockets, four source plates (Saal rostrum + three booth windows) with three backlog meters (green / hatched yellow / striped red zones), the steel lamp plate with two bezels |
+| `assets/ui/minigames/relay/relay_pins.png` | 3 × 15×17 | Crossbar pin (ivory knob, brass collar) · selection glow · dotted guide ring (hint) |
+| `assets/ui/minigames/relay/relay_lamps.png` | 6 × 30×30 | Yellow off/on, red off/on, floor lamp off/on (pressed glass with fresnel rings, halo when lit) |
+| `assets/ui/minigames/relay/relay_icons.png` | 6 × 9×9 | Check (understood), cross (wrong language), bars (silence), hook (relay), broken line (thread lost), pause |
+| `assets/ui/minigames/relay/relay_booths.png` | 5×4 cells 20×24 | Booth windows of Kabine 1–3 (an older woman, a man with glasses, a young woman — none of them a story character) and the floor rostrum, each listening / speaking a / speaking b / struggling / lost |
+| `assets/ui/minigames/relay/relay_interpreter.png` | 2 × 56×56 | The interpreter of Kabine 1 for the closing beat (grey hair in a bun, round glasses, cardigan, headset round her neck): calm / a small smile |
+| `assets/ui/minigames/relay/relay_layout.json` | — | Every rect of the composition (art px) — written by the generator, read by `relay_game.gd` |
+| `assets/ui/minigames/relay/find_relay.png` | 232×150 | Close-up of the find: the crossbar with the session's last four pins, the yellow lamp still glowing, a headset, the technician's note card with pencilled arrows only, a pencil, a cold coffee |
+| `assets/ui/minigames/relay/world_desk.png` | 4 × 44×38 | The technician's desk in the corridor (table, sloped bakelite console with socket field, two lamps, three channel diodes, a headset on a hook); lamp frames calm / yellow / diodes / both |
+| `assets/ui/minigames/relay/world_desk_n.png` | 4 × 44×38 | Normal map (table top up, console face tilted back) for the per-texel lighting |
+| `assets/ui/minigames/relay/world_desk_e.png` | 4 × 44×38 | Emission of the lamps and diodes (additive child sprite, light mask 0) |
+| `assets/audio/sfx/mg_relay_hall.wav` | 12 s LOOP | The Großer Saal heard from the corridor: a dozen far voices (no words), chairs, paper, a cough, room tone, behind glass |
+| `assets/audio/sfx/mg_relay_voice_fr.wav` | 8 s LOOP | The chair at the microphone through the desk monitor (older man, calm, phrase-final rises) |
+| `assets/audio/sfx/mg_relay_voice_ru.wav` | 8 s LOOP | The Soviet delegate (a woman, measured, darker vowels) |
+| `assets/audio/sfx/mg_relay_voice_de.wav` | 8 s LOOP | The Reich delegate (a man, clipped consonants) — the UI fades each voice with its speaker and bends the pitch with the tempo |
+| `assets/audio/sfx/mg_relay_plug.wav` | 0.3 s | A pin pushed into its socket (contact scrape + seat) |
+| `assets/audio/sfx/mg_relay_switch.wav` | 0.45 s | A desk relay pulling in (round start) |
+| `assets/audio/sfx/mg_relay_lamp_yellow.wav` | 0.47 s | Bakelite push button + the soft buzz of the lamp relay |
+| `assets/audio/sfx/mg_relay_lamp_red.wav` | 0.6 s | The same, heavier and lower, with a relay clack |
+| `assets/audio/sfx/mg_relay_lost.wav` | 0.7 s | A channel dropping out (crackle, falling hiss) |
+| `assets/audio/sfx/mg_relay_bell.wav` | 2.2 s | The chair's small brass hand bell, two strokes |
+| `assets/audio/sfx/mg_relay_click.wav` | 0.12 s | A dull button press that does nothing (lamp not needed) |
+
+### Verification (2026-11-06)
+
+* `tests/test_minigames_r7_relay.gd` (10 cases, ~1700 checks): booth/relay/pivot tables for every floor language,
+  rising tempo and shorter warnings, a careful and a slower scripted player get through (no lost thread, ≥ 90 %),
+  never re-plugging repeats round 1, ignoring the lamps repeats round 2 (lost threads), unneeded lamps are
+  ignored, yellow slows / red pauses (no scoring) / a lost thread silences the relaying booths, auto mode, keys,
+  hint, Esc, demo_solve source check, find + strings (calm, typographic quotes, no microphone numbers, nothing about
+  Anlage C or Elena), hotspot on the walkable floor ≥ 26 px from every other spot, level nodes, art sizes vs layout,
+  WAV format and loop chunks.
+* Windowed captures (scratch harnesses, not in the repo): the desk over the palais at 100 %, 150 % text and high
+  contrast; the real game booted into L_C3_Hall, Konrad at the desk, opened through `Game.interact` →
+  `_run_minigame`, solved by `demo_solve()` in 140 s without a refusal, find + history card shown, game unpaused.
+
+---
+<a id="part-tasks"></a>
+
+## Asset manifest part — tasks (side tasks „Aufgaben", TECHNICAL_ARCHITECTURE §12.9, 2026-11-06)
+
+All assets are original and generated deterministically by the script below (licence: project-owned, no
+third-party material, nothing downloaded, copied or traced). A re-run reproduces every file byte for byte (seeds
+are crc32 of fixed names; no wall clock, no `hash()`).
+
+### Generator
+| Command | Writes |
+|---|---|
+| `py -3 -P tools/pixelgen/gen_tasks.py [--preview DIR]` | `assets/explore/tasks/berlin_drawing.png`, `assets/ui/tasks/mark_task.png`; `--preview` adds ×3 previews |
+
+Read-only reuse: `tools/pixelgen/explore_berlin.py` (Canvas tone-space painter, ramps, masks, F35 glyphs, paper and
+wall helpers — the close-up shares the Berlin archive palette and Bayer dithering; the palette check of that module
+runs on the output), `tools/pixelgen/pg.py` (colour helpers), the exploration UI kit colours of
+`tools/pixelgen/gen_ui_explore.py` (copper/amber values copied as constants).
+
+### Files
+| File | Size | Content |
+|---|---|---|
+| `assets/explore/tasks/berlin_drawing.png` | 240×150, pixel art 1:1 (shown ×3) | close-up of the find `berlin.task.mittens.door` (task „Zweimal klopfen"): Lotte's folded drawing for the porter on squared school paper with a red margin line, held up in the dim stairwell — the lodge with a wobbly PFÖRTNER sign, the porter with cap and moustache, the radio with its green eye, notes flying out to a sun, signature LOTTE and a heart; coloured-pencil strokes with a child's unsteady line, unfinished colouring. No insignia. |
+| `assets/ui/tasks/mark_task.png` | 27×27 (9×9 art px ×3, like `assets/ui/explore/icons/mark_new.png`) | HUD prompt marker for the next step of a side task (`Interactable.prompt_state() == "task"`): a hollow amber diamond with a copper rim and a lit core, quieter than the "new find" twinkle. Used by the HUD once the hud.gd patch of the tasks round is integrated. |
+
+### Not assets
+Texts: `data/locale/de_tasks.json`. Data: `data/explore/tasks_karsk.json`, `tasks_berlin.json`, `tasks_plaza.json`,
+`tasks_veltrava.json`. Hotspots: `exp_task_signalbox` (Karsk), `exp_task_stairwell` (Berlin archive),
+`exp_task_coupling` (Veltrava station) in the environments' `explore_hotspots.json`. Visual harness:
+`tests/visual/tasks_shots.tscn`.
+
+---
+<a id="part-memories"></a>
+
+## Asset manifest — Memories („Erinnerungen“, area: memories)
+
+Owner: memories specialist · Date: 2026-11-06 · Engine: Godot 4.7.2. Everything below is **original work** made by
+project scripts from the game itself (no downloads, no traced or sampled material, no AI image/audio models).
+Contract: `documentation/TECHNICAL_ARCHITECTURE.md` §12.10.
+
+### 1. Assets
+| File | Size / format | Generator | Notes |
+|---|---|---|---|
+| `assets/ui/memories/L_A1_Railyard.png` | 320×180 RGB | `tools/pixelgen/gen_ui_memories.py` from `src/raw_L_A1_Railyard.png` | Sepia print for the MemoryView card: crop (236,126) of the 640×360 world frame, 1 world px = 1 print px. |
+| `assets/ui/memories/L_M1_Archive.png` | 320×180 RGB | same, `src/raw_L_M1_Archive.png` | crop (196,146): drafting table, lamp, window light. |
+| `assets/ui/memories/L_M1_Plaza.png` | 320×180 RGB | same, `src/raw_L_M1_Plaza.png` | crop (214,92): dome, plain eagle (neutral twin), ranks. |
+| `assets/ui/memories/L_C3_Station.png` | 320×180 RGB | same, `src/raw_L_C3_Station.png` | crop (120,56): clock tower, arch window, departures board. |
+| `assets/ui/memories/L_C3_Hall.png` | 320×180 RGB | same, `src/raw_L_C3_Hall.png` | crop (150,50): staircase, chandelier, gallery door. |
+| `assets/ui/memories/icon_memory.png` | 39×39 RGBA (13×13 drawn ×3) | same | Pocket watch at nine o'clock, amber arc + arrow tip on the rim (time running back). UI kit palette. |
+| `assets/ui/memories/manifest.json` | JSON | same | Files, sizes, crops, sources. |
+| `assets/ui/memories/src/raw_<scene>.png` (5) | 640×360 RGB, `.gdignore` (not imported) | `tests/visual/memory_thumbs.tscn` | In-game captures (`PixelView.capture_world_image`, graded, one sample per texel) at fixed camera/player spots, **`--symbols=0`**: the neutral insignia twins — real regime insignia never appear in a menu (§12.4). |
+| `assets/audio/sfx/mem_rewind.wav` | 2.9 s, 44.1 kHz 16-bit stereo | `tools/audiogen/memories_audio.py` | Pocket-clock ticks time-reversed and speeding up (winding back), reversed airy swell with a soft release, faint tape-wow drone sinking 196→176 Hz, hushed low settle. Peak −5 dBFS, RMS −26 dBFS. No chime, no fanfare. |
+| `assets/audio/sfx/mem_return.wav` | 2.6 s, same format | same | The same clock forward, fast at first, settling into tick-tock; the swell from its peak fading out; drone rising back. Peak −5 dBFS, RMS −31 dBFS. |
+
+Determinism: `gen_ui_memories.py` and `memories_audio.py` are seeded (zlib.crc32 of the names) and write byte-identical
+files on every run (checked twice: md5 of both WAVs and all PNGs unchanged). The raw captures are renderings of the
+running game (snow, walkers, smoke move), so a re-capture gives slightly different frames; the print step from a given
+raw frame is deterministic.
+
+Reproduce:
+```bash
+GODOT="$LOCALAPPDATA/Programs/Godot/Godot_v4.7.2-stable_win64_console.exe"
+"$GODOT" --path . res://tests/visual/memory_thumbs.tscn -- --scene=L_A1_Railyard --capture=C:/tmp/boot.png \
+    --frames=100000 --mt-out=C:/Spiele/AshesOfEmpires/assets/ui/memories/src --symbols=0
+py -3 -P tools/pixelgen/gen_ui_memories.py
+py -3 -P tools/audiogen/memories_audio.py
+## then the shared --import (lock .import_lock)
+```
+`--mt-survey=1` captures a 320-px camera sweep per level (to choose the spots in `SHOTS` / `CROPS`).
+
+### 2. Code / data
+* `scripts/core/memories.gd` (helper), `scripts/core/game.gd` (memory mode, transitions, films), `scripts/core/memory_drive.gd`
+  (E2E helpers + `--memory-demo`), `scripts/ui/memory_view.gd` + `scenes/ui/MemoryView.tscn`, HUD badge (`hud.gd`),
+  pause / main menu entries, save guard (`save_system.gd`, `save_load_menu.gd`).
+* `data/grades.json` → `"memory"` overlay preset. Strings: `data/locale/de_memories.json` (UI, places, months, prompts,
+  remembered lines, film titles, `sys.save.err.memory`).
+* Profile file at runtime: `user://profile.json` (not shipped).
+
+### 3. Content notes
+Remembered lines are first person, past tense, in the protagonists' voices; they only state what the player did
+(the decision taken, the puzzle solved) — nothing new is invented. Dates are months („Januar 1964“, „Februar 1964“),
+no invented days. No reward language; the finds counter is the same neutral counter as elsewhere.
+
+---
 <a id="part-ui"></a>
 
 ## Asset manifest — UI (area: ui)
@@ -1975,65 +2797,3 @@ code, libraries or downloaded material; no network access was used. All files ar
 
 Regenerate the fixture after any change to `data/v3/*.json` or the preproduction reference; `tests/test_reference_parity.gd`
 fails with "unchanged since the fixture was generated" until it is regenerated.
-
----
-<a id="part-c3"></a>
-
-## Asset manifest part — Chapter 3 „Der eiserne Frieden" (opening), branch `kapitel-3`
-
-Date for all entries: **2026-11-05** (work started 2026-11-04). Everything below is original work for this project, produced
-by deterministic generators in this repository or written by hand; no downloaded images, sounds or samples, no AI image
-services, no tracing of references. Licence: project-owned, same as the game. The real-history cards cite published
-books and encyclopaedia articles as sources (text written here, not copied); their facts could not be checked online in
-the cloud session and carry a `review` note in the data.
-
-### Story, presentation and code
-| Path | Kind | How it was made |
-|---|---|---|
-| `data/v3/*.json` (Chapter-3 entries), `data/v3/locale_de.json` (`*.c3*` keys) | story data, German texts | hand-written from `documentation/C3_DESIGN.md` |
-| `data/chapters/c3.json` | presentation rules (line variants, option texts, reactions, palettes, grades, UI/cinematic registry) | hand-written |
-| `data/locale/de_c3_dialogue.json`, `de_c3_characters.json`, `de_c3_cinematics.json`, `de_c3_ui.json` | German texts | hand-written |
-| `scripts/core/chapter_ext.gd`, `scripts/actors/story_npc.gd`, `scripts/actors/gated_interactable.gd` | GDScript | hand-written |
-| `scenes/levels/L_C3_Station.tscn`, `L_C3_Hall.tscn` | level scenes | generated once by a throw-away script from the hotspot contract, then hand-maintained |
-| `scripts/core/autoplay.gd`, `scripts/core/inputplay.gd` (Chapter-3 routes) | E2E drivers | hand-written extensions |
-| `tests/test_c3_*.gd`, `tests/reference/python_reference.json.gz` | tests, parity fixture | hand-written; fixture generated by `python3 -P tests/reference/make_python_reference.py` from the unmodified preproduction reference engine on `data/v3` |
-| `tools/docs/gen_quest_db_c3.py` → `documentation/QUEST_DATABASE.md` (C3 section) | documentation generator | hand-written |
-
-### Exploration content
-| Path | Kind | How it was made |
-|---|---|---|
-| `data/explore/veltrava_station.json` (12 finds, 1 secret, 2 chats), `veltrava_hall.json` (10 finds, 2 chats) | exploration entries | hand-written in the protagonists' voices |
-| `data/explore/c3_history_soviet.json` (2 cards), `c3_history_reich.json` (1 card) | real-history cards | hand-written, sourced (see `review` note) |
-| `data/locale/de_explore_veltrava.json`, `de_history_c3.json` | German texts | hand-written |
-
-### Characters — `tools/pixelgen/characters_c3.py` (+ `chargen_cast_c3.py`, `chargen_portrait_c3.py`)
-Seven sprite sheets with normal maps and 4-expression portrait strips through the existing character pipeline
-(`chargen_core/body/anim`), deterministic (verified: two runs byte-identical): `assets/characters/elena/`,
-`border_officer/`, `conductor/`, `voronova/`, `kessler/`, `typist/`, `journalist/` (`sheet.png`, `sheet_n.png`,
-`sheet.json`, `portrait.png`, `portrait.json`). Review strips in `assets/characters/_preview/c3_*` (`.gdignore`).
-
-### Audio — `tools/audiogen/c3_audio.py` (synthesised, deterministic seeds `zlib.crc32(name)`)
-| File | Content | Length / level |
-|---|---|---|
-| `assets/audio/amb/amb_veltrava_station.wav` | station hall at dawn: crowd murmur (formant babble, no speech), standing loco breathing, steam, couplings, pigeons, footsteps, cart wheel, distant tram bell, two-tone chime, wind | 60 s loop, stereo 44.1 kHz 16-bit, RMS ≈ −24 dBFS, peak −5.4 |
-| `assets/audio/amb/amb_veltrava_palais.wav` | conference palace interior: room tone, murmur behind doors, typewriter bursts, mimeograph, clock, radiator ticks | 60 s loop, RMS ≈ −25 dBFS |
-| `assets/audio/music/mus_veltrava.wav` | chapter cue: restrained chamber texture, slow clockwork pulse over a bowed drone, hesitant two-voice motif; sits under dialogue | 90 s loop (listed in `Audio.LOOPING_MUSIC`), RMS ≈ −20 dBFS, peak −4.9 |
-
-### Environments — `tools/pixelgen/env_veltrava_station*.py` + `env_veltrava_lib.py`, `env_veltrava_hall*.py`
-| Path | Content | How it was made |
-|---|---|---|
-| `assets/environments/veltrava_station/**` (14 layers, 18 props, fx strips, `scene.json`) | Bahnhof Veltrava at dawn: old-town skyline, station building, dual-gauge tracks, both delegation trains, courier wagon 4, canopies, passport control, concourse with Café „Korridor“; flags as neutral `*.png` + `*_hist.png` | generated (deterministic, palette `veltrava` registered by `env_veltrava_lib.py`); final polish pass not done |
-| `assets/environments/veltrava_hall/**` (74 files: room, shafts, exteriors, Saal parallax, 15 props, fx, `scene.json`, `provenance.json`) | Palais der Kommission: vestibule, foyer, Protokollbüro, interpreters' corridor; flags neutral + `_hist` | generated (deterministic, palette `palais`) |
-| `assets/ui/documents/veltrava_station_weighbill.png`, `veltrava_station_departures.png`, `veltrava_station_travel_order.png` + `veltrava_station_documents.json` | inspect documents of the station (scribble glyphs + legible key figures) | `tools/pixelgen/env_veltrava_station_docs.py` |
-| `assets/ui/documents/veltrava_hall_carbon.png` + `veltrava_hall_documents.json` | the carbon-copy blotter from booth 2 | `tools/pixelgen/env_veltrava_hall_docs.py` |
-| `data/locale/de_env_veltrava_station.json`, `de_env_veltrava_hall.json` | alt texts of the documents | hand-written |
-
-### Puzzle UI — `tools/pixelgen/gen_ui_c3.py`
-`assets/ui/puzzle/c3_*` (plan, log sheet, 4 name cards, 4 glyphs, slot, arrow, `c3_protocol_board.json`),
-`assets/ui/documents/veltrava_protocol_seating.png`, `veltrava_protocol_booth_log.png` + `veltrava_protocol_documents.json` — generated,
-deterministic; HD text is overlaid by `scripts/ui/protocol_puzzle.gd` (hand-written, with `scenes/ui/ProtocolPuzzle.tscn`,
-`tests/test_c3_puzzle_ui.gd`, `tests/visual/ProtocolPuzzlePreview.tscn`).
-
-### Cinematics (open, branch `c3-cine` only)
-`scenes/cinematics/ch3_trains/**`, `ch3_tohall/**`, `ch3_close/**`, `ch3_common/**`, `tests/test_c3_cinematics.gd` (hand-written) and
-`tools/pixelgen/env_veltrava_cine.py` (generator, unfinished; no assets generated yet) — see `documentation/C3_REPORT.md` §4.

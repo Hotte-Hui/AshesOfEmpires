@@ -677,6 +677,45 @@
    "on_layer": "playfield"
   },
   {
+   "name": "transom_1",
+   "pos": [
+    1586,
+    134
+   ],
+   "color": "#D3DEE6",
+   "energy": 0.3,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 26,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "transom_2",
+   "pos": [
+    1652,
+    134
+   ],
+   "color": "#D3DEE6",
+   "energy": 0.3,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 26,
+   "on_layer": "playfield"
+  },
+  {
+   "name": "transom_3",
+   "pos": [
+    1718,
+    134
+   ],
+   "color": "#D3DEE6",
+   "energy": 0.3,
+   "radius": 84,
+   "flicker": 0.0,
+   "height": 26,
+   "on_layer": "playfield"
+  },
+  {
    "name": "globe_1470",
    "pos": [
     1470,
@@ -905,6 +944,191 @@
    ],
    "z": -40,
    "lit": false
+  }
+ ],
+ "decals": [
+  {
+   "name": "garderobiere",
+   "file": "life/garderobiere.png",
+   "pos": [
+    216,
+    241
+   ],
+   "frames": 65,
+   "fps": 6,
+   "layer": "playfield",
+   "z": 0,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "note": "cloakroom attendant behind the counter (sorts tokens, looks up)",
+   "base_y": 290
+  },
+  {
+   "name": "cleaner",
+   "file": "life/cleaner.png",
+   "pos": [
+    395,
+    248
+   ],
+   "frames": 70,
+   "fps": 7,
+   "layer": "playfield",
+   "z": 0,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "note": "cleaning woman mopping the melt water in the archway",
+   "base_y": 293
+  },
+  {
+   "name": "landing_pair",
+   "file": "life/landing_pair.png",
+   "pos": [
+    696,
+    127
+   ],
+   "frames": 52,
+   "fps": 6,
+   "layer": "room",
+   "z": 2,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "note": "two delegates talking at the gallery door, the usher beside it (stair landing)"
+  },
+  {
+   "name": "waiter",
+   "file": "life/waiter.png",
+   "pos": [
+    751,
+    247
+   ],
+   "frames": 58,
+   "fps": 5,
+   "layer": "playfield",
+   "z": 0,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "note": "waiter at the untouched buffet",
+   "base_y": 294
+  },
+  {
+   "name": "interp_1",
+   "file": "life/interp_1.png",
+   "pos": [
+    1571,
+    228
+   ],
+   "frames": 50,
+   "fps": 6,
+   "layer": "room",
+   "z": 2,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "note": "interpreter at work in booth 1 (FR), seen from behind"
+  },
+  {
+   "name": "interp_3",
+   "file": "life/interp_3.png",
+   "pos": [
+    1690,
+    228
+   ],
+   "frames": 50,
+   "fps": 5,
+   "layer": "room",
+   "z": 2,
+   "lit": true,
+   "normal": true,
+   "emission": false,
+   "note": "interpreter at work in booth 3 (EN), seen from behind"
+  },
+  {
+   "name": "saal_life",
+   "file": "life/saal_life.png",
+   "pos": [
+    1167,
+    226
+   ],
+   "frames": 48,
+   "fps": 4,
+   "layer": "saal_near",
+   "z": 1,
+   "lit": false,
+   "normal": false,
+   "emission": false,
+   "note": "the session through the booth windows: speaker, nods, an usher with a note"
+  },
+  {
+   "name": "door_flash",
+   "file": "life/door_flash.png",
+   "pos": [
+    952,
+    198
+   ],
+   "frames": 72,
+   "fps": 6,
+   "layer": "room",
+   "z": 2,
+   "lit": false,
+   "normal": false,
+   "emission": true,
+   "note": "press flashes behind the etched glass of the Saal doors"
+  },
+  {
+   "name": "pigeon",
+   "file": "life/pigeon.png",
+   "pos": [
+    1178,
+    181
+   ],
+   "frames": 78,
+   "fps": 6,
+   "layer": "",
+   "z": -60,
+   "lit": false,
+   "normal": false,
+   "emission": false,
+   "note": "a pigeon on the outer sill of the office window (behind the glass)",
+   "parallax": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "name": "clock_vestibule",
+   "file": "life/clock_vestibule.png",
+   "pos": [
+    329,
+    113
+   ],
+   "frames": 60,
+   "fps": 1,
+   "layer": "room",
+   "z": 2,
+   "lit": false,
+   "normal": false,
+   "emission": false,
+   "note": "second hand of the vestibule clock"
+  },
+  {
+   "name": "clock_corridor",
+   "file": "life/clock_corridor.png",
+   "pos": [
+    1463,
+    153
+   ],
+   "frames": 60,
+   "fps": 1,
+   "layer": "room",
+   "z": 2,
+   "lit": false,
+   "normal": false,
+   "emission": false,
+   "note": "second hand of the interpreters' corridor clock"
   }
  ],
  "hotspot_info": {
@@ -1244,7 +1468,8 @@
   "The seating easel matches the puzzle: horseshoe, presidium on top, mics clockwise from 1, secretariat (12) at the open end; only 1, 2 and 12 are printed.",
   "Booth 2 (x 1622-1682): empty chair, headset dangling on its cable, pencil, blotter pad, lamp on.",
   "The evacuation plan shows a dashed staff corridor down to a cellar room (foreshadowing).",
-  "No story character is painted into the art; NPC sprites stand at the npc anchors."
+  "No story character is painted into the art; NPC sprites stand at the npc anchors.",
+  "Ambient life = decals with frames in life/ (env_veltrava_hall_life.py): cloakroom attendant, cleaner in the archway, delegates + usher on the stair landing, waiter beside the buffet, interpreters in booths 1 and 3, the session in the Saal, press flashes behind the Saal doors, a pigeon outside the office window, clock second hands.  Playfield figures keep base_y < 296; none stands on a hotspot."
  ],
  "meta": {
   "mode": "side",

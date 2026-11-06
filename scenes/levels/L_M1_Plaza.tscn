@@ -85,6 +85,7 @@ script = ExtResource("2")
 kind = "chat"
 hotspot_id = "exp_pz_photographer"
 explore_id = "plaza.photographer"
+explore_chain = PackedStringArray("plaza.photographer", "plaza.task.photo.photographer")
 
 [node name="ExpBarrier" type="Node2D" parent="Playfield"]
 script = ExtResource("2")
@@ -135,6 +136,7 @@ script = ExtResource("2")
 kind = "chat"
 hotspot_id = "exp_pz_neighbour"
 explore_id = "plaza.neighbour"
+explore_chain = PackedStringArray("plaza.neighbour", "plaza.task.photo.ask", "plaza.task.photo.return")
 npc_id = "berlin_mother"
 
 [node name="ExpWindow" type="Node2D" parent="Playfield"]

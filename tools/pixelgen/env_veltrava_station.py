@@ -31,8 +31,14 @@ import env_veltrava_station_bg as BG  # noqa: E402
 import env_veltrava_station_tracks as TR  # noqa: E402
 import env_veltrava_station_props as PR  # noqa: E402
 import env_veltrava_station_fx as FX  # noqa: E402
+import env_veltrava_station_life as LIFE  # noqa: E402
 
 WORLD = (WORLD_W, WORLD_H)
+CANVAS_MODULATE = '#D5D3D6'
+# story NPC feet = scene.json hotspot + hotspot_offset of the node in scenes/levels/L_C3_Station.tscn, and the
+# side they face; used only to place their breath puffs (mouth ~41 px above the feet on the 32x56 sheets)
+NPC_FEET = {'conductor': ((616, 290), -1), 'border_officer': ((1208, 286), -1), 'voronova': ((346, 300), -1),
+            'konrad_queue': ((1300, 280), -1)}
 EMISSION_STRENGTH = {'skyline': 0.35, 'city': 0.4, 'station': 0.5, 'far_track': 0.5, 'island': 0.6,
                      'square': 0.5, 'ground': 0.3, 'train_near': 0.5, 'concourse': 0.55, 'canopy': 0.7}
 
@@ -166,6 +172,8 @@ def build():
     tr, ET = TR.make_train_near()
     e, _, trpos = save_layer(tr, 'train_near', 1.0, -16, crop='box')
     layers.append(e)
+    # compartments of wagon 2 whose lamp is on but where nobody is baked in: somebody moves behind the glass
+    A['life_windows'] = [(w[0], w[1]) for w in ET['cars'][1].get('lit', []) if not w[4]][:3]
     EC = {}
     canopy = PR.make_canopy(EC)
     e, _, _ = save_layer(canopy, 'canopy', 1.0, -12, crop='box')
@@ -191,8 +199,9 @@ def build():
     ent, _, _ = save_prop(P, 'luggage_cart', foot, (424, 290), 290, rect_poly(398, 283, 452, 291))
     props.append(ent)
     P, foot = PR.bench(seated=True)
-    ent, _, _ = save_prop(P, 'bench_a', foot, (206, 282), 282, rect_poly(181, 276, 233, 283))
+    ent, bpos_a, (ba0, bb0) = save_prop(P, 'bench_a', foot, (206, 282), 282, rect_poly(181, 276, 233, 283))
     props.append(ent)
+    A['bench_heads'] = [(bpos_a[0] + hx - ba0, bpos_a[1] + hy - bb0) for (hx, hy) in PR.BENCH_HEADS]
     P, foot = PR.bench(mitten=True)
     ent, _, _ = save_prop(P, 'bench_mitten', foot, (802, 298), 298, rect_poly(777, 292, 829, 299))
     props.append(ent)
@@ -221,8 +230,9 @@ def build():
         ent, _, _ = save_prop(P, 'flag_' + kind, foot, (fxw, bpos[1] + 15), 278, [], hist=H)
         props.append(ent)
     P, foot = PR.queue_reich()
-    ent, _, _ = save_prop(P, 'queue_reich', foot, (1342, 280), 280, rect_poly(1320, 274, 1364, 281))
+    ent, qpos, (qx0, qy0) = save_prop(P, 'queue_reich', foot, (1342, 280), 280, rect_poly(1320, 274, 1364, 281))
     props.append(ent)
+    A['queue_heads'] = [(qpos[0] + hx - qx0, qpos[1] + hy - qy0) for (hx, hy) in PR.QUEUE_HEADS]
     P, foot = PR.menu_stand()
     ent, _, _ = save_prop(P, 'menu_stand', foot, (1604, 290), 290, rect_poly(1596, 286, 1612, 291))
     props.append(ent)
@@ -231,6 +241,9 @@ def build():
     warm = [(1594, 270, (LA[2], LA[1]), 0.95, 3), (1650, 268, (LA[3], LA[2]), 1.0, 3),
             (1704, 270, (LA[2], LA[1]), 0.95, 3), (A['booth_lamp'][0], 282, (LA[2], LA[1]), 0.6, 1),
             (ET['saloon'][0], 268, (LA[1], LA[0]), 0.5, 1)]
+    # polish pass: the lit compartments mirror faintly in the wet slabs along the platform edge (warm accents)
+    warm += [(w[0] + 8, 267, (LA[1], LA[0]), 0.32, 1) for car in ET['cars'] for w in car.get('lit', [])
+             if 0 <= w[0] < 1920]
     EG = {}
     door_xs = [dx + dw // 2 for car in ET['cars'] for (dx, dw) in car['doors'] if 0 <= dx < 1920]
     ground = TR.make_ground(EG, cold, warm, door_xs=door_xs)
@@ -238,6 +251,15 @@ def build():
     layers.append(e)
     e, _, _ = save_layer(PR.make_fg(), 'fg_frame', 1.3, 60, lit=False, normal=False)
     layers.append(e)
+    # ------------------------------------------------------------------ ambient life (actors + viaduct plane)
+    A['breath'] = [{'pos': [fx_, fy_], 'points': [[fx_ + face * 3, fy_ - 41]], 'interval': 4.2 + (fx_ % 7) * 0.2}
+                   for (fx_, fy_), face in NPC_FEET.values()]
+    A['breath'].append({'pos': [1342, 280], 'points': [list(h) for h in A['queue_heads']], 'interval': 5.0})
+    A['breath'].append({'pos': [206, 282], 'points': [list(h) for h in A['bench_heads']], 'interval': 5.6})
+    actors, extra = LIFE.build(A)
+    for (XL, nm, par, z) in extra:
+        e, _, _ = save_layer(XL, nm, par, z)
+        layers.append(e)
     layers.sort(key=lambda d: d['z'])
     # ------------------------------------------------------------------ fx strips
     strips = {}
@@ -259,8 +281,6 @@ def build():
     strip('chimney_smoke', S, org, 8)
     S, org = FX.smoke_ribbon(seed=7, fw=30, fh=54, drift=16.0, w0=1.5, w1=6.0, cols=[SK[0], SK[1], SK[2], SK[3]])
     strip('chimney_smoke_far', S, org, 8)
-    S, org = FX.pigeons(seed=8)
-    strip('pigeons', S, org, 8)
 
     def anim(key, src, parallax, z, fps, emission=False, alpha=1.0, note=None):
         f, org, fw, fh, n = strips[key]
@@ -283,18 +303,30 @@ def build():
             anim('snow_near', (k * 160 - row * 70, y), 0.96, -35, 5 + (k % 2),
                  note='near flakes beyond the canopy edge, hidden by trains and platform' if k == 0 and row == 0 else None)
     ax, ay, aw, ah = EQ['arch']
-    anim('snow_arch', (ax - 2, ay), 1.0, -17, 5, note='snow on the square, seen only through the exit arch')
+    anim('snow_arch', (ax - 2, ay), 1.0, -14, 5,
+         note='snow on the square, seen only through the exit arch (in front of the tram actor at z -17)')
     # steam: Soviet loco (left, off-screen) and the steam-heating couplings between the carriages
     anim('loco_steam', (-30, 178), 1.0, -15, 5)
     anim('heater_steam', (-6, 258), 1.0, -15, 6, alpha=0.9)
+    decals = []
     for (gx, gy) in ET['gangways']:
+        if gx == 326:
+            # the leaking heating coupling between wagons 2 and 3 (side task 'Wagen drei ist kalt'): a named
+            # decal, so the task code can stop the hiss once the stop cock is thawed:
+            #   level.backdrop.decals_by_name["heater_leak_23"].visible = false
+            f_, org_, fw_, fh_, n_ = strips['heater_steam']
+            decals.append({'name': 'heater_leak_23', 'file': f_, 'pos': [int(gx - 2 - org_[0]), int(gy + 20 - org_[1])],
+                           'z': -15, 'parallax': [1.0, 1.0], 'lit': False, 'normal': False, 'frames': n_,
+                           'fps': 7, 'alpha': 0.9,
+                           'note': 'steam leak of the frozen stop cock between wagons 2 and 3 (exp_task_coupling)'})
+            continue
         anim('heater_steam', (gx - 2, gy + 20), 1.0, -15, 5 + gx % 2, alpha=0.85)
     # chimney smoke: city (0.3) and the station building (0.55)
-    for (cx, cy) in [c for c in chimneys if c[1] < 150][::3][:6]:
+    # polish pass: fewer ribbons -- ten thin plumes at cam 0 read as scratches across the old town
+    for (cx, cy) in [c for c in chimneys if c[1] < 150][::5][:4]:
         anim('chimney_smoke_far', (cx, cy), 0.30, -79, 4)
-    for (cx, cy) in ES['chimneys']:
+    for (cx, cy) in ES['chimneys'][1:3]:
         anim('chimney_smoke', (cx, cy), 0.55, -69, 4 + cx % 2)
-    anim('pigeons', (462, 276), 1.0, -11, 5)
     # fog bands: 'y' = band centre, parallax between the planes they separate
     fx += [
         {'type': 'fog_band', 'y': 142, 'height': 26, 'color': hexc(SK[4]), 'alpha': 0.30, 'parallax': 0.18, 'z': -86},
@@ -344,7 +376,7 @@ def build():
                       'desc': 'Brass frame with the weighing ticket between the two sealed doors of wagon 4.'},
         'departures': {'kind': 'inspect', 'mark': list(A['departures_board']), 'radius': 30,
                        'document': 'res://assets/ui/documents/veltrava_station_departures.png',
-                       'desc': 'Departures board bolted to the canopy column; last row 23:40 KORDON-17, Gleis 5.'},
+                       'desc': 'Departures board bolted to the canopy column; last row 23.40 KORDON-17, Gleis 5.'},
         'control': {'kind': 'dialogue', 'npc': 'border_officer', 'mark': [A['counter2'][0], A['counter2'][1] - 10],
                     'radius': 36, 'document': 'res://assets/ui/documents/veltrava_station_travel_order.png',
                     'desc': 'Counter 2 (Sowjetische Delegation) of the commission booth; travel order granted here.'},
@@ -359,9 +391,11 @@ def build():
         'exp_four_rails': {'kind': 'discover', 'mark': [240, 252], 'radius': 26,
                            'desc': 'Four-rail dual-gauge track (1520 + 1435) visible between the bogies of car 2.'},
         'exp_luggage': {'kind': 'discover', 'mark': [424, 270], 'radius': 26,
-                        'desc': 'Porter cart with trunks and suitcases (travel labels).'},
+                        'desc': 'Porter cart: the delegation case No. 14, tied with cord, a wooden toy horse '
+                                'strapped on top with a trouser belt; trunk with travel labels, hat box.'},
         'exp_pigeons': {'kind': 'discover', 'mark': [484, 268], 'radius': 26,
-                        'desc': 'Pigeon corner at the platform edge; more pigeons roost on the canopy girder.'},
+                        'desc': 'Pigeon corner at the platform edge (StationPigeons actor): two tug at a '
+                                'sandwich, a third waits; more roost on the canopy girder.'},
         'exp_bogie': {'kind': 'discover', 'mark': [bog[0] + bog[2] // 2, bog[1] + 4], 'radius': 26,
                       'desc': 'Convertible bogie of wagon 4 with the empty second wheel-set notch and gauge plate.'},
         'exp_mitten': {'kind': 'discover', 'mark': [805, 277], 'radius': 24,
@@ -369,24 +403,33 @@ def build():
         'exp_clock': {'kind': 'discover', 'mark': list(EC['clock']), 'radius': 30,
                       'desc': 'Triple clock: BERLIN 7:55 / VELTRAVA 8:55 / MOSKAU 9:55.'},
         'exp_kiosk': {'kind': 'discover', 'mark': [1016, 236], 'radius': 26,
-                      'desc': 'Newspaper kiosk ZEITUNGEN · ГАЗЕТЫ · JOURNAUX.'},
+                      'desc': 'Newspaper kiosk ZEITUNGEN · ГАЗЕТЫ · JOURNAUX; the same photo on three front '
+                              'pages (Moscow, Berlin, the city paper).'},
         'exp_poster': {'kind': 'discover', 'mark': list(A['poster']), 'radius': 26,
-                       'desc': 'Commission welcome poster (WILLKOMMEN / ДОБРО ПОЖ. / BIENVENUE) on the column.'},
+                       'desc': 'Commission poster „DREI KORRIDORE – EIN FRIEDEN“ on the column, peeling: '
+                               'one drawing pin left (top left), three corners hanging.'},
         'exp_return_notice': {'kind': 'discover', 'mark': list(EQ['notice']), 'radius': 26,
-                              'desc': 'Notice case with the trilingual notice „Büro für Rückführung“.'},
+                              'desc': 'Notice case with the trilingual notice „Büro für Rückführung“ (Zimmer 4) '
+                                      'and a 23.40 slip.'},
         'exp_stove': {'kind': 'discover', 'mark': list(EQ['stove']), 'radius': 26,
-                      'desc': 'Waiting-room door; the green tiled stove glows behind the glass.'},
+                      'desc': 'Waiting-room door; the green tiled stove glows behind the glass, two porters '
+                              'warm their hands, coal scuttle at its foot.'},
         'exp_exchange': {'kind': 'discover', 'mark': list(EQ['exchange']), 'radius': 26,
-                         'desc': 'Exchange office WECHSELSTUBE · ОБМЕН ВАЛЮТЫ · CHANGE with rate board.'},
+                         'desc': 'Exchange office WECHSELSTUBE · ОБМЕН ВАЛЮТЫ · CHANGE; chalk rate board RM / '
+                                 'RBL / VKR, every rate corrected.'},
         'exp_tram': {'kind': 'discover', 'mark': [ax + aw // 2, ay + 60], 'radius': 30,
-                     'desc': 'Exit arch: the snowy station square with tram line 7.'},
+                     'desc': 'Exit arch: the snowy station square, tram line 7 waiting (StationTram actor) '
+                             'with its hand-written trilingual line board.'},
         'exp_footprints': {'kind': 'discover', 'hidden': True, 'mark': [162, 266], 'radius': 18,
-                           'desc': 'Footprints in the blown snow at the platform edge, leading to the tracks.'},
+                           'desc': 'Several pairs of footprints cross the drift at the platform edge, step over '
+                                   'the coping and go on in the snow of the track bed under wagon 2.'},
     }
     manifest = {
         'id': 'veltrava_station', 'palette': 'veltrava', 'world_size': list(WORLD),
         'camera': {'bounds': [0, 0, WORLD[0], WORLD[1]]},
-        'canvas_modulate': '#C9CED8',
+        # polish pass: a touch brighter and warmer than the cloud pass's #C9CED8 (cold blue cast read as night
+        # on the PC's Forward+ path); the canopy lamps keep the cold accent, the café the warm one
+        'canvas_modulate': CANVAS_MODULATE,
         'layers': [{k: v for k, v in l.items() if k != 'size'} for l in layers],
         'props': [{k: v for k, v in p.items() if k != 'size'} for p in props],
         'walkable': [[0, 262], [1920, 262], [1920, 350], [0, 350]],
@@ -395,6 +438,8 @@ def build():
         'hotspot_info': hotspot_info,
         'lights': lights,
         'fx': fx,
+        'decals': decals,
+        'actors': actors,
         'notes': {
             'generator': 'tools/pixelgen/env_veltrava_station.py (python3 -P tools/pixelgen/env_veltrava_station.py)',
             'date': '2026-11-04',
@@ -413,10 +458,21 @@ def build():
                               'at camera x 0); it scrolls with that layer.',
             'warm_focal': 'cam 0: saloon window of car 3 (Voronova); cam 640: booth lamp at counter 2; cam 1280: '
                           'Café Korridor.',
+            'polish_2026_11_06': 'Forward+ polish on the PC: dawn sky one ramp step lighter with a rose-cream band, '
+                                 'canvas modulate #D5D3D6, sandstone station building and concourse (value groups '
+                                 'like Karsk), glazed canopy roof lights, occupied compartments (car 3 frosted, no '
+                                 'heating), platform lit from the open side, fluted fg columns + low fg silhouettes, '
+                                 'fewer smoke ribbons; props match their find texts (poster, kiosk, exchange, '
+                                 'notice, luggage, stove, footprints); ambient actors (pigeons, island walkers, '
+                                 'tram, viaduct train, window life, breath) and the decal hook heater_leak_23.',
+            'actors': 'scenes/levels/veltrava_station/*.tscn (station_pigeons / station_walkers / station_tram, '
+                      'all extend scripts/levels/karsk/karsk_actor.gd) + the generic Karsk actors KarskTrain, '
+                      'KarskWindowLife, KarskBreath configured by props; sprites in actors/ '
+                      '(tools/pixelgen/env_veltrava_station_life.py).',
         },
     }
     manifest = _plain(manifest)
-    with open(os.path.join(ENV_DIR, 'scene.json'), 'w', encoding='utf-8') as f:
+    with open(os.path.join(ENV_DIR, 'scene.json'), 'w', encoding='utf-8', newline='\n') as f:
         json.dump(manifest, f, indent=1, ensure_ascii=False)
     bad = {}
     for root, _, files in os.walk(ENV_DIR):

@@ -11,6 +11,12 @@ extends Node
 ## Chapter 3: after M1 the route continues through L_C3_Station (one exploration find + one optional chat by real
 ## input first) and L_C3_Hall incl. the protocol puzzle (one wrong order, then the right one); optional 3rd/4th spec
 ## values choose c3a_choose / c3b_choose. "Fortsetzen" must resume before the last decision (c3b_choose).
+## --inputplay-explore (§12 + §12.9 side tasks): walks every level at its start, the parade plaza, and once more
+## right before each level's final decision (story-gated chats are active by then); a walk repeats, nearest first,
+## until nothing new is findable (requirements unlock entries, chained hotspots move on to their next entry), and
+## the last walk of a level checks that every side task of that level is done.
+
+const Autoplay := preload("res://scripts/core/autoplay.gd")
 
 const A1 := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal", "a1_inspect_ledger",
 	"a1_choose"]
@@ -60,7 +66,7 @@ func run() -> void:
 		return
 	if await _menu_new_game() and await _intro() and await _menus_in_game() \
 			and await _play_route(A1, "L_A1_Railyard") and await _play_route(M1, "L_M1_Archive") \
-			and await _explore_sample() and await _play_route(C3A, "L_C3_Station") \
+			and await _memories_trip() and await _explore_sample() and await _play_route(C3A, "L_C3_Station") \
 			and await _play_route(C3B, "L_C3_Hall") and await _ending():
 		await _continue_from_menu()
 	_finish(t0)
@@ -140,6 +146,22 @@ func _menus_in_game() -> bool:
 	return true
 
 
+## §12.10 (--inputplay-memories): at the start of the station, keys only — Esc → „Erinnerungen“ → the Karsk card →
+## Enter, one find and the remembered conversation there, Esc → „In die Gegenwart zurückkehren“ → Enter.
+func _memories_trip() -> bool:
+	if not Game.args.has("inputplay-memories"):
+		return true
+	if not await _until(func(): return _gameplay_ready() and str(Game.level.level_id) == "L_C3_Station", 120.0):
+		return _fail("memories: never got control in L_C3_Station")
+	var md: Node = load("res://scripts/core/memory_drive.gd").new()
+	add_child(md)
+	var ok: bool = await md.inputplay(self)
+	for f in md.failures:
+		_fail("memories: " + str(f))
+	md.queue_free()
+	return ok and failures.is_empty()
+
+
 func _play_route(route: Array, level_id: String) -> bool:
 	if not await _until(func(): return _gameplay_ready() and str(Game.level.level_id) == level_id, 90.0):
 		return _fail("never got control in " + level_id)
@@ -150,6 +172,16 @@ func _play_route(route: Array, level_id: String) -> bool:
 	for oid in route:
 		if not await _until(func(): return Story.is_available(oid) and _gameplay_ready(), 30.0):
 			return _fail("objective never available: " + oid)
+		if oid == "c3b_inspect_booth" and Game.args.has("inputplay-explore"):
+			await _explore_level(level_id)          # the session is running: the relay desk is open now
+			if not failures.is_empty():
+				return false
+		if oid == route[route.size() - 1] and Game.args.has("inputplay-explore"):
+			await _explore_level(level_id, true)     # §12.9: story-gated chats are open now; finish every task
+			if not failures.is_empty():
+				return false
+			if not await _until(func(): return Story.is_available(oid) and _gameplay_ready(), 30.0):
+				return _fail("objective not available after the exploration walk: " + oid)
 		var it := _interactable(oid)
 		if it == null:
 			return _fail("no interactable for " + oid)
@@ -444,7 +476,7 @@ func _visit_side_level_keys() -> void:
 	var lid := str(Game.level.level_id)
 	await _shoot("side_" + lid)
 	if Game.args.has("inputplay-explore"):
-		await _explore_level(lid)
+		await _explore_level(lid, true)
 	var ex: Node = null
 	for it in get_tree().get_nodes_in_group("interactables"):
 		if it.is_inside_tree() and str(it.kind) == "exit":
@@ -461,23 +493,38 @@ func _visit_side_level_keys() -> void:
 
 
 # ------------------------------------------------------------------ exploration pass (§12, --inputplay-explore)
-## Walks to EVERY optional find / chat of the level (nearest first), opens it with E and pages through it with
-## Space exactly like a player, then checks that Explore recorded it.
-func _explore_level(level_id: String) -> void:
-	var todo: Array = []
-	for it in get_tree().get_nodes_in_group("interactables"):
-		if it.is_inside_tree() and (str(it.kind) == "discover" or str(it.kind) == "chat") and str(it.explore_id) != "":
-			todo.append(it)
+## Walks to EVERY optional find / chat of the level that has something new right now (nearest first), opens it
+## with E and pages through it with Space exactly like a player, then checks that Explore recorded it. §12.9: the
+## candidates are re-collected after every interaction, so entries unlocked by "requires" and the next entry of a
+## chained hotspot (an NPC hosting several task steps) are visited too; each hotspot+entry pair is tried once.
+## `final`: afterwards every side task of the level must be done.
+func _explore_level(level_id: String, final := false) -> void:
 	var done := 0
 	var shots := 0
-	while not todo.is_empty():
+	var tried := {}
+	var guard := 0
+	while guard < 500:
+		guard += 1
+		var todo: Array = []
+		for cand in Autoplay.pending_finds(get_tree().get_nodes_in_group("interactables"), Explore):
+			if not tried.has("%d:%s" % [cand.get_instance_id(), cand.explore_id]):
+				todo.append(cand)
+		if todo.is_empty() or Game.player == null:
+			break
 		var from: Vector2 = Game.player.global_position
 		todo.sort_custom(func(a, b): return a.global_position.distance_to(from) < b.global_position.distance_to(from))
-		var it: Node = todo.pop_front()
+		var it: Node = todo[0]
 		var id := str(it.explore_id)
+		tried["%d:%s" % [it.get_instance_id(), id]] = true
 		if not await _walk_to_focus(it, 60.0):
-			_fail("explore: could not get the prompt of %s in %s (player %s, target %s)" % [id, level_id,
-				Game.player.global_position, it.global_position])
+			var near: Array = []
+			for o in get_tree().get_nodes_in_group("interactables"):
+				if is_instance_valid(o) and o.global_position.distance_to(Game.player.global_position) < 40.0:
+					near.append("%s(%s,%s,active=%s)" % [o.name, o.get("kind"), o.get("explore_id"), o.is_active()])
+			_fail("explore: could not get the prompt of %s in %s (player %s, target %s; locked=%s busy=%s paused=%s modal=%s player.focus=%s Game._focus=%s near=%s)" % [
+				id, level_id, Game.player.global_position, it.global_position, Game.input_locked, Game.busy,
+				get_tree().paused, ui.is_modal_open() if ui and ui.has_method("is_modal_open") else "?",
+				Game.player.get("focus"), Game._focus, near])
 			continue
 		await _tap(KEY_E)
 		if not await _until(func(): return Game.busy, 3.0):
@@ -492,9 +539,18 @@ func _explore_level(level_id: String) -> void:
 			_fail("explore: %s was not recorded as found" % id)
 		done += 1
 		await _wait(0.45)
+	var finished := 0
+	var tasks: Array = Explore.tasks_for(level_id) if Explore.has_method("tasks_for") else []
+	for t in tasks:
+		var st: Dictionary = Explore.task_state(str(t["id"]))
+		if str(st["state"]) == "done":
+			finished += 1
+		elif final:
+			_fail("explore: side task %s not completed in %s (%s, step %d)" % [t["id"], level_id, st["state"], st["step"]])
 	var c: Dictionary = Explore.counts(level_id)
-	print("INPUTPLAY explored %d finds in %s (Explore counts %s/%s, history %s)" % [done, level_id,
-		c.get("found", 0), c.get("total", 0), Explore.history_counts()])
+	print("INPUTPLAY explored %d finds in %s (Explore counts %s/%s, history %s, tasks %d/%d%s)" % [done, level_id,
+		c.get("found", 0), c.get("total", 0), Explore.history_counts(), finished, tasks.size(),
+		", final walk" if final else ""])
 
 
 ## Space through whatever the interaction opened (find pages, history cards, chat lines) until it is over.

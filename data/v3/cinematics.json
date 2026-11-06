@@ -33,21 +33,21 @@
       "shots": [
         {
           "id": "h1",
-          "duration_s": 3,
+          "duration_s": 5.5,
           "shot": "Camera leaves the drawing through an archival window",
           "camera": "crane"
         },
         {
           "id": "h2",
-          "duration_s": 5,
+          "duration_s": 9,
           "shot": "Great Hall distant monumental silhouette, ordinary people foreground",
           "camera": "establishing"
         },
         {
           "id": "h3",
-          "duration_s": 3,
-          "shot": "Return to office workbench",
-          "camera": "fixed"
+          "duration_s": 9.5,
+          "shot": "Slow low-angle push and tilt up to the dome; a neighbour draws the curtains above the waiting family; held final frame (the parade and the return to the workbench follow)",
+          "camera": "low_angle_push"
         }
       ]
     },
@@ -107,7 +107,7 @@
         },
         {
           "id": "t4",
-          "duration_s": 6,
+          "duration_s": 7.5,
           "shot": "Dawn: both trains converge on the river bridge into Veltrava",
           "camera": "establishing"
         }

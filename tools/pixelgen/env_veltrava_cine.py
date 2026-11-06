@@ -4,18 +4,20 @@ Owner: cinematics stream (documentation/C3_DESIGN.md §7).  Every file written h
 code, deterministic (fixed seeds, no time or global random state) and drawn at 1 texel = 1 px of the
 640x360 world (close shots use bespoke larger figures, never scaled sprites).  Run:
 
-    python3 -P tools/pixelgen/env_veltrava_cine.py [--preview DIR] [--only trains,tohall,close]
+    py -3 -P tools/pixelgen/env_veltrava_cine.py [--only trains,tohall,close]     (~2 min uncached, ~3 s cached)
 
 Palette: the 'veltrava' / 'palais' ramps of data/chapters/c3.json are registered into pg.PALETTES at import
-time (read-only use); a few character ramps are sampled from the existing protagonist sprites so the
-bespoke figures match assets/characters/{konrad,alexei}.
+time (read-only use).  Konrad and Alexei (backs at the windows, faces in the glass) are sculpted with the
+dialogue-portrait SDF pipeline in env_veltrava_cine_figs.py so they match their portraits and sprites.
+Modules: this file (trains: night exterior, both compartments, flare, build/main), env_veltrava_cine_dawn.py
+(t4), env_veltrava_cine_tohall.py, env_veltrava_cine_close.py, env_veltrava_cine_kit.py, env_veltrava_cine_figs.py.
 
 Output (assets/cinematics/ch3/):
   trains/  ext_sky, ext_far_de|su, ext_mid, ext_near, pole, int_konrad, fig_konrad, refl_konrad, glow_lamp,
-           patch_warm|cold, int_alexei, fig_alexei, refl_alexei, glow_tea, steam_tea, sweep, flare,
-           bridge_bg, bridge_fg, train_de, train_su, smoke, dawn_glow
-  tohall/  k1_bg, k1_clock, steam_puffs, k2_bg, k2_clock, pendulum, k2_konrad
-  close/   n1_bg, n1_fg, board_*, n2_bg, n2_win_konrad, n2_win_alexei
+           patch_warm|cold, int_alexei, fig_alexei, refl_alexei, glow_tea, steam_tea, spoon, sweep, flare,
+           roomflare_k|a, bridge_bg, bridge_fg, train_de, train_su, smoke, dawn_glow, fg_glow, walker
+  tohall/  k1_bg, k1_clock, k1_glass, steam_puffs, k2_bg, k2_clock, k2_glass, pendulum, k2_konrad
+  close/   n1_bg, n1_mid, n1_fg, board, steam, n2_bg, n2_win_konrad, n2_win_alexei, n2_lamp_glow
 The runtime (scenes/cinematics/ch3_*) composes these layers and animates them; layout constants shared with
 the runtime are listed in LAYOUT and written to assets/cinematics/ch3/layout.json.
 """
@@ -289,6 +291,7 @@ def ext_far(side='de'):
             lay.px(mx + 2, ytop + 1 - y0, 'C', 11.0, flat=True)
         masts[i] = (mx, ytop)
     # watchtowers
+    towers = []
     for k in range(2):
         tx = int(150 + k * 320 + rng.uniform(-20, 20))
         base = fence_y - 1
@@ -303,8 +306,10 @@ def ext_far(side='de'):
             lay.poly([(tx - 5, cab_y - y0), (tx + 1.5, cab_y - 5 - y0), (tx + 8, cab_y - y0)], 'C', 1.6)
         lay.rect(tx - 2, cab_y + 2 - y0, 2, 2, 'C', 9.0, flat=True)                  # lit slit
         lay.rect(tx + 2, cab_y + 2 - y0, 2, 2, 'C', 7.0, flat=True)
+        towers.append([tx + 1, cab_y + 4 - y0])
     lay.resolve(band=3.0)
     LAYOUT['trains']['masts_' + side] = masts
+    LAYOUT['trains']['towers_' + side] = towers
     return lay
 
 
@@ -705,15 +710,6 @@ def int_konrad():
     p.put(p.box(168, 244, 472, 245), 'B', 3.4 + lamp[244, :][None, :].repeat(1, 0) * 0 + 1.0)
     p.put(p.box(168, 246, 472, 254), 'W', 2.6 + lamp * 4.0)
     p.put(p.box(168, 254, 472, 262), 'W', 1.2)
-    # ---- coffee cup on its saucer (the counterpart of Alexei's tea glass)
-    p.put(p.ell(372, 236.8, 11, 2.4), 'P', 4.2)
-    p.put(p.ell(372, 236.2, 9, 1.4), 'P', 5.6)
-    cup = p.poly([(365, 226), (379, 226), (378, 233), (375, 236), (369, 236), (366, 233)])
-    p.put(cup, 'P', 6.4 - np.clip((xx - 366) / 13, 0, 1) * 3.2)
-    p.put(p.box(365, 226, 380, 227), 'B', 4.4)
-    p.put(p.ell(372, 226.9, 6, 0.9), 'W', 2.2)
-    handle = p.line([(379, 228), (382, 229), (382, 232), (378, 233)], 0.5)
-    p.put(handle, 'P', 3.4)
     # ---- leather folder (mostly behind Konrad)
     fold = p.box(386, 236, 456, 242)
     p.put(fold, 'W', 2.4 + lamp * 3.0)
@@ -741,167 +737,107 @@ def int_konrad():
     p.put(shade & (yy < 199), 'L', 2.2, emis=True)
     p.put(p.box(314, 213, 347, 215), 'L', 5.0, emis=True)
     p.put(p.box(323, 215, 338, 216), 'L', 5.0, emis=True)
+    # ---- coffee cup on its saucer (the counterpart of Alexei's tea glass), in front of the glass
+    cx_ = K_CUP[0]
+    p.put(p.ell(cx_, 236.8, 11, 2.4), 'P', 4.2 + lamp[236, cx_] * 1.0)
+    p.put(p.ell(cx_, 236.2, 9, 1.4), 'P', 5.6)
+    cup = p.poly([(cx_ - 7, 226), (cx_ + 7, 226), (cx_ + 6, 233), (cx_ + 3, 236), (cx_ - 3, 236), (cx_ - 6, 233)])
+    p.put(cup, 'P', 6.4 - np.clip((xx - (cx_ - 6)) / 13, 0, 1) * 3.0)
+    p.put(p.box(cx_ - 7, 226, cx_ + 8, 227), 'B', 4.4)
+    p.put(p.ell(cx_, 226.9, 6, 0.9), 'W', 2.2)
+    p.put(p.line([(cx_ + 7, 228), (cx_ + 10, 229), (cx_ + 10, 232), (cx_ + 6, 233)], 0.5), 'P', 3.4)
+    paint_reach_k(p, lamp)
     # overall falloff to the frame edges (night interior)
     p.L.amb_field(-np.clip(np.hypot((xx - 330) / 420, (yy - 200) / 260) - 0.35, 0, 1) * 2.4)
     p.resolve(band=2.6)
     return p.L
 
 
-# ---------------------------------------------------------------- Konrad (seated, seen from behind-right)
-FIG_K = (366, 96, 190, 218)          # frame box x, y, w, h (absolute), 4 frames side by side
+K_CUP = (352, 236)
 
 
-def fig_konrad_frame(turn: int, breath: int):
-    x0, y0, w, h = FIG_K
-    R = ramps_k()
-    p = Paint(w, h, R, 'fig_konrad', x0, y0)
+def paint_reach_k(p: Paint, lamp):
+    """Konrad's left forearm on the table: from behind his body (right) to the cup handle by the window.
+    Coat sleeve, white shirt cuff, the back of the hand warm in the lamp light, fingers round the handle."""
     yy, xx = p.yy, p.xx
-    lampdir = (-1.0, 0.2)
-    lamp = point_light(h, w, K_LAMP[0], K_LAMP[1], 260, x0, y0, power=1.1)
-    b = breath
-    # ---------- torso in the overcoat: far shoulder low on the left, near shoulder + arm on the right
-    torso = p.poly([(420, 161), (436, 165 - b), (458, 162 - b), (482, 166 - b), (504, 172 - b), (519, 183 - b),
-                    (525, 200), (523, 236), (521, 276), (526, 314), (390, 314), (388, 282), (386, 248), (387, 214),
-                    (390, 190 - b), (398, 176 - b), (410, 166 - b)])
-    arm = p.poly([(505, 176 - b), (520, 182 - b), (530, 196), (536, 222), (541, 250), (544, 268), (540, 280),
-                  (528, 284), (518, 270), (512, 240), (508, 208)])
-    coat = torso | arm
-    p.put(coat, 'K', 1.15 - np.clip((yy - 170) / 140, 0, 1) * 0.6, flat=True)
-    # light on the wool: cold from the window (top/left edges), warm lamp rim on the left above the table
-    p.add(coat, edge_light(coat, (-0.35, -1.0), 4.0) * 2.8)
-    p.add(coat, edge_light(coat, lampdir, 7.0) * np.clip(lamp * 1.9, 0, 1) * (yy < 244) * 2.2)
-    # the near arm separates from the back: a shadow crease and a soft sheen on the sleeve
-    crease = p.line([(506, 178), (510, 206), (514, 240), (518, 268)], 0.6) & coat
-    p.put(crease, 'K', 0.15)
-    p.add(arm & ~crease, edge_light(arm, (1.0, -0.4), 3.0) * 0.8)
-    # seams, shoulder blades, the vent, folds at the elbow
-    for pts, dt in (([(456, 170), (460, 214), (464, 262), (468, 314)], -0.35),
-                    ([(468, 165), (492, 170), (512, 180)], 0.55),
-                    ([(424, 190), (430, 214)], 0.35), ([(486, 192), (494, 216)], 0.35),
-                    ([(462, 286), (466, 314)], -0.5),
-                    ([(520, 250), (530, 262)], 0.6), ([(512, 232), (522, 244)], 0.5)):
-        p.add(p.line(pts, 0.5) & coat, dt)
-    rimw = coat & rim(coat, -1, 0, 1) & (yy < 244) & (yy > 164)
-    p.put(rimw, 'L', 0.8 + np.clip(lamp * 1.8, 0, 1.6))
-    # ---------- collar (turned up) and the scarf
-    collar = p.poly([(419, 152), (427, 148), (440, 149), (452, 149), (460, 153), (463, 161), (455, 166 - b),
-                     (436, 167 - b), (421, 163)])
-    p.put(collar, 'K', 1.6)
-    p.add(collar, edge_light(collar, lampdir, 4) * 1.8 + edge_light(collar, (0, -1), 2) * 1.5)
-    p.add(collar & p.line([(424, 160), (452, 160)], 0.5), -0.6)
-    scarf = p.poly([(412, 155), (421, 150), (428, 152), (431, 160), (426, 167), (414, 167), (410, 161)])
-    p.put(scarf, 'Y', 1.4 + edge_light(scarf, lampdir, 5) * 3.4)
-    p.add(scarf & p.line([(415, 160), (427, 157)], 0.5), -0.9)
-    # ---------- head: hair at the back, lit cheek plane in lost profile, ear, nose tip
-    skull = p.ell(438, 139, 14.0, 14.0) & (yy >= 128)
-    neck = p.box(431, 148, 447, 160)
-    if turn == 0:
-        face_pts = [(423, 129), (418, 133), (416, 140), (417, 147), (420, 153), (425, 158), (431, 159), (434, 154),
-                    (431, 146), (429, 137)]
-    else:
-        face_pts = [(426, 129), (421, 133), (419, 140), (420, 147), (422, 153), (426, 158), (431, 159), (433, 154),
-                    (431, 146), (430, 137)]
-    face = p.poly(face_pts)
-    head = skull | face | neck
-    p.put(head, 'F', 1.2)
-    p.put(neck, 'F', 0.7)
-    hair = skull & ~face & (xx >= 429) & (yy < 151)
-    p.put(hair, 'H', 0.45, flat=True)
-    p.put(hair & rim(hair, 1, 0, 1), 'H', 1.4)
-    p.put(hair & (np.abs(yy - 150.5) < 0.6), 'H', 1.3)           # clean neckline
-    fl = edge_light(face, lampdir, 7.0, soft=2)
-    p.put(face, 'F', 1.9 + fl * 3.9 + np.clip((434 - xx) / 18, 0, 1) * 0.7)
-    p.add(face & (yy > 154), -0.8)
-    p.add(face & p.line([(419, 141), (426, 143)], 0.5), 0.6)
-    if turn == 0:
-        nose = p.poly([(418, 138), (413, 143), (415, 146), (419, 146)])
-        p.put(nose, 'F', 4.4)
-        p.px(414, 143, 'F', 6.0)
-        p.px(420, 137, 'F', 1.0)
-        p.px(419, 151, 'F', 2.4)
-    ear = p.ell(445.5, 140, 1.8, 3.6)
-    p.put(ear, 'F', 1.1)
-    p.put(ear & rim(ear, -1, 0, 1), 'F', 2.2)
-    p.put(p.box(442, 131, 445, 137) & skull, 'H', 1.0)
-    # ---------- hat
-    if turn == 0:
-        brim_pts = [(403, 132), (407, 128), (416, 125), (428, 124), (444, 124), (458, 123), (467, 121), (470, 123),
-                    (465, 127), (455, 129), (440, 131), (424, 132), (412, 134), (405, 135)]
-    else:
-        brim_pts = [(406, 132), (409, 128), (417, 125), (428, 124), (444, 124), (458, 123), (467, 121), (470, 123),
-                    (465, 127), (455, 129), (440, 131), (425, 132), (413, 134), (407, 134)]
-    brim = p.poly(brim_pts)
-    crown = p.poly([(421, 126), (420, 116), (423, 108), (429, 104), (436, 103), (440, 106), (445, 103), (450, 104),
-                    (455, 109), (457, 117), (456, 126)])
-    p.put(crown, 'H', 1.3 + edge_light(crown, (-0.5, -1), 3) * 2.3 + edge_light(crown, lampdir, 4) * 1.2)
-    band = crown & (yy >= 120)
-    p.put(band, 'H', 0.4)
-    p.put(p.box(452, 120, 456, 125) & crown, 'H', 1.5)
-    p.add(crown & p.line([(440, 106), (441, 115)], 0.5), -0.8)
-    p.add(crown & p.line([(426, 109), (425, 118)], 0.5), -0.6)
-    p.put(brim, 'H', 1.2)
-    p.add(brim & (yy >= 128), edge_light(brim, lampdir, 5) * 3.0 * (xx < 450))
-    p.put(brim & rim(brim, 0, -1, 1) & (xx > 412), 'H', 2.6)
-    p.put(brim & rim(brim, -1, 0, 1), 'H', 4.2)
-    p.add(head & shift(brim, 0, -1) & ~brim, -0.9)
-    sil = coat | collar | scarf | head | brim | crown
-    out = kit.dilate(sil, 1) & ~sil
-    p.put(out & (xx < 470) & (yy < 236), 'K', 0.2)
-    p.resolve(band=3.2)
-    return p.L
+    hx = K_CUP[0] + 9                                   # the handle
+    sleeve = p.poly([(hx + 10, 225), (hx + 22, 222), (hx + 42, 233), (hx + 44, 250), (hx + 30, 252), (hx + 12, 236)])
+    p.put(sleeve, 'K', 1.0 + lamp * 1.6)
+    top = sleeve & ~shift(sleeve, 0, -1)
+    p.put(top, 'K', 3.2 + lamp * 1.2)
+    p.put(sleeve & ~shift(sleeve, -1, 0) & (yy < 238), 'L', 1.4 + lamp * 1.2)      # lamp rim on the cuff side
+    p.add(p.line([(hx + 20, 229), (hx + 36, 240)], 0.5) & sleeve, -0.6)              # fold along the forearm
+    cuff = p.poly([(hx + 6, 227), (hx + 11, 225), (hx + 14, 235), (hx + 9, 237)])
+    p.put(cuff, 'P', 4.6 + lamp * 0.8)
+    p.put(cuff & ~shift(cuff, 1, 0), 'P', 2.8)
+    hand = p.poly([(hx - 1, 228), (hx + 3, 226), (hx + 8, 227), (hx + 10, 234), (hx + 5, 236), (hx, 235)])
+    p.put(hand, 'F', 2.4 + lamp * 1.4)
+    p.put(hand & ~shift(hand, 0, -1), 'F', 4.6)                                    # knuckles catch the lamp
+    p.put(hand & ~shift(hand, -1, 0), 'F', 4.0)
+    for fy in (230, 232):
+        p.px(hx + 1, fy, 'F', 1.2)                                                 # fingers round the handle
+    p.px(hx - 1, 231, 'F', 3.2)
+
+
+# ---------------------------------------------------------------- Konrad (seated, seen from behind-right)
+FIG_K = (363, 88, 200, 232)          # frame box x, y, w, h (absolute), 4 frames side by side
+
+
+def _breath(img):
+    """The same frame with chest and shoulders 1 px higher (the bottom row repeats)."""
+    out = np.empty_like(img)
+    out[:-1] = img[1:]
+    out[-1] = img[-1]
+    return out
+
+
+def _sheet4(f0, f1):
+    """[turn0, turn0 + breath, turn1, turn1 + breath] side by side."""
+    return np.concatenate([f0, _breath(f0), f1, _breath(f1)], axis=1)
 
 
 def fig_konrad():
-    frames = [fig_konrad_frame(turn, breath) for turn in (0, 1) for breath in (0, 1)]
-    x0, y0, w, h = FIG_K
-    sheet = np.zeros((h, w * 4, 4), np.uint8)
-    for i, L in enumerate(frames):
-        sheet[:, i * w:(i + 1) * w] = L.c
-    LAYOUT['trains']['fig_konrad'] = [x0, y0]
-    return sheet
+    import env_veltrava_cine_figs as F
+    f0 = F.back_konrad(0)['rgba']
+    f1 = F.back_konrad(1)['rgba']
+    LAYOUT['trains']['fig_konrad'] = [FIG_K[0], FIG_K[1]]
+    LAYOUT['trains']['fig_frames'] = 4
+    return _sheet4(f0, f1)
 
 
-def refl_konrad():
-    """Additive reflection on the glass: Konrad's lamp-lit face (seen from the front) and the lamp."""
-    a = np.zeros((VH, VW, 3), np.float32)
+def _glass_reflection(face_rgba, at, extra, fade_from, fade_len):
+    """Full-frame additive reflection: the posterised face (top-left at `at`) fading out below `fade_from`,
+    plus `extra` (h, w, 3) float light (lamp, tea glass), all clipped to the glass and dithered."""
+    a = extra.astype(np.float32).copy()
+    fh, fw = face_rgba.shape[:2]
+    x0, y0 = at
     yy, xx = grid(VH, VW)
-    g = glass_mask()
-    # face oval, lit from the lower left (the lamp), mirrored: he looks back toward his own head
-    face = ellipse_mask(VW, VH, 377, 145, 10.5, 14.5)
-    lit = np.clip((388 - xx) / 20, 0, 1) * 0.65 + 0.35
-    soft = np.clip(1 - np.hypot((xx - 377) / 11.5, (yy - 145) / 15.5), 0, 1) ** 0.5
-    for c, v in enumerate((19, 12, 8)):
-        a[..., c] += face * v * lit * (0.45 + 0.55 * soft)
-    for (ex, ey) in ((373, 141), (381, 141)):                     # eye sockets (no light)
-        a[ellipse_mask(VW, VH, ex, ey, 2.4, 1.4)] *= 0.25
-    nose = poly_mask(VW, VH, [(377, 141), (375, 150), (379, 151)])
-    a[nose] += (7, 4, 3)
-    a[(np.abs(yy - 154.5) < 0.6) & (np.abs(xx - 377) < 3)] *= 0.3
-    # hat: dark (adds nothing) but the brim underside picks up a little lamp light
-    brim = poly_mask(VW, VH, [(356, 131), (398, 130), (396, 134), (358, 135)])
-    a[brim] = (10, 6, 4)
-    crown = poly_mask(VW, VH, [(366, 131), (366, 114), (377, 110), (388, 114), (388, 131)])
-    a[crown] = 0
-    scarf = poly_mask(VW, VH, [(368, 158), (388, 158), (392, 168), (364, 168)])
-    a[scarf] += (12, 9, 4)
-    collar = poly_mask(VW, VH, [(358, 162), (366, 158), (366, 178), (354, 180)]) | \
-        poly_mask(VW, VH, [(390, 158), (398, 162), (402, 180), (390, 178)])
-    a[collar] += (6, 6, 10)
-    # the lamp and its warm halo reflected near the real lamp
-    d = np.hypot((xx - 306) / 14, (yy - 203) / 9)
-    for c, v in enumerate((70, 44, 20)):
-        a[..., c] += np.clip(1 - d, 0, 1) ** 1.3 * v
-    core = ellipse_mask(VW, VH, 306, 205, 5, 2.5)
-    a[core] += (40, 26, 12)
-    # the table edge and cup glinting along the bottom of the glass
-    a[(yy >= 220) & (yy < 226) & (xx > 300) & (xx < 400)] += (16, 10, 5)
-    a[~g] = 0
-    # posterise into a few levels + Bayer dither between them (pixel-art glass, not a smooth blend)
+    face = np.zeros((VH, VW, 3), np.float32)
+    X0, Y0, X1, Y1 = max(0, x0), max(0, y0), min(VW, x0 + fw), min(VH, y0 + fh)
+    face[Y0:Y1, X0:X1] = face_rgba[Y0 - y0:Y1 - y0, X0 - x0:X1 - x0, :3]
+    fall = np.clip(1 - (yy - fade_from) / fade_len, 0.15, 1.0)[..., None]
+    a += face * fall
+    a[~glass_mask()] = 0
     q = np.floor(a / 4.0 + pg.bayer(VW, VH)[..., None]) * 4.0
     out = np.zeros((VH, VW, 4), np.uint8)
     out[..., :3] = np.clip(q, 0, 255).astype(np.uint8)
     out[..., 3] = np.where(out[..., :3].max(-1) > 0, 255, 0)
     return out
+
+
+def refl_konrad():
+    """Additive reflection in the black glass: Konrad's lamp-lit face, the lamp, the table edge and cup."""
+    import env_veltrava_cine_figs as F
+    face = F.reflection(F.face_konrad(0), (54, 38, 26), gain=1.25, levels=5)
+    yy, xx = grid(VH, VW)
+    a = np.zeros((VH, VW, 3), np.float32)
+    d = np.hypot((xx - 304) / 14, (yy - 203) / 9)
+    for c, v in enumerate((70, 44, 20)):
+        a[..., c] += np.clip(1 - d, 0, 1) ** 1.3 * v
+    a[ellipse_mask(VW, VH, 304, 205, 5, 2.5)] += (40, 26, 12)
+    a[(yy >= 220) & (yy < 225) & (xx > 290) & (xx < 380)] += (14, 9, 4)
+    LAYOUT['trains']['refl_face_konrad'] = [358, 104]
+    return _glass_reflection(face, (358, 104), a, 158, 26)
 
 
 def additive_glow(cx, cy, rx, ry, rgb, power=1.5, levels=7, w=None, h=None, ox=0, oy=0):
@@ -964,7 +900,8 @@ def ramps_a():
 
 
 def lamp_field_a(p: Paint):
-    f = point_light(p.h, p.w, A_LAMP[0], A_LAMP[1], 330, p.ox, p.oy, power=1.3)
+    """The small wall lamp: a warm pool on the right wall and the table, falling off fast (a 40 W bulb)."""
+    f = point_light(p.h, p.w, A_LAMP[0], A_LAMP[1], 250, p.ox, p.oy, power=1.6)
     return f
 
 
@@ -982,7 +919,12 @@ def int_alexei():
     allm = np.ones((VH, VW), bool)
     # ---- laminate walls (cream, here in night shadow) with aluminium joint strips; green dado below
     n = pg.value_noise(VW, VH, 30, 301, octaves=2)
-    p.put(allm, 'M', 2.0 + lamp * 5.6 + nl * 1.2 + (n - 0.5) * 0.4)
+    p.put(allm, 'M', 1.8 + lamp * 4.6 + nl * 1.2 + (n - 0.5) * 0.4)
+    # laminate sheets: faint vertical seams and a wood-grain print, so the lit wall is not one flat blob
+    grain = np.repeat(pg.value_noise(VW, VH // 5 + 2, 3, 302, octaves=2), 5, axis=0)[:VH]
+    p.add(allm & (yy < 250), (grain - 0.5) * 0.5 * (0.3 + lamp))
+    for jx in range(8, VW, 64):
+        p.add(p.box(jx, 82, jx + 1, 250), -0.5)
     for jx in (40, 112, 528, 600):
         p.put(p.box(jx, 60, jx + 2, 250), 'I', 2.6 + lamp[150, jx] * 3.0)
         p.put(p.box(jx, 60, jx + 1, 250), 'I', 3.6 + lamp[150, jx] * 3.0)
@@ -1078,9 +1020,7 @@ def int_alexei():
     p.put(p.box(tx - 6, ty - 21, tx + 7, ty - 20), 'L', 5.0, emis=True)
     p.put(p.box(tx - 7, ty - 22, tx + 8, ty - 21), 'S', 5.4)          # glass rim
     p.put(p.box(tx + 5, ty - 21, tx + 6, ty - 15), 'S', 6.0)          # glint
-    spoon = p.line([(tx + 2, ty - 21), (tx + 5, ty - 30)], 0.5)
-    p.put(spoon, 'X', 5.4)
-    p.px(tx + 5, ty - 31, 'X', 6.6)
+    paint_reach_a(p, lamp)
     # frost on the cold glass corners (on the glass, in front of the night)
     rng = np.random.default_rng(311)
     gx0, gy0, gx1, gy1 = GLASS
@@ -1101,133 +1041,73 @@ def int_alexei():
     return p.L
 
 
-# ---------------------------------------------------------------- Alexei (seated, seen from behind-left)
-FIG_A = (112, 94, 228, 220)
-
-
-def fig_alexei_frame(turn: int, breath: int):
-    x0, y0, w, h = FIG_A
-    R = ramps_a()
-    p = Paint(w, h, R, 'fig_alexei', x0, y0)
+def paint_reach_a(p: Paint, lamp):
+    """Alexei's right forearm on the table, the quilted sleeve, his hand at the handle of the glass holder."""
     yy, xx = p.yy, p.xx
-    lamp = point_light(h, w, A_LAMP[0], A_LAMP[1], 380, x0, y0, power=1.1)
-    lampdir = (1.0, 0.15)
-    b = breath
-    # ---------- torso in the padded coat (mirror of Konrad: near shoulder + arm on the left)
-    torso = p.poly([(219, 161), (204, 165 - b), (182, 162 - b), (158, 166 - b), (136, 172 - b), (121, 183 - b),
-                    (115, 200), (117, 236), (119, 276), (114, 314), (250, 314), (252, 282), (254, 248), (253, 214),
-                    (250, 190 - b), (242, 176 - b), (230, 166 - b)])
-    arm = p.poly([(135, 176 - b), (120, 182 - b), (110, 196), (104, 222), (99, 250), (96, 268), (100, 280),
-                  (112, 284), (122, 270), (128, 240), (132, 208)])
-    coat = torso | arm
-    p.put(coat, 'A', 1.2 - np.clip((yy - 170) / 140, 0, 1) * 0.6, flat=True)
-    p.add(coat, edge_light(coat, (0.3, -1.0), 4.0) * 2.4)                       # window light (cold-ish)
-    p.add(coat, edge_light(coat, lampdir, 7.0) * np.clip(lamp * 2.2, 0, 1) * 2.4)
-    # quilted padding: curved horizontal seams across the back and the sleeve
-    for k in range(12):
-        yq = 178 + k * 11
-        pts = [(112, yq + 6), (150, yq + 1), (190, yq), (230, yq + 2), (256, yq + 6)]
-        seam = p.line(pts, 0.5) & torso
-        p.add(seam, -0.4)
-        p.add(shift(seam, 0, 2) & torso & ~seam, 0.22)
-    for xq in (150, 196, 238):                                              # vertical stitching
-        p.add(p.line([(xq, 172), (xq + 2, 314)], 0.5) & torso, -0.25)
-    for k in range(7):
-        yq = 196 + k * 12
-        seam = p.line([(96, yq + 2), (134, yq - 2)], 0.5) & arm
-        p.add(seam, -0.5)
-    crease = p.line([(134, 178), (130, 206), (126, 240), (122, 268)], 0.6) & coat
-    p.put(crease, 'A', 0.2)
-    rimw = coat & rim(coat, 1, 0, 1) & (yy < 244) & (yy > 164)
-    p.put(rimw, 'L', 0.9 + np.clip(lamp * 2.0, 0, 1.8))
-    # satchel strap across the back (his satchel hangs at the other hip)
-    strap = p.line([(132, 182), (170, 220), (210, 262), (240, 300)], 1.9) & torso
-    p.put(strap, 'G', 1.0 + edge_light(strap, (0.3, -1), 2) * 1.4)
-    p.put(strap & rim(strap, 0, 1, 1), 'G', 0.4)
-    p.put(p.box(176, 224, 183, 231) & strap, 'X', 4.6)                          # buckle
-    # ---------- collar of the padded coat
-    collar = p.poly([(221, 152), (213, 148), (200, 149), (188, 149), (180, 153), (177, 161), (185, 166 - b),
-                     (204, 167 - b), (219, 163)])
-    p.put(collar, 'A', 1.9)
-    p.add(collar, edge_light(collar, lampdir, 4) * 1.8 + edge_light(collar, (0, -1), 2) * 1.6)
-    # ---------- head: lost profile to the right (cheek beyond the near ear flap), lit by the wall lamp
-    skull = p.ell(203, 141, 14.0, 14.0) & (yy >= 130)
-    neck = p.box(197, 150, 210, 158)
-    if turn == 0:
-        face_pts = [(216, 133), (222, 136), (225, 142), (225, 149), (222, 155), (217, 159), (211, 160), (212, 150)]
-    else:
-        face_pts = [(215, 133), (220, 136), (223, 142), (223, 149), (220, 155), (216, 159), (211, 160), (212, 150)]
-    face = p.poly(face_pts)
-    head = skull | face | neck
-    p.put(head, 'F', 1.0)
-    p.put(neck, 'F', 0.3)
-    hair = skull & ~face & (yy < 153)
-    p.put(hair, 'U', 0.7, flat=True)
-    fl = edge_light(face, lampdir, 6.0, soft=1)
-    p.put(face, 'F', 1.6 + fl * 3.4)
-    p.add(face & (yy > 155), -0.7)
-    if turn == 0:
-        nose = p.poly([(224, 140), (229, 144), (227, 147), (224, 147)])
-        p.put(nose, 'F', 3.8)
-        p.px(228, 144, 'F', 5.4)
-    p.px(222, 152, 'F', 2.0)
-    # ---------- shapka: fur crown, turned-up fur band, ear flaps hanging at the sides
-    crown = p.poly([(184, 128), (183, 116), (187, 107), (195, 101), (205, 99), (215, 101), (222, 107), (225, 116),
-                    (224, 128)])
-    band = p.poly([(180, 132), (181, 122), (186, 119), (204, 118), (222, 119), (228, 122), (229, 132), (224, 135),
-                   (204, 136), (184, 135)])
-    flap_far = p.poly([(181, 130), (190, 131), (191, 146), (188, 153), (182, 151), (179, 140)])
-    flap_near = p.poly([(212, 132), (220, 132), (221, 144), (218, 153), (213, 152), (211, 141)])
-    hat = crown | band | flap_far | flap_near
-    fur = pg.value_noise(w, h, 2, 321 + turn, octaves=2)
-    tuft = pg.white_noise(w, h, 322)
-    p.put(crown, 'U', 2.0 + (fur - 0.5) * 2.2 + edge_light(crown, (0.4, -1), 3) * 1.8)
-    p.put(band, 'U', 2.6 + (fur - 0.5) * 2.4 + edge_light(band, lampdir, 4) * 2.4)
-    p.put(flap_far, 'U', 1.5 + (fur - 0.5) * 1.6)
-    p.put(flap_near, 'U', 1.8 + (fur - 0.5) * 1.8 + edge_light(flap_near, lampdir, 3) * 2.2)
-    p.add(band & (yy > 133), -0.9)
-    p.add(crown & (yy > 126), -0.8)
-    p.add(hat & (tuft > 0.82), 0.9)
-    p.add(hat & (tuft < 0.12), -0.9)
-    top_edge = hat & rim(hat, 0, -1, 1)
-    p.put(top_edge, 'U', 3.6 + (tuft > 0.5) * 1.0)
-    edge_out = kit.dilate(hat, 1) & ~hat & (tuft > 0.7) & (yy < 132)     # ragged fur silhouette
-    p.put(edge_out, 'U', 2.6)
-    p.add(head & shift(band, 0, -1) & ~band, -0.8)
-    sil = coat | collar | head | hat
-    out = kit.dilate(sil, 1) & ~sil
-    p.put(out & (xx > 170) & (yy < 236), 'A', 0.1)
-    p.resolve(band=3.2)
-    return p.L
+    hx = TEA[0] - 11                                    # the holder's handle
+    sleeve = p.poly([(hx - 10, 224), (hx - 24, 221), (hx - 46, 233), (hx - 48, 252), (hx - 32, 254), (hx - 12, 236)])
+    p.put(sleeve, 'A', 1.2 + lamp * 1.8)
+    p.put(sleeve & ~shift(sleeve, 0, -1), 'A', 3.4 + lamp * 1.2)
+    p.put(sleeve & ~shift(sleeve, 1, 0) & (yy < 240), 'L', 1.4 + lamp * 1.4)       # the wall lamp on its side
+    for k in range(3):                                                             # quilting across the sleeve
+        q = p.line([(hx - 20 - k * 8, 223 + k * 3), (hx - 14 - k * 8, 236 + k * 4)], 0.5) & sleeve
+        p.add(q, -0.8)
+    hand = p.poly([(hx + 1, 228), (hx - 3, 226), (hx - 9, 227), (hx - 11, 234), (hx - 5, 236), (hx, 235)])
+    p.put(hand, 'F', 2.4 + lamp * 1.6)
+    p.put(hand & ~shift(hand, 0, -1), 'F', 4.6)
+    p.put(hand & ~shift(hand, 1, 0), 'F', 4.0)
+    for fy in (230, 232):
+        p.px(hx - 1, fy, 'F', 1.2)
+    p.px(hx + 1, 231, 'F', 3.2)
+
+
+# ---------------------------------------------------------------- Alexei (seated, seen from behind-left)
+FIG_A = (96, 86, 220, 232)
 
 
 def fig_alexei():
-    frames = [fig_alexei_frame(turn, breath) for turn in (0, 1) for breath in (0, 1)]
-    x0, y0, w, h = FIG_A
-    sheet = np.zeros((h, w * 4, 4), np.uint8)
-    for i, L in enumerate(frames):
-        sheet[:, i * w:(i + 1) * w] = L.c
-    LAYOUT['trains']['fig_alexei'] = [x0, y0]
-    return sheet
+    import env_veltrava_cine_figs as F
+    f0 = F.back_alexei(0)['rgba']
+    f1 = F.back_alexei(1)['rgba']
+    LAYOUT['trains']['fig_alexei'] = [FIG_A[0], FIG_A[1]]
+    return _sheet4(f0, f1)
 
 
 def refl_alexei():
-    """Additive reflections: the wall lamp and the glowing tea glass on the cold glass; no face (cold car)."""
-    a = np.zeros((VH, VW, 3), np.float32)
+    """Additive reflections: Alexei's face lit from the wall lamp, the lamp itself and the glowing tea."""
+    import env_veltrava_cine_figs as F
+    face = F.reflection(F.face_alexei(0), (50, 38, 24), gain=1.25, levels=5)
     yy, xx = grid(VH, VW)
-    g = glass_mask()
+    a = np.zeros((VH, VW, 3), np.float32)
     d = np.hypot((xx - 452) / 12, (yy - 150) / 8)
     for c, v in enumerate((60, 40, 20)):
         a[..., c] += np.clip(1 - d, 0, 1) ** 1.4 * v
     d2 = np.hypot((xx - 352) / 9, (yy - 214) / 7)
     for c, v in enumerate((34, 20, 9)):
         a[..., c] += np.clip(1 - d2, 0, 1) ** 1.4 * v
-    a[~g] = 0
-    q = np.floor(a / 4.0 + pg.bayer(VW, VH)[..., None]) * 4.0
-    out = np.zeros((VH, VW, 4), np.uint8)
-    out[..., :3] = np.clip(q, 0, 255).astype(np.uint8)
-    out[..., 3] = np.where(out[..., :3].max(-1) > 0, 255, 0)
-    return out
+    LAYOUT['trains']['refl_face_alexei'] = [236, 106]
+    return _glass_reflection(face, (236, 106), a, 160, 26)
+
+
+def spoon():
+    """The tea spoon standing in Alexei's glass, 2 frames: at rest leaning right, and knocked upright by a
+    rail joint (the runtime switches with every knock; the bed sound clinks on the same beat)."""
+    fw, fh = 8, 14
+    tx, ty = TEA
+    x0, y0 = tx - 1, ty - 34
+    R = ramps(X=['#15171C', '#22262D', '#323840', '#464D55', '#5E666E', '#8593A3', '#C2C9D2', '#F2F3F5'])
+    sheet = np.zeros((fh, fw * 2, 4), np.uint8)
+    for fr, top in enumerate(((6, 3), (4, 2))):
+        p = Paint(fw, fh, R, 'spoon', x0, y0)
+        bot = (tx + 2, ty - 21)
+        tip = (x0 + top[0], y0 + top[1])
+        p.put(p.line([bot, tip], 0.5), 'X', 5.4)
+        p.px(tip[0], tip[1] - 1, 'X', 6.8)
+        p.px(tip[0] - 1, tip[1], 'X', 4.0)
+        p.resolve(band=2.0)
+        sheet[:, fr * fw:(fr + 1) * fw] = p.L.c
+    LAYOUT['trains']['spoon'] = [x0, y0]
+    return sheet
 
 
 def glow_tea():
@@ -1320,459 +1200,157 @@ def roomflare(interior: np.ndarray, figure: np.ndarray, fig_xy, toward=(-1, -1))
 
 
 # =========================================================================== TRAINS: dawn on the river bridge (t4)
-# Veltrava from the near bank: the three-arch railway bridge (the commission's arms) carries both trains into the
-# city.  The old town and the palais dome stand against the slate-blue dawn (brightening in the east = right),
-# the river half frozen below.  Trains run on the deck between the far railing (bg) and the near parapet (fg).
-DAWN_SKY = V['night'][1:] + V['slate'][:4] + V['sky']        # 0..12, monotonic luminance
-PARAPET_Y = 184                                               # top of the near parapet (bridge_fg)
-TRAIN_H = 28
-TRAIN_DE_Y, TRAIN_SU_Y = 160, 164                             # sprite tops; rail level = top + TRAIN_H
-ARCHES = [(48, 222), (236, 404), (418, 592)]                  # x spans of the three arch openings
-ARCH_CY, ARCH_RY = 236, 34                                    # arch intrados: ellipse centre row / rise
-WATER_Y = 240
-QUAY_LAMPS = [34, 118, 206, 294, 378, 466, 550, 626]
-PARAPET_LAMPS = [36, 128, 220, 312, 404, 496, 588]
+# painted in env_veltrava_cine_dawn.py (imported lazily: it imports this module)
 
 
-def ramps_dawn():
-    return ramps(
-        S=DAWN_SKY,
-        N=V['night'] + V['slate'][:3],                                      # silhouettes 0..6
-        W=V['snow'],
-        L=V['lamp'],
-        P=V['patina'],
-        I=V['iron'] + [V['slate'][4], V['slate'][5]],                       # iron / stone 0..6
-        C=V['cream'],
-        R=V['red'],
-        K=[V['night'][1], V['night'][3], V['slate'][1], V['slate'][3], V['sky'][0], V['sky'][2], V['sky'][4]],
-        G=V['patina'][:3] + [V['slate'][2]],                                # frozen reeds, dark bank growth
-    )
+# =========================================================================== build
+def build_trains():
+    out = {}
+
+    def w(rel, img):
+        arr = img.c if hasattr(img, 'c') else img
+        save(arr, 'trains/' + rel)
+        out[rel] = arr
+        return arr
+
+    w('ext_sky.png', ext_sky())
+    w('ext_far_de.png', ext_far('de'))
+    w('ext_far_su.png', ext_far('su'))
+    w('ext_mid.png', ext_mid())
+    w('ext_near.png', ext_near())
+    w('pole.png', pole())
+    ik = w('int_konrad.png', int_konrad())
+    fk = w('fig_konrad.png', fig_konrad())
+    w('refl_konrad.png', refl_konrad())
+    w('glow_lamp.png', glow_lamp())
+    w('patch_warm.png', window_patches((60, 40, 20), 1))
+    w('patch_cold.png', window_patches((30, 34, 40), 2))
+    ia = w('int_alexei.png', int_alexei())
+    fa = w('fig_alexei.png', fig_alexei())
+    w('refl_alexei.png', refl_alexei())
+    w('glow_tea.png', glow_tea())
+    w('steam_tea.png', steam_tea())
+    w('spoon.png', spoon())
+    w('sweep.png', sweep())
+    w('flare.png', flare())
+    fwk = FIG_K[2]
+    fwa = FIG_A[2]
+    w('roomflare_k.png', roomflare(ik, fk[:, :fwk], FIG_K[:2], toward=(-1, -1)))
+    w('roomflare_a.png', roomflare(ia, fa[:, :fwa], FIG_A[:2], toward=(1, -1)))
+    import env_veltrava_cine_dawn as D
+    w('bridge_bg.png', D.bridge_bg())
+    w('bridge_fg.png', D.bridge_fg())
+    w('train_de.png', D.train_de())
+    w('train_su.png', D.train_su())
+    w('smoke.png', D.smoke())
+    w('dawn_glow.png', D.dawn_glow())
+    w('fg_glow.png', D.fg_glow())
+    w('walker.png', D.walker())
+    return out
 
 
-def _arch_mask(p: Paint, x0, x1, cy=ARCH_CY, ry=ARCH_RY):
-    cx = (x0 + x1) / 2
-    return p.ell(cx, cy, (x1 - x0) / 2, ry) & (p.yy < cy)
+def build_tohall():
+    import env_veltrava_cine_tohall as T
+    for rel, fn in (('k1_bg.png', T.k1_bg), ('k1_clock.png', T.k1_clock), ('k1_glass.png', T.k1_glass),
+                    ('steam_puffs.png', T.steam_puffs), ('k2_bg.png', T.k2_bg), ('k2_clock.png', T.k2_clock),
+                    ('k2_glass.png', T.k2_glass), ('pendulum.png', T.pendulum), ('k2_konrad.png', T.k2_konrad)):
+        img = fn()
+        save(img.c if hasattr(img, 'c') else img, 'tohall/' + rel)
 
 
-def _roof_run(p: Paint, xs, base, tone, seed, hz=None):
-    """A run of gabled / hipped roofs between the x breakpoints xs at base row `base` (silhouette layer)."""
-    rng = np.random.default_rng(seed)
-    for a, b in zip(xs[:-1], xs[1:]):
-        h = rng.uniform(10, 24)
-        kind = rng.integers(0, 3)
-        if kind == 0:                                           # gable
-            pts = [(a, base), (a, base - h * 0.55), ((a + b) / 2, base - h), (b, base - h * 0.55), (b, base)]
-        elif kind == 1:                                         # mansard
-            pts = [(a, base), (a, base - h * 0.5), (a + 4, base - h), (b - 4, base - h), (b, base - h * 0.5), (b, base)]
-        else:                                                   # flat with a chimney
-            pts = [(a, base), (a, base - h * 0.7), (b, base - h * 0.7), (b, base)]
-        m = p.poly(pts)
-        t = tone if hz is None else tone + hz
-        p.put(m, 'N', t)
-        if kind == 2:
-            cx = rng.uniform(a + 3, b - 3)
-            p.put(p.box(cx, base - h * 0.7 - 5, cx + 2, base - h * 0.7), 'N', t)
-        # a few lit windows
-        for _ in range(int(rng.integers(0, 3))):
-            wx = rng.uniform(a + 2, b - 4); wy = base - rng.uniform(3, max(4, h * 0.5))
-            p.put(p.box(wx, wy, wx + 2, wy + 2), 'L', float(rng.choice([2.0, 3.0, 3.5])), emis=True)
+def build_close():
+    import env_veltrava_cine_close as N
+    for rel, fn in (('n1_bg.png', N.n1_bg), ('n1_mid.png', N.n1_mid), ('n1_fg.png', N.n1_fg),
+                    ('board.png', N.board), ('steam.png', N.steam), ('n2_bg.png', N.n2_bg),
+                    ('n2_win_konrad.png', N.n2_win_konrad), ('n2_win_alexei.png', N.n2_win_alexei),
+                    ('n2_lamp_glow.png', N.n2_lamp_glow)):
+        img = fn()
+        save(img.c if hasattr(img, 'c') else img, 'close/' + rel)
 
 
-def bridge_bg():
-    R = ramps_dawn()
-    p = Paint(VW, VH, R, 'bridge_bg')
-    yy, xx = p.yy, p.xx
-    allm = np.ones((VH, VW), bool)
-    east = np.clip((xx - 100) / 540, 0, 1)
-    # ---- sky: slate above, the dawn low in the east; stratus bands with lit undersides
-    down = np.clip((yy - 40) / 118, 0, 1)
-    sky = 4.4 + down ** 1.25 * (5.4 + 3.2 * east) + east * 0.6
-    sky += (pg.value_noise(VW, VH, 56, 401, octaves=3) - 0.5) * 0.8
-    p.put(allm, 'S', sky)
-    rng = np.random.default_rng(402)
-    for _ in range(11):
-        by = rng.uniform(50, 122); x0 = rng.uniform(-80, 560); ln = rng.uniform(100, 300); th = rng.uniform(1.2, 3.6)
-        band = (np.abs(yy - by - 0.012 * (xx - x0)) < th) & (xx > x0) & (xx < x0 + ln)
-        p.add(band, -1.0)
-        p.add(shift(band, 0, -1) & ~band, 0.8)
-    # ---- castle hill (far left, deep in haze)
-    hill = p.poly([(-5, 160), (-5, 138), (40, 124), (84, 112), (112, 108), (150, 120), (196, 136), (230, 152), (240, 160)])
-    p.put(hill, 'N', 5.2 + np.clip((yy - 110) / 50, 0, 1) * 0.6)
-    castle = p.box(70, 98, 126, 114) | p.box(76, 88, 84, 100) | p.box(110, 92, 118, 100) | p.box(96, 84, 102, 100)
-    p.put(castle, 'N', 4.9)
-    for bx in range(70, 126, 4):
-        p.put(p.box(bx, 96, bx + 2, 98), 'N', 4.9)
-    p.put(p.poly([(96, 84), (99, 78), (102, 84)]), 'N', 4.7)
-    p.put(p.box(98, 94, 100, 96), 'L', 2.5, emis=True)
-    # ---- old town, second rank (hazy)
-    _roof_run(p, [-4, 30, 58, 96, 130, 168, 204, 238, 262, 286, 308, 332, 356, 380, 404, 430, 454, 478, 506, 534,
-                  560, 584, 612, 644], 150, 3.8, 403)
-    # Gothic cathedral: nave + two spires (one taller), far left-centre
-    nave = p.poly([(150, 150), (150, 118), (160, 112), (200, 112), (210, 118), (210, 150)])
-    p.put(nave, 'N', 3.4)
-    for (sx, top, w) in ((154, 66, 12), (198, 80, 10)):
-        tower = p.box(sx, 112, sx + w, 150)
-        spire = p.poly([(sx - 1, 112), (sx + w / 2, top), (sx + w + 1, 112)])
-        p.put(tower | spire, 'N', 3.2)
-        p.put(p.box(sx + w / 2 - 1, 100, sx + w / 2 + 1, 106), 'N', 2.4)           # belfry opening
-        p.put(p.line([(sx + w / 2, top), (sx + w / 2, top - 5)], 0.4), 'N', 2.6)   # cross
-    for k in range(5):                                                               # buttress pinnacles
-        p.put(p.poly([(163 + k * 8, 112), (165 + k * 8, 104), (167 + k * 8, 112)]), 'N', 3.3)
-    # baroque church with an onion dome, right of centre
-    body = p.box(466, 120, 500, 150)
-    p.put(body, 'N', 3.3)
-    onion = p.ell(483, 112, 10, 9) | p.poly([(475, 112), (483, 96), (491, 112)])
-    p.put(onion, 'P', 1.6 + np.clip((xx - 476) / 14, 0, 1) * 1.3)
-    p.put(p.box(482, 90, 484, 97), 'N', 2.4)
-    p.put(p.ell(483, 89, 2, 2), 'P', 2.5)
-    # town hall tower (right)
-    th = p.box(560, 104, 576, 150) | p.poly([(557, 104), (568, 86), (579, 104)])
-    p.put(th, 'N', 3.0)
-    p.put(p.ell(568, 112, 4, 4), 'C', 3.2, emis=True)                               # lit clock face
-    p.put(p.ell(568, 112, 2.5, 2.5), 'C', 4.6, emis=True)
-    # ---- the palais of the commission: long classical front, central dome with a lantern and flagpoles
-    front = p.box(246, 124, 416, 150)
-    p.put(front, 'N', 2.6 + east * 0.3)
-    for k in range(13):                                                              # pilaster rhythm
-        p.put(p.box(252 + k * 13, 128, 253 + k * 13, 146), 'N', 3.4)
-    for k in range(12):
-        lit = k in (1, 2, 4, 7, 9, 10)
-        p.put(p.box(256 + k * 13, 134, 260 + k * 13, 140), 'L' if lit else 'N', 2.6 if lit else 1.8, emis=lit)
-    p.put(p.box(242, 122, 420, 124), 'N', 3.6)                                       # cornice
-    p.put(p.box(242, 121, 420, 122), 'W', 1.4)                                       # snow on the cornice
-    drum = p.box(302, 106, 360, 124)
-    p.put(drum, 'N', 2.7)
-    for k in range(8):
-        p.put(p.box(306 + k * 7, 109, 307 + k * 7, 122), 'N', 3.5)
-    dome = p.ell(331, 108, 31, 26) & (yy < 108)
-    dl = np.clip((xx - 310) / 44, 0, 1)                                              # dawn on the east flank
-    p.put(dome, 'P', 1.3 + dl * 2.2 + np.clip((yy - 84) / 24, 0, 1) * 0.6)
-    for k in range(-3, 4):                                                           # ribs
-        rx = 331 + k * 8
-        p.put(p.line([(rx, 108), (331 + k * 4.5, 86)], 0.4) & dome, 'P', 0.9 + dl[108, int(rx)] * 1.4)
-    p.put(dome & rim(dome, 0, -1, 1), 'P', 3.6 + dl * 1.0)                           # snow-lit crown
-    lantern = p.box(326, 72, 336, 83) | p.poly([(324, 72), (331, 64), (338, 72)])
-    p.put(lantern, 'N', 2.8)
-    p.put(p.box(329, 75, 333, 80), 'L', 2.4, emis=True)
-    for fx_ in (264, 298, 364, 398):                                                 # flagpoles with limp flags
-        p.put(p.box(fx_, 100, fx_ + 1, 123), 'N', 3.0)
-        p.put(p.box(fx_ + 1, 101, fx_ + 3, 108), 'N', 2.4)
-    # ---- the riverside: warehouses and the quay street (nearest rank), the quay wall
-    _roof_run(p, [-4, 26, 54, 88, 116, 146, 176, 202, 230, 258, 290, 320, 348, 378, 410, 440, 468, 496, 526, 556,
-                  586, 616, 644], 158, 1.7, 405)
-    p.put(p.box(0, 150, VW, 158), 'N', 1.6)
-    for k in range(0, VW, 9):                                                        # street-level windows / arcades
-        if (k // 9) % 3 != 1:
-            p.put(p.box(k + 2, 152, k + 5, 156), 'L' if (k // 9) % 4 == 0 else 'N', 2.2 if (k // 9) % 4 == 0 else 1.0,
-                  emis=(k // 9) % 4 == 0)
-    quay = p.box(0, 158, VW, 164)
-    p.put(quay, 'I', 1.6 + (pg.value_noise(VW, VH, 5, 406, octaves=1) - 0.5) * 0.8)
-    p.put(p.box(0, 158, VW, 159), 'W', 1.6)
-    for lx in QUAY_LAMPS:                                                            # quay lamps on the far bank
-        p.put(p.box(lx, 148, lx + 1, 158), 'N', 0.8)
-        p.put(p.box(lx - 1, 146, lx + 2, 149), 'L', 3.6, emis=True)
-        p.put(p.box(lx, 145, lx + 1, 146), 'L', 4.2, emis=True)
-    # ---- the bridge: far railing, deck, near spandrel wall, piers, arches with the river through them
-    rail = p.box(0, 157, VW, 158) | (p.box(0, 157, VW, 163) & ((xx.astype(int) % 7) == 3))
-    p.put(rail, 'I', 0.6)
-    p.put(p.box(0, 156, VW, 157), 'I', 4.4)                                          # top rail catches the dawn
-    deck = p.box(0, 163, VW, PARAPET_Y)
-    dn = pg.value_noise(VW, VH, 9, 407, octaves=2)
-    p.put(deck, 'W', 1.1 + (dn - 0.5) * 1.2 - np.clip((yy - 170) / 14, 0, 1) * 0.5)
-    sleepers = deck & (yy >= 176) & ((xx.astype(int) % 6) < 2)
-    p.add(sleepers, -0.55)
-    p.put(p.box(0, 181, VW, 182), 'I', 3.0)                                          # the far rail of the near track
-    p.put(p.box(0, 168, VW, 169), 'I', 2.4)                                          # the far track's rail
-    # cornice under the near parapet, then the spandrel wall down to the water
-    p.put(p.box(0, 194, VW, 196), 'I', 4.0)
-    p.put(p.box(0, 193, VW, 194), 'W', 2.0)
-    wall = p.box(0, 196, VW, WATER_Y + 8)
-    stone = pg.value_noise(VW, VH, 7, 408, octaves=2)
-    p.put(wall, 'I', 1.4 + (stone - 0.5) * 0.9 - np.clip((yy - 196) / 50, 0, 1) * 0.5)
-    courses = wall & ((yy.astype(int) % 5) == 0)
-    p.add(courses, -0.4)
-    for (a, b) in ARCHES:
-        op = _arch_mask(p, a, b)
-        # the river beyond the bridge, lit by the dawn (brighter toward the east), seen through the opening
-        p.put(op, 'K', 1.9 + east * 1.9 + np.clip((yy - 204) / 34, 0, 1) * 0.5 +
-              (pg.value_noise(VW, VH, 24, 409, octaves=2) - 0.5) * 0.6)
-        far_ice = op & (yy > 224) & ((pg.value_noise(VW, VH, 13, 410, octaves=2) + (1 - east) * 0.3) > 0.78)
-        p.put(far_ice, 'W', 0.4 + east * 0.6)
-        for lx in QUAY_LAMPS:                                                        # quay lamps mirrored
-            st = op & (np.abs(xx - lx) < 1.0) & ((yy.astype(int) + lx) % 3 != 0)
-            p.put(st, 'L', 0.9 + np.clip(1 - (yy - 200) / 36, 0, 1) * 1.4)
-        ring = kit.dilate(op, 2) & ~op
-        p.put(ring, 'I', 0.5)                                                        # voussoirs in shadow
-        p.put(ring & (yy < 212) & (xx > (a + b) / 2), 'I', 2.6)                      # east side of the arch lit
-        key = p.box((a + b) / 2 - 2, 200, (a + b) / 2 + 2, 206) & ~op
-        p.put(key, 'I', 3.4)
-    for (a, b) in ((222, 236), (404, 418)):                                          # piers with cutwaters
-        pier = p.box(a, 200, b, WATER_Y + 10)
-        p.put(pier, 'I', 1.0 + np.clip((xx - a) / (b - a), 0, 1) * 1.4)
-        p.put(p.poly([(a - 4, WATER_Y + 10), (a - 4, 226), ((a + b) / 2, 214), (b + 4, 226), (b + 4, WATER_Y + 10)]),
-              'I', 1.2 + np.clip((xx - a + 4) / (b - a + 8), 0, 1) * 1.2)
-        p.put(p.box(a - 4, WATER_Y - 2, b + 4, WATER_Y + 1), 'W', 1.2)               # ice piled at the pier
-    # ---- the river in front: dark open water, the dawn mirrored in the eastern channel, ice along the banks
-    water = p.box(0, WATER_Y, VW, VH)
-    wn = pg.value_noise(VW, VH, 22, 411, octaves=3)
-    chan = np.clip(1 - np.abs(xx - 450) / 240, 0, 1)
-    wt = 0.9 + chan * 1.7 + east * 1.0 + (wn - 0.5) * 0.9 - np.clip((yy - WATER_Y) / 60, 0, 1) * 0.5
-    p.put(water, 'K', wt)
-    # the lit arch openings mirrored right below the bridge (horizontal ripple lines)
-    for (a, b) in ARCHES:
-        mir = water & (xx > a + 16) & (xx < b - 16) & (yy < WATER_Y + 26)
-        p.add(mir & ((yy.astype(int) + xx.astype(int) // 5) % 3 == 0), 1.1 * np.clip(1 - (yy - WATER_Y) / 26, 0, 1))
-    # faint continuation of the quay-lamp streaks
-    for lx in QUAY_LAMPS:
-        st = water & (np.abs(xx - lx) < 1.0) & ((yy.astype(int) * 2 + lx) % 5 == 0) & (yy < WATER_Y + 24)
-        p.put(st, 'L', 0.6 + np.clip(1 - (yy - WATER_Y) / 24, 0, 1) * 1.0)
-    # ice sheets from both banks, thin floes drifting in the channel
-    sheet = pg.value_noise(VW, VH, 30, 412, octaves=2)
-    edge_w = np.clip(1 - xx / 150, 0, 1) + np.clip((xx - 560) / 80, 0, 1)
-    ice = water & ((sheet * 0.6 + edge_w * 0.9 + np.clip((yy - 262) / 40, 0, 1) * 0.5) > 0.95)
-    floes = water & (pg.value_noise(VW, VH, 9, 414, octaves=1) > 0.84) & (yy > WATER_Y + 6) & (yy < 280)
-    ice |= floes
-    p.put(ice, 'W', 0.5 + east * 0.5 + np.clip((yy - 250) / 60, 0, 1) * 0.5 + (wn - 0.5) * 0.5)
-    p.put(ice & ~shift(ice, 0, 1), 'W', 1.6)                                         # lit floe edges
-    p.put(ice & ~shift(ice, 0, -1) & ~kit.erode(ice, 1), 'K', 0.8)
-    p.resolve(band=2.6)
-    glints = []
-    rng = np.random.default_rng(413)
-    for _ in range(40):
-        gx = int(rng.uniform(280, 600)); gy = int(rng.uniform(WATER_Y + 4, 282))
-        if not ice[gy, gx]:
-            glints.append([gx, gy, int(rng.integers(1, 4))])
-    LAYOUT['trains']['glints'] = glints
-    return p.L
+def write_layout():
+    p = os.path.join(OUT, 'layout.json')
+    os.makedirs(OUT, exist_ok=True)
+
+    def norm(o):
+        if isinstance(o, dict):
+            return {str(k): norm(v) for k, v in o.items()}
+        if isinstance(o, (list, tuple)):
+            return [norm(v) for v in o]
+        if isinstance(o, (np.integer,)):
+            return int(o)
+        if isinstance(o, (np.floating, float)):
+            v = float(o)
+            return int(v) if v.is_integer() and isinstance(o, np.floating) else round(v, 4)
+        return o
+    import re
+    txt = json.dumps(norm(LAYOUT), indent=1, sort_keys=True, ensure_ascii=False)
+    # short numeric lists on one line (readable diffs)
+    txt = re.sub(r'\[\s*(-?[\d.]+(?:,\s*-?[\d.]+)*)\s*\]',
+                 lambda m: '[' + ', '.join(v.strip() for v in m.group(1).split(',')) + ']', txt)
+    with open(p, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(txt + '\n')
 
 
-def bridge_fg():
-    """Near parapet with its lamp posts (in front of the trains) and the near bank at the bottom."""
-    R = ramps_dawn()
-    p = Paint(VW, VH, R, 'bridge_fg')
-    yy, xx = p.yy, p.xx
-    par = p.box(0, PARAPET_Y, VW, 194)
-    st = pg.value_noise(VW, VH, 6, 421, octaves=2)
-    p.put(par, 'I', 1.6 + (st - 0.5) * 0.8 + np.clip((xx - 100) / 540, 0, 1) * 0.4)
-    p.put(par & ((xx.astype(int) % 11) == 0), 'I', 0.9)                              # balustrade joints
-    p.put(p.box(0, PARAPET_Y, VW, PARAPET_Y + 1), 'W', 1.5)                          # snow on the coping
-    p.put(p.box(0, PARAPET_Y + 1, VW, PARAPET_Y + 2), 'I', 3.6)
-    for lx in PARAPET_LAMPS:
-        p.put(p.box(lx - 2, PARAPET_Y - 2, lx + 3, PARAPET_Y + 1), 'I', 0.8)        # plinth
-        p.put(p.box(lx, PARAPET_Y - 22, lx + 1, PARAPET_Y - 1), 'I', 0.9)           # post
-        p.put(p.box(lx - 1, PARAPET_Y - 24, lx + 2, PARAPET_Y - 22), 'I', 1.2)
-        p.put(p.box(lx - 2, PARAPET_Y - 30, lx + 3, PARAPET_Y - 24), 'L', 3.3, emis=True)    # lantern
-        p.put(p.box(lx - 1, PARAPET_Y - 28, lx + 2, PARAPET_Y - 25), 'L', 4.4, emis=True)
-        p.put(p.box(lx - 2, PARAPET_Y - 31, lx + 3, PARAPET_Y - 30), 'I', 2.6)      # cap
-        p.put(p.box(lx - 1, PARAPET_Y - 32, lx + 2, PARAPET_Y - 31), 'W', 1.2)
-    # ---- near bank: a snow slope falling into its own blue shadow, reed clumps, a bare tree at the right
-    bank_top = 283 + (wrap_noise(VW, 1, 70, 422)[0] * 7).astype(int) - np.clip((xx[0] - 520) / 120, 0, 1).astype(int) * 2
-    bank = yy >= bank_top[None, :]
-    sn = pg.value_noise(VW, VH, 14, 423, octaves=2)
-    p.put(bank, 'W', 1.6 + (sn - 0.5) * 0.8 - np.clip((yy - 290) / 24, 0, 1) * 1.2)
-    p.put(bank & ~shift(bank, 0, 1), 'W', 3.0)
-    p.put(bank & (yy > 304), 'S', 5.6 + (sn - 0.5) * 0.8)                            # the slope in shadow
-    p.put(bank & (yy > 302) & (yy <= 304), 'S', 7.0)
-    rng = np.random.default_rng(424)
-    for _ in range(14):                                                              # frozen reed clumps
-        rx = int(rng.uniform(20, 560)); base = int(bank_top[rx])
-        for k in range(int(rng.integers(3, 7))):
-            h = int(rng.uniform(4, 11)); dx = rng.uniform(-3, 3)
-            p.put(p.line([(rx + dx, base + 2), (rx + dx + rng.uniform(-1.5, 1.5), base - h)], 0.4), 'G',
-                  float(rng.uniform(0.4, 2.2)))
-    # bare tree (trunk at the right edge, branches over the water, snow on their upper sides)
-    trunk = p.poly([(606, 320), (610, 268), (612, 240), (616, 240), (620, 268), (626, 320)])
-    p.put(trunk, 'N', 0.6 + np.clip((xx - 606) / 20, 0, 1) * 0.8)
-    for pts in (((613, 244), (590, 226), (566, 214)), ((613, 242), (618, 222), (610, 204)), ((615, 246), (636, 230),
-                (650, 220)), ((590, 226), (582, 212)), ((596, 229), (600, 214)), ((618, 222), (630, 212)),
-                ((613, 258), (596, 250), (584, 248))):
-        br = p.line(list(pts), 0.9)
-        p.put(br, 'N', 0.7)
-        p.put(br & ~shift(br, 0, 1), 'W', 1.4)
-    p.put(trunk & ~shift(trunk, 1, 0), 'W', 0.8)                                     # snow on the trunk's east side
-    p.resolve(band=2.6)
-    return p.L
-
-
-def _paint_coach(p: Paint, x0, w, body_ramp, body_tone, roof_tone, lit, frame, pennant=False, boxcar=False):
-    """One passenger coach / boxcar from x0 to x0+w on a TRAIN_H-row sprite, rail level at row 28."""
-    yy, xx = p.yy, p.xx
-    body = p.rr(x0 + 1, 8, x0 + w - 1, 24, 2)
-    p.put(body, body_ramp, body_tone + np.clip((xx - x0) / w, 0, 1) * 0.6)
-    p.put(body & (yy >= 22), body_ramp, body_tone - 0.5)
-    roof = p.rr(x0 + 1, 5, x0 + w - 1, 9, 3)
-    p.put(roof, 'I', roof_tone)
-    p.put(roof & (yy < 7), 'W', 1.6)                                                 # snow-dusted roof
-    p.put(p.box(x0 + 3, 8, x0 + w - 3, 9), 'I', 1.0)                                 # roof shadow line
-    if boxcar:
-        door = p.box(x0 + w // 2 - 7, 10, x0 + w // 2 + 7, 23)
-        p.put(door & ~kit.erode(door, 1), body_ramp, body_tone - 0.7)
-        p.put(p.box(x0 + w // 2 - 7, 15, x0 + w // 2 + 7, 16), body_ramp, body_tone - 0.6)
-        tm = text('4', '35')
-        p.put(np.pad(tm, ((12, TRAIN_H - 17), (x0 + 6, p.w - x0 - 9)))[:p.h, :p.w], 'W', 2.0)
-        # lead seal plate catching the lamp light
-        p.put(p.box(x0 + w // 2 + 9, 17, x0 + w // 2 + 12, 19), 'L', 1.6)
+def main(argv=None):
+    import argparse
+    import time
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--only', default='trains,tohall,close')
+    args = ap.parse_args(argv)
+    parts = [s.strip() for s in args.only.split(',') if s.strip()]
+    t0 = time.time()
+    # every part registers its LAYOUT entries; layout.json is always written from a complete build
+    # (a partial --only run rebuilds the other parts' layout entries without writing their images)
+    if 'trains' in parts:
+        build_trains()
     else:
-        k = 0
-        for wx in range(x0 + 7, x0 + w - 8, 7):
-            win = p.box(wx, 11, wx + 4, 17)
-            on = lit[k % len(lit)]
-            p.put(win, 'L' if on else 'N', 2.4 + (k % 3) * 0.4 if on else 0.5, emis=on)
-            if on:
-                p.put(p.box(wx, 11, wx + 4, 12), 'L', 3.6, emis=True)
-            k += 1
-        for dx in (x0 + 2, x0 + w - 5):                                              # end doors
-            p.put(p.box(dx, 10, dx + 3, 23), body_ramp, body_tone - 0.6)
-            p.put(p.box(dx + 1, 12, dx + 2, 15), 'N', 1.2)
-    p.put(p.box(x0 + 1, 24, x0 + w - 1, 25), 'N', 0.6)                               # underframe
-    for bx in (x0 + 9, x0 + w - 13):                                                 # bogies
-        p.put(p.box(bx - 2, 24, bx + 6, 26), 'N', 0.3)
-        for wx in (bx - 1, bx + 5):
-            wh = p.ell(wx, 26.5, 2.4, 2.4)
-            p.put(wh, 'N', 0.2)
-            p.put(wh & rim(wh, 1 if frame == 0 else -1, 0, 1), 'I', 2.4)
-    p.put(p.box(x0 - 1, 19, x0 + 1, 21), 'I', 1.0)                                   # coupling
-    if pennant:
-        p.put(p.box(x0 + w - 3, 1, x0 + w - 2, 6), 'I', 2.6)
-        fl = [(x0 + w - 2, 1), (x0 + w + 2 + frame, 2), (x0 + w - 2, 4)]
-        p.put(p.poly(fl), 'W', 2.6 if frame == 0 else 2.0)
-        p.put(p.poly(fl) & (yy >= 3), 'N', 0.4)
-
-
-def _paint_loco(p: Paint, x0, side, frame):
-    """Steam locomotive (62 px) with its tender (26 px).  side 'de': front at the right; 'su': front at the left."""
-    yy, xx = p.yy, p.xx
-    if side == 'de':
-        f = lambda dx: x0 + dx                                                       # noqa: E731 (dx from the tender end)
+        _layout_only_trains()
+    if 'tohall' in parts:
+        build_tohall()
     else:
-        f = lambda dx: x0 + 88 - dx                                                  # noqa: E731
-    lo = lambda a, b: (min(a, b), max(a, b))                                         # noqa: E731
-    # tender
-    a, b = lo(f(0), f(26))
-    p.put(p.box(a + 1, 10, b - 1, 24), 'I', 1.3)
-    p.put(p.box(a + 2, 8, b - 2, 11), 'N', 0.4)                                      # coal
-    p.put(p.box(a + 1, 10, b - 1, 11), 'I', 2.6)
-    for wx in (a + 6, a + 13, a + 20):
-        wh = p.ell(wx, 26.5, 2.4, 2.4)
-        p.put(wh, 'N', 0.2)
-        p.put(wh & rim(wh, 1 if frame == 0 else -1, 0, 1), 'I', 2.2)
-    # cab
-    a, b = lo(f(26), f(40))
-    p.put(p.box(a, 7, b, 24), 'I', 1.5)
-    p.put(p.box(a - 1, 6, b + 1, 8), 'I', 2.6)
-    p.put(p.box(a + 1, 5, b - 1, 7), 'W', 1.4)
-    p.put(p.box(a + 4, 10, a + 8, 15), 'L', 2.6, emis=True)                          # lit cab window
-    # boiler
-    a, b = lo(f(40), f(84))
-    boil = p.rr(a, 9, b, 21, 3)
-    p.put(boil, 'I', 1.6 + np.clip((yy - 9) / 12, 0, 1) * -0.9)
-    p.put(boil & (yy < 11), 'I', 3.4)
-    p.put(boil & (yy < 10), 'W', 0.6)                                                # snow on top
-    p.put(p.box(a, 21, b, 24), 'N', 0.5)                                             # running gear shadow
-    dome_x = f(58)
-    p.put(p.ell(dome_x, 9, 3.5, 2.5) & (yy < 9), 'I', 2.6)
-    chim = f(76)
-    p.put(p.box(chim - 2, 2, chim + 2, 9), 'I', 1.4)
-    p.put(p.box(chim - 3, 2, chim + 3, 3), 'I', 2.6)
-    # smoke deflectors + smokebox front + headlights
-    front = f(88)
-    fa, fb = lo(f(84), front)
-    p.put(p.box(fa, 8, fb, 21), 'I', 1.1)
-    hl_x = f(86)
-    p.put(p.box(hl_x - 1, 10, hl_x + 1, 12), 'L', 4.2, emis=True)
-    p.put(p.box(hl_x - 1, 17, hl_x + 1, 19), 'L', 3.4, emis=True)
-    da, db = lo(f(80), f(81))
-    p.put(p.box(da, 5, db + 1, 19), 'I', 2.8)
-    # drivers with rods (two frames: the rod moves)
-    for k, wx in enumerate((f(48), f(58), f(68))):
-        wh = p.ell(wx, 25, 3.6, 3.6)
-        p.put(wh, 'N', 0.25)
-        p.put(wh & ~kit.erode(wh, 1), 'I', 1.6)
-        p.put(p.box(wx, 25, wx + 1, 26), 'I', 2.8)
-    rod_y = 26 if frame == 0 else 24
-    a, b = lo(f(46), f(70))
-    p.put(p.box(a, rod_y, b, rod_y + 1), 'I', 2.4)
-    for wx in (f(78), f(85)):                                                        # leading truck
-        wh = p.ell(wx, 26.5, 2.2, 2.2)
-        p.put(wh, 'N', 0.25)
-    LAYOUT['trains']['train_' + side]['chimney'] = [int(chim), 2]
+        _layout_only('tohall')
+    if 'close' in parts:
+        build_close()
+    else:
+        _layout_only('close')
+    write_layout()
+    print('env_veltrava_cine: %s in %.1f s -> %s' % (','.join(parts), time.time() - t0, OUT))
 
 
-def train_sheet(side):
-    W = 368
-    sheet = np.zeros((TRAIN_H * 2, W, 4), np.uint8)
-    LAYOUT['trains']['train_' + side] = {'front': W if side == 'de' else 0, 'y': TRAIN_DE_Y if side == 'de' else TRAIN_SU_Y,
-                                         'w': W}
-    for fr in range(2):
-        R = ramps_dawn()
-        p = Paint(W, TRAIN_H, R, 'train_' + side)
-        if side == 'de':
-            for i in range(4):
-                _paint_coach(p, i * 70, 70, 'I', 1.3, 2.6, [1, 1, 0, 1, 0, 1, 1, 0], fr, pennant=True)
-            _paint_loco(p, 280, 'de', fr)
-        else:
-            _paint_loco(p, 0, 'su', fr)
-            for i in range(3):
-                _paint_coach(p, 88 + i * 70, 70, 'P', 1.6, 2.3, [0, 1, 1, 0, 1, 0, 0, 1], fr)
-            _paint_coach(p, 298, 70, 'P', 1.5, 2.3, [], fr, boxcar=True)
-        p.resolve(band=2.6)
-        sheet[fr * TRAIN_H:(fr + 1) * TRAIN_H] = p.L.c
-    return sheet
+def _layout_only_trains():
+    # cheap functions that register the trains LAYOUT keys (the figure renders are skipped)
+    import env_veltrava_cine_dawn as D
+    for fn in (pole, glow_lamp, glow_tea, steam_tea, spoon, sweep, D.bridge_bg, D.bridge_fg, D.train_de, D.train_su,
+               D.smoke, D.walker):
+        fn()
+    ext_far('de')
+    ext_far('su')
+    LAYOUT['trains']['fig_konrad'] = [FIG_K[0], FIG_K[1]]
+    LAYOUT['trains']['fig_alexei'] = [FIG_A[0], FIG_A[1]]
 
 
-def train_de():
-    return train_sheet('de')
+def _layout_only(part):
+    if part == 'tohall':
+        import env_veltrava_cine_tohall as T
+        T.k1_clock()
+        T.k2_clock()
+        T.steam_puffs()
+        T.pendulum()
+        T.k2_konrad()
+    else:
+        import env_veltrava_cine_close as N
+        N.n1_bg()
+        N.board()
+        N.steam()
+        N.n2_bg()
+        N.n2_win_konrad()
+        N.n2_win_alexei()
 
 
-def train_su():
-    return train_sheet('su')
-
-
-def smoke():
-    """Six frames of a steam puff growing and thinning (26 x 26 each); lit from the east."""
-    n, fw, fh = 6, 26, 26
-    sheet = np.zeros((fh, fw * n, 4), np.uint8)
-    for i in range(n):
-        u = i / (n - 1)
-        r = 3.5 + 8.5 * u
-        yy, xx = grid(fh, fw)
-        d = np.hypot((xx + 0.5 - fw / 2) / r, (yy + 0.5 - fh / 2 - u * 1.5) / (r * 0.85))
-        nz = pg.value_noise(fw, fh, 4, 501 + i, octaves=2)
-        core = np.clip(1 - d, 0, 1) ** 0.7 + (nz - 0.5) * 0.5
-        dens = np.clip(core, 0, 1) * (1.0 - 0.58 * u)
-        m = (dens > pg.bayer(fw, fh, i * 5, i * 3) * 0.7) & (dens > 0.08)
-        lit = np.clip((xx - fw / 2) / r * 0.5 + (fh / 2 - yy) / r * 0.5 + 0.5, 0, 1)
-        cols = [pg.hx(c) for c in (V['sky'][1], V['sky'][2], V['snow'][1], V['snow'][2], V['snow'][3])]
-        idx = np.clip((lit * 2.4 + core * 1.0 - u * 1.0 + 0.3).round().astype(int), 0, 4)
-        for ci in range(5):
-            sel = m & (idx == ci)
-            sheet[:, i * fw:(i + 1) * fw][sel] = cols[ci]
-    LAYOUT['trains']['smoke'] = {'frames': n}
-    return sheet
-
-
-def dawn_glow():
-    """Additive warmth of the dawn: a band behind the city and the lit water channel (runtime fades it in)."""
-    yy, xx = grid(VH, VW)
-    a = np.zeros((VH, VW, 3), np.float32)
-    east = np.clip((xx - 160) / 480, 0, 1)
-    band = np.clip(1 - np.abs(yy - 128) / 70, 0, 1) ** 1.6 * (0.25 + 0.75 * east)
-    for c, v in enumerate((84, 50, 20)):
-        a[..., c] += band * v
-    water = (yy > WATER_Y - 2) & (yy < 300)
-    ref = np.clip(1 - np.abs(xx - 460) / 150, 0, 1) ** 1.3 * np.clip(1 - (yy - WATER_Y) / 58, 0, 1) * water
-    for c, v in enumerate((44, 28, 12)):
-        a[..., c] += ref * v
-    return quant_add(a, 8.0)
-
-
-def fg_glow():
-    """Halos of the parapet lanterns (additive, drawn over the trains and the parapet)."""
-    yy, xx = grid(VH, VW)
-    a = np.zeros((VH, VW, 3), np.float32)
-    for lx in PARAPET_LAMPS:
-        d = np.hypot((xx + 0.5 - lx - 0.5) / 15.0, (yy + 0.5 - (PARAPET_Y - 27)) / 11.0)
-        g = np.clip(1 - d, 0, 1) ** 1.5
-        for c, v in enumerate((66, 42, 18)):
-            a[..., c] += g * v
-    return quant_add(a, 8.0)
+if __name__ == '__main__':
+    # run inside the importable module object: the sub-modules (tohall, close, figs) import
+    # env_veltrava_cine and must share its LAYOUT dict with the writer
+    sys.modules.pop('env_veltrava_cine', None)
+    import env_veltrava_cine as _self  # noqa: E402
+    _self.main()

@@ -99,6 +99,92 @@ def parse(s):
     return [r for r in rows if r]
 
 
+# ------------------------------------------------------------------------------------------- eye shapes
+# Round 7: every speaker shared the same two eye stamps.  These derive individual eye SHAPES from a stamp
+# table (applied per speaker in its spec: features['eyes'] = eye_shapes(EYES, 'hooded', 'droop'), ...):
+#   hooded  heavy upper lid: deeper crease, the lid covers the outer corner of the eye white
+#   narrow  one row less of open eye (tired / squinting / reserved)
+#   round   one row more of eye white below the iris (wide-set, open, young)
+#   droop   outer corner of the lash line one px lower (kind, tired, sad)
+#   lift    outer corner one px higher (alert, sharp)
+#   deep    deep-set: an extra shadow row above the crease
+# The near eye (image left) has its outer corner on the LEFT, the far eye on the RIGHT.
+def _rows_of(stamp):
+    rows = parse(stamp) if isinstance(stamp, str) else list(stamp)
+    w = max(len(r) for r in rows)
+    return [list(r.ljust(w, '.')) for r in rows]
+
+
+def _lash_row(rows):
+    for i, r in enumerate(rows):
+        if r.count('K') >= 3:
+            return i
+    return 1
+
+
+def _outer_x(row, side):
+    xs = [i for i, c in enumerate(row) if c not in '.']
+    if not xs:
+        return None
+    return xs[0] if side == 'near' else xs[-1]
+
+
+def _shape(rows, anc, side, expr, kind):
+    closed = expr == 'closed'
+    li = _lash_row(rows)
+    ax, ay = anc
+    if kind == 'hooded':
+        for j in range(0, li):
+            rows[j] = [('#' if c == '=' else c) for c in rows[j]]
+        if not closed and li + 1 < len(rows):
+            x = _outer_x(rows[li + 1], side)
+            if x is not None:
+                rows[li + 1][x] = 'K'
+    elif kind == 'deep':
+        w = len(rows[0])
+        top = ['.'] * w
+        for i, c in enumerate(rows[0]):
+            if c in '=#':
+                top[i] = '-'
+        rows.insert(0, top)
+        ay += 1
+    elif kind == 'narrow' and not closed:
+        # drop the first row below the eye row that still shows iris / white (keeps lash line and lower lid)
+        for j in range(li + 2, len(rows) - 1):
+            if any(c in 'IiWw' for c in rows[j]):
+                del rows[j]
+                break
+    elif kind == 'round' and not closed and expr != 'surprised':
+        j = li + 1
+        if j < len(rows):
+            new = [('W' if c in 'IiPH' else c) for c in rows[j]]
+            new = [('w' if c == 'K' else c) for c in new]
+            rows.insert(j + 1, new)
+    elif kind in ('droop', 'lift'):
+        x = _outer_x(rows[li], side)
+        if x is not None and rows[li][x] == 'K':
+            if kind == 'droop' and li + 1 < len(rows):
+                rows[li][x] = '.' if not closed else 'K'
+                if rows[li + 1][x] in '.-=':
+                    rows[li + 1][x] = 'K'
+            elif kind == 'lift' and li > 0:
+                rows[li][x] = 'k'
+                rows[li - 1][x] = 'K'
+    return rows, (ax, ay)
+
+
+def eye_shapes(table, *kinds):
+    """Copy of an eye stamp table with the given shape changes applied in order (see above)."""
+    out = {}
+    for (side, expr), (stamp, anc) in table.items():
+        rows = _rows_of(stamp)
+        a = anc
+        for k in kinds:
+            rows, a = _shape(rows, a, side, expr, k)
+        out[(side, expr)] = ('\n'.join(''.join(r) for r in rows), a)
+    return out
+
+
 # ------------------------------------------------------------------------------------------- canvas
 class Canvas:
     """Holds the tone map (relative marks) and absolute colour overrides for one frame."""

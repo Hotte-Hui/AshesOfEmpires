@@ -72,7 +72,7 @@ func _build_play(area: Control) -> void:
 	row.add_child(card)
 	var col := Kit.vbox(10)
 	card.add_child(col)
-	col.add_child(Kit.label(Kit.t("mg.shunt.waybill.kicker").to_upper(), "PaperKicker"))
+	col.add_child(Kit.label(Kit.t("mg.shunt.waybill.kicker").to_upper().replace("ß", "SS"), "PaperKicker"))
 	var wt := Kit.label(Kit.t("mg.shunt.waybill.title"), "", 30, Kit.C_INK)
 	wt.add_theme_font_override("font", Kit.font("fv_serif_bold"))
 	col.add_child(wt)
@@ -302,7 +302,7 @@ func _leave() -> void:
 
 func _update_ui() -> void:
 	if _trips_label:
-		_trips_label.text = Kit.t("mg.shunt.trips", {"n": logic.trips}).to_upper()
+		_trips_label.text = Kit.t("mg.shunt.trips", {"n": logic.trips}).to_upper().replace("ß", "SS")
 	if _act_btn:
 		_act_btn.text = Kit.t("mg.shunt.btn.enter" if logic.phase == "home" else "mg.shunt.btn.leave")
 	if not solved and not _busy:

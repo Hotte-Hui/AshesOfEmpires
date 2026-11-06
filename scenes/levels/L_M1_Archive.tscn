@@ -91,6 +91,7 @@ script = ExtResource("2")
 kind = "chat"
 hotspot_id = "exp_porter"
 explore_id = "berlin.porter"
+explore_chain = PackedStringArray("berlin.porter", "berlin.task.mittens.ask", "berlin.task.mittens.return")
 npc_id = "porter"
 radius = 34.0
 
@@ -227,6 +228,7 @@ script = ExtResource("2")
 kind = "discover"
 hotspot_id = "exp_heater"
 explore_id = "berlin.heater"
+explore_chain = PackedStringArray("berlin.heater", "berlin.task.mittens.take")
 prompt_height = 46.0
 
 [node name="ExpPigeons" type="Node2D" parent="Playfield"]
@@ -253,3 +255,19 @@ kind = "discover"
 hotspot_id = "exp_radio_dial"
 explore_id = "berlin.radio_dial"
 radius = 20.0
+
+[node name="TaskStairwell" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_task_stairwell"
+explore_id = "berlin.task.mittens.door"
+radius = 24.0
+prompt_height = 70.0
+
+[node name="ExpRohrpost" type="Node2D" parent="Playfield"]
+script = ExtResource("2")
+kind = "discover"
+hotspot_id = "exp_rohrpost"
+explore_id = "berlin.rohrpost"
+radius = 20.0
+prompt_height = 62.0

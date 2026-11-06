@@ -10,7 +10,7 @@ Board art (assets/ui/puzzle/, text-free -- the UI sets every word in HD via Loc 
   c3_plan.png              seating plan of the Großer Saal (Berlin drafting style: diazo paper, blue
                            ink, dotted construction grid, hatched table, chairs, microphones)
   c3_log.png               Elena's booth log sheet, Kabine 2 (typed form: letterhead, rules, red
-                           margin, punch holes, paper clip, her ink bracket at 10:09)
+                           margin, punch holes, paper clip, her ink bracket at 10.09)
   c3_card_<id>.png         name plates chair / reich / soviet / secretariat, each with its own shape
                            glyph (circle / square / triangle / diamond -- never colour coded)
   c3_glyph_<shape>.png     the same glyphs, small (plan annotations next to the HD block labels)
@@ -497,16 +497,16 @@ LOG_PITCH = 8
 LOG_ROWS = [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b'), (2, 'b'), (3, 'a'), (3, 'b'), (3, 'n'), (4, 'a'), (4, 'b')]
 LOG_COLS = {'time': 22, 'mic': 47, 'channel': 61, 'remark': 30, 'note': 30, 'right': 160}
 # monospace advance of the typed board text (Courier Prime 20 px = 12 screen px = 4 art px) and the
-# position of "§ 4" inside the 10:09 remark ("verliest § 4 ..."), underlined by Elena
+# position of "§ 4" inside the 10.09 remark ("verliest § 4 ..."), underlined by Elena
 TYPE_ADV = 4
 PARA_CHARS = (9, 3)
 LOG_ENTRIES = [   # canonical facts (C3_DESIGN §2.7) -- the HD board text comes from Loc keys
-    {'time': '10:02', 'mic': '1', 'channel': 'FR → DE/RU', 'remark': ['ERÖFFNUNG TOP 4 „ANLAGE C“']},
-    {'time': '10:06', 'mic': '9', 'channel': 'DE → RU',
+    {'time': '10.02', 'mic': '1', 'channel': 'FR → DE/RU', 'remark': ['ERÖFFNUNG TOP 4 „ANLAGE C“']},
+    {'time': '10.06', 'mic': '9', 'channel': 'DE → RU',
      'remark': ['„KEINE EINWÄNDE GEGEN DIE', 'FASSUNG VOM 12. JANUAR.“']},
-    {'time': '10:09', 'mic': '12', 'channel': 'FR → DE/RU', 'remark': ['VERLIEST § 4 (VORBEREITETER TEXT)'],
+    {'time': '10.09', 'mic': '12', 'channel': 'FR → DE/RU', 'remark': ['VERLIEST § 4 (VORBEREITETER TEXT)'],
      'note': ['RU: BEGLEITETE PERSONEN –', 'DE: BEGLEITGUT!']},
-    {'time': '10:11', 'mic': '3', 'channel': 'RU → DE', 'remark': ['„WIR SCHLIESSEN UNS AN.“']},
+    {'time': '10.11', 'mic': '3', 'channel': 'RU → DE', 'remark': ['„WIR SCHLIESSEN UNS AN.“']},
 ]
 
 
@@ -562,7 +562,7 @@ def draw_log():
 
 
 def _elena_marks(l, y_entry, y_note, underline=None):
-    """Elena's fountain-pen marks at 10:09: a bracket over the whole entry in the left margin and a
+    """Elena's fountain-pen marks at 10.09: a bracket over the whole entry in the left margin and a
     stroke under "§ 4" (the note text itself is HD on the board / pixel handwriting on the document)."""
     pen = c(INK_B)
     x = 14
@@ -822,9 +822,9 @@ def main():
              'alt_key': 'doc.c3.booth_log.alt', 'item_id': 'ev_c3_booth_log', 'objective': 'c3b_inspect_log',
              'hotspot': 'booth_log', 'title_key': 'item.c3_booth_log.name',
              'description_key': 'item.c3_booth_log.description',
-             'describes': "Elena Weiss' booth log, Kabine 2 (RU-DE), agenda item 4 'Anlage C': 10:02 mic 1 FR, "
-                          "10:06 mic 9 DE, 10:09 mic 12 FR reads out § 4 (prepared text) with her handwritten "
-                          "margin note 'RU: begleitete Personen - DE: Begleitgut!', 10:11 mic 3 RU.",
+             'describes': "Elena Weiss' booth log, Kabine 2 (RU-DE), agenda item 4 'Anlage C': 10.02 mic 1 FR, "
+                          "10.06 mic 9 DE, 10.09 mic 12 FR reads out § 4 (prepared text) with her handwritten "
+                          "margin note 'RU: begleitete Personen - DE: Begleitgut!', 10.11 mic 3 RU.",
              'marks': {
                  'rows': DLM['rows'],
                  'entries': [{'time': e['time'], 'mic': int(e['mic']), 'channel': e['channel']} for e in LOG_ENTRIES],

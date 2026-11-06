@@ -1,6 +1,8 @@
 {
  "doc": "Exploration hotspots added after the art pass (Level._merge_explore_hotspots; scene.json wins on name clashes). Append-only: one block per contributing area.",
  "hotspots": {
+  "exp_relay_desk": [1777, 300],
+  "exp_cloak_tokens": [205, 300]
  },
  "spawns": {
  }

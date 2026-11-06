@@ -1,0 +1,73 @@
+{
+ "area": "plaza",
+ "doc": "Side task (Aufgabe, TECHNICAL_ARCHITECTURE §12.9) of L_M1_Plaza, owner: tasks. After the chat with the woman from No. 9 (plaza.neighbour) she asks for a photograph; ask + return are a chain on ChatNeighbour, the photographer's part a chain on ChatPhotographer (after plaza.photographer). Texts: data/locale/de_tasks.json. Checked by tests/test_tasks.gd.",
+ "entries": [
+  {
+   "id": "plaza.task.photo.ask",
+   "kind": "chat",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.task.photo.ask.title",
+   "text_key": "explore.plaza.task.photo.ask.text",
+   "prompt_key": "explore.plaza.task.photo.ask.prompt",
+   "requires": ["plaza.neighbour"],
+   "lines": [
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.ask.l1", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.ask.l2", "expr": "neutral"},
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.ask.l3", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.ask.l4", "expr": "concerned"},
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.ask.l5", "expr": "concerned"},
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.ask.l6", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.ask.l7", "expr": "determined"}
+   ]
+  },
+  {
+   "id": "plaza.task.photo.photographer",
+   "kind": "chat",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.task.photo.photographer.title",
+   "text_key": "explore.plaza.task.photo.photographer.text",
+   "prompt_key": "explore.plaza.task.photo.photographer.prompt",
+   "requires": ["plaza.task.photo.ask"],
+   "lines": [
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.photographer.l1", "expr": "neutral"},
+    {"speaker": "photographer", "key": "explore.plaza.task.photo.photographer.l2", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.photographer.l3", "expr": "neutral"},
+    {"speaker": "photographer", "key": "explore.plaza.task.photo.photographer.l4", "expr": "neutral"},
+    {"speaker": "photographer", "key": "explore.plaza.task.photo.photographer.l5", "expr": "neutral"},
+    {"speaker": "photographer", "key": "explore.plaza.task.photo.photographer.l6", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.photographer.l7", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "plaza.task.photo.return",
+   "kind": "chat",
+   "level": "L_M1_Plaza",
+   "title_key": "explore.plaza.task.photo.return.title",
+   "text_key": "explore.plaza.task.photo.return.text",
+   "prompt_key": "explore.plaza.task.photo.return.prompt",
+   "requires": ["plaza.task.photo.photographer"],
+   "lines": [
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.return.l1", "expr": "neutral"},
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.return.l2", "expr": "surprised"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.return.l3", "expr": "neutral"},
+    {"speaker": "berlin_father", "key": "explore.plaza.task.photo.return.l4", "expr": "neutral"},
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.return.l5", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.plaza.task.photo.return.l6", "expr": "determined"},
+    {"speaker": "berlin_mother", "key": "explore.plaza.task.photo.return.l7", "expr": "neutral"}
+   ]
+  }
+ ],
+ "tasks": [
+  {
+   "id": "plaza.task.photo",
+   "level": "L_M1_Plaza",
+   "title_key": "task.plaza.photo.title",
+   "summary_key": "task.plaza.photo.summary",
+   "steps": [
+    {"explore_id": "plaza.task.photo.ask", "hint_key": "task.plaza.photo.hint.ask"},
+    {"explore_id": "plaza.task.photo.photographer", "hint_key": "task.plaza.photo.hint.photographer"},
+    {"explore_id": "plaza.task.photo.return", "hint_key": "task.plaza.photo.hint.return"}
+   ]
+  }
+ ]
+}

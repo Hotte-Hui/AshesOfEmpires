@@ -313,7 +313,7 @@ func _correct() -> bool:
 	kit.eq(count[0], 1, "still exactly one solved signal")
 	kit.ok(pz.modal_input(key_event(KEY_ENTER)) and pz.is_open, "Enter right after success is swallowed (guard)")
 	var beat: float = pz.success_beat()
-	kit.ok(beat >= 3.0 and beat <= 6.0, "auto-close beat %.2f s: a reading pause, but inside the 8 s the input driver waits" % beat)
+	kit.ok(beat >= 3.0 and beat <= 7.5, "auto-close beat %.2f s: a reading pause, but inside the 8 s the input driver waits" % beat)
 	pz._solved_at -= 1000
 	kit.ok(pz.modal_input(key_event(KEY_ENTER)), "Enter after the guard confirms")
 	kit.ok(not pz.is_open and not pz.visible, "closed on confirm")
@@ -424,7 +424,7 @@ func _loc_keys() -> bool:
 	wanted["doc.c3.booth_log.alt"] = true
 	kit.ok(wanted.size() >= 60, "keys collected (%d)" % wanted.size())
 	kit.eq(loc.missing(wanted.keys()), [], "Loc keys used by the protocol puzzle")
-	kit.eq(loc.t("ui.c3.protocol.success"), "Paragraph vier kam vom Sekretariat der Kommission – nicht von einer Delegation. Beide Seiten haben zugestimmt, ohne nachzufragen.", "success text (C3_DESIGN §2.7)")
+	kit.eq(loc.t("ui.c3.protocol.success"), "Paragraph vier kam als fertiger Text vom Sekretariat – nicht von einer Delegation. Die Reichsdelegation kannte die Fassung schon, die sowjetische schloss sich an. Nachgefragt hat niemand.", "success text (C3_DESIGN §2.7)")
 	kit.eq(loc.t("ui.c3.protocol.hint"), "Die Mikrofone sind im Uhrzeigersinn nummeriert, beginnend beim Vorsitz. Zähle die Plätze am Hufeisen ab – das Sekretariat hat einen eigenen Tisch.", "hint text (C3_DESIGN §2.7)")
 	return true
 

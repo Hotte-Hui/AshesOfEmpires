@@ -9,6 +9,13 @@ extends Node
 ## Chapter 3 (C3_DESIGN.md): the route continues through L_C3_Station and L_C3_Hall; optional 3rd/4th spec values
 ## choose c3a_choose / c3b_choose (default ask_elena / share_protocol). A second save (slot 2) is taken in the
 ## station and reloaded at the end; the dialogue history is checked for the flag-dependent line variants.
+## --autoplay-explore (§12 + §12.9 side tasks): an exploration pass at the start of every level, on the parade
+## plaza and once more right before each level's final decision (story-gated optional chats are active by then).
+## A pass repeats until nothing new is findable — requirements unlock further entries, a chained hotspot moves on
+## to its next entry — and the last pass of a level checks that every side task of that level is done.
+
+## Objectives before which a level's last exploration pass runs (all its tasks must be done afterwards).
+const FINAL_PASS := ["a1_choose", "m1_choose", "c3a_choose", "c3b_choose"]
 
 const ROUTE := ["a1_talk_irina", "a1_inspect_seal", "a1_inspect_timetable", "a1_solve_signal",
 	"a1_inspect_ledger", "a1_choose", "m1_inspect_plan_a", "m1_inspect_plan_b", "m1_align_plans",
@@ -61,8 +68,17 @@ func run() -> void:
 		if not ok:
 			_fail("objective never became available: " + oid + " scene=" + Game._story_scene())
 			break
-		if oid in ["a1_talk_irina", "m1_inspect_plan_a", "c3a_talk_conductor", "c3b_arrival"] and Game.args.has("autoplay-explore"):
+		if oid in ["a1_talk_irina", "m1_inspect_plan_a", "c3a_talk_conductor", "c3b_arrival", "c3b_inspect_booth"] and Game.args.has("autoplay-explore"):
 			await _explore_pass()
+		if oid in FINAL_PASS and Game.args.has("autoplay-explore"):
+			await _explore_pass(true)
+		if oid == "c3a_talk_conductor" and Game.args.has("autoplay-memories"):   # §12.10 memory round trip
+			var md: Node = load("res://scripts/core/memory_drive.gd").new()
+			add_child(md)
+			if not await md.autoplay(self):
+				for f in md.failures:
+					_fail("memories: " + str(f))
+			md.queue_free()
 		var it := _find_interactable(oid)
 		if it == null:
 			_fail("no interactable in level for " + oid)
@@ -163,18 +179,64 @@ func _check_variants() -> void:
 			_fail("line variant %s was not spoken on this route" % k)
 
 
+## §12 / §12.9: interactables that would record something new right now — discover/chat hotspots in the tree whose
+## current entry is not found yet and which are active (story gates, "requires", once) — in the given order.
+## Pure helper shared with inputplay.gd; `ex` = the Explore service (or a test double with is_found).
+static func pending_finds(nodes: Array, ex: Object) -> Array:
+	var out: Array = []
+	for it in nodes:
+		if not is_instance_valid(it) or not it.is_inside_tree():
+			continue
+		if not (str(it.get("kind")) == "discover" or str(it.get("kind")) == "chat"):
+			continue
+		var id := str(it.get("explore_id"))
+		if id == "" or ex.is_found(id) or not it.has_method("is_active") or not it.is_active():
+			continue
+		out.append(it)
+	return out
+
+
+## Every explore id an exploration interactable can show (its explore_id and its explore_chain).
+static func explore_ids_of(it: Node) -> Array:
+	var ids: Array = []
+	var chain = it.get("explore_chain")
+	if chain != null:
+		for c in chain:
+			if not (str(c) in ids):
+				ids.append(str(c))
+	var id := str(it.get("explore_id"))
+	if not (id in ids):
+		ids.append(id)
+	return ids
+
+
 ## §12: trigger every optional find / chat of the current level through the normal Game.interact path and
 ## check Explore recorded it (gates of the canonical route are untouched: these never change Story state).
-func _explore_pass() -> void:
+## §12.9: repeats until nothing new is findable (requirements unlock entries, chains move on to their next
+## entry); each hotspot+entry pair is tried once. `final`: afterwards every side task of the level must be done.
+func _explore_pass(final := false) -> void:
 	var snapshot := Story.save_json()
-	var n := 0
+	var lid := str(Game.level.level_id)
 	for it in get_tree().get_nodes_in_group("interactables"):
 		if not it.is_inside_tree() or not (str(it.kind) == "discover" or str(it.kind) == "chat"):
 			continue
+		for id in explore_ids_of(it):
+			if str(id) == "" or not Explore.has_entry(str(id)):
+				_fail("explore: interactable %s has unknown explore_id '%s'" % [it.name, id])
+	var n := 0
+	var tried := {}
+	var guard := 0
+	while guard < 500:
+		guard += 1
+		var it: Node = null
+		for cand in pending_finds(get_tree().get_nodes_in_group("interactables"), Explore):
+			if not tried.has("%d:%s" % [cand.get_instance_id(), cand.explore_id]):
+				it = cand
+				break
+		if it == null:
+			break
 		var id := str(it.explore_id)
-		if id == "" or not Explore.has_entry(id):
-			_fail("explore: interactable %s has unknown explore_id '%s'" % [it.name, id])
-			continue
+		tried["%d:%s" % [it.get_instance_id(), id]] = true
 		_place_player_near(it)
 		await get_tree().create_timer(0.05).timeout
 		await Game.interact(it)
@@ -183,9 +245,17 @@ func _explore_pass() -> void:
 		n += 1
 	if Story.save_json() != snapshot:
 		_fail("explore: optional content changed the canonical Story state")
-	var c: Dictionary = Explore.counts(str(Game.level.level_id))
-	print("AUTOPLAY explored %d finds in %s (%s/%s), history %s" % [n, Game.level.level_id, c.get("found", 0),
-		c.get("total", 0), Explore.history_counts()])
+	var done := 0
+	var tasks: Array = Explore.tasks_for(lid) if Explore.has_method("tasks_for") else []
+	for t in tasks:
+		var st: Dictionary = Explore.task_state(str(t["id"]))
+		if str(st["state"]) == "done":
+			done += 1
+		elif final:
+			_fail("explore: side task %s not completed in %s (%s, step %d)" % [t["id"], lid, st["state"], st["step"]])
+	var c: Dictionary = Explore.counts(lid)
+	print("AUTOPLAY explored %d finds in %s (%s/%s), history %s, tasks %d/%d%s" % [n, lid, c.get("found", 0),
+		c.get("total", 0), Explore.history_counts(), done, tasks.size(), " (final pass)" if final else ""])
 
 
 ## Optional side level (parade plaza): explore it in explore mode, then leave through its exit.
@@ -195,7 +265,7 @@ func _visit_side_level() -> void:
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	if Game.args.has("autoplay-explore"):
-		await _explore_pass()
+		await _explore_pass(true)
 	for it in get_tree().get_nodes_in_group("interactables"):
 		if it.is_inside_tree() and str(it.kind) == "exit":
 			_place_player_near(it)

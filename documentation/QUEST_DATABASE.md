@@ -260,7 +260,7 @@ repression are not used as interchangeable aesthetic motifs.
 | Sequence | Trigger | Skip policy (data) | Shots | Engine semantics |
 |---|---|---|---|---|
 | `LS_A1_ToM1` | event `a1_completed` | `dispatch_next_scene_only_once` | s1 C-17 cargo stamp close-up (4 s), s2 match cut to the C-17 annotation on the Berlin blueprint (2 s), s3 wide of the archive, control to Konrad (3 s) | queued once; the scene already switched at the event |
-| `LS_M1_Hall` | objective `m1_align_plans` | `visual_only` | h1 camera leaves the drawing through the archive window (3 s), h2 the Great Hall's distant silhouette with ordinary people in the foreground (5 s), h3 return to the workbench (3 s) | queued once; no state change |
+| `LS_M1_Hall` | objective `m1_align_plans` | `visual_only` | h1 camera leaves the drawing through the archive window (5.5 s), h2 the Great Hall's distant silhouette with ordinary people in the foreground (9 s), h3 slow low-angle push and tilt up to the dome, a neighbour draws the curtains above the waiting family, held final frame (9.5 s) — as built in `L_M1_HallReveal` (`hall_reveal.gd`, 24 s); the parade `L_M1_Parade` (47 s) follows in the same skip chain, then the optional plaza `L_M1_Plaza` or the return to the workbench | queued once; no state change |
 | `LS_X1_Final` | event `m1_completed` | `mark_finale_complete_once` | x1 Alexei files the document (4 s), x2 Konrad folds the matching memorandum (4 s), x3 neutral-border schematic (4 s), x4 demo end (3 s) | queued once, together with `LS_C3_Trains`; now the Chapter-2 closer — the finale itself is `Story.finale()` after Chapter 3 |
 
 `pending_cinematics()` lists unlocked, unseen sequences in data order; `consume_cinematic(id, skipped)` — played or
@@ -347,10 +347,10 @@ c3a_talk_conductor ─> c3a_inspect_weighbill + c3a_inspect_departures ─> c3a_
 
 | Objective | Type | Objective text (de) | Requires | Grants | Effects | Details |
 |---|---|---|---|---|---|---|
-| `c3a_talk_conductor` | dialogue | Frag den Schaffner nach dem versiegelten Wagen. | — | — | — | `dlg_c3a_conductor`, 7 nodes; hotspot `conductor` |
+| `c3a_talk_conductor` | dialogue | Frage den Schaffner nach dem versiegelten Wagen. | — | — | — | `dlg_c3a_conductor`, 7 nodes; hotspot `conductor` |
 | `c3a_inspect_weighbill` | inspect | Lies die Wiegekarte an Wagen 4. | `c3a_talk_conductor` | `ev_c3_weighbill` | `courier_files_seen = true` | hotspot `weighbill` |
 | `c3a_inspect_departures` | inspect | Prüfe die Abfahrtstafel. | `c3a_talk_conductor` | `ev_c3_departures` | — | hotspot `departures` |
-| `c3a_pass_control` | dialogue | Geh durch die Passkontrolle. | `c3a_inspect_weighbill`, `c3a_inspect_departures` | `ev_c3_travel_order` | — | `dlg_c3a_control`, 8 nodes; item at the terminal node; hotspot `control` |
+| `c3a_pass_control` | dialogue | Gehe durch die Passkontrolle. | `c3a_inspect_weighbill`, `c3a_inspect_departures` | `ev_c3_travel_order` | — | `dlg_c3a_control`, 8 nodes; item at the terminal node; hotspot `control` |
 | `c3a_talk_elena` | dialogue | Sprich mit der Dolmetscherin Elena Weiss. | `c3a_pass_control` | — | — | `dlg_c3a_elena`, 9 nodes; hotspot `elena_cafe` |
 | `c3a_choose` | choice | Entscheide, ob du Elena ins Vertrauen ziehst. | `c3a_talk_elena` | — | per choice (§11.8) | `ask_elena` / `note_alone`; hotspot `elena_cafe` |
 
@@ -364,22 +364,22 @@ c3b_arrival ─> c3b_inspect_seating + c3b_inspect_log ─> c3b_solve_protocol �
 |---|---|---|---|---|---|---|
 | `c3b_arrival` | dialogue | Melde dich bei Ministerialdirektor Kessler. | — | — | — | `dlg_c3b_arrival`, 9 nodes; hotspot `kessler` |
 | `c3b_inspect_seating` | inspect | Sieh dir die Sitzordnung der Eröffnungssitzung an. | `c3b_arrival` | `ev_c3_seating` | — | hotspot `seating` |
-| `c3b_inspect_log` | inspect | Hol das Dolmetscherprotokoll aus dem Protokollbüro. | `c3b_arrival` | `ev_c3_booth_log` | — | hotspot `booth_log` |
+| `c3b_inspect_log` | inspect | Hole das Dolmetscherprotokoll aus dem Protokollbüro. | `c3b_arrival` | `ev_c3_booth_log` | — | hotspot `booth_log` |
 | `c3b_solve_protocol` | puzzle | Gleiche Sitzordnung und Protokoll ab: Wer sprach wann zu Anlage C? | `c3b_inspect_seating`, `c3b_inspect_log` | — | `protocol_matched = true` | `pz_c3_protocol`; hotspot `protocol_table` |
-| `c3b_inspect_booth` | inspect | Such Elena Weiss in Kabine 2. | `c3b_solve_protocol` | `ev_c3_carbon` | `elena_missing = true` | hotspot `booth_2` |
+| `c3b_inspect_booth` | inspect | Suche Elena Weiss in Kabine 2. | `c3b_solve_protocol` | `ev_c3_carbon` | `elena_missing = true` | hotspot `booth_2` |
 | `c3b_talk_alexei` | dialogue | Sprich mit dem Mann von der sowjetischen Delegation. | `c3b_inspect_booth` | — | — | `dlg_c3b_meeting`, 12 nodes; hotspot `alexei_meet` |
 | `c3b_choose` | choice | Entscheide, was du ihm anvertraust. | `c3b_talk_alexei` | — | per choice (§11.8) | `share_protocol` / `search_elena` / `report_delegation`; hotspot `alexei_meet` |
 
 ### 11.4 Dialogues
 
-Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = portrait expression (`line_expr`). *Variants* replace the line text when their condition holds (first match wins, `line_variants`); the base text is the canonical `data/v3` line.
+Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = portrait expression (`line_expr`). *Variants* replace the line text when their condition holds (first match wins, `line_variants`); the base text is the canonical `data/v3` line. Where the variants cover every option of an earlier mandatory choice, one of them always matches in normal play and the base line is marked *fallback only* (heard only when a level is started without a save, e.g. `--scene=`); the variants are then the lines the player actually hears and are written against the following line.
 
 **`dlg_c3a_conductor`** (objective `c3a_talk_conductor`, entry `c3a_cond_01`)
 
 | Node | Speaker | Expr | Text key | Line (de) | Variants |
 |---|---|---|---|---|---|
 | `c3a_cond_01` | conductor | concerned | `dlg.c3.cond_01` | Finger weg von der Plombe, Herr Ingenieur. Wagen vier gehört nicht zum Zug – nur zur Fahrt. | — |
-| `c3a_cond_02` | alexei | neutral | `dlg.c3.cond_02` | Ein Wagen ohne Schaffner? | `irina_trust` ≥ 1: „In Karsk hätte meine Dispatcherin so einen Wagen längst aufgeschrieben. Ohne Schaffner?“ (`dlg.c3.cond_02.irina`)<br>`alexei_secrecy` ≥ 1: „Ich frage nur. Ein Wagen ohne Schaffner?“ (`dlg.c3.cond_02.secrecy`) |
+| `c3a_cond_02` | alexei | neutral | `dlg.c3.cond_02` | Ein Wagen ohne Begleiter? | `irina_trust` ≥ 1: „In Karsk hätte unsere Dispatcherin so einen Wagen längst aufgeschrieben. Ohne Begleiter?“ (`dlg.c3.cond_02.irina`)<br>`alexei_secrecy` ≥ 1: „Ich frage nur. Ein Wagen ohne Begleiter?“ (`dlg.c3.cond_02.secrecy`)<br>*base line = fallback only: every option of `a1_choose` sets one of these flags* |
 | `c3a_cond_03` | conductor | neutral | `dlg.c3.cond_03` | Ein Wagen mit Schlüssel. Und der Schlüssel reist erster Klasse. | — |
 | `c3a_cond_04` | alexei | concerned | `dlg.c3.cond_04` | Wo wurde er angehängt? | — |
 | `c3a_cond_05` | conductor | neutral | `dlg.c3.cond_05` | In Kordon-17, an der Linie. Jede Woche einer. Mal von Ihrer Seite, mal von unserer. | — |
@@ -390,11 +390,11 @@ Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = por
 
 | Node | Speaker | Expr | Text key | Line (de) | Variants |
 |---|---|---|---|---|---|
-| `c3a_ctrl_01` | border_officer | neutral | `dlg.c3.ctrl_01` | Sowjetische Delegation an Schalter zwei. Ihre Papiere, bitte. Die Reichsdelegation hat Vorrang an Schalter eins. | — |
-| `c3a_ctrl_02` | elena | neutral | `dlg.c3.ctrl_02` | Ich übersetze für die Kommission. Er fragt nach dem Zweck Ihrer Reise. | — |
+| `c3a_ctrl_01` | border_officer | neutral | `dlg.c3.ctrl_01` | Sowjetische Delegation an Schalter zwei. Ihre Papiere, bitte. Die Reichsdelegation wird an Schalter eins abgefertigt. | — |
+| `c3a_ctrl_02` | elena | neutral | `dlg.c3.ctrl_02` | Ich dolmetsche für die Kommission. Er fragt nach dem Zweck Ihrer Reise. | — |
 | `c3a_ctrl_03` | alexei | neutral | `dlg.c3.ctrl_03` | Technisches Gutachten. Die Gleisanbindung von Kordon-17. | — |
 | `c3a_ctrl_04` | border_officer | concerned | `dlg.c3.ctrl_04` | Hier steht noch etwas: ‚Begleitperson Kurierwagen 4‘. Davon haben Sie nichts gesagt. | — |
-| `c3a_ctrl_05` | alexei | surprised | `dlg.c3.ctrl_05` | Davon wusste ich nichts. | `irina_trust` ≥ 1: „Davon wusste ich nichts. Gegengezeichnet hat meine Dispatcherin – für die Gleise, nicht für einen Wagen.“ (`dlg.c3.ctrl_05.irina`)<br>`alexei_secrecy` ≥ 1: „Davon wusste ich nichts. In Karsk hat niemand diesen Auftrag gegengezeichnet.“ (`dlg.c3.ctrl_05.secrecy`) |
+| `c3a_ctrl_05` | alexei | surprised | `dlg.c3.ctrl_05` | Davon wusste ich nichts. | `irina_trust` ≥ 1: „Davon wusste ich nichts. Gegengezeichnet hat unsere Dispatcherin – für die Gleise, nicht für einen Wagen.“ (`dlg.c3.ctrl_05.irina`)<br>`alexei_secrecy` ≥ 1: „Davon wusste ich nichts. In Karsk hat niemand diesen Auftrag gegengezeichnet.“ (`dlg.c3.ctrl_05.secrecy`)<br>*base line = fallback only: every option of `a1_choose` sets one of these flags* |
 | `c3a_ctrl_06` | elena | concerned | `dlg.c3.ctrl_06` | Der Vermerk ist zweisprachig. Auf Russisch begleiten Sie Fracht. Auf Deutsch begleiten Sie Akten. | — |
 | `c3a_ctrl_07` | border_officer | neutral | `dlg.c3.ctrl_07` | Die Wörter sind nicht meine Sache. Der Stempel ist es. | — |
 | `c3a_ctrl_08` (end) | border_officer | neutral | `dlg.c3.ctrl_08` | Willkommen in Veltrava, Herr Morozov. Hier ist jeder Ausländer. Das macht die Arbeit gerecht. | — |
@@ -409,7 +409,7 @@ Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = por
 | `c3a_el_04` | alexei | concerned | `dlg.c3.el_04` | Und sagen alle drei dasselbe? | — |
 | `c3a_el_05` | elena | neutral | `dlg.c3.el_05` | Fast. Ich notiere die Stellen, an denen sie es nicht tun. Dafür bezahlt mich die Kommission. | — |
 | `c3a_el_06` | alexei | concerned | `dlg.c3.el_06` | Nur dafür? | `alexei_secrecy` ≥ 1: „Und das erzählen Sie einem Fremden im Bahnhofscafé?“ (`dlg.c3.el_06.secrecy`) |
-| `c3a_el_07` | elena | concerned | `dlg.c3.el_07` | Mein Bruder hat einmal ein Formular unterschrieben, ohne das Kleingedruckte zu verstehen. Seitdem übersetze ich das Kleingedruckte. | — |
+| `c3a_el_07` | elena | concerned | `dlg.c3.el_07` | Mein Bruder hat einmal ein Formular unterschrieben. Das Kleingedruckte hat ihm niemand übersetzt. Seitdem übersetze ich das Kleingedruckte. | — |
 | `c3a_el_08` | alexei | concerned | `dlg.c3.el_08` | Wo ist Ihr Bruder jetzt? | — |
 | `c3a_el_09` (end) | elena | determined | `dlg.c3.el_09` | Auf einer Liste. – Gehen Sie zu Ihrer Delegation, Herr Morozov. In Veltrava hören alle mit. Die Neutralen am genauesten. | — |
 
@@ -417,9 +417,9 @@ Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = por
 
 | Node | Speaker | Expr | Text key | Line (de) | Variants |
 |---|---|---|---|---|---|
-| `c3b_arr_01` | kessler | neutral | `dlg.c3.arr_01` | Adler. Der Zug war pünktlich, Sie sind es nicht. Die Kommission wartet nicht auf Zeichner. | — |
-| `c3b_arr_02` | konrad | concerned | `dlg.c3.arr_02` | An der Linie wurde das Gepäck kontrolliert, Herr Ministerialdirektor. | `konrad_evidence` ≥ 1: „An der Linie wurde das Gepäck kontrolliert, Herr Ministerialdirektor. Auch mein Zeichenrohr.“ (`dlg.c3.arr_02.evidence`)<br>`office_suspicion` ≥ 1: „An der Linie wurde mein Gepäck zweimal geöffnet, Herr Ministerialdirektor. Nur meines.“ (`dlg.c3.arr_02.suspicion`) |
-| `c3b_arr_03` | kessler | neutral | `dlg.c3.arr_03` | Sie hinterlegen die Pläne für Kordon-17 im Protokollbüro. Morgen erläutern Sie sie dem Fachausschuss – langsam, deutlich und ohne eigene Meinung. | `office_suspicion` ≥ 1: „Sie hinterlegen die Pläne für Kordon-17 im Protokollbüro. Ihre Anfrage aus Berlin liegt übrigens auf meinem Tisch. Hier beantworte ich sie nicht.“ (`dlg.c3.arr_03.suspicion`) |
+| `c3b_arr_01` | kessler | neutral | `dlg.c3.arr_01` | Adler. Die Delegation ist seit zwanzig Minuten vollzählig – bis auf Sie. Die Kommission wartet nicht auf Zeichner. | — |
+| `c3b_arr_02` | konrad | concerned | `dlg.c3.arr_02` | Am Bahnhof wurde das Gepäck kontrolliert, Herr Ministerialdirektor. | `konrad_evidence` ≥ 1: „Am Bahnhof wurde das Gepäck kontrolliert, Herr Ministerialdirektor. Auch mein Zeichenrohr.“ (`dlg.c3.arr_02.evidence`)<br>`office_suspicion` ≥ 1: „Am Bahnhof wurde mein Gepäck zweimal geöffnet, Herr Ministerialdirektor. Nur meines.“ (`dlg.c3.arr_02.suspicion`)<br>*base line = fallback only: every option of `m1_choose` sets one of these flags* |
+| `c3b_arr_03` | kessler | neutral | `dlg.c3.arr_03` | Die Pläne für Kordon-17 ins Protokollbüro. Morgen erläutern Sie dem Fachausschuss jede Zeichnung – langsam, deutlich, ohne eigene Meinung. | `office_suspicion` ≥ 1: „Die Pläne für Kordon-17 ins Protokollbüro. Ihre Anfrage aus Berlin liegt übrigens auf meinem Tisch. Hier beantworte ich sie nicht.“ (`dlg.c3.arr_03.suspicion`) |
 | `c3b_arr_04` | kessler | neutral | `dlg.c3.arr_04` | Frau Weiss von der Kommission überträgt Ihre Begriffe ins Russische. Sorgen Sie dafür, dass es keine Missverständnisse gibt. | — |
 | `c3b_arr_05` | elena | neutral | `dlg.c3.arr_05` | Herr Adler, eine Frage vorab. Ihr Plan nennt einen ‚Erfassungsraum‘. Was wird dort erfasst? | — |
 | `c3b_arr_06` | konrad | neutral | `dlg.c3.arr_06` | Unterlagen. Ein Archivraum mit Sortiertischen und Karteischränken. | — |
@@ -433,15 +433,15 @@ Linear, one node per `advance_dialogue`; resumes at the saved node. *Expr* = por
 |---|---|---|---|---|---|
 | `c3b_meet_01` | alexei | concerned | `dlg.c3.meet_01` | Das ist nicht Ihre Kabine. | — |
 | `c3b_meet_02` | konrad | neutral | `dlg.c3.meet_02` | Ihre auch nicht. Sowjetische Delegation, nehme ich an – das Abzeichen. | — |
-| `c3b_meet_03` | alexei | neutral | `dlg.c3.meet_03` | Technischer Gutachter. Ich suche Frau Weiss. | `elena_trust` ≥ 1: „Frau Weiss und ich waren nach der Sitzung verabredet. Hier, an Kabine zwei.“ (`dlg.c3.meet_03.elena`)<br>`evidence_chain` ≥ 1: „Ich suche den Empfänger eines Kurierwagens. Die Plombennummer habe ich. Die Wiegekarte nennt dieses Haus.“ (`dlg.c3.meet_03.evidence`) |
+| `c3b_meet_03` | alexei | neutral | `dlg.c3.meet_03` | Technischer Gutachter. Ich suche Frau Weiss. | `elena_trust` ≥ 1: „Frau Weiss und ich waren nach der Sitzung verabredet. Hier, an Kabine zwei.“ (`dlg.c3.meet_03.elena`)<br>`evidence_chain` ≥ 1: „Die Wiegekarte nennt dieses Haus als Empfänger. Die Plombennummer habe ich. Für den Rest brauche ich Frau Weiss.“ (`dlg.c3.meet_03.evidence`)<br>*base line = fallback only: every option of `c3a_choose` sets one of these flags* |
 | `c3b_meet_04` | konrad | concerned | `dlg.c3.meet_04` | Sie ist nicht hier. Ihr Protokollheft auch nicht. Unten in der Garderobe hängt noch ihr Mantel. | — |
 | `c3b_meet_05` | alexei | concerned | `dlg.c3.meet_05` | Und Sie stehen zufällig in ihrer Kabine. Mit einem Bleistift in der Hand. | — |
 | `c3b_meet_06` | konrad | neutral | `dlg.c3.meet_06` | Ich bin Zeichner. Ich lese, was auf Tischen liegt. | — |
-| `c3b_meet_07` | alexei | determined | `dlg.c3.meet_07` | In Karsk fehlen drei Wagen. Auf ihrem Siegel stand dieselbe Serie wie auf den Papieren hier. | `irina_trust` ≥ 1: „In Karsk fehlen drei Wagen mit derselben Serie wie auf den Papieren hier. Eine Kollegin hat sie gezählt – ihr Name steht neben meinem.“ (`dlg.c3.meet_07.irina`)<br>`alexei_secrecy` ≥ 1: „In Karsk fehlen drei Wagen mit derselben Serie wie auf den Papieren hier. Niemand dort weiß, dass ich danach frage. Das soll so bleiben.“ (`dlg.c3.meet_07.secrecy`) |
-| `c3b_meet_08` | konrad | concerned | `dlg.c3.meet_08` | In Berlin trägt ein Korridor dieselbe Serie. Einer, den es nicht geben dürfte. | `konrad_evidence` ≥ 1: „In Berlin trägt ein Korridor dieselbe Serie. Ich habe eine Abschrift des Vermerks. Was darin steht, behalte ich vorerst.“ (`dlg.c3.meet_08.evidence`)<br>`office_suspicion` ≥ 1: „In Berlin trägt ein Korridor dieselbe Serie. Ich habe offiziell danach gefragt. Seitdem sieht man mir über die Schulter.“ (`dlg.c3.meet_08.suspicion`) |
+| `c3b_meet_07` | alexei | determined | `dlg.c3.meet_07` | In Karsk fehlen drei Wagen. Auf ihrem Siegel stand dieselbe Serie wie auf den Papieren hier. | `irina_trust` ≥ 1: „In Karsk fehlen drei Wagen mit derselben Serie wie auf den Papieren hier. Eine Kollegin hat sie gezählt – ihr Name steht neben meinem.“ (`dlg.c3.meet_07.irina`)<br>`alexei_secrecy` ≥ 1: „In Karsk fehlen drei Wagen mit derselben Serie wie auf den Papieren hier. Niemand dort weiß, dass ich danach frage. Das soll so bleiben.“ (`dlg.c3.meet_07.secrecy`)<br>*base line = fallback only: every option of `a1_choose` sets one of these flags* |
+| `c3b_meet_08` | konrad | concerned | `dlg.c3.meet_08` | In Berlin trägt ein Korridor dieselbe Serie. Einer, den es nicht geben dürfte. | `konrad_evidence` ≥ 1: „In Berlin trägt ein Korridor dieselbe Serie. Ich habe eine Abschrift des Vermerks. Ob ich sie Ihnen zeige, weiß ich noch nicht.“ (`dlg.c3.meet_08.evidence`)<br>`office_suspicion` ≥ 1: „In Berlin trägt ein Korridor dieselbe Serie. Ich habe offiziell danach gefragt. Seitdem sieht man mir über die Schulter.“ (`dlg.c3.meet_08.suspicion`)<br>*base line = fallback only: every option of `m1_choose` sets one of these flags* |
 | `c3b_meet_09` | alexei | determined | `dlg.c3.meet_09` | C-17. | — |
 | `c3b_meet_10` | konrad | concerned | `dlg.c3.meet_10` | C-17. – Sie sind Russe, ich bin Deutscher. Man hat uns beigebracht, dass einer von uns lügt. | — |
-| `c3b_meet_11` | alexei | neutral | `dlg.c3.meet_11` | Man hat uns vieles beigebracht. – Morozov. Karsk. | — |
+| `c3b_meet_11` | alexei | neutral | `dlg.c3.meet_11` | Man hat uns vieles beigebracht. Nicht dasselbe. – Morozov. Karsk. | — |
 | `c3b_meet_12` (end) | konrad | neutral | `dlg.c3.meet_12` | Adler. Berlin. | — |
 
 Journal „Personen“ (non-protagonist speakers, in the order they are met): `conductor` Schaffner des Korridor-Express, `border_officer` Grenzbeamter in Veltrava, `elena` Elena Weiss, `kessler` Gerhard Kessler.
@@ -452,9 +452,9 @@ Journal „Personen“ (non-protagonist speakers, in the order they are met): `c
 |---|---|---|---|---|---|---|---|
 | `pz_c3_protocol` | `c3b_solve_protocol` | `symbol_order` | `ev_c3_seating`, `ev_c3_booth_log` | soviet, secretariat, chair, reich | `["chair", "reich", "secretariat", "soviet"]` | 2 failures | Fictional seating plan and interpreters' booth log of a fictional conference; not a real protocol. |
 
-`pz_c3_protocol` name plates: `soviet` „Sowjetische Delegation“, `secretariat` „Sekretariat der Kommission“, `chair` „Vorsitz – Kommissar Aalto“, `reich` „Reichsdelegation“.
+`pz_c3_protocol` name plates: `soviet` „Sowjetische Delegation“, `secretariat` „Sekretariat der Kommission“, `chair` „Hochkommissar Aalto (Vorsitz)“, `reich` „Reichsdelegation“.
 Hint (`ui.c3.protocol.hint`): „Die Mikrofone sind im Uhrzeigersinn nummeriert, beginnend beim Vorsitz. Zähle die Plätze am Hufeisen ab – das Sekretariat hat einen eigenen Tisch.“
-Success (`ui.c3.protocol.success`): „Paragraph vier kam vom Sekretariat der Kommission – nicht von einer Delegation. Beide Seiten haben zugestimmt, ohne nachzufragen.“
+Success (`ui.c3.protocol.success`): „Paragraph vier kam als fertiger Text vom Sekretariat – nicht von einer Delegation. Die Reichsdelegation kannte die Fassung schon, die sowjetische schloss sich an. Nachgefragt hat niemand.“
 UI scene: `res://scenes/ui/ProtocolPuzzle.tscn` (`open(obj_id)`, signal `solved`).
 Engine semantics as in §4: unlimited retries, no penalty; a list of strings in the wrong order **or of the wrong length** counts one attempt, a malformed answer (not a list, non-string items) is rejected and not counted; the UI only submits complete orders (`ui.c3.protocol.incomplete`).
 
@@ -462,11 +462,11 @@ Engine semantics as in §4: unlimited retries, no penalty; a list of strings in 
 
 | Item | Name (de) | Description (de) | Category | Scene | Granted by |
 |---|---|---|---|---|---|
-| `ev_c3_weighbill` | Wiegekarte Kurierwagen 4 | Ladung „Akten, Anlage C“, 2 410 kg. Plombe C-17/44 mit Gegensiegel der Kommission. Empfänger: Sekretariat der Kommission. | document | `L_C3_Station` | `c3a_inspect_weighbill` |
-| `ev_c3_departures` | Sonderfahrt 23:40 | Die Abfahrtstafel nennt für heute Nacht einen Zug ohne Halt nach Kordon-17, Gleis 5. Unter „Zuggattung“ steht nur: Leerfahrt. | document | `L_C3_Station` | `c3a_inspect_departures` |
+| `ev_c3_weighbill` | Wiegekarte Kurierwagen 4 | Ladung „Akten, Anlage C“, 2410 kg. Plombe C-17/44 mit Gegensiegel der Kommission. Empfänger: Sekretariat der Kommission. | document | `L_C3_Station` | `c3a_inspect_weighbill` |
+| `ev_c3_departures` | Sonderfahrt 23.40 | Die Abfahrtstafel nennt für heute Nacht einen Zug ohne Halt nach Kordon-17, Gleis 5. Unter „Zuggattung“ steht nur: Leerfahrt. | document | `L_C3_Station` | `c3a_inspect_departures` |
 | `ev_c3_travel_order` | Dienstreiseauftrag mit Zusatz | Alexeis Reiseauftrag trägt einen Zusatz, von dem er nichts wusste: „Begleitperson Kurierwagen 4“. Auf Russisch begleitet er Fracht, auf Deutsch Akten. | document | `L_C3_Station` | `c3a_pass_control` |
 | `ev_c3_seating` | Sitzordnung der Eröffnungssitzung | Hufeisentisch im Großen Saal. Die Mikrofone sind im Uhrzeigersinn ab dem Vorsitz nummeriert; das Sekretariat sitzt an einem eigenen Tisch an der offenen Seite. | document | `L_C3_Hall` | `c3b_inspect_seating` |
-| `ev_c3_booth_log` | Dolmetscherprotokoll Kabine 2 | Elenas Protokoll der Sitzung: Uhrzeit, Mikrofon, Sprache. Neben Paragraph vier steht ihre Randnotiz: „RU: begleitete Personen – DE: Begleitgut“. | document | `L_C3_Hall` | `c3b_inspect_log` |
+| `ev_c3_booth_log` | Dolmetscherprotokoll Kabine 2 | Elenas Protokoll der Sitzung: Uhrzeit, Mikrofon, Sprache. Neben Paragraph vier steht ihre Randnotiz: „RU: begleitete Personen – DE: Begleitgut!“ | document | `L_C3_Hall` | `c3b_inspect_log` |
 | `ev_c3_carbon` | Durchschrift aus Kabine 2 | Auf Elenas Schreibunterlage hat sich ihre letzte Notiz durchgedrückt: „§ 4 – Personen. Vom Sekretariat, nicht von einer Delegation. Wer hat den Text geliefert?“ Ihr Protokollheft fehlt. | physical_clue | `L_C3_Hall` | `c3b_inspect_booth` |
 
 Granted once, in acquisition order, after the six slice items (inventory order of the canonical route: weighbill, departures, travel order, seating, booth log, carbon).
@@ -504,15 +504,15 @@ All options are always offered (the engine does not gate choices by flags); only
 |---|---|---|---|---|---|
 | `c3a_choose` „Entscheide, ob du Elena ins Vertrauen ziehst.“ | `ask_elena` | Elena bitten, Anlage C nach der Sitzung mit dir zu vergleichen | `elena_trust +1` | — | elena (determined): „Nach der Eröffnungssitzung, Kabine zwei. Bringen Sie Ihren Reiseauftrag mit – ich bringe die drei Fassungen.“ (`dlg.c3.react.ask_elena`) |
 |  | `note_alone` | Die Plombennummer notieren und allein weitersuchen | `evidence_chain +1` | `irina_trust` ≥ 1: „Die Plombennummer für Irinas Akte notieren und allein weitersuchen“<br>`alexei_secrecy` ≥ 1: „Die Plombennummer notieren – und wieder niemandem etwas sagen“ | elena (concerned): „Wie Sie meinen. Aber Zahlen übersetzen sich nicht von selbst.“ (`dlg.c3.react.note_alone`) |
-| `c3b_choose` „Entscheide, was du ihm anvertraust.“ | `share_protocol` | Ihm Elenas Notiz zu Paragraph vier zeigen | `alexei_konrad_trust +1` | `konrad_evidence` ≥ 1: „Ihm Elenas Notiz zeigen – und die Abschrift von Emils Vermerk“<br>`office_suspicion` ≥ 1: „Ihm Elenas Notiz zeigen, obwohl dein Amt dich beobachtet“ | alexei (determined): „Begleitgut. Auf meinem Schein steht Fracht. – Heute Nacht um 23:40 fährt ein Zug ohne Halt nach Kordon-17. Jetzt wissen Sie auch etwas.“ (`dlg.c3.react.share_protocol`) |
+| `c3b_choose` „Entscheide, was du ihm anvertraust.“ | `share_protocol` | Ihm Elenas Notiz zu Paragraph vier zeigen | `alexei_konrad_trust +1` | `konrad_evidence` ≥ 1: „Ihm Elenas Notiz zeigen – und die Abschrift von Emils Vermerk“<br>`office_suspicion` ≥ 1: „Ihm Elenas Notiz zeigen, obwohl dein Amt dich beobachtet“ | alexei (determined): „Begleitgut. Auf meinem Schein steht Fracht. – Heute Nacht um 23.40 Uhr fährt ein Zug ohne Halt nach Kordon-17. Jetzt wissen Sie auch etwas.“ (`dlg.c3.react.share_protocol`) |
 |  | `search_elena` | Nur über Elena reden: Wo wurde sie zuletzt gesehen? | `elena_trust +1` | — | alexei (concerned): „Am Bahnhof hat sie für den Grenzbeamten übersetzt. Ich frage dort. Sie fragen hier. Getrennt.“ (`dlg.c3.react.search_elena`) |
-|  | `report_delegation` | Den Vorfall der deutschen Delegation melden | `kessler_alerted +1` | `office_suspicion` ≥ 1: „Den Dienstweg gehen – wie mit der Anfrage in Berlin“ | `elena_trust` ≥ 1 → alexei (concerned): „Melden Sie es. Aber nennen Sie Frau Weiss nicht beim Namen.“ (`dlg.c3.react.report_delegation.elena`)<br>alexei (neutral): „Dann haben wir uns nie gesehen, Herr Adler.“ (`dlg.c3.react.report_delegation`) |
+|  | `report_delegation` | Den Vorfall bei Ministerialdirektor Kessler melden | `kessler_alerted +1` | `office_suspicion` ≥ 1: „Den Dienstweg gehen – wie mit der Anfrage in Berlin“ | `elena_trust` ≥ 1 → alexei (concerned): „Melden Sie es. Aber nennen Sie Frau Weiss nicht beim Namen.“ (`dlg.c3.react.report_delegation.elena`)<br>alexei (neutral): „Dann haben wir uns nie gesehen, Herr Adler.“ (`dlg.c3.react.report_delegation`) |
 
 ### 11.9 Cinematics
 
 | Sequence | Trigger | Skip policy (data) | Shots | Scene (§12.5) |
 |---|---|---|---|---|
-| `LS_C3_Trains` | event `m1_completed` | `visual_only` | t1 Konrad at the window of the German delegation's saloon car; night, snow plain, floodlit Line (8 s), t2 Match cut through the window frame (2 s), t3 Alexei at the window of the Soviet car; tea glass in a metal holder; same plain from the other side (8 s), t4 Dawn: both trains converge on the river bridge into Veltrava (6 s) | `res://scenes/cinematics/ch3_trains/Ch3Trains.tscn` |
+| `LS_C3_Trains` | event `m1_completed` | `visual_only` | t1 Konrad at the window of the German delegation's saloon car; night, snow plain, floodlit Line (8 s), t2 Match cut through the window frame (2 s), t3 Alexei at the window of the Soviet car; tea glass in a metal holder; same plain from the other side (8 s), t4 Dawn: both trains converge on the river bridge into Veltrava (7.5 s) | `res://scenes/cinematics/ch3_trains/Ch3Trains.tscn` |
 | `LS_C3_ToHall` | event `c3a_completed` | `visual_only` | k1 Station clock at 9:40 (3 s), k2 Match cut to the palais clock at 9:40; control to Konrad (3 s) | `res://scenes/cinematics/ch3_tohall/Ch3ToHall.tscn` |
 | `LS_C3_Close` | event `c3b_completed` | `visual_only` | n1 Night, platform 5: a special train with dark windows leaves without stopping (6 s), n2 Two lit hotel windows across the station square, two silhouettes, one whistle (6 s) | `res://scenes/cinematics/ch3_close/Ch3Close.tscn` |
 
@@ -527,8 +527,8 @@ Queued once in data order (`LS_C3_Trains` right after `LS_X1_Final`, both on `m1
 | `cin.c3.trains.alexei.irina` | Irina hat meinen Reiseauftrag gegengezeichnet. Ihr Name fährt jetzt mit. |
 | `cin.c3.trains.alexei.secrecy` | Irina hat nicht gefragt, warum ich mich für diese Reise gemeldet habe. Das war schlimmer als jede Frage. |
 | `cin.c3.trains.place` | Veltrava, Freie Stadt an der Linie. Februar 1964. |
-| `cin.c3.tohall.time` | Palais der Kommission, 9:40 Uhr. |
-| `cin.c3.close.train` | 23:40, Gleis 5. Ein Sonderzug ohne Halt nach Kordon-17. |
+| `cin.c3.tohall.time` | Palais der Kommission, 9.40 Uhr. |
+| `cin.c3.close.train` | 23.40 Uhr, Gleis 5. Ein Sonderzug ohne Halt nach Kordon-17. |
 | `cin.c3.close.after` | Zwei Hotels. Derselbe Pfiff. |
 
 ### 11.10 People of the chapter
@@ -537,9 +537,9 @@ Queued once in data order (`LS_C3_Trains` right after `LS_X1_Final`, both on `m1
 |---|---|---|---|
 | `elena` | Elena Weiss | Konferenzdolmetscherin der Kommission | Dolmetscherin der Kommission. Notiert jede Stelle, an der die Sprachfassungen von Anlage C nicht übereinstimmen. Ihr Bruder steht „auf einer Liste“. |
 | `border_officer` | Grenzbeamter | Grenzpolizei der Freien Stadt Veltrava | Kontrolliert die Delegationen am Bahnhof. Die Wörter sind nicht seine Sache, der Stempel schon. |
-| `conductor` | Schaffner | Zugbegleiter des Korridor-Express, gemischte Besatzung | Ein Eisenbahner aus dem Reich. Zählt Wagen, keine Akten – und weiß, dass Wagen vier jede Woche fährt. |
+| `conductor` | Schaffner | Zugschaffner des Korridor-Express, gemischtes Zugpersonal | Ein Eisenbahner aus dem Reich. Zählt Wagen, keine Akten – und weiß, dass jede Woche so ein Wagen mitfährt. |
 | `voronova` | Lidia Voronova | Stellvertretende Eisenbahnministerin der UdSSR, Leiterin der Delegation | Leitet die sowjetische Eisenbahndelegation. Glaubt an Züge, die Brot bringen. |
-| `kessler` | Gerhard Kessler | Ministerialdirektor im Reichsverkehrsministerium, Leiter der Delegation | Leitet die Reichsdelegation. Will Pläne ohne eigene Meinung. |
+| `kessler` | Gerhard Kessler | Ministerialdirektor im Reichsverkehrsministerium, Leiter der Delegation | Leitet die Reichsdelegation. Will von seinem Zeichner Pläne – keine Meinung, keine Fragen. |
 | `typist` | Frau Brunner | Schreibkraft im Protokollbüro der Kommission | Tippt im Protokollbüro die Sitzungsprotokolle in drei Sprachen. |
 | `journalist` | Nils Ekdahl | Korrespondent einer Stockholmer Zeitung | Schwedischer Korrespondent. Sucht jemanden, der ihm eine Zeichnung zeigt, die nicht stimmt. |
 <!-- C3:END -->

@@ -113,7 +113,7 @@ covering the speakers (now docks at the top when speakers stand low).
 **Found and fixed during round-2 integration:** the test walker could not reach two finds behind props (the tea stall
 behind the family's luggage, the chalk marks behind the C-17 wagon) → grid path-finding over the walkable area;
 a deferred render call received already-freed sprites (`pixel_view._style_world_sprite`) → untyped, validity-checked;
-the rename guard flagged the real historian "Matthias Schmidt" in a source → "M. Schmidt"; a second vendor sprite
+the rename guard flagged the real historian's first name in a source → now cited as "M. Schmidt"; a second vendor sprite
 next to the stall contradicted the painted vendor and her portrait → removed; faces were dithered by the palette snap
 → skin tones added to the runtime palettes; plans/stamps in the UI and the hall crowd ignored the insignia switch →
 resolved through `Symbols.pick`.

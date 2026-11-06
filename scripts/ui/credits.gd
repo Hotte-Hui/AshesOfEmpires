@@ -52,7 +52,7 @@ func _ready() -> void:
 		var orn := Kit.sprite("icons/ornament_diamond.png")
 		orn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		head.add_child(orn)
-		head.add_child(Kit.label(Kit.t(s[0]).to_upper(), "KickerLabel", 24))
+		head.add_child(Kit.label(Kit.t(s[0]).to_upper().replace("ß", "SS"), "KickerLabel", 24))
 		sec.add_child(head)
 		var txt := Kit.wrap_label(Kit.t(s[1], {"version": version}), "BodyLabel")
 		Kit.scalable(txt, 29)
@@ -63,7 +63,7 @@ func _ready() -> void:
 	var sorn := Kit.sprite("icons/ornament_diamond.png")
 	sorn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	shead.add_child(sorn)
-	shead.add_child(Kit.label(Kit.t("credits.end.h_sources").to_upper(), "KickerLabel", 24))
+	shead.add_child(Kit.label(Kit.t("credits.end.h_sources").to_upper().replace("ß", "SS"), "KickerLabel", 24))
 	_src_section.add_child(shead)
 	var sintro := Kit.wrap_label(Kit.t("credits.end.sources_intro"), "BodyLabel")
 	Kit.scalable(sintro, 29)

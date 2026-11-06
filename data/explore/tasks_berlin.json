@@ -1,0 +1,78 @@
+{
+ "area": "berlin",
+ "doc": "Side task (Aufgabe, TECHNICAL_ARCHITECTURE §12.9) of L_M1_Archive, owner: tasks. The porter's greeting berlin.porter unlocks it; ask + return are a chain on TalkPorter, the mittens a chain on ExpHeater (after berlin.heater), the stairwell door a new hotspot exp_task_stairwell. Texts: data/locale/de_tasks.json; close-up: assets/explore/tasks/ (tools/pixelgen/gen_tasks.py). Checked by tests/test_tasks.gd.",
+ "entries": [
+  {
+   "id": "berlin.task.mittens.ask",
+   "kind": "chat",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.task.mittens.ask.title",
+   "text_key": "explore.berlin.task.mittens.ask.text",
+   "prompt_key": "explore.berlin.task.mittens.ask.prompt",
+   "requires": ["berlin.porter"],
+   "lines": [
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.ask.l1", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.ask.l2", "expr": "neutral"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.ask.l3", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.ask.l4", "expr": "neutral"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.ask.l5", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.ask.l6", "expr": "neutral"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.ask.l7", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.ask.l8", "expr": "surprised"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.ask.l9", "expr": "neutral"}
+   ]
+  },
+  {
+   "id": "berlin.task.mittens.take",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.task.mittens.take.title",
+   "text_key": "explore.berlin.task.mittens.take.text",
+   "prompt_key": "explore.berlin.task.mittens.take.prompt",
+   "requires": ["berlin.task.mittens.ask"]
+  },
+  {
+   "id": "berlin.task.mittens.door",
+   "kind": "detail",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.task.mittens.door.title",
+   "text_key": "explore.berlin.task.mittens.door.text",
+   "prompt_key": "explore.berlin.task.mittens.door.prompt",
+   "image": "res://assets/explore/tasks/berlin_drawing.png",
+   "requires": ["berlin.task.mittens.take"]
+  },
+  {
+   "id": "berlin.task.mittens.return",
+   "kind": "chat",
+   "level": "L_M1_Archive",
+   "title_key": "explore.berlin.task.mittens.return.title",
+   "text_key": "explore.berlin.task.mittens.return.text",
+   "prompt_key": "explore.berlin.task.mittens.return.prompt",
+   "requires": ["berlin.task.mittens.door"],
+   "lines": [
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.return.l1", "expr": "neutral"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.return.l2", "expr": "surprised"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.return.l3", "expr": "neutral"},
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.return.l4", "expr": "neutral"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.return.l5", "expr": "neutral"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.return.l6", "expr": "concerned"},
+    {"speaker": "konrad", "key": "explore.berlin.task.mittens.return.l7", "expr": "concerned"},
+    {"speaker": "porter", "key": "explore.berlin.task.mittens.return.l8", "expr": "neutral"}
+   ]
+  }
+ ],
+ "tasks": [
+  {
+   "id": "berlin.task.mittens",
+   "level": "L_M1_Archive",
+   "title_key": "task.berlin.mittens.title",
+   "summary_key": "task.berlin.mittens.summary",
+   "steps": [
+    {"explore_id": "berlin.task.mittens.ask", "hint_key": "task.berlin.mittens.hint.ask"},
+    {"explore_id": "berlin.task.mittens.take", "hint_key": "task.berlin.mittens.hint.take"},
+    {"explore_id": "berlin.task.mittens.door", "hint_key": "task.berlin.mittens.hint.door"},
+    {"explore_id": "berlin.task.mittens.return", "hint_key": "task.berlin.mittens.hint.return"}
+   ]
+  }
+ ]
+}
