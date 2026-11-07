@@ -13,6 +13,7 @@ extends Node
 
 const BootFlow := preload("res://scripts/ui/boot_flow.gd")
 const BOOT_SPLASH := "res://scenes/ui/BootSplash.tscn"
+const DesktopShortcut := preload("res://scripts/core/desktop_shortcut.gd")
 
 @onready var world: SubViewport = $World
 @onready var level_root: Node = $World/LevelRoot
@@ -29,6 +30,7 @@ func _ready() -> void:
 	level_root.child_entered_tree.connect(_on_world_child_entered)
 	level_root.child_exiting_tree.connect(_on_world_child_exiting)
 	if BootFlow.decide(self) and ResourceLoader.exists(BOOT_SPLASH):
+		DesktopShortcut.ensure()           # first real launch of the exported game: „Ashes of Empires“ on the desktop
 		var splash: Node = (load(BOOT_SPLASH) as PackedScene).instantiate()
 		add_child(splash)
 		await splash.play()

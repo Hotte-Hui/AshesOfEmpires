@@ -9,6 +9,7 @@ Berliner Bauarchiv. Beide stoßen unabhängig voneinander auf dieselbe rätselha
 
 ## Spielen (Windows)
 - **Fertiger Build:** `builds/windows/AshesOfEmpires.exe` starten (oder `Spiel starten.cmd`).
+- **Desktop-Verknüpfung:** Beim ersten echten Start legt die exportierte .exe „Ashes of Empires“ auf dem Desktop an (einmalig).
 - **Zum Weitergeben:** `builds/AshesOfEmpires_Testversion.zip` (Spiel + „LIES MICH.txt“ mit Start- und Feedback-Hinweisen).
 - **Aus dem Projekt:** Godot 4.7.2 öffnen → Projekt `C:\Spiele\AshesOfEmpires` → F5.
 
