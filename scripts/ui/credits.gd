@@ -2,7 +2,8 @@ extends "res://scripts/ui/ui_modal.gd"
 ## Credits: tools, generators, fonts with licences, asset provenance, AI-assisted development note and the
 ## alternative-history disclaimer, then "Quellen der historischen Karten" (every real-history card with its
 ## sources; same builder as the end credits, EndCredits.add_source_list). Slow auto-scroll (off with reduced
-## motion; arrows / page keys / wheel always work); the footer button jumps to the sources and back.
+## motion; arrows / page keys / wheel always work); the footer button jumps to the sources and back; „Demo-Hinweis“
+## reopens the studio's demo letter (UIRoot.open_demo_notice, TECHNICAL_ARCHITECTURE §12.13).
 
 const EndCredits := preload("res://scripts/ui/end_credits.gd")
 const SECTIONS := [["ui.credits.h_project", "ui.credits.project"], ["ui.credits.h_tools", "ui.credits.tools"],
@@ -19,6 +20,7 @@ var _src_list: VBoxContainer
 var _src_hc := false
 var _src_btn: Button
 var _src_past := false
+var _demo_btn: Button
 
 
 func _ready() -> void:
@@ -79,6 +81,9 @@ func _ready() -> void:
 	var foot := Kit.hbox(18)
 	foot.alignment = BoxContainer.ALIGNMENT_END
 	v.add_child(foot)
+	_demo_btn = Kit.button(Kit.t("ui.demo.credits_button"), "", 260)   # §12.13: the demo letter, any time
+	_demo_btn.pressed.connect(_open_demo_notice)
+	foot.add_child(_demo_btn)
 	_src_btn = Kit.button(Kit.t("credits.src.jump"), "", 300)
 	_src_btn.pressed.connect(_toggle_sources)
 	foot.add_child(_src_btn)
@@ -111,6 +116,12 @@ func _fill_sources() -> void:
 ## Scroll position of the sources heading inside the scroll content (pad top margin 24).
 func _sources_y() -> int:
 	return int(_src_section.position.y) + 24 - 8
+
+
+func _open_demo_notice() -> void:
+	if ui_root != null and ui_root.has_method("open_demo_notice"):
+		Kit.ui_sound("confirm")
+		ui_root.open_demo_notice(false)
 
 
 ## Footer button: jump to the sources, or back to the top when already there.

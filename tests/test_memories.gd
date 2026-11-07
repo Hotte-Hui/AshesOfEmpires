@@ -671,13 +671,15 @@ func _game_cards() -> bool:
 	var ids: Array = []
 	for f in films:
 		ids.append(str(f["id"]))
-	kit.eq(ids.slice(0, 3), ["LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final"], "films in story order")
-	kit.ok(bool(films[0]["unlocked"]) and str(films[0]["title"]) != "", "the departure from Karsk was seen after A1")
-	kit.ok(not bool(films[1]["unlocked"]) and str(films[1]["title"]) == "", "the Great Hall not yet (no spoiler)")
+	# round 11: the prologue of a new game comes first (tests/test_prologue.gd)
+	kit.eq(ids.slice(0, 4), ["LS_Prologue", "LS_A1_ToM1", "LS_M1_Hall", "LS_X1_Final"], "films in story order")
+	kit.ok(bool(films[0]["unlocked"]), "the prologue was seen by every game")
+	kit.ok(bool(films[1]["unlocked"]) and str(films[1]["title"]) != "", "the departure from Karsk was seen after A1")
+	kit.ok(not bool(films[2]["unlocked"]) and str(films[2]["title"]) == "", "the Great Hall not yet (no spoiler)")
 	Story.inspect("m1_inspect_plan_a")
 	Story.inspect("m1_inspect_plan_b")
 	Story.solve_puzzle("m1_align_plans", kit.M1_OVERLAY.duplicate())
-	kit.ok(bool(game.memory_films("game")[1]["unlocked"]), "the Great Hall film unlocks with its trigger objective")
+	kit.ok(bool(game.memory_films("game")[2]["unlocked"]), "the Great Hall film unlocks with its trigger objective")
 	kit.ok(not game.rewatch_film("LS_X1_Final", false), "an unseen film cannot be started")
 	kit.ok(not game.rewatch_film("LS_A1_ToM1", false), "no film without a running level (tests)")
 	for f in game.memory_films("game"):

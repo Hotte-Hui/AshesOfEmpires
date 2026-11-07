@@ -19,6 +19,7 @@ import math
 import numpy as np
 
 import env_berlin_kit as kit
+import swastika_px as SP
 
 
 # =========================================================================== swastika
@@ -30,24 +31,18 @@ _SW5 = ['#.###',
 
 
 def swastika_mask(size: int, rotate45: bool = True, weight: float = 1.0) -> np.ndarray:
-    """Right-facing swastika in a size x size box; rotate45 stands it on a corner (flag/emblem form).
-    Rasterised from the 5x5 unit pattern by supersampled coverage; small sizes use hand-tuned masks."""
-    if rotate45 and size in _SW_HAND:
-        return np.array([[c == '#' for c in row] for row in _SW_HAND[size]], bool)
+    """Right-facing swastika in a size x size box; rotate45 stands it on a corner (flag/emblem form) and comes
+    from swastika_px (exact 45-degree pixel lattice, hand-pixelled 5/7/9).  The upright form is rasterised
+    from the 5x5 unit pattern by supersampled coverage."""
+    if rotate45:
+        return SP.mask(size)
     ss = 12
     n = size * ss
     yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
     u = (xx + 0.5) / ss - size / 2.0
     v = (yy + 0.5) / ss - size / 2.0
-    if rotate45:
-        a = math.radians(45.0)
-        ru = u * math.cos(a) + v * math.sin(a)
-        rv = -u * math.sin(a) + v * math.cos(a)
-        # the rotated 5-unit cross must fit the box diagonal-wise
-        scale = 5.0 / (size * 0.98)
-    else:
-        ru, rv = u, v
-        scale = 5.0 / size
+    ru, rv = u, v
+    scale = 5.0 / size
     gx = ru * scale + 2.5
     gy = rv * scale + 2.5
     inside = (gx >= 0) & (gx < 5) & (gy >= 0) & (gy < 5)
@@ -58,27 +53,6 @@ def swastika_mask(size: int, rotate45: bool = True, weight: float = 1.0) -> np.n
     cell = inside & pat[gyi, gxi]
     cov = cell.reshape(size, ss, size, ss).mean(axis=(1, 3))
     return cov >= (0.5 / weight)
-
-
-# hand-tuned 45-degree swastikas for tiny sizes (pixel clusters read better than raw coverage)
-_SW_HAND = {
-    7: ['..#....',
-        '.#...#.',
-        '..#.#.#',
-        '...#...',
-        '#.#.#..',
-        '.#...#.',
-        '....#..'],
-    9: ['....#....',
-        '...#.....',
-        '..#...#..',
-        '...#.#.#.',
-        '#...#...#',
-        '.#.#.#...',
-        '..#...#..',
-        '.....#...',
-        '....#....'],
-}
 
 
 # =========================================================================== eagles

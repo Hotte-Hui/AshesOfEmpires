@@ -9,6 +9,7 @@ Berliner Bauarchiv. Beide stoßen unabhängig voneinander auf dieselbe rätselha
 
 ## Spielen (Windows)
 - **Fertiger Build:** `builds/windows/AshesOfEmpires.exe` starten (oder `Spiel starten.cmd`).
+- **Zum Weitergeben:** `builds/AshesOfEmpires_Testversion.zip` (Spiel + „LIES MICH.txt“ mit Start- und Feedback-Hinweisen).
 - **Aus dem Projekt:** Godot 4.7.2 öffnen → Projekt `C:\Spiele\AshesOfEmpires` → F5.
 
 ### Steuerung
@@ -34,6 +35,8 @@ Alle Tasten lassen sich unter *Einstellungen → Steuerung* neu belegen. Dort gi
 Textgröße, Textgeschwindigkeit, hohen Kontrast, reduzierte Bewegung und alle Lautstärken.
 
 ## Inhalt der spielbaren Fassung (Kapitel 1–4)
+Ein kurzer Prolog (etwa eine Minute, überspringbar) erzählt vor Kapitel 1, wie die Welt von 1964 entstanden ist.
+
 1. **Kapitel 1 – „Das letzte Signal“** (Karsk, Alexei): Gespräch mit Irina, Bleisiegel, Fahrplan, Signalrätsel,
    Frachtbuch, erste Entscheidung.
 2. **Übergang:** Der Waggon C-17 wird an einen Güterzug nach Westen gekoppelt – je nach Entscheidung steht Irina neben

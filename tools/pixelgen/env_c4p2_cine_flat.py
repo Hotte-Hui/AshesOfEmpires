@@ -147,6 +147,25 @@ class Flat:
             self.rgb[mm] = hx(col)
         return mm
 
+    def paste(self, rgba, x, y, clip=None):
+        """Composite an RGBA image (a figure, a prop) with its top-left at world (x, y); `clip` limits it to a
+        mask.  Returns the mask it covered."""
+        rgba = np.asarray(rgba)
+        h, w = rgba.shape[:2]
+        X0, Y0 = int(round(x - self.g.ox)), int(round(y - self.g.oy))
+        xa, ya, xb, yb = max(0, X0), max(0, Y0), min(self.w, X0 + w), min(self.h, Y0 + h)
+        m = np.zeros((self.h, self.w), bool)
+        if xb <= xa or yb <= ya:
+            return m
+        sub = rgba[ya - Y0:yb - Y0, xa - X0:xb - X0].astype(np.float32)
+        a = sub[..., 3] / 255.0
+        if clip is not None:
+            a = a * np.asarray(clip, bool)[ya:yb, xa:xb]
+        self.rgb[ya:yb, xa:xb] = self.rgb[ya:yb, xa:xb] * (1 - a[..., None]) + sub[..., :3] / 255.0 * a[..., None]
+        m[ya:yb, xa:xb] = a > 0
+        self.a |= m
+        return m
+
     def rgba(self, alpha=None):
         out = np.zeros((self.h, self.w, 4), np.uint8)
         out[..., :3] = np.round(np.clip(self.rgb, 0, 1) * 255).astype(np.uint8)

@@ -222,3 +222,14 @@ c3g / c4d / c4g); the drivers keep their saves in `user://e2e/saves`.
 | Exported .exe (499 MB pack) after the fix, real input, skip + memories | **INPUTPLAY_PASS** 755s, 0 errors, 0 warnings |
 | The user's saves, settings, photos and memories profile | unchanged (md5) after every run |
 Not covered: a human playtest and listening pass, a physical controller.
+
+## 15. Round 11 (2026-11-07) — reworked C4P2 films, prologue, AAA start, round-off
+Reduced E2E set agreed with the user (the routes that never found a unique bug in rounds 9–10 were skipped; nothing in
+this round touched exploration).
+| Layer | Result |
+|---|---|
+| Unit (`tests/run_all.gd`) | **75 files, 833 cases, 112,988 checks — all passed**, no pending items (new: test_prologue, test_splash, the extended C4P2 cinematics and generator-keep tests) |
+| Autoplay, played in full (8 choices, every cinematic incl. the prologue and the reworked C4P2 films) | **PASS** 677 s, 0 errors, 0 warnings |
+| Real input, skip | **INPUTPLAY_PASS** 745 s, 0 errors, 0 warnings |
+| Exported .exe (502 MB pack), real input, skip + memories | **INPUTPLAY_PASS** 767 s, 0 errors, 0 warnings |
+| User data | saves, settings and photos unchanged; the memories profile had been written by a test run and was restored from the backup |

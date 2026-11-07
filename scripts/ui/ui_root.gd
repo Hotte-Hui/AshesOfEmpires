@@ -5,7 +5,8 @@ extends Control
 ##   discovery (DiscoveryView, §12 exploration finds + real-history cards), pause_menu, main_menu,
 ##   settings_menu, saveload_menu, credits, confirm, subtitles, fade, photo (PhotoMode, added in _ready),
 ##   end_credits (EndCredits, added in _ready; play_end_credits() rolls it after the demo end card),
-##   memories (MemoryView, added in _ready; open_memories("game"|"menu"), §12.10 „Erinnerungen“)
+##   memories (MemoryView, added in _ready; open_memories("game"|"menu"), §12.10 „Erinnerungen“),
+##   demo_notice (DemoNotice, added in _ready; open_demo_notice(first_run), §12.13 — main menu / credits)
 ## * modal stack: push_modal()/pop_modal(); the top modal gets input first (in _input, before the GUI);
 ##   pausing modals set get_tree().paused (all UI runs with PROCESS_MODE_ALWAYS)
 ## * applies theme.tres / theme_hc.tres and live text scaling from Settings
@@ -45,6 +46,9 @@ var end_credits: Control = null
 ## Memories (scenes/ui/MemoryView.tscn, §12.10), instanced in _ready (not part of UIRoot.tscn); open_memories().
 const MEMORY_SCENE := "res://scenes/ui/MemoryView.tscn"
 var memories: Control = null
+## Demo notice (scenes/ui/DemoNotice.tscn, §12.13), instanced in _ready (not part of UIRoot.tscn); open_demo_notice().
+const DEMO_NOTICE_SCENE := "res://scenes/ui/DemoNotice.tscn"
+var demo_notice: Control = null
 
 ## true while a cinematic runs (HUD hidden, letterbox); set through set_cinematic().
 var cinematic_mode := false
@@ -61,6 +65,7 @@ func _ready() -> void:
 	_add_photo_mode()
 	_add_end_credits()
 	_add_memory_view()
+	_add_demo_notice()
 	for c in get_children():
 		if c is Control and "ui_root" in c:
 			c.set("ui_root", self)
@@ -328,6 +333,21 @@ func open_saveload(mode := "load", in_game := true) -> void:
 
 func open_credits() -> void:
 	credits.open()
+
+
+func _add_demo_notice() -> void:
+	if demo_notice != null or not ResourceLoader.exists(DEMO_NOTICE_SCENE):
+		return
+	demo_notice = (load(DEMO_NOTICE_SCENE) as PackedScene).instantiate() as Control
+	demo_notice.name = "DemoNotice"
+	add_child(demo_notice)
+	move_child(demo_notice, toast_layer.get_index())
+
+
+## §12.13: the studio's demo letter. first_run = the main menu's first opening (delayed arrival, input guard).
+func open_demo_notice(first_run := false) -> void:
+	if demo_notice != null and not is_open(demo_notice):
+		demo_notice.open(first_run)
 
 
 func _add_end_credits() -> void:

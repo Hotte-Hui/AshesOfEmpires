@@ -88,13 +88,22 @@ SHOVEL_KEYS = [
 ]
 
 
-def shovel_poses(phase_lean=0.0, reach=0.0):
+# round 11c (art director, Depot p1: "arms out like zombies"): the turn, throw, follow-through and return with
+# the rear hand low by the hip and the shaft on a diagonal -- the front arm never level with the shoulder
+SHOVEL_LOW_THROW = {3: ((46.0, 48.0), (8.0, 70.0)), 4: ((68.0, 26.0), (16.0, 66.0)), 5: ((78.0, 14.0), (26.0, 52.0)),
+                    6: ((56.0, 16.0), (20.0, 46.0))}
+
+
+def shovel_poses(phase_lean=0.0, reach=0.0, low_throw=False):
+    """low_throw: the round-11c throw (SHOVEL_LOW_THROW) and the long-shafted coal shovel with its broad blade."""
     out = []
     for i, (le, st, an, af, fn, ff, bob, onb, fly) in enumerate(SHOVEL_KEYS):
+        if low_throw and i in SHOVEL_LOW_THROW:
+            an, af = SHOVEL_LOW_THROW[i]
         an = (an[0] + reach * (1.0 if an[0] < 60 else 0.0), an[1])
         out.append(dict(bob=bob, lean=le + phase_lean, stoop=st, foot_n=fn, foot_f=ff, arm_n=an, arm_f=af,
                         face='base', phase=i, dx=-2.0, lag=0.0, bounce=0, hand_n='fist', hand_f='fist',
-                        c4p2_shovel=True, c4p2_onblade=onb, c4p2_fly=fly))
+                        c4p2_shovel=True, c4p2_onblade=onb, c4p2_fly=fly, c4p2_big=low_throw))
     return out
 
 
@@ -105,16 +114,21 @@ def shovel_hook_back(fr, J, P, spec):
         return
     a, b = J['wr_f'], J['wr_n']
     ux, uy = _unit(a, b)
+    big = bool(P.get('c4p2_big'))
     s0 = (a[0] - ux * 2.5, a[1] - uy * 2.5)
-    s1 = (b[0] + ux * 7.0, b[1] + uy * 7.0)
+    s1 = (b[0] + ux * (9.5 if big else 7.0), b[1] + uy * (9.5 if big else 7.0))
     _line(fr, spec, s0, s1, 0.55, 'c4p2_wood', name='shaft')
     _line(fr, spec, (s0[0] - uy * 1.2, s0[1] + ux * 1.2), (s0[0] + uy * 1.2, s0[1] - ux * 1.2), 0.5, 'c4p2_wood',
           name='dgrip')
-    # the blade: a short scoop angled ~25 deg down from the shaft
+    # the blade: a short scoop angled ~25 deg down from the shaft (big: the broad coal scoop, its raised side)
     ang = math.atan2(uy, ux) + math.radians(22)
     bx, by = math.cos(ang), math.sin(ang)
-    e = (s1[0] + bx * 5.5, s1[1] + by * 5.5)
-    _line(fr, spec, s1, e, 1.1, 'c4p2_steel', name='blade')
+    bl = 7.5 if big else 5.5
+    e = (s1[0] + bx * bl, s1[1] + by * bl)
+    _line(fr, spec, s1, e, 1.35 if big else 1.1, 'c4p2_steel', name='blade')
+    if big:
+        _line(fr, spec, (s1[0] + bx * 1.0 + by * 1.2, s1[1] + by * 1.0 - bx * 1.2),
+              (e[0] - bx * 0.6 + by * 1.2, e[1] - by * 0.6 - bx * 1.2), 0.45, 'c4p2_steel', tone=4, name='blade_lip')
     if P.get('c4p2_onblade'):
         for k, (dx, dy) in enumerate(((1.5, -1.6), (3.0, -1.8), (4.2, -1.2), (2.3, -2.6))):
             _px(fr, spec, s1[0] + bx * dx - by * 0.2, s1[1] + by * dx + dy, 'c4p2_coal', 2 + (k % 2))

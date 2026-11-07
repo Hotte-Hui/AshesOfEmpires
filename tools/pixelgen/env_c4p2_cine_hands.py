@@ -193,6 +193,11 @@ def _dist(m, rmax):
 
 
 # ================================================================================================= the hand
+# round 11c: Ekdahl's gloves -- warm grey kid leather (the cool neutral grey read as metal); used by
+# env_c4p2_cine_book with glossy=True (a soft sheen)
+KID_GLOVE = ['#1a1613', '#2f2925', '#48403a', '#635952', '#7f746b', '#a09389']
+
+
 FINGERS = {                 # base (x, y) cm on the knuckle line of a RIGHT hand seen from the back, segment lengths,
     'index': ((-2.9, 9.35), (4.2, 2.5, 1.95), 1.0, -3.0),           # radius at the base, splay (deg)
     'middle': ((-0.95, 9.75), (4.6, 2.8, 2.05), 1.04, 0.0),
@@ -268,6 +273,12 @@ def thumb_chain(p: HandPose):
         pts.append((x, y))
     radii = [1.55, 1.22, 1.08, 0.92]
     return [f(*q) for q in pts], [r * p.s for r in radii]
+
+
+def _stitch(cv):
+    """Every third pixel on a diagonal lattice: where a stitched seam's thread catches the light."""
+    yy, xx = np.mgrid[0:cv.h, 0:cv.w]
+    return ((xx + yy) % 3) == 0
 
 
 def draw_hand(cv: Canvas, p: HandPose, skin='skin', nail='nail', glove_mat=None, grime=False, plaster=False,
@@ -346,6 +357,20 @@ def draw_hand(cv: Canvas, p: HandPose, skin='skin', nail='nail', glove_mat=None,
                                        (cx_ + nx * w_ * 0.5 + dx / L * 1.2, cy_ + ny * w_ * 0.5 + dy / L * 1.2)],
                                       0.4) & full
                     cv.bias(hm, 0.6)
+                if p.glove:
+                    # round 11c: the kid leather gathers over the joint -- three short bowed folds, each with its
+                    # lit lip on the wrist side (the smooth grey glove read as a metal hand)
+                    ux_, uy_ = dx / L, dy / L
+                    for o_, ww in (((-1.8, 0.75), (1.9, 0.5)) if j == 1 else ((0.3, 0.6),)):
+                        c0x, c0y = cx_ + ux_ * o_, cy_ + uy_ * o_
+                        fm_ = cv.line_mask([(c0x - nx * w_ * ww, c0y - ny * w_ * ww), (c0x + ux_ * 0.9, c0y + uy_ * 0.9),
+                                            (c0x + nx * w_ * ww, c0y + ny * w_ * ww)], 0.42) & full
+                        cv.bias(fm_, -0.8)
+                        lm_ = cv.line_mask([(c0x - nx * w_ * ww * 0.8 - ux_ * 1.2, c0y - ny * w_ * ww * 0.8 - uy_ * 1.2),
+                                            (c0x - ux_ * 0.3, c0y - uy_ * 0.3),
+                                            (c0x + nx * w_ * ww * 0.8 - ux_ * 1.2, c0y + ny * w_ * ww * 0.8 - uy_ * 1.2)],
+                                           0.4) & full & ~fm_
+                        cv.bias(lm_, 0.7)
         # the nail (dorsal, not gloved, not folded under, not curled away)
         if p.view == 'dorsal' and not p.glove and not under and acc < 120.0:
             (ax, ay), (bx2, by2) = pts_[2], pts_[3]
@@ -383,6 +408,7 @@ def draw_hand(cv: Canvas, p: HandPose, skin='skin', nail='nail', glove_mat=None,
             sm = cv.line_mask([(ax + nx * r_ * sgn, ay + ny * r_ * sgn),
                                (bx2 + nx * r_ * sgn * 0.9, by2 + ny * r_ * sgn * 0.9)], 0.4) & full
             cv.bias(sm, -1.0)
+            cv.bias(sm & _stitch(cv), 1.3)                 # round 11c: the seam's stitches
     # thumb (over the palm on a dorsal right hand it lies at the side; one part)
     tp, tr = thumb_chain(p)
     pid, tm = cv.caps([(tp[j], tp[j + 1], tr[j], tr[j + 1]) for j in range(3)], mat, inline=True, name='thumb')
@@ -410,6 +436,7 @@ def draw_hand(cv: Canvas, p: HandPose, skin='skin', nail='nail', glove_mat=None,
         for (x0_, x1_) in ((-1.85, -1.3), (0.1, 0.0), (1.95, 1.2)):
             pm_ = cv.line_mask([f(x0_, 9.0), f(x1_, 3.4)], 0.42) & palm_full
             cv.bias(pm_, -1.0)
+            cv.bias(pm_ & _stitch(cv), 1.3)
             hm_ = cv.line_mask([f(x0_ + 0.55, 8.7), f(x1_ + 0.5, 3.6)], 0.4) & palm_full & ~pm_
             cv.bias(hm_, 0.7)
         # the wrist's gather and the press stud

@@ -13,6 +13,7 @@ const DEFAULTS := {
 	"puzzle_hints": 1,            # 0 off, 1 after 2 fails (default), 2 immediate
 	"historical_symbols": true,   # real regime insignia (swastika, hammer & sickle) in a critical, historical-
 	                              # artistic context (StGB §86 Abs. 4); off = fictional emblems (see Symbols.pick)
+	"demo_notice_seen": false,    # §12.13: the demo letter was confirmed once (main menu shows it on first opening)
 }
 ## action -> default keys (physical keycodes) + joypad buttons
 const ACTIONS := {
@@ -30,6 +31,8 @@ const PAD := {
 }
 
 var values: Dictionary = DEFAULTS.duplicate(true)
+## The settings file; tests point a fresh instance at a temporary file (never the player's settings.cfg).
+var path := PATH
 var _runtime_overrides: Dictionary = {}   # forced for this run only (CLI), never written to disk
 var _persisted: Dictionary = {}           # on-disk values of overridden keys
 
@@ -123,11 +126,11 @@ func save_settings() -> void:
 	for k in values:
 		# a CLI-forced value (e.g. --symbols=0) is never persisted; the player's own value stays on disk
 		cfg.set_value("settings", k, _persisted[k] if _runtime_overrides.has(k) and _persisted.has(k) else values[k])
-	cfg.save(PATH)
+	cfg.save(path)
 
 func load_settings() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(PATH) != OK:
+	if cfg.load(path) != OK:
 		return
 	for k in cfg.get_section_keys("settings"):
 		values[k] = cfg.get_value("settings", k)

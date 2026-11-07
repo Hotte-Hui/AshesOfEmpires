@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/boot_splash.gd" id="1_script"]
+
+[node name="BootSplash" type="CanvasLayer"]
+process_mode = 3
+layer = 120
+script = ExtResource("1_script")

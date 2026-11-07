@@ -13,7 +13,9 @@ resolution), env_c4p2_cine_busts.py (the cast's dialogue busts as film figures),
 engines side-on and head-on), env_c4p2_cine_people.py (rig figures placed, graded, on their contact shadows),
 env_c4p2_cine_pal.py (the city palettes), env_c4p2_cine_places.py (structures seen in more than one film),
 env_c4p2_cine_rig.py (poses and props on the rig), env_c4p2_cine_book3d.py (the guidebook as one 3-D model),
-env_c4p2_cine_show.py (the depot showcase) and env_c4p2_cine_{depot,steam,book,express,clock}.py (one per film).
+env_c4p2_cine_show.py (the depot showcase), env_c4p2_cine_k14.py (Kolonnenstraße 14: the street front, its far
+layer and life in Express x4, the courtyard's dressing in Clock k1), env_c4p2_cine_kordon.py (Kordon-17 wide in
+Clock k2) and env_c4p2_cine_{depot,steam,book,express,clock}.py (one per film).
 Output: assets/cinematics/c4p2/<film>/*.png and assets/cinematics/c4p2/layout.json (anchors shared with the
 runtimes in scenes/cinematics/ch4p2_*/; tests/test_c4p2_cinematics.gd checks them).
 """

@@ -30,6 +30,7 @@ import numpy as np
 import env_c4p2_cine_busts as BU
 import env_c4p2_cine_flat as FL
 import env_c4p2_cine_hands as HD
+import env_c4p2_cine_k14 as Z14
 import env_c4p2_cine_kit as K
 import env_c4p2_cine_people as PP
 import env_c4p2_cine_rig as R
@@ -222,38 +223,10 @@ def ekdahl_frames():
     F.outline(lamp_s, col='#8a6430')
     F.pool(F.box(0, 0, w, h), 138, 86, 90, 70, steps=((1.0, 1.15), (0.5, 1.35)), col='#ffc070')
     base = F.opaque()
-    bust_n = BU.grade(BU.bust('journalist', 'neutral'), mul=(1.06, 0.98, 0.88), rim=('right', (255, 214, 150)))
-    bust_d = BU.grade(BU.bust('journalist', 'determined'), mul=(1.06, 0.98, 0.88), rim=('right', (255, 214, 150)))
-    bust_b = BU.grade(BU.bust('journalist', 'neutral', 'blink'), mul=(1.06, 0.98, 0.88), rim=('right', (255, 214, 150)))
-    out = []
-    for f in range(4):
-        cell = base.copy()
-        b = bust_d if f == 1 else (bust_b if f == 3 else bust_n)
-        FL.over(cell, b, 14, 6 + (3 if f == 3 else 0))
-        if f > 0:
-            cv = HD.Canvas(w, h, 'karsk')
-            HD.mats_common(cv, skin='#d2a080')
-            cv.mat('tweed', '#5e4c3a')
-            cv.mat('can', ['#1a1c1e', '#3a3e44', '#5a6068', '#7e868e', '#aab2ba', '#e2e8ee'], glossy=True)
-            if f == 1:
-                # the canister: a 35 mm film can held up at the glass, the hand's fingers round it
-                full, dv = HD.sleeve(cv, (120, 104), (128, 140), 30, 34, 'tweed', seed=31)
-                can = cv.poly([(116, 52), (136, 52), (136, 76), (116, 76)], 'can', R=4.0, cyl=0.0, name='can')
-                m = cv.line_mask([(116, 54), (136, 54)], 1.0) & (cv.fr.mat >= 0)
-                cv.tone(m, 5, mat='can')
-                cv.tone(cv.line_mask([(116, 64), (136, 64)], 0.5) & (cv.fr.mat >= 0), 2, mat='can')
-                p = HD.HandPose(wrist=(124, 100), ang=-8, s=2.6, side='R', view='palmar', curl=(0.55, 0.6, 0.62, 0.66),
-                                thumb=(18, 0.2), spread=-4)
-                HD.draw_hand(cv, p)
-            else:
-                full, dv = HD.sleeve(cv, (122, 108), (130, 146), 30, 34, 'tweed', seed=31)
-                p = HD.HandPose(wrist=(124, 102), ang=-6, s=2.6, side='R', view='palmar', curl=(0.04, 0.03, 0.05, 0.08),
-                                thumb=(22, 0.05), spread=8)
-                HD.draw_hand(cv, p)
-            hand = cv.render(key=(-0.4, 0.5, 0.75))
-            FL.over(cell, hand, 0, 0)
-        out.append(cell)
-    return out
+    # round 11: Ekdahl as a whole figure (env_c4p2_cine_figs): his shoulders, his left arm up from below the
+    # sill, the film can in his fist / the open hand at the glass, the nod
+    import env_c4p2_cine_figs as FG
+    return FG.ekdahl_cells(base)
 
 
 def win_overlay():
@@ -454,6 +427,30 @@ def x2_plate():
         F.fill(c & FL.edge(c, 't'), '#8a7a5a')
         F.outline(c, col='#0a0806')
         F.mul(F.box(x - 2, y, x + w_ + 3, y + 2), 0.6)
+    # round 11: the water tower by the line beyond the platform's end, the station's name board at the right,
+    # footprints in the platform's snow walking in towards Lev
+    wt = F.box(294, hz - 22, 310, hz)
+    F.fill(wt, '#2a1c18')
+    F.fill(wt & (np.mod(yy.astype(np.int64), 3) == 0), '#22161a')
+    tank = F.box(291, hz - 36, 313, hz - 22)
+    F.fill(tank, '#1a1e26')
+    F.fill(tank & (np.mod(xx.astype(np.int64), 4) == 0), '#141820')
+    F.fill(F.poly([(289, hz - 36), (315, hz - 36), (302, hz - 44)]), '#14181e')
+    F.fill(F.line([(289, hz - 36.5), (302, hz - 44.5), (315, hz - 36.5)], 0.6), '#9aa6ba')
+    F.fill(F.box(300, hz - 14, 304, hz - 8), '#d89848')
+    for px_ in (606, 636):
+        F.fill(F.box(px_, 188, px_ + 2, 300), '#1a1e26')
+    nb = F.box(600, 176, 640, 192)
+    F.fill(nb, '#1e3a5a')
+    F.fill(F.text('КАРСК', 606, 181, 's') & nb, '#e8ecf0')
+    F.fill(F.box(600, 175, 640, 177), '#dfe6ee')
+    F.outline(nb, col='#0a1a2a', k=0.6)
+    for k in range(12):
+        u = k / 11.0
+        fx_ = 628 - u * 150 + (k % 2) * (4 - 3 * u)
+        fy_ = 330 - u * 96
+        sz = 3.2 - 2.2 * u
+        F.fill(F.ell(fx_, fy_, sz, sz * 0.45) & pl, '#3e4658')
     return F.opaque()
 
 
@@ -477,115 +474,21 @@ def trail_frames():
 
 
 def alexei_silhouette():
-    """Alexei from behind in the left foreground, against the platform lamps: the ushanka (its fur crown, the
-    folded-up front flap showing as a band, the ear flaps tied up on top, the back flap down over the collar),
-    the quilted jacket's raised collar and its shoulders -- near-black, the lamps' amber on the rim of the fur and
-    the shoulders, the quilting just readable.  8 frames: breathing (the shoulders rise a pixel)."""
-    cw, ch = 240, 214
-    out = []
-    for f in range(8):
-        lift = 1 if f in (2, 3, 4) else 0
-        F = FL.Flat(cw, ch, bg='#000000')
-        xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
-        cx = 112
-        y = 20 - lift
-        crown = F.ell(cx, y + 38, 40, 32)
-        band = F.poly([(cx - 46, y + 40), (cx + 46, y + 38), (cx + 48, y + 62), (cx - 48, y + 64)])
-        ties = F.ell(cx - 8, y + 6, 12, 7) | F.ell(cx + 10, y + 7, 11, 6)
-        backf = F.poly([(cx - 40, y + 60), (cx + 40, y + 58), (cx + 36, y + 98), (cx - 36, y + 100)])
-        hat = crown | band | ties | backf
-        ear = F.ell(cx + 41, y + 74, 5, 8)
-        collar = F.poly([(cx - 44, y + 92), (cx + 44, y + 90), (cx + 52, y + 118), (cx - 52, y + 120)])
-        sh = F.poly([(cx - 52, y + 112), (cx + 52, y + 110), (cx + 104, y + 132), (cx + 128, y + 160),
-                     (cw + 20, ch + 10), (-60, ch + 10), (-60, y + 168), (cx - 100, y + 136)])
-        body = collar | sh
-        F.fill(body, '#0c0e13')
-        F.fill(sh & (np.mod(yy - y, 11) == 0), '#161a22')
-        F.fill(sh & (np.mod(yy - y, 11) == 1), '#08090d')
-        F.fill(sh & (np.abs(xx - cx - (yy - y - 110) * 0.15) < 1), '#08090d')
-        F.fill(collar, '#11141a')
-        F.fill(collar & (np.mod(xx, 3) == 0), '#0a0c10')
-        F.fill(hat, '#0f1117')
-        fur = hat & (np.mod(xx + yy * 2, 5) == 0) & (K.hash2(np.floor_divide(xx, 2), np.floor_divide(yy, 2), 7) > 0.4)
-        F.fill(fur, '#1a1e27')
-        F.fill(band & (np.mod(yy - y, 4) == 0), '#191c25')
-        F.fill(ties & (np.mod(xx - yy, 3) == 0), '#1a1e27')
-        F.fill(ear, '#2a1c16')
-        F.fill(ear & (F.xx > cx + 42), '#6a3a28')
-        all_ = body | hat | ear
-        rim = FL.edge(all_, 'tr', 1) & (F.xx > cx - 34)
-        F.fill(rim, '#d8a868')
-        F.fill(FL.edge(hat, 't', 1) & (F.xx > cx - 44) & (np.mod(xx, 2) == 0), '#f0c888')
-        rim2 = FL.edge(all_ & ~rim, 'tr', 1) & (F.xx > cx - 20)
-        F.fill(rim2, '#5a4028')
-        F.fill(FL.edge(sh, 't', 1) & (F.xx > cx + 40), '#c89058')
-        out.append(F.rgba(all_))
-    return K.hsheet(out)
+    """Alexei from behind in the left foreground, against the platform lamps (round 11: a whole figure from
+    env_c4p2_cine_figs instead of the flat silhouette) -- the ushanka, flaps tied up on the crown, the quilted jacket's
+    raised collar, its channels across the back and round the arms, the lamps' amber on the rims.  8 frames:
+    breathing (the shoulders rise a pixel)."""
+    import env_c4p2_cine_figs as FG
+    return FG.alexei_back_sheet()
 
 
 def x2_people():
-    """Alexei's silhouette (8 frames) and Lev (14 frames, facing the camera from the platform's edge: his
-    dialogue bust, his coat continued below it, his hands) -- 0..7 publish_now: his empty hands rise into the
-    picture, palms up, and sink again; 8..13 protect_first: the white bundle of carbons in his hands is folded,
+    """Alexei from behind (8 frames) and Lev (14 frames, facing the camera from the platform's edge -- round 11:
+    a whole figure with arms and hands from env_c4p2_cine_figs) -- 0..7 publish_now: his empty hands rise,
+    palms to us, and sink again; 8..13 protect_first: the white bundle of carbons in his hands is folded,
     pushed under his coat, the coat buttoned."""
-    _register_lev()
-    rim = ('right', (255, 206, 140))
-    lv_rest = BU.extend(BU.grade(BU.bust('lev', 'concerned'), mul=(0.86, 0.88, 0.98), rim=rim), 72)
-    lv_blink = BU.extend(BU.grade(BU.bust('lev', 'concerned', 'blink'), mul=(0.86, 0.88, 0.98), rim=rim), 72)
-    cw, chh = 160, 184
-    bx, by = 24, 0
-    cells = []
-    lift = (0, 12, 26, 36, 36, 30, 16, 0)
-    for f in range(8):
-        cell = np.zeros((chh, cw, 4), np.uint8)
-        FL.over(cell, lv_blink if f == 4 else lv_rest, bx, by)
-        if lift[f] > 0:
-            cv = HD.Canvas(cw, chh, 'karsk')
-            HD.mats_common(cv, skin='#c49478')
-            cv.mat('wool', '#4a4c50')
-            for side, wx, ang in (('L', 56, 14), ('R', 104, -14)):
-                yb = chh + 6 - lift[f]
-                HD.sleeve(cv, (wx, yb + 8), (wx + (-14 if side == 'L' else 14), chh + 44), 22, 26, 'wool', seed=40)
-                p = HD.HandPose(wrist=(wx, yb + 2), ang=ang, s=2.5, side=side, view='palmar',
-                                curl=(0.12, 0.1, 0.14, 0.18), thumb=(12, 0.1), spread=4)
-                HD.draw_hand(cv, p)
-            FL.over(cell, cv.render(key=(0.3, 0.6, 0.75)), 0, 0)
-        cells.append(cell)
-    keys = [(0, 46, 0.0), (1, 44, 0.0), (2, 40, 0.6), (3, 30, 0.9), (4, 22, 1.0), (5, 16, 1.0)]
-    for (f, up, fold) in keys:
-        cell = np.zeros((chh, cw, 4), np.uint8)
-        FL.over(cell, lv_rest, bx, by)
-        cv = HD.Canvas(cw, chh, 'karsk')
-        HD.mats_common(cv, skin='#c49478')
-        cv.mat('wool', '#4a4c50')
-        yb = chh - up
-        if f < 3:
-            HD.carbons(cv, 80, yb - 16 + int(fold * 12), 42, 56, ang=-4 + f * 3, fold=fold)
-        elif f == 3:
-            HD.carbons(cv, 84, yb - 2, 42, 56, ang=4, fold=fold)
-        for side, wx, ang in (('L', 58, 26), ('R', 104, -24)):
-            yy_ = yb + 10
-            if f >= 4 and side == 'L':
-                continue
-            HD.sleeve(cv, (wx, yy_ + 8), (wx + (-14 if side == 'L' else 14), chh + 44), 22, 26, 'wool', seed=41)
-            curl = (0.5, 0.5, 0.55, 0.6) if f < 4 else (0.72, 0.74, 0.76, 0.78)
-            if f == 5 and side == 'R':
-                yy_ -= 12
-            p = HD.HandPose(wrist=(wx, yy_ + 2), ang=ang, s=2.5, side=side, curl=curl, thumb=(6, 0.3), spread=-2)
-            HD.draw_hand(cv, p)
-        layer = cv.render(key=(0.3, 0.6, 0.75))
-        if f == 3:
-            # the bundle half under the coat: the coat's left panel covers its lower half
-            cover = np.zeros((chh, cw), bool)
-            cover[yb + 4:, 60:84] = True
-            body = lv_rest[..., 3] > 0
-            sub = np.zeros((chh, cw), bool)
-            hh_, ww_ = min(body.shape[0], chh - by), min(body.shape[1], cw - bx)
-            sub[by:by + hh_, bx:bx + ww_] = body[:hh_, :ww_]
-            layer[cover & sub, 3] = 0
-        FL.over(cell, layer, 0, 0)
-        cells.append(cell)
-    return alexei_silhouette(), K.hsheet(cells), (cw, chh)
+    import env_c4p2_cine_figs as FG
+    return alexei_silhouette(), FG.lev_sheet(), FG.LEV_CELL
 
 
 def band_packing():
@@ -663,21 +566,33 @@ def lamp_macro(kind):
             F.fill(F.ell(sx, sy, 2, 2), '#8a929c')
         F.outline(house, col='#050506')
     else:
-        F.grad(F.box(0, 0, 640, 360), 0, 360, '#05070e', '#141a2c', steps=5)
-        far = F.box(380, 60, 560, 250)
-        F.fill(far, '#0e1220')
-        for wx, wy in ((400, 90), (450, 90), (500, 90), (400, 150), (500, 150)):
-            w_ = F.box(wx, wy, wx + 22, wy + 32)
-            F.fill(w_, '#1a2034')
-        lit = F.box(450, 150, 472, 182)
-        F.fill(lit, '#e8a050')
-        F.fill(F.box(450, 150, 472, 156), '#f8d080')
-        F.fill(F.box(460, 150, 462, 182), '#6a3a18')
+        F.paste(Z14.lamp_backdrop(), 0, 0)               # round 11b: No. 14's corner and the far layer, in the haze
         hoard = F.box(0, 230, 640, 360)
         F.fill(hoard, '#3a2e24')
+        pl = np.floor_divide(xx, 22)
+        F.mul(hoard & (K.hash2(pl, 1, 771) > 0.6), 0.86)                # each plank its own weathering
+        F.mul(hoard & (K.hash2(pl, 2, 771) > 0.82), 1.12)
+        F.mul(hoard & (np.mod(xx * 3 + np.floor_divide(yy, 7) + pl * 5, 11) == 0), 0.88)        # the grain
+        for k in range(9):                                                # knots
+            kx, ky = 8 + int(K.hash2(k, 1, 772) * 620), 280 + int(K.hash2(k, 2, 772) * 70)
+            F.fill(F.ell(kx, ky, 2.5, 1.6) & hoard, '#22180f')
         for k, x in enumerate(range(0, 640, 22)):
             F.fill(hoard & F.box(x, 230, x + 1, 360), '#22180f')
             F.fill(hoard & F.box(x + 1, 230, x + 2, 360), '#5a4632')
+            F.fill(F.box(x + 6, 278, x + 7, 279) | F.box(x + 15, 278, x + 16, 279), '#8a8e94')   # nails in the rail
+        F.fill(F.box(0, 276, 640, 277), '#22180f')                        # the rail behind the boards
+        F.fill(F.box(0, 227, 640, 230) & (yy >= 227 + np.floor(K.hash2(np.floor_divide(xx, 4), 1, 773) * 3)), '#dfe6ee')
+        F.fill(F.box(0, 230, 640, 231), '#9eaabf')                        # snow on the hoarding's top
+        po = F.poly([(424, 282), (494, 280), (496, 326), (474, 334), (462, 322), (424, 330)])   # a torn notice
+        F.fill(F.poly([(420, 286), (440, 284), (442, 318), (420, 320)]), '#4a5a6a')            # an older one under it
+        F.fill(po, '#bfb69c')
+        F.speckle(po, 0.08, None, seed=774, k=0.9)
+        F.fill(po & F.box(424, 280, 500, 292), '#8a2a1e')
+        F.fill(F.text('BEKANNTMACHUNG', 430, 284, 's') & po, '#e8e0cc')
+        for k in range(6):
+            F.fill(F.box(430, 298 + k * 4, 488 - (k * 9) % 17, 299 + k * 4) & po, '#4a4236')
+        F.fill(F.poly([(474, 334), (462, 322), (480, 318)]), '#d8d0bc')     # the torn corner's flap
+        F.outline(po, col='#6a604e', k=0.7)
         post = F.box(84, 240, 230, 340)
         F.fill(post, '#d8d0bc')
         F.fill(F.poly([(84, 240), (230, 240), (230, 270), (190, 300), (84, 262)]), '#c8b890')
@@ -744,164 +659,17 @@ def coat_wipe():
 
 # ================================================================================================= x4 street
 def street_plate():
-    """(far, front): far = the night sky, the S-Bahn viaduct's arches and the roofs beyond (the S-Bahn train is a
-    sprite between the layers); front = No. 12's building site (scaffold, hoarding with posters, the barrier with
-    its lamp) and No. 14 (plaster facade, cornices, windows lit and dark with curtains, plants and a radio's
-    glow, the coal merchant's shutter, the house number, the arched gate passage with its lamp), the cast-iron
-    street lamp, the cobbled street with snow and tyre tracks."""
-    W = STREET_W
-    far = FL.Flat(W, 360, bg='#05070e')
-    F = far
-    F.grad(F.box(0, 0, W, 200), 0, 200, '#04060c', '#16203a', steps=6)
-    for x0 in range(0, W, 46):
-        b = F.box(x0, 150 + (x0 * 7) % 30, x0 + 40, 200)
-        F.fill(b, '#0c1020')
-    via = F.box(0, 136, W, 200)
-    F.fill(via, '#1a1418')
-    F.fill(F.box(0, 136, W, 140), '#2a2228')
-    for ax in range(0, W, 60):
-        arch = F.ell(ax + 30, 200, 22, 38) & (F.yy > 160)
-        F.fill(arch, '#07080e')
-    F.fill(F.box(0, 130, W, 136), '#24242c')
-    for x in range(0, W, 12):
-        F.fill(F.box(x, 126, x + 1, 130), '#3a3a44')
-    farr = F.opaque()
-    G = FL.Flat(W, 360, bg='#000000')
-    F = G
-    xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
-    # No. 12: the gap site -- the firewall of the next house with old wallpaper, the scaffold, the hoarding
-    fw = F.box(0, 40, 300, 300)
-    F.fill(fw, '#2a2028')
-    for k, (x0, y0, x1, y1, col) in enumerate(((40, 120, 120, 180, '#4a4a5a'), (130, 120, 200, 180, '#5a4a3a'),
-                                              (40, 190, 120, 250, '#3a4a48'), (130, 190, 200, 250, '#4a3a44'))):
-        r_ = F.box(x0, y0, x1, y1)
-        F.fill(r_, col)
-        F.fill(r_ & (np.mod(xx + k, 6) == 0), '#2a2a32')
-    F.fill(F.box(205, 60, 214, 300), '#3a2a22')
-    for y in range(80, 300, 34):
-        F.fill(F.box(210, y, 300, y + 3), '#5a4a38')
-    for x in (214, 256, 298):
-        F.fill(F.box(x, 60, x + 3, 300), '#4a3a2a')
-    for y in range(80, 300, 34):
-        F.fill(F.line([(214, y), (256, y + 34)], 0.6) | F.line([(256, y), (298, y + 34)], 0.6), '#3a2e22')
-    hoard = F.box(0, 230, 560, 300)
-    F.fill(hoard, '#3a2e24')
-    for k, x in enumerate(range(0, 560, 22)):
-        F.fill(hoard & F.box(x, 230, x + 1, 300), '#22180f')
-        F.fill(hoard & F.box(x + 1, 230, x + 2, 300), '#5a4632')
-    posters = ((40, 238, 70, 46, '#c8b890', 'RADRENNEN'), (130, 240, 54, 40, '#b8c8c0', 'KINO'),
-               (200, 236, 64, 48, '#d8c8a0', 'WINTERBALL'), (300, 240, 58, 42, '#c8a898', 'TANZ'),
-               (380, 238, 66, 46, '#d0d0c0', 'SAMMLUNG'))
-    for (px, py, pw, ph, col, txt) in posters:
-        po = F.box(px, py, px + pw, py + ph)
-        F.fill(po, col)
-        F.fill(F.text(txt, px + 3, py + 4, 's') & po, '#2a2018')
-        for ly in range(py + 14, py + ph - 4, 4):
-            F.fill(F.box(px + 3, ly, px + pw - 3 - (ly % 7), ly + 1) & po, '#6a5a48')
-        F.fill(F.poly([(px + pw - 14, py + ph), (px + pw, py + ph - 18), (px + pw, py + ph)]), '#3a2e24')
-        F.outline(po, col='#22180f')
-    bar = F.box(480, 264, 640, 278)
-    F.fill(bar, '#e8e0d4')
-    F.fill(bar & (np.mod(xx - yy, 30) < 15), '#b8241a')
-    F.outline(bar, col='#1a0e0a')
-    F.fill(F.box(X4_LAMP[0] - 2, X4_LAMP[1] + 6, X4_LAMP[0] + 2, 278), '#1a1c20')
-    lamp = F.ell(X4_LAMP[0], X4_LAMP[1], 6, 6)
-    F.fill(lamp, '#e83a24')
-    F.fill(F.ell(X4_LAMP[0] - 1, X4_LAMP[1] - 1, 2, 2), '#ffb08a')
-    F.outline(lamp, col='#3a0402')
-    for lx in (500, 630):
-        F.fill(F.box(lx, 278, lx + 3, 300), '#2a2018')
-    # No. 14: four storeys of plaster, cornices, windows, the shop shutter, the gate passage
-    h14 = F.box(640, 20, W, 300)
-    F.fill(h14, '#3a3c4a')
-    F.fill(h14 & (np.mod(yy - 20, 16) == 0), '#34364a')
-    F.fill(h14 & (yy > 216), '#33343f')
-    F.fill(h14 & (yy > 216) & (np.mod(yy, 8) == 0), '#2a2b36')
-    for y in (88, 150, 212):
-        cor = F.box(640, y, W, y + 5)
-        F.fill(cor, '#4a4c5c')
-        F.fill(cor & FL.edge(cor, 't'), '#dfe6ee')
-        F.fill(cor & FL.edge(cor, 'b'), '#22242e')
-    wins = []
-    for fl_, y in enumerate((40, 102, 164)):
-        for k, x in enumerate(range(668, W - 20, 64)):
-            if GATE[0] - 30 < x < GATE[1] + 10 and fl_ == 2:
-                continue
-            wins.append((x, y, fl_, k))
-    for (x, y, fl_, k) in wins:
-        w_ = F.box(x, y, x + 26, y + 38)
-        lit = K.hash2(x, y, 51) > 0.45
-        F.fill(w_, '#0e1220')
-        if lit:
-            F.fill(w_, '#e09848')
-            F.fill(w_ & F.box(x, y, x + 26, y + 6), '#f8d080')
-            kind = int(K.hash2(x, y, 52) * 4)
-            if kind == 0:
-                F.fill(w_ & F.ell(x + 16, y + 26, 6, 9), '#3a2014')
-                F.fill(w_ & F.ell(x + 16, y + 15, 4, 4), '#3a2014')
-            elif kind == 1:
-                F.fill(w_ & F.box(x, y + 28, x + 26, y + 38), '#5a7a3a')
-                F.fill(w_ & F.ell(x + 8, y + 26, 5, 6), '#3a5a2a')
-            elif kind == 2:
-                F.fill(w_ & (np.mod(xx, 3) == 0), '#f0d8a8')
-        F.fill(F.box(x + 12, y, x + 14, y + 38), '#2a2c38')
-        F.fill(F.box(x, y + 14, x + 26, y + 16), '#2a2c38')
-        sill = F.box(x - 2, y + 38, x + 28, y + 41)
-        F.fill(sill, '#4a4c5c')
-        F.fill(sill & FL.edge(sill, 't'), '#dfe6ee')
-        F.outline(w_, col='#14161e')
-    shop = F.box(820, 232, 960, 296)
-    F.fill(shop, '#2a2a30')
-    for y in range(234, 296, 4):
-        F.fill(shop & F.box(0, y, W, y + 1), '#3a3a44')
-    sign = F.box(820, 220, 960, 232)
-    F.fill(sign, '#1e2a3e')
-    F.fill(F.text('KOHLEN · BRIKETTS', 828, 223, 's') & sign, '#d8c890')
-    F.outline(shop | sign, col='#0a0a10')
-    gate = F.box(GATE[0], 222, GATE[1], 300)
-    arch = F.ell((GATE[0] + GATE[1]) / 2, 222, (GATE[1] - GATE[0]) / 2, 26) & (F.yy < 222)
-    F.fill(gate | arch, '#0a0a10')
-    F.fill(F.box(GATE[0] + 8, 250, GATE[1] - 8, 300), '#141418')
-    F.fill(F.box(GATE[0] + 20, 270, GATE[1] - 20, 300), '#3a2a1a')
-    F.outline(gate | arch, col='#4a4c5c')
-    num = F.box((GATE[0] + GATE[1]) / 2 - 8, 186, (GATE[0] + GATE[1]) / 2 + 8, 196)
-    F.fill(num, '#2a4a8a')
-    F.fill(F.text('14', int((GATE[0] + GATE[1]) / 2 - 4), 188, 's') & num, '#f0f0f0')
-    F.outline(num, col='#e0e0e0')
-    gl = F.box((GATE[0] + GATE[1]) / 2 - 3, 226, (GATE[0] + GATE[1]) / 2 + 3, 232)
-    F.fill(gl, '#ffe0a0')
-    # the street lamp, the pavement, the cobbles with snow and tyre tracks, the gutter
-    sl = F.box(900, 60, 904, 300)
-    F.fill(sl, '#1a1c24')
-    F.fill(F.poly([(890, 52), (914, 52), (908, 66), (896, 66)]), '#2a2c36')
-    F.fill(F.box(896, 60, 908, 64), '#ffe8b0')
-    pave = F.box(0, 296, W, 312)
-    F.fill(pave, '#4a5062')
-    for x in range(0, W, 18):
-        F.fill(F.box(x, 296, x + 1, 312), '#3a4050')
-    F.fill(F.box(0, 296, W, 298), '#c8d0dc')
-    curb = F.box(0, 312, W, 316)
-    F.fill(curb, '#6a7080')
-    road = F.box(0, 316, W, 360)
-    F.fill(road, '#2a3040')
-    row_ = np.floor_divide(yy - 316, 6)
-    cob = road & ((np.mod(yy - 316, 6) == 0) | (np.mod(xx + (row_ % 2) * 5, 10) == 0))
-    F.fill(cob, '#1a1e2a')
-    F.fill(road & (np.mod(yy - 316, 6) == 1) & ~cob, '#36405a')
-    snow_j = cob & (K.hash2(np.floor_divide(xx, 10), row_, 61) > 0.45)
-    F.fill(snow_j, '#7a86a4')
-    for ty in (328, 344):
-        F.fill(F.box(0, ty, W, ty + 3) & road, '#22283a')
-    F.pool(pave | curb | road, 902, 300, 140, 30, steps=((1.0, 1.15), (0.5, 1.3)), col='#ffd890')
-    F.pool(pave | road | curb, (GATE[0] + GATE[1]) / 2, 300, 60, 16, steps=((1.0, 1.12),), col='#ffd890')
-    F.pool(pave | road | curb, X4_LAMP[0], 300, 50, 12, steps=((1.0, 1.1),), col='#ff6a50')
-    return farr, G.rgba()
+    """(far, front): Kolonnenstraße 14 by night, painted in env_c4p2_cine_k14 -- far = the sky, the roofs and the
+    church clock, the S-Bahn viaduct (the train is a sprite on this layer; the layer pans at Z14.PARALLAX of the
+    street), the gap site's snow beyond the hoarding; front = No. 12's gap site (hoarding with posters, the
+    builders' hut, rubble, the barrier with its warning lamp at X4_LAMP, the Litfaßsäule) and No. 14 to scale
+    (stucco relief, windows as rooms, the gate passage at GATE receding to the courtyard, the coal merchant, the
+    corner pub), the gas lamp and the pavement under snow."""
+    return Z14.street_far(STREET_W), Z14.street_front(STREET_W, X4_LAMP)
 
 
 def street_glows():
-    blobs = [(X4_LAMP[0], X4_LAMP[1], 22, 18, (120, 26, 12), 1.5), (902, 62, 40, 30, (100, 80, 50), 1.5),
-             ((GATE[0] + GATE[1]) / 2, 228, 30, 22, (80, 56, 24), 1.5)]
-    return K.glow_sprite(STREET_W, K.VH, blobs, 8.0)
+    return Z14.street_glows(STREET_W, X4_LAMP)
 
 
 def sbahn():
@@ -956,6 +724,12 @@ def build(w):
     sh, n, cw = PP.sheet('konrad', _konrad_poses(), None, 32, False, key='right', mul=(0.86, 0.9, 1.06),
                          rim=(150, 170, 220))
     w('express/x4_konrad.png', sh)
+    wk, wn, ww = Z14.walker_sheet()                       # the street's life (env_c4p2_cine_k14)
+    w('express/x4_walker.png', wk)
+    w('express/x4_smoke.png', Z14.smoke_sheet())
+    won, wox, woy = Z14.win_on_sprite()
+    w('express/x4_win_on.png', won)
+    L.update(Z14.layout(), x4_win_on=[wox, woy], x4_walker_cell=[ww, wn])
     L.update(lamp_c=list(LAMP_C), lamp_r=LAMP_R, car_w=CAR_W, win1=list(WIN1), win_step=WIN_STEP,
              ekdahl_at=[GLASS1[0], GLASS1[1]], ekdahl_cell=[GLASS1[2] - GLASS1[0], GLASS1[3] - GLASS1[1]],
              train_t0=TRAIN_T0, train_a=TRAIN_A, gesture_t=GESTURE_T, nod_t=list(NOD_T),

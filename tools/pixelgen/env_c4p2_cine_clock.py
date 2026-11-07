@@ -31,7 +31,9 @@ import numpy as np
 
 import env_c4p2_cine_busts as BU
 import env_c4p2_cine_flat as FL
+import env_c4p2_cine_k14 as Z14
 import env_c4p2_cine_kit as K
+import env_c4p2_cine_kordon as KD
 import env_c4p2_cine_pal as PAL
 from env_c4p2_cine_kit import GB, Lt
 
@@ -166,18 +168,10 @@ def k1_plate():
     for k in range(8):
         ox = bx0 + 48 + k * 11
         F.fill(F.poly([(ox, by1 - 10), (ox + 9, by1 - 13), (ox + 7, by1 - 7)]) & offc, ['#8a4a24', '#5a2e14', '#a05a2a'][k % 3])
-    coat = F.poly([(bx0 + 62, by1 - 8), (bx0 + 76, by1 - 20), (bx1 - 34, by1 - 22), (bx1 - 12, by1 - 12),
-                   (bx1 - 14, by1 - 4), (bx0 + 66, by1 - 3)])
-    F.fill(coat, '#2a2420')
-    F.fill(coat & F.line([(bx0 + 80, by1 - 16), (bx1 - 30, by1 - 18)], 0.6), '#3e3630')
-    F.fill(coat & F.line([(bx0 + 90, by1 - 8), (bx1 - 40, by1 - 10)], 0.6), '#1a1612')
-    head = F.ell(bx0 + 70, by1 - 15, 7, 6)
-    F.fill(head, '#5a3418')
-    face = F.ell(bx0 + 72, by1 - 13, 5, 4)
-    F.fill(face, '#d8a080')
-    F.fill(F.box(bx0 + 71, by1 - 14, bx0 + 74, by1 - 13), '#5a3020')
-    F.fill(F.box(bx0 + 76, by1 - 12, bx0 + 77, by1 - 11), '#b07a5a')
-    F.fill(F.ell(bx0 + 82, by1 - 9, 2, 1.5), '#d8a080')
+    # Ilse asleep under the cobbler's coat (round 11: a figure of env_c4p2_cine_figs -- curled on her side, the
+    # head on a rolled apron, plaits, the eye shut, a hand under the cheek, the knees drawn up, stockinged feet)
+    import env_c4p2_cine_figs as FG
+    FG.paint_into(F, FG.ilse_asleep(), bx0 + 58, by1 - 27)
     cx_, cy_ = CANDLE
     F.fill(F.box(cx_ - 2, cy_ + 2, cx_ + 2, cy_ + 12), '#f0e8d0')
     F.fill(F.box(cx_ - 4, cy_ + 11, cx_ + 4, cy_ + 13), '#8a8070')
@@ -231,6 +225,7 @@ def k1_plate():
     F.fill(arch, '#07080e')
     F.fill(F.box(gx0 + 6, gy0 + 10, gx0 + 14, gy0 + 16), '#ffe0a0')
     F.pool(arch, gx0 + 10, gy0 + 40, 60, 90, steps=((1.0, 1.3),), col='#5a3a1a')
+    Z14.courtyard_dress(F, Y, HANNA, BASE_WIN, GATE_K)      # plaster, stucco, neighbours, the yard's things
     # light: the candle's spill on the plinth and the yard, the fanlight's on the steps, Hanna's on the sill
     F.pool(pl | yd, cx_ + 40, Y['yard'], 140, 50, steps=((1.0, 1.06), (0.5, 1.14)), col='#ffb050')
     F.pool(fac, 550, Y['plinth'] + 20, 70, 50, steps=((1.0, 1.08), (0.5, 1.16)), col='#ffc070')
@@ -292,114 +287,10 @@ DOOR_SHUT = 9.7                          # ... and closes
 
 
 def k2_plate():
-    """Kordon-17 from far: the night sky with stars, the forest line, the plain in snow bands, the compound under
-    its masts, the hall on the Line, Tür Ost, the siding with C-17/45, the fence and its strip, towers, a hut."""
-    F = FL.Flat(bg='#020306')
-    xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
-    sky = F.box(0, 0, 640, K2_HORIZON)
-    F.grad(sky, 0, K2_HORIZON, '#020306', '#141c2e', steps=6)
-    for k in range(90):
-        sx, sy = int(K.hash2(k, 1, 301) * 640), int(K.hash2(k, 2, 301) * (K2_HORIZON - 50))
-        F.fill(F.box(sx, sy, sx + 1, sy + 1), '#c8d0e0' if K.hash2(k, 3, 301) > 0.6 else '#6a7488')
-    for x in range(0, 640, 2):
-        h_ = 5 + int(10 * abs(math.sin(x * 0.05)) + 6 * K.hash2(x // 4, 1, 303))
-        F.fill(F.box(x, K2_HORIZON - h_, x + 2, K2_HORIZON), '#05070c')
-        if K.hash2(x // 2, 2, 304) > 0.8:
-            F.fill(F.box(x, K2_HORIZON - h_ - 3, x + 1, K2_HORIZON - h_), '#05070c')
-    plain = F.box(0, K2_HORIZON, 640, 360)
-    bands = ((K2_HORIZON, '#2a3448'), (192, '#36425a'), (210, '#44526c'), (250, '#4e5e7a'), (290, '#56688a'))
-    for (y0, c) in bands:
-        F.fill(F.box(0, y0, 640, 360), c)
-    for k in range(60):
-        dx, dy = int(K.hash2(k, 5, 305) * 640), 250 + int(K.hash2(k, 6, 305) * 100)
-        F.fill(F.box(dx, dy, dx + 6 + k % 9, dy + 1), '#6a7c9c')
-    # the compound: pale snow in the masts' light, stepped pools
-    comp = F.poly([(190, 226), (610, 226), (640, 250), (170, 250)])
-    F.fill(comp, '#8a9ab6')
-    for mx in (300, 520, 160):
-        F.pool(plain, mx, 234, 96, 14, steps=((1.0, 1.12), (0.6, 1.28), (0.3, 1.45)), col='#f2e2b0')
-        F.fill(F.box(mx, 150, mx + 1, 230), '#0a0c12')
-        F.fill(F.box(mx - 3, 148, mx + 4, 151), '#fff2c8')
-    # watch towers
-    for tx in (206, 590):
-        F.fill(F.box(tx, 168, tx + 2, 230) | F.box(tx + 10, 168, tx + 12, 230), '#0a0c12')
-        F.fill(F.line([(tx, 190), (tx + 12, 210)], 0.5) | F.line([(tx + 12, 190), (tx, 210)], 0.5), '#0a0c12')
-        cab = F.box(tx - 4, 158, tx + 16, 170)
-        F.fill(cab, '#141822')
-        F.fill(F.box(tx, 161, tx + 12, 166), '#d8c890')
-        F.fill(F.poly([(tx - 6, 158), (tx + 18, 158), (tx + 6, 152)]), '#1a1e28')
-        F.fill(F.poly([(tx - 6, 158), (tx + 18, 158), (tx + 6, 152)]) & FL.edge(F.poly([(tx - 6, 158), (tx + 18, 158), (tx + 6, 152)]), 't'), '#c8d4e8')
-    # the hall on the Line: the German hall's taller west end, the long low building, Tür Ost
-    x0, x1, yr, yg = HALL
-    hb = F.box(x0, yr, x1, yg)
-    F.fill(hb, '#1e2230')
-    F.fill(hb & (np.mod(xx, 8) == 0), '#1a1e2a')
-    wh = F.box(x0 - 30, yr - 10, x0 + 40, yg)
-    F.fill(wh, '#22263a')
-    F.fill(F.poly([(x0 - 34, yr - 10), (x0 + 44, yr - 10), (x0 + 4, yr - 20)]), '#2a3044')
-    F.fill(F.box(x0, yr - 1, x1, yr + 1) | F.box(x0 - 30, yr - 11, x0 + 40, yr - 9), '#c8d4e8')
-    for wx in range(x0 + 50, x1 - 20, 22):
-        F.fill(F.box(wx, yr + 10, wx + 6, yr + 15), '#c8b878')
-    for wx in (x0 - 20, x0, x0 + 20):
-        F.fill(F.box(wx, yr + 2, wx + 8, yr + 9), '#e8d8a0')
-    dx0, dy0, dx1, dy1 = DOOR_E
-    F.fill(F.box(dx0, dy0, dx1, dy1), '#0c0e14')
-    F.fill(F.box(dx0 - 1, dy0 - 3, dx1 + 1, dy0 - 1), '#f2e2b0')
-    F.outline(hb | wh, col='#0a0c12')
-    # guard hut and a lorry
-    hut = F.box(170, 214, 190, 228)
-    F.fill(hut, '#2a2e3a')
-    F.fill(F.box(174, 218, 180, 223), '#e8c878')
-    F.fill(F.box(168, 212, 192, 215), '#c8d4e8')
-    lor = F.box(564, 216, 600, 228)
-    F.fill(lor, '#2a3024')
-    F.fill(F.box(596, 218, 606, 228), '#20261c')
-    F.fill(F.ell(572, 229, 3, 3) | F.ell(598, 229, 3, 3), '#0a0a0e')
-    F.fill(F.box(564, 214, 600, 216), '#c8d4e8')
-    # the siding and wagon C-17/45
-    wx0, wx1, wy0, wy1 = WAGON
-    F.fill(F.box(wx0 - 30, wy1, wx1 + 60, wy1 + 2), '#2a2e3a')
-    wg = F.box(wx0, wy0, wx1, wy1 - 2)
-    F.fill(wg, '#5a2a1c')
-    F.fill(wg & (np.mod(xx, 4) == 0), '#4a2216')
-    F.fill(F.box(wx0, wy0, wx1, wy0 + 1), '#c8d4e8')
-    F.fill(F.box(wx0 + 24, wy0 + 3, wx0 + 34, wy1 - 3), '#24120c')
-    F.fill(F.text('C-17', wx0 + 4, wy0 + 4, 's') & wg, '#e8e0d0')
-    for whx in (wx0 + 8, wx1 - 8):
-        F.fill(F.ell(whx, wy1 - 1, 2, 2), '#0a0a0e')
-    F.outline(wg, col='#140806')
-    # the ploughed strip and the fence with its posts and wire
-    strip = F.box(0, 232, 640, 244)
-    F.fill(strip, '#3a4458')
-    for k in range(0, 640, 5):
-        F.fill(F.box(k, 236 + (k % 3), k + 3, 237 + (k % 3)), '#2e3648')
-    for px_ in range(0, 640, 14):
-        F.fill(F.box(px_, FENCE_Y - 11, px_ + 1, FENCE_Y), '#0a0c12')
-        F.fill(F.box(px_ - 1, FENCE_Y - 12, px_ + 2, FENCE_Y - 11), '#c8d4e8')
-    for wy in (FENCE_Y - 9, FENCE_Y - 6, FENCE_Y - 3):
-        F.fill(F.box(0, wy, 640, wy + 1) & (np.mod(xx, 3) != 0), '#141822')
-    # the near field: drift ridges, the lorry's tracks running in to the gate, the outer fence close by, a sign
-    for k in range(7):
-        y0_ = 262 + k * 7 + (k * k) % 5
-        rid = np.abs(yy - (y0_ + 3 * np.sin(xx * 0.03 + k))) < 0.6
-        F.fill(plain & rid & (K.hash2(np.floor_divide(xx, 40), k, 306) > 0.3), '#7a8aa8')
-        F.fill(plain & (np.abs(yy - 1 - (y0_ + 3 * np.sin(xx * 0.03 + k))) < 0.6), '#46566e')
-    for (a, b) in (((560, 230), (430, 360)), ((572, 230), (470, 360))):
-        F.fill(F.line([a, b], 1.4), '#3a4862')
-    for px_ in range(-20, 660, 46):
-        post = F.box(px_, 268, px_ + 3, 312)
-        F.fill(post, '#1a1e28')
-        F.fill(F.box(px_, 266, px_ + 3, 268), '#c8d4e8')
-    for wy in (276, 286, 296, 306):
-        F.fill(F.box(0, wy, 640, wy + 1) & (np.mod(xx + wy, 4) != 0), '#22283a')
-    for k in range(0, 640, 46):
-        F.fill(F.line([(k + 2, 278), (k + 44, 304)], 0.4) | F.line([(k + 44, 278), (k + 2, 304)], 0.4), '#1c2232')
-    sg = F.box(96, 248, 140, 262)
-    F.fill(sg, '#c8c0a8')
-    F.fill(F.text('КОРДОН-17', 99, 252, 's') & sg, '#3a1410')
-    F.fill(F.box(116, 262, 119, 280), '#1a1e28')
-    F.outline(sg, col='#2a2a24')
-    return F.opaque()
+    """Kordon-17 from far, painted in env_c4p2_cine_kordon (sky and its light dome, the forest in two bands, the
+    compound under its masts and towers, the hall on the Line with Tür Ost, the siding with C-17/45, the sentry hut
+    and boom, the fences, the road with its telegraph poles) on this film's anchors."""
+    return KD.k2_plate(HALL, DOOR_E, WAGON, FENCE_Y, K2_HORIZON)
 
 
 def tiny_walkers():
@@ -630,26 +521,12 @@ def tape_strip(text):
 
 
 def k3_people():
-    """Irina's bust (10 frames: reading the tape -- neutral, a blink, then concerned; 6..9 concerned breathing,
-    a blink) with her dispatcher's jacket continued to the desk; Alexei's bust outside the glass (8 frames),
-    graded cold by the night with the room's warm light on his face."""
-    warm = ('left', (255, 214, 150))
-    ir = {}
-    for ex in ('neutral', 'concerned'):
-        for row in ('rest', 'blink'):
-            b = BU.grade(BU.bust('irina', ex, row), mul=(1.08, 1.0, 0.86), rim=('right', (255, 220, 160)))
-            ir[(ex, row)] = BU.extend(b, 48, buttons=True, open_front=False, spread=0.15)
-    seq = [('neutral', 'rest'), ('neutral', 'rest'), ('neutral', 'blink'), ('concerned', 'rest'), ('concerned', 'rest'),
-           ('concerned', 'rest'), ('concerned', 'rest'), ('concerned', 'rest'), ('concerned', 'blink'),
-           ('concerned', 'rest')]
-    irina = K.hsheet([ir[k] for k in seq])
-    al = {}
-    for row in ('rest', 'blink'):
-        al[row] = BU.grade(BU.bust('alexei', 'concerned', row), mul=(0.62, 0.7, 0.92), lift=(4, 6, 14), rim=warm)
-    for row in al:
-        al[row] = BU.extend(al[row], 36, buttons=False, open_front=False, spread=0.3)
-    alexei = K.hsheet([al['blink'] if i == 5 else al['rest'] for i in range(8)])
-    return irina, alexei
+    """Irina at the teleprinter (10 frames: reading the tape -- neutral, a blink, then concerned; 6..9 concerned
+    breathing, a blink) and Alexei outside the frosted glass (8 frames, graded cold by the night with the room's
+    warm light on his face) -- round 11: whole figures from env_c4p2_cine_figs (her shoulders, arms and hands
+    on the desk; his shoulders under the ushanka, cut by the sill) instead of busts on painted torsos."""
+    import env_c4p2_cine_figs as FG
+    return FG.irina_k3_sheet(), FG.alexei_k3_sheet()
 
 
 # ------------------------------------------------------------------------------------------------ k4 the desk
@@ -700,9 +577,83 @@ def k4_plate():
         x = 480 + k * 9
         F.fill(F.box(x, 230 - k * 0.1, x + 5, 234 - k * 0.1), '#2a2a30')
     F.outline(tape, col='#8a8470')
+    _k4_dress(F, pad, baize)
     F.pool(baize | led, 330, 170, 300, 180, steps=((1.0, 1.0), (0.6, 1.12), (0.3, 1.26)), col='#ffd890')
     F.mul(wood & ~pad, 0.7)
     return F.opaque()
+
+
+def _k4_dress(F, pad, baize):
+    """The rest of a night dispatcher's desk round the card: the baize's nap, wear and two ink blots, the leather
+    border's tooled line, the schoty (abacus) with tonight's count pushed over, the inkwell and the dip pen, the
+    stamp and its pad, a stack of telegram blanks, paper clips, the glass ashtray (all in the lamp's light later)."""
+    import env_c4p2_cine_book as B
+    xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
+    F.speckle(baize, 0.10, None, seed=471, k=0.9)
+    F.speckle(baize, 0.05, None, seed=472, k=1.1)
+    F.mul(baize & F.ell(330, 286, 120, 26), 1.08)
+    for (bx, by, r) in ((452, 120, 4), (338, 254, 3)):
+        F.fill(F.ell(bx, by, r, r * 0.7) | F.ell(bx + r * 0.8, by + 1, r * 0.5, r * 0.4), '#1e2a3a')
+    F.speckle(pad & ~baize, 0.12, None, seed=473, k=0.85)
+    tool = (F.box(34, 54, 606, 296) & ~F.box(35, 55, 605, 295))
+    F.fill(tool, '#a8783a')
+    # the schoty: frame, eight wires, beads (the middle pair dark), a count pushed to the left
+    fr = F.box(236, 64, 346, 120)
+    F.shadow(fr, -5, 6, 0.7, under=baize)
+    F.fill(fr, '#6a3a1e')
+    F.fill(fr & FL.edge(fr, 't', 2), '#9a6030')
+    inner = F.box(242, 70, 340, 114)
+    F.fill(inner, '#2a1a10')
+    for r in range(8):
+        y = 73 + r * 5.2
+        F.fill(F.box(242, y, 340, y + 1), '#b8b0a0')
+        pushed = int(K.hash2(r, 1, 474) * 6)
+        for b in range(10):
+            bx = (244 + b * 7) if b < pushed else (340 - (10 - b) * 7)
+            col = '#2a1a10' if b in (4, 5) else '#d8c098'
+            F.fill(F.ell(bx + 3, y + 0.5, 3, 2.2), col)
+            F.fill(F.box(bx + 1, y - 1, bx + 4, y), '#f0e0b8' if b not in (4, 5) else '#5a4030')
+    F.outline(fr, col='#2a1408', k=0.6)
+    # the inkwell and the dip pen
+    ink = F.ell(228, 146, 9, 8)
+    F.shadow(ink, -4, 5, 0.7, under=baize)
+    F.fill(ink, '#8a9aa0')
+    F.fill(F.ell(228, 146, 5, 4), '#141a2a')
+    F.fill(F.ell(225, 142, 2, 1.5), '#e8f0f4')
+    F.outline(ink, col='#2a3034', k=0.6)
+    pen = F.line([(242, 160), (300, 138)], 1.0)
+    F.shadow(pen, -3, 4, 0.7, under=baize)
+    F.fill(pen, '#3a2418')
+    F.fill(F.line([(296, 139.5), (304, 136.5)], 0.7), '#c8c0b0')
+    # the stamp and its ink pad
+    tin = F.box(222, 234, 260, 258)
+    F.shadow(tin, -4, 5, 0.7, under=baize)
+    F.fill(tin, '#7a7a82')
+    F.fill(F.box(225, 237, 257, 255), '#3a2a5a')
+    F.fill(F.box(225, 237, 257, 238), '#5a4a7a')
+    st = F.box(268, 238, 292, 256)
+    F.shadow(st, -4, 5, 0.7, under=baize)
+    F.fill(st, '#5a3a20')
+    F.fill(F.ell(280, 247, 6, 6), '#9a6a3a')
+    F.fill(F.ell(278, 245, 2, 2), '#c89a60')
+    F.outline(st | tin, col='#2a1a10', k=0.6)
+    # telegram blanks, a few paper clips
+    for k, (dx, dy, a) in enumerate(((0, 0, -3.0), (3, -2, 2.0), (1, 2, -1.0))):
+        c, s_ = math.cos(math.radians(a)), math.sin(math.radians(a))
+        pts = [(470 + dx + u * c - v * s_, 64 + dy + u * s_ + v * c) for (u, v) in ((0, 0), (58, 0), (58, 74), (0, 74))]
+        sh = F.poly(pts)
+        if k == 0:
+            F.shadow(sh, -4, 5, 0.7, under=baize)
+        F.fill(sh, ('#e4dcc4', '#ece6d2', '#f2ecdc')[k])
+        F.outline(sh, col='#8a8470', k=0.7)
+    top_ = F.poly([(471, 66), (529, 64), (531, 138), (473, 140)])
+    F.fill(F.text('ТЕЛЕГРАММА', 476, 70, 's') & top_, '#5a3a3a')
+    for ly in range(84, 134, 6):
+        F.fill(F.box(476, ly, 524, ly + 1) & top_, '#b8b0a0')
+    for (cx, cy) in ((440, 76), (452, 82), (214, 284)):
+        clip = (F.ell(cx, cy, 4, 2) & ~F.ell(cx, cy, 3, 1)) | (F.ell(cx + 1, cy, 2.5, 1.2) & ~F.ell(cx + 1, cy, 1.5, 0.4))
+        F.fill(clip, '#b8c0c8')
+    B.ashtray(F, 566, 272, 14, glass=True, under=baize, butts=2, papirosa=True)
 
 
 def k4_card():
@@ -758,6 +709,10 @@ def build(w):
     for name, sh in tiny_walkers().items():
         w('clock/k2_%s.png' % name, sh)
     w('clock/k2_door.png', door_light())
+    w('clock/k2_smoke.png', KD.smoke_sheet())
+    ps, pcw, pch = KD.patrol_sheet()
+    w('clock/k2_patrol.png', ps)
+    L.update(KD.layout((pcw, pch)))
     w('clock/flash.png', flash_frames())
     beams = np.zeros((K.VH, K.VW, 4), np.uint8)
     for mx in (300, 520, 160):

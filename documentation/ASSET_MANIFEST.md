@@ -30,6 +30,8 @@ edit the part of the owning area and re-run the script.
 
 ## Index
 - [render-camera](#part-render-camera)
+- [splash](#part-splash)
+- [prologue](#part-prologue)
 - [env_karsk](#part-env_karsk)
 - [karsk_skyline](#part-karsk_skyline)
 - [explore_karsk](#part-explore_karsk)
@@ -226,6 +228,67 @@ Hall lens shift (`camera_hall_rig_check.gd`, 144 Hz): before 86 steps of 3 px + 
 214 × 1 px + 22 × 2 px, 183 holds (sub-pixel tilt).
 FPS (vsync off, walking): A1 1080p 1 305 avg / 633 1 %-low; A1 2160p 762 / 488; M1 1080p 1 324 / 552;
 M1 2160p 596 / 335 (requirement ≥ 120).
+
+---
+<a id="part-splash"></a>
+
+## Asset manifest part — splash (boot sequence + demo notice, round 11)
+
+Date: 2026-11-07. Owner: splash. Contract: TECHNICAL_ARCHITECTURE §12.13. Everything is original and generated
+deterministically by the scripts below (re-running reproduces the files byte for byte); no image, sound or logo of
+any third party is used — the engine card only names the engine in the game's own pixel capitals.
+
+| Item | Path | Origin / generator | Licence |
+|---|---|---|---|
+| Title picture | `assets/ui/splash/title_scene.png` (640×420, shown ×3; final view = rows 0–359, the card starts on rows 60–419 and tilts up) | `tools/pixelgen/gen_title_splash.py` — Karsk railyard at dusk (water tower, depot, silos, slab blocks, chimneys whose smoke drifts east, crane, semaphore signal, snowed-in sidings) and the domed Great Hall of Berlin (fictional, no insignia) in the afterglow, divided by ONE railway line running to the horizon; telegraph poles and a snow fence on the Berlin side; stars, stratus clouds lit from below | Project art |
+| Train lamp | `assets/ui/splash/title_lamp.png` (640×420, binary alpha) | same generator — headlamp, glittering halo, horizontal flare, light running down the rails; faded / pulsed at runtime | Project art |
+| Title lettering | `assets/ui/splash/title_logo.png` (ASHES OF EMPIRES), `assets/ui/splash/title_sub.png` (◆── THE LAST WINTER ──◆) | same generator — own 7×9 capitals → Scale3x → bold verticals, forged-copper ramp, bevel, snow lying on the letters, ash flecks, outline + drop shadow; subtitle in snow tones at 1× | Project art |
+| Studio emblem | `assets/ui/splash/studio_mark.png`, `studio_glow.png` (40×40, shown ×4) | same generator — broken ring of ash around a glowing ember with a small flame; dithered glow pulsed at runtime | Project art |
+| Pixel capitals | runtime, `scripts/ui/pixel_font.gd` (5×7, umlaut dots above the cap line as in `pixfont_umlauts.py`, Scale2x option) | hand-made glyph table; letters the studio name and „Erstellt mit / Godot Engine“ from locale keys | Project code |
+| Glint | `assets/shaders/splash_glint.gdshader` | hand-written canvas shader, quantised to art pixels | Project code |
+| Title sting | `assets/audio/music/mus_title_sting.wav` (9.2 s, 44.1 kHz/16-bit stereo) | `tools/audiogen/title_audio.py` — snow wind, low D drone, far locomotive horn, the K head (piano) answered by the B head (celesta) from `music.py`, one stroke at 2.40 s (timpani + sub, low brass, strings on D minor add9) when the title appears, open D/A ringing into the menu theme | Project audio |
+| Ember crackle | `assets/audio/sfx/splash_ember.wav` (3.0 s) | same script — warm breath, crackling embers, faint glassy shimmer | Project audio |
+| Fonts | `assets/fonts/fv_serif_italic.tres` („präsentiert“, signature), theme fonts of the letter | reused | SIL OFL 1.1 |
+| UI kit art | `assets/ui/icons/ornament_diamond.png`, `icons/stamp_evidence.png`, `frames/paper.png` (PaperPanel) | reused | see `ui.md` |
+| Text | `data/locale/de_splash.json` (`splash.*`, `ui.demo.*`; studio name `splash.studio`) | written for this round | Project text |
+
+Run: `py -3 -P tools/pixelgen/gen_title_splash.py [--preview=DIR]`, `py -3 -P tools/audiogen/title_audio.py`.
+
+Verification: `tests/test_splash.gd` (12 cases); windowed check run of the real boot
+`godot --path . -- --splash-shots=DIR` (frames of every card, the main menu and the letter; the letter is not
+confirmed, the settings flag is not written) — frames reviewed outside the project (scratchpad).
+
+---
+<a id="part-prologue"></a>
+
+## Asset manifest part — prologue (LS_Prologue, the prologue of a new game)
+
+* **Date:** 2026-11-07 (round 11)
+* **Area owner:** prologue stream
+* **Scene / code:** `scenes/cinematics/prologue/` (`Prologue.tscn`, `prologue.gd`; extends the C4 base
+  `c4_common/c4_cinematic.gd` and through it the §12.5 contract of `ch3_common/c3_cinematic.gd`). Not a Story
+  cinematic: played by `Game._cin_prologue()` after the opening note of a NEW game (never on load), listed first on the
+  „Filmsequenzen“ page (`Game.memory_films`). 60 s, five shots, subtitles only (`data/locale/de_prologue.json`),
+  shot changes dip through black, every frame a pure function of t (`tests/test_prologue.gd`).
+* **Insignia:** none in any shot (no `*_hist` files, nothing for `Symbols.pick()` to swap).
+
+| Path | What | How it was made |
+|---|---|---|
+| `assets/cinematics/prologue/p1_line.png` | dusk over the snowfield: the armistice Line (posts, barbed wire, ploughed control strip, dragon's teeth), a watchtower against the last light, ruined villages on the horizon, a birch in front (680 × 360: the camera drifts) | `py -3 -P tools/pixelgen/env_prologue.py` (float painting on crisp masks, resolved once to a median-cut palette with Bayer dither, `env_prologue_kit.py`) |
+| `assets/cinematics/prologue/p1_windowglow.png` | the tower window's breathing glow (additive) | same |
+| `assets/cinematics/prologue/p2_map.png`, `p2_veltrava.png` | a paper map under a desk lamp (Baltic and Black Sea with hatched coasts, rivers, graticule, relief marks, BERLIN / KARSK, a red pencil); the label „FREIE STADT VELTRAVA“ (the Line, the ring and the three corridors with their trains are drawn at runtime from `layout.json`) | same; pixel fonts of `env_veltrava_cine_kit.py` (read-only) |
+| `assets/cinematics/prologue/p3_papers.png`, `p3_stamp.png`, `p3_shadow.png`, `p3_imprint.png` | a freight office desk: the bilingual Frachtbrief of Korridor II (wagons 17-0417 …), a card index, a lead seal, the ink pad; the rubber stamp seen from above, its shadow, the violet „C-17 / ANLAGE C“ imprint | same |
+| `assets/cinematics/prologue/p4_berlin.png`, `p4_lampglow.png` | a drafting hall in Berlin at dawn: the tall window, rooftops in snow, the dome of the Great Hall in the haze, pinned blueprints, the drafting table, the plan chest and its lamp (glow additive) | same |
+| `assets/cinematics/prologue/p4_konrad.png` | Konrad at the window: the `idle_back` frames of his game sheet `assets/characters/konrad/sheet.png`, re-lit as a cool silhouette with window rims | same (re-lit, not redrawn) |
+| `assets/cinematics/prologue/p5_karsk.png` | the Karsk yard at night: tracks into the dark, the floodlight mast, the lit signal box, a waiting locomotive, a wagon with the chalked „C-17“, the works on the horizon | same |
+| `assets/cinematics/prologue/p5_alexei_walk.png`, `p5_alexei_idle.png` | Alexei walking in and standing: `walk_side` / `idle_side` of `assets/characters/alexei/sheet.png`, re-lit for the night with a warm rim | same (re-lit, not redrawn) |
+| `assets/cinematics/prologue/p5_cone.png`, `p5_signal.png`, `p5_headlamp.png` | floodlight cone, the signal lamp (red | green), the locomotive's headlamp (all additive) | same |
+| `assets/cinematics/prologue/layout.json` | runtime anchors (pans, lamp, map polylines, imprint, window, feet, walk) | same |
+| `assets/audio/music/mus_prologue.wav` | the prologue's score (~64 s, one-shot): D-minor string ground under the Line, piano pins and a pluck pulse on the map, an Eb colour and a low pedal when the stamp lands, B (Konrad) on celesta in Berlin, K (Alexei) on felt piano in Karsk, ending open on A sus2 | `py -3 -P tools/audiogen/prologue_audio.py` (the game's own motifs and instruments of `music.py`, read-only) |
+| `data/locale/de_prologue.json` | the 15 subtitles and the film's title on the „Filmsequenzen“ page | written by hand from `documentation/WORLD_BIBLE.md` / `STORY_BIBLE.md` |
+
+Sounds reused from earlier rounds (unchanged): `karsk_wind_gust_1/2`, `paper_rustle_1/2/3`, `karsk_train_far`,
+`stamp_thud`, `berlin_tram_bell`, `train_horn_far`, ambience `amb_karsk_yard`.
 
 ---
 <a id="part-env_karsk"></a>
@@ -1309,7 +1372,7 @@ max 2.2 ms); `--selftest` PASS (finished once, 7 cues in order, locale keys, ove
 |---|---|
 | `tools/pixelgen/gen_great_hall.py` | Round 1 assets + import settings; `main()` now calls the new sky module. |
 | `tools/pixelgen/gen_great_hall_sky.py` | **New.** Dramatic dusk matte: gradient with burning horizon band and sun glow behind the dome's right shoulder, crepuscular rays (upwards only), a towering cloud bank self-shadowed by marching towards the sun (burning undersides/edges, billowing dark bodies, torn gaps), cirrus and low stratus, far skyline with tiny lit windows and a mast light. |
-| `tools/pixelgen/gen_great_hall_symbols.py` | **New.** Banners/flags (neutral + `_hist`), eagles (+ normal maps), swastika rasteriser (on point, clockwise; thresholds tuned per size), Reichssiegel obelisk. |
+| `tools/pixelgen/gen_great_hall_symbols.py` | **New.** Banners/flags (neutral + `_hist`), eagles (+ normal maps), Reichssiegel obelisk. Round 11: the `_hist` banners are laid out flat as materials (cloth, disc, emblem) and the folds/light go over all three; the swastika comes from `tools/pixelgen/swastika_px.py` (on point, clockwise, 5×5 unit construction built exactly on the 45° pixel lattice: equal arm/gap widths, centred, hand-pixelled 5/7/9 px; also behind `env_berlin_insignia.swastika_mask`). |
 | `tools/pixelgen/gen_great_hall_life.py` | **New.** Multi-LOD citizens (paper-doll rasteriser of `gen_great_hall.Fig`), patrol, sweeper, cart, birds, smoke/steam loops, window silhouettes, kiosk display, stop sign, belongings, paper sheet, `life.json` metadata. |
 
 #### Generated textures — `assets/architecture/great_hall/` (2026-11-04, original, project licence)
@@ -1317,7 +1380,7 @@ max 2.2 ms); `--selftest` PASS (finished once, 7 cues in order, locale keys, ove
 |---|---|---|---|
 | `sky.png` | 1024×720 | `gen_great_hall_sky.make_sky` | Dramatic matte (see above); texel (512,430) = optical axis at the horizon. |
 | `fog.png`, `smoke.png` | 1024×720 | `gen_great_hall` | Distance haze colour; drifting smoke ribbons. |
-| `symbols/banner_portico(_hist).png` | 10×36 | symbols | Giant portico banners (1:1 in the final frame). |
+| `symbols/banner_portico(_hist).png` | 10×36 (`_hist` 40×144, mipmapped) | symbols | Giant portico banners (1:1 in the final frame); the same material hangs on the parade tribune at ~4 px per 1x texel, hence the 4× finer `_hist` twin. |
 | `symbols/flag_street(_hist).png` | 30×90 | symbols | Hanging banners (1.2 × 3.6 m) on the tenements and over the family's door; mipmapped. |
 | `symbols/flag_pole(_hist).png` | 16×44 | symbols | Mast flags on the plaza; mipmapped. |
 | `symbols/eagle_portico(_hist).png` + `_n` | 39×31 | symbols | Stone state eagle on the portico attic holding an oak wreath with the swastika (`_hist`) / the Reichssiegel (neutral). |

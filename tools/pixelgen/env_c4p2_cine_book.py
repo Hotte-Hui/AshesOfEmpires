@@ -500,7 +500,7 @@ def ekdahl_glove(f, scene='berlin'):
     cv = HD.Canvas(520, 460, scene)
     HD.mats_common(cv)
     cv.mat('tweed', '#5e4c3a')
-    cv.mat('glove', ['#1c1c1e', '#3a3a3c', '#58585a', '#767472', '#949290', '#b8b4ae'], glossy=True)
+    cv.mat('glove', HD.KID_GLOVE, glossy=True)          # round 11c: warm grey kid leather (env_c4p2_cine_hands)
     ang, curls, under = {0: (118.0, (0.28, 0.3, 0.36, 0.44), (0, 0, 0, 0)),
                          1: (104.0, (0.12, 0.14, 0.2, 0.3), (0, 0, 0, 0)),
                          2: (98.0, (0.62, 0.62, 0.66, 0.7), (2, 2, 2, 2))}[f]
@@ -993,7 +993,7 @@ def glove_side(th):
     cv = HD.Canvas(300, 160, 'karsk')
     HD.mats_common(cv)
     cv.mat('tweed', '#5e4c3a')
-    cv.mat('glove', ['#1c1c1e', '#3a3a3c', '#58585a', '#767472', '#949290', '#b8b4ae'], glossy=True)
+    cv.mat('glove', HD.KID_GLOVE, glossy=True)          # round 11c: warm grey kid leather (env_c4p2_cine_hands)
     ang = -90.0 + th * 0.35 - 8.0
     a = math.radians(ang)
     tip0 = (36.0, 62.0)

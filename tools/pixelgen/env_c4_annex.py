@@ -17,6 +17,8 @@ Produces assets/environments/berlin_annex/ (one level file, two Story scenes, tw
   key "scene", the design's spawns, hotspots, NPC anchors, walk band, blocker, zones, camera_zones, looks)
   + provenance.json.  scripts/levels/c4/annex_level.gd applies the gates, the scene filter and the camera zones.
 explore_hotspots.json (exploration stream) and any foreign scene.json "actors" entries are kept.
+Shared folder (round 11, tools/pixelgen/env_keep.py): a run removes only the PNGs of ITS previous provenance rows,
+keeps the rows (and files) of other generators and writes scene.json only when its content changed.
 """
 from __future__ import annotations
 
@@ -37,10 +39,12 @@ import env_c4_annex_loop as EL        # noqa: E402
 import env_c4_annex_hall as EH        # noqa: E402
 import env_c4_annex_fx as EFX         # noqa: E402
 import env_c4_annex_docs as EDOC      # noqa: E402
+import env_keep as KEEP               # noqa: E402  (round 11: the folder is shared)
 
 ROOT = K.ROOT
 ENV_DIR = os.path.join(ROOT, 'assets', 'environments', 'berlin_annex')
 GEN = 'tools/pixelgen/env_c4_annex.py'
+FAMILY = 'tools/pixelgen/env_c4_annex'   # provenance rows of this generator and its modules (env_keep)
 PRODUCED: list[tuple[str, str, str]] = []
 BUILD_S = 0.0
 A, B = L.SCENE_A, L.SCENE_B
@@ -64,18 +68,10 @@ def save(arr, relpath, gen, desc):
 
 
 def clean_previous():
-    """Remove the files this generator wrote last time (provenance.json); never touches foreign files."""
-    p = os.path.join(ENV_DIR, 'provenance.json')
-    try:
-        with open(p, encoding='utf-8') as f:
-            old = json.load(f)
-    except (OSError, ValueError):
-        return
-    for e in old.get('files', []):
-        fp = os.path.join(ROOT, e.get('path', ''))
-        if e.get('path', '').startswith('assets/environments/berlin_annex/') and fp.endswith('.png') \
-                and os.path.isfile(fp):
-            os.remove(fp)
+    """Remove the PNGs this generator wrote last time (its own provenance.json rows); never touches foreign files
+    (rows of other generators, hand art, the .import sidecars)."""
+    if os.path.isdir(ENV_DIR):
+        KEEP.remove_own_pngs(ENV_DIR, ROOT, FAMILY)
 
 
 def maps(lay):
@@ -583,14 +579,15 @@ def merge_foreign(scene: dict):
 
 def write_scene(scene: dict):
     kept = merge_foreign(scene)
-    with open(os.path.join(ENV_DIR, 'scene.json'), 'w', encoding='utf-8', newline='\n') as f:
-        json.dump(scene, f, ensure_ascii=False, indent=1)
-        f.write('\n')
+    KEEP.write_json(os.path.join(ENV_DIR, 'scene.json'), scene)   # same content as before: byte for byte
     return kept
 
 
 def write_provenance():
     files = [{'path': p, 'generator': g, 'description': d} for (p, g, d) in PRODUCED]
+    have = {f['path'] for f in files}
+    old = KEEP.read_json(os.path.join(ENV_DIR, 'provenance.json'))
+    files += [r for r in KEEP.merge_rows([], old, FAMILY, ROOT) if r.get('path') not in have]   # foreign rows stay
     data = {'environment': 'berlin_annex', 'level': 'scenes/levels/L_C4_Annex.tscn', 'generator': GEN,
             'date': K.DATE, 'license': 'original work, generated deterministically by the project tools (no third-party '
                                       'images, no traced references)', 'files': files}

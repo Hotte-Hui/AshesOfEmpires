@@ -47,10 +47,17 @@ var _coat: Sprite2D
 var _street: Node2D
 var _konrad: Sprite2D
 var _sbahn: Sprite2D
+var _far4: Node2D            # x4's far layer (pans at x4_parallax of the street)
+var _walker: Sprite2D        # x4: the neighbour walking home from the pub
+var _win_on: Sprite2D        # x4: a Beletage window that lights up
+var _smoke4: Node2D          # x4: the builders' hut's stove smoke
+var _t_smoke4: Texture2D
+var _time4 := 0.0
 var _snow1: Node2D
 var _snow2: Node2D
 var _snow3: Node2D
 var _snow4: Node2D
+var _snow4a: Node2D          # x4a: snow crossing the warning lamp, the near flakes lit red as they pass the lens
 
 
 func _init() -> void:
@@ -199,13 +206,25 @@ func _build() -> void:
 	x4a = group("WarningLamp")
 	sprite("express/x4_lamp.png", Vector2.ZERO, x4a)
 	_glow4 = glow("express/lamp_glow.png", x4a)
+	_snow4a = snow(x4a, Rect2(-20, 30, 680, 300), [
+		{"count": 40, "v": Vector2(-5, 14), "vjit": 0.3, "size": Vector2(1, 1), "color": Color("#8a96b0"), "sway": 2.0},
+		{"count": 10, "v": Vector2(-9, 26), "vjit": 0.3, "size": Vector2(2, 2), "color": Color("#e2c8c4"), "sway": 3.0},
+	], 4505)
 	x4 = group("Street")
 	_street = Node2D.new()
 	_street.name = "Pan"
 	x4.add_child(_street)
-	sprite("express/x4_far.png", Vector2.ZERO, _street)
-	_sbahn = sprite("express/x4_sbahn.png", Vector2(-240, 126), _street)
+	_far4 = Node2D.new()
+	_far4.name = "Far"
+	_street.add_child(_far4)
+	sprite("express/x4_far.png", Vector2.ZERO, _far4)
+	_sbahn = sprite("express/x4_sbahn.png", Vector2(-240, 126), _far4)
 	sprite("express/x4_street.png", Vector2.ZERO, _street)
+	var wo: Array = X.get("x4_win_on", [659, 96])
+	_win_on = sprite("express/x4_win_on.png", Vector2(float(wo[0]), float(wo[1])), _street)
+	_t_smoke4 = tex("express/x4_smoke.png")
+	_smoke4 = fx(_street, "HutSmoke", _draw_smoke4)
+	_walker = cells("express/x4_walker.png", _street, 32)
 	_konrad = cells("express/x4_konrad.png", _street, 32)
 	glow("express/x4_glow.png", _street)
 	_snow4 = snow(x4, Rect2(-20, 30, 680, 300), [
@@ -260,5 +279,20 @@ func _apply(time: float) -> void:
 	var su := clampf((time - SBAHN_T[0]) / (SBAHN_T[1] - SBAHN_T[0]), 0.0, 1.0)
 	_sbahn.visible = time >= SBAHN_T[0] and time <= SBAHN_T[1]
 	_sbahn.position = Vector2(roundf(-240.0 + (float(X.get("street_w", 1100)) + 240.0) * su), 126)
-	for s in [_snow1, _snow2, _snow3, _snow4]:
+	_far4.position = Vector2(roundf(cam * (1.0 - float(X.get("x4_parallax", 1.0)))), 0)
+	var wk: Array = X.get("x4_walker", [1062, 958, 302, 10.6])
+	var wx := maxf(float(wk[1]), float(wk[0]) - maxf(0.0, time - float(wk[3])) * WALK_SPEED * 0.8)
+	_walker.frame = walk_i(float(wk[0]) - wx) % maxi(1, _walker.hframes)
+	_walker.position = Vector2(roundf(wx - 16.0), float(wk[2]) - 54.0)
+	_win_on.visible = time >= float(X.get("x4_win_on_t", 11.8))
+	_time4 = time
+	_smoke4.queue_redraw()
+	for s in [_snow1, _snow2, _snow3, _snow4, _snow4a]:
 		s.set_time(time)
+
+
+## x4: the stove smoke of the builders' hut on No. 12's gap site, drifting left with the snow.
+func _draw_smoke4() -> void:
+	var sm: Array = X.get("x4_smoke", [445, 186])
+	puffs(_smoke4, _t_smoke4, 8, _time4, WIPE[0] - 3.0, DUR, 0.42, 2.6, Vector2(float(sm[0]) - 9.0, float(sm[1]) - 22.0),
+			Vector2(-8, -9), 4511, Color(1, 1, 1, 0.75))

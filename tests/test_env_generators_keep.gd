@@ -13,16 +13,38 @@ extends RefCounted
 ## Round 10 lead pass: env_berlin.py (berlin_archive, the round-8 AmbientWalkers actor + walkers/) — it deletes nothing
 ## and keeps no provenance.json, so it only needs the scene merge and the byte-stable writer (MERGE_ONLY); its re-run
 ## in a scratch copy is byte-identical (documentation/asset_manifest_parts/polish_r10.md).
+## Round 11 (rounding-off pass): the last generators of shared env folders follow the same rules --
+##  * env_c4_tunnels.py (karsk_tunnels) and env_c3p2_archive.py (veltrava_registry) deleted every PNG and every top-level
+##    JSON but explore_hotspots.json and wrote scene.json / provenance.json from scratch: now the full env_keep set (GENS);
+##  * env_c4_annex.py (berlin_annex) removed every PNG its provenance listed, whoever wrote the row, and rewrote
+##    provenance.json from scratch: now only its own rows' PNGs go, foreign rows stay, scene.json is written only when
+##    changed; its merge_foreign (foreign actors by "gen", unknown keys, hotspots / spawns) stays (OWN_MERGE);
+##  * env_karsk.py (karsk_railyard) and env_plaza.py (hall_plaza) deleted nothing but rewrote scene.json from scratch
+##    (CRLF on Windows): now merge + byte-stable LF writer (MERGE_ONLY); env_karsk_lib.py no longer hard-codes the
+##    checkout path (a run from a copy or worktree wrote into the main checkout).
+## Proof (scratch copies of tools/ data/ scenes/ documentation/ assets/ without audio; the repo untouched), diffed byte
+## for byte: before -- tunnels and registry lost a hand actor, a hand key, two walker PNGs + a hand prop and the
+## walkers_r8.py row; annex deleted the walker PNG of a foreign row and dropped the row; railyard and plaza lost the hand
+## actor and key and came out CRLF (de_env_karsk.json too). After (two runs each) -- every PNG of the five folders
+## byte-identical to the repo (61 + 116 + 63 + 113 + 84), all hand content kept (in place; the annex appends foreign
+## entries at the end as before), a stale own PNG + row of a third run removed, a clean run byte-identical in full.
 
 const Kit := preload("res://tests/support/test_kit.gd")
 const GENS := {"env_veltrava_hall": "veltrava_hall", "env_veltrava_station": "veltrava_station",
-	"env_c3p2_quay": "veltrava_quay"}
+	"env_c3p2_quay": "veltrava_quay", "env_c4_tunnels": "karsk_tunnels", "env_c3p2_archive": "veltrava_registry"}
 ## generators that never delete a file (no own-record removal needed) but rewrite a shared scene.json
-const MERGE_ONLY := {"env_berlin": "berlin_archive"}
+const MERGE_ONLY := {"env_berlin": "berlin_archive", "env_karsk": "karsk_railyard", "env_plaza": "hall_plaza"}
+## extra env_keep calls of single MERGE_ONLY generators
+const MERGE_EXTRA := {"env_berlin": ["KEEP.lf_json("]}
+## generators with their own scene merge (merge_foreign) but env_keep's removal, provenance merge and writer
+const OWN_MERGE := {"env_c4_annex": "berlin_annex"}
+## folders whose scene.json carries the round-8 AmbientWalkers actor (walkers_r8.py)
+const WALKER_FOLDERS := ["veltrava_hall", "veltrava_station", "veltrava_quay", "berlin_archive"]
 ## provenance "generator" prefixes of each generator's own rows (env_keep FAMILY)
 const FAMILY := {"veltrava_hall": ["tools/pixelgen/env_veltrava_hall"],
 	"veltrava_station": ["tools/pixelgen/env_veltrava_station.py", "tools/pixelgen/env_veltrava_station_life.py"],
-	"veltrava_quay": ["tools/pixelgen/env_c3p2_quay"]}
+	"veltrava_quay": ["tools/pixelgen/env_c3p2_quay"], "karsk_tunnels": ["tools/pixelgen/env_c4_tunnels"],
+	"veltrava_registry": ["tools/pixelgen/env_c3p2_archive"], "berlin_annex": ["tools/pixelgen/env_c4_annex"]}
 const FOREIGN_DIRS := ["walkers/", "thaw/"]
 const THAW := ["car3_peephole", "car3_thaw"]
 
@@ -61,10 +83,20 @@ func _sources() -> bool:
 		var src := FileAccess.get_file_as_string("res://tools/pixelgen/%s.py" % g)
 		if not kit.ok(src != "", "%s.py readable" % g):
 			continue
-		for bad in ["os.remove(", "rmtree(", "json.dump(scene"]:
+		for bad in ["os.remove(", "rmtree(", "json.dump(scene", "json.dump(manifest", "pg.write_manifest("]:
 			kit.ok(not src.contains(bad), "%s: no %s (it deletes nothing, scene.json goes through env_keep)" % [g, bad])
-		for call in ["import env_keep as KEEP", "KEEP.merge_scene(", "KEEP.write_json(sj,", "KEEP.lf_json("]:
+		for call in ["import env_keep as KEEP", "KEEP.merge_scene(", "KEEP.write_json(sj,"] + MERGE_EXTRA.get(g, []):
 			kit.ok(src.contains(call), "%s uses %s" % [g, call])
+	for g in OWN_MERGE:
+		var src := FileAccess.get_file_as_string("res://tools/pixelgen/%s.py" % g)
+		if not kit.ok(src != "", "%s.py readable" % g):
+			continue
+		kit.ok(not src.contains("os.remove("), "%s: removes nothing itself (env_keep removes its own PNGs)" % g)
+		for call in ["import env_keep as KEEP", "KEEP.remove_own_pngs(", "KEEP.write_json(", "KEEP.merge_rows(",
+				"def merge_foreign("]:
+			kit.ok(src.contains(call), "%s uses %s" % [g, call])
+	var lib := FileAccess.get_file_as_string("res://tools/pixelgen/env_karsk_lib.py")
+	kit.ok(lib != "" and not lib.contains("'C:/Spiele/"), "env_karsk_lib.py: ROOT is the checkout the file lives in")
 	return true
 
 
@@ -72,6 +104,7 @@ func _actors() -> bool:
 	var walkers_seen := 0
 	var folders: Dictionary = GENS.duplicate()
 	folders.merge(MERGE_ONLY)
+	folders.merge(OWN_MERGE)
 	for g in folders:
 		var env: String = "res://assets/environments/%s/" % folders[g]
 		var scene = _json(env + "scene.json")
@@ -98,7 +131,8 @@ func _actors() -> bool:
 					var base := rig.get_basename()
 					kit.ok(FileAccess.file_exists(env + base + ".png") and FileAccess.file_exists(env + base + "_n.png"),
 						"%s: the rig's sheet and normal map %s(.png / _n.png)" % [folders[g], base])
-		kit.ok("AmbientWalkers.tscn" in scenes, "%s: the ambient walkers' actor is in scene.json" % folders[g])
+		if folders[g] in WALKER_FOLDERS:
+			kit.ok("AmbientWalkers.tscn" in scenes, "%s: the ambient walkers' actor is in scene.json" % folders[g])
 	kit.ok(walkers_seen >= 13, "walkers checked in the four folders (%d)" % walkers_seen)
 	var st = _json("res://assets/environments/veltrava_station/scene.json")
 	var names: Array = []
@@ -113,8 +147,10 @@ func _actors() -> bool:
 
 
 func _provenance() -> bool:
-	for g in GENS:
-		var env: String = GENS[g]
+	var gens: Dictionary = GENS.duplicate()
+	gens.merge(OWN_MERGE)
+	for g in gens:
+		var env: String = gens[g]
 		var prov = _json("res://assets/environments/%s/provenance.json" % env)
 		if not kit.ok(prov is Dictionary and (prov.get("files", []) as Array).size() > 10, "%s: provenance.json lists its files" % env):
 			continue

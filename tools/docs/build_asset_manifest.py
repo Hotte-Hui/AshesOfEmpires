@@ -10,7 +10,7 @@ import glob
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PARTS = os.path.join(ROOT, "documentation", "asset_manifest_parts")
 OUT = os.path.join(ROOT, "documentation", "ASSET_MANIFEST.md")
-ORDER = ["render-camera", "env_karsk", "karsk_skyline", "explore_karsk", "minigames", "minigames_r7_kb", "env_berlin", "explore_berlin",
+ORDER = ["render-camera", "splash", "prologue", "env_karsk","karsk_skyline", "explore_karsk", "minigames", "minigames_r7_kb", "env_berlin", "explore_berlin",
          "characters", "portraits", "characters_r7", "portraits_r7", "great_hall", "parade", "env_plaza", "explore_plaza", "plaza_polish",
          "trans_a1m1", "trans_finale", "c3", "env_veltrava_station", "env_veltrava_hall", "c3_cine", "minigames_r7_v", "minigames_r7_relay",
          "tasks", "memories", "c3p2_story", "env_c3p2_archive", "env_c3p2_night", "c3p2_cine", "c3p2_puzzle",

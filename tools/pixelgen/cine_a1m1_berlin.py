@@ -38,6 +38,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cine_a1m1_lib as lib  # noqa: E402
 from cine_a1m1_lib import Layer, BR, tone_put, rect_tone, bayer, value_noise, white_noise, seed_of  # noqa: E402
 import pg  # noqa: E402
+import swastika_px as SPX  # noqa: E402
 
 NI, VI, STN, OC, GL, SL, PA, SN = (BR[k] for k in ('night', 'violet', 'stone', 'ochre', 'glow', 'steel',
                                                    'patina', 'snow'))
@@ -505,46 +506,25 @@ BANNER_PHASES = 16                             # frames per wave cycle; two sets
 BANNER_DISC = (12, 31, 20)                     # disc centre x, y on the flat fabric, diameter
 
 
-def swastika_bold(n: int = 16, h: float = 0.6, L: float = 2.0, ss: int = 10) -> np.ndarray:
-    """Bold historical swastika for the _hist banners: the classic 5-unit construction (arm width h*2 units,
-    hooks bent clockwise as on the NSDAP flag), turned 45 degrees, rasterised n x n with supersampling and
-    made exactly 4-fold symmetric (2-of-4 vote over the quarter turns) so it reads clean and thick at 1x."""
-    unit = n / ((L + h) * 2 * math.sqrt(2))
-    c = n / 2
-    g = np.zeros((n, n))
-    for yy in range(n * ss):
-        for xx in range(n * ss):
-            x = (xx + 0.5) / ss - c
-            y = (yy + 0.5) / ss - c
-            u = (x + y) / math.sqrt(2) / unit
-            v = (-x + y) / math.sqrt(2) / unit
-            au, av = abs(u), abs(v)
-            ins = (au <= h and av <= L + h) or (av <= h and au <= L + h)
-            ins |= (-L - h <= v <= -L + h and 0 <= u <= L + h) or (L - h <= u <= L + h and 0 <= v <= L + h)
-            ins |= (L - h <= v <= L + h and -L - h <= u <= 0) or (-L - h <= u <= -L + h and -L - h <= v <= 0)
-            if ins:
-                g[yy // ss, xx // ss] += 1
-    m = (g / (ss * ss)) > 0.5
-    return sum(np.rot90(m, k).astype(int) for k in range(4)) >= 2
-
-
 def _banner_flat(hist: bool):
-    """Flat fabric as material ids: 0 cloth, 1 disc, 2 emblem, 3 disc rim."""
+    """Flat fabric as material ids: 0 cloth, 1 disc, 2 emblem, 3 disc rim.  _hist: the on-point swastika from
+    the exact 45-degree pixel lattice (swastika_px, U = 3: 15 px, 3-px stair arms, four congruent arms) centred
+    in a 19-px disc around the same pixel centre (the waves then carry disc and emblem together)."""
     FW, H = BANNER_FW, BANNER_H
     ids = np.zeros((H, FW), np.int8)
     cx, cy, d = BANNER_DISC
     disc = lib.disc_mask(d)
     ox, oy = cx - d // 2, cy - d // 2
-    ids[oy:oy + d, ox:ox + d][disc] = 1
     if hist:
-        sw = swastika_bold(16, 0.6)
-        sy, sx = oy + (d - sw.shape[0]) // 2, ox + (d - sw.shape[1]) // 2
-        ids[sy:sy + sw.shape[0], sx:sx + sw.shape[1]][sw] = 2
-    else:
-        ids[oy:oy + d, ox:ox + d][lib.edge_of(disc)] = 3
-        rs = lib.REICHSSIEGEL_11
-        sy, sx = cy - rs.shape[0] // 2, cx - rs.shape[1] // 2
-        ids[sy:sy + rs.shape[0], sx:sx + rs.shape[1]][rs] = 2
+        hx, hy = cx + 0.5, cy + 0.5
+        ids[SPX.disc(FW, H, hx, hy, 9.75)] = 1
+        ids[SPX.at(FW, H, hx, hy, 3)] = 2
+        return ids
+    ids[oy:oy + d, ox:ox + d][disc] = 1
+    ids[oy:oy + d, ox:ox + d][lib.edge_of(disc)] = 3
+    rs = lib.REICHSSIEGEL_11
+    sy, sx = cy - rs.shape[0] // 2, cx - rs.shape[1] // 2
+    ids[sy:sy + rs.shape[0], sx:sx + rs.shape[1]][rs] = 2
     return ids
 
 

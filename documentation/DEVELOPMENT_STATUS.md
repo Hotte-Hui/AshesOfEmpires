@@ -5,6 +5,18 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Round 11 (2026-11-07) — the five Chapter-4-part-2 films reworked, a prologue, an AAA start, round-off
+The user kept the round-10 film overhaul and asked for the same treatment of the five new films, better swastikas
+in the hall / parade, a gentler start and a round-off; budget-conscious (one lean workflow). Evidence: TEST_REPORT §15.
+| Area | Now |
+|---|---|
+| C4P2 films (Depot, Steam, Book, Express, Clock) | full figures instead of armless busts and silhouette blobs (Lev, Irina, Alexei from behind with the tied ushanka, Ekdahl's hand and film tin, Ilse asleep, the photographer with his own rig), Kolonnenstraße 14 with stucco, lit rooms and street life, Kordon-17 with depth, towers and floodlights, the coal gang reworked; before/after sheets sent to the user |
+| Swastikas (hall, parade, plaza, street banners — `_hist` only) | hand-pixelled emblems on the 45° grid (`tools/pixelgen/swastika_px.py`), the portico banner texture 40×144 so the tribune banners stay crisp; neutral twins unchanged |
+| Start of a new game | the disclaimer card, then a 60 s prologue (five painted shots: the Line, the map with Veltrava and the corridors, the C-17 stamp, Konrad in Berlin, Alexei in Karsk), then Chapter 1; skippable; never on load |
+| Game launch | black → „HOTTE-HUI präsentiert“ (name in `data/locale/de_splash.json`) → „Erstellt mit Godot Engine“ (own lettering, no third-party logos) → the title picture with falling ash and a new sting → main menu; a one-time demo letter (reopen via „Mitwirkende“); never in tests or drivers |
+| Round-off | every env generator merges scene.json / provenance.json through `env_keep.py` and removes only its own PNGs; the end card with eight decisions fits at 100–150 % text; `documentation/EXTENDING.md` = the recipe for the next chapter |
+| For testers | `builds/AshesOfEmpires_Testversion.zip` (exe + pck + „LIES MICH.txt“ with start help, SmartScreen note and feedback questions) |
+
 ## Round 10 (2026-11-06/07) — the user's playtest feedback, a cinematics overhaul, Chapter 4 part 2
 The user played round 9 and sent screenshots; the round answered them and extended the game in parallel (round 10 in a
 git worktree, merged afterwards). Evidence: TEST_REPORT.md §14.
@@ -134,8 +146,8 @@ of quality content first. Delivered by 16 parallel specialists + integration (ev
 | Content safety | fictional-history disclaimer at new game; fictional insignia only (no real party symbols); no glorification | disclaimer seen in the real-input run; content rules given to every asset generator; spot checks of screens and strings (no full editorial review yet) |
 
 ## Windows build
-`builds/windows/AshesOfEmpires.exe` (109 MB Godot runtime, icon embedded) + `AshesOfEmpires.pck` (499 MB after
-round 10, mostly lossless audio and art) + `AshesOfEmpires.console.exe` (log output). Rebuild:
+`builds/windows/AshesOfEmpires.exe` (109 MB Godot runtime, icon embedded) + `AshesOfEmpires.pck` (502 MB after
+round 11, mostly lossless audio and art) + `AshesOfEmpires.console.exe` (log output). Rebuild:
 `godot --headless --path . --export-release "Windows Desktop" builds/windows/AshesOfEmpires.exe`. Start with
 `Spiel starten.cmd` in the project root.
 

@@ -4,12 +4,15 @@ extends "res://scripts/ui/ui_modal.gd"
 ## Fortsetzen (only if Saves.has_any()), Neues Spiel, Laden, Erinnerungen (only once a scene was completed —
 ## Game.memories_any(), global profile, §12.10), Einstellungen, Mitwirkende, Beenden.
 ## Signals for Game: new_game_requested, continue_requested, quit_requested (fallbacks when unconnected).
+## §12.13: the first opening of a real player's launch also brings the studio's demo letter (BootFlow.notice_due();
+## never in automated runs) until it was confirmed once.
 
 signal new_game_requested
 signal continue_requested
 signal quit_requested
 
 const SnowField := preload("res://scripts/ui/snow_field.gd")
+const BootFlow := preload("res://scripts/ui/boot_flow.gd")
 
 var _buttons: Dictionary = {}
 var _menu: VBoxContainer
@@ -104,6 +107,16 @@ func refresh() -> void:
 func _on_open() -> void:
 	Kit.appear(_title_block, 0.9 if not Kit.reduced_motion() else 0.3)
 	Kit.appear(_menu, 0.6, Vector2(-18, 0))
+	if BootFlow.notice_due():
+		BootFlow.notice_opened = true
+		_open_notice.call_deferred()
+
+
+## Deferred: the menu is on the stack before the letter covers it (the letter's own deferred focus call runs after
+## the menu's, so „Los geht's“ ends up focused).
+func _open_notice() -> void:
+	if is_open and ui_root != null and ui_root.has_method("open_demo_notice") and ui_root.top_modal() == self:
+		ui_root.open_demo_notice(true)
 
 
 func focus_default() -> void:

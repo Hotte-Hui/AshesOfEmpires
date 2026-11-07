@@ -1,6 +1,7 @@
 # NEXT STEPS — Ashes of Empires: The Last Winter
 
-State after round 10 (2026-11-07): Chapters 1–4 complete — Chapter 4 part 2 joined the archive and the transport
+State after round 11 (2026-11-07; round 11 = the five C4P2 films reworked, prologue, AAA start, round-off — see
+DEVELOPMENT_STATUS): Chapters 1–4 complete — Chapter 4 part 2 joined the archive and the transport
 path (Karsk depot, Berlin Ostbahnhof, Kolonnenstraße 14; decision c4g). The user's screenshot feedback and a
 cinematics overhaul (13 films) are in; saves fill missing Story flags with defaults. 185 finds, 46 chats, 14
 mini-games, 11 tasks, 29 history cards, 8 decisions. Main path ≈ 64 min, everything ≈ 4 h 35 min (estimates; no
@@ -12,9 +13,11 @@ human playtest yet). Open work, in priority order.
 - **Chapter 5 part 1** (STORY_BIBLE §6 row 5, FUTURE_CHAPTER_ARCS „Kapitel 5“): the infrastructure also has real
   civilian use; an abrupt collapse would endanger residents, silence would too — contract `C5_DESIGN.md` first; the
   c4g decision (publish_now / protect_first) and `people_protected` drive the opening; the Hanna thread (house 14).
-- **Open polish:** the photographer in a C4P2 film is drawn from a stand-in until its rig spec exists; close-ups for
-  the Chapter-3-part-2 / Chapter-4 items that open their board picture; `env_c4_tunnels.py` / `env_c3p2_archive.py`
-  through `env_keep.py` before anyone adds walkers there; hi-res capture frames for L_M1_HallReveal / L_M1_Parade.
+- **Open polish:** close-ups for the Chapter-3-part-2 / Chapter-4 items that open their board picture; hi-res capture
+  frames for L_M1_HallReveal / L_M1_Parade; the E2E runs can write the real memories profile (keep backing it up).
+- **The user's long-term goal:** about five times the current game — a blockbuster story with revelations, crises,
+  stronger dialogue, new theatres (Moscow, America, war zones) and missions / files to find. Follow
+  `documentation/EXTENDING.md` for every new chapter.
 - **Budget:** the user asked to keep rounds cheap — one workflow at a time, art directors only where the user looks
   (cinematics, places), lean final checks instead of 12-agent review phases, before/after sheets instead of repeated
   captures. No fiction disclaimers in new texts.

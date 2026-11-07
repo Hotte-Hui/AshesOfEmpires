@@ -12,6 +12,8 @@ Outputs (area env_karsk):
     data/locale/de_env_karsk.json                          (optional observation strings)
     assets/environments/karsk_railyard/_preview/*.png      (composited checks, .gdignore'd)
 Deterministic: fixed seeds, no network, original procedural art (references are never sampled).
+scene.json is merged over the previous one (round 11, tools/pixelgen/env_keep.py): keys and "actors" other
+writers add stay in place; unchanged content leaves the file byte for byte (LF).
 """
 from __future__ import annotations
 
@@ -33,6 +35,7 @@ import env_karsk_yard as YD  # noqa: E402
 import env_karsk_fx as FX  # noqa: E402
 import env_karsk_life as LF  # noqa: E402
 import env_karsk_sprites as SPR  # noqa: E402
+import env_keep as KEEP  # noqa: E402  (round 11: the folder is shared)
 
 WORLD = (1920, 360)
 ACTOR_DIR = 'res://scenes/levels/karsk/'
@@ -528,8 +531,8 @@ def build(preview=True):
     }
     manifest = _plain(manifest)
     manifest = apply_skyline(manifest)
-    with open(os.path.join(ENV_DIR, 'scene.json'), 'w', encoding='utf-8') as f:
-        json.dump(manifest, f, indent=1, ensure_ascii=False)
+    sj = os.path.join(ENV_DIR, 'scene.json')
+    KEEP.write_json(sj, KEEP.merge_scene(manifest, KEEP.read_json(sj)))   # keys / actors of other writers stay
     # palette discipline report (colour PNGs only)
     bad = {}
     for root, _, files in os.walk(ENV_DIR):
@@ -586,7 +589,7 @@ LOCALE = {
 def write_locale():
     path = os.path.join(ROOT, 'data', 'locale', 'de_env_karsk.json')
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:   # the repo's LF form on every platform
         json.dump({'locale': 'de-DE', 'area': 'env_karsk', 'strings': LOCALE}, f, indent=1, ensure_ascii=False)
     print('locale:', path, len(LOCALE), 'strings')
 

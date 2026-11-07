@@ -110,6 +110,14 @@ func run() -> void:
 	Story.new_game()
 	if Explore.has_method("reset"):
 		Explore.reset()
+	# round 11: a new game opens with the prologue — through the director exactly as after „Neues Spiel“ (real time,
+	# or skipped at once with --autoplay-skip); it must end cleanly and leave the Story untouched
+	var fresh := Story.save_json()
+	await Game._cin_prologue()
+	if Game.prologue != null or Game.in_cinematic:
+		_fail("the prologue did not end cleanly")
+	if Story.save_json() != fresh:
+		_fail("the prologue changed the Story state")
 	await Game.goto_level(Game._story_scene(), "", false)
 	await _shoot("start")
 	var saved_snapshot := ""

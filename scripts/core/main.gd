@@ -7,6 +7,12 @@ extends Node
 ## World as before) so the 3D pixel post keeps its 1 px = 1 world px contract.
 ## `grade` stays the node whose ShaderMaterial Game._apply_grade() writes; the same material drives both
 ## post stages.
+## Boot flow (§12.13, round 11): a real player's launch first plays the boot sequence (scenes/ui/BootSplash.tscn:
+## black, studio, engine, title picture) and only then registers with Game (main menu fades in from black); tests,
+## drivers and harnesses (scripts/ui/boot_flow.gd) reach Game.register_main() in the same frame as before.
+
+const BootFlow := preload("res://scripts/ui/boot_flow.gd")
+const BOOT_SPLASH := "res://scenes/ui/BootSplash.tscn"
 
 @onready var world: SubViewport = $World
 @onready var level_root: Node = $World/LevelRoot
@@ -22,6 +28,10 @@ func _ready() -> void:
 	view.setup(world, graded)
 	level_root.child_entered_tree.connect(_on_world_child_entered)
 	level_root.child_exiting_tree.connect(_on_world_child_exiting)
+	if BootFlow.decide(self) and ResourceLoader.exists(BOOT_SPLASH):
+		var splash: Node = (load(BOOT_SPLASH) as PackedScene).instantiate()
+		add_child(splash)
+		await splash.play()
 	Game.register_main(self)
 
 

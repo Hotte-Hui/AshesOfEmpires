@@ -8,7 +8,8 @@ Loaders resolve the path with Symbols.pick().  The insignia are in-world iconogr
 critical narrative (the evicted family is the focus of the shot); they are never UI, reward or decoration.
 
 Outputs (assets/architecture/great_hall/symbols/):
-  banner_portico(.png|_hist.png)   10x36  giant vertical banners hung on the portico (d ~ 950 m, ~1 texel/px)
+  banner_portico(.png|_hist.png)   10x36  giant vertical banners hung on the portico (d ~ 950 m, ~1 texel/px);
+                                         the _hist twin is 40x144 + mipmaps (also the close parade tribune)
   flag_street(.png|_hist.png)      30x90  hanging banners on the tenement facades (d ~ 30 m, ~1 texel/px)
   flag_pole(.png|_hist.png)        16x44  flags on the plaza masts (mipmapped, 120-600 m)
   eagle_portico(.png|_hist.png)    +_n   free-standing stone eagle on the portico attic, claws on a wreath
@@ -28,6 +29,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pg  # noqa: E402
+import swastika_px as SP  # noqa: E402
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..',
                                      'assets', 'architecture', 'great_hall', 'symbols'))
@@ -61,49 +63,8 @@ def save_rgba(arr, path):
 
 
 # ============================================================================ the two emblems
-# Upright right-facing swastika on its own 5x5 unit grid (row 0 = top).  Rotated 45 deg it stands on a point
-# as on the regime's flag: the NE arm hooks to the SE, the NW arm to the NE, etc.
-_SW = ["X.XXX",
-       "X.X..",
-       "XXXXX",
-       "..X.X",
-       "XXX.X"]
-
-
-def swastika_mask(size: int, sub: int = 8, thr: float = 0.42) -> np.ndarray:
-    """Rasterise the swastika rotated 45 deg into a size x size mask (supersampled, thresholded).
-    The diamond of the rotated 5x5 unit square fits exactly into the size x size box."""
-    unit = size / (5.0 * math.sqrt(2.0))
-    acc = np.zeros((size, size), np.float32)
-    c = size / 2.0
-    ca = math.cos(math.radians(45.0))
-    for sy in range(sub):
-        for sx in range(sub):
-            yy, xx = np.mgrid[0:size, 0:size].astype(np.float32)
-            px = xx + (sx + 0.5) / sub - c
-            py = yy + (sy + 0.5) / sub - c
-            # rotate back by -45 deg into the upright frame
-            ux = (px * ca + py * ca) / unit + 2.5
-            uy = (-px * ca + py * ca) / unit + 2.5
-            ix = np.floor(ux).astype(int)
-            iy = np.floor(uy).astype(int)
-            ok = (ix >= 0) & (ix < 5) & (iy >= 0) & (iy < 5)
-            v = np.zeros_like(px, dtype=bool)
-            for r in range(5):
-                for q in range(5):
-                    if _SW[r][q] == 'X':
-                        v |= ok & (iy == r) & (ix == q)
-            acc += v
-    return (acc / (sub * sub)) >= thr
-
-
-# Threshold per size, chosen by eye from rasterisations at 10x (below ~11 px the hooks only survive with the
-# right coverage threshold; the result reads as the regime's on-point swastika, not as a blob or a cross).
-_SW_THR = {7: 0.46, 8: 0.46, 9: 0.5, 10: 0.46, 11: 0.54, 12: 0.46}
-
-
-def swastika(size: int) -> np.ndarray:
-    return swastika_mask(size, sub=12, thr=_SW_THR.get(size, 0.46))
+# The swastika of the _hist twins comes from swastika_px: on point, hooks clockwise, the 5x5 unit construction
+# built exactly on the 45-degree pixel lattice (hand-pixelled below 9 px), never a thresholded vector.
 
 
 def reichssiegel(size: int) -> tuple[np.ndarray, np.ndarray]:
@@ -178,23 +139,72 @@ def disc_mask(d: int) -> np.ndarray:
     return (xx - c) ** 2 + (yy - c) ** 2 <= (d / 2.0 - 0.2) ** 2
 
 
+def fold_tone(w: int, h: int, folds, seed: int, k: int = 1) -> np.ndarray:
+    """The cloth's light field (1.0 = flat lit cloth): vertical folds (light crest, dark trough), a slow
+    sideways drift downwards, darker side hems.  Fold positions are in 1x texels; k scales the field for a
+    k-times finer texture of the same banner (k = 1 reproduces cloth() exactly)."""
+    tone = np.full((h, w), 1.0, np.float32)
+    for fx, depth in folds:
+        for x in range(w):
+            d = (x + 0.5) / k - 0.5 - fx
+            tone[:, x] += depth * math.exp(-(d * d) / 1.6) * (1.0 if d >= 0 else -0.6)
+    for y in range(h):
+        sh = int(round(math.sin(y / max(8.0 * k, h / 3.0) + seed) * 0.6 * k))
+        tone[y] = np.roll(tone[y], sh)
+    tone[:, :k] -= 0.7
+    tone[:, w - k:] -= 0.9
+    return tone
+
+
+# light ramps per material of the _hist flag (dark -> light); index = round(tone) (+1 on the white)
+_HIST_RAMPS = {0: RED, 1: [SNOW[1], SNOW[2], SNOW[3], SNOW[4]], 2: [BLACK, NIGHT[1]]}
+
+
+def hist_banner(w: int, h: int, cy: int, disc_d: int, folds, seed: int, k: int = 1) -> np.ndarray:
+    """The _hist banner: the flat flag is laid out first as materials -- terracotta cloth, the white disc and
+    the black swastika on point from the exact pixel lattice (swastika_px), centred in the disc -- and only
+    then the folds and the light go over all three, so the emblem bends with the cloth instead of being
+    stamped onto it.  cy = disc centre row, disc_d = disc diameter (both in texels of this texture), folds
+    in 1x texels; k = texel scale (4: the portico banner drawn 4x finer for the close parade tribune)."""
+    cx = w / 2.0
+    U = SP.pick_u(disc_d)
+    cyc = SP.centre_for(cx, cy, U)
+    mat = np.zeros((h, w), np.int8)
+    mat[SP.disc(w, h, cx, cyc, disc_d / 2.0 - 0.2)] = 1
+    mat[SP.at(w, h, cx, cyc, U)] = 2
+    tone = fold_tone(w, h, folds, seed, k)
+    lvl = np.round(tone).astype(int)
+    img = np.zeros((h, w, 4), np.uint8)
+    for mi, ramp in _HIST_RAMPS.items():
+        cols = np.stack([H(c) for c in ramp])
+        if mi == 1:
+            idx = lvl + 1
+        elif mi == 2:
+            idx = (lvl >= 2).astype(int)
+        else:
+            idx = lvl
+        m = mat == mi
+        img[m] = cols[np.clip(idx, 0, len(ramp) - 1)[m]]
+    # rod pocket (light lip over a dark seam) and the hem, k texels per 1x row
+    img[0:k, :] = H(RED[-1])
+    img[k:2 * k, :] = H(RED[0])
+    img[h - k:h, :] = H(RED[1])
+    img[h - 2 * k:h - k, :] = H(RED[0])
+    # frayed, frozen lower edge (the same draws as cloth(); threads of uneven length when k > 1)
+    rng = np.random.default_rng(seed)
+    for x1 in range(w // k):
+        if rng.random() < 0.18:
+            for s in range(k):
+                img[h - max(1, k - (s * 3 + x1) % k):h, x1 * k + s, 3] = 0
+    return img
+
+
 def banner(w: int, h: int, cy: int, disc_d: int, sym: int, hist: bool, folds, seed: int) -> np.ndarray:
-    """Vertical banner.  hist: red cloth, white disc, black swastika on point.
+    """Vertical banner.  hist: hist_banner() (red cloth, white disc, black swastika on point; the emblem size
+    follows the disc, `sym` only applies to the neutral seal).
     neutral: grey-black cloth with the Reichssiegel (black disc with a white pillar) on a pale ring."""
     if hist:
-        img = cloth(w, h, RED, folds, seed)
-        x0 = (w - disc_d) // 2
-        y0 = cy - disc_d // 2
-        dm = disc_mask(disc_d)
-        stamp(img, dm, x0, y0, WHITE[1])
-        # disc shading: the folds still read through the white (lower-right shade, upper-left light)
-        yy, xx = np.mgrid[0:disc_d, 0:disc_d]
-        shade = dm & ((xx + yy) > disc_d * 1.25)
-        stamp(img, shade, x0, y0, WHITE[0])
-        lit = dm & ((xx + yy) < disc_d * 0.55)
-        stamp(img, lit, x0, y0, WHITE[2])
-        sm = swastika(sym)
-        stamp(img, sm, x0 + (disc_d - sym) // 2, y0 + (disc_d - sym) // 2, BLACK)
+        return hist_banner(w, h, cy, disc_d, folds, seed)
     else:
         img = cloth(w, h, GREYBLACK, folds, seed)
         x0 = (w - disc_d) // 2
@@ -362,7 +372,7 @@ def eagle_portico(hist: bool):
     # emblem inside the wreath
     ex, ey = int(cx + 0.5) - 3, int(wy) - 4
     if hist:
-        sm = swastika(7)
+        sm = SP.HAND[7]
         field = inner[ey:ey + 7, ex:ex + 7] & ~sm
         img[ey:ey + 7, ex:ex + 7][field] = H(STONE[3])
         img[ey:ey + 7, ex:ex + 7][sm] = H(BLACK)
@@ -454,14 +464,20 @@ def preview(items):
 def main():
     os.makedirs(ROOT, exist_ok=True)
     made = []
-    # portico banners: 10 px wide (one pier gap + overlap), 36 px tall at ~0.9 px/m
+    # portico banners: 10 px wide (one pier gap + overlap), 36 px tall at ~0.9 px/m.  The _hist twin is drawn
+    # 4x finer (40x144, mipmapped): the parade tribune hangs the same banner close to the camera (~4 screen px
+    # per 1x texel), where a 7-px emblem became a few crude blocks; at the reveal distance the mipmaps fold it
+    # back to the 10x36 footprint.
+    b = banner(10, 36, 12, 9, 7, False, [(3, 0.9), (7, 0.7)], 5)
+    save_rgba(b, out('banner_portico.png'))
+    made.append(b)
+    b = hist_banner(40, 144, 50, 36, [(3, 0.9), (7, 0.7)], 5, k=4)
+    save_rgba(b, out('banner_portico_hist.png'))
+    made.append(b)
+    # street banners on the facades: 30x90 (~1.2 x 3.6 m at 25 px/m); _hist disc 24 px (U = 4 lattice)
+    folds = [(5, 1.0), (12, 0.8), (19, 1.0), (25, 0.7)]
     for hist in (False, True):
-        b = banner(10, 36, 12, 9, 7, hist, [(3, 0.9), (7, 0.7)], 5)
-        save_rgba(b, out('banner_portico%s.png' % ('_hist' if hist else '')))
-        made.append(b)
-    # street banners on the facades: 30x90 (~1.2 x 3.6 m at 25 px/m)
-    for hist in (False, True):
-        b = banner(30, 90, 34, 23, 17, hist, [(5, 1.0), (12, 0.8), (19, 1.0), (25, 0.7)], 9)
+        b = banner(30, 90, 34, 24 if hist else 23, 17, hist, folds, 9)
         save_rgba(b, out('flag_street%s.png' % ('_hist' if hist else '')))
         made.append(b)
     # plaza mast flags

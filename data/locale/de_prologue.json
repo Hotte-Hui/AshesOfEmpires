@@ -1,0 +1,24 @@
+{
+ "locale": "de-DE",
+ "area": "prologue",
+ "note": "Runde 11 – der Prolog eines neuen Spiels (LS_Prologue, scenes/cinematics/prologue): Untertitel der fünf Bilder und der Eintrag auf der Erinnerungsseite „Filmsequenzen“. Grundlage: documentation/WORLD_BIBLE.md und STORY_BIBLE.md. Owner: prologue stream.",
+ "strings": {
+  "prologue.p1.europe": "Europa, im Winter 1964.",
+  "prologue.p1.war": "Der Krieg, der 1939 begann, endete ohne Sieger.",
+  "prologue.p1.line": "1953 erstarrte die Front zu einer Linie quer durch Osteuropa.",
+  "prologue.p1.armistice": "Ein Waffenstillstand – kein Frieden.",
+  "prologue.p2.empires": "Westlich der Linie das Deutsche Reich, östlich die Sowjetunion – zwei Diktaturen.",
+  "prologue.p2.veltrava": "Auf der Linie liegt die Freie Stadt Veltrava – neutral, voller Exilanten und Spione.",
+  "prologue.p2.accord": "1963 wurde dort der Korridorvertrag unterzeichnet: drei Bahnstrecken über die Linie.",
+  "prologue.p2.trains": "Seitdem rollen wieder Züge – mit Getreide, Kohle und Medizin.",
+  "prologue.p3.papers": "Mit jeder Ladung reisen Frachtbriefe, Stempel und Karteikarten.",
+  "prologue.p3.c17": "Auf manchen steht dieselbe Vertragsnummer: C-17.",
+  "prologue.p4.konrad": "In Berlin zeichnet Konrad Adler Baupläne für die neue Hauptstadt.",
+  "prologue.p4.neutral": "Zeichnungen, glaubt er, sind neutral.",
+  "prologue.p5.alexei": "In Karsk repariert Alexei Morozov Signale und Weichen.",
+  "prologue.p5.politics": "Politik, sagt er, ist Sache der anderen.",
+  "prologue.p5.strangers": "Noch kennen die beiden einander nicht.",
+  "ui.memories.film.LS_Prologue": "Prolog: Europa, Winter 1964",
+  "ui.memories.film_sub.LS_Prologue": "Die Linie, der Korridorvertrag, zwei Städte · vor Kapitel 1"
+ }
+}

@@ -34,6 +34,9 @@ const STILLS := "res://assets/ui/documents/"
 const ChapterExt := preload("res://scripts/core/chapter_ext.gd")
 const CIN_A1_M1 := "res://scenes/cinematics/a1m1/CinA1ToM1.tscn"
 const FINALE_SCENE := "res://scenes/cinematics/finale/Finale.tscn"
+## Round 11: the prologue of a new game (scenes/cinematics/prologue) — also a film on the „Filmsequenzen“ page.
+const PROLOGUE_SCENE := "res://scenes/cinematics/prologue/Prologue.tscn"
+const PROLOGUE_ID := "LS_Prologue"
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 ## §12.10 memories: scene table, global profile (user://profile.json), read-only echo plans, memory grade.
 const Memories := preload("res://scripts/core/memories.gd")
@@ -76,6 +79,7 @@ var side_level := false         # an optional walkable level outside the Story s
 var _plaza_after_hall := false      # ticks (ms); player interact presses before this are ignored
 var busy := false
 var in_cinematic := false
+var prologue: Node = null           # round 11: the prologue scene while it runs (_cin_prologue; the drivers watch it)
 var args: Dictionary = {}
 var objectives: Dictionary = {}
 var palettes: Dictionary = {}
@@ -296,6 +300,7 @@ func _on_new_game() -> void:
 	_pending_stand_in = null
 	_call(ui, "close_all")
 	await _show_disclaimer()
+	await _cin_prologue()      # round 11: how this winter came to be — a new game only, never on load
 	_force_reload = true
 	await goto_level(_story_scene(), "", true)
 
@@ -1382,9 +1387,48 @@ func _play_cinematic_by_id(cid: String) -> bool:
 			return await _cin_hall()
 		"LS_X1_Final":
 			return await _cin_final()
+		PROLOGUE_ID:
+			return await _cin_prologue()
 	if ext.has_cinematic(cid):
 		return await ext.play_cinematic(self, cid)
 	return false
+
+
+## Round 11: the prologue (scenes/cinematics/prologue) — the Line, the two states, Veltrava and the corridors, the
+## papers and C-17, the two men in their cities — after the opening note of a NEW game (never on load, never by the
+## Story engine) and again from „Filmsequenzen“. Runs like a §12.5 film (letterbox; Esc / „advance“ skips; the E2E
+## drivers' auto_skip too) under level_root and leaves the screen black: goto_level() fades Karsk in. `prologue`
+## holds the scene while it runs (the drivers watch it). Returns true when skipped.
+func _cin_prologue() -> bool:
+	if not ResourceLoader.exists(PROLOGUE_SCENE) or main == null:
+		return false
+	_begin_cinematic()
+	await fade_out(0.4)
+	var cin: Node = load(PROLOGUE_SCENE).instantiate()
+	main.level_root.add_child(cin)
+	prologue = cin
+	cin.configure({"choices": {}, "flags": {}, "symbols": Symbols.enabled()})
+	_apply_grade(cin)
+	var done := [false]
+	cin.finished.connect(func(): done[0] = true, CONNECT_ONE_SHOT)
+	await fade_in(0.4)
+	cin.play()
+	var limit := float(cin.get("max_duration"))
+	var waited := 0.0
+	while not done[0] and waited < limit:
+		if _skip:
+			cin.skip()
+			break
+		await get_tree().process_frame
+		waited += get_process_delta_time()
+	await fade_out(0.6)
+	prologue = null
+	cin.queue_free()
+	if camera:
+		camera.release()
+	var skipped := _end_cinematic()
+	_call(_ui("hud"), "hide_hud")   # nothing to show over black: the next level brings the HUD back
+	return skipped
 
 
 func _begin_cinematic() -> void:
@@ -1655,6 +1699,7 @@ func _finale_flow() -> void:
 	await fade_out(1.0)
 	_title.visible = false
 	_caption.visible = false
+	_reset_overlay_text()
 	# closing credits roll with production credits and every source of the history cards (round 5)
 	if not auto and ui and ui.has_method("play_end_credits"):
 		await ui.play_end_credits()
@@ -1680,15 +1725,56 @@ func _show_disclaimer() -> void:
 	in_cinematic = false
 
 
-func _show_end_card() -> void:
-	var lines: Array = [Loc.t("ui.slice_end")]
-	if Story.has_method("choice_history"):
-		lines.append_array(end_card_decisions(Story.choice_history()))
+## The end card at the player's text size (round 11): the title, „Ende der Demo …“, a blank line and one bullet per
+## decision (end_card_decisions) as ONE block centred in the 1920x1080 frame, the caption in a 1640 px column; if the
+## block would not fit at 125 / 150 % text, the caption steps down 2 px at a time (never below the 100 % size).
+## `ch`: an explicit choice history (tests/visual/cine_finale_harness.gd), else the story's. _reset_overlay_text()
+## gives the title / caption their default layout back (disclaimer, title cards) once the card is gone.
+func _show_end_card(ch = null) -> void:
+	const W := 1640.0
+	const GAP := 24.0
+	const MARGIN := 40.0
+	if not (ch is Dictionary):
+		ch = Story.choice_history() if Story.has_method("choice_history") else {}
+	var bullets: Array = end_card_decisions(ch)
+	var text: String = Loc.t("ui.slice_end")
+	if not bullets.is_empty():
+		text += "\n\n" + "\n".join(bullets)
+	var ts := Kit.text_scale()
 	_title.text = Loc.t("game.title")
+	_title.add_theme_font_size_override("font_size", int(round(46 * ts)))
+	_caption.text = text
+	var fs := int(round(28 * ts))
+	var title_h := 0.0
+	var cap_h := 0.0
+	while true:
+		_caption.add_theme_font_size_override("font_size", fs)
+		_caption.size = Vector2(W, 0)
+		title_h = _title.get_minimum_size().y
+		cap_h = _caption.get_minimum_size().y
+		if title_h + GAP + cap_h <= 1080.0 - 2.0 * MARGIN or fs <= 28:
+			break
+		fs -= 2
+	var top := maxf(MARGIN, roundf((1080.0 - title_h - GAP - cap_h) / 2.0))
+	_title.position = Vector2(0, top)
+	_title.size = Vector2(1920, title_h)
+	_caption.position = Vector2((1920.0 - W) / 2.0, top + title_h + GAP)
+	_caption.size = Vector2(W, cap_h)
 	_title.visible = true
-	_caption.text = "\n".join(lines)
 	_caption.visible = true
 	_caption.modulate.a = 1.0
+
+
+## The default layout of the overlay's title and caption (as _build_overlay makes them).
+func _reset_overlay_text() -> void:
+	_title.text = ""
+	_caption.text = ""
+	_title.position = Vector2(0, 410)
+	_title.size = Vector2(1920, 80)
+	_title.add_theme_font_size_override("font_size", 46)
+	_caption.position = Vector2(260, 500)
+	_caption.size = Vector2(1400, 300)
+	_caption.add_theme_font_size_override("font_size", 28)
 
 
 ## The end card's decision list (C4_DESIGN §1, round 9): one bullet per recorded decision in STORY order (the
@@ -1943,6 +2029,11 @@ func memory_films(context := "game") -> Array:
 				states.append(p["value"])
 	else:
 		states.append(Story.snapshot())
+	# round 11: the prologue comes first — seen by every game ("game"), from the menu once any scene was completed
+	if _film_exists(PROLOGUE_ID):
+		var seen := not states.is_empty()
+		out.append({"id": PROLOGUE_ID, "unlocked": seen, "title": Loc.t("ui.memories.film." + PROLOGUE_ID) if seen else "",
+			"sub": Loc.t("ui.memories.film_sub." + PROLOGUE_ID) if seen else ""})
 	var cd = _json("res://data/v3/cinematics.json")
 	for seq in (cd.get("sequences", []) if cd is Dictionary else []):
 		var cid := str(seq.get("id", ""))
@@ -1992,6 +2083,8 @@ func _film_exists(cid: String) -> bool:
 			return ResourceLoader.exists(str(LEVELS["L_M1_HallReveal"]))
 		"LS_X1_Final":
 			return ResourceLoader.exists(FINALE_SCENE)
+		PROLOGUE_ID:
+			return ResourceLoader.exists(PROLOGUE_SCENE)
 	return ext.has_cinematic(cid)
 
 
@@ -2039,6 +2132,8 @@ func rewatch_film(cid: String, from_menu := false) -> bool:
 			await _cin_hall()
 		"LS_X1_Final":
 			await _cin_final()
+		PROLOGUE_ID:
+			await _cin_prologue()
 		_:
 			await ext.play_cinematic(self, cid)
 	_plaza_after_hall = false

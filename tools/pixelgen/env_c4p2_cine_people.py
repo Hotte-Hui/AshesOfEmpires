@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import numpy as np
 
+import env_c4p2_cine_figs as FG
 import env_c4p2_cine_flat as FL
 import env_c4p2_cine_kit as K
 import env_c4p2_cine_rig as R
@@ -38,6 +39,7 @@ def sheet(cid, poses, setup=None, width=32, flip=False, key='left', mul=(1.0, 1.
           strip=True, recolor=None, view='side', lift=(0, 0, 0)):
     """(sheet rgba, n frames, cell width) of `cid` on the rig.  key: the side of the baked key light in the
     final picture (after any mirroring); rim: (r, g, b) or None, laid on the key side."""
+    FG.install()                 # round 11: rig specs of the film's own figures (the press photographer)
     spec, used = K.spec_of(cid, standin)
     if strip:
         R.strip_props(spec)
@@ -56,6 +58,7 @@ def sheet(cid, poses, setup=None, width=32, flip=False, key='left', mul=(1.0, 1.
 
 
 def idle(cid, flip=False, n=None, **kw):
+    FG.install()
     CH, CB, A, CC = K.rig()
     spec, used = K.spec_of(cid, kw.get('standin', 'worker_b'))
     poses = A.idle_side(spec.style)

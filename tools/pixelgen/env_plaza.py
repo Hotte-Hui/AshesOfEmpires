@@ -3,6 +3,8 @@
 Run:  py -3 -P tools/pixelgen/env_plaza.py [--preview=DIR]
 Writes assets/environments/hall_plaza/ (layers + _n/_e maps, _hist twins, props, decals, actor sheets, fx)
 and its scene.json (TECHNICAL_ARCHITECTURE 3.1 / 12.2).  Area: plaza-env.  Deterministic, no downloads.
+scene.json is merged over the previous one (round 11, tools/pixelgen/env_keep.py): keys and "actors" other
+writers add stay in place; unchanged content leaves the file byte for byte (LF).
 
 Planes (world 1920x360, oblique 2.5D like Karsk):
   sky   p0.12  overcast dusk, cloud base lit by the searchlights      beams fx p0.12 (Lichtdom, 12 frames)
@@ -33,6 +35,7 @@ from pg import Layer  # noqa: E402
 import env_berlin_insignia as INS  # noqa: E402
 import env_berlin_kit as kit  # noqa: E402
 import env_plaza_sprites as SP  # noqa: E402
+import env_keep as KEEP  # noqa: E402  (round 11: the folder is shared)
 from env_plaza_sprites import N, V, S, O, G, T, PA, W, RED, COLD, STONE_D, PATR, save, save_color, \
     strip, edges, tfill, put, disc, emit  # noqa: E402
 
@@ -858,7 +861,8 @@ def build_all(preview_dir=None):
     save(paint_street_back(), 'street_back')
     save(paint_fg(), 'fg_frame', normal=False)
     m = build_manifest(sz)
-    pg.write_manifest(os.path.join(ENV, 'scene.json'), m)
+    sj = os.path.join(ENV, 'scene.json')
+    KEEP.write_json(sj, KEEP.merge_scene(m, KEEP.read_json(sj)))   # keys / actors of other writers stay
     errs = hotspot_check(m)
     bad = palette_check()
     print('hotspot check:', errs or 'OK')

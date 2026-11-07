@@ -1,7 +1,8 @@
 extends Node
 ## Real-input end-to-end test. Unlike autoplay.gd (which calls Game.interact directly), this driver touches
 ## the game ONLY through synthetic keyboard events (Input.parse_input_event), exactly like a player:
-##   main menu (arrow keys + Enter) -> disclaimer -> intro pan -> journal + pause menu -> walking to every
+##   main menu (arrow keys + Enter) -> disclaimer -> prologue (watched, or Esc while it runs with --inputplay-skip)
+##   -> intro pan -> journal + pause menu -> walking to every
 ##   hotspot (WASD + Shift) -> E to interact -> dialogue advanced with Space -> inspect views closed with E/Esc
 ##   -> signal puzzle via number keys (one wrong attempt) -> blueprint puzzle via R + arrows (one wrong attempt)
 ##   -> choices via arrow keys / number keys -> cinematics watched or skipped with Esc -> end card ->
@@ -169,6 +170,21 @@ func _menu_new_game() -> bool:
 	await _shoot("disclaimer")
 	if skip_cine:
 		await _tap(KEY_SPACE)
+	return await _prologue()
+
+
+## Round 11: the prologue follows the opening note of a new game. A player watches it start; with --inputplay-skip
+## Esc skips it — pressed only while it runs (Esc outside a cinematic would open the pause menu) — else it is
+## watched to its natural end (~60 s).
+func _prologue() -> bool:
+	if not await _until(func(): return Game.prologue != null, 15.0):
+		return _fail("the prologue did not start after the opening note")
+	await _wait(2.5)
+	await _shoot("prologue")
+	if skip_cine and Game.prologue != null and Game.in_cinematic:
+		await _tap(KEY_ESCAPE)
+	if not await _until(func(): return Game.prologue == null, 6.0 if skip_cine else 75.0):
+		return _fail("the prologue did not end")
 	return true
 
 

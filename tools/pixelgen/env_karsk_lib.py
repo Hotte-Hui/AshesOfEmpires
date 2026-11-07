@@ -9,14 +9,15 @@ import math
 import os
 import sys
 
-sys.path.insert(0, 'C:/Spiele/AshesOfEmpires/tools/pixelgen')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np  # noqa: E402
 from PIL import Image  # noqa: E402
 
 import pg  # noqa: E402
 from pg import Layer, hx, bayer, value_noise  # noqa: E402,F401
 
-ROOT = 'C:/Spiele/AshesOfEmpires'
+# the checkout this file lives in (round 11: was a fixed path, so a run from a worktree or copy wrote here)
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')).replace(os.sep, '/')
 ENV_DIR = ROOT + '/assets/environments/karsk_railyard'
 DOC_DIR = ROOT + '/assets/ui/documents'
 

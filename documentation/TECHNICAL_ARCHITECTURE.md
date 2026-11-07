@@ -11,6 +11,7 @@ GODOT="$LOCALAPPDATA/Programs/Godot/Godot_v4.7.2-stable_win64_console.exe"   # c
 "$GODOT" --path /c/Spiele/AshesOfEmpires -- --capture=C:/tmp/shot.png --scene=L_A1_Railyard --frames=90
 #   ^ windowed run (needs GPU, headless has no renderer): loads a level, waits N frames, saves a 1920x1080
 #     screenshot of the composed window and quits.  Extra: --spawn=<name> --cam=<x>,<y> --char=<id>
+"$GODOT" --path /c/Spiele/AshesOfEmpires -- --splash-shots=C:/tmp/boot    # windowed check run of the real boot (§12.13)
 py -3 -P tools/pixelgen/<generator>.py                                         # art generators (Pillow+numpy)
 ```
 Never run two `--import` passes at the same time on purpose; if an import fails because another process is
@@ -235,7 +236,7 @@ These rules were found by the real-input playthrough (`--inputplay`) and are bin
 | Driver | What it proves | Command |
 |---|---|---|
 | `scripts/core/autoplay.gd` | the whole slice through the Story API, all gates honoured, save/load mid-run, all 4 branch combinations, cinematics watched or skipped | `godot --headless --path . -- --autoplay=<a1>,<m1> [--autoplay-skip] [--autoplay-shots=DIR]` |
-| `scripts/core/inputplay.gd` | the whole slice through **synthetic key presses only**: menu, disclaimer, intro skip, journal, pause, walking, every interaction, both puzzle UIs (one wrong attempt each), choices by arrow keys and number keys, cinematics, end card, "Fortsetzen" | `godot --path . -- --inputplay=<a1>,<m1> [--inputplay-skip] [--inputplay-shots=DIR]` |
+| `scripts/core/inputplay.gd` | the whole slice through **synthetic key presses only**: menu, disclaimer, prologue (Esc while it runs with `--inputplay-skip`), intro skip, journal, pause, walking, every interaction, both puzzle UIs (one wrong attempt each), choices by arrow keys and number keys, cinematics, end card, "Fortsetzen" | `godot --path . -- --inputplay=<a1>,<m1> [--inputplay-skip] [--inputplay-shots=DIR]` |
 
 ## 12. Exploration layer, symbols & expansion round 2 (contract, 2026-11-04 evening)
 Goal of this round (user request): ~10 minutes of high-quality content; better characters and faces; more
@@ -327,6 +328,19 @@ gear-and-wheat emblem.
 `{"choices": Story.choice_history(), "flags": {…}, "symbols": bool}`), `play()`, `skip()` (idempotent; `finished`
 exactly once). Rendered in the world viewport under `Game.level_root`; camera via `Game.camera`
 (`set_top_left`, `tween_to`, `release`); subtitles via `Game.subtitle(text, dur)`; audio via `Audio`.
+- **New-game flow (round 11):** main menu „Neues Spiel“ → `Game._on_new_game()`: Story / Explore reset → the single
+  opening note (`_show_disclaimer()`, 7 s, Esc / „advance“ skips) → **the prologue** `LS_Prologue`
+  (`Game._cin_prologue()`, `scenes/cinematics/prologue/Prologue.tscn`, 60 s, five painted shots, subtitles only:
+  the Line → the map with the two states, Veltrava and the three corridors → the Frachtbrief and C-17 → Konrad in
+  Berlin → Alexei in Karsk; letterboxed, Esc / „advance“ skips, `Game.prologue` holds the scene while it runs) →
+  `goto_level(_story_scene())` = Chapter 1 in Karsk with its intro pan. Loading or continuing a save never plays it;
+  the Story engine does not know it (not in `data/v3/cinematics.json`, not in `data/chapters`); the „Filmsequenzen“
+  page lists it first (`memory_films`, unlocked in every game / from the menu once any scene was completed) and
+  `--cinematic=LS_Prologue [--cine-t=S]` plays it for captures. Both E2E drivers go through it (`autoplay.gd` calls
+  `_cin_prologue()` before the first level, `--autoplay-skip` skips at once; `inputplay.gd` presses Esc only while it
+  runs with `--inputplay-skip`, else watches it to the end). Art `py -3 -P tools/pixelgen/env_prologue.py`
+  (`assets/cinematics/prologue/**`, anchors in `layout.json`), score `tools/audiogen/prologue_audio.py`
+  (`mus_prologue`), text `data/locale/de_prologue.json`, tests `tests/test_prologue.gd`.
 - **Chapter-3 cinematics** (`LS_C3_Trains` 25.5 s, `LS_C3_ToHall` 6 s, `LS_C3_Close` 12 s; owner: cinematics stream)
   extend `scenes/cinematics/ch3_common/c3_cinematic.gd`: every frame is a pure function of the timeline (`seek(t)`,
   `advance(dt)` for tools/tests), a sorted cue list fires once while playing (`say`, short `sfx`, `bed` = longer sounds
@@ -759,6 +773,49 @@ A cork board of the whole investigation; it only ever READS Story (`inventory`, 
   milestones per decision, memory cut-off, navigation, read-only, sizes 100/125/150 %, contrast, journal tab, art).
   Windowed: `godot --path . --script res://tests/visual/evidence_board_shots.gd -- --scene=L_C3_Quay --char=alexei
   --capture=<dir>/_unused.png --frames=999999 --shots=<dir>` (mock Settings, no saves).
+
+### 12.13 Boot flow: boot sequence and demo notice (round 11, owner: splash)
+A real player's launch starts like a big release; every automated run boots exactly as before.
+- **Decision** (`scripts/ui/boot_flow.gd`, statics). `Main._ready()` calls `BootFlow.decide(self)` once, BEFORE
+  `Game.register_main()`. Player launch = no user argument after `--` except `--splash-shots=DIR`, no `--script` /
+  `-s` / `--headless`, display not headless, and Main is the startup scene (visual harnesses instance Main as a child).
+  Any driver / tool argument (`--autoplay`, `--inputplay`, `--capture`, `--cinematic=none`, `--scene`, `--memory-demo`,
+  …) → the old boot: no splash, no notice, `register_main()` in the same frame. `BootFlow.player_launch` keeps the answer.
+- **Boot sequence** (`scenes/ui/BootSplash.tscn` + `scripts/ui/boot_splash.gd`, CanvasLayer 120, built in code):
+  black 0.8 s → studio card 0.6+1.5+0.6 s (ember emblem `assets/ui/splash/studio_mark.png` ×4 with pulsing glow and
+  rising sparks; studio name `splash.studio` in our own pixel capitals `scripts/ui/pixel_font.gd`; „präsentiert“;
+  sound `splash_ember`) → engine card 0.5+1.1+0.5 s „Erstellt mit Godot Engine“ in our pixel lettering (no logo, no
+  other company's name) → title picture 0.9+4.5+1.0 s: `title_scene.png` (640×420 shown ×3) tilts up 60 art rows in
+  3 s (all layers together, so the rails always meet the lamp), `title_lamp.png` brightens as the train comes closer,
+  ash and embers on the art grid, the title (`title_logo.png`) at 2.4 s on the stroke of `mus_title_sting` (Music
+  bus, own player), `title_sub.png` at 3.0 s, one glint (`assets/shaders/splash_glint.gdshader`) 3.4–4.3 s → black.
+  ≈ 12 s in all; reduced motion: no tilt, fewer motes. Time-driven state machine: `start()`, `advance(dt)`,
+  `press()`, `await play()`; `cards` lists the cards shown.
+- **Skipping.** A key down (no echo), mouse button or pad button skips the current card (0.25 s fade); the second
+  press skips the rest. Releases and motion never count; key / mouse / pad events are swallowed while it runs. A
+  skipped title fades the sting out; otherwise the sting rings on under the menu, then the node frees itself.
+- **Hand-over.** `await splash.play()` returns on black → `Game.register_main()` → `show_main_menu()` fades the menu
+  in from black (the UI loads on the black frame).
+- **Demo notice** (`scenes/ui/DemoNotice.tscn` + `scripts/ui/demo_notice.gd`; UIRoot child `demo_notice`,
+  `UIRoot.open_demo_notice(first_run)`): a letter on the paper style — kicker „Demo · Version x“, stamp „In Arbeit“,
+  heading, body (early demo, Chapters 1–4, about an hour; graphics / music / texts being improved; many chapters to
+  come; thanks; feedback welcome), signature with `splash.studio`, one button „Los geht's“ in the last row.
+  `MainMenu._on_open()` opens it (deferred) when `BootFlow.notice_due()`: player launch, not opened before in this
+  session, settings flag `demo_notice_seen` (Settings DEFAULTS → `user://settings.cfg`, never in saves) not set.
+  First opening: the letter arrives 0.9 s after the menu and swallows presses for 0.6 s more (keys mashed through
+  the splash cannot close it unread). „Los geht's“ (Enter / Space / E / pad A / click) or Esc / B close it and set the
+  flag through `Settings.set_value`. Always reachable from „Mitwirkende“ → „Demo-Hinweis“. Text 100/125/150 %: sheet
+  width 1060·(1 + 1.25·(scale − 1)) px; the sheet is placed by hand (`_place()`): a full-rect CenterContainer keeps
+  the transient height of wrapping labels that have no width yet and centres the letter far below the screen.
+- **Texts** `data/locale/de_splash.json` (`splash.*`, `ui.demo.*`) — rename the studio there only. Pixel capitals:
+  A–Z ÄÖÜ 0–9 `- . , ! ? ' : · & / +`; other characters fall back to the title font.
+- **Settings.** `Settings.path` (default `user://settings.cfg`) lets tests point a fresh instance at a temporary file.
+- **Assets** `py -3 -P tools/pixelgen/gen_title_splash.py [--preview=DIR]`, `py -3 -P tools/audiogen/title_audio.py`
+  (manifest part `splash`).
+- **Tests / check run.** `tests/test_splash.gd` (gate, order, timing, skipping, presses, flag in a temporary settings
+  file, driver mode, letter, sizes, credits entry, lettering, art / audio). Windowed: `godot --path . --
+  --splash-shots=DIR` plays the real boot, saves frames of every card, the menu and the letter
+  (`scripts/ui/dev/boot_shots.gd`) and quits without confirming the letter (the flag is not written).
 
 ## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
 Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.

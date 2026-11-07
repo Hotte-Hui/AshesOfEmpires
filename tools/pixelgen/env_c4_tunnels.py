@@ -17,6 +17,9 @@ Produces assets/environments/karsk_tunnels/ (documentation/C4_DESIGN.md 4.1):
 * scene.json (layers / props / decals / fx / lights with the gate keys after / until / choice / fade of
   registry_level.gd, plus "scene" filters, "swing", "event_fx", "train" and "looks" read by tunnels_level.gd) and
   provenance.json.  The story contract (spawns, hotspots, npcs, the cellar_door blocker) is kept unchanged.
+Shared folder (round 11, tools/pixelgen/env_keep.py): a run removes only the PNGs its previous run recorded in
+provenance.json and merges scene.json / provenance.json over the old ones -- explore_hotspots.json, keys and
+"actors" other writers add, their files and provenance rows stay; an unchanged run is byte-identical.
 """
 from __future__ import annotations
 
@@ -36,11 +39,13 @@ import env_c4_tunnels_kit as K          # noqa: E402
 import env_c4_tunnels_layout as L       # noqa: E402
 import env_c4_tunnels_room as ER        # noqa: E402
 import env_c4_tunnels_fx as EFX         # noqa: E402
+import env_keep as KEEP                 # noqa: E402  (round 11: the folder is shared)
 
 ROOT = K.ROOT
 ENV_DIR = os.path.join(ROOT, 'assets', 'environments', 'karsk_tunnels')
 LF = chr(10)
 PRODUCED: list[tuple[str, str, str]] = []
+FAMILY = 'tools/pixelgen/env_c4_tunnels'   # provenance rows of this generator and its modules (env_keep)
 SA, SC = 'L_C4_TunnelsA', 'L_C4_TunnelsB'
 
 BASE = dict(door_open=False, wagon_door='half', plan_rolled=True, hist=False)
@@ -88,15 +93,11 @@ def save_arr(arr, path, gen, desc):
 
 
 def clean_env_dir():
-    if not os.path.isdir(ENV_DIR):
-        return
-    keep = {'explore_hotspots.json'}
-    for root, _dirs, files in os.walk(ENV_DIR):
-        if '_preview' in root:
-            continue
-        for f in files:
-            if f.endswith('.png') or (f.endswith('.json') and f not in keep and root == ENV_DIR):
-                os.remove(os.path.join(root, f))
+    """Remove the PNGs this generator wrote last time (its provenance.json rows, tools/pixelgen/env_keep.py) so
+    renamed / dropped files never linger; every other file of the shared folder stays (explore_hotspots.json, hand
+    or walker art, the .import sidecars -- UIDs stay stable); scene.json and provenance.json are merged, not wiped."""
+    if os.path.isdir(ENV_DIR):
+        KEEP.remove_own_pngs(ENV_DIR, ROOT, FAMILY)
 
 
 # =========================================================================== bakes
@@ -448,8 +449,8 @@ def build_scene(preview_dir=None):
                  'date': K.DATE, 'palette_ramps': K.TUN},
     }
     sj = os.path.join(ENV_DIR, 'scene.json')
-    with open(sj, 'w', encoding='utf-8', newline=LF) as f:
-        json.dump(scene, f, indent=1, ensure_ascii=False)
+    scene = KEEP.merge_scene(scene, KEEP.read_json(sj))     # keys / "actors" other writers added stay in place
+    KEEP.write_json(sj, scene)   # same content as before: the file stays byte for byte
     record(sj, 'env_c4_tunnels.py', 'art manifest (TECHNICAL_ARCHITECTURE 3.1 + registry gates + tunnels extensions)')
 
     n, bad = K.palette_report(room.lay.c)
@@ -522,13 +523,14 @@ def preview(scene, out_dir):
 # =========================================================================== provenance
 def write_provenance():
     files = [{'path': p, 'generator': 'tools/pixelgen/' + g, 'content': d} for p, g, d in sorted(PRODUCED)]
+    p = os.path.join(ENV_DIR, 'provenance.json')
+    files = KEEP.merge_rows(files, KEEP.read_json(p), FAMILY, ROOT)   # rows of other generators stay
     out = {'generator': 'tools/pixelgen/env_c4_tunnels.py (+ _kit, _layout, _room, _siding, _fx)',
            'date': K.DATE,
            'licence': 'project-owned original artwork, generated procedurally; no copied, traced, downloaded or '
                       'AI-generated pixels; bitmap fonts hand-defined (env_veltrava_hall_kit.py + env_c4_tunnels_kit.py)',
            'run': 'py -3 -P tools/pixelgen/env_c4_tunnels.py',
            'files': files}
-    p = os.path.join(ENV_DIR, 'provenance.json')
     with open(p, 'w', encoding='utf-8', newline=LF) as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
 

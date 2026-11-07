@@ -50,7 +50,15 @@ GANG = [
 ]
 # each one's own footing (px off the heap's general line) and stance (extra lean, extra reach in degrees)
 GANG_DY = (2, -4, 5, -2, 1, 6, -3, 3, -5, 2, -1)
-GANG_POSE = ((0, 0), (4, 6), (-3, -4), (2, 4), (-2, 0), (5, 8), (0, -6), (3, 4), (-4, -2), (1, 6), (-2, -4))
+GANG_POSE = ((0, 0), (6, 6), (-3, -4), (3, 4), (-5, 0), (8, 8), (0, -6), (4, 4), (-6, -2), (2, 6), (-3, -4))
+# round 11c: headgear per member (no ashen bald heads) and the two who straighten up on their shovels
+GANG_HATS = ({'hat': '#1e1c1c', 'band': '#3a3026'}, {'hat': '#6e2a22', 'fur': '#3e3428'},
+             {'hat': '#3e3022', 'band': '#2a2018'}, {'kerchief': '#2c3c70', 'hat': '#2c3c70'},
+             {'hat': '#4a3424', 'band': '#2a1e14'}, {'hat': '#7a6228', 'scarf': '#4a3c24'},
+             {'hat': '#20283a', 'band': '#141a26'}, {'hat': '#2a2420', 'band': '#3e342a'},
+             {'hat': '#1c2436', 'band': '#2c3448'}, {'hat': '#322618', 'band': '#4a3a26'},
+             {'hat': '#8a2a1e', 'scarf': '#5a4a3a'})
+GANG_REST = (2, 6)
 REST = ('emil', 392, {'coat': '#3a3634'})        # an old man resting on his shovel behind the wagon
 GUARD_X = 600                                    # guard_karsk warming at the barrel (faces left)
 # the shovel bites the sound tool cuts into c4p2cine_depot (film time; the three nearest shovels)
@@ -114,14 +122,18 @@ def p1_plate():
     heap = [(-10, 360), (-10, 178), (20, 172), (70, 176), (120, 170), (170, 178), (215, 186), (262, 204),
             (300, 222), (340, 240), (380, 258), (410, 272), (420, 360)]
     PL.coal_heap(g, heap, 280, snow_k=0.55)
-    # the terrace the gang stands on (trodden: lighter, flatter) and their shovelled hollows
+    # where the gang stands (round 11c: no trodden step under each one -- it read as a figurine's base): the snow
+    # trodden off ragged round the boots, the shadow under them, the hollow each shovel has dug, kicked-up lumps
+    rng = np.random.default_rng(417)
     for i, (cid, x, ph, cols) in enumerate(GANG):
         yb = gang_feet(x, i)
-        step = g.poly([(x - 13, yb + 3), (x - 9, yb - 1), (x + 10, yb - 1), (x + 14, yb + 3)])
-        g.put(step, '#2a2a30', n=(0, 0.8, 0.6), z=276, gl=0.1)
-        g.put(g.box(x - 9, yb - 1, x + 10, yb), '#3a3a44', n=(0, 0.9, 0.4), z=275)
-        pile = g.ell(x + 15, yb + 1, 6, 3)
-        g.put(pile & ~step, '#16161a', z=276, gl=0.3)
+        g.mul(g.ell(x + 1, yb + 0.5, 11.0, 3.0) & (noise(g.w, g.h, 2, 40 + i, 2) > 0.45), 0.74)
+        g.mul(g.ell(x + 1, yb + 0.7, 6.5, 1.3), 0.55)
+        g.put(g.ell(x + 15, yb + 1.5, 6.0, 2.2) & (noise(g.w, g.h, 2, 60 + i, 1) > 0.3), '#101014',
+              n=(0, 0.5, 0.85), z=276, gl=0.2)
+        for k in range(4):
+            lx, ly = x + rng.uniform(-10.0, 12.0), yb + rng.uniform(-0.5, 2.5)
+            g.put(g.ell(lx, ly, rng.uniform(0.6, 1.1), rng.uniform(0.5, 0.8)), '#1e1e24', n=(0, 0.85, 0.5), z=275)
     # retaining wall of old sleepers at the foot of the heap
     wall = g.box(250, 270, 430, 300) & ~g.poly(heap) | g.box(330, 286, 430, 300)
     K.planks(g, g.box(250, 272, 340, 300) & ~g.poly(heap), '#2a2018', pw=4, vertical=False, seed=7, z=262)
@@ -161,16 +173,23 @@ def p1_glows():
 
 
 def gang_sheets(lights):
-    """Each member of Kolonne 4: an 8-frame shovel cycle (48 x 56 cells), tinted by the place's light."""
+    """Each member of Kolonne 4: an 8-frame shovel cycle (48 x 56 cells), tinted by the place's light -- round
+    11c: each in his or her own headgear (dark, coloured caps, ushankas and kerchiefs against the faces), the
+    throw with the rear hand low and the shaft on a diagonal, two of them straightened up on their shovels."""
     out = []
     for i, (cid, x, ph, cols) in enumerate(GANG):
         spec, used = K.spec_of(cid, 'worker_b')
         R.strip_props(spec)
-        for name, hexc in cols.items():
+        for name, hexc in list(cols.items()) + list(GANG_HATS[i].items()):
             K.recolor(spec, name, hexc)
         K.key_light(spec, 'left', up=0.75, front=0.35)
         lean, reach = GANG_POSE[i]
-        frames = R.render_set(spec, R.shovel_poses(lean, reach), R.shovel_setup(spec), 48)
+        if i in GANG_REST:
+            poses = R.rest_poses()
+            poses = [dict(poses[k // 4 * 2], phase=k) for k in range(8)]
+            frames = R.render_set(spec, poses, R.rest_setup(spec), 48)
+        else:
+            frames = R.render_set(spec, R.shovel_poses(lean, reach, low_throw=True), R.shovel_setup(spec), 48)
         feet = gang_feet(x, i)
         x0, y0 = x - 24, feet - 54
         cells = [K.fig_tint(rg, nm, lights, x0, y0, 250, PAL_K, gain=0.92, wrap=0.45, rim=0.45, **P1_AMB)
@@ -243,7 +262,7 @@ P2_FLOOR = 300
 P2_DOOR = (168, 472, 112, 74)            # opening x0, x1, springing y, crown y
 P2_LAMP = (362, 118)                      # the work lamp inside (hangs from its cable)
 P2_WALK = (96, 276)                       # Alexei's feet x at the start / end of p2 (45 px/s, 4 s)
-P2_FITTER = (410, 292)
+P2_FITTER = (368, 266)                    # round 11c: beside the engine's right cylinder (was a stride off, 410, 292)
 P2_LIGHTS = [
     Lt(P2_LAMP[0], P2_LAMP[1] + 6, 190, '#ffc27a', I=2.6, r=260, wrap=0.25),
     Lt(186, 106, 60, '#ffd8a0', I=1.8, r=260, wrap=0.3),
@@ -550,22 +569,29 @@ def alexei_toolbox_sheet():
 
 
 def fitter_sheet():
-    """A fitter at the engine's right cylinder with an oil can (3 frames: the can tips and pours)."""
+    """A fitter beside the engine's right cylinder, bent to it with his long-spouted oil can (round 11c: he stood
+    a stride off holding the can out at arm's length like a pistol): the can's round brass body hangs under his
+    fist at the cylinder's height, the spout runs down into the oil cup; 3 frames: the can tips and pours."""
     spec, used = K.spec_of('worker_a')
     R.strip_props(spec)
     K.recolor(spec, 'coat', '#2a2c30')
+    K.recolor(spec, 'hat', '#1e2026')
     K.key_light(spec, 'left', up=0.6, front=0.2)
     poses = []
-    for i, (an, tilt) in enumerate((((64.0, 34.0), 0), ((68.0, 44.0), 1), ((66.0, 40.0), 1))):
-        poses.append(dict(bob=0, lean=8.0, stoop=6.0, foot_n=(4.0, 0.0, 0), foot_f=(-3.0, 0.0, 0), arm_n=an,
-                          arm_f=(30.0, 40.0), face='base', phase=i, dx=0.0, lag=0.0, bounce=0, hand_n='fist',
-                          hand_f='fist', c4p2_oil=1 + tilt))
+    for i, (an, tilt) in enumerate((((40.0, 30.0), 0), ((44.0, 36.0), 1), ((42.0, 34.0), 2))):
+        poses.append(dict(bob=0, lean=14.0, stoop=10.0, foot_n=(5.0, 0.0, 0), foot_f=(-4.0, 0.0, 0), arm_n=an,
+                          arm_f=(22.0, 54.0), face='base', phase=i, dx=0.0, lag=0.0, bounce=0, hand_n='fist',
+                          hand_f='fist', c4p2_oil=tilt))
 
     def oil_hook(fr, J, P, spec_):
         x, y = J['wr_n']
-        R._line(fr, spec_, (x - 1, y), (x + 2, y + 2), 1.4, 'c4p2_steel', name='can')
-        tip = (x + 6, y + (1 if P['c4p2_oil'] == 1 else 4))
-        R._line(fr, spec_, (x + 2, y + 1), tip, 0.4, 'c4p2_steel', name='spout')
+        t = P['c4p2_oil']
+        R._line(fr, spec_, (x + 0.2, y + 0.4), (x + 0.8, y + 1.0), 0.5, 'c4p2_brass', name='handle')
+        R._line(fr, spec_, (x - 0.4, y + 2.6), (x + 1.4, y + 2.8), 1.7, 'c4p2_brass', name='can')
+        tip = (x + 8.5, y + (4.5 if t == 0 else 6.5))
+        R._line(fr, spec_, (x + 2.4, y + 2.4), tip, 0.4, 'c4p2_steel', name='spout')
+        if t == 2:
+            R._px(fr, spec_, tip[0], tip[1] + 1.5, 'c4p2_brass', 4)
     R._mats(spec)
     frames = R.flip_frames(R.render_set(spec, poses, [('front', oil_hook)], 48))
     x0, y0 = P2_FITTER[0] - 24, P2_FITTER[1] - 54
@@ -600,6 +626,166 @@ P3_SAMOVAR = (446, 200)
 P3_DESK = 224
 
 
+P3_BARE = ((566, 212, 36, 25, 621), (88, 282, 31, 19, 622), (590, 70, 18, 8, 623))   # plaster fallen: cx, cy, rx, ry, seed
+_BAYER4 = np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], np.float32) / 16.0
+
+
+def _p3_plaster(F):
+    """The ochre lime plaster (round 11b): broad soft tonal fields at three scales, ordered-dithered between five
+    tones (no square blotches); where it has fallen away the patch is ragged, the grey scratch coat shows in a ring
+    round the brick, the brick lies in level courses (running bond, one colour per brick, the upper arris lit), and
+    the plaster's broken lip throws its shadow on the brick (light from above left) and catches the light on the far
+    side.  Returns the mask of the intact plaster."""
+    xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
+    n = (0.55 * K.noise(640, 360, 64, 601, octaves=3) + 0.3 * K.noise(640, 360, 15, 602, octaves=2)
+         + 0.15 * K.noise(640, 360, 4, 603, octaves=1))
+    n = (n - n.min()) / max(1e-6, float(n.max() - n.min()))
+    n = n - 0.12 * np.clip((yy - 240) / 120.0, 0, 1)                        # the lower wall: damp, splashed
+    lev = np.clip(np.floor(n * 5.0 + (_BAYER4[np.mod(yy, 4), np.mod(xx, 4)] - 0.5) * 0.35), 0, 4).astype(np.int64)
+    for i, c in enumerate(('#94784a', '#9e8048', '#a88a52', '#b09256', '#b89a5e')):
+        F.fill(lev == i, c)
+    plaster = np.ones((360, 640), bool)
+    row = np.floor_divide(yy, 6)
+    run = xx + (row % 2) * 7
+    for (cx, cy, rx, ry, sd) in P3_BARE:
+        e = K.noise(640, 360, 6, sd, octaves=2)
+        e = (e - e.min()) / max(1e-6, float(e.max() - e.min()))
+        d = np.hypot((xx - cx) / rx, (yy - cy) / ry) + 0.6 * (e - 0.5)
+        coat, bare = d < 1.25, d < 1.0
+        ring = coat & ~bare
+        F.fill(ring, '#8e846e')                                             # the grey scratch coat
+        F.speckle(ring, 0.22, '#7c725e', seed=sd + 1)
+        F.speckle(ring, 0.10, '#a29882', seed=sd + 2)
+        F.fill(bare, '#5c544a')                                             # the mortar, raked back by frost
+        brick = bare & (np.mod(yy, 6) != 5) & (np.mod(run, 14) != 13)
+        hv = K.hash2(np.floor_divide(run, 14), row, sd + 3)
+        for lo, hi, c in ((0.0, 0.2, '#74392a'), (0.2, 0.68, '#86462f'), (0.68, 0.9, '#965439'), (0.9, 1.01, '#5c2c20')):
+            F.fill(brick & (hv >= lo) & (hv < hi), c)
+        F.mul(brick & (np.mod(yy, 6) == 0), 1.12)
+        F.mul(brick & (np.mod(yy, 6) == 4), 0.86)
+        F.speckle(brick, 0.05, '#9a8458', seed=sd + 4)                      # crumbs of lime left on the brick
+        F.mul(bare & ~FL.shift(bare, 2, 2), 0.62)                           # the lip's shadow on the brick
+        F.mul(ring & ~FL.shift(coat, 1, 1), 0.8)                            # ... and on the scratch coat
+        F.fill(ring & FL.shift(bare, 1, 1), '#a89e86')                      # the scratch coat's broken edge, lit
+        F.fill(~coat & FL.shift(coat, 1, 1), '#c6a86e')                     # the finish coat's lip, lit
+        plaster &= ~coat
+    return plaster
+
+
+def _p3_crack(F, x, y, ang, n, seed, clip):
+    """A hairline crack: a wandering line with one fork, its lower lip catching the light."""
+    pts = [(x, y)]
+    for i in range(n):
+        ang += (float(K.hash2(i, seed, 631)) - 0.5) * 0.9
+        st = 4.0 + float(K.hash2(i, seed, 632)) * 5.0
+        x, y = x + math.cos(ang) * st, y + math.sin(ang) * st
+        pts.append((x, y))
+    m = F.line(pts, 0.45)
+    if n > 3:
+        bx, by = pts[n // 2]
+        ba = ang + (0.8 if float(K.hash2(seed, 2, 633)) > 0.5 else -0.8)
+        m |= F.line([(bx, by), (bx + math.cos(ba) * 9, by + math.sin(ba) * 9)], 0.4)
+    m &= clip
+    F.fill(FL.shift(m, 0, 1) & ~m & clip, '#bca068')
+    F.fill(m, '#6a5634')
+
+
+def _p3_depth(F, plaster):
+    """The window sits deep in the wall (round 11b): the reveals beside the recessed frame (darker towards it, the
+    lintel's shade at their heads), the raised lime band round the opening with its ears, lit on its upper left
+    arrises and throwing a shadow on the wall, snow along its top, the sill's shadow under the frame.  Returns the
+    mask of band and reveals."""
+    xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
+    x0, y0, x1, y1 = P3_WIN
+    rvs = np.zeros((360, 640), bool)
+    for (a, b, base, deep) in ((x0 - 8, x0, '#8c7246', '#6a5434'), (x1, x1 + 8, '#866c42', '#64502f')):
+        rv = F.box(a, y0 - 8, b, y1 + 8)
+        F.fill(rv, base)
+        F.fill(rv & ((xx >= x0 - 3) if a < x0 else (xx < x1 + 3)), deep)
+        F.fill(rv & (yy < y0 + 12) & (((xx + yy) & 1) == 0), deep)
+        rvs |= rv
+    band = (F.box(x0 - 15, y0 - 15, x1 + 15, y1 + 15) | F.box(x0 - 19, y0 - 15, x0 - 14, y0 - 2)
+            | F.box(x1 + 14, y0 - 15, x1 + 19, y0 - 2)) & ~rvs
+    F.shadow(band, 2, 2, 0.72, under=plaster)
+    F.fill(band, '#b49860')
+    F.speckle(band, 0.08, None, seed=641, k=0.93)
+    F.fill(band & FL.edge(band, 'tl'), '#cbb07a')
+    F.fill(band & FL.edge(band, 'br'), '#8a7046')
+    F.fill(F.box(x0 - 19, y0 - 16, x1 + 19, y0 - 15), '#e2e8f0')
+    F.fill(F.box(x0 - 19, y0 - 17, x1 + 19, y0 - 16) & (K.hash2(np.floor_divide(xx, 3), yy, 642) > 0.5), '#e2e8f0')
+    F.mul(F.box(x0 - 8, y1 + 8, x1 + 10, y1 + 11), 0.78)                    # the sill's shadow on the band
+    return band | rvs
+
+
+def _p3_wall_dress(F, plaster):
+    """The yard wall round the dispatch window (round 11): the plaster's grain, damp running down from the cornice,
+    the splash zone at its foot; the drainpipe with its brackets and its tongue of ice, the yard's
+    loudspeaker on its bracket and its cable, the cable to the lamp, the fire board with its cone buckets, hook and
+    shovel, the thermometer beside the frame, the firewood stacked under snow.  Never inside the window."""
+    xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
+    x0, y0, x1, y1 = P3_WIN
+    out = ~F.box(x0 - 4, y0 - 4, x1 + 4, y1 + 4)
+    wall = plaster & out
+    F.speckle(wall, 0.10, None, seed=611, k=0.93)
+    F.speckle(wall, 0.04, None, seed=612, k=1.06)
+    for k, sx in enumerate(range(6, 640, 17)):                            # damp from the cornice: tapering runs
+        sx += int(K.hash2(k, 3, 613) * 9) - 4
+        ln = 14 + int(K.hash2(sx, 1, 613) * 70)
+        hw = 1.0 + float(K.hash2(sx, 2, 613)) * 2.2
+        u = (yy - 50) / float(ln)
+        run = wall & (u >= 0) & (u < 1) & (np.abs(xx - sx - 1.2 * np.sin(yy * 0.21 + k)) < hw * (1.0 - 0.6 * u) + 0.5)
+        F.mul(run & ((u < 0.5) | (K.hash2(xx, yy, 614 + k) > u)), 0.9)
+        F.mul(run & (u < 0.25), 0.94)
+    F.mul(wall & (yy > 296 + 3 * np.sin(xx * 0.07)), 0.9)                 # the splash zone at the wall's foot
+    pipe = F.box(128, 30, 134, 360)
+    F.fill(pipe, '#5a6470')
+    F.fill(pipe & FL.edge(pipe, 'l'), '#8a96a2')
+    F.fill(pipe & FL.edge(pipe, 'r'), '#3a424c')
+    for y in range(60, 360, 56):
+        F.fill(F.box(126, y, 136, y + 2), '#2a2e34')
+    F.fill(F.poly([(127, 300), (135, 300), (133, 330), (131, 342), (129, 330)]), '#c8dcea')
+    F.fill(F.box(125, 28, 137, 34), '#5a6470')
+    for (a, b, sag) in (((312, 54), (64, 74), 8), ((328, 54), (640, 62), 10)):
+        pts = [(a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u + sag * math.sin(math.pi * u)) for u in np.linspace(0, 1, 16)]
+        F.fill(F.line(pts, 0.4) & out, '#2a2620')
+    F.fill(F.box(66, 62, 70, 76), '#2a2a2e')                              # the loudspeaker
+    horn = F.poly([(52, 74), (70, 72), (72, 80), (46, 92)])
+    F.fill(horn, '#6a6e74')
+    F.fill(F.poly([(46, 92), (52, 74), (50, 82)]), '#1a1c20')
+    F.fill(horn & FL.edge(horn, 't'), '#9aa0a8')
+    F.fill(F.line([(53, 75), (69, 73)], 0.5), '#e2e8f0')
+    fb = F.box(20, 128, 100, 218)                                         # the fire board
+    F.shadow(fb, 3, 3, 0.75, under=wall)
+    F.fill(fb, '#7a2a20')
+    F.fill(fb & FL.edge(fb, 'all', 2), '#5a1e16')
+    for k, bx in enumerate((32, 50)):
+        cone = F.poly([(bx - 7, 140), (bx + 7, 140), (bx, 166)])
+        F.fill(cone, '#b0302a')
+        F.fill(cone & (xx < bx - 2), '#c84a3a')
+        F.fill(F.box(bx - 7, 139, bx + 7, 141), '#2a2a2e')
+    F.fill(F.line([(68, 132), (92, 210)], 0.8), '#3a2a1e')                # the hook
+    F.fill(F.line([(92, 210), (96, 202)], 0.6), '#2a2a2e')
+    F.fill(F.line([(28, 210), (60, 176)], 0.8), '#3a2a1e')                # the shovel
+    F.fill(F.poly([(60, 176), (70, 168), (72, 178), (64, 184)]), '#2a2a2e')
+    F.fill(F.box(20, 127, 100, 129), '#e2e8f0')
+    th = F.box(514, 138, 522, 196)                                        # the thermometer: minus twenty-something
+    F.shadow(th, 2, 2, 0.75, under=wall)
+    F.fill(th, '#c8b080')
+    F.fill(F.box(517, 142, 519, 190), '#e8eef2')
+    F.fill(F.box(517, 176, 519, 190), '#b0302a')
+    F.fill(F.ell(518, 190, 2, 2), '#b0302a')
+    F.outline(th, col='#6a5030', k=0.7)
+    for k in range(18):                                                    # firewood under snow, bottom right
+        r_, c_ = divmod(k, 6)
+        lx, ly = 524 + c_ * 19 + (r_ % 2) * 9, 312 - r_ * 15
+        log = F.ell(lx, ly, 8, 7)
+        F.fill(log, '#6a4a2a')
+        F.fill(F.ell(lx, ly, 5, 4.5), '#b08a5a')
+        F.fill(F.ell(lx, ly, 2, 1.8), '#8a6a42')
+        F.outline(log, col='#2a1a0e', k=0.7)
+    F.fill(F.ell(568, 275, 56, 6) & (yy < 277), '#e2e8f0')
+
+
 def p3_flat():
     """(plate, overlay): the dispatch office's window close, from the yard: the ochre plaster wall with its bare
     brick, cracks and cornice, the sign, the lamp bracket, icicles; inside, the room (shelf of ledgers, wall clock,
@@ -609,22 +795,21 @@ def p3_flat():
     F = FL.Flat(bg='#000000')
     xx, yy = F.xx.astype(np.int64), F.yy.astype(np.int64)
     x0, y0, x1, y1 = P3_WIN
-    wall = F.box(0, 0, 640, 360)
-    F.fill(wall, '#a88a52')
-    F.fill(wall & (K.hash2(np.floor_divide(xx, 22), np.floor_divide(yy, 18), 51) > 0.8), '#9e8048')
-    F.fill(wall & (np.mod(yy, 30) == 0) & (K.hash2(np.floor_divide(xx, 40), yy, 52) > 0.5), '#94784a')
-    for pts in (((520, 170), (566, 160), (590, 196), (572, 236), (528, 228)), ((60, 262), (100, 250), (118, 292), (76, 300))):
-        bare = F.poly(list(pts))
-        F.fill(bare, '#8a4a34')
-        F.fill(bare & (np.mod(yy, 5) == 0), '#5a5048')
-        F.fill(bare & (np.mod(xx + (np.floor_divide(yy, 5) % 2) * 5, 10) == 0), '#5a5048')
-        F.outline(bare, col='#c8aa70')
-    F.fill(F.line([(500, 120), (512, 140), (506, 168), (520, 190)], 0.5) | F.line([(100, 90), (108, 120), (104, 140)], 0.5),
-           '#5a4a30')
+    plaster = _p3_plaster(F) & ~F.box(0, 0, 640, 50)
+    for (cx_, cy_, ang, n, sd) in ((x0 - 15, y1 + 15, 2.3, 5, 1), (x1 + 15, y1 + 15, 0.7, 6, 2), (x1 + 19, y0 - 15, -0.7, 2, 3),
+                                   (548, 190, -1.9, 4, 4), (70, 268, -2.6, 4, 5), (102, 52, 1.5, 6, 6)):
+        _p3_crack(F, cx_, cy_, ang, n, sd, plaster)
     corn = F.box(0, 30, 640, 50)
     F.fill(corn, '#8e744a')
+    F.fill(F.box(0, 37, 640, 38), '#a88c5a')
+    F.fill(F.box(0, 43, 640, 44), '#6e5a3a')
+    F.fill(F.box(0, 44, 640, 45), '#a2865a')
     F.fill(corn & FL.edge(corn, 'b', 2), '#5a4830')
     F.fill(F.box(0, 30, 640, 34), '#e2e8f0')
+    F.mul(F.box(0, 50, 640, 53), 0.8)                                       # the cornice's shadow on the wall
+    F.mul(F.box(0, 53, 640, 56) & (((xx + yy) & 1) == 0), 0.88)
+    deep = _p3_depth(F, plaster)
+    plaster &= ~deep
     sign = F.box(520, 96, 624, 112)
     F.fill(sign, '#1e3a5a')
     F.fill(F.text('ДИСПЕТЧЕРСКАЯ', 524, 101, 's') & sign, '#e8ecf0')
@@ -634,6 +819,14 @@ def p3_flat():
     F.fill(F.box(318, 40, 322, 52), '#2a2a2e')
     F.fill(F.box(314, 58, 326, 61), '#ffe8b0')
     F.fill(F.box(312, 50, 328, 52), '#e2e8f0')
+    plaster &= ~sign & ~F.box(310, 38, 330, 62)
+    lit = plaster | deep                                                    # the lamp's pool on the wall, the night beyond
+    F.pool(lit, 320, 62, 250, 125, steps=((1.0, 1.05), (0.62, 1.1), (0.34, 1.16)), col='#ffe8b0')
+    dv = np.hypot((xx - 320) / 340.0, (yy - 175) / 215.0)
+    chk = ((xx + yy) & 1) == 0
+    F.mul(plaster & ((dv > 1.0) | ((dv > 0.96) & chk)), 0.92)
+    F.mul(plaster & ((dv > 1.12) | ((dv > 1.08) & chk)), 0.92)
+    _p3_wall_dress(F, plaster)
     # the room inside
     inner = F.box(x0 + 10, y0 + 10, x1 - 10, y1 - 12)
     F.fill(inner, '#3e3226')
@@ -738,14 +931,11 @@ def p3_flat():
 
 
 def irina_sheet():
-    """Irina's dialogue bust graded to her lamp (warm from the left) and the yard's cold light: f 0 at her
-    ledger (neutral), f 1 the telephone has rung (surprised); her jacket continued below the cut."""
-    import env_c4p2_cine_busts as BU
-    out = []
-    for ex in ('neutral', 'surprised'):
-        b = BU.grade(BU.bust('irina', ex), mul=(1.06, 0.98, 0.86), rim=('left', (255, 214, 150)))
-        out.append(BU.extend(b, 40, buttons=True, open_front=False, spread=0.15))
-    return K.hsheet(out)
+    """Irina at her dispatch window, graded to her lamp (warm from the left) and the yard's cold light: f 0 at
+    her ledger (neutral), f 1 the telephone has rung (surprised) -- round 11: a whole figure from
+    env_c4p2_cine_figs (shoulders, arms to the desk) instead of the bust on a painted torso."""
+    import env_c4p2_cine_figs as FG
+    return FG.irina_p3_sheet()
 
 
 def build_p3(w):

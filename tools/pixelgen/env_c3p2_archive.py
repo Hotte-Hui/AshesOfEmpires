@@ -19,6 +19,9 @@ Produces assets/environments/veltrava_registry/ (C3P2_DESIGN.md 5.1):
 * scene.json (layers / props / decals / fx / lights with the gate keys after / until / choice / fade, the
   design's spawns, hotspots, walk band, blockers, zones, looks) + provenance.json.
 The gates are applied by scripts/levels/c3p2_archive/registry_level.gd (the level script of the .tscn).
+Shared folder (round 11, tools/pixelgen/env_keep.py): a run removes only the PNGs its previous run recorded in
+provenance.json and merges scene.json / provenance.json over the old ones -- explore_hotspots.json, keys and
+"actors" other writers add, their files and provenance rows stay; an unchanged run is byte-identical.
 """
 from __future__ import annotations
 
@@ -39,11 +42,13 @@ import env_c3p2_archive_layout as L       # noqa: E402
 import env_c3p2_archive_room as ER        # noqa: E402
 import env_c3p2_archive_fx as EFX         # noqa: E402
 import env_c3p2_archive_props as EP       # noqa: E402
+import env_keep as KEEP                 # noqa: E402  (round 11: the folder is shared)
 
 ROOT = K.ROOT
 ENV_DIR = os.path.join(ROOT, 'assets', 'environments', 'veltrava_registry')
 LF = chr(10)
 PRODUCED: list[tuple[str, str, str]] = []
+FAMILY = 'tools/pixelgen/env_c3p2_archive'   # provenance rows of this generator and its modules (env_keep)
 
 STATES = {
     'a': dict(lamp_green=False, torch=True, door_closed=False, clock=(0, 38), scarf=True, halves=False, file=True,
@@ -122,15 +127,11 @@ def save_arr(arr, path, gen, desc):
 
 
 def clean_env_dir():
-    if not os.path.isdir(ENV_DIR):
-        return
-    keep = {'explore_hotspots.json'}
-    for root, _dirs, files in os.walk(ENV_DIR):
-        if '_preview' in root:
-            continue
-        for f in files:
-            if f.endswith('.png') or (f.endswith('.json') and f not in keep and root == ENV_DIR):
-                os.remove(os.path.join(root, f))
+    """Remove the PNGs this generator wrote last time (its provenance.json rows, tools/pixelgen/env_keep.py) so
+    renamed / dropped files never linger; every other file of the shared folder stays (explore_hotspots.json, hand
+    or walker art, the .import sidecars -- UIDs stay stable); scene.json and provenance.json are merged, not wiped."""
+    if os.path.isdir(ENV_DIR):
+        KEEP.remove_own_pngs(ENV_DIR, ROOT, FAMILY)
 
 
 def gate_merge(*gs) -> dict:
@@ -512,8 +513,8 @@ def build_scene(preview_dir=None):
                  'date': K.DATE, 'palette_ramps': K.REG},
     }
     sj = os.path.join(ENV_DIR, 'scene.json')
-    with open(sj, 'w', encoding='utf-8', newline=LF) as f:
-        json.dump(scene, f, indent=1, ensure_ascii=False)
+    scene = KEEP.merge_scene(scene, KEEP.read_json(sj))     # keys / "actors" other writers added stay in place
+    KEEP.write_json(sj, scene)   # same content as before: the file stays byte for byte
     record(sj, 'env_c3p2_archive.py', 'art manifest (TECHNICAL_ARCHITECTURE 3.1 + the registry gates)')
 
     # ---- checks
@@ -585,13 +586,14 @@ def preview(scene, out_dir, looks=('a', 'b', 'c', 'd')):
 # =========================================================================== provenance
 def write_provenance():
     files = [{'path': p, 'generator': 'tools/pixelgen/' + g, 'content': d} for p, g, d in sorted(PRODUCED)]
+    p = os.path.join(ENV_DIR, 'provenance.json')
+    files = KEEP.merge_rows(files, KEEP.read_json(p), FAMILY, ROOT)   # rows of other generators stay
     out = {'generator': 'tools/pixelgen/env_c3p2_archive.py (+ _kit, _layout, _room, _props, _fx)',
            'date': K.DATE,
            'licence': 'project-owned original artwork, generated procedurally; no copied, traced, downloaded or '
                       'AI-generated pixels; bitmap fonts from env_veltrava_hall_kit.py (hand-defined)',
            'run': 'py -3 -P tools/pixelgen/env_c3p2_archive.py',
            'files': files}
-    p = os.path.join(ENV_DIR, 'provenance.json')
     with open(p, 'w', encoding='utf-8', newline=LF) as f:
         json.dump(out, f, indent=1, ensure_ascii=False)
 

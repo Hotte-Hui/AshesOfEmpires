@@ -780,7 +780,7 @@ def main():
 
 
 # ============================================================================ Godot import settings
-MIPMAPPED = {'drawing.png', 'banner.png', 'flag_street.png', 'flag_street_hist.png', 'flag_pole.png',
+MIPMAPPED = {'drawing.png', 'banner.png', 'flag_street.png', 'flag_street_hist.png', 'flag_pole.png', 'banner_portico_hist.png',
              'flag_pole_hist.png', 'kiosk_front.png'}
 
 

@@ -71,7 +71,7 @@ max 2.2 ms); `--selftest` PASS (finished once, 7 cues in order, locale keys, ove
 |---|---|
 | `tools/pixelgen/gen_great_hall.py` | Round 1 assets + import settings; `main()` now calls the new sky module. |
 | `tools/pixelgen/gen_great_hall_sky.py` | **New.** Dramatic dusk matte: gradient with burning horizon band and sun glow behind the dome's right shoulder, crepuscular rays (upwards only), a towering cloud bank self-shadowed by marching towards the sun (burning undersides/edges, billowing dark bodies, torn gaps), cirrus and low stratus, far skyline with tiny lit windows and a mast light. |
-| `tools/pixelgen/gen_great_hall_symbols.py` | **New.** Banners/flags (neutral + `_hist`), eagles (+ normal maps), swastika rasteriser (on point, clockwise; thresholds tuned per size), Reichssiegel obelisk. |
+| `tools/pixelgen/gen_great_hall_symbols.py` | **New.** Banners/flags (neutral + `_hist`), eagles (+ normal maps), Reichssiegel obelisk. Round 11: the `_hist` banners are laid out flat as materials (cloth, disc, emblem) and the folds/light go over all three; the swastika comes from `tools/pixelgen/swastika_px.py` (on point, clockwise, 5×5 unit construction built exactly on the 45° pixel lattice: equal arm/gap widths, centred, hand-pixelled 5/7/9 px; also behind `env_berlin_insignia.swastika_mask`). |
 | `tools/pixelgen/gen_great_hall_life.py` | **New.** Multi-LOD citizens (paper-doll rasteriser of `gen_great_hall.Fig`), patrol, sweeper, cart, birds, smoke/steam loops, window silhouettes, kiosk display, stop sign, belongings, paper sheet, `life.json` metadata. |
 
 ### Generated textures — `assets/architecture/great_hall/` (2026-11-04, original, project licence)
@@ -79,7 +79,7 @@ max 2.2 ms); `--selftest` PASS (finished once, 7 cues in order, locale keys, ove
 |---|---|---|---|
 | `sky.png` | 1024×720 | `gen_great_hall_sky.make_sky` | Dramatic matte (see above); texel (512,430) = optical axis at the horizon. |
 | `fog.png`, `smoke.png` | 1024×720 | `gen_great_hall` | Distance haze colour; drifting smoke ribbons. |
-| `symbols/banner_portico(_hist).png` | 10×36 | symbols | Giant portico banners (1:1 in the final frame). |
+| `symbols/banner_portico(_hist).png` | 10×36 (`_hist` 40×144, mipmapped) | symbols | Giant portico banners (1:1 in the final frame); the same material hangs on the parade tribune at ~4 px per 1x texel, hence the 4× finer `_hist` twin. |
 | `symbols/flag_street(_hist).png` | 30×90 | symbols | Hanging banners (1.2 × 3.6 m) on the tenements and over the family's door; mipmapped. |
 | `symbols/flag_pole(_hist).png` | 16×44 | symbols | Mast flags on the plaza; mipmapped. |
 | `symbols/eagle_portico(_hist).png` + `_n` | 39×31 | symbols | Stone state eagle on the portico attic holding an oak wreath with the swastika (`_hist`) / the Reichssiegel (neutral). |

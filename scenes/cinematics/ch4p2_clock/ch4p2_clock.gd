@@ -38,6 +38,7 @@ const CROSS := [6.6, 9.2]           # protect_first: the two cross the light int
 const TYPE_T0 := 11.6
 const TYPE_CPS := 7.0
 const TICK_END := 20.0
+const TAPE_DROP := 36.0             # k3: the printed tape runs along the desk's edge this far below the slot
 const K1_TILT := [3.3, 5.0, 160.0, 40.0]   # k1: the plate's offset from t0 to t1 (the camera tilts up)
 
 var C: Dictionary = {}
@@ -55,7 +56,12 @@ var _flash: Sprite2D
 var _people: Array = []
 var _escort: Sprite2D
 var _witness: Sprite2D
+var _patrol: Array = []      # k2: two guards walking the patrol road inside the fence
+var _smoke2: Node2D          # k2: smoke from the sentry hut's stovepipe and the hall's chimneys
+var _t_smoke2: Texture2D
+var _time2 := 0.0
 var _tapes: Dictionary = {}
+var _tapeloop: Node2D
 var _fill: Node2D
 var _alexei: Sprite2D
 var _irina: Sprite2D
@@ -173,6 +179,11 @@ func _build() -> void:
 	k2 = group("Kordon")
 	sprite("clock/k2_bg.png", Vector2.ZERO, k2)
 	glow("clock/k2_beams.png", k2)
+	_t_smoke2 = tex("clock/k2_smoke.png")
+	_smoke2 = fx(k2, "Smoke", _draw_smoke2)
+	var pcell: Array = C.get("k2_patrol_cell", [10, 13])
+	for i in 2:
+		_patrol.append(cells("clock/k2_patrol.png", k2, int(pcell[0])))
 	_door = glow("clock/k2_door.png", k2)
 	for i in 2:
 		_people.append(cells("clock/k2_person.png", k2, 16))
@@ -196,6 +207,7 @@ func _build() -> void:
 		var tp := sprite("clock/tape_%s.png" % v, Vector2.ZERO, k3)
 		tp.region_enabled = true
 		_tapes[v] = tp
+	_tapeloop = fx(k3, "TapeLoop", _draw_tape_loop)
 	_hand = fx(k3, "SecondHand", _draw_hand)
 	glow("clock/k3_lamp_glow.png", k3)
 	# ---------------------------------------------------------------- k4
@@ -288,17 +300,58 @@ func _apply(time: float) -> void:
 		var tp: Sprite2D = _tapes[v]
 		tp.visible = v == g and n > 0
 		tp.region_rect = Rect2(0, 0, maxf(1.0, tw), 11)
-		tp.position = Vector2(float(tt[0]) - tw - 12.0, float(tt[1]) - 1.0)
+		tp.position = Vector2(float(tt[0]) - tw - 12.0, float(tt[1]) + TAPE_DROP)
+	_tapeloop.visible = n > 0
 	_irina.frame = (once_frame(time, 12.4, 13.4, 6)) if time < 14.4 else 6 + p2_loop_frame(time, 4.0, 4)
 	_alexei.frame = p2_loop_frame(time, 4.0, maxi(1, _alexei.hframes))
 	_levglow.modulate = Color(1, 1, 1, clampf(0.85 + 0.08 * hnoise(time * 1.6, 37), 0.0, 1.0))
 	# k4: the decision on the desk
 	_canister.visible = g == "protect_first"
 	_folder.visible = g != "protect_first"
+	# k2: the patrol walks the road inside the fence, the stoves smoke
+	var pa: Array = C.get("k2_patrol", [164, 236, 233, 5.4, 12.0])
+	var pc: Array = C.get("k2_patrol_cell", [10, 13])
+	for i in _patrol.size():
+		var pg: Sprite2D = _patrol[i]
+		var px := minf(float(pa[1]), float(pa[0]) + maxf(0.0, time - float(pa[3])) * float(pa[4]) * motion_k()) - i * 9.0
+		pg.position = Vector2(roundf(px - float(pc[0]) / 2.0), float(pa[2]) - float(pc[1]))
+		pg.frame = p2_loop_frame(time, 3.0, 2, i) if px < float(pa[1]) - i * 9.0 else 0
+	_time2 = time
 	for s in [_snow1, _snow2]:
 		s.set_time(time)
-	for n2 in [_hand, _fx4, _motes]:
+	for n2 in [_hand, _fx4, _motes, _smoke2]:
 		n2.queue_redraw()
+
+
+## k2: smoke rising from the sentry hut's stovepipe and the hall's two chimneys, leaning with the wind.
+func _draw_smoke2() -> void:
+	var sm: Array = C.get("k2_smokes", [])
+	for i in sm.size():
+		var m: Array = sm[i]
+		puffs(_smoke2, _t_smoke2, 8, _time2, 2.0, DUR, 0.55 + 0.1 * i, 3.0, Vector2(float(m[0]) - 6.0, float(m[1]) - 14.0),
+				Vector2(-4, -7), 4620 + i, Color(1, 1, 1, 0.7))
+
+
+## k3: the tape's loop from the slot down over the desk's edge, where the printed strip runs on to the left
+## (round 11c: the strip used to run at chest height straight across Irina like a caption bar).
+func _draw_tape_loop() -> void:
+	var tt: Array = C.get("tty", [500, 196])
+	var o := Vector2(float(tt[0]), float(tt[1]))
+	var pts := PackedVector2Array()
+	for q in [Vector2(-3, 1), Vector2(-8, 4), Vector2(-12, 11), Vector2(-14, 20), Vector2(-14.5, 30),
+			Vector2(-13.5, TAPE_DROP + 4.0)]:
+		pts.append(o + q)
+	var sh := PackedVector2Array()
+	var lip := PackedVector2Array()
+	var lit := PackedVector2Array()
+	for p in pts:
+		sh.append(p + Vector2(2, 1))
+		lip.append(p + Vector2(-2, 0))
+		lit.append(p + Vector2(1, 0))
+	_tapeloop.draw_polyline(sh, Color(0.05, 0.03, 0.02, 0.35), 4.0)
+	_tapeloop.draw_polyline(pts, Color("#e2d8bc"), 4.0)
+	_tapeloop.draw_polyline(lip, Color("#8a8470"), 1.0)
+	_tapeloop.draw_polyline(lit, Color("#f6f0dc"), 1.0)
 
 
 ## the second hand of the dispatch clock: one tick per second (pure function of t)
