@@ -44,9 +44,11 @@ const LINK_DONE := Color("dca16e")
 const PAPER := Color("e6dec2")
 const PAPER_EDGE := Color("b0aa93")
 ## The one shared fact of each pair as it is written on the entry (underlined after the solution). Words,
-## not positions: a word the text does not contain only loses its underline.
-const MATCH_WORDS := {"in_c17_44": ["Plombe C-17/44", "2410 kg"], "out_2340": ["23.40 Uhr", "Gleis 5"],
-	"par_4": ["„Begleitgut“", "„begleitete Personen“"], "january": ["drei Wagen"]}
+## not positions: a word the text does not contain only loses its underline. German first, then the English wording.
+const MATCH_WORDS := {"in_c17_44": ["Plombe C-17/44", "2410 kg", "seal C-17/44"],
+	"out_2340": ["23.40 Uhr", "Gleis 5", "23:40", "platform 5"],
+	"par_4": ["„Begleitgut“", "„begleitete Personen“", "“escorted goods”", "“escorted persons”"],
+	"january": ["drei Wagen", "three wagons"]}
 const CARD_FONT := 19
 const LABEL_FONT := 19
 const LINK_W := 54

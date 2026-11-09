@@ -1,0 +1,10 @@
+{
+ "locale": "en",
+ "area": "trans_a1m1",
+ "strings": {
+  "cin.a1m1.alexei.share": "A wagon heading west. A stamp in the book. But this time two people know.",
+  "cin.a1m1.alexei.keep": "A wagon heading west. A stamp in the book. And one man who knows – and keeps quiet.",
+  "cin.a1m1.konrad": "A plan is only an order made of lines. What happens between the lines is for others to decide.",
+  "cin.a1m1.caption": "The red stamp C-17 in the Karsk freight ledger becomes a pencil note on a Berlin building plan."
+ }
+}

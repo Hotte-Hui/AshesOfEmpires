@@ -23,6 +23,7 @@ var logic = Logic.new()
 var selected := 0
 var stage: Control
 var _tex: Dictionary = {}
+var _tight_font: FontVariation = null   # plates whose name would run off the board (see _plate)
 var _send_btn: Button
 var _p_rush: AudioStreamPlayer
 var _px := 3
@@ -502,14 +503,18 @@ func draw_stage(v: Control) -> void:
 
 
 func _plate(v: Control, anchor: Vector2, side: String, text: String, target: bool, lit: bool) -> void:
-	var f := Kit.font("fv_label")
+	var f: Font = Kit.font("fv_label")
 	var fs := _fs_board(19)
 	var tw := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
 	var pad := _s(10)
 	var ph := float(fs) + _s(12)
+	var gap := _s(10)
+	if side == "E" and anchor.x + gap + tw + pad * 2.0 + _s(16) > _board_pos.x + _board_size().x * _px:
+		# a long name (e.g. the English „Reading room“) stays on the board: tighter letters, never a smaller size
+		f = _tight_label_font(f)
+		tw = f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
 	var pw := tw + pad * 2.0 + _s(16)
 	var r := Rect2()
-	var gap := _s(10)
 	match side:
 		"E":
 			r = Rect2(Vector2(anchor.x + gap, anchor.y - ph / 2.0), Vector2(pw, ph))
@@ -533,6 +538,19 @@ func _plate(v: Control, anchor: Vector2, side: String, text: String, target: boo
 		v.draw_circle(lamp_c, _s(18), Color(Kit.C_AMBER, 0.25))
 	v.draw_string(f, Vector2(r.position.x + pad + _s(16), r.position.y + _s(6) + fs * 0.85), text, HORIZONTAL_ALIGNMENT_LEFT,
 		-1, fs, _col(Kit.C_INK, Color.BLACK))
+
+
+## The plate font with the letter spacing of the board's own lettering removed (built once).
+func _tight_label_font(base: Font) -> Font:
+	if _tight_font == null:
+		_tight_font = FontVariation.new()
+		_tight_font.base_font = base
+		_tight_font.spacing_glyph = 0
+		if base is FontVariation:
+			_tight_font.base_font = (base as FontVariation).base_font
+			_tight_font.variation_opentype = (base as FontVariation).variation_opentype
+			_tight_font.fallbacks = (base as FontVariation).fallbacks
+	return _tight_font
 
 
 func _draw_stations(v: Control) -> void:

@@ -1,0 +1,16 @@
+{
+ "locale": "en",
+ "area": "c3_cinematics",
+ "strings": {
+  "cin.c3.trains.konrad.base": "The plans for Kordon-17 are in the drawing tube. More than that, I am told, I need not know.",
+  "cin.c3.trains.konrad.evidence": "The copy lies in the drawing tube, between two blueprints that nobody unrolls.",
+  "cin.c3.trains.konrad.suspicion": "My enquiry received no answer. Only this official trip.",
+  "cin.c3.trains.alexei.base": "Three wagons are missing in Karsk. I’m going after them, with orders I don’t quite understand.",
+  "cin.c3.trains.alexei.irina": "Irina countersigned my travel order. Her name rides with me now.",
+  "cin.c3.trains.alexei.secrecy": "Irina didn’t ask why I volunteered for this trip. That was worse than any question.",
+  "cin.c3.trains.place": "Veltrava, Free City on the Line. February 1964.",
+  "cin.c3.tohall.time": "Commission Palace, 09:40.",
+  "cin.c3.close.train": "23:40, Platform 5. A special train to Kordon-17, non-stop.",
+  "cin.c3.close.after": "Two hotels. The same whistle."
+ }
+}

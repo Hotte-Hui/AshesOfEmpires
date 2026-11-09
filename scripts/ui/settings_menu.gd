@@ -1,5 +1,6 @@
 extends "res://scripts/ui/ui_modal.gd"
-## Settings: every key of scripts/core/settings.gd — fullscreen, vsync, pixel_post, the five volumes,
+## Settings: every key of scripts/core/settings.gd — language („Sprache / Language“, first row of the display tab,
+## both languages in their own name; switches live, §12.14), fullscreen, vsync, pixel_post, the five volumes,
 ## text_scale (100/125/150 %, applied live), subtitles, dialogue_speed, high_contrast, reduced_motion,
 ## puzzle_hints, historical_symbols (§12.4: real regime insignia in the critical in-world depiction, off =
 ## fictional emblems, applied at the next scene load) — plus key rebinding for the main actions
@@ -7,6 +8,7 @@ extends "res://scripts/ui/ui_modal.gd"
 ## the focused value; a line at the bottom explains the focused option.
 
 const TABS := ["display", "audio", "access", "controls"]
+const LocScript := preload("res://scripts/story/loc.gd")
 const BIND_ACTIONS := ["move_left", "move_right", "move_up", "move_down", "run", "interact", "advance", "journal"]
 
 
@@ -68,6 +70,7 @@ var _capture_btn: Button = null
 var _bind_buttons: Dictionary = {}
 var _back_btn: Button
 var _reset_btn: Button
+var _title: Label
 
 
 func _ready() -> void:
@@ -82,11 +85,12 @@ func _ready() -> void:
 	add_child(p)
 	var v := Kit.vbox(12)
 	p.add_child(v)
-	v.add_child(Kit.label(Kit.t("ui.settings.title"), "HeadingLabel"))
+	_title = Kit.label(Kit.t("ui.settings.title"), "HeadingLabel")
+	v.add_child(_title)
 	var tabs := Kit.hbox(6)
 	v.add_child(tabs)
 	for id in TABS:
-		var b := Kit.button(Kit.t("ui.settings.tab." + id).to_upper().replace("ß", "SS"), "TabButton")
+		var b := Kit.button(_tab_text(id), "TabButton")
 		b.toggle_mode = true
 		b.button_group = _group
 		b.pressed.connect(show_tab.bind(id))
@@ -141,6 +145,7 @@ func show_tab(id: String) -> void:
 	var have := Kit.svc("Settings") != null and Kit.has_svc("Settings", "set_value")
 	match id:
 		"display":
+			_stepper_row("language", language_options())
 			_toggle_row("fullscreen")
 			_toggle_row("vsync")
 			_slider_row("pixel_post")
@@ -172,6 +177,30 @@ func show_tab(id: String) -> void:
 			break
 	if is_open:
 		_focus_first_row.call_deferred()
+
+
+func _tab_text(id: String) -> String:
+	return Kit.t("ui.settings.tab." + id).to_upper().replace("ß", "SS")
+
+
+## „Sprache / Language“: every playable language in its own name (Loc.LANGUAGES), value = language code.
+static func language_options() -> Array:
+	var out: Array = []
+	for code in LocScript.LANGUAGES:
+		out.append([code, LocScript.LANGUAGES[code]])
+	return out
+
+
+## The language changed (UIRoot → propagate_call): the fixed texts take the new language and the open tab is built
+## again (deferred: the switch itself comes from a button of that tab); focus stays on the language row.
+func _on_language_changed() -> void:
+	_title.text = Kit.t("ui.settings.title")
+	for id in _tab_buttons:
+		(_tab_buttons[id] as Button).text = _tab_text(id)
+	_reset_btn.text = Kit.t("ui.settings.reset_bindings")
+	_back_btn.text = Kit.t("ui.back")
+	if is_open:
+		show_tab.call_deferred(current_tab)
 
 
 func _row(key_label: String, desc_key: String) -> HBoxContainer:

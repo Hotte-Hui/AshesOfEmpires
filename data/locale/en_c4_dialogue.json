@@ -1,0 +1,25 @@
+{
+ "locale": "en",
+ "area": "c4_dialogue",
+ "strings": {
+  "dlg.c4.lev_01.irina": "Irina Belova said you would come. And that you can be trusted. She rarely says that.",
+  "dlg.c4.lev_01.secrecy": "At this hour, Morozov, and alone? Whoever comes alone wants something that isn’t in the duty book.",
+  "dlg.c4.lev_04.swap": "Three wagons in January, rebooked with no destination. In Veltrava they were called C-17. A German carries their list now.",
+  "dlg.c4.lev_04.elena": "Three wagons in January, rebooked with no destination. In Veltrava they were called C-17. Their list hangs in a coat, ticket 27.",
+  "dlg.c4.tun_08.secrecy": "Because you can keep quiet, anyone can see that. And because my name will be on no paper, Morozov. None.",
+  "dlg.c4.mar_02.evidence": "I don’t want to ride. I am a draughtsman at the General Building Office, and I collect what is in no report. The loop is new.",
+  "dlg.c4.mar_02.suspicion": "I don’t want to ride. I am a draughtsman at the General Building Office – not on duty today. This loop here is new.",
+  "dlg.c4.mar_04.admit": "Building works, the notice says. – No. I have stopped repeating notices.",
+  "dlg.c4.mar_12.pocket": "I drew the site plan for these clearances. And a room on the Line. I want to know what for.",
+  "dlg.c4.sid_08.split": "On Tuesday, in this wagon. Pjotr is on the same list – I carry it with me.",
+  "dlg.c4.sid_08.swap": "On Tuesday, in this wagon. And Pjotr with her. A German carries his name through Berlin now.",
+  "dlg.c4.sid_08.elena": "On Tuesday, in this wagon. And Pjotr with her. His list hangs in a coat in Veltrava.",
+  "dlg.c4.sid_10.trust": "Then I’ll collect numbers. And in Berlin someone collects the cards to match. Together it can be counted, Lev.",
+  "dlg.c4.cnt_03.kessler": "Adler – Herr Kessler recommended you to the office. Reliable, he writes. Which file?",
+  "dlg.c4.cnt_03.suspicion": "Adler. Your own office was asking about you recently. Well, ventilation is ventilation. Which file?",
+  "choice.c4d.name_marta.pocket": "Give Marta Vogel’s name – the Lindner file would join Sheet 7, evidence with signatures, before Tuesday",
+  "choice.c4d.protect_marta.report": "Give no name – ‘I heard it on the street.’ In Veltrava you already reported someone once",
+  "dlg.c4.react.name_marta": "Vogel, Marta. Tram, Route 74 – we’ll find that. Thank you, Herr Adler. The Lindner file, here you are.",
+  "dlg.c4.react.protect_marta": "On the street. Then the file stays in the cabinet, Herr Adler. Come back when the street has a name."
+ }
+}

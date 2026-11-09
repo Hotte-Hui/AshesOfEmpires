@@ -149,7 +149,7 @@ Level scene = `scenes/levels/<LevelId>.tscn`, root script `scripts/levels/level.
 | Name | Script | Responsibility |
 |---|---|---|
 | `Settings` | scripts/core/settings.gd | options, input map (runtime, rebindable), persistence `user://settings.cfg` |
-| `Loc` | scripts/story/loc.gd | `Loc.t(key, args := {}) -> String`; merges `data/v3/locale_de.json` + `data/locale/*.json` |
+| `Loc` | scripts/story/loc.gd | `Loc.t(key, args := {}) -> String`; merges `data/v3/locale_de.json` + `data/locale/de_*.json`; English overlay `en_*.json`, live `set_language()` (§12.14) |
 | `Story` | scripts/story/story_engine.gd | authoritative story/quest state (port of `preproduction/tools/story_engine_v4.py`) |
 | `Saves` | scripts/core/save_system.gd | slots, autosave, atomic writes, validation via `Story.load_json` |
 | `Audio` | scripts/core/audio.gd | ambience/music crossfades, SFX, buses |
@@ -194,7 +194,8 @@ Buses: Master, Music, Ambience, SFX, UI (`default_bus_layout.tres`). `Audio.play
 
 ## 8. Data & localisation
 Canonical gameplay data: `data/v3/*.json` (schema 3; renamed konrad). New strings go into
-`data/locale/de_<area>.json` (one file per contributor area to avoid merge conflicts). German first.
+`data/locale/de_<area>.json` (one file per contributor area to avoid merge conflicts). German first; the English
+twin of every file is `data/locale/en_<area>.json`, the story strings go to `data/locale/en_v3.json` (§12.14).
 
 ## 9. Tests
 `tests/run_all.gd` (extends SceneTree) loads every `tests/test_*.gd` (extends RefCounted, `func run() -> Array`
@@ -779,6 +780,7 @@ A real player's launch starts like a big release; every automated run boots exac
 - **Decision** (`scripts/ui/boot_flow.gd`, statics). `Main._ready()` calls `BootFlow.decide(self)` once, BEFORE
   `Game.register_main()`. Player launch = no user argument after `--` except `--splash-shots=DIR`, no `--script` /
   `-s` / `--headless`, display not headless, and Main is the startup scene (visual harnesses instance Main as a child).
+  `--lang=xx` (§12.14) only changes the language and never this decision.
   Any driver / tool argument (`--autoplay`, `--inputplay`, `--capture`, `--cinematic=none`, `--scene`, `--memory-demo`,
   …) → the old boot: no splash, no notice, `register_main()` in the same frame. `BootFlow.player_launch` keeps the answer.
 - **Boot sequence** (`scenes/ui/BootSplash.tscn` + `scripts/ui/boot_splash.gd`, CanvasLayer 120, built in code):
@@ -807,8 +809,9 @@ A real player's launch starts like a big release; every automated run boots exac
   flag through `Settings.set_value`. Always reachable from „Mitwirkende“ → „Demo-Hinweis“. Text 100/125/150 %: sheet
   width 1060·(1 + 1.25·(scale − 1)) px; the sheet is placed by hand (`_place()`): a full-rect CenterContainer keeps
   the transient height of wrapping labels that have no width yet and centres the letter far below the screen.
-- **Texts** `data/locale/de_splash.json` (`splash.*`, `ui.demo.*`) — rename the studio there only. Pixel capitals:
-  A–Z ÄÖÜ 0–9 `- . , ! ? ' : · & / +`; other characters fall back to the title font.
+- **Texts** `data/locale/de_splash.json` (`splash.*`, `ui.demo.*`) — rename the studio there only (studio: „Midnight
+  Anvil“; `en_splash.json` keeps the same name). Pixel capitals: A–Z ÄÖÜ 0–9 `- . , ! ? ' : · & / +` and the marks
+  „ “ ” ‚ ‘ ’ " – — …; other characters fall back to the title font.
 - **Settings.** `Settings.path` (default `user://settings.cfg`) lets tests point a fresh instance at a temporary file.
 - **Assets** `py -3 -P tools/pixelgen/gen_title_splash.py [--preview=DIR]`, `py -3 -P tools/audiogen/title_audio.py`
   (manifest part `splash`).
@@ -816,6 +819,49 @@ A real player's launch starts like a big release; every automated run boots exac
   file, driver mode, letter, sizes, credits entry, lettering, art / audio). Windowed: `godot --path . --
   --splash-shots=DIR` plays the real boot, saves frames of every card, the menu and the letter
   (`scripts/ui/dev/boot_shots.gd`) and quits without confirming the letter (the flag is not written).
+
+### 12.14 Languages: German and English (round 12, owner: localisation)
+German stays the source; English lies over it. A key without English text shows its German text, never a raw key.
+- **Files.** Every `data/locale/de_<name>.json` has a twin `data/locale/en_<name>.json` with the same structure and the
+  same keys (metadata such as `note` may stay untranslated); the story strings of `data/v3/locale_de.json` (its
+  `strings`) are translated in `data/locale/en_v3.json` (`{"strings": {…}}`) — `data/v3/*` itself is never edited
+  (Python reference parity). Placeholders stay exactly as in German: `{name}` fields, printf marks, BBCode tags and the
+  number of `\n` line breaks. Names of people and places are not translated. New keys: German file first, the English
+  twin in the same change (the German text shows until it exists).
+- **Loc** (`scripts/story/loc.gd`). `reload()` merges the German table as before (`overrides` = collisions between
+  German files only); for `language != "de"` every key then takes the text of the twin of the file that gave its
+  German text (`twin_path()`; keys only an English file has are ignored, an empty English text counts as missing).
+  `Loc.LANGUAGES` = `{"de": "Deutsch", "en": "English"}`, each in its own name. QA helpers: `translated_by(key)`,
+  `untranslated()` (German fallbacks of the current language), `source_of(key)` (always the German file).
+- **Live switch.** `Loc.set_language(code)` re-reads the tables, walks the scene tree and replaces every Label / Button
+  / RichTextLabel text that is a string of the old language — as it is or in capitals (headings, kickers); when keys
+  share a German text, the key that really produced the text on screen wins (`t()` remembers it) — then emits
+  `language_changed`. UIRoot relays it as `propagate_call("_on_language_changed")` and refreshes the HUD. Panels with
+  formatted lines implement that hook: main menu (footer), pause menu (header, place, progress), settings menu (title,
+  tabs, buttons; the open tab is rebuilt deferred, focus stays on the language row). Panels that build their texts
+  when they open (journal, puzzles, letters, cards) need nothing. Lettering painted into pixel art stays German.
+- **Setting** `language` (`Settings.DEFAULTS`, `user://settings.cfg`). No valid value on disk →
+  `Settings.default_language(OS.get_locale_language())` = English unless the OS speaks German; a player's first
+  launch writes just that key (`language_picked`). `Settings.forced_language(user_args, engine_args, display)`:
+  `-- --lang=en|de` forces a language for checks; every other automated run (any other user argument, `--script`,
+  headless, a directly started scene) plays German. Forced values are runtime overrides (`apply_run_overrides`), never
+  written — a fresh profile in a driver run gets no language key at all. `Settings.apply("language")` (the autoload
+  only) calls `Loc.set_language`; at boot `Loc._ready()` reads the value itself.
+- **Settings menu.** First row of the display tab: „Sprache / Language“ (`ui.settings.language` /
+  `ui.settings.desc.language` in `data/locale/de_lang.json` + `en_lang.json`), a stepper with „Deutsch“ / „English“
+  (click or Enter = next, left / right, pad d-pad + A).
+- **Formats in code** (`scripts/ui/ui_kit.gd`, keys in `de_ui.json` / `en_ui.json`). Code never writes German marks
+  itself: `Kit.quoted(s)` (`ui.quote`: „…“ / “…”), `Kit.decimal(v, places)` (`ui.decimal_point`: 23,6 / 23.6 — luggage
+  scale, turntable), `Kit.format_time()` (`ui.date_time` + `ui.date_months`: 04.11.2026 · 18:42 / 04 Nov 2026 · 18:42).
+  German output is unchanged. Words a script looks for in a translated text (CheckPuzzle `MATCH_WORDS`) list the
+  English wording next to the German.
+- **Fonts.** All TTFs in use (Oswald, PT Serif ×4, PT Mono, Courier Prime) draw “ ” ‘ ’ — … „ ‚ – themselves; the
+  pixel capitals of the boot cards know them too (`scripts/ui/pixel_font.gd`).
+- **Tests** `tests/test_localisation.gd`: switch + German fallback (fixture files in a temporary folder), live
+  re-translation of texts on screen, the real tables keep every key, placeholder parity and no stray keys in every
+  `en_*.json`, the setting in a temporary settings file (first launch, persistence, overrides never written), German in
+  automated runs, the settings row, a live switch of a mounted main menu, typography of every font. It prints how many
+  keys still fall back to German. Unit tests, drivers and harnesses stay German.
 
 ## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
 Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.

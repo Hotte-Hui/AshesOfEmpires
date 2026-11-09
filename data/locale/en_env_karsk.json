@@ -1,0 +1,17 @@
+{
+ "locale": "en",
+ "area": "env_karsk",
+ "strings": {
+  "obs.karsk.stove.prompt": "Look at the fire barrel",
+  "obs.karsk.stove.text": "Old sleepers in a tar drum. Burns badly, warms all the same – the men talk about the night shift, not about the wagons.",
+  "obs.karsk.poster.prompt": "Read the notices",
+  "obs.karsk.poster.text": "New housing blocks by the autumn, the poster promises. The waiting list beside it has been extended in pencil.",
+  "obs.karsk.family.prompt": "Look at the waiting family",
+  "obs.karsk.family.text": "Three generations, four bundles, one wooden crate. They wait the way people wait here: without asking.",
+  "doc.karsk.signal_board.title": "Practice box – unpowered training model",
+  "doc.karsk.seal.alt": "Lead seal on the wagon door: station stamp struck twice, beneath it, scraped off, “C-17”. Scratched beside it: square, circle, triangle.",
+  "doc.karsk.timetable.alt": "Working timetable: three rebooked wagon lines with no destination station, marked in the margin with square, circle and triangle – from top to bottom.",
+  "doc.karsk.ledger.alt": "Freight ledger: a new line for wagon 24-311 with a red “C-17” stamp. The consignee has been blacked out.",
+  "doc.karsk.signal_board.alt": "Unpowered practice box with three empty card slots, a dead indicator lamp and a sample diagram. Not part of a real signalling system."
+ }
+}

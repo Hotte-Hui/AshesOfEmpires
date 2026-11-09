@@ -1,0 +1,25 @@
+{
+ "locale": "en",
+ "area": "c4p2_characters",
+ "strings": {
+  "char.maria.name": "Maria Gorelowa",
+  "char.maria.role": "Returnee from Veltrava, Column 4",
+  "char.hanna.name": "Hanna Adler",
+  "char.hanna.role": "Teacher, Konrad’s sister",
+  "char.wendt.name": "Kommissar Wendt",
+  "char.wendt.role": "State Police",
+  "char.blockwart.name": "Erwin Kuhnert",
+  "char.blockwart.role": "Caretaker and block warden, Kolonnenstraße 14",
+  "char.guard_karsk.name": "Guard",
+  "char.press_officer.name": "Press Minder",
+  "char.stapo_civil.name": "Man at the News-stand",
+  "sys.journal.person.maria.name": "Maria Gorelowa",
+  "sys.journal.person.maria.note": "Came back from Veltrava in January in wagon 24 318. Shovels coal in Column 4 until the screening is done. Scratched “We are fourteen” into the wall.",
+  "sys.journal.person.hanna.name": "Hanna Adler",
+  "sys.journal.person.hanna.note": "My sister. Teacher, Kolonnenstraße 14, side wing. Lets Ilse into the classroom before lessons and doesn’t ask who is looking for her.",
+  "sys.journal.person.wendt.name": "Kommissar Ludwig Wendt",
+  "sys.journal.person.wendt.note": "State Police. Signed the pneumatic-post slip. Speaks softly, forgets nothing and is always out and about on Tuesdays.",
+  "sys.journal.person.blockwart.name": "Erwin Kuhnert",
+  "sys.journal.person.blockwart.note": "Caretaker and block warden in Hanna’s building. Keeps the household card index, one card per flat. Order is his word for fear."
+ }
+}

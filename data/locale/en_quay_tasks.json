@@ -1,0 +1,33 @@
+{
+ "locale": "en",
+ "area": "quay_tasks",
+ "strings": {
+  "task.veltrava.blanket.title": "A blanket for Frau Brunner",
+  "task.veltrava.blanket.summary": "Frau Brunner ran to the fire in her nightdress and is freezing by the fire engine. She would never ask for anything.",
+  "task.veltrava.blanket.hint.ask": "Talk to Frau Brunner by the fire engine again.",
+  "task.veltrava.blanket.hint.locker": "The fire engine carries blankets – in the equipment locker behind the cab.",
+  "task.veltrava.blanket.hint.return": "Take the blanket to Frau Brunner.",
+  "explore.veltrava.task.blanket.ask.title": "The slippers",
+  "explore.veltrava.task.blanket.ask.prompt": "Talk to Frau Brunner",
+  "explore.veltrava.task.blanket.ask.text": "Frau Brunner is freezing in a coat over her nightdress and won’t take anything from the fire brigade. There are blankets on the fire engine.",
+  "explore.veltrava.task.blanket.ask.l1": "I’m all right. It’s only the shock. And the slippers.",
+  "explore.veltrava.task.blanket.ask.l2": "Your hands are blue, Frau Brunner.",
+  "explore.veltrava.task.blanket.ask.l3": "The fire brigade needs everything it has tonight. I don’t want to take anything from anyone.",
+  "explore.veltrava.task.blanket.ask.l4": "There are blankets on the fire engine. They’re freezing there too, and for no reason.",
+  "explore.veltrava.task.blanket.ask.l5": "And you? You’re black up to the eyes.",
+  "explore.veltrava.task.blanket.ask.l6": "Soot doesn’t keep you warm. I’ll be right back.",
+  "explore.veltrava.task.blanket.locker.title": "The equipment locker",
+  "explore.veltrava.task.blanket.locker.prompt": "Open the equipment locker",
+  "explore.veltrava.task.blanket.locker.text": "In the equipment locker behind the cab: branch pipes, couplings, an axe and, on top, neatly folded, six grey wool blankets stamped ‘Veltrava Fire Brigade’. On the inside of the frame, a list: ‘To be taken only against signature’. I write: one wool blanket, 02:25, Morozov, for Frau Brunner. The engineer at the pump looks over, nods and goes on turning the valve.",
+  "explore.veltrava.task.blanket.return.title": "For Frau Brunner",
+  "explore.veltrava.task.blanket.return.prompt": "Give Frau Brunner the blanket",
+  "explore.veltrava.task.blanket.return.text": "Frau Brunner has a fire-brigade blanket round her shoulders, signed for by Morozov. She is staying until the fire is out.",
+  "explore.veltrava.task.blanket.return.l1": "A blanket? For me? Herr Morozov, that belongs to the fire brigade.",
+  "explore.veltrava.task.blanket.return.l2": "I signed for it. One wool blanket, two twenty-five. They’ll get it back.",
+  "explore.veltrava.task.blanket.return.l3": "You wrote a receipt. For a blanket. Tonight of all nights.",
+  "explore.veltrava.task.blanket.return.l4": "Where I work, nothing moves without a waybill. Not even a blanket.",
+  "explore.veltrava.task.blanket.return.l5": "For thirty years I typed lists. Names, wagons, crates. Not one of them ever said ‘for Frau Brunner’.",
+  "explore.veltrava.task.blanket.return.l6": "Now one does. At the fire brigade. That counts too.",
+  "explore.veltrava.task.blanket.return.l7": "Then I’ll stay until they’ve put it out. Somebody has to write down what’s left."
+ }
+}

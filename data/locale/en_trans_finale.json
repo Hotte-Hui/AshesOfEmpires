@@ -1,0 +1,10 @@
+{
+ "locale": "en",
+ "area": "trans_finale",
+ "strings": {
+  "cine.finale.caption_berlin": "Berlin, 23:47",
+  "cine.finale.caption_karsk": "Karsk, 01:47 Moscow time – the same minute",
+  "cine.finale.line1": "Two distant places. The same code.",
+  "cine.finale.final": "A peace whose files do not tally."
+ }
+}

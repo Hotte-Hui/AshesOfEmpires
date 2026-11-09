@@ -1,0 +1,9 @@
+{
+ "locale": "en",
+ "area": "env_veltrava_station",
+ "strings": {
+  "doc.veltrava.weighbill.alt": "Weighbill in the brass frame of courier van 4: load “Files, Annex C”, weight 2410 kg, seal C-17/44 with the Commission’s round counter-seal. Consignee: Secretariat of the Commission.",
+  "doc.veltrava.departures.alt": "Split-flap departures board: four day trains, and below them a freshly inserted line – 23:40, Kordon-17, platform 5, train type: empty stock.",
+  "doc.veltrava.travel_order.alt": "Travel order on grey official paper, stamps and signatures. An addition typed in afterwards reads “Escort, courier van 4” – in the Russian with the note freight, in the German with the note files."
+ }
+}

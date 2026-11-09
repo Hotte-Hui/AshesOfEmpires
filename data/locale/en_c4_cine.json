@@ -1,0 +1,16 @@
+{
+ "locale": "en",
+ "area": "c4_cine",
+ "strings": {
+  "ui.memories.film.LS_C4_Homeward": "Homeward",
+  "ui.memories.film_sub.LS_C4_Homeward": "Two trains, each with its half",
+  "ui.memories.film.LS_C4_Number": "Forty-Five",
+  "ui.memories.film_sub.LS_C4_Number": "The same number in Karsk and in Berlin",
+  "ui.memories.film.LS_C4_Card": "Card No. 0417",
+  "ui.memories.film_sub.LS_C4_Card": "Two halves, one perforation",
+  "ui.memories.film.LS_C4_Stamp": "Two Stamps",
+  "ui.memories.film_sub.LS_C4_Stamp": "Accept in Karsk, dispatch in Berlin",
+  "ui.memories.film.LS_C4_Voices": "Voices under Concrete",
+  "ui.memories.film_sub.LS_C4_Voices": "Tuesday, 23:40, wagon C-17/45"
+ }
+}

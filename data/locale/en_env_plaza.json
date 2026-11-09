@@ -1,0 +1,23 @@
+{
+ "locale": "en",
+ "area": "env_plaza",
+ "strings": {
+  "env.plaza.name": "Square before the Great Hall",
+  "env.plaza.time": "Parade evening, snowfall",
+  "env.plaza.spot.exit_archive": "Street to the archive",
+  "env.plaza.spot.tribune": "Grandstand",
+  "env.plaza.spot.loudspeaker": "Loudspeaker mast",
+  "env.plaza.spot.vendor": "Chestnut seller",
+  "env.plaza.spot.family_door": "Sealed front door",
+  "env.plaza.spot.barrier": "Barrier",
+  "env.plaza.spot.guard": "Sentry",
+  "env.plaza.spot.poster": "Poster column",
+  "env.plaza.spot.tank": "Parked tank",
+  "env.plaza.spot.tram_stop": "Tram stop",
+  "env.plaza.spot.children": "Children on the crate",
+  "env.plaza.spot.banner": "Flagpole",
+  "env.plaza.spot.window": "Lit window",
+  "env.plaza.spot.rubble": "Rubble of the cleared block",
+  "env.plaza.spot.photographer": "Press photographer"
+ }
+}

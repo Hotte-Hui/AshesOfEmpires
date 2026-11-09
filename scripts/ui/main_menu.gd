@@ -67,8 +67,7 @@ func _ready() -> void:
 		b.focus_entered.connect(Kit.ui_sound.bind("move"))
 		_menu.add_child(b)
 		_buttons[e[0]] = b
-	var version := str(ProjectSettings.get_setting("application/config/version", "0.1.0"))
-	_footer = Kit.label(Kit.t("ui.menu.footer", {"version": version}), "ControlHintLabel")
+	_footer = Kit.label(_footer_text(), "ControlHintLabel")
 	_footer.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_footer.offset_left = 144
 	_footer.offset_right = 1144
@@ -76,6 +75,15 @@ func _ready() -> void:
 	_footer.offset_bottom = -42
 	_footer.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	add_child(_footer)
+
+
+func _footer_text() -> String:
+	return Kit.t("ui.menu.footer", {"version": str(ProjectSettings.get_setting("application/config/version", "0.1.0"))})
+
+
+## §12.14 language switch: the plain texts follow by themselves (Loc.retranslate), the footer is formatted.
+func _on_language_changed() -> void:
+	_footer.text = _footer_text()
 
 
 func open() -> void:

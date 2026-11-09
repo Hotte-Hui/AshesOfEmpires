@@ -1,0 +1,9 @@
+{
+ "locale": "en",
+ "area": "feel_r8",
+ "note": "Runde 8, Feinschliff (feel_r8): Gründe, warum sich eine Erinnerung aus dem Hauptmenü nicht öffnen lässt (die Fehler der Spielstandprüfung kommen aus de_system.json, sys.save.err.*).",
+ "strings": {
+  "ui.memories.broken_reason.missing": "No save was recorded for this place.",
+  "ui.memories.broken_reason.unknown": "The record of this place is incomplete."
+ }
+}

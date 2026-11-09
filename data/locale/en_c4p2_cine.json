@@ -1,0 +1,16 @@
+{
+ "locale": "en",
+ "area": "c4p2_cine",
+ "strings": {
+  "ui.memories.film.LS_C4P2_Depot": "Column 4",
+  "ui.memories.film_sub.LS_C4P2_Depot": "The Karsk locomotive depot before daybreak",
+  "ui.memories.film.LS_C4P2_Steam": "A Jet of Steam",
+  "ui.memories.film_sub.LS_C4P2_Steam": "From the coal bunker to the hall of the Ostbahnhof",
+  "ui.memories.film.LS_C4P2_Book": "Page Two Hundred and Twelve",
+  "ui.memories.film_sub.LS_C4P2_Book": "A guidebook closes in Berlin and opens in Karsk",
+  "ui.memories.film.LS_C4P2_Express": "The Red Light",
+  "ui.memories.film_sub.LS_C4P2_Express": "The West Express leaves, the site lamp burns",
+  "ui.memories.film.LS_C4P2_Clock": "23:40",
+  "ui.memories.film_sub.LS_C4P2_Clock": "Berlin, Kordon-17 and Karsk on one clock"
+ }
+}

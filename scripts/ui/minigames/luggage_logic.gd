@@ -9,6 +9,7 @@ extends RefCounted
 ## suitcase of presents (23.6 kg — too heavy, the mother repacks), the suitcase again (19.8 kg) and the parcel of what
 ## came out (3.8 kg) — the same 23.6 kg in a form the Corridor allows. Weights in hectograms (0.1 kg) as integers.
 
+const UIKit := preload("res://scripts/ui/ui_kit.gd")
 const ITEMS := [
 	{"key": "mg.luggage.item.1", "hg": 236, "limit_hg": 200, "result": "mg.luggage.result.1"},
 	{"key": "mg.luggage.item.2", "hg": 198, "limit_hg": 200, "result": "mg.luggage.result.2"},
@@ -146,6 +147,6 @@ func next_move() -> Dictionary:
 	return {"beam": "read", "dir": 0, "steps": 0}
 
 
-## „23,6 kg“ — the German reading of hectograms.
+## „23,6 kg“ — the reading of hectograms, with the decimal mark of the current language (English 23.6 kg).
 static func kg_text(hg: int) -> String:
-	return "%d,%d kg" % [floori(float(hg) / 10.0), hg % 10]
+	return "%s kg" % UIKit.decimal(float(hg) / 10.0)

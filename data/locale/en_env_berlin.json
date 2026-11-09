@@ -1,0 +1,26 @@
+{
+ "locale": "en",
+ "area": "env_berlin",
+ "note": "Bauarchiv M1 (Runde 2): Vorhalle mit Pförtnerloge, Lesesaal & Bibliothek, Zeichenbüro, Archivhalle, Lichtpausraum, Ausgabe. Optionale Beobachtungen in Konrads Stimme (genau, längere Sätze, anfangs beschönigend). Hotspot-Ids und Raumgrenzen: assets/environments/berlin_archive/scene.json. Die exp_*-Texte gehören dem Bereich berlin-explore.",
+ "strings": {
+  "obs.berlin.window.prompt": "Look out of the window",
+  "obs.berlin.window.text": "Above the snow-covered roofs of the tenements, the dome of the Great Hall stands in the haze, so far off that it looks more like a change in the weather than a building. In the department they say every line we draw contributes to it. Across the street, light burns in only a few windows; the other flats count, as the notices put it, as vacated. The flag on the façade has hung there since the last holiday. After a few days you stop seeing it, just as you stop seeing the gutters.",
+  "obs.berlin.notice.prompt": "Read the notice",
+  "obs.berlin.notice.text": "A typewritten list of names, house numbers and floors, each line followed by the word “relocated” and a date from this autumn. The column for the new address has been left empty throughout – presumably it will be filled in once the responsible office has completed its records. I know two of the addresses; they lie exactly where the new axis runs on our plans.",
+  "obs.berlin.photo.prompt": "Look at the photo",
+  "obs.berlin.photo.text": "The department photograph from the summer of 1961, taken in front of the model of the Hall, everyone in shirtsleeves. Someone has scratched out Herr Brandt’s face with a pin, carefully, until only white paper was left. His drawing table has been covered since the spring. We were told he had been transferred, and, like everyone else, I did not ask where.",
+  "hs.berlin.plan_a.prompt": "Look at the drawing board",
+  "hs.berlin.plan_b.prompt": "Search the plan chest",
+  "hs.berlin.overlay_table.prompt": "Overlay the plans on the light table",
+  "hs.berlin.emil.prompt": "Talk to Emil",
+  "env.berlin.building": "General Building Office – Building Archive, Second Floor",
+  "env.berlin.room.hall": "Entrance Hall",
+  "env.berlin.room.library": "Reading Room and Library",
+  "env.berlin.room.office": "Drawing Office",
+  "env.berlin.room.archive": "Archive Hall",
+  "env.berlin.room.lightroom": "Blueprint Room",
+  "env.berlin.room.counter": "Issue Desk",
+  "env.berlin.sign.stairwell": "Stairwell",
+  "env.berlin.sign.magazin": "Stacks – No Entry"
+ }
+}

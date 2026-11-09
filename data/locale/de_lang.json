@@ -1,0 +1,9 @@
+{
+ "locale": "de-DE",
+ "area": "lang",
+ "note": "Sprachwahl (TECHNICAL_ARCHITECTURE §12.14): die Zeile „Sprache / Language“ ganz oben im Reiter Anzeige des Einstellungsmenüs. Die Sprachen selbst stehen in ihrer eigenen Sprache in Loc.LANGUAGES (scripts/story/loc.gd), nicht hier.",
+ "strings": {
+  "ui.settings.language": "Sprache / Language",
+  "ui.settings.desc.language": "Sprache aller Texte, Menüs und Untertitel. Wirkt sofort."
+ }
+}

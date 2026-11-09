@@ -35,6 +35,14 @@ Berliner Bauarchiv. Beide stoßen unabhängig voneinander auf dieselbe rätselha
 Alle Tasten lassen sich unter *Einstellungen → Steuerung* neu belegen. Dort gibt es auch Untertitel,
 Textgröße, Textgeschwindigkeit, hohen Kontrast, reduzierte Bewegung und alle Lautstärken.
 
+### Sprache / Language
+Das Spiel ist auf **Deutsch** und **Englisch** spielbar. Beim ersten Start spricht es Englisch, außer Windows ist auf
+Deutsch eingestellt. Umstellen jederzeit unter *Einstellungen → Anzeige → Sprache / Language* (Maus, Tastatur oder
+Controller; wirkt sofort und bleibt gespeichert). Bilder mit eingezeichnetem deutschem Text bleiben vorerst deutsch.
+
+*The game can be played in German and English. On first launch it starts in English unless Windows is set to German;
+switch any time under Settings → Display → Language / Sprache (applies at once and is remembered).*
+
 ## Inhalt der spielbaren Fassung (Kapitel 1–4)
 Ein kurzer Prolog (etwa eine Minute, überspringbar) erzählt vor Kapitel 1, wie die Welt von 1964 entstanden ist.
 
@@ -104,6 +112,9 @@ abschalten; dann zeigt das Spiel fiktive Embleme.
   - Komplettdurchlauf über die Story-API: `godot --headless --path . -- --autoplay=share_with_irina,preserve_evidence,… (8 Entscheidungen) [--autoplay-skip] [--autoplay-explore]`
   - Komplettdurchlauf nur über simulierte Tastendrücke: `godot --path . -- --inputplay=keep_private,request_explanation [--inputplay-skip] [--inputplay-explore] [--inputplay-shots=ORDNER]`
   - `--autoplay-explore` / `--inputplay-explore` besuchen zusätzlich jede Entdeckung und jedes Nebengespräch.
+  - Tests, Treiber und Prüfläufe laufen immer auf Deutsch; `-- --lang=en` erzwingt Englisch für einen Lauf (wird nie
+    gespeichert). Übersetzungen: `data/locale/en_<name>.json` neben jeder `de_<name>.json`, die Story-Texte in
+    `data/locale/en_v3.json`; fehlt ein englischer Text, zeigt das Spiel den deutschen (TECHNICAL_ARCHITECTURE §12.14).
 - Assets neu erzeugen (deterministisch): `py -3 -P tools/pixelgen/env_karsk.py`, `env_berlin.py`, `characters.py`,
   `gen_ui.py`, `gen_great_hall.py`, `icon.py`; Audio: `py -3 -P tools/audiogen/build_all.py`.
 - Status, Testbericht und nächste Schritte: `documentation/DEVELOPMENT_STATUS.md`, `TEST_REPORT.md`, `NEXT_STEPS.md`.

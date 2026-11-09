@@ -10,6 +10,8 @@ extends Control
 ## * modal stack: push_modal()/pop_modal(); the top modal gets input first (in _input, before the GUI);
 ##   pausing modals set get_tree().paused (all UI runs with PROCESS_MODE_ALWAYS)
 ## * applies theme.tres / theme_hc.tres and live text scaling from Settings
+## * language switch (§12.14): Loc re-translates every plain text itself; UIRoot then calls _on_language_changed() on
+##   every panel that has it (formatted lines) and refreshes the HUD
 ## * keeps the HUD in sync with Story signals (objective tracker, journal toasts), tells the HUD which
 ##   interactable is focused (Game.focus_changed -> found / not-yet-found prompt marker) and toasts real-history
 ##   cards that were unlocked without being shown (e.g. by a chat; never celebratory, kind "history")
@@ -74,6 +76,9 @@ func _ready() -> void:
 	var s := Kit.svc("Settings")
 	if s != null and s.has_signal("changed"):
 		s.changed.connect(_on_setting_changed)
+	var loc := Kit.svc("Loc")
+	if loc != null and loc.has_signal("language_changed"):
+		loc.language_changed.connect(_on_loc_language_changed)
 	connect_story()
 	connect_explore()
 	_connect_game.call_deferred()
@@ -408,6 +413,13 @@ func _on_setting_changed(key: String, _value) -> void:
 				subtitles.hide_subtitle()
 		"reduced_motion":
 			propagate_call("_on_reduced_motion_changed")
+
+
+## §12.14: the plain texts are already in the new language (Loc.retranslate); the panels redo their formatted lines.
+func _on_loc_language_changed(_language: String) -> void:
+	propagate_call("_on_language_changed")
+	if hud.has_method("refresh"):
+		hud.refresh()
 
 
 func _on_objective_completed(oid: String) -> void:

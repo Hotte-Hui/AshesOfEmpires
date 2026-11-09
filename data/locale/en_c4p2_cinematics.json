@@ -1,0 +1,22 @@
+{
+ "locale": "en",
+ "area": "c4p2_cinematics",
+ "strings": {
+  "cin.c4p2.depot.place": "Karsk, Monday, 17 February 1964, 06:10.",
+  "cin.c4p2.steam.alexei": "They’re rigging a tarpaulin for tomorrow. So the Swede sees the coal, but not who shovels it.",
+  "cin.c4p2.steam.berlin": "Berlin, Ostbahnhof, 20:30.",
+  "cin.c4p2.book.konrad": "Page two hundred and twelve. That is all the Russian I know.",
+  "cin.c4p2.book.karsk": "Karsk, Tuesday, 17:30.",
+  "cin.c4p2.express.alexei_publish": "Tomorrow Stockholm will know what happens at Kordon-17 at 23:40. And Archipov will know who told.",
+  "cin.c4p2.express.alexei_protect": "No witness at Door East. But tonight Lev sleeps in his own bed.",
+  "cin.c4p2.express.berlin": "Berlin, Kolonnenstraße, 22:10.",
+  "cin.c4p2.clock.berlin": "Berlin, 23:40.",
+  "cin.c4p2.clock.konrad_name": "Ilse sleeps among lasts and leather. Hanna knows now whose name I gave.",
+  "cin.c4p2.clock.konrad_protect": "Ilse sleeps among lasts and leather. Wendt knows my name now.",
+  "cin.c4p2.clock.kordon": "Kordon-17, 23:40 Corridor time.",
+  "cin.c4p2.clock.publish": "Hand-over suspended. Not cancelled.",
+  "cin.c4p2.clock.protect": "The wagon runs. The card stays with me until nobody has to pay for it any more.",
+  "cin.c4p2.clock.karsk": "Karsk, 01:40.",
+  "cin.c4p2.clock.end": "End of Chapter Four."
+ }
+}

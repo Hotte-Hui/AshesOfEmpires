@@ -1,0 +1,23 @@
+{
+ "locale": "en",
+ "area": "prologue",
+ "strings": {
+  "prologue.p1.europe": "Europe, winter 1964.",
+  "prologue.p1.war": "The war that began in 1939 ended without a victor.",
+  "prologue.p1.line": "In 1953 the front froze into a line running across Eastern Europe.",
+  "prologue.p1.armistice": "An armistice – not a peace.",
+  "prologue.p2.empires": "West of the Line, the German Reich; east of it, the Soviet Union – two dictatorships.",
+  "prologue.p2.veltrava": "On the Line lies the Free City of Veltrava – neutral, full of exiles and spies.",
+  "prologue.p2.accord": "In 1963 the Corridor Treaty was signed there: three rail routes across the Line.",
+  "prologue.p2.trains": "Since then, trains have been running again – with grain, coal and medicine.",
+  "prologue.p3.papers": "Every load travels with waybills, stamps and index cards.",
+  "prologue.p3.c17": "Some of them bear the same contract number: C-17.",
+  "prologue.p4.konrad": "In Berlin, Konrad Adler draws building plans for the new capital.",
+  "prologue.p4.neutral": "Drawings, he believes, are neutral.",
+  "prologue.p5.alexei": "In Karsk, Alexei Morozov repairs signals and points.",
+  "prologue.p5.politics": "Politics, he says, is other people’s business.",
+  "prologue.p5.strangers": "The two of them have not yet met.",
+  "ui.memories.film.LS_Prologue": "Prologue: Europe, Winter 1964",
+  "ui.memories.film_sub.LS_Prologue": "The Line, the Corridor Treaty, two cities · before Chapter 1"
+ }
+}

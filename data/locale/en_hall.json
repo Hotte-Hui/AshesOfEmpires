@@ -1,0 +1,16 @@
+{
+ "locale": "en",
+ "area": "great_hall",
+ "strings": {
+  "hall.cue.archive_room": "[Soft rustling of paper. Outside, snow is falling.]",
+  "hall.cue.tram_bell": "[A tram bell. The tram pulls away.]",
+  "hall.cue.loudspeaker_1": "LOUDSPEAKER: “Attention. The resettlement of residents from grid squares Süd 7 to 12 is proceeding according to plan.”",
+  "hall.cue.pigeons": "[Pigeons take off in alarm.]",
+  "hall.cue.patrol": "[The steady marching steps of a patrol crossing the square.]",
+  "hall.cue.loudspeaker_2": "LOUDSPEAKER: “The capital thanks its citizens for their understanding.”",
+  "hall.cue.window_closes": "[Above the family, a neighbour draws the curtains. The light goes out. The loudspeakers keep talking.]",
+  "hall.ad.h1": "From the drawing table in the building archive, the view glides out through the open window and sinks down over the snowy street. Flags hang from the façades, a car drives towards the square, a man buys a newspaper at a kiosk, smoke rises from the chimneys.",
+  "hall.ad.h2": "At the end of the street the Great Hall dominates the horizon: a black dome against a glowing evening sky, crowned by the eagle above the globe, flags on the portico, cranes at the wings. In the foreground a family with suitcases waits outside a sealed flat door with a flag hanging above it. The view lingers on the square. Passers-by walk on without looking. A queue waits at the stop, the tram pulls away, a street sweeper sweeps snow, a sentry stands beneath a loudspeaker mast, a patrol marches across the square.",
+  "hall.ad.h3": "The camera slowly moves closer, dips a little and looks up the dome to the eagle on the lantern. Above the family a neighbour comes to the window and draws the curtains; the light goes out. The image rests on the Hall for a long time while the patrol marches on across the square. Fade to black."
+ }
+}

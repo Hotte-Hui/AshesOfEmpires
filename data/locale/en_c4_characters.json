@@ -1,0 +1,18 @@
+{
+ "locale": "en",
+ "area": "c4_characters",
+ "strings": {
+  "char.marta.name": "Marta Vogel",
+  "char.marta.role": "Tram driver, Route 74",
+  "char.lev.name": "Lev Sokolov",
+  "char.lev.role": "Archivist at the Karsk goods office",
+  "char.registrar.name": "Registrar Fengler",
+  "char.registrar.role": "Enquiries and Verification, South Branch",
+  "sys.journal.person.lev.name": "Lev Sokolov",
+  "sys.journal.person.lev.note": "Archivist at the Karsk goods office. Keeps carbons, even of pages that officially don’t exist. Wants to be on no paper.",
+  "sys.journal.person.marta.name": "Marta Vogel",
+  "sys.journal.person.marta.note": "Drives the first tram on Route 74 round the cleared blocks. Sees who is taken away at night – and says so only when she must.",
+  "sys.journal.person.registrar.name": "Registrar Fengler",
+  "sys.journal.person.registrar.note": "Enquiries and Verification at the South Branch. Releases files only in exchange for a name. There must be order."
+ }
+}

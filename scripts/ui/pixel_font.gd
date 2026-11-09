@@ -2,7 +2,8 @@ extends RefCounted
 ## Own 5x7 pixel capitals for the boot cards (TECHNICAL_ARCHITECTURE §12.13, round 11): texts come from locale keys
 ## (the studio name is renamable in data/locale/de_splash.json) and are lettered at runtime — no font file, no
 ## third-party glyphs. Umlauts follow tools/pixelgen/pixfont_umlauts.py: the dots sit one row ABOVE the cap line and
-## the letter is one row shorter, so every line is 8 rows (row 0 = umlaut dots). ß becomes SS.
+## the letter is one row shorter, so every line is 8 rows (row 0 = umlaut dots). ß becomes SS. Typographic marks of both
+## languages (§12.14): „ “ ” ‚ ‘ ’ " – — … next to the plain - . , ! ? ' : · & / +.
 ## render(text, opts) -> Image, or null when a character has no glyph (the caller then falls back to a Label).
 ## opts: smooth (Scale2x: twice the size, rounded diagonals), bold (+1 px verticals), tracking (px between letters),
 ##       ramp (Array of Color, top → bottom), outline (Color), shadow (Color, drawn 1 px down-right), bevel (bool).
@@ -60,6 +61,16 @@ const GLYPHS := {
 	"/": ["....#", "....#", "...#.", "..#..", ".#...", "#....", "#...."],
 	"+": [".....", "..#..", "..#..", "#####", "..#..", "..#..", "....."],
 	" ": ["...", "...", "...", "...", "...", "...", "..."],
+	"\"": ["#.#", "#.#", "...", "...", "...", "...", "..."],
+	"‘": [".#", "#.", "##", "..", "..", "..", ".."],
+	"’": ["##", ".#", "#.", "..", "..", "..", ".."],
+	"‚": ["..", "..", "..", "..", "##", ".#", "#."],
+	"“": [".#..#", "#..#.", "##.##", ".....", ".....", ".....", "....."],
+	"”": ["##.##", ".#..#", "#..#.", ".....", ".....", ".....", "....."],
+	"„": [".....", ".....", ".....", ".....", "##.##", ".#..#", "#..#."],
+	"–": ["....", "....", "....", "####", "....", "....", "...."],
+	"—": ["......", "......", "......", "######", "......", "......", "......"],
+	"…": [".....", ".....", ".....", ".....", ".....", ".....", "#.#.#"],
 }
 
 

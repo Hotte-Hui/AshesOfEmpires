@@ -1,8 +1,13 @@
 extends Node
 ## Player options + input map (rebindable). Persisted in user://settings.cfg.
+## "language" (TECHNICAL_ARCHITECTURE §12.14): the first launch picks English unless the OS speaks German and keeps that
+## choice in the file; automated runs always play German and `-- --lang=en` forces English for checks — both only for
+## that run, never written (forced_language). Changing it switches Loc live (apply).
 signal changed(key: String, value)
 
+const LocScript := preload("res://scripts/story/loc.gd")
 const PATH := "user://settings.cfg"
+const LANG_ARG := "--lang="
 const DEFAULTS := {
 	"fullscreen": true, "vsync": true,
 	"master_volume": 0.9, "music_volume": 0.75, "ambience_volume": 0.85, "sfx_volume": 0.9, "ui_volume": 0.8,
@@ -14,6 +19,7 @@ const DEFAULTS := {
 	"historical_symbols": true,   # real regime insignia (swastika, hammer & sickle) in a critical, historical-
 	                              # artistic context (StGB §86 Abs. 4); off = fictional emblems (see Symbols.pick)
 	"demo_notice_seen": false,    # §12.13: the demo letter was confirmed once (main menu shows it on first opening)
+	"language": "de",             # §12.14: "de" | "en" (Loc.LANGUAGES); a file without it gets default_language()
 }
 ## action -> default keys (physical keycodes) + joypad buttons
 const ACTIONS := {
@@ -35,19 +41,52 @@ var values: Dictionary = DEFAULTS.duplicate(true)
 var path := PATH
 var _runtime_overrides: Dictionary = {}   # forced for this run only (CLI), never written to disk
 var _persisted: Dictionary = {}           # on-disk values of overridden keys
+## true when load_settings() found no language in the file and picked one from the OS locale (first launch)
+var language_picked := false
 
 func _ready() -> void:
 	_build_input_map()
 	load_settings()
-	# Test/capture override, never persisted: `-- --symbols=0|1` forces the historical-insignia setting for this
-	# run only (lets several tools capture both variants without touching the player's settings file).
-	for a in OS.get_cmdline_user_args():
+	apply_run_overrides(OS.get_cmdline_user_args(), OS.get_cmdline_args(), DisplayServer.get_name())
+	apply_all()
+
+## The values this run forces (never persisted) — call after load_settings():
+## * `-- --symbols=0|1` forces the historical-insignia setting for this run only (lets several tools capture both
+##   variants without touching the player's settings file);
+## * the language of an automated run or of `--lang=xx` (forced_language). A player's first launch instead writes
+##   the language picked from the OS locale (only that key).
+func apply_run_overrides(user_args: PackedStringArray, engine_args: PackedStringArray, display: String) -> void:
+	for a in user_args:
 		if a.begins_with("--symbols="):
 			_runtime_overrides["historical_symbols"] = a.get_slice("=", 1) != "0"
+	var forced := forced_language(user_args, engine_args, display)
+	if forced != "":
+		_runtime_overrides["language"] = forced
 	for k in _runtime_overrides:
-		_persisted[k] = values.get(k, DEFAULTS.get(k))
+		if not (k == "language" and language_picked):   # an automated run never writes a first-launch pick
+			_persisted[k] = values.get(k, DEFAULTS.get(k))
 		values[k] = _runtime_overrides[k]
-	apply_all()
+	if language_picked and not _runtime_overrides.has("language"):
+		_write_key("language")   # a player's first launch: the picked language stays from now on
+
+## First launch: English unless the OS locale is German.
+static func default_language(os_language: String) -> String:
+	return "de" if os_language.to_lower().begins_with("de") else "en"
+
+## The language forced for this run ("" = the player's setting): `-- --lang=xx` (checks; an unknown code = German);
+## German for every other automated run — any other user argument (drivers, tools, --splash-shots), a `--script`
+## main loop, the headless display or a directly started scene (visual harnesses).
+static func forced_language(user_args: PackedStringArray, engine_args: PackedStringArray, display: String) -> String:
+	for a in user_args:
+		if a.begins_with(LANG_ARG):
+			var l := a.substr(LANG_ARG.length()).strip_edges().to_lower()
+			return l if LocScript.LANGUAGES.has(l) else LocScript.SOURCE
+	if display == "headless" or not user_args.is_empty():
+		return LocScript.SOURCE
+	for a in engine_args:
+		if a in ["--script", "-s", "--headless"] or a.get_extension() in ["tscn", "scn"]:
+			return LocScript.SOURCE
+	return ""
 
 func _build_input_map() -> void:
 	for action in ACTIONS:
@@ -111,6 +150,12 @@ func apply(key: String) -> void:
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if values[key] else DisplayServer.WINDOW_MODE_WINDOWED)
 		"vsync":
 			DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if values[key] else DisplayServer.VSYNC_DISABLED)
+		"language":
+			# only the autoload drives the live language (test instances never switch it); at boot Loc reads it itself
+			if is_inside_tree() and get_tree().root.get_node_or_null("Settings") == self:
+				var loc := get_tree().root.get_node_or_null("Loc")
+				if loc != null and loc.has_method("set_language"):
+					loc.set_language(str(values[key]))
 		_:
 			if key.ends_with("_volume"):
 				var short := key.trim_suffix("_volume")
@@ -124,15 +169,34 @@ func apply(key: String) -> void:
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	for k in values:
-		# a CLI-forced value (e.g. --symbols=0) is never persisted; the player's own value stays on disk
-		cfg.set_value("settings", k, _persisted[k] if _runtime_overrides.has(k) and _persisted.has(k) else values[k])
+		# a CLI-forced value (e.g. --symbols=0, --lang=en, German in a driver run) is never persisted; the player's own
+		# value stays on disk (none yet: the key is left out)
+		if _runtime_overrides.has(k):
+			if _persisted.has(k):
+				cfg.set_value("settings", k, _persisted[k])
+			continue
+		cfg.set_value("settings", k, values[k])
+	cfg.save(path)
+
+## Writes one key into the file and keeps everything else in it as it is.
+func _write_key(key: String) -> void:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("settings", key, values[key])
 	cfg.save(path)
 
 func load_settings() -> void:
 	var cfg := ConfigFile.new()
-	if cfg.load(path) != OK:
+	var loaded := cfg.load(path) == OK
+	language_picked = not (loaded and cfg.has_section_key("settings", "language")
+		and LocScript.LANGUAGES.has(str(cfg.get_value("settings", "language"))))
+	if language_picked:
+		values["language"] = default_language(OS.get_locale_language())
+	if not loaded:
 		return
 	for k in cfg.get_section_keys("settings"):
+		if k == "language" and language_picked:
+			continue
 		values[k] = cfg.get_value("settings", k)
 	for k in values.keys():
 		if str(k).begins_with("bind_"):

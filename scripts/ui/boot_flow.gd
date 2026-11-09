@@ -6,10 +6,12 @@ extends RefCounted
 ## Every automated run boots exactly as before: any user argument after `--` (drivers and tools: --autoplay,
 ## --inputplay, --capture, --cinematic=none, --scene, --memory-demo, …), a `--script` main loop, the headless display,
 ## or a Main that is not the startup scene (visual harnesses instance it as a child). The one exception is
-## `--splash-shots=DIR`: the windowed check run of this very sequence (scripts/ui/dev/boot_shots.gd).
+## `--splash-shots=DIR`: the windowed check run of this very sequence (scripts/ui/dev/boot_shots.gd). `--lang=xx`
+## (English checks, §12.14) changes only the language, never this decision.
 
 const Kit := preload("res://scripts/ui/ui_kit.gd")
 const SHOTS_ARG := "--splash-shots="
+const LANG_ARG := "--lang="
 const NOTICE_KEY := "demo_notice_seen"
 const ENGINE_ARGS_OFF := ["--script", "-s", "--headless"]
 
@@ -28,7 +30,7 @@ static func is_player_launch(user_args: PackedStringArray, engine_args: PackedSt
 		if a in ENGINE_ARGS_OFF:
 			return false
 	for a in user_args:
-		if not a.begins_with(SHOTS_ARG):
+		if not (a.begins_with(SHOTS_ARG) or a.begins_with(LANG_ARG)):
 			return false
 	return true
 

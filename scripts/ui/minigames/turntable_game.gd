@@ -269,12 +269,12 @@ func pull() -> void:
 
 static func _cm_text(cm: float) -> String:
 	if cm >= 100.0:
-		return ("%.1f m" % (cm / 100.0)).replace(".", ",")
+		return Kit.decimal(cm / 100.0) + " m"
 	return "%d cm" % int(round(cm))
 
 
 static func _deg_text(d: float) -> String:
-	return ("%.1f" % d).replace(".", ",")
+	return Kit.decimal(d)
 
 
 # ================================================================ hints

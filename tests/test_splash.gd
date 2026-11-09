@@ -351,16 +351,16 @@ func _lettering() -> bool:
 	for key in ["splash.studio", "splash.made_with", "splash.engine"]:
 		kit.ok(UKit.has_key(key), key + " exists")
 		kit.ok(PixelFont.supports(UKit.t(key)), key + " can be lettered in pixel capitals")
-	kit.eq(UKit.t("splash.studio"), "HOTTE-HUI", "studio name")
+	kit.eq(UKit.t("splash.studio"), "Midnight Anvil", "studio name")
 	var loc := UKit.svc("Loc")
 	if loc != null and loc.has_method("source_of"):
 		kit.eq(loc.source_of("splash.studio"), "res://data/locale/de_splash.json", "the studio name lives in ONE key")
-	var img := PixelFont.render("HOTTE-HUI", {"tracking": 1})
+	var img := PixelFont.render("Midnight Anvil", {"tracking": 1})
 	kit.ok(img != null and img.get_height() == PixelFont.ROWS + 4, "1x lettering is 8 rows + padding")
 	var big := PixelFont.render("ÄÖÜ GODOT", {"smooth": true, "bold": true, "outline": Color.BLACK, "shadow": Color.BLACK,
 		"ramp": [Color.WHITE, Color.GRAY], "bevel": true})
 	kit.ok(big != null and big.get_height() == PixelFont.ROWS * 2 + 4, "Scale2x lettering doubles the rows")
-	kit.ok(PixelFont.render("HOTTE·HUI ✓", {}) == null, "unknown characters → null (Label fallback)")
+	kit.ok(PixelFont.render("MIDNIGHT·ANVIL ✓", {}) == null, "unknown characters → null (Label fallback)")
 	var s := _splash()
 	var studio: Control = s.get("_studio")
 	var pix := 0

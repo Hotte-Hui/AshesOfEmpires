@@ -686,7 +686,7 @@ func _wrong_text(br: Dictionary) -> String:
 
 func _under_text(sym: String) -> String:
 	var u := under_of(sym)
-	return Kit.t("ui.c4.numbers.bare") if u == "" else "„%s“" % face(u)
+	return Kit.t("ui.c4.numbers.bare") if u == "" else Kit.quoted(face(u))
 
 
 # ================================================================ open / state

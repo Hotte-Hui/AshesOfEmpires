@@ -1,0 +1,9 @@
+{
+ "locale": "en",
+ "area": "lang",
+ "note": "Language choice (TECHNICAL_ARCHITECTURE §12.14): the row „Sprache / Language“ at the top of the display tab of the settings menu. The languages themselves are listed in their own name in Loc.LANGUAGES (scripts/story/loc.gd).",
+ "strings": {
+  "ui.settings.language": "Language / Sprache",
+  "ui.settings.desc.language": "Language of all texts, menus and subtitles. Takes effect immediately."
+ }
+}

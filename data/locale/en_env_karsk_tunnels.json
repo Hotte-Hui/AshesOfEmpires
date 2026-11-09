@@ -1,0 +1,14 @@
+{
+ "locale": "en",
+ "area": "karsk_tunnels",
+ "strings": {
+  "doc.karsk_tunnels_book_gap.alt": "The shelf of freight ledgers: three volumes are missing – January 1964, first to third ten-day period. On the empty shelf, a note in Lev’s hand: “У Л. С. – на просмотр” (With L. S. – for review).",
+  "doc.karsk_tunnels_freight_book.alt": "The freight ledger for January 1964. On 14, 21 and 28 January – C-17/41, /42, /43 to Kordon-17 – the signature in the “Разрешил” (Approved) column has been neatly cut out. Next to it, each time: “Отд. Т – устно” (Dept. T – verbal).",
+  "doc.karsk_tunnels_carbon.alt": "Three carbon copies held up to the lamp. Where the signature is missing above, the pencil has pressed through: “Ю. Архипов, полковник” – Ju. Archipov, Colonel, Transport Department. The same hand three times.",
+  "doc.karsk_tunnels_plan.alt": "Air-raid protection plan from 1941, on linen: service tunnel 3 runs from the cellar of the goods office beneath the entire goods yard and ends at a track with no number. Someone has traced the route in pencil.",
+  "doc.karsk_tunnels_tracks.alt": "Behind the iron door: the rails are worn shiny, the dust beside them trampled. On the sleeper, a drop of red-brown paint, still soft.",
+  "doc.karsk_tunnels_card_ru.alt": "Index card no. 0417, Russian half: “Коваленко Анна Петровна, 1926, Харьков” – taken to Germany in 1942, returnee, onward: Karsk filtration point. Stamp “Принять” (accept). The perforation on the left.",
+  "doc.karsk_tunnels_stencils.alt": "Tin stencils sorted by run: C-17/41 to /44 worn, C-17/45 still wet. Beside them, letters in two alphabets and a bucket of red-brown.",
+  "doc.karsk_tunnels_wagon_inside.alt": "Inside wagon 24 318: two benches of rough planks, a stovepipe hole in the roof, a bucket. Scratched into the planks, names in two scripts and a date – 21.1. Below, smaller: “We are fourteen.”"
+ }
+}

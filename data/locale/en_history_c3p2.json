@@ -1,0 +1,11 @@
+{
+ "locale": "en",
+ "area": "history_c3p2",
+ "note": "Reale-Geschichte-Karten aus Kapitel 3, Teil 2 (data/explore/c3p2_history_reich.json, c3p2_history_soviet.json). Außerhalb der Fiktion, sachlicher dokumentarischer Ton, 450–800 Zeichen, keine Erfolgssprache, jede Karte steht für sich. Faktengeprüft am 06.11.2026 gegen mindestens zwei unabhängige Quellen je Karte; Quellen in den Datendateien.",
+ "strings": {
+  "hist.reich.census_1939.title": "The supplementary card of 1939",
+  "hist.reich.census_1939.text": "On 17 May 1939 the German Reich counted its inhabitants. Every household also filled in a “supplementary card for information on ancestry and education”: for each person it had to be stated whether any of their four grandparents was a “full Jew”. In this way the state registered some 277,500 people of Jewish descent by name, date of birth and address, in order to subject them to the racial laws. The cards later went to the Reich Kinship Office. In 1984, in “Die restlose Erfassung”, Götz Aly and Karl Heinz Roth showed how counting, card indexes and sorting prepared the ground for persecution. The surviving cards are held today in the Federal Archives, where they help to document the names of the persecuted.",
+  "hist.soviet.filtration.title": "Filtration: screening the returnees",
+  "hist.soviet.filtration.text": "After the war millions of Soviet citizens returned from Germany: liberated prisoners of war and the forced labourers deported as “Ostarbeiter”. More than four million passed through the NKVD’s screening and filtration camps in 1945/46. All were presumed guilty; in long interrogations they had to prove they were not traitors. Many civilians were then allowed home; many former soldiers had to go back into the army or into labour battalions. Over 200,000 former prisoners of war were handed over to the NKVD, and many ended up in the Gulag. Until the end of the Soviet Union the returnees were not regarded as victims of the Nazi regime. Only during perestroika did the first of them begin to speak about it publicly."
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "locale": "en",
+ "area": "splash",
+ "note": "Boot-Sequenz und Demo-Brief (TECHNICAL_ARCHITECTURE §12.13, Runde 11). splash.studio ist der Studioname: nur hier umbenennen, er erscheint auf der Studiokarte und unter dem Demo-Brief. Die Pixel-Schrift der Karten kennt A–Z, ÄÖÜ, 0–9, - . , ! ? ' : · & / + und die Satzzeichen „ “ ” ‚ ‘ ’ \" – — …; andere Zeichen fallen auf die Titelschrift zurück. Der Brief ist warm und persönlich, ohne Hinweise zur Fiktion (die stehen einmal beim Spielstart).",
+ "strings": {
+  "splash.studio": "Midnight Anvil",
+  "splash.presents": "presents",
+  "splash.made_with": "Made with",
+  "splash.engine": "Godot Engine",
+  "ui.demo.kicker": "Demo · Version {version}",
+  "ui.demo.stamp": "In progress",
+  "ui.demo.title": "Glad you’re here!",
+  "ui.demo.body": "What you’re about to play is an early demo of ASHES OF EMPIRES: THE LAST WINTER – chapters 1 to 4, about an hour of story between Karsk and Berlin.\n\nEverything is still a work in progress: graphics, music and text are being improved all the time, and the story will grow by many more chapters – with new places, secrets and decisions.\n\nThank you for playing! Every bit of feedback, every idea and every bug you find helps us enormously. And wrap up warm – it’s going to be a long winter.",
+  "ui.demo.signoff": "Warm regards from the workshop\n{studio}",
+  "ui.demo.ok": "Let’s go",
+  "ui.demo.credits_button": "Demo note"
+ }
+}

@@ -233,3 +233,12 @@ this round touched exploration).
 | Real input, skip | **INPUTPLAY_PASS** 745 s, 0 errors, 0 warnings |
 | Exported .exe (502 MB pack), real input, skip + memories | **INPUTPLAY_PASS** 767 s, 0 errors, 0 warnings |
 | User data | saves, settings and photos unchanged; the memories profile had been written by a test run and was restored from the backup |
+
+## 16. Round 12 (2026-11-09) — English localisation, studio name, marketing material
+| Layer | Result |
+|---|---|
+| Unit | **77 files, 846 cases, 113466 checks — ALL PASSED** (3990 / 3990 keys translated, test_localisation) |
+| Autoplay, played in full | **PASS** |
+| Real input, skip | **INPUTPLAY_PASS** |
+| Exported .exe, real input | **INPUTPLAY_PASS**, 0 errors, 0 warnings |
+The drivers and tests run in German; English was checked by the QA agent with `-- --lang=en` captures at 100 / 150 %.

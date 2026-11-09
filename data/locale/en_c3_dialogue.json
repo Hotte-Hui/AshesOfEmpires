@@ -1,0 +1,32 @@
+{
+ "locale": "en",
+ "area": "c3_dialogue",
+ "strings": {
+  "dlg.c3.cond_02.irina": "In Karsk our dispatcher would have logged a van like that long ago. No escort?",
+  "dlg.c3.cond_02.secrecy": "I’m only asking. A van with no escort?",
+  "dlg.c3.ctrl_05.irina": "I knew nothing about it. Our dispatcher countersigned – for the tracks, not for a van.",
+  "dlg.c3.ctrl_05.secrecy": "I knew nothing about it. In Karsk nobody countersigned this order.",
+  "dlg.c3.el_02.irina": "A colleague taught me to look twice. Once for the file, once for the people.",
+  "dlg.c3.el_06.secrecy": "And you tell this to a stranger in the station café?",
+  "dlg.c3.arr_02.evidence": "They checked the luggage at the station, Director. My drawing tube too.",
+  "dlg.c3.arr_02.suspicion": "They opened my luggage twice at the station, Director. Only mine.",
+  "dlg.c3.arr_03.suspicion": "The plans for Kordon-17 to the minutes office. Your enquiry from Berlin is on my desk, by the way. I shan’t answer it here.",
+  "dlg.c3.meet_03.elena": "Frau Weiss and I had arranged to meet after the session. Here, at booth two.",
+  "dlg.c3.meet_03.evidence": "The weighbill names this building as consignee. I have the seal number. For the rest I need Frau Weiss.",
+  "dlg.c3.meet_07.irina": "Three wagons are missing in Karsk, same series as on the papers here. A colleague counted them – her name is next to mine.",
+  "dlg.c3.meet_07.secrecy": "Three wagons are missing in Karsk, same series as on the papers here. Nobody there knows I’m asking. It should stay that way.",
+  "dlg.c3.meet_08.evidence": "In Berlin a corridor bears the same series. I have a copy of the memo. Whether I show it to you, I don’t know yet.",
+  "dlg.c3.meet_08.suspicion": "In Berlin a corridor bears the same series. I asked about it officially. Since then someone’s been looking over my shoulder.",
+  "choice.c3a.note_alone.irina": "Note the seal number for Irina’s file and keep searching alone",
+  "choice.c3a.note_alone.secrecy": "Note the seal number – and once again tell nobody",
+  "choice.c3b.share_protocol.evidence": "Show him Elena’s note – and the copy of Emil’s memo",
+  "choice.c3b.share_protocol.suspicion": "Show him Elena’s note, although your office is watching you",
+  "choice.c3b.report_delegation.suspicion": "Go through official channels – as with the enquiry in Berlin",
+  "dlg.c3.react.ask_elena": "After the opening session, booth two. Bring your travel order – I’ll bring the three versions.",
+  "dlg.c3.react.note_alone": "As you wish. But numbers don’t translate themselves.",
+  "dlg.c3.react.share_protocol": "Escorted goods. My papers say freight. – Tonight at 23:40 a train leaves for Kordon-17, non-stop. Now you know something too.",
+  "dlg.c3.react.search_elena": "At the station she interpreted for the border officer. I’ll ask there. You ask here. Separately.",
+  "dlg.c3.react.report_delegation": "Then we never met, Herr Adler.",
+  "dlg.c3.react.report_delegation.elena": "Report it. But don’t mention Frau Weiss by name."
+ }
+}

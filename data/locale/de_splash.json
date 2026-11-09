@@ -1,9 +1,9 @@
 {
  "locale": "de-DE",
  "area": "splash",
- "note": "Boot-Sequenz und Demo-Brief (TECHNICAL_ARCHITECTURE §12.13, Runde 11). splash.studio ist der Studioname: nur hier umbenennen, er erscheint auf der Studiokarte und unter dem Demo-Brief. Die Pixel-Schrift der Karten kennt A–Z, ÄÖÜ, 0–9 und - . , ! ? ' : · & / +; andere Zeichen fallen auf die Titelschrift zurück. Der Brief ist warm und persönlich, ohne Hinweise zur Fiktion (die stehen einmal beim Spielstart).",
+ "note": "Boot-Sequenz und Demo-Brief (TECHNICAL_ARCHITECTURE §12.13, Runde 11). splash.studio ist der Studioname: nur hier umbenennen, er erscheint auf der Studiokarte und unter dem Demo-Brief. Die Pixel-Schrift der Karten kennt A–Z, ÄÖÜ, 0–9, - . , ! ? ' : · & / + und die Satzzeichen „ “ ” ‚ ‘ ’ \" – — …; andere Zeichen fallen auf die Titelschrift zurück. Der Brief ist warm und persönlich, ohne Hinweise zur Fiktion (die stehen einmal beim Spielstart).",
  "strings": {
-  "splash.studio": "HOTTE-HUI",
+  "splash.studio": "Midnight Anvil",
   "splash.presents": "präsentiert",
   "splash.made_with": "Erstellt mit",
   "splash.engine": "Godot Engine",

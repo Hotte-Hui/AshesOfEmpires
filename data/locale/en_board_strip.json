@@ -1,0 +1,9 @@
+{
+ "locale": "en",
+ "area": "board",
+ "note": "Pinnwand „Die Akte C-17“, Runde 10 (Politur): die roten Fäden im Detailstreifen kommen seitenweise, ganze Gruppen; eine Seite endet auf „+n weitere“, solange Gruppen folgen.",
+ "strings": {
+  "board.detail.more": "+{n} more",
+  "board.hint.threads": "Browse threads"
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "locale": "en",
+ "area": "c4_cinematics",
+ "strings": {
+  "cin.c4.homeward.place": "Karsk, Sunday, 16 February 1964, 04:40.",
+  "cin.c4.homeward.alexei.split": "The Russian sheets. Pjotr’s name lies under my coat.",
+  "cin.c4.homeward.alexei.swap": "The German sheets. I read them slowly. He carries Pjotr’s name.",
+  "cin.c4.homeward.alexei.elena": "Pjotr’s list hangs in a coat in Veltrava. I have only the numbers.",
+  "cin.c4.number.karsk": "Karsk, 07:10.",
+  "cin.c4.number.berlin": "Berlin, 05:10.",
+  "cin.c4.number.alexei": "Forty-five. The next run. The paint is still wet.",
+  "cin.c4.card.konrad": "Lindner, Anna. The other half is already on its way.",
+  "cin.c4.card.karsk": "Karsk, 07:30.",
+  "cin.c4.stamp.lev": "If the card goes missing, they’ll look for it with me first.",
+  "cin.c4.stamp.berlin": "Berlin, 06:00.",
+  "cin.c4.voices.konrad_name": "The Lindner file, with every signature. And with Marta’s name in it.",
+  "cin.c4.voices.konrad_protect": "No file. But tomorrow morning Ilse will sit in Hanna’s classroom again.",
+  "cin.c4.voices.alexei": "Four numbers, one wagon. And Lev’s name on no paper I carry.",
+  "cin.c4.voices.tuesday": "Tuesday, 23:40. Wagon C-17/45."
+ }
+}

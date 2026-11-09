@@ -1,0 +1,14 @@
+{
+ "locale": "en",
+ "area": "berlin_annex",
+ "note": "Bildbeschreibungen der Dokumente aus L_C4_Annex (alt_key in assets/ui/documents/berlin_annex_documents.json, erzeugt von tools/pixelgen/env_c4_annex_docs.py). Korrekturrunde 9: compl-04 Martas Linienplan, compl-10 die sechs übrigen Dokumente.",
+ "strings": {
+  "doc.berlin_annex_notice.alt": "Eviction notice for house no. 9, “Construction Works, South Axis”, stamped by the district office. Below it, fresh, in a different hand: “Household dissolved. File passed to South Branch.” Pinned to it, the site plan of Süd 8, shafts S 1 to S 3, and in the title block “drawn by K. A.”",
+  "doc.berlin_annex_shaft.alt": "Behind the torn posters on poster column S 2, a grey steel door with an enamel sign: “Ventilation Structure S 2 – Authorised Personnel Only”. A warm glow shows through the grille at its foot: in the middle of the frost, warm air is rising there.",
+  "doc.berlin_annex_card_de.alt": "Index card no. 0417, German half, red tab “C-17”: “Lindner, Anna, née Kowalenko, b. 1926 Kharkov”, in red “Note C-17: repatriation East”, “Handover Kordon-17, Door East, courier van C-17/45, Tue 18 Feb, 23:40”, in blue “Child Ilse, 8 – whereabouts unknown.” The perforation on the right.",
+  "doc.berlin_annex_drawer.alt": "Drawer Süd 8 from above: card after card in four rows, the number “212” at the bottom left. A small red flag sticks out of 37 cards; at the bottom right, in red: “37 – C-17”.",
+  "doc.berlin_annex_plan.alt": "A framed plan in blue lines: “Ventilation plan, South Branch, 1961, sheet 3”. Three blocks of houses, hatched in red: “to be cleared”. From each one a shaft, S 1 to S 3, leads down into a long box: “Card index”. In the title block: “Drawn by K. Adler”.",
+  "doc.berlin_annex_tube_slip.alt": "A pneumatic-post slip with a red-dotted border. Sender: “State Police Office, Kommissar Wendt”. Typed: “By Monday: all C-17 households Süd 8, whereabouts of the children. Informants by name.” At the bottom right, large and red: “Urgent”.",
+  "doc.berlin_annex_route_board.alt": "Marta’s route plan on tracing paper, clipped to the board in the driver’s cab: route 74 as a thick pencil line with four stops and the Süd 8 turning loop at the end, three dashed diversions with a diamond in the middle – “Oct.”, “Dec.”, “Jan.”. Drawn in the direction of travel, not north-up: the little north arrow points left."
+ }
+}

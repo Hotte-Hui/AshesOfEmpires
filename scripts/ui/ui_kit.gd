@@ -103,6 +103,17 @@ static func has_key(key: String) -> bool:
 	return loc != null and loc.has_method("has") and bool(loc.has(key))
 
 
+## A quotation in the marks of the current language (ui.quote: German „…“, English “…”).
+static func quoted(s: String) -> String:
+	return t("ui.quote", {"text": s}) if has_key("ui.quote") else "„%s“" % s
+
+
+## A decimal number as the current language writes it (ui.decimal_point: German 23,6 · English 23.6).
+static func decimal(v: float, places := 1) -> String:
+	var s := ("%." + str(places) + "f") % v
+	return s.replace(".", t("ui.decimal_point") if has_key("ui.decimal_point") else ",")
+
+
 ## Text that may already be localised or may be a key.
 static func resolve(text_or_key: String) -> String:
 	if text_or_key != "" and not text_or_key.contains(" ") and has_key(text_or_key):
@@ -733,16 +744,25 @@ static func ex_bar(ratio: float, width := 240, neutral := false) -> Control:
 
 
 static func format_time(v) -> String:
-	## Accepts unix seconds, ISO strings or dictionaries; returns "04.11.2026 · 18:42".
+	## Accepts unix seconds, ISO strings or dictionaries; returns "04.11.2026 · 18:42" (English: "4 Nov 2026 · 18:42").
 	if v is float or v is int:
 		if float(v) <= 0.0:
 			return ""
 		var bias := int(Time.get_time_zone_from_system().get("bias", 0)) * 60
 		var d := Time.get_datetime_dict_from_unix_time(int(v) + bias)
-		return "%02d.%02d.%04d · %02d:%02d" % [d.day, d.month, d.year, d.hour, d.minute]
+		return _date_time(int(d.day), int(d.month), int(d.year), "%02d:%02d" % [d.hour, d.minute])
 	if v is String and v != "":
 		var s: String = v
 		if s.length() >= 16 and s[4] == "-":
-			return "%s.%s.%s · %s" % [s.substr(8, 2), s.substr(5, 2), s.substr(0, 4), s.substr(11, 5)]
+			return _date_time(s.substr(8, 2).to_int(), s.substr(5, 2).to_int(), s.substr(0, 4).to_int(), s.substr(11, 5))
 		return s
 	return ""
+
+
+## A date with its time as the current language writes it: ui.date_time with the month from ui.date_months
+## (German „04.11.2026 · 18:42“, English „04 Nov 2026 · 18:42“).
+static func _date_time(day: int, month: int, year: int, hm: String) -> String:
+	var months := t("ui.date_months").split(",") if has_key("ui.date_months") else PackedStringArray()
+	if not has_key("ui.date_time") or months.size() != 12 or month < 1 or month > 12:
+		return "%02d.%02d.%04d · %s" % [day, month, year, hm]
+	return t("ui.date_time", {"d": "%02d" % day, "mon": months[month - 1].strip_edges(), "y": "%04d" % year, "time": hm})

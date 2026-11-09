@@ -1,0 +1,17 @@
+{
+ "locale": "en",
+ "area": "credits",
+ "note": "Abspann nach der Demo (scripts/ui/end_credits.gd) und Quellenliste im Hauptmenü-Panel „Mitwirkende“ (scripts/ui/credits.gd). Sachlich, archivarisch, ohne Belohnungssprache. Quellentitel und Links stehen in data/explore/history_*.json.",
+ "strings": {
+  "credits.end.h_sources": "Sources for the history cards",
+  "credits.end.sources_intro": "The “Real History” cards stand outside the fictional plot. Their details rest on the following sources, ordered by card.",
+  "credits.end.side.reich": "Nazi Germany",
+  "credits.end.side.soviet": "Soviet Union",
+  "credits.end.no_url": "no online version",
+  "credits.end.menu_hint": "The source list with all links is also in the main menu under “Credits”.",
+  "credits.end.skip": "Skip",
+  "credits.end.faster": "Faster (hold)",
+  "credits.src.jump": "To the sources",
+  "credits.src.top": "Back to top"
+ }
+}

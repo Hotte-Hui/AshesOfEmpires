@@ -1,0 +1,25 @@
+{
+ "locale": "en",
+ "area": "c3p2_cinematics",
+ "strings": {
+  "cin.c3p2.radio.time": "Veltrava, 00:10.",
+  "cin.c3p2.radio.ru": "(Russian) …Annex C: goods and escorted persons pass the Line…",
+  "cin.c3p2.radio.de": "(German) …Annex C: goods and escorted goods pass the Line without stopping.",
+  "cin.c3p2.radio.note": "Registry. Courtyard, ramp. 00:30. – E.",
+  "cin.c3p2.radio.note_ru": "Регистратура. Двор, рампа. 0.30. – Е.",
+  "cin.c3p2.radio.alexei.base": "Escorted persons. In German they put it differently.",
+  "cin.c3p2.radio.alexei.cafe": "She never came to the café. I paid for two glasses of tea.",
+  "cin.c3p2.radio.alexei.alone": "I wanted to search alone. Now she’s writing to me.",
+  "cin.c3p2.radio.konrad.base": "Escorted goods. I have heard the word three times today.",
+  "cin.c3p2.radio.konrad.share": "I showed him Elena’s note; he showed me a train. Now she is writing to us both.",
+  "cin.c3p2.radio.konrad.search": "Her coat was still in the cloakroom when I left. Ticket 27.",
+  "cin.c3p2.radio.konrad.report": "Kessler listened and nodded. Nothing more.",
+  "cin.c3p2.fire.time": "01:40.",
+  "cin.c3p2.halves.split": "Each carries his own language home – and the names written in it.",
+  "cin.c3p2.halves.swap": "He carries Pjotr’s name across his border. I carry his people across mine.",
+  "cin.c3p2.halves.elena": "The list is in a coat, ticket 27. If she comes back, she will find it.",
+  "cin.c3p2.halves.plan_kept": "In my coat pocket: sheet seven. Drawn by K. Adler.",
+  "cin.c3p2.halves.plan_burnt": "Sheet seven has burnt. I drew it all the same.",
+  "cin.c3p2.halves.tuesday": "Tuesday, 23:40. Platform 5."
+ }
+}

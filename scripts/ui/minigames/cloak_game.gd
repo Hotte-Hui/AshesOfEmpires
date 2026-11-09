@@ -391,7 +391,7 @@ func _update_ui() -> void:
 		_name_label.text = Kit.t("mg.cloak.wenzel.name")
 		_role_label.text = Kit.t("mg.cloak.wenzel.role")
 		_pin_label.text = ""
-		_say_label.text = "„%s“" % Kit.t("mg.cloak.wenzel.end" if logic.done else "mg.cloak.wenzel.hats")
+		_say_label.text = Kit.quoted(Kit.t("mg.cloak.wenzel.end" if logic.done else "mg.cloak.wenzel.hats"))
 		if tl != null:
 			tl.text = ""
 	else:
@@ -401,7 +401,7 @@ func _update_ui() -> void:
 		var line := "%s.ask%d" % [g, r + 1]
 		if _phase == "thanks":
 			line = str(_last.get("key", line))
-		_say_label.text = "„%s“" % Kit.t("mg.cloak.say." + line)
+		_say_label.text = Kit.quoted(Kit.t("mg.cloak.say." + line))
 		if tl != null:
 			tl.text = Kit.t("mg.cloak.token", {"n": str(Logic.GUESTS[g]["token"])}).to_upper().replace("ß", "SS")
 	var it := ""

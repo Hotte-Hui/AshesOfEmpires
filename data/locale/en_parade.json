@@ -1,0 +1,20 @@
+{
+ "parade.cue.loudspeaker_1": "LOUDSPEAKER: Attention. Residents of the reorganisation districts will line up in closed ranks behind the barrier.",
+ "parade.cue.loudspeaker_2": "LOUDSPEAKER: Today the world sees what order can achieve.",
+ "parade.cue.loudspeaker_3": "LOUDSPEAKER: Attendance is being recorded. Remain in your place.",
+ "parade.cue.konrad": "KONRAD (thinking): I drew this axis. Room for a hundred thousand. Those who had to move out for it were in no plan.",
+ "parade.cue.loudspeaker_4": "LOUDSPEAKER (distant): … everyone in his place.",
+ "parade.sfx.pa_chime": "Loudspeaker chime",
+ "parade.sfx.boots": "Marching in step",
+ "parade.sfx.tanks": "Tank tracks, rattling windows",
+ "parade.sfx.jets": "Jet fighters flying low",
+ "parade.title": "The Parade",
+ "parade.shot.p1": "The square before the Great Hall",
+ "parade.shot.p2": "The column",
+ "parade.shot.p3": "Tanks",
+ "parade.shot.p4": "The grandstand",
+ "parade.shot.p5": "Behind the barrier",
+ "parade.shot.p6": "Cathedral of Light",
+ "parade.shot.p7": "Konrad",
+ "parade.shot.p8": "The cleared street"
+}

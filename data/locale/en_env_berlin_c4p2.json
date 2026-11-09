@@ -1,0 +1,12 @@
+{
+ "locale": "en",
+ "area": "berlin_c4p2",
+ "note": "Bildbeschreibungen der Dokumente aus L_C4P2_Berlin (alt_key in assets/ui/documents/berlin_c4p2_documents.json, erzeugt von tools/pixelgen/env_c4p2_berlin_docs.py; Runde 10, env-berlin).",
+ "strings": {
+  "doc.berlin_c4p2_departures.alt": "Enamel board on platform K: “D 303 Berlin Ost – Kordon-17 – Karsk, 21:10”. Below it, a freshly painted board: Tuesday, special train to Kordon-17 with special carriage, departs 15:30; platform K closed from 15:00.",
+  "doc.berlin_c4p2_seals.alt": "Two lead seals on the courier van’s wire, one German and one Soviet, both stamped “C-17”. Beside it on the next track, the green wagon: a barred hatch, misted on the inside, and in chalk “Tue – Kordon”.",
+  "doc.berlin_c4p2_tracing.alt": "Ekdahl’s guidebook, page 212, “Karsk – bangård och depå”. Inside, upside down, the German half of card 0417 and Konrad’s tracing of Kordon-17: Door West, Door East, the counter, the bench for fourteen. On the folded corner: “MOROZOV – 0417 – TUE 23:40 – DOOR EAST”.",
+  "doc.berlin_c4p2_house_notice.alt": "Notice from the block warden: all households are to hold themselves ready from 22:00 on Tuesday for a check of the household card index. Children are to be presented. Pinned above it, the site plan “Construction Section Süd 9 – Kolonnenstraße 12 to 18”, every house hatched, drawn by K. A.",
+  "doc.berlin_c4p2_house_cards.alt": "Kuhnert’s household card index, six cards fanned out: Adler in side wing 3, Pohl “reports reliably”, the porter’s lodge, the empty rear building 3, the carriageway from 22:00, the attic open on washing day. With them, a slip without a household card: Pietsch’s shoe repair, basement."
+ }
+}

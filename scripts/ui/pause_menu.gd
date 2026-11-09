@@ -101,6 +101,17 @@ func _ready() -> void:
 
 
 func open() -> void:
+	_fill()
+	open_modal()
+
+
+## §12.14 language switch while the menu is open: the formatted lines are written again.
+func _on_language_changed() -> void:
+	if is_open:
+		_fill()
+
+
+func _fill() -> void:
 	var st := Kit.svc("Story")
 	var who = st.get("active_character") if st != null else null
 	_who.text = Kit.t("ui.pause.playing_as", {"name": Kit.char_name(str(who))}).to_upper().replace("ß", "SS") if who != null and str(who) not in ["", "none"] else ""
@@ -115,7 +126,6 @@ func open() -> void:
 	(_buttons["load"] as Button).disabled = not Kit.has_svc("Saves", "list_slots")
 	_refresh_memory()
 	_refresh_explore()
-	open_modal()
 
 
 ## §12.10: inside a memory the header names it and the entry leads back to the present (or to the main menu).

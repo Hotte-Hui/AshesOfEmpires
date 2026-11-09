@@ -1,0 +1,19 @@
+{
+ "strings": {
+  "ui.prompt.inspect": "Examine",
+  "ui.prompt.dialogue": "Talk",
+  "ui.prompt.puzzle": "Use",
+  "ui.prompt.choice": "Decide",
+  "ui.prompt.observe": "Look",
+  "ui.toast.evidence": "New evidence: {name}",
+  "ui.load_failed": "The saved game could not be loaded.",
+  "obs.test.crate.prompt": "Look at crate",
+  "obs.test.crate.text": "An empty crate. Test object.",
+  "intro.disclaimer.title": "A word first",
+  "intro.disclaimer.text": "This game tells a fictional alternate history. It does not claim to show how Europe really was in 1964. It condemns the crimes of the National Socialist dictatorship and the oppression of the Soviet system – without equating them – and tells of people who live under them.",
+  "ui.prompt.discover": "Explore",
+  "ui.prompt.chat": "Talk",
+  "ui.toast.discovery": "Discovered: {name} ({n}/{total})",
+  "ui.toast.history": "Historical background: {name}"
+ }
+}
