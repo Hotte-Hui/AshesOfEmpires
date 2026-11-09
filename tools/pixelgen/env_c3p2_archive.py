@@ -349,8 +349,8 @@ def build_scene(preview_dir=None):
     # ---- flames (decal strips with emission), per fire look
     for st in ('c', 'd'):
         for (nm, x, yb, w, h, seed, spots, hgt) in FLAMES[st]:
-            fuel = EFX.fuel_line(w, spots, base=0.0 if nm.startswith('flames_frame') else 0.15)
-            rgba, em = EFX.flame_strip(w, h, seed, frames=16, fuel=fuel, height=hgt)
+            rgba, em = EFX.flame_strip(w, h, seed, frames=16, spots=spots,
+                                       base=0.0 if nm.startswith('flames_frame') else 0.15, height=hgt)
             base = os.path.join(ENV_DIR, 'fx', nm)
             save_arr(rgba, base + '.png', 'env_c3p2_archive_fx.py', 'flames (%s), 16 frames' % nm)
             save_arr(em, base + '_e.png', 'env_c3p2_archive_fx.py', 'flames (%s) -- emission strip' % nm)

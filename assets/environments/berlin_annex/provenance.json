@@ -359,6 +359,31 @@
    "path": "assets/ui/documents/berlin_annex_documents.json",
    "generator": "tools/pixelgen/env_c4_annex_docs.py",
    "description": "document metadata (item -> image, key marks)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/terminal/desk.png",
+   "generator": "tools/pixelgen/gen_annex_terminal.py",
+   "description": "the data desk of the Datenstelle: tape cabinet, desk with the round vector display and the teleprinter, card reader (cut from a bake of the hall; y-sorted actor sprite)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/terminal/desk_n.png",
+   "generator": "tools/pixelgen/gen_annex_terminal.py",
+   "description": "the data desk of the Datenstelle: tape cabinet, desk with the round vector display and the teleprinter, card reader (cut from a bake of the hall; y-sorted actor sprite) -- normal map"
+  },
+  {
+   "path": "assets/environments/berlin_annex/terminal/desk_e.png",
+   "generator": "tools/pixelgen/gen_annex_terminal.py",
+   "description": "the data desk of the Datenstelle: tape cabinet, desk with the round vector display and the teleprinter, card reader (cut from a bake of the hall; y-sorted actor sprite) -- emission mask"
+  },
+  {
+   "path": "assets/environments/berlin_annex/terminal/roster.png",
+   "generator": "tools/pixelgen/gen_annex_terminal.py",
+   "description": "the duty roster of the Datenstelle on its clipboard beside the second ladder (cut from a bake of the hall)"
+  },
+  {
+   "path": "assets/environments/berlin_annex/terminal/roster_n.png",
+   "generator": "tools/pixelgen/gen_annex_terminal.py",
+   "description": "the duty roster of the Datenstelle on its clipboard beside the second ladder (cut from a bake of the hall) -- normal map"
   }
  ]
 }

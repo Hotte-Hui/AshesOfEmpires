@@ -1,0 +1,57 @@
+{
+ "note": "Flashback films of four real-history cards (TECHNICAL_ARCHITECTURE §12.15): two per regime side, each about its own, specific subject — no pairing, no equivalence. A film is three painted shots; the first carries the place-and-date caption, the next two one sober line each. Every caption is taken from facts of its card (tests/test_flashbacks.gd checks numbers and words against the card text). Not Story data: no flags, no objectives, not in data/v3/cinematics.json. Art anchors: assets/cinematics/flashback/layout.json; texts: data/locale/de_flashback.json / en_flashback.json.",
+ "films": [
+  {
+   "id": "LS_FB_Nuremberg",
+   "key": "nuremberg",
+   "card": "hist.reich.nuremberg_interpreters",
+   "scene": "res://scenes/cinematics/flashback_nuremberg/FlashbackNuremberg.tscn",
+   "bed": "fb_projector_bed",
+   "place": "fb.nuremberg.place",
+   "shots": [
+    {"id": "court", "dur": 4.5},
+    {"id": "booth", "dur": 6.5, "line": "fb.nuremberg.line1"},
+    {"id": "desk", "dur": 5.5, "line": "fb.nuremberg.line2", "on": {"yellow": [[1.0, 2.5]], "red": [[3.1, 4.6]]}}
+   ]
+  },
+  {
+   "id": "LS_FB_Evictions",
+   "key": "evictions",
+   "card": "hist.reich.evictions",
+   "scene": "res://scenes/cinematics/flashback_evictions/FlashbackEvictions.tscn",
+   "bed": "fb_projector_bed",
+   "place": "fb.evictions.place",
+   "shots": [
+    {"id": "street", "dur": 4.5},
+    {"id": "chronicle", "dur": 6.0, "line": "fb.evictions.line1"},
+    {"id": "room", "dur": 5.5, "line": "fb.evictions.line2"}
+   ]
+  },
+  {
+   "id": "LS_FB_Settlement",
+   "key": "settlement",
+   "card": "hist.soviet.special_settlements",
+   "scene": "res://scenes/cinematics/flashback_settlement/FlashbackSettlement.tscn",
+   "bed": "fb_projector_bed",
+   "place": "fb.settlement.place",
+   "shots": [
+    {"id": "steppe", "dur": 4.5},
+    {"id": "kommandantur", "dur": 5.5, "line": "fb.settlement.line1"},
+    {"id": "boundary", "dur": 6.0, "line": "fb.settlement.line2"}
+   ]
+  },
+  {
+   "id": "LS_FB_Kyshtym",
+   "key": "kyshtym",
+   "card": "hist.soviet.kyshtym",
+   "scene": "res://scenes/cinematics/flashback_kyshtym/FlashbackKyshtym.tscn",
+   "bed": "fb_projector_bed",
+   "place": "fb.kyshtym.place",
+   "shots": [
+    {"id": "plant", "dur": 4.5},
+    {"id": "village", "dur": 6.5, "line": "fb.kyshtym.line1"},
+    {"id": "fence", "dur": 5.0, "line": "fb.kyshtym.line2"}
+   ]
+  }
+ ]
+}

@@ -15,12 +15,15 @@ extends RefCounted
 ##                                                                   must be PF.additive()
 ##   PF.reveal_material() + PF.set_reveal(..)                       a big additive light layer shown as a
 ##                                                                   growing dithered pool / a wipe
+##   PF.mass_materials()                                            six pass materials: flames that overlap
+##                                                                   become ONE body (see mass_materials)
 ## Reduced motion: pass rate = 0.5 (flames and light step half as often, smoke and sparks travel half as far).
 ## Sheets: flame_xs/s/m/l/xl/xxl, lick, tiles window/ground/low_a|b/wall_a|b, puff_s/m/l/xl(_grey),
 ## tiles bank_a|b(_grey) and their veils veil_a|b(_grey), sparks_s/m, glow_s/m/l, pool_s/m/l -- see kit.json.
 
 const DIR := "res://assets/fx/pixel_fire/"
 const REVEAL := preload("res://scripts/render/pixel_fire_reveal.gdshader")
+const MASS := preload("res://scripts/render/pixel_fire_mass.gdshader")
 ## frames per second of the flame sheets (== TICK in pixel_fire.py)
 const TICK := 10.0
 ## a light pool steps to another frame at most this often: fire light breathes, it never strobes
@@ -292,6 +295,26 @@ static func light(ci: CanvasItem, sheet_name: String, centre: Vector2, t: float,
 		return
 	var f := int(floor(t * LIGHT_HZ * rate + phase(i + 3) * 4.0))
 	frame(ci, sheet_name, f, Vector2(roundf(centre.x) - int(d["w"]) / 2, roundf(centre.y) - int(d["h"]) / 2))
+
+
+## A MASS of fire (a wall of fire with towers behind it and flames in front): kit flames that overlap each bring
+## their own dark rim, and the rims cross the hot bodies behind them.  Drawn band by band they merge instead:
+## give SIX sibling nodes these materials, in this order, and let every one of them draw the SAME flames (the
+## same PF.flame / PF.wall calls).  The first pass keeps only the cooling flamelets, the others paint every
+## texel that is at least as hot as their band (rim .. white-hot core) in that band's flat colour -- so each band
+## is the union over all flames: one body, a rim around the whole, the hot cores inside.  Kit colours only
+## (sheets in another palette keep their own rims: bake them as one sheet instead).
+static func mass_materials() -> Array[ShaderMaterial]:
+	var out: Array[ShaderMaterial] = []
+	var ramp := PackedColorArray([SPARK[4], SPARK[3], SPARK[2], SPARK[1], SPARK[0]])
+	for level in range(-1, 5):
+		var m := ShaderMaterial.new()
+		m.shader = MASS
+		m.set_shader_parameter("level", level)
+		m.set_shader_parameter("ramp", ramp)
+		m.set_shader_parameter("cool", SPARK[5])
+		out.append(m)
+	return out
 
 
 ## Material for a big additive light layer (a baked lit-minus-unlit image) that is shown as a hard-pixel

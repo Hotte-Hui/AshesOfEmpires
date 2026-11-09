@@ -22,6 +22,10 @@ extends "res://scenes/cinematics/c3p2_common/c3p2_cinematic.gd"
 ## flame stand behind it, the largest flames on the side walls in front; f4_lit follows the front as a dithered
 ## wipe (the table gets its own lit layer, so the flames between hall and table stay pure palette); a bank of
 ## smoke hangs under the vault, puffs climb into it; sparks rise on arcs and cool, paper burns out.
+## The wall of fire is ONE mass: six pass nodes (PF.mass_materials) draw the same flames band by band, so the
+## towers behind, the wall and the flames in front share one rim and keep their hot cores -- no outlines
+## crossing each other.  The fire's light layers (f2_glow, f4_lit) are palette differences: background + layer
+## is the palette picture of the lit place.
 ## Fire light never strobes: pools step at most PF.LIGHT_HZ times a second, never a full-screen flash; reduced
 ## motion halves the flames' and the light's rate and the travel of smoke and sparks.
 ## Art: tools/pixelgen/env_c3p2_cine_fire.py (+ _registry, _life; build_fx for the kit-made sheets) ->
@@ -76,6 +80,8 @@ var _f4reveal: ShaderMaterial
 var _f4lit_table: Sprite2D
 var _f4cone: Sprite2D
 var _f4fire: Node2D
+## f4: the six band passes of the wall of fire (PF.mass_materials), _f4fire is the first
+var _f4mass: Array[Node2D] = []
 var _alexei: Sprite2D
 var _f4fx: Node2D
 var _f4bank: Node2D
@@ -158,7 +164,13 @@ func _build() -> void:
 	_f4glow.material = _f4reveal
 	_f4heat = _fx_node(f4, "Heat", _draw_f4_heat)
 	_f4heat.material = additive()
-	_f4fire = _fx_node(f4, "Fire", _draw_f4_fire)
+	var mats := PF.mass_materials()
+	_f4mass.clear()
+	for i in mats.size():
+		var band := _fx_node(f4, "Fire" if i == 0 else "Fire%d" % i, _draw_f4_fire.bind(i))
+		band.material = mats[i]
+		_f4mass.append(band)
+	_f4fire = _f4mass[0]
 	sprite("fire/f4_table.png", _lv("f4_table_at"), f4)
 	_f4lit_table = sprite("fire/f4_lit_table.png", _lv("f4_table_at"), f4)
 	_f4lit_table.material = _f4reveal
@@ -236,7 +248,8 @@ func _apply(time: float) -> void:
 		Vector2(LIT_SOFT, 1), 1.0)
 	_f4cone.modulate = Color(1, 1, 1, 0.35 - 0.2 * burnt)
 	_alexei.frame = 0 if time < 10.4 else 1
-	_f4fire.queue_redraw()
+	for band in _f4mass:
+		band.queue_redraw()
 	_f4fx.queue_redraw()
 	_f4heat.queue_redraw()
 	_f4bank.queue_redraw()
@@ -463,9 +476,10 @@ static func _f4_stage(age: float, kind: int) -> String:
 ## f4: the fire runs right -> left.  Behind the front every anchor catches as a small flame and steps up; the
 ## wall of fire rises out of the cabinets' foot line (WALL_RAMP px behind the front it stands at full height),
 ## towers stand behind it, the side walls' flames (lower, nearer the camera) in front
-func _draw_f4_fire() -> void:
+func _draw_f4_fire(band: int) -> void:
 	if not f4.visible:
 		return
+	var ci := _f4mass[band]
 	var rate := fire_rate()
 	var pts: Array = layout.get("f4_fire", [])
 	for pass_ in 2:
@@ -477,9 +491,9 @@ func _draw_f4_fire() -> void:
 				continue
 			var s := _f4_stage(t - _lit_time(x), int(p[2]) if p.size() > 2 else 0)
 			if s != "":
-				PF.flame(_f4fire, s, Vector2(x, float(p[1]) if side else WALL_Y), t, i, rate)
+				PF.flame(ci, s, Vector2(x, float(p[1]) if side else WALL_Y), t, i, rate)
 		if pass_ == 0:
-			PF.wall(_f4fire, ["wall_a", "wall_b"], 0.0, 640.0, WALL_Y, t, {"rate": rate, "shift": 37,
+			PF.wall(ci, ["wall_a", "wall_b"], 0.0, 640.0, WALL_Y, t, {"rate": rate, "shift": 37,
 				"front": roundf(_front(t) + WALL_LAG), "ramp": WALL_RAMP, "side": 1.0})
 
 

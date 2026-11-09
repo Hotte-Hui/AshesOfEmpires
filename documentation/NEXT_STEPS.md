@@ -106,3 +106,11 @@ human playtest yet). Open work, in priority order.
 - Round recipe that worked in rounds 8–9: contract document first, parallel build streams with one owner per file,
   four review lenses with adversarial verification, a small integration fix pass with its own review, then the lead's
   full test layers. Briefs stay tight, outputs filtered.
+
+## Addendum after round 13 (2026-11-10)
+- Done: pixel fire everywhere, the data desk with „Planspiel Abgang“, four flashback films, English localisation.
+- Open: nobody has played „Planspiel Abgang“ by hand yet (fairness rests on its solver) or listened to the new
+  sounds; at 150 % text the house puzzle's three-line cards overlap slightly and the evidence board's left column
+  scrolls under the notes panel; more history cards could get flashbacks (the kit is `tools/pixelgen/env_flashback*.py`).
+- Models: Fable 5.2 for visible art (cap its tool calls), Opus 5.5 for mechanics, videos and checks — Fable cost
+  about five times as much as Opus on the same task.

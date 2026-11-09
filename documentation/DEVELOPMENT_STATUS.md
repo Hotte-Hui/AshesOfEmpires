@@ -5,6 +5,17 @@ Scope reached: **vertical slice**, playable start to finish (main menu → Chapt
 Chapter 2 opening → Great Hall reveal → X1 finale → end card → main menu).
 Evidence for every "verified" item: `TEST_REPORT.md`.
 
+## Rounds 12–13 (2026-11-09/10) — English, pixel fire, the data desk, flashbacks
+| Area | Now |
+|---|---|
+| Languages (round 12) | German and English: setting „Sprache / Language“, live switch, per-key fallback to German, every string translated (`data/locale/en_*.json`, `en_v3.json`); studio name Midnight Anvil |
+| Pixel fire (round 13) | one kit for all fire (`tools/pixelgen/pixel_fire.py`, `pixel_fire_bake.py` → `assets/fx/pixel_fire/`, runtime `scripts/render/pixel_fire.gd`): designed hard-pixel flame loops, chunky dithered smoke, 1-px sparks, stepped light pools — used by LS_C3_Fire / Escape / Halves, the burning registry, the quay, the parade fire bowls, barrel fires, candles and smoke wisps; the old soft gradient flames are gone |
+| The data desk (round 13) | optional side task in the registry annex (scene D): an operator number from the duty roster, a phosphor terminal (LISTE / ÖFFNEN / SUCHEN over five files, case S8-067 unlocks the program) and „Planspiel Abgang“ — the regime's arrest simulation as a wireframe 3D game in which the player steers the hunted person through three maps to the gap in the net; closing find „Lauf zwölf“ |
+| Flashbacks (round 13) | four history cards carry a short archive-style film („Rückblende ansehen“): the Nuremberg interpreters, the Berlin evictions, the special settlements, Kyshtym — places, rooms and documents only, people at a distance, no violence shown; listed in the memories film menu |
+| Bug hunt (round 13) | all levels, 108 scenes, both languages and the menus at 150 % checked; one defect fixed (the luggage scale's enamel sign in English) |
+| Marketing | `builds/marketing/`: seven promo videos (teasers, hooks, a fire devlog, terminal, flashback), thumbnail, cover, profile picture, CAPTIONS.txt, POSTING_PLAN.md |
+| Model note | the same fire task was given to Opus 5.5 and Fable 5.2: Fable's result was clearly better looking but cost about five times as much; since then Fable builds what the player sees (with tool-call caps), Opus the mechanics, videos and checks |
+
 ## Round 11 (2026-11-07) — the five Chapter-4-part-2 films reworked, a prologue, an AAA start, round-off
 The user kept the round-10 film overhaul and asked for the same treatment of the five new films, better swastikas
 in the hall / parade, a gentler start and a round-off; budget-conscious (one lean workflow). Evidence: TEST_REPORT §15.

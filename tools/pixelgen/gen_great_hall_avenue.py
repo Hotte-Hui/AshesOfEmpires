@@ -569,8 +569,9 @@ def puff(k):
 
 
 def flame(f):
-    """Fire burning in a pylon's bowl, 4 flicker frames (the tip leans and breathes, the side tongues trade
-    heights).  Warm ramp only: ochre rim, glow body, pale core low in the bowl."""
+    """Fire burning in a pylon's bowl, 4 flicker frames.  Warm ramp only: ochre rim, glow body, pale core low in
+    the bowl.  Round 13: from 6 px up a cell is drawn by the pixel fire kit (kit_flame: designed tongues, merged
+    colour bands, hard pixels at every LOD); these shapes only feed the one-pixel columns of the far LODs."""
     rim, body, core, hot = c('ochre', 4), c('glow', 1), c('glow', 3), c('glow', 4)
     lean = [0.0, 0.06, -0.04, 0.03][f]
     tip = [0.96, 0.84, 1.0, 0.9][f]
@@ -581,7 +582,27 @@ def flame(f):
                    (-0.08 + lean * 0.4, 0.42), (-0.16, 0.14)]),
           E(core, 0.0, 0.15, 0.11, 0.13),
           E(hot, 0.0, 0.08, 0.07, 0.06)]
+    sh = _Frames(sh)
+    sh.frame = f
     return sh
+
+
+class _Frames(list):
+    """a slot's shape list that also knows which frame of its loop it is"""
+    frame = 0
+
+
+def kit_flame(f, cw, ch, h):
+    """Frame f (of 4) of the bowl's fire for a LOD cell: the pixel fire kit's tongues (pixel_fire_bake.flames)
+    in the avenue's warm ramp -- a main tongue with forks over a bed of embers, standing on the cell's foot
+    line.  Hard pixels, exact palette colours."""
+    import pixel_fire_bake as PFB
+    cols = (c('ochre', 4), c('glow', 1), c('glow', 3), c('glow', 4))
+    fr = PFB.flames(cw, h + 1, 4, [(cw / 2.0, 0.26 * cw, 1.0)], 571 + h, 1.0, base=0.25,
+                    cols=cols if h >= 14 else cols[1:], tick=7.5, cool=c('ochre', 3))[f]
+    out = np.zeros((ch, cw, 4), np.uint8)
+    out[:h + 1] = fr
+    return out
 
 
 SLOTS = ([('march_back', march_back(f)) for f in range(4)] + [('stand_back', stand_back(v)) for v in range(3)]
@@ -633,6 +654,8 @@ def render(kind, sh, h):
     labels: dict = {}
     out = np.zeros((ch, cw, 4), np.uint8)
     soft = kind in SOFT
+    if kind == 'flame' and h >= 6 and isinstance(sh, _Frames):
+        return kit_flame(sh.frame, cw, ch, h)
     if h <= 4:
         # tiny figures: a one-pixel column (puffs / crows: two) sampled from a reference render; the top pixel
         # keeps the helmet / hat (the pale dot that makes a formation read as ranks of men)

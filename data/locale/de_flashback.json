@@ -1,0 +1,30 @@
+{
+ "locale": "de-DE",
+ "area": "flashback",
+ "note": "Runde 13 – Rückblenden zu vier Karten „Reale Geschichte“ (TECHNICAL_ARCHITECTURE §12.15): der Knopf auf der Karte, die Orts- und Datumszeile und je zwei nüchterne Zeilen der Filme, ihre Einträge auf der Erinnerungsseite „Filmsequenzen“. Jede Zeile nennt nur, was auf der jeweiligen Karte steht (data/locale/de_history_*.json); keine Wertung, keine Erfolgssprache. Owner: flashback stream.",
+ "strings": {
+  "ui.flashback.watch": "Rückblende ansehen",
+  "ui.flashback.hint": "Rückblende",
+  "ui.flashback.skip": "Überspringen",
+  "ui.memories.film.LS_FB_Nuremberg": "Rückblende: Die Dolmetscher von Nürnberg",
+  "ui.memories.film_sub.LS_FB_Nuremberg": "Reale Geschichte · Nürnberg, 1945–1946",
+  "ui.memories.film.LS_FB_Evictions": "Rückblende: Geräumte Wohnungen",
+  "ui.memories.film_sub.LS_FB_Evictions": "Reale Geschichte · Berlin, August 1941",
+  "ui.memories.film.LS_FB_Settlement": "Rückblende: Die Sondersiedlung",
+  "ui.memories.film_sub.LS_FB_Settlement": "Reale Geschichte · nach dem Erlass vom 26. November 1948",
+  "ui.memories.film.LS_FB_Kyshtym": "Rückblende: Majak, 29. September 1957",
+  "ui.memories.film_sub.LS_FB_Kyshtym": "Reale Geschichte · bei Tscheljabinsk-40",
+  "fb.nuremberg.place": "Nürnberg, 20. November 1945 bis 1. Oktober 1946",
+  "fb.nuremberg.line1": "Erstmals wurde in großem Umfang simultan gedolmetscht: Englisch, Französisch, Russisch und Deutsch.",
+  "fb.nuremberg.line2": "Eine gelbe Lampe bat Redner, langsamer zu sprechen, eine rote, innezuhalten.",
+  "fb.evictions.place": "Berlin, August 1941",
+  "fb.evictions.line1": "Laut Dienststellen-Chronik begann eine Aktion zur Räumung von rund 5.000 jüdischen Wohnungen.",
+  "fb.evictions.line2": "Ab Oktober 1941 wurden viele der Vertriebenen deportiert.",
+  "fb.settlement.place": "Sondersiedlung, nach dem Erlass vom 26. November 1948",
+  "fb.settlement.line1": "Meldepflicht bei der Kommandantur, kein Verlassen des Bezirks.",
+  "fb.settlement.line2": "Der Erlass erklärte die Verbannung für ewig; auf Flucht standen 20 Jahre Zwangsarbeit.",
+  "fb.kyshtym.place": "Plutoniumfabrik Majak bei Tscheljabinsk-40, 29. September 1957",
+  "fb.kyshtym.line1": "Nach der Explosion eines Tanks mit hochradioaktiven Abfällen wurden rund 10.000 Menschen umgesiedelt.",
+  "fb.kyshtym.line2": "Die sowjetischen Behörden hielten den Unfall geheim."
+ }
+}

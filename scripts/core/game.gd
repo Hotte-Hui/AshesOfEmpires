@@ -36,6 +36,8 @@ const CIN_A1_M1 := "res://scenes/cinematics/a1m1/CinA1ToM1.tscn"
 const FINALE_SCENE := "res://scenes/cinematics/finale/Finale.tscn"
 ## Round 11: the prologue of a new game (scenes/cinematics/prologue) — also a film on the „Filmsequenzen“ page.
 const PROLOGUE_SCENE := "res://scenes/cinematics/prologue/Prologue.tscn"
+## Round 13: flashback films of four real-history cards (§12.15) — films of the „Filmsequenzen“ page, never Story.
+const FLASHBACKS := preload("res://scripts/core/flashbacks.gd")
 const PROLOGUE_ID := "LS_Prologue"
 const SpriteRig := preload("res://scripts/actors/sprite_rig.gd")
 ## §12.10 memories: scene table, global profile (user://profile.json), read-only echo plans, memory grade.
@@ -2045,6 +2047,7 @@ func memory_films(context := "game") -> Array:
 				open = true
 		out.append({"id": cid, "unlocked": open, "title": Loc.t("ui.memories.film." + cid) if open else "",
 			"sub": Loc.t("ui.memories.film_sub." + cid) if open and Loc.has("ui.memories.film_sub." + cid) else ""})
+	out.append_array(FLASHBACKS.films(self, menu))   # round 13: after the story films, unlocked by their cards
 	return out
 
 
@@ -2085,6 +2088,8 @@ func _film_exists(cid: String) -> bool:
 			return ResourceLoader.exists(FINALE_SCENE)
 		PROLOGUE_ID:
 			return ResourceLoader.exists(PROLOGUE_SCENE)
+	if FLASHBACKS.is_film(cid):
+		return FLASHBACKS.exists(cid)
 	return ext.has_cinematic(cid)
 
 
@@ -2092,6 +2097,8 @@ func _film_exists(cid: String) -> bool:
 ## return: Story untouched (nothing is consumed, snapshot checked), no saves meanwhile, the present level at the
 ## same position — or the main menu. Esc skips as always.
 func rewatch_film(cid: String, from_menu := false) -> bool:
+	if FLASHBACKS.is_film(cid):   # round 13: a flashback plays above the open list — no level change, no Story state
+		return await FLASHBACKS.rewatch(self, cid, from_menu)
 	if not can_travel(from_menu) or not _film_exists(cid):
 		return false
 	var ok_film := false

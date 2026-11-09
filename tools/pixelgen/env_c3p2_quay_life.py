@@ -25,6 +25,8 @@ import math
 
 import numpy as np
 
+import pixel_fire_bake as PFB
+
 import env_c3p2_quay_kit as K
 from env_c3p2_quay_kit import (Canvas, Light, Layer, resolve, bayer, value_noise, NI, SL, IR, CR, PA, LA, SK, SN, RD,
                                SKIN)
@@ -310,28 +312,32 @@ def beacon(pos):
     return S, box
 
 
+# Round 13: the wing's fire comes from the pixel fire kit (pixel_fire.py through pixel_fire_bake.py) in the quay's
+# own colours -- the Veltrava palette has no fire ramp, so the bands run red -> lamp light.
+QUAY_FLAME = ('#A8382E', '#D08F55', '#EDB777', '#FCE2B0')              # rim .. core (small flames: 4 bands)
+QUAY_COOL = '#7A2218'
+SMOKE_LIT = ('#22262D', '#4A4236', '#6E3F22')                          # dark / body / lit by the fire below
+SMOKE_NIGHT = ('#1A2431', '#2A3646', '#3A4859')                        # .. out of its light
+
+
 def window_fire(c, lights):
-    """Flames licking out of a souterrain window (rows above the opening) -- 8 frames @ 6 fps."""
+    """Fire in a souterrain window and licking up the wall above it -- 8 frames @ 6 fps.  Designed pixel tongues
+    (pixel_fire_bake.flames): one set fills the opening, one stands on the lintel; the emission twin is the hot
+    core only."""
     box = (c - 16, 226, 32, 38)
-    y0w = N.BASE_WIN_Y[0]
-
-    def draw(cv, i, n):
-        X, Y = box[0], box[1]
-        rng = np.random.default_rng(c * 31 + i)
-        for k in range(5):
-            fx_ = c - 11 + k * 5 + int(rng.integers(-1, 2))
-            hgt = int(4 + 9 * abs(math.sin(i * 0.9 + k * 1.7 + c)) + rng.integers(0, 3))
-            for y in range(hgt):
-                w = max(1, int(round(3 * (1 - y / hgt))))
-                xx = fx_ + int(round(math.sin((y + i) * 0.8 + k) * (y / max(1, hgt)) * 1.5)) + y // 5
-                cv.rect(xx - X, y0w - 1 - y - Y, w, 1, 'flame', 0.95 - 0.7 * (y / hgt))
-        # the bright interior shifts (a beam or a stack collapses)
-        for k in range(6):
-            xx = c - 10 + int(rng.integers(0, 21))
-            yy = y0w + 4 + int(rng.integers(0, 12))
-            cv.rect(xx - X, yy - Y, 2, 1, 'flame', 1.0)
-
-    S = _frames(8, box, draw, lights, 'fire_win')
+    y0w, y1w = N.BASE_WIN_Y
+    n = 8
+    inside = PFB.flames(22, y1w - y0w, n, [(6, 4, 0.9), (15, 5, 1.0)], c * 31, 1.0, base=0.3, cols=QUAY_FLAME,
+                        tick=6, cool=QUAY_COOL)
+    over = PFB.flames(box[2], y0w - box[1], n, [(9, 3, 0.8), (20, 4, 1.0), (26, 2, 0.55)], c * 31 + 7, 1.0,
+                      base=0.0, cols=QUAY_FLAME, tick=6, cool=QUAY_COOL)
+    S = Layer(box[2] * n, box[3], 'fire_win')
+    for i in range(n):
+        fr = np.zeros((box[3], box[2], 4), np.uint8)
+        PFB.paste(fr, over[i], 0, 0)
+        PFB.paste(fr, inside[i], 5, y0w - box[1])
+        S.c[:, i * box[2]:(i + 1) * box[2]] = fr
+        S.em[:, i * box[2]:(i + 1) * box[2]] = PFB.hot([fr], QUAY_FLAME[1:])[0]
     return S, box
 
 
@@ -430,32 +436,17 @@ def _periodic_noise(w, h, cell, seed, octaves=3):
 
 
 def smoke_column(c, seed, n=16, fw=84, fh=226, drift=34.0, r0=5.0, r1=26.0, y_src=246, dens=1.0, fire=1.0):
-    """Thick smoke pouring from a window and rolling up the facade, drifting right: a continuous column whose
-    turbulence (periodic noise) scrolls upward one period per loop -> seamless.  Binary alpha, dithered rim;
-    tone: fire-lit belly near the window, smoke-grey above.  Returns (Layer strip, box)."""
+    """Thick smoke pouring from a window and rolling up the facade, drifting right: a column of pixel puffs
+    (pixel_fire_bake.column) that swell, climb and break up through the ordered dither -- binary alpha, three
+    tones; fire-lit while young near the window (fire), the night's slate above.  Returns (Layer strip, box)."""
     X, Y = c - 16, y_src - fh + 6
-    yy, xx = np.mgrid[0:fh, 0:fw].astype(np.float32)
-    big = _periodic_noise(fw, fh, 16.0, seed, 3)
-    small = _periodic_noise(fw, fh, 6.0, seed + 1, 2)
-    h = np.clip(((y_src - Y) - yy) / (fh - 12), 0, 1)               # 0 at the window .. 1 at the top
-    frames = []
-    for i in range(n):
-        off = int(round(i / n * fh))
-        B = np.roll(big, -off, axis=0)
-        Sm = np.roll(small, -off, axis=0)
-        cx = 16 + drift * h ** 1.6 + 6 * (B - 0.5)
-        w = r0 + (r1 - r0) * h ** 0.8
-        prof = np.clip(1 - ((xx - cx) / w) ** 2, 0, 1)
-        D = prof * (0.55 + 0.9 * (B - 0.5) + 0.45 * (Sm - 0.5)) * dens * (1 - 0.55 * h ** 2)
-        D[(y_src - Y) - 2:] = 0
-        mask = D > (0.22 + 0.22 * (bayer(fw, fh, X, Y) - 0.5))
-        Dup = np.vstack([np.zeros((3, fw), np.float32), D[:-3]])
-        tone = 0.27 - 0.04 * h + 0.12 * np.clip(D - Dup, -0.3, 0.3) + 0.06 * (Sm - 0.5) - 0.07 * np.clip(D - 0.5, 0, 1)
-        cv = Canvas(fw, fh, 'smoke', ox=X, oy=Y)
-        cv.put(mask, 0, 0, 'smoke', tone)
-        lights = [Light('fire', c, y_src + 4, 60, 1.3 * fire), Light('fire', c + 6, y_src - 36, 54, 0.4 * fire)]
-        frames.append(resolve(cv, lights, gains=(0.4, 0.42, 0.3), warm_bias=0.3))
-    return _strip_from(frames, 'smoke'), (X, Y, fw, fh)
+    fr = PFB.column(fw, fh, n, (16.0, fh - 10.0), (16.0 + drift, 0.6 * r1), seed,
+                    tones=SMOKE_LIT if fire > 0.5 else SMOKE_NIGHT, cool=SMOKE_NIGHT,
+                    sizes=(int(1.3 * r1), int(1.6 * r1), int(2.0 * r1)), count=7, loops=2, sway=2.5,
+                    warm_until=0.22)
+    S = Layer(fw * n, fh, 'smoke')
+    S.c[:] = np.concatenate(fr, axis=1)
+    return S, (X, Y, fw, fh)
 
 
 def steam_puffs(cx, cy, seed, n=12, fw=40, fh=48):

@@ -12,6 +12,7 @@ import numpy as np
 
 import env_c4_tunnels_kit as K
 import env_c4_tunnels_layout as L
+import pixel_fire_bake as PFB
 
 
 def strip(frames_list):
@@ -121,26 +122,11 @@ def particles(w, h, frames, fps, n, seed, kind='dust', spawn=None, vy=(-2, 2), v
 
 
 def steam_wisp(w, h, frames, seed, dens=1.0, ramp='S', drift=0.6):
-    """Seamless rising wisp (steam from the samovar, the leaking flange; thin smoke from a stove pipe): soft
-    dithered alpha, lighter core, curling as it rises and thins."""
-    out = np.zeros((frames, h, w, 4), np.uint8)
-    per = h
-    nz = K.periodic_noise(w, per * 2, 6, 9, seed, octaves=3, per_y=per)
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    xs = np.arange(w, dtype=np.float32)[None, :]
-    for k in range(frames):
-        off = int(round(k / frames * per))
-        n = np.roll(nz, -off, axis=0)[:h]
-        rise = 1 - ys / h                                                  # 1 at the source (bottom)
-        cx = w / 2 + (1 - rise) * drift * w * 0.3 * np.sin((ys / h) * 3 + k / frames * 2 * math.pi)
-        spread = 1.5 + (1 - rise) * w * 0.35
-        core = np.exp(-((xs - cx) ** 2) / (2 * spread ** 2))
-        a = core * (0.25 + 0.75 * rise) * (0.55 + 0.9 * (n - 0.5) + 0.35) * dens
-        a = np.clip(a, 0, 1) * np.clip(rise * 3.0, 0, 1)
-        alpha = soft_alpha(a, k * 3, 0, levels=(0, 60, 96, 132, 170))
-        tone = np.full((h, w), 4.0 if ramp == 'S' else 3.0, np.float32) + core * 1.2
-        out[k] = K.ramp_rgba(ramp, np.clip(tone, 0, 6), alpha, seed=seed)
-    return strip(list(out))
+    """Seamless rising wisp (steam from the samovar, the leaking flange; thin smoke from a stove pipe).  Round
+    13: pixel fire kit (pixel_fire_bake.wisp) -- hard-pixel puffs in three tones of the ramp that swell, climb
+    and break up through the ordered dither, no soft alpha."""
+    tones = tuple('#%02X%02X%02X' % tuple(int(v) for v in K.rgba(ramp, i)[:3]) for i in (3, 4, 5))
+    return strip(PFB.wisp(w, h, frames, seed, tones, drift=drift))
 
 
 def drip(h, frames=30, fps=10, seed=0, w=11):

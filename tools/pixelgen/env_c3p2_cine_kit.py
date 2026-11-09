@@ -212,41 +212,13 @@ def hand_text(s: str, scale=2, slant=0.22, seed=0) -> np.ndarray:
 
 # ------------------------------------------------------------------------------------------------ sheets
 def flame_sheet(n=8, fw=26, fh=44, seed=1, cool=False):
-    """n frames of a licking flame (bottom-anchored, transparent), palette FIRE; frames cycle smoothly."""
-    out = np.zeros((fh, fw * n, 4), np.uint8)
-    yy, xx = np.mgrid[0:fh, 0:fw].astype(np.float32)
-    pal = [hexrgb(c) for c in FIRE]
-    for i in range(n):
-        ph = i / n * 2 * math.pi
-        u = (yy + 0.5) / fh                                         # 0 top .. 1 bottom
-        sway = (np.sin(ph + u * 5.0) * 2.2 + np.sin(2 * ph + u * 9.0 + 1.3) * 1.0) * (1 - u)
-        nz = pg.value_noise(fw, fh * 2, 6, seed * 31 + 7, octaves=3)
-        off = int((i / n) * fh) % fh
-        nzs = nz[off:off + fh]
-        half = (fw * 0.42) * (u ** 0.62) * (0.85 + 0.15 * np.sin(ph * 2 + 0.7))
-        dx = np.abs(xx + 0.5 - fw / 2 - sway)
-        dens = np.clip(1.0 - dx / (half + 1e-3), 0, 1) * np.clip(u * 1.6, 0, 1)
-        dens = dens + (nzs - 0.5) * 0.9 * (1 - u * 0.6)
-        tongue = np.clip(np.sin(ph * 1.0 + xx * 0.9) * 0.5 + 0.5, 0, 1) * (1 - u) * 0.35
-        dens = dens - tongue
-        th = pg.bayer(fw, fh, i, 0)
-        m = dens > 0.18 + th * 0.10
-        heat = np.clip(dens * 1.25 + u * 0.55 - 0.25, 0, 1)
-        idx = np.clip((heat * (len(pal) - 1 + 0.6) + (th - 0.5) * 0.9).astype(int), 0, len(pal) - 1)
-        if cool:
-            idx = np.clip(idx - 1, 0, len(pal) - 2)
-        fr = np.zeros((fh, fw, 4), np.uint8)
-        for k, c in enumerate(pal):
-            sel = m & (idx == k)
-            fr[sel, :3] = c.astype(np.uint8)
-            fr[sel, 3] = 255
-        out[:, i * fw:(i + 1) * fw] = fr
-    return out
-
-
-def smoke_sheet(n=8, fw=64, fh=48, seed=5, cols=None, light=(0.4, -0.7)):
-    cols = cols or ['#0E0F12', '#17191D', '#22242A', '#2E3036', '#3D3E42']
-    return K.puff_sheet(n, fw, fh, cols, seed, grow=(0.26, 0.48), thin=0.45, light=light, drift=0.04)
+    """n frames of a licking flame (bottom-anchored, transparent).  Round 13: the pixel fire kit's designed
+    tongues (pixel_fire_bake.flames) -- a main tongue with forks over a bed of embers, merged colour bands, hard
+    pixels, a seamless loop at the films' 9 fps; cool = without the white-hot core."""
+    import pixel_fire as PF
+    import pixel_fire_bake as PFB
+    return np.concatenate(PFB.flames(fw, fh, n, [(fw / 2.0, 0.24 * fw, 1.0)], seed, 1.0, base=0.25,
+                                     cols=PF.FIRE[:4] if cool else None, tick=9), axis=1)
 
 
 def ember_sheet(n=4, w=3, h=3):

@@ -323,7 +323,7 @@ def h3_bg():
     sky = yy < H3_HORIZON
     cl = LF.nz(VW, VH, 34, 1305, 4)
     cv.put(sky, '#1A2431', 0.45 + cl[sky] * 0.3 + (yy[sky] - 46) / 140.0)
-    # (round 11: the smoke column is its own soft layer, h3_plume, drawn over the sky by the runtime)
+    # (round 13: the smoke column is drawn by the film from the pixel fire kit's puffs)
     # far bank: houses, the Line's fence and towers, the bridge with the barrier
     _far_bank(cv, H3_HORIZON, H3_HORIZON - 30, ((372, H3_HORIZON - 40), (500, H3_HORIZON - 40)), fire, scale=0.6, seed=9)
     br = (xx >= 540) & (yy >= H3_HORIZON - 20) & (yy < H3_HORIZON + 10)
@@ -417,27 +417,6 @@ def h3_dawn():
     ice = np.clip(1.0 - (yy - H3_HORIZON) / 120.0, 0, 1) * (yy > H3_HORIZON + 2) * (xx > 300)
     a += (ice * 0.6)[..., None] * np.array([14, 16, 22], np.float32)
     return K.soft_quant(a, 2.0)
-
-
-def h3_plume():
-    """The smoke column of the burning east wing (soft RGBA, full frame): it rises from the roof's fire, leans east
-    with the wind and widens into a flat drifting cloud high over the river; the fire lights its foot orange, its
-    high flank catches the first grey of dawn; billows all the way, soft at every edge."""
-    rng = np.random.default_rng(1313)
-    lobes = []
-    for k in range(70):
-        s_ = (k + rng.uniform(0, 1)) / 70.0
-        cx = 214 + 300 * s_ ** 1.5 + rng.uniform(-8, 8) * (0.4 + s_)
-        cy = 92 - 104 * s_ ** 0.8 + rng.uniform(-6, 6) * (0.4 + s_)
-        r = 9 + 46 * s_ + rng.uniform(-3, 5) * (0.5 + s_)
-        a = 0.95 - 0.35 * s_
-        fire = max(0.0, 1.0 - s_ * 2.2)
-        lobes.append((cx, cy, r, a, fire))
-    # the column's foot over the burning roof
-    for x_ in (170, 196, 222, 248, 276):
-        lobes.append((x_ + rng.uniform(-4, 4), 86 + rng.uniform(-4, 2), 12 + rng.uniform(0, 5), 0.9, 1.0))
-    ramp = ['#0E0C0D', '#171314', '#211A19', '#2C221E', '#3A2C24', '#523826', '#6E4628', '#8E5A2E', '#B07038']
-    return LF.soft_plume(VW, VH, lobes, ramp, light=(-0.1, 1.0), alpha=0.92, seed=1315, cool=(16, 18, 26))
 
 
 def h3_glow():

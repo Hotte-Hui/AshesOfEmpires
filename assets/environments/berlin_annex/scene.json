@@ -1015,6 +1015,17 @@
    "gen": "env_c4_annex",
    "scene_id": "L_C4_AnnexA",
    "note": "Marta's breath in the frost"
+  },
+  {
+   "scene": "res://scenes/levels/c4/AnnexTerminal.tscn",
+   "pos": [
+    1093,
+    288
+   ],
+   "props": {},
+   "gen": "gen_annex_terminal",
+   "scene_id": "L_C4_AnnexB",
+   "note": "the data desk between machine room and household index (terminal/desk.png) and the duty roster beside the second ladder (terminal/roster.png); carries the exploration spots exp_terminal / exp_terminal_roster of the side task „Planspiel Abgang“ (tools/pixelgen/gen_annex_terminal.py, terminal/layout.json)"
   }
  ],
  "walkable": [
@@ -1096,6 +1107,14 @@
   ],
   "guard_annex": [
    1868,
+   300
+  ],
+  "exp_terminal": [
+   1096,
+   300
+  ],
+  "exp_terminal_roster": [
+   1327,
    300
   ]
  },

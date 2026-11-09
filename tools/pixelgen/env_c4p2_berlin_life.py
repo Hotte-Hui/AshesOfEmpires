@@ -255,8 +255,16 @@ def drift_strip(R, w, h, frames=24, fps=8, n=60, seed=0, ramp='V', tones=(5, 4),
 
 def plume_strip(R, w, h, frames=16, seed=0, ramp='V', base=4.0, dens=1.0, drift=0.0, warm_root=None, rise=3,
                 spread=0.5, root=0.18, alphas=(0, 50, 92, 140)):
-    """Steam / smoke rising from the bottom centre, soft alpha in four levels, periodic noise scrolled one period
-    per loop (the loop never jumps)."""
+    """Steam / smoke rising from the bottom centre.  Steam (a pale base tone) is a soft veil: alpha in four
+    levels, periodic noise scrolled one period per loop.  Smoke (base < 3: chimneys, an exhaust) is pixel art
+    since round 13 -- the pixel fire kit's puffs (pixel_fire_bake.wisp) in three tones of the ramp, hard
+    pixels, breaking up through the ordered dither."""
+    if base < 3.0:
+        import pixel_fire_bake as PFB
+        t, n_ = int(round(base)), R.n(ramp)
+        tones = tuple('#%02X%02X%02X' % tuple(int(v) for v in R.table[R[ramp], max(0, min(n_ - 1, t + d)), :3])
+                      for d in (-1, 0, 1))
+        return K.strip(PFB.wisp(w, h, frames, seed, tones, drift=drift))
     P = frames * rise
     nz = K.periodic_noise(w, P, 8, 10, seed, octaves=3, per_y=P)
     ys = np.arange(h, dtype=np.float32)[:, None]

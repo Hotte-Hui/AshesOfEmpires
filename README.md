@@ -93,6 +93,10 @@ im Dienststollen, die Lüftungsklappen der Nebenstelle Süd und die Drehscheibe 
 verbinden, was zusammengehört („derselbe Stempel“, „dieselbe Wagennummer“), und die Zusammenfassung „Was die Akte
 bisher zeigt“ wächst mit jedem Fund und jeder Entscheidung.
 
+**Der Rechner in der Nebenstelle (optional):** An einem Datenplatz von 1964 meldet man sich an, durchsucht Dateien und findet „Planspiel Abgang“ – die Simulation einer Festnahme als 3D-Drahtgitterspiel, in dem man die gejagte Person steuert.
+
+**Rückblenden:** Vier Karten „Reale Geschichte“ zeigen auf Wunsch einen kurzen Film im Stil alter Archivaufnahmen – Orte, Räume und Dokumente, zurückhaltend erzählt.
+
 **Erinnerungen:** Abgeschlossene Szenen lassen sich über das Pausenmenü noch einmal besuchen – eine Zeitreise in
 Sepia, in der man alles in Ruhe ansieht, verpasste Funde nachholt und Gespräche nachliest. Die Geschichte ändert sich
 dabei nicht; „In die Gegenwart zurückkehren“ bringt einen genau dorthin zurück, wo man war. Nach dem Durchspielen

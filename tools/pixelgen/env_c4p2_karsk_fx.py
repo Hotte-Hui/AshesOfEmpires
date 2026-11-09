@@ -16,6 +16,14 @@ import numpy as np
 
 import env_c4p2_karsk_kit as K
 import env_c4p2_karsk_layout as L
+import pixel_fire_bake as PFB
+
+
+
+R = K.R
+
+def _hex(c):
+    return '#%02X%02X%02X' % tuple(int(v) for v in c[:3])
 
 
 def strip(frames_list):
@@ -73,26 +81,12 @@ def particles(w, h, frames, fps, n, seed, kind='snow', vy=(4, 8), vx=(-1, 2), li
 
 
 def plume(w, h, frames, seed, ramp='V', dens=1.0, drift=0.6, tone=3.0, spread_k=0.35, rise_fade=3.0, up=True):
-    """Seamless rising wisp / plume: dithered alpha, a lighter core, curling as it rises and thins."""
-    out = np.zeros((frames, h, w, 4), np.uint8)
-    per = h
-    nz = K.periodic_noise(w, per * 2, 6, 9, seed, octaves=3, per_y=per)
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    xs = np.arange(w, dtype=np.float32)[None, :]
-    for k in range(frames):
-        off = int(round(k / frames * per))
-        n = np.roll(nz, -off if up else off, axis=0)[:h]
-        rise = ys / h if up else 1 - ys / h          # 1 at the source (bottom)
-        cx = w * 0.3 + (1 - rise) * drift * w * 0.12 * np.sin((ys / h) * 3 + k / frames * 2 * math.pi) \
-            + (1 - rise) ** 1.4 * drift * w * 0.45
-        spread = 1.5 + (1 - rise) * w * spread_k
-        core = np.exp(-((xs - cx) ** 2) / (2 * spread ** 2))
-        a = core * (0.2 + 0.8 * rise) * (0.45 + 1.1 * (n - 0.5) + 0.3) * dens
-        a = np.clip(a, 0, 1) * np.clip(rise * rise_fade, 0, 1)
-        alpha = soft_alpha(a, k * 3, 0, levels=(0, 40, 66, 92, 120))
-        t = np.full((h, w), tone, np.float32) + core * 1.2
-        out[k] = K.ramp_rgba(ramp, np.clip(t, 0, K.R.n(ramp) - 1), alpha, seed=seed)
-    return strip(list(out))
+    """Seamless rising wisp / plume (round 13: pixel fire kit, pixel_fire_bake.wisp): hard-pixel puffs in three
+    tones of the ramp around `tone` that swell, climb, lean with the draught and break up through the ordered
+    dither -- no soft alpha."""
+    t, n_ = int(round(tone)), R.n(ramp)
+    tones = tuple(_hex(K.rgba(ramp, max(0, min(n_ - 1, t + d)))) for d in (-1, 0, 1))
+    return strip(PFB.wisp(w, h, frames, seed, tones, drift=drift))
 
 
 def billow(w, h, frames, seed, ramp='V', tone=3.4, warm_k=0.0):
@@ -120,34 +114,12 @@ def billow(w, h, frames, seed, ramp='V', tone=3.4, warm_k=0.0):
 
 
 def flames(frames=8, w=14, h=18, seed=0):
-    """Barrel fire (KarskBarrel: origin = rim centre; cell bottom on the rim): three separate tongues that lick up
-    at their own pace and sway, a yellow-white root, orange bodies, thin red tips -- air between them, so the fire
-    never reads as a block or a sign."""
-    out = np.zeros((frames, h, w, 4), np.uint8)
-    nz = K.periodic_noise(w, h * 2, 3, 3, seed, octaves=2, per_y=h)
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    xs = np.arange(w, dtype=np.float32)[None, :]
-    u = (h - 1 - ys) / float(h - 1)                                   # 0 on the rim, 1 at the top of the cell
-    tongues = ((-3.6, 0.0, 0.62, 0.95), (0.0, 2.1, 1.0, 1.25), (3.4, 4.0, 0.72, 0.9))   # dx, phase, height, width
-    for k in range(frames):
-        ph = k / frames * 2 * math.pi
-        lv = np.zeros((h, w), np.float32)
-        for j, (dx, p0, hk, wk) in enumerate(tongues):
-            top = hk * (0.72 + 0.28 * math.sin(ph * (1 + j % 2) + p0))
-            rel = u / max(0.2, top)
-            sway = math.sin(ph + p0 + 1.0) * 1.3 * rel
-            cxk = w / 2.0 - 0.5 + dx + sway
-            half = 2.1 * wk * np.clip(1 - rel, 0, 1) ** 0.8 + 0.25
-            core = np.clip(1 - np.abs(xs - cxk) / half, 0, 1) * (rel <= 1.0)
-            lv = np.maximum(lv, core * (1.15 - rel * 0.55))
-        n = np.roll(nz, -int(round(k / frames * h)), axis=0)[:h]
-        lv = lv * (0.78 + 0.5 * (n - 0.5))
-        img = np.zeros((h, w, 4), np.uint8)
-        img[lv > 0.2] = K.rgba('R', 4)
-        img[lv > 0.45] = K.rgba('L', 4)
-        img[lv > 0.74] = K.rgba('L', 5)
-        out[k] = img
-    return strip(list(out))
+    """Barrel fire (KarskBarrel: origin = rim centre; cell bottom on the rim).  Round 13: designed pixel tongues
+    from the pixel fire kit (pixel_fire_bake.flames) in the depot's colours -- a main tongue with a fork over a
+    bed of embers, the colour bands merged into one hot core."""
+    cols = tuple(_hex(K.rgba(r, i)) for (r, i) in (('R', 3), ('R', 4), ('L', 4), ('L', 5)))
+    return strip(PFB.flames(w, h, frames, [(w / 2.0, 4, 1.0)], seed, 1.0, base=0.25, cols=cols,
+                            cool=_hex(K.rgba('R', 2))))
 
 
 def glow_door(w, h, frames=8, seed=0):

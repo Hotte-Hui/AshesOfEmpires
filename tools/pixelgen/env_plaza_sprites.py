@@ -637,10 +637,13 @@ def barrel_guard() -> Layer:
     L.hline(2, 38, 12, O[1], 0.6)
     L.hline(2, 44, 12, O[1], 0.6)
     L.vline(3, 33, 14, T[2], 0.62)
-    for i, xx in enumerate(range(3, 13)):
-        h = 3 + (i * 5 % 4)
-        col = (O[4], G[1], G[2], O[3])[i % 4]
-        L.rect(xx, 32 - h, 1, h, col, 0.8, em=emit(col))
+    # round 13: the flame is one frame of the pixel fire kit's tongues (pixel_fire_bake.flames) in the plaza's
+    # colours -- a main tongue with a fork over a bed of embers (the prop is a still)
+    import pixel_fire_bake as PFB
+    idx = PFB.bands(PFB.flames(12, 14, 8, [(6, 4, 1.0)], 9, 1.0, base=0.25, cols=PFB.MARKS[:4])[2])
+    for y, x in zip(*np.nonzero(idx >= 0)):
+        col = (O[3], O[4], G[1], G[2])[int(idx[y, x])]
+        L.rect(2 + int(x), 18 + int(y), 1, 1, col, 0.8, em=emit(col))
     L.rect(5, 26, 1, 2, G[3], 0.85, em=emit(G[3]))
     return L
 

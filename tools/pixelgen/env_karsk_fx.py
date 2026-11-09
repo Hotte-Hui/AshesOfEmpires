@@ -146,45 +146,20 @@ def tower_plume(frames=8, fw=84, fh=64, seed=0, cols=None):
 
 
 def barrel_flames(frames=8, fw=18, fh=20, seed=0):
-    """Flames above the barrel rim: one merged, organic fire body (not separate stripes) whose tongues rise,
-    split and lick upward.  Heat field = envelope (wide low base, narrowing) + rising periodic turbulence;
-    banded into pale core / amber / copper / dark smoky tips.  Seamless loop: every turbulence term moves an
-    integer number of periods per loop.  Origin = rim centre at local (fw//2, fh-1).  All pixels emissive."""
+    """Flames above the barrel rim.  Round 13: designed pixel tongues from the pixel fire kit
+    (pixel_fire_bake.flames) -- a main tongue with forks over a bed of embers, the colour bands (copper ramp:
+    amber rim .. pale core) merged into one body.  Seamless loop; origin = rim centre at local (fw//2, fh-1).
+    All pixels emissive."""
+    import pixel_fire_bake as PFB
     S = Layer(fw * frames, fh, 'flames')
-    rng = np.random.default_rng(seed)
-    yy, xx = np.mgrid[0:fh, 0:fw].astype(np.float32)
-    v = (fh - 1 - yy) / (fh - 1)                       # 0 at the rim .. 1 at the top
-    u = (xx + 0.5 - fw / 2.0) / (fw / 2.0) * 1.3        # base ~ the barrel mouth (12 of 18 px)
-    terms = [(rng.uniform(1.2, 2.6), int(rng.integers(1, 3)), rng.uniform(0, 2 * math.pi), rng.uniform(0.5, 1.0))
-             for _ in range(5)]
+    fr = PFB.flames(fw, fh, frames, [(fw / 2.0, 5, 1.0)], seed, 1.0, base=0.25, cols=PFB.MARKS[:4],
+                    cool=PFB.MARK_COOL)
+    ramp = {0: CO[1], 1: CO[2], 2: CO[3], 3: CO[4], 9: CO[0]}
     for f in range(frames):
-        t = f / frames
-        turb = np.zeros_like(u)
-        for (kx, m, ph, amp) in terms:
-            turb += amp * np.sin(2 * math.pi * (kx * u * 0.9 + m * (v * 1.3 - t)) + ph)
-        turb /= sum(tm[3] for tm in terms)
-        lean = 0.12 * math.sin(2 * math.pi * t) * v       # the whole fire sways a little
-        env = 1.0 - np.abs(u - lean) ** 1.5 * (0.9 + 0.8 * v) - v ** 1.15 * 0.95
-        heat = env + turb * (0.2 + 0.5 * v)
-        heat[yy >= fh - 1] = np.maximum(heat[yy >= fh - 1], 0.5 - np.abs(u[yy >= fh - 1]) * 0.55)
-        bands = [(0.7, CO[4]), (0.46, CO[3]), (0.27, CO[2]), (0.13, CO[1]), (0.05, CO[0])]
-        for x in range(fw):
-            for y in range(fh):
-                h = heat[y, x]
-                for thr, c in bands:
-                    if h > thr:
-                        if c is CO[0] and v[y, x] < 0.5:
-                            break                          # dark smoky edge only on the high tips
-                        S.px(f * fw + x, y, c, em=c)
-                        break
-        # remove isolated single pixels (clean clusters)
-        sub = S.c[:, f * fw:(f + 1) * fw]
-        a = sub[..., 3] > 0
-        p = np.pad(a, 1)
-        nb = p[:-2, 1:-1].astype(int) + p[2:, 1:-1] + p[1:-1, :-2] + p[1:-1, 2:]
-        lone = a & (nb == 0)
-        sub[lone] = 0
-        S.em[:, f * fw:(f + 1) * fw][lone] = 0
+        idx = PFB.bands(fr[f])
+        for y, x in zip(*np.nonzero(idx >= 0)):
+            c = ramp[int(idx[y, x])]
+            S.px(f * fw + int(x), int(y), c, em=c)
     return S, (fw // 2, fh - 1)
 
 

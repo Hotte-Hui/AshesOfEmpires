@@ -51,6 +51,7 @@ var _car: Sprite2D
 var _glass: Sprite2D
 var _passage: Sprite2D
 var _candle: Sprite2D
+var _flame1: Node2D          # k1: the candle's flame (pixel fire kit, flame_xs)
 var _door: Sprite2D
 var _flash: Sprite2D
 var _people: Array = []
@@ -171,6 +172,8 @@ func _build() -> void:
 	sprite("clock/k1_front.png", Vector2.ZERO, k1)
 	_passage = glow("clock/passage_glow.png", k1)
 	_candle = glow("clock/k1_glow.png", k1)
+	need_kit(["flame_xs"])
+	_flame1 = fx(k1, "CandleFlame", _draw_candle)
 	_snow1 = snow(k1, Rect2(-20, 30, 680, 300), [
 		{"count": 60, "v": Vector2(-3, 12), "vjit": 0.3, "size": Vector2(1, 1), "color": Color("#8a9ab8"), "sway": 2.0},
 		{"count": 22, "v": Vector2(-5, 20), "vjit": 0.3, "size": Vector2(1, 1), "color": Color("#dce4f0"), "sway": 3.0},
@@ -248,7 +251,9 @@ func _apply(time: float) -> void:
 	_car.position = Vector2(roundf(p.x - float(cc[0]) / 2.0), roundf(p.y - float(cc[1])))
 	_passage.visible = time >= float(CAR_T[1]) - 0.6
 	_passage.modulate = Color(1, 1, 1, clampf(1.0 - (time - float(CAR_T[1])) / 1.4, 0.0, 1.0))
-	_candle.modulate = Color(1, 1, 1, clampf(fire_wobble(time, 31, 0.18), 0.0, 1.0))
+	# the candle's light breathes in whole steps (pixel fire kit rule: fire light never ramps)
+	_candle.modulate = Color(1, 1, 1, 0.88 + 0.12 * light_step(time, 31))
+	_flame1.queue_redraw()
 	# k2: the door, the people, the witness, the flash
 	_door.visible = door_open(time)
 	var de: Array = C.get("door_e", [452, 216, 462, 226])
@@ -321,6 +326,13 @@ func _apply(time: float) -> void:
 		s.set_time(time)
 	for n2 in [_hand, _fx4, _motes, _smoke2]:
 		n2.queue_redraw()
+
+
+## k1: the candle in the cobbler's window burns (pixel fire kit: the smallest sheet -- a tongue that leans, breathes
+## and lets its tip go) over the still flame of the plate; whole pixels, it rides with the plate's tilt.
+func _draw_candle() -> void:
+	var c: Array = C.get("candle", [318, 372])
+	PF.flame(_flame1, "flame_xs", Vector2(float(c[0]) + 0.5, float(c[1]) + 3.0), _time2, 0, fire_rate())
 
 
 ## k2: smoke rising from the sentry hut's stovepipe and the hall's two chimneys, leaning with the wind.

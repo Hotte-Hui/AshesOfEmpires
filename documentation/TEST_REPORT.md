@@ -242,3 +242,14 @@ this round touched exploration).
 | Real input, skip | **INPUTPLAY_PASS** |
 | Exported .exe, real input | **INPUTPLAY_PASS**, 0 errors, 0 warnings |
 The drivers and tests run in German; English was checked by the QA agent with `-- --lang=en` captures at 100 / 150 %.
+
+## 17. Round 13 (2026-11-10) — pixel fire, the data desk with „Planspiel Abgang“, flashbacks
+| Layer | Result |
+|---|---|
+| Unit | **80 files, 877 cases, 126640 checks — ALL PASSED** |
+| Autoplay, played in full | **PASS** |
+| Autoplay, skip + exploration (the data desk and its mini-games through ctx.auto) | **PASS** |
+| Real input, skip | **INPUTPLAY_PASS** |
+| Real input, skip + exploration + memories (every find, the terminal and the wireframe game by synthetic keys) | **INPUTPLAY_PASS** (last level: Explore counts 21/21) |
+| Exported .exe, real input | **INPUTPLAY_PASS**, 0 errors, 0 warnings |
+Not covered: a human playing „Planspiel Abgang“, listening to the new sounds.

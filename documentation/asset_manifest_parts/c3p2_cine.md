@@ -124,7 +124,8 @@ red fringe to a white-hot core — no dark rim, the core is the brightest pixel)
   (`flame_out`), halos, glass shards that glint and stay twinkling in the snow, onlookers who react (take sequences
   in layout `escape.e4_people[].seq`: flinch, hands to the face, a step back, pointing, walking to the engine) and
   the fire engine nosing in (`engine`) with its turning blue beacon (`beacon`, `beacon_wash`).
-* **Halves:** h3's smoke column is the soft `h3_plume` (no flat sheet, no holes) drifting east; the dawn is visible
+* **Halves:** h3's smoke column was the soft `h3_plume` (round 13: the pixel fire kit's puffs, drawn by the film;
+  `h3_plume`, `flame_s` and `smoke` are gone — see the part "Pixel fire kit"); the dawn is visible
   (`h3_dawn`: the sky lifts, a pale band and a rose-grey line on the right horizon; horizon ≈ RGB 13,17,26 → 80,86,112);
   soft `smoke`, `steam`, `breath`; window fires from `fire_sheet`.
 
@@ -216,7 +217,7 @@ fades. The round-11 gradient fire is gone: `fire_sheet` flames (`fire_mid/big/wi
 |---|---|
 | `h1_bg`, `h1_glow`, `fig_alexei`, `fig_konrad` (4 each), `stacks` (3), `arms` (2×14), `list_fold` (4) | the quay bench from behind: the balustrade, the frozen river with the fire's glow, the Line with fence and two watchtowers (searchlight beams at runtime); the men; the Russian pages (with the list of names), the German pages, the list; arms reaching near / across / holding; the list folded into Konrad's coat |
 | `h2_bg`, `h2_glow`, `walk_alexei`, `walk_konrad` (6 each) | the promenade with its lanterns and their bench; the two walking apart (Konrad mirrored at runtime) |
-| `h3_bg`, `h3_glow`, `h3_dawn`, `h3_plume`, `flame_s`, `smoke` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the soft smoke column leaning east; the first grey of dawn (faded in at runtime) |
+| `h3_bg`, `h3_glow`, `h3_dawn` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the first grey of dawn (faded in at runtime). Round 13: the wing's flames, smoke column and sparks are the pixel fire kit's sheets, played by the film (no own files) |
 | `board_bg`, `board_glow`, `glyphs` | the departures board (trilingual header, four standing rows) and the split-flap glyph atlas (glyphs + mid-flap) from which the runtime flips „DIENSTAG · 23.40 · KORDON-17 · GLEIS 5“ in |
 
 ## Sound — `assets/audio/sfx/` (`tools/audiogen/c3p2_cine_audio.py`, 44.1 kHz / 16-bit stereo)

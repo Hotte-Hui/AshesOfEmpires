@@ -292,20 +292,17 @@ def build(w):
 
 def build_places(w):
     """The halves' places and soft effects that need no figure renders (round 11): the burning wing over the ice
-    with its soft smoke column and a dawn that can be seen, the board hall, soft steam / breath / smoke, fire that
-    reads as fire in the wing's windows."""
+    and a dawn that can be seen, the board hall, soft steam / breath (the wing's fire and smoke: pixel fire kit,
+    played by the film)."""
     import env_c3p2_cine_river as RV
     import env_c3p2_cine_life as LF
     w('halves/h3_bg.png', RV.h3_bg())
     w('halves/h3_dawn.png', RV.h3_dawn())
     w('halves/h3_glow.png', RV.h3_glow())
-    w('halves/h3_plume.png', RV.h3_plume())
     w('halves/board_bg.png', RV.board_bg())
     w('halves/steam.png', LF.soft_puff_sheet(6, 120, 80, LF.STEAM_COLD, 1161, grow=(0.3, 0.5), light=(0.2, -0.9),
                                              thin=0.55, drift=0.06, alpha=0.7, wisp=0.6))
     w('halves/breath.png', LF.soft_puff_sheet(6, 24, 18, ['#3A4859', '#4F5E70', '#687789', '#A1AAB7', '#C2C9D2'],
                                               1141, grow=(0.2, 0.42), light=(0.3, -0.8), thin=0.7, alpha=0.8, lobes=6))
-    w('halves/smoke.png', LF.soft_puff_sheet(8, 64, 48, ['#1E1714', '#2E2522', '#43352E', '#5C473B', '#78604E',
-                                                         '#957A62'], 1151, grow=(0.26, 0.5), light=(0.0, 0.95),
-                                             thin=0.5, drift=0.1, alpha=0.85))
-    w('halves/flame_s.png', LF.fire_sheet(8, 20, 30, 17, tongues=2, width=(0.2, 0.3), length=(0.6, 1.0)))
+    # round 13: the wing's flames, smoke and smoke column are the pixel fire kit's sheets, played by the film
+    # (halves/flame_s, halves/smoke and halves/h3_plume are gone)

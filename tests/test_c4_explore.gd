@@ -40,7 +40,8 @@ const LEVELS := {
 	"L_C4_AnnexA": {"path": "res://scenes/levels/L_C4_Annex.tscn", "env": "berlin_annex", "prefix": "berlin.annex.",
 		"area": "berlin", "scenes": ["L_C4_AnnexA", "L_C4_AnnexB"],
 		"story": ["door_9", "timetable_case", "marta_tram", "column_s2", "loading_hatch", "drawer_s8", "plan_wall",
-			"tube_station", "registrar_counter"], "npcs": ["marta_tram", "registrar_counter", "guard_annex"], "total": 18},
+			"tube_station", "registrar_counter"], "npcs": ["marta_tram", "registrar_counter", "guard_annex"], "total": 18,
+		"extra": 4},          # round 13: the data desk's four entries (c4_annex_terminal.json, tests/test_c4_terminal.gd)
 }
 ## Per Story scene: who plays it, the x range of its walk area, the node gates, the remembered scene, how many entries.
 const SCENES := {
@@ -369,8 +370,10 @@ func _validation() -> bool:
 	for cid in cards:
 		kit.ok(real.has_card(cid), "Explore loaded card %s" % cid)
 	for lid in LEVELS:
-		kit.eq(real.counts(lid)["total"], int(LEVELS[lid]["total"]), "counts(%s) sees every find of the level file" % lid)
-	kit.eq(real.tasks_for("L_C4_AnnexA").map(func(t): return str(t["id"])), [TASK], "the annex's one side task")
+		kit.eq(real.counts(lid)["total"], int(LEVELS[lid]["total"]) + int(LEVELS[lid].get("extra", 0)),
+			"counts(%s) sees every find of the level file" % lid)
+	kit.eq(real.tasks_for("L_C4_AnnexA").map(func(t): return str(t["id"])), [TASK, "berlin.task.planspiel"],
+		"the annex's side tasks: Ilses Puppe (tram loop) and, since round 13, the data desk (tests/test_c4_terminal.gd)")
 	kit.eq(real.tasks_for("L_C4_TunnelsA").map(func(t): return str(t["id"])), [TASK2], "the tunnels' one side task")
 	return true
 
@@ -991,13 +994,13 @@ func _memory_counts() -> bool:
 	for c in game.memory_scenes("game"):
 		got[str(c.get("id", ""))] = c
 	var per_scene := FileAccess.get_file_as_string("res://scripts/core/game.gd").contains("e.get(\"scene\"")
-	var want_scene := {"L_C4_TunnelsA": [1, 8], "L_C4_TunnelsB": [1, 14], "L_C4_AnnexA": [1, 11], "L_C4_AnnexB": [0, 7]}
+	var want_scene := {"L_C4_TunnelsA": [1, 8], "L_C4_TunnelsB": [1, 14], "L_C4_AnnexA": [1, 11], "L_C4_AnnexB": [0, 11]}
 	for sid in ["L_C4_TunnelsA", "L_C4_TunnelsB", "L_C4_AnnexA", "L_C4_AnnexB"]:
 		var c: Dictionary = got.get(sid, {})
 		if not kit.ok(not c.is_empty() and bool(c.get("unlocked", false)), "memory card %s is unlocked after Chapter 4" % sid):
 			continue
 		var tunnels: bool = str(sid).begins_with("L_C4_Tunnels")
-		var want: Array = want_scene[sid] if per_scene else ([2, 22] if tunnels else [1, 18])
+		var want: Array = want_scene[sid] if per_scene else ([2, 22] if tunnels else [1, 22])
 		kit.eq([int(c.get("found", -1)), int(c.get("total", -1))], want, "memory card %s counts %s" % [sid, "its walk area" if per_scene else "its level file"])
 	if not st.load_json(str(keep["story"])).get("ok", false):
 		st.new_game()

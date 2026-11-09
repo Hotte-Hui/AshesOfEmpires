@@ -13,6 +13,8 @@ extends "res://scripts/ui/ui_modal.gd"
 ## Input: E / Enter / Space / A = next (long pages scroll first; closes on the last page), Esc / B = close,
 ##        Left / Q / LB = previous page, Right / RB = next page, Up / Down = scroll; mouse on the buttons
 ##        and the wheel. Respects text scale (Kit.scalable), high contrast and reduced motion.
+## Round 13: the four cards with a flashback film (§12.15) carry „Rückblende ansehen“ under the text — the
+##        button, F or pad X plays it in a FlashbackView above this view; the card stays open.
 
 signal page_changed(index: int)
 
@@ -42,6 +44,10 @@ const C_ARCH_URL := Color("3e546b")
 ## Notebook inks: Alexei writes with blue-black ink, Konrad with black drawing ink.
 const C_INK_ALEXEI := Color("2b3c50")
 const C_INK_KONRAD := Color("1a1c2a")
+## Round 13: flashback films of four real-history cards (TECHNICAL_ARCHITECTURE §12.15).
+const Flashbacks := preload("res://scripts/core/flashbacks.gd")
+## The film button of a card may dip this far (px) into the lower margin of the card (the frame keeps 24 px).
+const FB_DIP := 12
 
 var suppress_toasts := true
 var explore_id := ""
@@ -68,6 +74,9 @@ var _filed: Label
 var _hints: Control = null
 var _dim_tween: Tween
 var _scroll_tween: Tween
+## „Rückblende ansehen“ of the card on the current page (null / "" when it has no film or is not found).
+var _fb_btn: Button = null
+var _fb_film := ""
 
 
 # ================================================================ ruled / squared notebook paper
@@ -287,6 +296,8 @@ func _show_page(i: int, dir: int) -> void:
 	_scroll = null
 	_more = null
 	_line_h = 0.0
+	_fb_btn = null
+	_fb_film = ""
 	var p: Dictionary = pages[i]
 	match str(p["type"]):
 		"find":
@@ -373,6 +384,8 @@ func _update_footer() -> void:
 		pairs.append([k_next + "|" + Kit.key_name(KEY_ESCAPE), Kit.t("ui.hint.close")])
 	if multi:
 		pairs.insert(0, [Kit.key_name(KEY_LEFT) + "|" + Kit.key_name(KEY_RIGHT), Kit.t("ui.explore.hint.pages")])
+	if _fb_film != "":
+		pairs.append([flashback_key_text(), Kit.t("ui.flashback.hint")])
 	_hints = Kit.controls_row(pairs)
 	_footer.add_child(_hints)
 
@@ -638,8 +651,68 @@ func _build_card(cid: String) -> Control:
 				Kit.scalable(ul, 20)
 				sv.add_child(ul)
 			body.add_child(sv)
-	v.add_child(_scroll_for(body))
+	var text_box := _scroll_for(body)
+	v.add_child(text_box)
+	var fb := Flashbacks.for_card(cid)
+	if not fb.is_empty() and Flashbacks.exists(str(fb["id"])) and _card_found_now(cid):
+		_flashback_button(text_box.get_child(text_box.get_child_count() - 1) as BoxContainer, str(fb["id"]))
 	return center
+
+
+# ================================================================ flashback film of a card (round 13, §12.15)
+## A card counts as found when Explore has it or this view files it right now.
+func _card_found_now(cid: String) -> bool:
+	return bool(_call("is_card_found", [cid], false)) or cid in cards_new
+
+
+## „Rückblende ansehen“ at the foot of a card that has a film: on the left of the row that holds the „more below“
+## mark, dipping FB_DIP px into the lower margin of the card — the text loses about half a line, not three.
+func _flashback_button(row: BoxContainer, film_id: String) -> void:
+	_fb_btn = Kit.button(Kit.t("ui.flashback.watch"), "", 0)
+	Kit.scalable(_fb_btn, get_theme_font_size("font_size", "Button"))
+	_fb_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	_fb_btn.pressed.connect(watch_flashback)
+	var dip := MarginContainer.new()
+	dip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dip.add_theme_constant_override("margin_top", 2)
+	dip.add_theme_constant_override("margin_bottom", -FB_DIP)
+	dip.add_child(_fb_btn)
+	var gap := Control.new()
+	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for c in row.get_children():
+		(c as Control).size_flags_vertical = Control.SIZE_SHRINK_BEGIN   # the mark stays under the text
+	row.add_child(dip)
+	row.move_child(dip, 0)
+	row.add_child(gap)
+	row.move_child(gap, 1)
+	_fb_film = film_id
+
+
+## Key (or pad button) that starts the flashback from the card: F, pad X.
+func flashback_key_text() -> String:
+	return Kit.pad_button_name(JOY_BUTTON_X) if Kit.last_input_pad else Kit.key_name(KEY_F)
+
+
+## True when the page on screen is a found card with a flashback film.
+func has_flashback() -> bool:
+	return is_open and _fb_film != "" and _fb_btn != null and is_instance_valid(_fb_btn)
+
+
+## Plays the flashback film of the card on this page: FlashbackView (scripts/ui/flashback_view.gd), a modal above
+## this one — the card stays open underneath and has the focus back afterwards. Only the player starts it (the
+## button, F, pad X); the Story is not involved.
+func watch_flashback() -> bool:
+	if not has_flashback():
+		return false
+	var fv := Flashbacks.view(ui_root if ui_root != null else self)
+	if fv == null or bool(fv.get("is_open")):
+		return false
+	_fb_btn.release_focus()   # afterwards the focus is on „Weiter“ / „Schließen“ again, not on a replay
+	if not bool(fv.call("play", _fb_film)):
+		return false
+	Kit.ui_sound("history")
+	return true
 
 
 # ================================================================ helpers
@@ -756,6 +829,8 @@ func _on_close() -> void:
 	_scroll = null
 	_more = null
 	page = -1
+	_fb_btn = null
+	_fb_film = ""
 
 
 func _on_contrast_changed() -> void:
@@ -783,6 +858,8 @@ func modal_input(event: InputEvent) -> bool:
 		var f := get_viewport().gui_get_focus_owner()
 		if f == _prev_btn and not _prev_btn.disabled and not (event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_E):
 			prev()
+		elif f != null and f == _fb_btn and not (event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_E):
+			watch_flashback()
 		else:
 			next()
 		return true
@@ -794,12 +871,18 @@ func modal_input(event: InputEvent) -> bool:
 		if k == KEY_PAGEDOWN:
 			_page_forward()
 			return true
+		if k == KEY_F and has_flashback():
+			watch_flashback()
+			return true
 	if event is InputEventJoypadButton and event.pressed:
 		if event.button_index == JOY_BUTTON_LEFT_SHOULDER:
 			prev()
 			return true
 		if event.button_index == JOY_BUTTON_RIGHT_SHOULDER:
 			_page_forward()
+			return true
+		if event.button_index == JOY_BUTTON_X and has_flashback():
+			watch_flashback()
 			return true
 	if event.is_action_pressed("ui_left") or event.is_action_pressed("move_left"):
 		prev()

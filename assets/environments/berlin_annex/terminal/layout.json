@@ -1,0 +1,58 @@
+{
+ "doc": "The data desk of Nebenstelle Süd (tools/pixelgen/gen_annex_terminal.py; read by scripts/levels/c4/annex_terminal.gd). World px. desk / roster: cut-outs of the baked hall (pos = top-left). spots: where Konrad stands (feet line y 300). life: the cursor on the tube, the first line of the trace it shows after the release, the lamp of the tape cabinet and the hubs of its two reels.",
+ "spots": {
+  "exp_terminal": [
+   1096,
+   300
+  ],
+  "exp_terminal_roster": [
+   1327,
+   300
+  ]
+ },
+ "life": {
+  "cursor": [
+   1089,
+   254
+  ],
+  "trace": [
+   1089,
+   248
+  ],
+  "lamp": [
+   1070,
+   275
+  ],
+  "reel_a": [
+   1071,
+   252
+  ],
+  "reel_b": [
+   1071,
+   263
+  ]
+ },
+ "desk": {
+  "file": "desk.png",
+  "pos": [
+   1061,
+   237
+  ],
+  "size": [
+   65,
+   52
+  ],
+  "base_y": 288
+ },
+ "roster": {
+  "file": "roster.png",
+  "pos": [
+   1321,
+   240
+  ],
+  "size": [
+   12,
+   19
+  ]
+ }
+}

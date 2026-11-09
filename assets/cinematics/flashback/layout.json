@@ -1,0 +1,282 @@
+{
+ "note": "Flashback films of the real-history cards: plates, drift anchors (top-left of the 480x360 gate on the plate), overlays. Written by tools/pixelgen/env_flashback.py; do not edit by hand.",
+ "view": [
+  640,
+  360
+ ],
+ "gate": [
+  80,
+  0,
+  480,
+  360
+ ],
+ "plate": [
+  512,
+  368
+ ],
+ "ramp": [
+  "#120d0a",
+  "#1d1510",
+  "#2a1f17",
+  "#39291e",
+  "#493628",
+  "#5b4533",
+  "#6e5540",
+  "#83674e",
+  "#987b5f",
+  "#ae9172",
+  "#c4a888",
+  "#d9c09f",
+  "#ecd9b9"
+ ],
+ "accents": {
+  "yellow": [
+   "#6b5320",
+   "#b08a2c",
+   "#dcb84a",
+   "#f1dc8e"
+  ],
+  "red": [
+   "#5e2319",
+   "#9a3324",
+   "#c94c35",
+   "#eb9a7c"
+  ]
+ },
+ "look": {
+  "gate": "look/gate.png",
+  "scratches": [
+   "look/scratch_a.png",
+   "look/scratch_b.png"
+  ],
+  "dust": "look/dust.png",
+  "dust_frames": 4
+ },
+ "films": {
+  "nuremberg": {
+   "shots": {
+    "court": {
+     "tex": "nuremberg/court.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      2,
+      4
+     ],
+     "to": [
+      28,
+      4
+     ],
+     "overlays": []
+    },
+    "booth": {
+     "tex": "nuremberg/booth.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      20,
+      6
+     ],
+     "to": [
+      10,
+      2
+     ],
+     "overlays": []
+    },
+    "desk": {
+     "tex": "nuremberg/desk.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      4,
+      2
+     ],
+     "to": [
+      26,
+      6
+     ],
+     "overlays": [
+      {
+       "id": "yellow",
+       "tex": "nuremberg/desk_yellow.png",
+       "pos": [
+        392,
+        128
+       ]
+      },
+      {
+       "id": "red",
+       "tex": "nuremberg/desk_red.png",
+       "pos": [
+        436,
+        128
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "evictions": {
+   "shots": {
+    "street": {
+     "tex": "evictions/street.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      2,
+      4
+     ],
+     "to": [
+      28,
+      4
+     ],
+     "overlays": []
+    },
+    "chronicle": {
+     "tex": "evictions/chronicle.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      10,
+      2
+     ],
+     "to": [
+      20,
+      6
+     ],
+     "overlays": []
+    },
+    "room": {
+     "tex": "evictions/room.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      28,
+      4
+     ],
+     "to": [
+      6,
+      4
+     ],
+     "overlays": []
+    }
+   }
+  },
+  "settlement": {
+   "shots": {
+    "steppe": {
+     "tex": "settlement/steppe.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      2,
+      4
+     ],
+     "to": [
+      30,
+      4
+     ],
+     "overlays": []
+    },
+    "kommandantur": {
+     "tex": "settlement/kommandantur.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      26,
+      4
+     ],
+     "to": [
+      8,
+      4
+     ],
+     "overlays": []
+    },
+    "boundary": {
+     "tex": "settlement/boundary.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      16,
+      6
+     ],
+     "to": [
+      16,
+      2
+     ],
+     "overlays": []
+    }
+   }
+  },
+  "kyshtym": {
+   "shots": {
+    "plant": {
+     "tex": "kyshtym/plant.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      2,
+      4
+     ],
+     "to": [
+      28,
+      4
+     ],
+     "overlays": []
+    },
+    "village": {
+     "tex": "kyshtym/village.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      28,
+      4
+     ],
+     "to": [
+      4,
+      4
+     ],
+     "overlays": []
+    },
+    "fence": {
+     "tex": "kyshtym/fence.png",
+     "size": [
+      512,
+      368
+     ],
+     "from": [
+      16,
+      6
+     ],
+     "to": [
+      16,
+      2
+     ],
+     "overlays": []
+    }
+   }
+  }
+ }
+}

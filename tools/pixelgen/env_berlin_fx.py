@@ -63,7 +63,8 @@ def snow_span():
 
 def smoke_curl_strip(frames=16, seed=31, w=16, h=36):
     """Cigarette smoke from a point at the bottom centre (16-frame seamless loop): a thin laminar thread for
-    the first third, then it breaks into slow curls that widen, drift right and fade."""
+    the first third, then it breaks into slow curls that widen, drift right and thin out.  Round 13: hard pixels
+    (alpha 255) in three tones by age; a particle leaves at its own point of the fade (ordered, no flicker)."""
     cols = [kit.pg.hx('#DEE5DC'), kit.pg.hx('#A7BCCB'), kit.pg.hx('#7A93A8')]
     strip = np.zeros((h, w * frames, 4), np.uint8)
     rng = np.random.default_rng(seed)
@@ -85,13 +86,15 @@ def smoke_curl_strip(frames=16, seed=31, w=16, h=36):
             size = 1 if t < 0.55 else 2
             if t > lam and (k + f) % 3 == 0:
                 continue
+            if a < 0.9 * ((k * 7 + 3) % 16 + 0.5) / 16.0:      # thins out with age instead of fading
+                continue
             xi, yi = int(round(x)), int(round(y))
             for dy in range(size):
                 for dx in range(size):
                     X, Y = xi + dx, yi - dy
                     if 0 <= X < w and 0 <= Y < h and strip[Y, f * w + X, 3] == 0:
                         c = cols[0 if t < 0.3 else (1 if t < 0.65 else 2)].copy()
-                        c[3] = int(40 + 120 * a)
+                        c[3] = 255
                         strip[Y, f * w + X] = c
     return strip
 

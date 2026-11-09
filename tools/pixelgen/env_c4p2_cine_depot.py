@@ -239,7 +239,7 @@ def build_p1(w):
     w('depot/p1_halos.png', halos)
     w('depot/p1_fireglow.png', fire)
     w('depot/flame.png', K.flame_sheet(8, 18, 30, seed=3))
-    w('depot/embers.png', K.ember_sheet(4, 3, 3))
+    # round 13: the barrel's sparks are the pixel fire kit's (PF.sparks in the film), depot/embers is gone
     w('depot/vent_steam.png', K.puff_sheet(8, 40, 34, PAL.K_STEAM[:5], 5, grow=(0.25, 0.5), thin=0.6,
                                            light=(0.0, 0.8), drift=0.2))
     w('depot/valve_jet.png', K.puff_sheet(8, 30, 44, PAL.K_STEAM[1:], 9, grow=(0.2, 0.5), thin=0.45,

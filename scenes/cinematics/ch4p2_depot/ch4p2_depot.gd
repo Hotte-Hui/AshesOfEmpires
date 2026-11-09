@@ -53,7 +53,6 @@ var _t_jet: Texture2D
 var _t_breath: Texture2D
 var _t_cock: Texture2D
 var _t_samovar: Texture2D
-var _t_embers: Texture2D
 
 
 func _init() -> void:
@@ -138,7 +137,6 @@ func _build() -> void:
 	_guard = cells("depot/guard.png", p1, 48, Vector2(float(gp[0]), float(gp[1])))
 	var fp: Array = D.get("p1_fire", [569, 262])
 	_flame = cells("depot/flame.png", p1, 18, Vector2(float(fp[0]) - 9.0, float(fp[1]) - 28.0))
-	_t_embers = tex("depot/embers.png")
 	_embers = fx(p1, "Embers", _draw_embers)
 	_fireglow = glow("depot/p1_fireglow.png", p1)
 	glow("depot/p1_halos.png", p1)
@@ -194,7 +192,8 @@ func _apply(time: float) -> void:
 	_rest.frame = p2_loop_frame(time, REST_FPS, 4)
 	_guard.frame = p2_loop_frame(time, GUARD_FPS * (0.5 if rm else 1.0), maxi(1, _guard.hframes))
 	_flame.frame = flame_frame(time, 8, 0.3)
-	_fireglow.modulate = Color(1, 1, 1, clampf(0.82 * fire_wobble(time, 71, 0.16), 0.0, 1.0))
+	# the fire's light breathes in whole steps (pixel fire kit rule: it never ramps, never strobes)
+	_fireglow.modulate = Color(1, 1, 1, 0.82 + 0.1 * light_step(time, 71))
 	_beams.modulate = Color(1, 1, 1, clampf(0.9 + 0.06 * hnoise(time * 0.7, 73), 0.0, 1.0))
 	# p2: Alexei walks at the in-game speed (feet never slide), the fitter oils, the lamp sways a little
 	var ax := alexei_x(time)
@@ -235,17 +234,12 @@ func _draw_steam1() -> void:
 
 func _draw_embers() -> void:
 	var time := _now()
-	if time >= 5.0 or _t_embers == null:
+	if time >= 5.0:
 		return
+	# sparks of the barrel fire (pixel fire kit): single pixels on arcs that cool down the spark ramp, no fades
 	var fp: Array = D.get("p1_fire", [569, 262])
-	var k := 0.5 if reduced_motion() else 1.0
-	for i in 9:
-		var life := 1.6 + 0.4 * absf(hnoise(i * 3.1, 91))
-		var age := fposmod(time + i * 0.37, life)
-		var x := float(fp[0]) + hnoise(i * 1.3, 93) * 6.0 + sin(age * 3.0 + i) * 2.0 * k
-		var y := float(fp[1]) - 18.0 - age * 26.0 * k
-		draw_frame(_embers, _t_embers, 4, i % 4, Vector2(roundf(x), roundf(y)), false,
-			Color(1, 1, 1, clampf(1.2 - age / life, 0.0, 1.0)))
+	PF.sparks(_embers, {"rect": Rect2(float(fp[0]) - 6.0, float(fp[1]) - 22.0, 12.0, 4.0), "count": 9, "life": 1.8,
+		"rise": 26.0, "kick": 5.0, "gravity": 6.0, "seed": 91, "rate": 0.5 if reduced_motion() else 1.0}, time)
 
 
 func _draw_steam2() -> void:

@@ -19,6 +19,7 @@ mirror per instance); the sheet table is assets/fx/pixel_fire/kit.json.
     py -3 -P tools/pixelgen/pixel_fire.py [--preview FILE.png]
 
 Other generators import this module for sheets in their own palette or size (see env_c3p2_cine_fire.build_fx).
+Level strips of any cell size and loop length are baked from the same parts by pixel_fire_bake.py.
 """
 from __future__ import annotations
 
@@ -148,14 +149,20 @@ def _tongue(M, cool, T, f, n, inset, wrap):
 
 
 def _bed(M, B, f, n, inset, wrap):
-    """the burning bed the tongues stand in: a mound (w, h at x) or, for tiles, a wavy band of height h"""
+    """the burning bed the tongues stand in: a mound (w, h at x), a wavy band of height h from x0 to x1
+    (lam = wavelength, cyc = cycles per loop) or, for tiles, a wavy band across the tile"""
     nb, fh, fw = M.shape
     xs = np.arange(fw) + 0.5
     for j in range(nb):
         hj = B['h'] - j * B.get('step', inset)
         if hj < 0.5:
             break
-        if wrap:
+        if 'x0' in B:                                           # a band from x0 to x1, its ends tapering
+            amp, lam, c = B.get('amp', 1.2), B.get('lam', 22.0), B.get('cyc', 1)
+            e = np.clip(np.minimum(xs - B['x0'], B['x1'] - xs) / max(3.0, 1.5 * B['h']), 0.0, 1.0)
+            top = (hj + amp * np.sin(2 * math.pi * (xs / lam + c * f / n) + 0.8 * j)
+                   + amp * 0.6 * np.sin(2 * math.pi * (xs / (lam * 0.62) - 2 * c * f / n) + 1.7 + 1.3 * j)) * np.sqrt(e)
+        elif wrap:
             amp, nx = B.get('amp', 2.0), B.get('nx', 2)
             top = (hj + amp * np.sin(2 * math.pi * (xs / fw * nx + f / n) + 0.8 * j)
                    + amp * 0.6 * np.sin(2 * math.pi * (xs / fw * (nx + 1) - 2 * f / n) + 1.7 + 1.3 * j))
@@ -172,8 +179,9 @@ def _bed(M, B, f, n, inset, wrap):
 
 
 def flame_frames(spec):
-    """spec: n, fw, fh, tongues [tongue(..)], bed {x, w, h} | {h, amp, nx} (tile), inset (px between two colour
-    bands), cols (band colours, rim first), wrap (True = horizontally tileable).  -> list of RGBA frames"""
+    """spec: n, fw, fh, tongues [tongue(..)], bed {x, w, h} | {h, amp, nx} (tile) | a list of beds,
+    inset (px between two colour
+    bands), cols (band colours, rim first), cool (a flamelet going out), wrap (True = horizontally tileable).  -> list of RGBA frames"""
     n, fw, fh = spec['n'], spec['fw'], spec['fh']
     cols = spec.get('cols', FIRE)
     nb = len(cols)
@@ -185,8 +193,9 @@ def flame_frames(spec):
         cool = np.zeros((fh, fw), bool)
         for T in spec['tongues']:
             _tongue(M, cool, T, f, n, inset, wrap)
-        if spec.get('bed'):
-            _bed(M, spec['bed'], f, n, inset, wrap)
+        beds = spec.get('bed') or []
+        for B in (beds if isinstance(beds, list) else [beds]):      # one bed, or one per burning spot
+            _bed(M, B, f, n, inset, wrap)
         # every inner band keeps a rim of the band outside it: left, right and above
         for j in range(1, nb):
             p = M[j - 1]
@@ -199,7 +208,7 @@ def flame_frames(spec):
             up[1:] = p[:-1]
             M[j] &= p & lr & up
         fr = np.zeros((fh, fw, 4), np.uint8)
-        fr[cool] = rgb(COOL) + (255,)
+        fr[cool] = rgb(spec.get('cool', COOL)) + (255,)
         for j in range(nb):
             fr[M[j]] = rgb(cols[j]) + (255,)
         out.append(fr)

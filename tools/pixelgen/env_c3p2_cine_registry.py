@@ -139,11 +139,24 @@ def hall(mode):
     return out
 
 
+def _lit_layer(lit, dark):
+    """A fire's light as a baked ADDITIVE layer that is pixel art itself (round 13): the place quantised to the
+    film's palette with and without the fire -- the same ordered dither as its background -- and their
+    difference per pixel (black = clear).  Background + layer is then exactly the palette picture of the lit
+    place; no smooth ramp lies over the dither any more.  (Where the fire would darken a channel nothing can
+    be added: that channel stays.)"""
+    a = lit.quant(PAL_R, spread=10.0)[..., :3].astype(np.int16)
+    b = dark.quant(PAL_R, spread=10.0)[..., :3].astype(np.int16)
+    out = np.zeros(a.shape[:2] + (4,), np.uint8)
+    out[..., :3] = np.clip(a - b, 0, 255)
+    out[..., 3] = np.where(out[..., :3].any(-1), 255, 0)
+    return out
+
+
 def f4_lit():
     """f4: the light of the burning cabinets (additive, black = clear) = the hall lit by the fire minus the hall
     without it, so bg + lit is the burning hall; the runtime reveals it from the right as the fire runs left."""
-    a = np.clip(_hall_cv('fire').rgb - _hall_cv('fire_dark').rgb, 0, 255)
-    return K.soft_quant(a, 3.0)
+    return _lit_layer(_hall_cv('fire'), _hall_cv('fire_dark'))
 
 
 def f4_table():
@@ -350,8 +363,7 @@ def f2_bg():
 def f2_fire_light():
     """f2: the light of the burning boxes on the right shelves (additive: the aisle lit by the fire minus the aisle
     without it), faded in by the runtime as the boxes catch."""
-    a = np.clip(_f2_cv(True).rgb - _f2_cv(False).rgb, 0, 255)
-    return K.soft_quant(a, 3.0)
+    return _lit_layer(_f2_cv(True), _f2_cv(False))
 
 
 def _f2_cv(burning):

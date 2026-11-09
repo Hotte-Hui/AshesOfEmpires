@@ -2,8 +2,11 @@
 
 Every strip is a horizontal row of frames (layer_stack.gd: hframes = frames) and loops seamlessly: noise is
 periodic in the loop direction, particles live exactly one loop (or an integer fraction of it).  Colours are
-palette-pure ('registry'); flames are binary-alpha pixel art with an emission twin (additive glow); smoke and
-the night shafts are soft veils with a few alpha levels.  Accessibility: no strip pulses its overall
+palette-pure ('registry').  Round 13: everything that burns comes from the pixel fire kit (pixel_fire.py through
+pixel_fire_bake.py) -- designed tongues with merged colour bands and an emission twin of their hot core, smoke as
+hard-pixel billows and puffs (three tones, ordered dither instead of alpha), sparks instead of a heat shimmer;
+the kit's white-hot core and smoke tones are the films' (LS_C3_Fire plays in this room).  Only the night
+shafts are still soft veils with a few alpha levels.  Accessibility: no strip pulses its overall
 brightness; ember brightness changes along each ember's life only (well below 3 Hz).
 """
 from __future__ import annotations
@@ -17,6 +20,8 @@ from PIL import Image
 import env_c3p2_archive_kit as K
 import env_c3p2_archive_layout as L
 import pg
+import pixel_fire as PF
+import pixel_fire_bake as PFB
 
 R = K.R
 
@@ -35,76 +40,13 @@ def strip(frames_list):
 
 
 # =========================================================================== flames
-def flame_strip(w, h, seed, frames=16, fuel=None, height=0.85, rise=6, core=1.0, lick=1.0):
-    """Animated flames over a fuel line (fuel: (w,) 0..1).  The silhouette is carved by noise rising one period
-    per loop; the colour follows a smooth heat field (pale core low in each tongue -> yellow -> orange -> red,
-    a dark-red rim), so the tongues read as clean bands, not speckle.  Returns (rgba strip, emission strip)."""
-    rng = np.random.default_rng(seed)
-    xs = np.arange(w, dtype=np.float32)
-    if fuel is None:
-        fuel = np.zeros(w, np.float32)
-        for _ in range(max(2, w // 14)):
-            c = rng.uniform(0, w)
-            s_ = rng.uniform(4, 10)
-            fuel += rng.uniform(0.5, 1.0) * np.exp(-((xs - c) / s_) ** 2)
-        fuel = np.clip(fuel / max(1e-3, fuel.max()), 0, 1)
-    P = frames * rise
-    nz = K.periodic_noise(w, P, 6, 18, seed, octaves=3, per_y=P)
-    nw = K.periodic_noise(w, P, 3, 7, seed + 1, octaves=2, per_y=P)
-    nh = K.periodic_noise(w, frames * 4, 10, 16, seed + 2, octaves=2, per_y=frames * 4)
-    sway = K.periodic_noise(P, 1, 12, 1, seed + 3, octaves=2, per_x=P)[0]
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    up = (h - 1 - ys)
-    F = R.table[R['F'], :R.n('F')]
-    rgba_frames, em_frames = [], []
-    for k in range(frames):
-        sh = (np.arange(h)[:, None] + k * rise) % P
-        # columns lean a little with height (the draught), different per row band
-        lean = (sway[(np.arange(h) + k * rise) % P] - 0.5) * 3.0 * (up[:, 0] / h)
-        xi = np.clip(np.round(np.arange(w)[None, :] + lean[:, None]).astype(int), 0, w - 1)
-        n = nz[sh, xi]
-        n2 = nw[sh, xi]
-        f = fuel[xi]
-        hk = nh[(k * 4) % (frames * 4), :][xi]
-        Hx = h * height * (0.28 + 0.72 * f) * (0.82 + 0.36 * hk) * lick
-        rel = np.clip(up / np.maximum(1.0, Hx), 0, 1.5)
-        body = (1 - rel) * (0.55 + 1.05 * (n - 0.5) + 0.5 * (n2 - 0.5)) + 0.28 * f * np.clip(1 - rel, 0, 1)
-        on = body > 0.2 + pg.bayer(w, h, k, 0, 4) * 0.05
-        heat = (f ** 0.6) * np.clip(body * 1.3, 0, 1) ** 0.9 + 0.25 * core * np.clip(1 - up / 5.0, 0, 1)
-        idx = np.full((h, w), 2, np.int32)
-        idx[heat > 0.16] = 3
-        idx[heat > 0.34] = 4
-        idx[heat > 0.55] = 5
-        idx[heat > 0.76] = 6
-        # one dithered pixel row between bands keeps the steps soft without speckle
-        band = pg.bayer(w, h, 1 + k, 2, 4)
-        for (lo, hi, lo_i) in ((0.14, 0.18, 2), (0.32, 0.36, 3), (0.53, 0.57, 4), (0.74, 0.78, 5)):
-            m = (heat > lo) & (heat < hi)
-            idx[m & (band > (heat - lo) / (hi - lo))] = lo_i
-        inner = on.copy()
-        inner[1:, :] &= on[:-1, :]
-        inner[:, 1:] &= on[:, :-1]
-        inner[:, :-1] &= on[:, 1:]
-        rim = on & ~inner
-        idx[rim] = np.minimum(idx[rim], 2)
-        idx[rim & (rel > 0.55)] = 1
-        col = F[idx].copy()
-        col[..., 3] = 255
-        col[~on] = 0
-        em = col.copy()
-        em[(idx < 4) | ~on] = 0
-        rgba_frames.append(col)
-        em_frames.append(em)
-    return strip(rgba_frames), strip(em_frames)
-
-
-def fuel_line(w, spots, base=0.15):
-    """fuel profile from [(x, width, strength)]."""
-    xs = np.arange(w, dtype=np.float32)
-    f = np.full(w, base, np.float32)
-    for (c, s, a) in spots:
-        f = np.maximum(f, a * np.exp(-((xs - c) / max(1.0, s)) ** 2))
-    return np.clip(f, 0, 1)
+def flame_strip(w, h, seed, frames=16, spots=(), base=0.15, height=0.85):
+    """Fire over a fuel line as pixel art (pixel_fire_bake.flames): a tongue at every burning spot
+    (x, half width, strength), forks, a bed of embers, low fire along the line (base > 0); the colour bands of
+    all tongues are merged, so the strip reads as one mass with hot cores.  Returns (rgba strip, emission
+    strip = the hot core only: added on top it lifts the core, rim and body stay pure palette)."""
+    fr = PFB.flames(w, h, frames, list(spots), seed, height=height, base=base)
+    return strip(fr), strip(PFB.hot(fr))
 
 
 # =========================================================================== particles
@@ -164,112 +106,33 @@ def particles(w, h, frames, fps, n, seed, kind='ember', spawn=None, vy=(-24, -12
 
 # =========================================================================== smoke
 def smoke_layer(w, h, bottom, dens, seed, glow_x=None, glow_k=0.0, x_off=0):
-    """Static smoke under the ceiling: bottom(x) = lower edge (y), dens(x) = 0..1.  Soft alpha (5 levels),
-    billows: lighter rolls with darker folds, the lower edge scalloped, lit orange from below near the fire and
-    a little cold where the high windows are."""
-    xs = np.arange(w, dtype=np.float32)[None, :]
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    n1 = K.noise(w, h, 26, seed)
-    n2 = K.noise(w, h, 9, seed + 1, octaves=2)
-    n3 = K.noise(w, h, 4, seed + 2, octaves=1)
-    scallop = 7 * np.abs(np.sin((xs + x_off) / 23.0 + n1 * 3)) + n2 * 10
-    B = bottom[None, :] + scallop + n1 * 18
-    t = np.clip((B - ys) / 46.0, 0, 1)                    # 0 at the edge, 1 deep in the layer
-    bill = n1 * 0.9 + n2 * 0.6 + n3 * 0.25                 # billow field
-    a = np.clip(t ** 0.7 * dens[None, :] * (0.8 + 0.6 * bill), 0, 1)
-    thr = pg.bayer(w, h, x_off, 0, 4)
-    level = np.zeros((h, w), np.int32)
-    for cut in (0.14, 0.32, 0.52, 0.74):
-        level += (a + (thr - 0.5) * 0.16 > cut)
-    alpha = np.array([0, 96, 140, 182, 216], np.uint8)[level]
-    # tone: rolls lighter, folds darker, the underside (near the edge) lighter still
-    tone = 2.6 + bill * 2.2 + (1 - t) * 1.2
-    edge = (t < 0.3) & (t > 0)
-    fl = np.floor(tone)
-    bthr = pg.bayer(w, h, x_off + 2, 1, 4)
-    frac = np.clip((tone - fl - 0.5) * 2.0 + 0.5, 0, 1)
-    idx = np.clip(fl + (frac > bthr), 0, R.n('S') - 1).astype(np.int32)
-    base = R.table[R['S'], :R.n('S')]
-    col = base[idx].copy()
-    if glow_x is not None and glow_k > 0:
-        g = np.clip(1 - np.abs(xs + x_off - glow_x) / 760.0, 0, 1) ** 1.2 * np.clip((ys - (B - 60)) / 60, 0, 1)
-        g = g * glow_k * (0.8 + 0.4 * (bill + 0.5))
-        fire = R.table[R['F'], :R.n('F')]
-        gi = np.clip(1 + g * 3.4 + (bthr - 0.5) * 0.9, 1, 5).astype(np.int32)
-        warm = (g + (bthr - 0.5) * 0.25 > 0.2) & (alpha > 0)
-        col[warm] = fire[gi][warm]
-    col[edge & (bthr > 0.75) & (alpha > 0)] = base[np.clip(idx + 1, 0, R.n('S') - 1)][edge & (bthr > 0.75) & (alpha > 0)]
-    col[..., 3] = alpha
-    col[alpha == 0] = 0
-    return col
+    """Still smoke under the ceiling (pixel_fire_bake.ceiling): bottom(x) = lower edge (y), dens(x) = 0..1.
+    Hard pixels: a solid bank with billows along its underside that frays out through the ordered dither, a
+    veil where it is thin; fire-lit tones within reach of glow_x, the night's greys elsewhere."""
+    xs = np.arange(w, dtype=np.float32) + x_off
+    warm = None if glow_x is None else np.clip(1.15 - np.abs(xs - glow_x) / 640.0, 0, 1) * min(1.0, glow_k + 0.1)
+    return PFB.ceiling(w, h, np.asarray(bottom, np.float32) * 0.86, seed, tones=PF.SMOKE_WARM, cool=PF.SMOKE_GREY,
+                       warm=warm, dens=dens, x_off=x_off)
 
 
 def smoke_roll_strip(w, h, frames, seed, speed=2, glow=0.0):
-    """Smoke rolling along under the vaults (toward the cold side, i.e. to the left): periodic noise scrolled
-    by `speed` px per frame, periodic over the loop; soft envelope at the strip's edges."""
-    P = frames * speed
-    nz = K.periodic_noise(P, h, 16, 8, seed, octaves=3, per_x=P)
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    xs = np.arange(w, dtype=np.float32)[None, :]
-    env = np.clip(np.minimum(xs, w - 1 - xs) / (w * 0.25), 0, 1) * np.clip(np.minimum(ys, h - 1 - ys) / (h * 0.3), 0, 1)
-    base = R.table[R['S'], :R.n('S')]
-    fire = R.table[R['F'], :R.n('F')]
-    fr = []
-    for k in range(frames):
-        n = nz[:, ((np.arange(w) + k * speed) % P)]
-        a = env * np.clip((n - 0.42) * 2.6, 0, 1)
-        thr = pg.bayer(w, h, k, 0, 4)
-        level = np.zeros((h, w), np.int32)
-        for cut in (0.2, 0.45, 0.7):
-            level += (a + (thr - 0.5) * 0.2 > cut)
-        alpha = np.array([0, 70, 118, 160], np.uint8)[level]
-        tone = 2.4 + n * 2.6
-        idx = np.clip(np.floor(tone + (thr - 0.5) * 0.6), 0, R.n('S') - 1).astype(np.int32)
-        col = base[idx].copy()
-        if glow > 0:
-            g = np.clip(ys / h, 0, 1) * glow * np.ones((1, w), np.float32)
-            warm = (g + (thr - 0.5) * 0.3 > 0.45) & (alpha > 0)
-            col[warm] = fire[np.clip((1 + g * 2.6).astype(np.int32), 1, 5)][warm]
-        col[..., 3] = alpha
-        col[alpha == 0] = 0
-        fr.append(col)
-    return strip(fr)
+    """Smoke rolling along under the vaults (toward the cold side, i.e. to the left): a stretch of the kit's
+    bank (pixel_fire_bake.drift) that moves half its length per loop and dissolves at both ends through the
+    ordered dither; fire-lit near the fire (glow), grey and thinner further away."""
+    return strip(PFB.drift(w, h, frames, seed, tones=PF.SMOKE_WARM if glow >= 0.5 else PF.SMOKE_GREY, shift=-1,
+                           thin=0.0 if glow >= 0.5 else 0.25, top=0.34))
 
 
 def smoke_wisp_strip(w, h, frames, seed, drift=(0.0, -1.0), dens=1.0, glow=0.0):
-    """Animated plume (rises / drifts), soft alpha.  Periodic noise scrolled one period per loop."""
-    P = frames * 3
-    nz = K.periodic_noise(w, P, 10, 12, seed, octaves=3, per_y=P)
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    xs = np.arange(w, dtype=np.float32)[None, :]
-    shape = np.clip(1 - np.abs(xs - w / 2) / (w / 2), 0, 1) ** 0.7 * np.clip(ys / (h * 0.3), 0, 1) ** 0.5
-    shape *= np.clip((h - ys) / (h * 0.15), 0, 1)
-    fr = []
-    base = R.table[R['S'], :R.n('S')]
-    fire = R.table[R['F'], :R.n('F')]
-    for k in range(frames):
-        sh = (np.arange(h)[:, None] + k * 3) % P
-        n = nz[sh, np.arange(w)[None, :]]
-        a = shape * (0.3 + 1.1 * (n - 0.35)) * dens
-        thr = pg.bayer(w, h, k, 0, 4)
-        level = np.zeros((h, w), np.int32)
-        for cut in (0.18, 0.4, 0.62):
-            level += (a + (thr - 0.5) * 0.2 > cut)
-        alpha = np.array([0, 64, 110, 156], np.uint8)[level]
-        tone = 1.4 + n * 1.6
-        idx = np.clip(np.floor(tone + thr - 0.5), 0, R.n('S') - 1).astype(np.int32)
-        col = base[idx].copy()
-        if glow > 0:
-            g = np.clip((ys - h * 0.55) / (h * 0.45), 0, 1) * glow * np.ones((1, w), np.float32)
-            warm = (g + (thr - 0.5) * 0.3 > 0.3) & (alpha > 0)
-            col[warm] = fire[np.clip((1 + g * 2.4).astype(np.int32), 0, 5)][warm]
-        col[..., 3] = alpha
-        col[alpha == 0] = 0
-        fr.append(col)
-    return strip(fr)
+    """A plume rising from the bottom of the cell (pixel_fire_bake.column): puffs that swell, climb, lean a
+    little and break up through the ordered dither -- fire-lit while they are young (glow), grey above."""
+    s2 = max(12, int(w * 0.65))
+    return strip(PFB.column(w, h, frames, (w / 2.0, h - 0.16 * s2), (w / 2.0 + 0.08 * w, 0.3 * s2), seed,
+                            tones=PF.SMOKE_WARM if glow > 0.2 else PF.SMOKE_GREY, cool=PF.SMOKE_GREY,
+                            sizes=(max(10, int(w * 0.45)), max(11, int(w * 0.55)), s2), count=6, loops=2,
+                            sway=0.05 * w))
 
 
-# =========================================================================== small decals
 def bell_strip():
     """Ringing fire bell: the striker hammering against the dome (4 frames, small motion, no flashing)."""
     w, h = 16, 12
@@ -377,21 +240,9 @@ def shafts(windows, fire=0, w=L.WORLD_W, h=L.WORLD_H):
 
 
 def heat_strip(w, h, frames, seed):
-    """Heat shimmer above a fire front: faint rising wavy streaks (unlit, low alpha)."""
-    P = frames * 2
-    nz = K.periodic_noise(w, P, 4, 10, seed, octaves=2, per_y=P)
-    fr = []
-    ys = np.arange(h, dtype=np.float32)[:, None]
-    env = np.clip(1 - np.abs(np.arange(w) - w / 2) / (w / 2), 0, 1)[None, :] * np.clip(ys / h, 0, 1)
-    for k in range(frames):
-        sh = (np.arange(h)[:, None] + k * 2) % P
-        n = nz[sh, np.arange(w)[None, :]]
-        on = (np.abs(n - 0.5) < 0.035) & (env > 0.15)
-        col = np.zeros((h, w, 4), np.uint8)
-        col[on] = _rgba('F', 5)
-        col[on, 3] = 60
-        fr.append(col)
-    return strip(fr)
+    """Above a fire front: sparks on arcs that cool down the spark ramp (pixel_fire.spark_frames) -- the place
+    of the former heat shimmer, which was a soft low-alpha effect."""
+    return strip(PF.spark_frames(frames, w, h, count=max(5, w // 6), seed=seed))
 
 
 def torch_beam(w=40, h=66):

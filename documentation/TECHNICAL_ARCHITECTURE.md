@@ -314,6 +314,7 @@ look at the thing, inside the walkable area); content owners rely on exactly the
 | `hist.reich.denunciation` | Denunciation: the small Gestapo (Würzburg: about twenty officials for all of Lower Franconia) depended on reports from the population — Gellately 1990 (more than half of the Würzburg „Rassenschande“ cases began with one), Mallmann/Paul 1991 (Saarland); the Heimtücke law, the Nuremberg laws, the radio ban and the contact ban as occasions; private motives; the objections of Johnson / Evans | Annex `exp_waiting_bench` — the bench „Warten bis zum Aufruf“ beside the counter where Konrad is asked for a name (Chapter 4 part 1, `c4_history_reich.json`) |
 Cards are real-world history, presented OUTSIDE the fiction ("REALE GESCHICHTE"), sober, sourced, 450–800
 characters, never celebrated (no fanfare, no "achievement" language; neutral paper sound).
+Four cards carry a short flashback film the player may start from the card (§12.15).
 
 ### 12.4 Historical insignia switch
 Setting `historical_symbols` (default **on**). Assets showing real insignia exist as a neutral/fictional file
@@ -453,6 +454,37 @@ Karsk 23,6 kg (too heavy), repacked 19,8 kg, the parcel 3,8 kg. Keys ←/→ big
 Up/Down a kilo, E/Enter/Space read, R; pad d-pad, LB/RB, A, Y; mouse click/drag a weight, wheel, „Ablesen“. Every part-2
 find uses `lever_spot.gd`.
 
+Data desk of Nebenstelle Süd (round 13, owner terminal; entries `data/explore/c4_annex_terminal.json`, strings
+`data/locale/de_terminal.json` / `en_terminal.json` `mg.term.*` / `mg.abgang.*`, tests `tests/test_c4_terminal.gd`, art
+`tools/pixelgen/gen_annex_terminal.py`, sounds `tools/audiogen/mg_audio_terminal.py`, capture
+`tests/visual/c4_terminal_shots.gd`, manifest `asset_manifest_parts/terminal_r13.md`): two mini-games on one picture
+tube (`scripts/ui/minigames/crt_kit.gd`: the picture is an art-pixel texture whose channels carry beam strength in three
+steps — green = main beam, red = second beam; a canvas shader maps every art pixel to ONE palette step with a one-pixel
+halo and scan rows, no blend, no gradient; the game's 5×7 capitals on a 6×10 cell; the steel housing is drawn in code).
+`DataTerminal.tscn` „Die Datenstelle“ (`berlin.annex.term_files`), rule `terminal_logic.gd`: login with the operator
+number of the duty roster (2741; digits typed or turned), the command set LISTE / ÖFFNEN / SUCHEN over five files
+(transfer lists C-17/45 and C-17/44, Wendt's memo, the operator's log, the post scheme; ≤ 46 characters a line; the
+search runs on the text of the current language) and the release of the locked program by the case number two files give
+together (the household whose „Verbleib“ is open: S8-067). Menu-driven — only the number is ever typed — so it plays on
+a pad; a wrong number or case is a refusal, hints after two per riddle (Settings `puzzle_hints`), the second names the
+answer. Raster 63×16 at ×3; larger text: 49×10 at ×4, so the letters grow with the text scale. `PlanspielAbgang.tscn`
+„Planspiel Abgang“ (`berlin.annex.planspiel`): the State Police's own arrest simulation, three maps (street, courtyard,
+stairwell + attic). Rule `abgang_logic.gd`: ticks of 0.05 s, a step of the figure 5 ticks, a beat of the posts 3 steps;
+a post changes its cell or facing only on a beat; sight = a beam 4 cells long, 1 wide next to the post and 3 beyond,
+blocked by solid cells and by more than one stair step of height; more than 2 ticks in a seen cell = arrest and the map
+starts again at beat 0 (the same rhythm every attempt, no penalty). `policy(margin)` is a backward BFS over (cell,
+step-unit mod period): the tests demand a way through with two steps (0.5 s) of slack on every map and an arrest for the
+shortest way walked at once; `demo_action()` feeds demo_solve (held synthetic keys, ≈ 27 s) and the hint trace. Picture:
+REAL 3D — a perspective `Camera3D` in a 384×172 `SubViewport` (`own_world_3d`, no MSAA / TAA) draws line meshes only (a
+static `ArrayMesh` per map: floor crosses, walls as wire boxes with storey lines, stairs, rafters; an `ImmediateMesh`
+per frame: posts, their beams, the crosses that announce the next beam, the figure, the gap, the trace), unshaded and
+never depth-tested, the head-up text lettered into the same viewport; the tube shader turns all of it into palette
+steps, shown ×3 on the 640×360 grid (larger text: 384×150). Pitch (50°–38°) and distance of the camera are fitted per
+map so the map fills the glass; a small drift and a fly-in unless reduced motion. Hints: after two arrests on a map its
+tip, after the third the display draws the trace of the next safe way (dim = wait, bright = go). Keys: arrows / WASD /
+d-pad / left stick (held), R or pad Y the map again; mouse: hold the button, the figure walks toward the pointer. At 100
+% text the flavour and the instruction stand beside the tube in both games.
+
 ### 12.9 Side tasks („Aufgaben“, round 7, owner: tasks)
 A small optional-task layer on top of §12.1 — backward compatible, **no save data beyond `Explore.state()`**
 (`{found, cards}`), never Story state.
@@ -535,6 +567,22 @@ A small optional-task layer on top of §12.1 — backward compatible, **no save 
   Exploration passes this content needs in the drivers: autoplay `EXPLORE_AT` + `c4e_inspect_notice`, `c4f_inspect_book`,
   `c4h_solve_house` (the chats with Maria, Marta, Hanna); inputplay a mid-route walk before `c4h_solve_house` (Hanna);
   `tests/test_c4p2_explore.gd` reports any that are still missing.
+- **Annex, the data desk (round 13, owner terminal).** „Planspiel Abgang“ (`berlin.task.planspiel`, level key
+  `L_C4_AnnexA`, Konrad, scene D only, `data/explore/c4_annex_terminal.json`): the data desk between machine room and
+  household index asks for an operator number (`exp_terminal`, 1096) → the duty roster of the Datenstelle beside the
+  second ladder: Kunze, E., 2741, late shift on Tuesday (`exp_terminal_roster`, 1327) → back at the desk „Die
+  Datenstelle“ (the files; the release by case S8-067; the operator's log now shows Konrad's login under her number) →
+  „Planspiel Abgang“: eleven runs in the log, eleven arrests; run twelve gets through — the 1941 breach in the fire
+  wall, known from the building office's own plans, has no post. Konrad pockets the teleprinter strip (close-up
+  `assets/explore/c4/planspiel_strip.png`). The spots are NOT nodes of the level file: the desk is an actor of the art
+  manifest (`scene.json` `actors`, `scenes/levels/c4/AnnexTerminal.tscn`, `scripts/levels/c4/annex_terminal.gd`,
+  `"scene_id": "L_C4_AnnexB"`) that carries its cut-out art (baked with the hall: `terminal/desk.png`, `roster.png`),
+  its small life and both `lever_spot.gd` interactables (chain on the desk: term_desk → term_files → planspiel; open
+  after `c4b_inspect_crates` and in the memory of `L_C4_AnnexB`). So a re-run of `env_c4_annex.py` keeps all of it
+  (foreign actor, foreign hotspots), and `tools/pixelgen/gen_annex_terminal.py` adds it through `env_keep` without
+  running the annex generator. The drivers complete it in the annex's passes (`c4d_inspect_drawer`, final before
+  `c4d_choose`); no Story state, no flag, no history card. Checked by `tests/test_c4_terminal.gd`
+  (`tests/test_c4_explore.gd` counts the four entries as `extra`).
 
 ### 12.10 Memories („Erinnerungen“, round 7, owner: memories)
 Revisit a completed scene, look at everything again, return to the present — only completed scenes.
@@ -863,6 +911,48 @@ German stays the source; English lies over it. A key without English text shows 
   automated runs, the settings row, a live switch of a mounted main menu, typography of every font. It prints how many
   keys still fall back to German. Unit tests, drivers and harnesses stay German.
 
+### 12.15 Flashback films of the real-history cards (round 13, owner: flashback)
+Four of the cards of §12.3 carry a short flashback film — two per regime side, each about its own, specific subject
+(no pairing, no equivalence): `hist.reich.nuremberg_interpreters` → `LS_FB_Nuremberg` (16.5 s), `hist.reich.evictions`
+→ `LS_FB_Evictions`, `hist.soviet.special_settlements` → `LS_FB_Settlement`, `hist.soviet.kyshtym` → `LS_FB_Kyshtym`
+(16 s each). Nothing is forced: only the player starts a film; the Story state is never read or written.
+* **Restraint (binding):** places, rooms, documents, tools; people only at a distance or from behind; no killing, no
+  bodies, no violence, no humiliation, no uniforms, flags or insignia (nothing for `Symbols.pick()`), no blast at Mayak;
+  no fact that is not on the card — `tests/test_flashbacks.gd` checks every number and every long word of a caption
+  against the card text in both languages. No music: one neutral projector bed.
+* **Sheet** `data/flashbacks/flashbacks.json` (not Story data: no flags, no objectives, no `data/v3/cinematics.json`
+  entry; saves untouched): per film `id`, `card`, `scene`, `bed`, `place` and three `shots` `{id, dur, line?, on?}` —
+  the first shot carries the place-and-date caption alone, each later shot one line (≤ 19 characters per second).
+  Registry `scripts/core/flashbacks.gd` (static: `all`, `film`, `for_card`, `exists`, `duration`, `layout`,
+  `card_found`, `films`, `view`, `play`, `rewatch`).
+* **Scenes** `scenes/cinematics/flashback_<name>/Flashback<Name>.tscn` = `flashback_common/flashback_film.gd` with
+  `film_id` set; it extends `ch3_common/c3_cinematic.gd` (§12.5: `finished` exactly once, idempotent `skip()`,
+  `seek()` / `advance()`, reduced motion). Picture: a 4:3 gate of 480 × 360 world px between black pillars; each shot
+  drifts across its 512 × 368 plate in single screen pixels, dips through black in four hard steps at both ends and
+  wears the film (a gate weave of whole pixels, a 12 Hz flicker, one light and one dark scratch, dust) — hard-edged,
+  never blurred; reduced motion halves the drift and drops weave, flicker and wear. `caption_state(t)` names what the
+  presenter shows; the same keys are `say` cues.
+* **Art** `py -3 -P tools/pixelgen/env_flashback.py` (`env_flashback_kit.py`, `env_flashback_reich.py`,
+  `env_flashback_soviet.py`) → `assets/cinematics/flashback/**` + `layout.json`: every plate is one luminance painting
+  resolved to a fixed 13-step sepia ramp with a 4 × 4 ordered dither in the middle of each step; the only other
+  colours are the muted yellow and red of the two lamps at Nuremberg. What a shot is about lies in its upper three
+  quarters (the plate of the line covers the rest). **Sound** `py -3 -P tools/audiogen/flashback_audio.py` →
+  `assets/audio/sfx/fb_projector_bed.wav`.
+* **Presenter** `scripts/ui/flashback_view.gd` (made on first use under UIRoot by `Flashbacks.view()`): a pausing modal
+  above whatever is open, the film drawn ×3 with nearest filtering, „REALE GESCHICHTE“ with place and date top left
+  and the line bottom centre on dark plates (text scale 100–150 %, balanced lines), the bed on its own player while
+  the Music / Ambience / SFX buses are turned down and afterwards restored exactly; Esc / B / Y or an advancing key
+  skips after a 350 ms guard, the mouse uses „Überspringen“. When it closes, the modal below has its focus back.
+* **Entry points:** the card in `scripts/ui/discovery_view.gd` shows „Rückblende ansehen“ / „Watch flashback“ at its
+  foot once the card is found (`has_flashback()`, `watch_flashback()`: the button, F, pad X; E still turns the page)
+  and the hint „F Rückblende“ in the footer; `Game.memory_films()` appends the four after the story films (unlocked by
+  the card: Explore in the game, the cards of the profile from the main menu; locked rows carry no words) and
+  `Game.rewatch_film()` hands them to `Flashbacks.rewatch()` — the same modal above the list, no level change, no
+  Story snapshot.
+* **Texts** `data/locale/de_flashback.json` / `en_flashback.json`. **Tests** `tests/test_flashbacks.gd`; captures
+  `tests/visual/flashback_shots.tscn` (`--fb-mode=films|card|both|game`). Provenance:
+  `documentation/asset_manifest_parts/flashback.md`.
+
 ## 13. Chapter extensions (Chapter 3 onward, branch `kapitel-3`, 2026-11-04)
 Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `documentation/MERGE_NOTES_C3.md`.
 - **Story chain.** The unchanged engine needs ONE linear scene chain ending in the non-quest montage, and a finale that
@@ -985,3 +1075,24 @@ Design contract: `documentation/C3_DESIGN.md`. Change log of existing files: `do
   `overhang=True` in the close-up / document / mini-game text renderers). Tests `tests/test_feel_r9.gd`; Forward+ harness
   `res://tests/visual/feel_r9_shots.tscn` (`--f9-shots=label:camx|-:px|-:py:seconds[:hud|task|journal|toast_modal|
   toast_back|disc=<id>@<scale>|insp=<item>@<scale>|walker=<id>@<seg>]`, `--f9-sizes=2560x1440;3840x2160`).
+- **Pixel fire (round 13, owner: fire)** — every flame, puff of smoke, spark and pool of fire light in the game is
+  pixel art from one kit: hard pixels (alpha 0 / 255), soft edges only as ordered dither, never scaled, rotated or
+  alpha-faded. *Art*: `tools/pixelgen/pixel_fire.py` → `assets/fx/pixel_fire/` (37 sheets + `kit.json`: designed
+  tongues with merged colour bands, cauliflower puffs, banks, sparks, flat light bands). *Films* play the sheets
+  live through `scripts/render/pixel_fire.gd` (`PF.flame / wall / puff / plume / sparks / light`, pure functions of
+  the time; `PF.reveal_material()` shows a baked light layer as a dithered pool or wipe; `PF.mass_materials()` =
+  six pass materials of `pixel_fire_mass.gdshader` for a MASS of fire: six sibling nodes draw the same flames, one
+  band each, so overlapping flames become one body with hot cores instead of crossing outlines — LS_C3_Fire's
+  wall). Users: LS_C3_Fire, LS_C3_Escape, LS_C3_Halves (h3), sparks in LS_C4P2_Depot. Fire light in films steps
+  (`light_step`, ≤ 2.5 Hz), it never ramps; a film's baked light layer is a palette difference (lit minus unlit,
+  both quantised with the background's dither — `env_c3p2_cine_registry._lit_layer`), so background + layer is a
+  palette picture. *Levels* show fire as baked strips (`scene.json` decals / fx), so their generators bake the
+  kit's parts with `tools/pixelgen/pixel_fire_bake.py` (`flames` over a fuel line, `hot` = emission twin of the hot
+  core, `column` / `wisp`, `ceiling`, `drift`, `halo`, `recolor` / `bands` for a scene's own palette): registry
+  (flames, smoke bank, rolls, plumes, sparks), quay (window fire, smoke columns, halos; Veltrava palette), parade
+  avenue (flame cells of the figure atlas; Berlin palette), the barrel fires (railyard, depot, plaza), chimney and
+  stove smoke (depot, tunnels, Berlin courtyard). A new fire: a film calls `PF.*`; a level generator calls
+  `pixel_fire_bake` with the scene's colours and keeps the strip's name, cell and frame count — never tint or fade
+  at runtime. Not converted (not fire, or already hard pixels): engine lights (`PointLight2D`), steam veils of the
+  Berlin level, breath puffs, lamp flames. Provenance: `asset_manifest_parts/pixel_fire.md`; tests
+  `tests/test_pixel_fire_kit.gd`.

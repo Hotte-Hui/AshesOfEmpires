@@ -1,0 +1,30 @@
+{
+ "locale": "en-GB",
+ "area": "flashback",
+ "note": "Round 13 – flashbacks for four “real history” cards (TECHNICAL_ARCHITECTURE §12.15): the button on the card, the place-and-date line and the two sober lines of each film, their entries on the memories page “Film sequences”. Every line states only what its card says (data/locale/en_history_*.json); no judgement, no achievement language. Owner: flashback stream.",
+ "strings": {
+  "ui.flashback.watch": "Watch flashback",
+  "ui.flashback.hint": "flashback",
+  "ui.flashback.skip": "Skip",
+  "ui.memories.film.LS_FB_Nuremberg": "Flashback: The interpreters at Nuremberg",
+  "ui.memories.film_sub.LS_FB_Nuremberg": "Real history · Nuremberg, 1945–1946",
+  "ui.memories.film.LS_FB_Evictions": "Flashback: The cleared flats",
+  "ui.memories.film_sub.LS_FB_Evictions": "Real history · Berlin, August 1941",
+  "ui.memories.film.LS_FB_Settlement": "Flashback: The special settlement",
+  "ui.memories.film_sub.LS_FB_Settlement": "Real history · after the decree of 26 November 1948",
+  "ui.memories.film.LS_FB_Kyshtym": "Flashback: Mayak, 29 September 1957",
+  "ui.memories.film_sub.LS_FB_Kyshtym": "Real history · near Chelyabinsk-40",
+  "fb.nuremberg.place": "Nuremberg, 20 November 1945 to 1 October 1946",
+  "fb.nuremberg.line1": "For the first time, simultaneous interpreting on a large scale: English, French, Russian and German.",
+  "fb.nuremberg.line2": "A yellow lamp asked speakers to slow down, a red one to pause.",
+  "fb.evictions.place": "Berlin, August 1941",
+  "fb.evictions.line1": "According to the office chronicle, an action to clear some 5,000 Jewish flats began.",
+  "fb.evictions.line2": "From October 1941 many of those driven out were deported.",
+  "fb.settlement.place": "A special settlement, after the decree of 26 November 1948",
+  "fb.settlement.line1": "Obliged to report to the commandant’s office, forbidden to leave the district.",
+  "fb.settlement.line2": "The decree declared the exile permanent; escape carried 20 years of forced labour.",
+  "fb.kyshtym.place": "Mayak plutonium plant near Chelyabinsk-40, 29 September 1957",
+  "fb.kyshtym.line1": "After a tank of highly radioactive waste exploded, around 10,000 people were resettled.",
+  "fb.kyshtym.line2": "The Soviet authorities kept the accident secret."
+ }
+}

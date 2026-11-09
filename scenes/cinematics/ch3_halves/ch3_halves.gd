@@ -14,10 +14,15 @@ extends "res://scenes/cinematics/c3p2_common/c3p2_cinematic.gd"
 ## the promenade has a foreground that drifts against the trees and lanterns, the walkers cast lantern shadows, the
 ## burning wing sends sparks and a leaning column of smoke, crows cross the dawn, pigeons sit on the board's frame
 ## and steam drifts through the station hall.
+## Round 13: the wing's fire is the pixel fire kit (scripts/render/pixel_fire.gd: whole pixels, never scaled, no
+## alpha fades) -- flames in its windows and on its roof, a plume of puffs per fire, the big column over the
+## roof as puffs that climb, lean east and break up through their own dither, sparks on arcs; the fire's glow
+## (h1_glow, h3_glow) breathes in whole steps (light_step), it never ramps.
 ## Art: tools/pixelgen/env_c3p2_cine_quay.py (+ _river, _life) -> assets/cinematics/c3p2/halves/ (+ layout.json).
 
 const DUR := 21.0
 const SHOTS := [["h1", 0.0, 6.0], ["h2", 6.0, 11.0], ["h3", 11.0, 17.0], ["h4", 17.0, 21.0]]
+const KIT := ["flame_s", "flame_m", "puff_s", "puff_m", "puff_l", "puff_m_grey", "puff_l_grey", "puff_xl_grey"]
 const LINE_TUESDAY := "cin.c3p2.halves.tuesday"
 const WALK := [6.25, 6.45, 26.0]      # Alexei starts, Konrad starts, speed px/s
 const DAWN := [11.4, 16.8]
@@ -57,9 +62,7 @@ var _board: Node2D
 var _stack_tex: Texture2D
 var _fold_tex: Texture2D
 var _breath: Texture2D
-var _plume: Sprite2D
-var _smoke: Texture2D
-var _flame_s: Texture2D
+var _plume: Node2D
 var _glyphs: Texture2D
 var _h2near: Sprite2D
 var _h2fx: Node2D
@@ -132,8 +135,7 @@ func _build() -> void:
 	_stack_tex = tex("halves/stacks.png")
 	_fold_tex = tex("halves/list_fold.png")
 	_breath = tex("halves/breath.png")
-	_smoke = tex("halves/smoke.png")
-	_flame_s = tex("halves/flame_s.png")
+	need_kit(KIT)
 	_glyphs = tex("halves/glyphs.png")
 	h1 = group("Bench")
 	sprite("halves/h1_bg.png", Vector2.ZERO, h1)
@@ -163,7 +165,7 @@ func _build() -> void:
 	h3 = group("River")
 	sprite("halves/h3_bg.png", Vector2.ZERO, h3)
 	_dawn = sprite("halves/h3_dawn.png", Vector2.ZERO, h3, 1, true)
-	_plume = sprite("halves/h3_plume.png", Vector2.ZERO, h3)
+	_plume = _fx(h3, "Plume", _draw_plume)
 	_h3glow = sprite("halves/h3_glow.png", Vector2.ZERO, h3, 1, true)
 	_h3fx = _fx(h3, "SmokeBeams", _draw_h3)
 	_crow = tex("halves/crow.png")
@@ -213,7 +215,7 @@ func _apply(time: float) -> void:
 	var k := motion_k()
 	# h1: the arms per choreography (and the bodies: breath, or leaning over for the far stack)
 	_apply_arms(time, rm)
-	_h1glow.modulate = Color(1, 1, 1, clampf(fire_wobble(time, 31, 0.1), 0.0, 1.0))
+	_h1glow.modulate = Color(1, 1, 1, 0.92 + 0.08 * light_step(time, 31))
 	_stacks.queue_redraw()
 	_h1top.queue_redraw()
 	_beams1.queue_redraw()
@@ -232,9 +234,8 @@ func _apply(time: float) -> void:
 	_snow2.set_time(time * (0.6 if rm else 1.0))
 	# h3: dawn grows, the fire's glow wobbles
 	_dawn.modulate = Color(1, 1, 1, ramp01(time, float(DAWN[0]), float(DAWN[1])))
-	# the smoke column drifts slowly east with the wind
-	_plume.position = Vector2(roundf(clampf((time - 11.0) / 6.0, 0.0, 1.0) * 6.0 * motion_k()), 0)
-	_h3glow.modulate = Color(1, 1, 1, clampf(fire_wobble(time, 33), 0.0, 1.0))
+	_plume.queue_redraw()
+	_h3glow.modulate = Color(1, 1, 1, 0.9 + 0.1 * light_step(time, 33))
 	_h3fx.queue_redraw()
 	_sky3.queue_redraw()
 	_snow3.set_time(time * (0.6 if rm else 1.0))
@@ -483,24 +484,34 @@ func _draw_h3() -> void:
 		_beam(_h3fx, from, a, reach, 20.0, Color(0.8, 0.86, 0.95, 0.09))
 		_beam(_h3fx, from, a, reach, 7.0, Color(0.85, 0.9, 1.0, 0.10))
 		_pool(_h3fx, from + Vector2(sin(a), cos(a)) * reach, 26.0, 5.0)
-	# flames in the wing's windows and on its roof, the smoke column leaning east with the wind, sparks
+	# the wing burns (pixel fire kit): every fire's smoke leans east with the wind, then the flames in the windows
+	# and the taller ones on the roof, sparks on arcs over the roof
 	var fires: Array = layout.get("h3_fire", [])
 	for j in fires.size():
 		var f: Array = fires[j]
-		if _flame_s:
-			draw_frame(_h3fx, _flame_s, 8, flame_frame(t, 8, j * 0.31), Vector2(float(f[0]), float(f[1]) + 14.0))
-		if _smoke:
-			for i in 4:
-				var age := fposmod(t * 0.3 + j * 0.17 + i * 0.25, 1.0)
-				var p := Vector2(float(f[0]) + age * age * 120.0 * k, float(f[1]) - 6.0 - age * 110.0 * k)
-				draw_frame(_h3fx, _smoke, 8, int(age * 7.0), p, false, Color(1.0, 0.86, 0.76, 0.85 * (1.0 - age)))
-	for i in 22:
-		var ph := float(i) * 1.37
-		var age2 := fposmod(t * 0.45 + i * 0.113, 1.0)
-		var x0 := 160.0 + fposmod(i * 37.0, 140.0)
-		var sp := Vector2(x0 + age2 * age2 * 70.0 * k + sin(ph + t * 2.0) * 3.0, 100.0 - age2 * 70.0 * k)
-		_h3fx.draw_rect(Rect2(sp.floor(), Vector2.ONE), Color(1.0, 0.75, 0.35, 0.9 * (1.0 - age2)))
+		PF.plume(_h3fx, {"from": Vector2(float(f[0]), float(f[1]) - 6.0), "spread": Vector2(2, 1), "count": 3,
+			"life": 3.4, "rise": 32.0, "slow": 0.3, "bend": 20.0, "sheets": ["puff_m", "puff_s", "puff_m_grey"],
+			"seed": 40 + j, "rate": k}, t)
+	for j in fires.size():
+		var f2: Array = fires[j]
+		PF.flame(_h3fx, "flame_m" if float(f2[1]) < 90.0 else "flame_s", Vector2(float(f2[0]), float(f2[1]) + 14.0),
+			t, j, fire_rate())
+	PF.sparks(_h3fx, {"rect": Rect2(160, 90, 140, 10), "count": 22, "life": 2.2, "rise": 32.0, "kick": 5.0,
+		"wind": 14.0, "seed": 7, "rate": k}, t)
 
+
+## h3: the smoke column of the burning wing (pixel fire kit): big puffs climb from the roof's fire and the wind
+## takes them east -- lit from below while they are young, the night's grey higher up; each one runs the life
+## drawn into its sheet (it swells, then breaks up through the ordered dither), nothing is faded.
+func _draw_plume() -> void:
+	if not h3.visible:
+		return
+	var k := motion_k()
+	PF.plume(_plume, {"from": Vector2(228, 92), "spread": Vector2(34, 6), "count": 10, "life": 9.0, "rise": 17.0,
+		"slow": 0.35, "bend": 5.0, "sway": 3.0, "sheets": ["puff_xl_grey", "puff_l_grey", "puff_xl_grey"],
+		"seed": 61, "rate": k}, t)
+	PF.plume(_plume, {"from": Vector2(228, 96), "spread": Vector2(40, 4), "count": 7, "life": 4.5, "rise": 20.0,
+		"slow": 0.3, "bend": 6.0, "sheets": ["puff_l", "puff_m", "puff_l"], "seed": 62, "rate": k}, t)
 
 ## three crows cross the first grey of dawn, wings beating at their own pace
 func _draw_crows() -> void:

@@ -74,6 +74,7 @@ edit the part of the owning area and re-run the script.
 - [c4_puzzle](#part-c4_puzzle)
 - [c4_cast_audio](#part-c4_cast_audio)
 - [explore_c4](#part-explore_c4)
+- [terminal_r13](#part-terminal_r13)
 - [board](#part-board)
 - [feel_r9](#part-feel_r9)
 - [env_c4p2_karsk](#part-env_c4p2_karsk)
@@ -85,6 +86,7 @@ edit the part of the owning area and re-run the script.
 - [polish_r10](#part-polish_r10)
 - [ui](#part-ui)
 - [explore_system](#part-explore_system)
+- [flashback](#part-flashback)
 - [photo_mode](#part-photo_mode)
 - [credits](#part-credits)
 - [audio](#part-audio)
@@ -2890,7 +2892,8 @@ red fringe to a white-hot core — no dark rim, the core is the brightest pixel)
   (`flame_out`), halos, glass shards that glint and stay twinkling in the snow, onlookers who react (take sequences
   in layout `escape.e4_people[].seq`: flinch, hands to the face, a step back, pointing, walking to the engine) and
   the fire engine nosing in (`engine`) with its turning blue beacon (`beacon`, `beacon_wash`).
-* **Halves:** h3's smoke column is the soft `h3_plume` (no flat sheet, no holes) drifting east; the dawn is visible
+* **Halves:** h3's smoke column was the soft `h3_plume` (round 13: the pixel fire kit's puffs, drawn by the film;
+  `h3_plume`, `flame_s` and `smoke` are gone — see the part "Pixel fire kit"); the dawn is visible
   (`h3_dawn`: the sky lifts, a pale band and a rose-grey line on the right horizon; horizon ≈ RGB 13,17,26 → 80,86,112);
   soft `smoke`, `steam`, `breath`; window fires from `fire_sheet`.
 
@@ -2982,7 +2985,7 @@ fades. The round-11 gradient fire is gone: `fire_sheet` flames (`fire_mid/big/wi
 |---|---|
 | `h1_bg`, `h1_glow`, `fig_alexei`, `fig_konrad` (4 each), `stacks` (3), `arms` (2×14), `list_fold` (4) | the quay bench from behind: the balustrade, the frozen river with the fire's glow, the Line with fence and two watchtowers (searchlight beams at runtime); the men; the Russian pages (with the list of names), the German pages, the list; arms reaching near / across / holding; the list folded into Konrad's coat |
 | `h2_bg`, `h2_glow`, `walk_alexei`, `walk_konrad` (6 each) | the promenade with its lanterns and their bench; the two walking apart (Konrad mirrored at runtime) |
-| `h3_bg`, `h3_glow`, `h3_dawn`, `h3_plume`, `flame_s`, `smoke` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the soft smoke column leaning east; the first grey of dawn (faded in at runtime) |
+| `h3_bg`, `h3_glow`, `h3_dawn` | wide: the palais with the burning east wing and its mirror image in the ice, the far bank with the Line's towers, the three-arch bridge; the first grey of dawn (faded in at runtime). Round 13: the wing's flames, smoke column and sparks are the pixel fire kit's sheets, played by the film (no own files) |
 | `board_bg`, `board_glow`, `glyphs` | the departures board (trilingual header, four standing rows) and the split-flap glyph atlas (glyphs + mid-flap) from which the runtime flips „DIENSTAG · 23.40 · KORDON-17 · GLEIS 5“ in |
 
 ### Sound — `assets/audio/sfx/` (`tools/audiogen/c3p2_cine_audio.py`, 44.1 kHz / 16-bit stereo)
@@ -3037,9 +3040,36 @@ Colours: `#A8381A` `#D8662A` `#F2A044` `#FCE0A0` `#FFF6DC` (rim .. white-hot cor
 Other palettes and sizes: import `pixel_fire` in a generator and call `flame_frames` / `puff_frames` / `bank_frames`
 / `pool_frames` (see `env_c3p2_cine_fire.build_fx_fire`), then `PF.register()` the sheet at runtime.
 
+### Rollout: every other fire of the game (round 13)
+`tools/pixelgen/pixel_fire_bake.py` bakes the kit's parts for cells of any size and loop length (`flames` over a
+fuel line, `hot` = the emission twin of the hot core, `column` / `wisp` = looping columns of puffs, `ceiling` = a
+still bank under a ceiling, `drift` = a rolling stretch of it, `halo` = flat light bands, `recolor` / `bands` for a
+scene's own palette). The scene generators call it where they used noise flames and soft veils; file names, cell
+sizes, frame counts and `scene.json` are unchanged, every other output of the generators is byte-identical.
+
+| Where | Files (generator) | Now |
+|---|---|---|
+| L_C3_Registry (looks C / D) | `veltrava_registry/fx/flames_*.png` + `_e` (14 strips), `smoke_c|d.png`, `fx/roll_*`, `fx/plume_*`, `fx/heat_*` (`env_c3p2_archive_fx.py`) | designed tongues with merged bands, emission = hot core only; the smoke under the vaults is a hard-pixel bank with billows and a dithered veil, the rolls are stretches of the kit's bank, the plumes columns of puffs, the heat shimmer became sparks; kit colours (the film LS_C3_Fire plays in this room) |
+| L_C3_Quay | `veltrava_quay/life/fire_win_1..5.png` + `_e`, `fx/smoke_1..3.png`, `fx/smoke_ladder.png`, the fire's halos in `glow_air.png` (`env_c3p2_quay_life.py`, `_near.py`) | tongues filling the souterrain windows and standing on the lintels, columns of puffs, halos as flat dithered bands — in the Veltrava palette (red rim, lamp ramp; the palette has no fire ramp) |
+| LS_C3_Halves (h3) | no files: the film plays kit sheets (`ch3_halves.gd`); `halves/flame_s.png`, `halves/smoke.png`, `halves/h3_plume.png` removed | flames in the wing's windows and on its roof, a plume per fire, the big column as puffs, sparks; glow steps instead of ramping |
+| LS_C3_Fire | `c3p2/fire/f2_glow.png`, `f4_lit.png`, `f4_lit_table.png` (`env_c3p2_cine_registry.py`) | palette differences (lit minus unlit, both quantised with the background's dither): background + layer is the palette picture of the lit place; the wall of fire is drawn as one mass (`scripts/render/pixel_fire_mass.gdshader`) |
+| L_M1_Parade avenue | flame cells of `great_hall/avenue/avenue_figures.png` (`gen_great_hall_avenue.py`) | the kit's tongues per LOD cell in the avenue's warm ramp (exact Berlin palette) |
+| Karsk depot (L_C4P2_Karsk) | `karsk_c4p2/fx/barrel_flames.png` + `_e`, every wisp of `plume()` (hood / dispatch / brazier / cabin / sandhouse smoke, kasha / samovar / express steam, coal dust) (`env_c4p2_karsk_fx.py`) | barrel fire as tongues in the depot's colours; wisps as hard-pixel puffs in three tones of their ramp |
+| Karsk railyard (L_A1_Railyard) | `karsk_railyard/fx/barrel_flames.png` + `_e` (`env_karsk_fx.py`) | tongues in the copper ramp |
+| Karsk tunnels (L_C4_Tunnels) | `karsk_tunnels/fx/booth_smoke.png`, `samovar_steam.png`, `steam_flange.png` (`env_c4_tunnels_fx.py`) | hard-pixel puffs |
+| Plaza (L_M1_Plaza) | `hall_plaza/props/barrel_guard.png` (+ `_e`, `_n`) (`env_plaza_sprites.py`) | the still flame is one frame of the kit's tongues |
+| LS_C4P2_Depot | `c4p2/depot/flame.png` (`env_c3p2_cine_kit.flame_sheet`); `depot/embers.png` removed (sparks: `PF.sparks`) | tongues; sparks cool down the spark ramp; the glow steps |
+| LS_C4P2_Clock | — (`ch4p2_clock.gd`) | the candle's light steps (`light_step`) instead of ramping |
+| Berlin courtyard (L_C4P2_Berlin) | `berlin_c4p2/fx/smoke_0..3.png`, `fx/smoke_chimney.png` (`env_c4p2_berlin_life.plume_strip`, base < 3) | chimney smoke as hard-pixel puffs in three tones of its ramp (steam keeps its veil) |
+| Berlin archive (L_M1_Archive) | `berlin_archive/actors/smoke_curl.png` (`env_berlin_fx.smoke_curl_strip`) | the cigarette's thread in hard pixels: it thins out instead of fading |
+
+All of it is original, deterministic work of the scripts named above (no downloads).
+
 ### Checks
 `tests/test_pixel_fire_kit.gd`: every sheet exists and fits kit.json, hard pixels only, the limited ramp, tiles
-join in any order, neighbours out of phase, light under 3 Hz, the two films draw no scaled or faded fire any more.
+join in any order, neighbours out of phase, light under 3 Hz, the films (LS_C3_Fire, LS_C3_Escape, LS_C3_Halves)
+draw no scaled or faded fire any more; rollout: the baked level strips are hard pixels in a limited ramp, the
+mass passes exist, the light layers of LS_C3_Fire add up to a palette picture, the soft assets are gone.
 
 ---
 <a id="part-c3p2_puzzle"></a>
@@ -3781,6 +3811,82 @@ rule and scene, art/layout/sounds; since the fix round also „Wir sind vierzehn
 Lüftungsklappen“). Windowed capture: `godot --path . --script res://tests/visual/c4_explore_shots.gd
 -- --shots=<dir> [--scale=1.5] [--hc=1]` (UIRoot, synthetic keys, demo_solve; writes no saves); the flaps:
 `tests/visual/c4_vent_shots.gd -- --shots=<absolute dir>`.
+
+---
+<a id="part-terminal_r13"></a>
+
+## Asset manifest — the data desk of Nebenstelle Süd: side task „Planspiel Abgang“, „Die Datenstelle“, the wireframe game (area: terminal_r13)
+
+Owner: terminal specialist (round 13) · Date: 2026-11-09 · Engine: Godot 4.7.2 · Contract: TECHNICAL_ARCHITECTURE
+§12.8 (mini-games) / §12.9 (side tasks), documentation/C4_DESIGN.md §4.2 / §6 (the annex, scene D).
+
+Everything listed here is **original work**, written for this game or generated procedurally by the project scripts
+below on 2026-11-09. No pixel, sample, font file or melody was taken from any other source; no downloads, no AI media,
+no recordings, no traced reference. The machine is a period-plausible 1964 data-processing desk (vector display,
+teleprinter, tape cabinet, card reader) without a real maker's name, type plate or screen layout; „Planspiel Abgang“,
+its maps, post scheme and files are fictional, no real person is named (the households of the transfer list are
+invented surnames). No regime insignia anywhere (§12.4). Colours: the desk and the roster are painted with the
+`annex` ramps of `data/chapters/c4.json` / `env_c4_annex_kit.py` (checked: 0 pixels outside the ramps); the picture
+tube has its own documented steps in `scripts/ui/minigames/crt_kit.gd` — glass #07120D / #0A1811, halo #173A26, green
+beam #2F6B45 / #6FD08C / #DCFFE2, amber beam #A87A44 / #F2C46A (halo #3A2A14), alarm glass #2A0F0C, steel housing
+##15191C–#98A4AC, plate #E6E1CF; high contrast: black glass, #4FAE72 / #9DF5B6 / #FFFFFF, #FFB000 / #FFE9A8. Letters:
+the game's own 5×7 capitals (`scripts/ui/pixel_font.gd`) plus thirteen signs drawn for the desk (`crt_kit.gd` EXTRA);
+the close-up uses the 3×5 / 5×7 bitmaps of the env kits. Licence: original project work (same terms as the rest of
+the game).
+
+### Content (text, data)
+
+| File | What |
+|---|---|
+| `data/explore/c4_annex_terminal.json` | four entries (level key `L_C4_AnnexA`, scene `L_C4_AnnexB`) and the side task `berlin.task.planspiel`: the desk → the duty roster → mini-game „Die Datenstelle“ → mini-game „Planspiel Abgang“ |
+| `data/locale/de_terminal.json`, `data/locale/en_terminal.json` | every text in German and English (same keys): finds, task, both mini-games, the machine's five files (line by line, ≤ 46 characters), the head-up text of the vector display |
+
+### Art
+
+| File | Generator | What |
+|---|---|---|
+| `assets/environments/berlin_annex/terminal/desk.png` (+ `_n`, `_e`; 65×52) | `py -3 -P tools/pixelgen/gen_annex_terminal.py` | the data desk between machine room and household index: tape cabinet with two reels and a lamp strip, the desk with the round vector display and the teleprinter, the card reader — painted into a bake of the hall with the annex kit and cut out as the difference (the room's own light, normal map, emission mask) |
+| `assets/environments/berlin_annex/terminal/roster.png` (+ `_n`; 12×19) | same | the duty roster of the Datenstelle on its clipboard beside the second ladder |
+| `assets/environments/berlin_annex/terminal/layout.json` | same | world positions of the cut-outs, the two exploration spots, the desk's small life (cursor, lamp, reel hubs) |
+| `assets/environments/berlin_annex/scene.json` (one `actors` entry, two `hotspots`), `provenance.json` (its rows) | same, through `tools/pixelgen/env_keep.py` | `scenes/levels/c4/AnnexTerminal.tscn` with `"scene_id": "L_C4_AnnexB"`; `exp_terminal` (1096, 300), `exp_terminal_roster` (1327, 300). `env_c4_annex.py` is not run; its own merge keeps foreign actors and hotspots |
+| `assets/explore/c4/planspiel_strip.png` (240×150) | same | close-up of the find „Lauf zwölf“: the tube with the attic as a wireframe, the breach marked, and the teleprinter strip „LAGE 3 LAUF 12 · ABGANG · WEG: …“ |
+
+Drawn at run time, no files: the housing of the display unit (`crt_kit.gd draw_housing`), the text raster of the
+terminal (`crt_kit.gd raster`), the 3D wireframe of the three maps (`abgang_game.gd`: line meshes in a 384×172
+SubViewport, palette-stepped by the tube shader, shown ×3), the desk's cursor / lamp / reels (`annex_terminal.gd`).
+
+### Sound (44.1 kHz, 16-bit, mono — `py -3 -P tools/audiogen/mg_audio_terminal.py`, numpy synthesis)
+
+| File | What |
+|---|---|
+| `assets/audio/sfx/mg_term_hum.wav` (LOOP 2 s) | the display unit at rest: mains transformer 50 / 100 / 150 Hz, the cabinet fan as periodic band noise, a faint whine |
+| `mg_term_relay.wav` | one relay: armature, contact bounce, body thump (menu steps; quiet: the beat of the posts) |
+| `mg_term_key.wav` | one teleprinter key (digits) |
+| `mg_term_ok.wav` | the number is accepted: relay, one 880 Hz tone, relay |
+| `mg_term_refuse.wav` | a refusal: relay and a short, low mains buzzer |
+| `mg_term_tape.wav` | the release: two relays, the tape drive running up |
+| `mg_abgang_step.wav` | one step of the figure: a dry tick |
+| `mg_abgang_seen.wav` | the tone when a post has seen the figure: relay, falling two-tone signal 660 → 440 Hz |
+| `mg_abgang_through.wav` | a map is passed: three rising pips |
+| `mg_abgang_print.wav` | the run is over: the teleprinter hammers the strip, the margin bell |
+
+### Code
+
+| File | What |
+|---|---|
+| `scenes/levels/c4/AnnexTerminal.tscn`, `scripts/levels/c4/annex_terminal.gd` | the desk as an actor of the art manifest: lit sprites, small life, the two `lever_spot.gd` interactables (chain on the desk) |
+| `scenes/ui/minigames/DataTerminal.tscn`, `scripts/ui/minigames/terminal_game.gd`, `terminal_logic.gd` | „Die Datenstelle“: login, list / open / search, release |
+| `scenes/ui/minigames/PlanspielAbgang.tscn`, `scripts/ui/minigames/abgang_game.gd`, `abgang_logic.gd` | „Planspiel Abgang“: three maps, posts, sight beams, solver (demo, hint trace), the 3D picture |
+| `scripts/ui/minigames/crt_kit.gd` | the shared picture tube: phosphor shader, line shader, letters, text raster, housing |
+| `tests/test_c4_terminal.gd`, `tests/visual/c4_terminal_shots.gd` | unit tests; windowed capture harness (`--shots=<dir> [--scale=1.5] [--hc=1] [--rm=1] [--lang=en]`) |
+
+### Reproduce
+
+```bash
+py -3 -P tools/pixelgen/gen_annex_terminal.py      # art, layout, scene.json actor, provenance rows (byte-stable re-run)
+py -3 -P tools/audiogen/mg_audio_terminal.py       # the ten sounds
+"$GODOT" --headless --path . --script res://tests/run_all.gd -- --filter=test_c4_terminal
+```
 
 ---
 <a id="part-board"></a>
@@ -4816,6 +4922,52 @@ Every texture is drawn at 1:1 and stored at x3 nearest (StyleBoxTexture cannot s
 `discovery`/`history`, settings toggle "Historische Hoheitszeichen", pause progress plate, strings in
 `data/locale/de_explore_ui.json`, tests `tests/test_explore.gd`, `tests/test_explore_data.gd`, harness
 `tests/visual/explore_ui_preview.tscn/.gd`.
+
+---
+<a id="part-flashback"></a>
+
+## Asset manifest part — flashback (films of four real-history cards)
+
+* **Date:** 2026-11-09 (round 13)
+* **Area owner:** flashback stream
+* **Contract:** `documentation/TECHNICAL_ARCHITECTURE.md` §12.15. Films `LS_FB_Nuremberg` (card
+  `hist.reich.nuremberg_interpreters`), `LS_FB_Evictions` (`hist.reich.evictions`), `LS_FB_Settlement`
+  (`hist.soviet.special_settlements`), `LS_FB_Kyshtym` (`hist.soviet.kyshtym`): 16–16.5 s, three painted shots each.
+* **Provenance:** everything below is **original work** written by the project's own deterministic generators
+  (fixed seeds; a re-run writes the same bytes). No downloads, no traced or sampled photographs or film frames, no AI
+  image or audio models. The subjects are real events; the pictures are generic reconstructions that show only what
+  the card states (places, rooms, documents, tools; people at a distance or from behind) — no faces, no uniforms, no
+  flags, no insignia (no `*_hist` files, nothing for `Symbols.pick()`), no violence, no blast.
+* **Scene / code:** `scenes/cinematics/flashback_common/flashback_film.gd` (+ four `Flashback<Name>.tscn`),
+  `scripts/core/flashbacks.gd`, `scripts/ui/flashback_view.gd`, the button in `scripts/ui/discovery_view.gd`, three
+  hooks in `scripts/core/game.gd` (`memory_films`, `_film_exists`, `rewatch_film`); sheet
+  `data/flashbacks/flashbacks.json`; tests `tests/test_flashbacks.gd`, captures `tests/visual/flashback_shots.tscn`.
+
+| Path | What | How it was made |
+|---|---|---|
+| `assets/cinematics/flashback/nuremberg/court.png` | the courtroom from the back rows: panelling, two draped windows, strip lights, the glazed, roofless booth with two rows of interpreters, listeners with headphones seen from behind (512 × 368; the film shows a 480 × 360 gate drifting across it) | `py -3 -P tools/pixelgen/env_flashback.py` (`env_flashback_reich.court`): one luminance painting resolved to the 13-step sepia ramp (`env_flashback_kit.resolve`: 4 × 4 ordered dither in the middle of a step, lens falloff, baked grain) |
+| `assets/cinematics/flashback/nuremberg/booth.png` | three interpreters at their desk from behind (headphones, microphones, papers), the glass front with its one top rail, the room beyond | same (`booth`) |
+| `assets/cinematics/flashback/nuremberg/desk.png` | headphones put down, the selector switch with four positions, the box with the two lamps (dark), typed sheets, a pencil | same (`desk`) |
+| `assets/cinematics/flashback/nuremberg/desk_yellow.png`, `desk_red.png` | the two lamps lit (48 × 48, hard-edged, dithered halo): the only colours outside the ramp — a muted yellow and a muted red, because the card names them | same (`lamp_overlay`) |
+| `assets/cinematics/flashback/evictions/street.png` | a Berlin street of tenements in summer: three open, empty windows, the open house door, things set on the pavement, a loaded handcart at the kerb; nobody in the street | same (`street`) |
+| `assets/cinematics/flashback/evictions/chronicle.png` | a desk: a typed page headed „CHRONIK“ / „1941“ / „AUGUST“ (every other line unreadable dashes), a plan with hatched blocks along an axis, pen, ink, stamp | same (`chronicle`); pixel fonts of `env_veltrava_lib` |
+| `assets/cinematics/flashback/evictions/room.png` | the cleared room: pale rectangles where a wardrobe and pictures were, a bare curtain rod, the darker floor where the carpet lay, the open door, a scrap of packing paper | same (`room`) |
+| `assets/cinematics/flashback/settlement/steppe.png` | open country under a wide sky: barracks and earth huts with thin smoke, a rutted track, a telegraph line, three people far off | same (`env_flashback_soviet.steppe`) |
+| `assets/cinematics/flashback/settlement/kommandantur.png` | the commandant's office (a log house, the board „КОМЕНДАТУРА“, a notice board) and seven people and a child waiting to report, all from behind | same (`kommandantur`) |
+| `assets/cinematics/flashback/settlement/boundary.png` | the road out of the district at dusk: a hut, the striped barrier down, a board nobody can read, the telegraph line running on | same (`boundary`) |
+| `assets/cinematics/flashback/kyshtym/plant.png` | the works across the water on a still day: halls, three stacks with thin plumes, low tank lids, a fence along the shore; reeds, birches and a boat in front. No blast, no cloud | same (`plant`) |
+| `assets/cinematics/flashback/kyshtym/village.png` | a village left behind: three log houses with open doors and cold chimneys, open gates, a well with its bucket on the ground, a cart with the shafts down | same (`village`) |
+| `assets/cinematics/flashback/kyshtym/fence.png` | a forest road ending at a chained mesh gate in a barbed-wire fence, an inner fence beyond, a barrier pole, a guard hut, an unlit lamp | same (`fence`) |
+| `assets/cinematics/flashback/look/gate.png` | the film gate (480 × 360): rounded corners, a ragged edge, a hair | same (`gate_mask`) |
+| `assets/cinematics/flashback/look/scratch_a.png`, `scratch_b.png`, `dust.png` | one light and one dark scratch (1 px wide), four dust specks (8 × 8 each) | same (`scratch`, `dust`) |
+| `assets/cinematics/flashback/layout.json` | plates, drift anchors, overlay positions, the ramp and the accent colours | same |
+| `assets/audio/sfx/fb_projector_bed.wav` | the films' only sound (19 s, 44.1 kHz, 16-bit, stereo, one-shot): a small projector in a quiet room — switch, motor run-up, a steady whirr with sixteen claw ticks a second, a low hum, the hiss and soft pops of an empty optical track, the run-down. No music | `py -3 -P tools/audiogen/flashback_audio.py` (numpy synthesis from one fixed seed) |
+| `data/flashbacks/flashbacks.json` | the four film sheets (card, scene, bed, caption keys, shot lengths, lamp windows) | written by hand |
+| `data/locale/de_flashback.json`, `data/locale/en_flashback.json` | button, hint, skip, the four place-and-date captions, eight lines, eight entries of the film page | written by hand; every caption restates facts of its card (`data/locale/*_history*.json`), checked by `tests/test_flashbacks.gd` |
+
+Reproduce: `py -3 -P tools/pixelgen/env_flashback.py [--sheet <png>]`, `py -3 -P tools/audiogen/flashback_audio.py`,
+then the shared import. Review captures: `"$GODOT" --path . res://tests/visual/flashback_shots.tscn -- --cinematic=none
+--fb-mode=both --fb-out=<dir> [--fb-lang=en --fb-scale=1.5]`.
 
 ---
 <a id="part-photo_mode"></a>

@@ -483,10 +483,21 @@ def make_glow():
     g.append((PYLON_LAMP[0], PYLON_LAMP[1] + 2, 30, 0.42, LA[3], 1.0))
     g.append((SHELTER_LAMP[0], SHELTER_LAMP[1], 18, 0.3, LA[3], 1.0))
     g.append((WALL_LAMP[0] + 1, WALL_LAMP[1], 16, 0.36, LA[3], 1.0))
-    for c in BASE_WIN:
-        g.append((c, 250, 34, 0.26, LA[2], 1.0))
     g.append((TRUCK['x1'] + 2, 262, 18, 0.4, LA[4], 1.0))
     arr = glow_image(K.WORLD_W, K.WORLD_H, g, levels=6, max_a=0.5)
+    # round 13: the fire's own halos are pixel fire light -- flat additive bands with dithered edges
+    # (pixel_fire_bake.halo) in the lamp ramp's hue, summed with whatever lantern light lies under them
+    import pixel_fire_bake as PFB
+    tints = tuple(tuple(int(round(v * k)) for v in LA[2][:3]) for k in (0.09, 0.17, 0.27))
+    for c in BASE_WIN:
+        hl = PFB.halo(92, 72, 46, 36, 44, 34, tints)
+        x0, y0 = int(c) - 46, 250 - 36
+        xa, xb = max(0, x0), min(K.WORLD_W, x0 + 92)
+        sub, hs = arr[y0:y0 + 72, xa:xb], hl[:, xa - x0:xb - x0]
+        m = hs[..., 3] > 0
+        add = sub[..., :3].astype(np.float32) * (sub[..., 3:4].astype(np.float32) / 255.0) + hs[..., :3]
+        sub[m, :3] = np.clip(np.rint(add[m]), 0, 255).astype(np.uint8)
+        sub[m, 3] = 255
     L = Layer(K.WORLD_W, K.WORLD_H, 'glow_air')
     L.c = arr
     return L, {}
