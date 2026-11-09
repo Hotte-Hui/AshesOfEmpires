@@ -351,17 +351,20 @@ def e3b_men():
 
 # =========================================================================================== build
 def _preview_fire():
+    # (the kit's sheets: flame_m 36 x 54 x 8, wall_a / wall_b 128 x 136 x 12, flame_xxl 112 x 212 x 12)
     LF['preview'] = [
         {'id': 'f1', 'layers': [['fire/f1_bg.png', [0, 0]], ['fire/lamp_cone.png', [0, 0], 'add'],
                                 ['fire/f1_konrad.png', LF['f1_konrad'], 'over', 2, 1]]},
         {'id': 'f2', 'layers': [['fire/f2_bg.png', [0, 0]], ['fire/f2_glow.png', [0, 0], 'add'],
                                 ['fire/f2_door.png', LF['f2_door_at'], 'over', 4, 0]] +
-            [['fire/f2_fire_m.png', [int(x) - 24, int(y) - 68], 'over', 8, i] for i, (x, y) in enumerate(LF['f2_fire'][:4])]},
-        {'id': 'f3', 'layers': [['fire/f3_bg.png', [0, 0]], ['fire/f3_warm.png', [0, 0], 'add']]},
+            [[KIT + 'flame_m.png', [int(x) - 18, int(y) - 52], 'over', 8, i] for i, (x, y) in enumerate(LF['f2_fire'][:4])]},
+        {'id': 'f3', 'layers': [['fire/f3_bg.png', [0, 0]], ['fire/f3_warm.png', [0, 160], 'add', 6, 5]]},
         {'id': 'f4', 'layers': [['fire/f4_bg.png', [0, 0]], ['fire/f4_lit.png', [0, 0], 'add']] +
-            [[LF['f4_kinds'][b][0], [int(x) - LF['f4_kinds'][b][1] // 2, int(y) - LF['f4_kinds'][b][2]],
-              'over', 8, (i * 3) % 8] for i, (x, y, b) in enumerate(LF['f4_fire'])] +
-            [['fire/f4_table.png', LF['f4_table_at']], ['fire/f4_alexei.png', LF['f4_alexei'], 'over', 2, 0]]},
+            [[KIT + 'flame_xxl.png', [int(x) - 56, int(y) - 212], 'over', 12, (i * 5) % 12]
+             for i, (x, y, b) in enumerate(LF['f4_fire']) if b == 1] +
+            [[KIT + ('wall_a.png', 'wall_b.png')[i % 2], [i * 128, 247 - 136], 'over', 12, 3] for i in range(5)] +
+            [['fire/f4_table.png', LF['f4_table_at']], ['fire/f4_lit_table.png', LF['f4_table_at'], 'add'],
+             ['fire/f4_alexei.png', LF['f4_alexei'], 'over', 2, 0]]},
     ]
 
 
@@ -378,33 +381,18 @@ def build_fire(w):
     _DOOR_FIG = getattr(F, 'doorway_figure', None)
     w('fire/f2_door.png', f2_door())
     w('fire/f2_glow.png', RG.f2_fire_light())
-    # round 11: fire that reads as fire (bright cores, no dark rim) and soft smoke (no dithered blotches)
-    w('fire/f2_fire_s.png', LFE.fire_sheet(8, 26, 36, 1871, tongues=2, width=(0.2, 0.3), length=(0.6, 1.0)))
-    w('fire/f2_fire_m.png', LFE.fire_sheet(8, 48, 70, 1872, tongues=3, width=(0.15, 0.26), length=(0.5, 1.0),
-                                           lean=-0.05))
-    w('fire/f2_fire_l.png', LFE.fire_sheet(8, 60, 104, 1873, tongues=4, width=(0.13, 0.22), length=(0.45, 1.0),
-                                           lean=-0.06))
+    # round 13: every flame, puff of smoke, spark and pool of fire light is the pixel fire kit's (build_fx)
     w('fire/f3_bg.png', RG.f3_bg())
-    w('fire/f3_warm.png', Q.glow_sprite(VW, VH, [(300, 360, 360, 200, (70, 30, 10), 1.3)], 6.0))
     w('fire/f4_bg.png', RG.hall('fire'))
     w('fire/f4_lit.png', RG.f4_lit())
     w('fire/f4_table.png', RG.f4_table())
-    w('fire/fire_band.png', RG.fire_band())
-    w('fire/smoke_hot.png', LFE.soft_puff_sheet(8, 112, 84, LFE.SMOKE_FIRE, 1023, grow=(0.26, 0.5), light=(0.1, 0.95),
-                                                thin=0.45, drift=0.04, alpha=0.95))
     w('fire/paper.png', LFE.paper_sheet())
-    w('fire/f4_glow.png', Q.glow_sprite(VW, VH, [(420, 200, 330, 140, (54, 22, 6), 1.4),
-                                                 (160, 210, 200, 110, (36, 14, 4), 1.4)], 3.0))
     fa = getattr(F, 'fire_alexei', None)
     w('fire/f4_alexei.png', fa() if fa else f4_alexei())
     if fa:
         LF['f4_alexei'] = list(getattr(F, 'F4_ALEXEI_AT', (54, 112)))
     RG.f4_anchors()
-    RG.f4_fire_sheets(w)
-    w('fire/smoke.png', LFE.soft_puff_sheet(8, 64, 48, ['#0E1310', '#151D18', '#1E2A22', '#2A3A2E', '#3A4E3E',
-                                                        '#4E6650', '#668066'], 1021, grow=(0.24, 0.48),
-                                            light=(-0.2, -0.9), thin=0.6, drift=-0.08, alpha=0.8, wisp=0.6))
-    w('fire/ember.png', Q.ember_sheet())
+    build_fx_fire(w)
     LF['lamp'] = list(LAMP_G)
     LF['f2_proj'] = dict(F2)
     _preview_fire()
@@ -420,12 +408,12 @@ def _preview_escape():
         {'id': 'e2b', 'layers': [['escape/e2_bg.png', [0, 0]], ['escape/e2_lamp.png', [0, 0], 'add'],
                                  ['escape/e2_hatch.png', LE['hatch_at'], 'over', 3, 2],
                                  ['escape/e2_konrad.png', LE['e2_konrad'], 'over', 4, 3]]},
-        {'id': 'e3a', 'layers': [['escape/e3a_bg.png', [0, 0]], ['escape/e3a_glow.png', [0, 0], 'add'],
+        {'id': 'e3a', 'layers': [['escape/e3a_bg.png', [0, 0]], ['escape/e3a_glow.png', [90, 190], 'add', 4, 0],
                                  ['escape/e3a_hands.png', LE['e3_hands'], 'over', 4, 3]]},
         {'id': 'e3b', 'layers': [['escape/e3b_bg.png', [0, 0]], ['escape/e3b_hatch.png', LE['e3b_hatch'], 'over', 2, 1],
                                  ['escape/e3b_men.png', LE['e3b_men'], 'over', 2, 0]]},
-        {'id': 'e4', 'layers': [['escape/e4_bg.png', [0, 0]], ['escape/e4_glow.png', [0, 0], 'add']] +
-            [['escape/e4_window.png', xy, 'over', 3, 2 if i < 4 else 0] for i, xy in enumerate(LE['e4_windows'])]},
+        {'id': 'e4', 'layers': [['escape/e4_bg.png', [0, 0]]] +
+            [[KIT + 'lick.png', [xy[0] - 4, xy[1] - 76], 'over', 10, i] for i, xy in enumerate(LE['e4_windows'][:4])]},
     ]
 
 
@@ -442,18 +430,14 @@ def build_escape(w):
     w('escape/e2_konrad.png', hk() if hk else e2_konrad())
     if hk:
         LE['e2_konrad'] = list(getattr(F, 'E2_KONRAD_AT', (190, 70)))
-    w('escape/e2_lamp.png', Q.glow_sprite(VW, VH, [(YARD_LAMP[0], YARD_LAMP[1] + 4, 80, 60, (60, 46, 26), 1.5),
-                                                   (128, 172, 70, 46, (70, 30, 8), 1.4),
-                                                   (612, 112, 20, 20, (40, 32, 18), 1.5)], 6.0))
     w('escape/e3a_bg.png', YD.e3a_bg())
     w('escape/e3a_hands.png', e3a_hands())
-    w('escape/e3a_glow.png', Q.glow_sprite(VW, VH, [(320, 340, 230, 150, (110, 46, 12), 1.4),
-                                                    (320, 360, 120, 60, (90, 50, 20), 1.2)], 6.0))
     w('escape/e3b_bg.png', YD.e3b_bg())
     w('escape/e3b_hatch.png', YD.e3b_hatch())
     w('escape/e3b_men.png', e3b_men())
     build_escape_places(w)
     build_escape_people(w)
+    build_fx_escape(w)
     _preview_escape()
 
 
@@ -463,17 +447,8 @@ def build_escape_places(w):
     import env_c3p2_cine_life as LFE
     w('escape/e2_hatch.png', YD.e2_hatch())
     w('escape/e4_bg.png', YD.e4_bg())
-    w('escape/e4_window.png', YD.e4_window())
-    w('escape/e4_glow.png', YD.e4_glow())
-    # soft smoke (no dithered blotches), lit orange from below by the burning windows
-    w('escape/smoke.png', LFE.soft_puff_sheet(8, 112, 84, LFE.SMOKE_FIRE, 1031, grow=(0.24, 0.5), light=(0.05, 0.95),
-                                              thin=0.4, drift=0.08, alpha=0.95))
-    w('escape/breath.png', LFE.soft_puff_sheet(6, 24, 18, ['#3A4859', '#4F5E70', '#687789', '#A1AAB7', '#C2C9D2'], 1041,
-                                               grow=(0.2, 0.42), light=(0.3, -0.8), thin=0.7, alpha=0.8, lobes=6))
-    w('escape/flame_s.png', LFE.fire_sheet(8, 32, 40, 1043, tongues=3, width=(0.16, 0.26), length=(0.55, 1.0)))
-    w('escape/flame_out.png', LFE.fire_sheet(8, 40, 70, 1045, tongues=3, width=(0.15, 0.24), length=(0.5, 1.0),
-                                             lean=0.05, bed=0.7))
-    w('escape/fire_halo.png', LFE.fire_halo(64, 64, (110, 46, 12), 1.5))
+    # round 13: flames, smoke, sparks and fire light are the pixel fire kit's (build_fx); the burning windows
+    # are drawn by the runtime (backdrop, the kit's flames, the bars)
     w('escape/engine.png', YD.e4_engine())
     w('escape/beacon.png', YD.e4_beacon_glow())
     w('escape/beacon_wash.png', YD.e4_beacon_wash())
@@ -522,3 +497,49 @@ def build_escape_people(w):
                                at=[(690, 306), (720, 308)][i], to=[(566, 306), (606, 310)][i], t0=14.7 + i * 0.25,
                                t1=15.9 + i * 0.25, flip=True))
     LE['e4_people'] = people
+
+
+# ================================================================================================ pixel fire (round 13)
+WISP = ('#14261C', '#2E5640', '#4A7A5C')              # f1: the first smoke in the green lamp's light
+BREATH = ('#4F5E70', '#A1AAB7', '#DEE2E7')            # e3b: breath in the cold
+E3A_TINTS = ((30, 13, 4), (62, 27, 8), (104, 46, 14))
+KIT = '../../fx/pixel_fire/'                          # the kit's sheets, relative to assets/cinematics/c3p2/
+
+
+def build_fx_fire(w):
+    """Round 13: the fire of both films comes from the pixel fire kit (tools/pixelgen/pixel_fire.py ->
+    assets/fx/pixel_fire/, played by scripts/render/pixel_fire.gd).  Written here are only the sheets the kit's
+    standard set cannot hold -- smoke in this film's own tones, light pools of this film's shapes, the fire's
+    light on the table layer -- all made by the kit's functions (hard pixels, ordered dither, no soft alpha)."""
+    import os
+    import pixel_fire as PF
+    from PIL import Image
+    w('fire/wisp_s.png', PF.sheet(PF.puff_frames(8, 20, 16, WISP, 1021, 4, light=(-0.3, -0.95))))
+    w('fire/wisp_m.png', PF.sheet(PF.puff_frames(10, 34, 26, WISP, 1022, 5, light=(-0.3, -0.95))))
+    # f3: the fire behind the camera warms the door from below, more and more: six stages of one pool
+    w('fire/f3_warm.png', PF.sheet(PF.pool_frames(VW, 200, 300, 200, 370, 196,
+                                                  scales=(0.5, 0.6, 0.7, 0.8, 0.9, 1.0))))
+    LF['f3_warm_at'] = [0, VH - 200]
+    # f4: the fire's light on the table layer (the table stands in front of the flames, f4_lit behind them)
+    lit = np.array(Image.open(os.path.join(Q.OUT, 'fire', 'f4_lit.png')).convert('RGBA'))
+    tab = np.array(Image.open(os.path.join(Q.OUT, 'fire', 'f4_table.png')).convert('RGBA'))
+    part = lit[VH - tab.shape[0]:].copy()
+    part[tab[..., 3] == 0] = 0
+    w('fire/f4_lit_table.png', part)
+
+
+def build_fx_escape(w):
+    """Round 13, the escape's own sheets (see build_fx_fire)."""
+    import pixel_fire as PF
+    # e2: the lamps of the yard (the window's fire light is the kit's pools now)
+    w('escape/e2_lamp.png', Q.glow_sprite(VW, VH, [(YARD_LAMP[0], YARD_LAMP[1] + 4, 80, 60, (60, 46, 26), 1.5),
+                                                   (612, 112, 20, 20, (40, 32, 18), 1.5)], 6.0))
+    # e3a: the glow deep in the chute (four breathing frames)
+    w('escape/e3a_glow.png', PF.sheet(PF.pool_frames(460, 170, 230, 150, 228, 148, E3A_TINTS, breathe=4.0)))
+    LE['e3a_glow_at'] = [90, 190]
+    w('escape/breath.png', PF.sheet(PF.puff_frames(6, 24, 18, BREATH, 1041, 4, light=(0.3, -0.9), fade=0.3)))
+
+
+def build_fx(w):
+    build_fx_fire(w)
+    build_fx_escape(w)

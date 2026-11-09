@@ -12,6 +12,8 @@ extends "res://scenes/cinematics/ch3_common/c3_cinematic.gd"
 
 const ASSETS2 := "res://assets/cinematics/c3p2/"
 const FX := preload("res://scenes/cinematics/ch3_common/pixel_fx.gd")
+## the pixel fire kit (flames, smoke, sparks, fire light): tools/pixelgen/pixel_fire.py -> assets/fx/pixel_fire/
+const PF := preload("res://scripts/render/pixel_fire.gd")
 ## gap between two subtitles that follow each other
 const LINE_GAP := 0.1
 
@@ -121,6 +123,50 @@ static func draw_frame(ci: CanvasItem, sheet: Texture2D, n: int, i: int, pos: Ve
 func flame_frame(time: float, n: int, phase: float, fps := 9.0) -> int:
 	var r := fps * (0.5 if reduced_motion() else 1.0)
 	return int(floor(time * r + phase * n)) % n
+
+
+## Rate of the pixel fire kit's flames and light pools: reduced motion halves it.
+func fire_rate() -> float:
+	return 0.5 if reduced_motion() else 1.0
+
+
+## The kit sheets a film uses must exist (same `missing` bookkeeping as tex()).
+func need_kit(names: Array) -> void:
+	for n in names:
+		if PF.sheet(str(n)) == null and not missing.has(PF.DIR + str(n) + ".png"):
+			missing.append(PF.DIR + str(n) + ".png")
+
+
+## A film's own sheet of the kit's make (assets/cinematics/c3p2/...), registered under `sheet_name` for PF.*.
+func own_sheet(sheet_name: String, rel: String, n: int) -> void:
+	PF.register(sheet_name, tex(rel), n)
+
+
+## Smoke rolling along a ceiling behind a moving head at x = head (dir +1: it comes from the left, -1: from
+## the right; whole pixels): big puffs roll at the head, behind them a veil, then the bank.  The billows travel
+## with the head when `carried` (smoke drifting in), or hang where they are (smoke spreading from a fire).
+func smoke_front(ci: CanvasItem, head: float, dir: float, foot_y: float, time: float, carried := false,
+		veil := 96.0, warm := true) -> void:
+	var tag := "" if warm else "_grey"
+	var hx := roundf(head)
+	var o := {"rate": 0.3 * motion_k(), "shift": int(-hx) if carried else 23}
+	var a := hx - dir * veil
+	PF.wall(ci, ["veil_a" + tag, "veil_b" + tag], clampf(minf(hx, a), 0.0, 640.0), clampf(maxf(hx, a), 0.0, 640.0),
+		foot_y, time, o)
+	if dir > 0.0:
+		PF.wall(ci, ["bank_a" + tag, "bank_b" + tag], 0.0, clampf(a, 0.0, 640.0), foot_y, time, o)
+	else:
+		PF.wall(ci, ["bank_a" + tag, "bank_b" + tag], clampf(a, 0.0, 640.0), 640.0, foot_y, time, o)
+	for i in 3:
+		PF.puff(ci, ("puff_xl" if i == 1 else "puff_l") + tag,
+			Vector2(hx - dir * (6.0 + i * 16.0), foot_y - 30.0 + (i % 2) * 12.0),
+			0.3 + 0.12 * absf(sin(time * 1.3 * motion_k() + i * 2.1)), i)
+
+
+## A light step (-1, 0 or 1) that changes at most PF.LIGHT_HZ times a second: fire light breathes in whole
+## steps, it never ramps and never strobes.
+func light_step(time: float, seed: int) -> int:
+	return int(roundf(hnoise(floorf(time * PF.LIGHT_HZ * fire_rate()) * 1.37, seed)))
 
 
 ## Slow (< 3 Hz) brightness wobble of fire light, softened by reduced motion: 1 +- amp.

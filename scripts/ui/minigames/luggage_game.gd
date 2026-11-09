@@ -360,6 +360,18 @@ func _tilt_y(x: float) -> float:
 	return (x - PIVOT.x) * tan(deg_to_rad(TILT_DEG * _tip))
 
 
+## The enamel sign's text width (art px): a line longer than the sign in one language (English: „Corridor traffic ·
+## Free luggage allowance“) steps down in size instead of being cut off at the sign's edge.
+const SIGN_W := 106.0
+
+
+static func sign_font_size(font: Font, text: String, base: int, width: float) -> int:
+	var fs := base
+	while fs > 8 and font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > width - 4.0:
+		fs -= 1
+	return fs
+
+
 static func coarse_x(n: int) -> float:
 	return RAIL_X0 + (RAIL_X1 - RAIL_X0) * float(n) / float(Logic.COARSE_MAX)
 
@@ -589,10 +601,13 @@ func draw_scene(v: Control) -> void:
 	if font == null:
 		return
 	var fs := 13 if S == 2 else 17
-	v.draw_string(font, Vector2(179.0 * S, 81.0 * S), Kit.t("mg.luggage.sign.1"), HORIZONTAL_ALIGNMENT_CENTER, 106.0 * S,
-		fs - 1, Color("2c4a7a"))
-	v.draw_string(font, Vector2(179.0 * S, 90.0 * S), Kit.t("mg.luggage.sign.2"), HORIZONTAL_ALIGNMENT_CENTER, 106.0 * S,
-		fs - 3, Color("23272b"))
+	var sign_w := SIGN_W * S
+	var s1 := Kit.t("mg.luggage.sign.1")
+	var s2 := Kit.t("mg.luggage.sign.2")
+	v.draw_string(font, Vector2(179.0 * S, 81.0 * S), s1, HORIZONTAL_ALIGNMENT_CENTER, sign_w,
+		sign_font_size(font, s1, fs - 1, sign_w), Color("2c4a7a"))
+	v.draw_string(font, Vector2(179.0 * S, 90.0 * S), s2, HORIZONTAL_ALIGNMENT_CENTER, sign_w,
+		sign_font_size(font, s2, fs - 3, sign_w), Color("23272b"))
 	var tc := COL_LABEL if not hc else COL_INK
 	for n in range(0, Logic.COARSE_MAX + 1, 2):
 		var x := coarse_x(n)

@@ -9,16 +9,23 @@ extends "res://scenes/cinematics/c3p2_common/c3p2_cinematic.gd"
 ##               snow, the fire brigade's bells approaching
 ## No inner lines (the picture and the sound carry it).  Reduced motion: half travel, no window flash frames.
 ## Round 10: snow falls into the chute from the square of light, the yard has its coal heap, barrels, the gate and
-## the lane's lamp, the window and the hatch glow and flicker; sparks rise out of the hatch; in the lane the windows
-## burst with flames licking out and glass glinting into the snow, onlookers watch the wing and two firemen run in
-## as the bells come close (a slow blue beacon from the right).
+## the lane's lamp; in the lane glass glints into the snow, onlookers watch the wing and two firemen run in as the
+## bells come close (a slow blue beacon from the right).
 ## Round 11: the iron lid is opaque cast iron (tread plate under melting snow; open, its ribbed sooted underside
-## with the cast date); all smoke is soft and volumetric; in the lane each burst window throws its flames up the
-## facade and a column of smoke that merges into one mass under the cornice (the snow falls in front of it), the
-## glass flies out in glinting shards that stay twinkling in the snow, the onlookers flinch, step back, point and
-## wave, and the fire engine noses into the lane from the right, its blue beacon turning on the cab and washing
-## the snow and the facade.
-## Art: tools/pixelgen/env_c3p2_cine_fire.py (+ _yard, _life) -> assets/cinematics/c3p2/escape/.
+## with the cast date); the glass flies out in glinting shards that stay twinkling in the snow, the onlookers
+## flinch, step back, point and wave, and the fire engine noses into the lane from the right, its blue beacon
+## turning on the cab and washing the snow and the facade.
+## Round 13: the fire is pixel art -- every flame, puff of smoke, spark and pool of fire light comes from the pixel
+## fire kit (tools/pixelgen/pixel_fire.py -> assets/fx/pixel_fire/, played by scripts/render/pixel_fire.gd: whole
+## pixels, never scaled, no alpha fades).  e1: puffs shrink away up the chute.  e2: flames behind the yard
+## window's bars, its light on the wall and the snow, puffs and sparks out of the hatch.  e3: the glow deep in the
+## chute breathes in four frames, puffs and sparks rise past the hands; breath and the smoke from under the lid
+## are small puffs.  e4: a window bursts (one hot frame), flames fill it behind the bars, step up over the lintel
+## and lick up the facade with the draught; its light lies on the wall around it and on the snow in front as
+## dithered pools; a column of puffs climbs the facade and spreads under the cornice into big, slow, grey
+## billows that break up in the wind; sparks on arcs.
+## Art: tools/pixelgen/env_c3p2_cine_fire.py (+ _yard, _life; build_fx for the kit-made sheets) ->
+## assets/cinematics/c3p2/escape/.
 
 const DUR := 16.0
 const SHOTS := [["e1", 0.0, 4.0], ["e2", 4.0, 8.0], ["e3", 8.0, 12.0], ["e4", 12.0, 16.0]]
@@ -35,6 +42,15 @@ const BURST_GAP := 0.42
 const BURST_ORDER := [3, 2, 4, 1, 5, 0, 6]
 const ENGINE := [14.5, 15.7, 664.0, 560.0, 318.0]   # e4: the engine noses in: t0, t1, x from, x to, wheels' y
 const BEACON_HZ := 0.9                               # its beacon turns (well under 3 Hz)
+## e4: a souterrain window's opening (layout e4_windows = its top-left), the lane's snow line, the iron bars
+const WIN := Vector2(32, 28)
+const SNOW_Y := 262.0
+const BAR := Color("#140D0A")
+const IRON := Color("#05070B")
+## e3b: the souterrain window at the right of the snow shot (env_c3p2_cine_yard.e3b_bg)
+const E3B_WINDOW := [486, 140, 556, 182]
+const KIT := ["flame_s", "flame_m", "lick", "window", "low_a", "puff_s", "puff_m", "puff_l", "puff_xl",
+	"puff_s_grey", "puff_m_grey", "puff_l_grey", "puff_xl_grey", "glow_m", "glow_l", "pool_m", "pool_l"]
 
 var e1: Node2D
 var e2: Node2D
@@ -47,6 +63,8 @@ var _e1fx: Node2D
 var _hatch: Sprite2D
 var _konrad: Sprite2D
 var _e2fx: Node2D
+var _e2heat: Node2D
+var _e2win: Node2D
 var _snow2: Node2D
 var _hands: Sprite2D
 var _e3afx: Node2D
@@ -55,19 +73,11 @@ var _hatch_b: Sprite2D
 var _men: Sprite2D
 var _e3bfx: Node2D
 var _snow3: Node2D
-var _e4glow: Sprite2D
-var _windows: Array = []
 var _e4fx: Node2D
 var _snow4: Node2D
-var _smoke: Texture2D
-var _breath: Texture2D
-var _flame_s: Texture2D
-var _e2lamp: Sprite2D
 var _e4people: Node2D
 var _people: Array = []
 var _beacon: Node2D
-var _flame_out: Texture2D
-var _halo: Texture2D
 var _engine: Node2D
 var _engine_tex: Texture2D
 var _beacon_tex: Texture2D
@@ -105,9 +115,8 @@ func _make_cues() -> Array:
 # ------------------------------------------------------------------ build
 func _build() -> void:
 	layout = _layout_section("escape")
-	_smoke = tex("escape/smoke.png")
-	_breath = tex("escape/breath.png")
-	_flame_s = tex("escape/flame_s.png")
+	need_kit(KIT)
+	own_sheet("c3p2_breath", "escape/breath.png", 6)
 	e1 = group("Chute")
 	sprite("escape/e1_bg.png", Vector2.ZERO, e1)
 	_light1 = sprite("escape/e1_light.png", Vector2.ZERO, e1, 1, true)
@@ -115,7 +124,10 @@ func _build() -> void:
 	_file = sprite("escape/e1_file.png", Vector2.ZERO, e1, 2)
 	e2 = group("Yard")
 	sprite("escape/e2_bg.png", Vector2.ZERO, e2)
-	_e2lamp = sprite("escape/e2_lamp.png", Vector2.ZERO, e2, 1, true)
+	sprite("escape/e2_lamp.png", Vector2.ZERO, e2, 1, true)
+	_e2heat = _fx(e2, "WindowLight", _draw_e2_heat)
+	_e2heat.material = additive()
+	_e2win = _fx(e2, "WindowFire", _draw_e2_window)
 	_hatch = sprite("escape/e2_hatch.png", _lv("hatch_at"), e2, 3)
 	_e2fx = _fx(e2, "Smoke", _draw_e2)
 	_konrad = sprite("escape/e2_konrad.png", _lv("e2_konrad"), e2, KONRAD.size())
@@ -124,7 +136,7 @@ func _build() -> void:
 		{"count": 30, "v": Vector2(9, 30), "vjit": 0.3, "size": Vector2(2, 2), "color": Color("#c2c9d2"), "sway": 3.0}], 9201)
 	e3a = group("Hands")
 	sprite("escape/e3a_bg.png", Vector2.ZERO, e3a)
-	_e3glow = sprite("escape/e3a_glow.png", Vector2.ZERO, e3a, 1, true)
+	_e3glow = sprite("escape/e3a_glow.png", _lv("e3a_glow_at"), e3a, 4, true)
 	_e3afx = _fx(e3a, "Smoke", _draw_e3a)
 	_hands = sprite("escape/e3a_hands.png", _lv("e3_hands"), e3a, HANDS.size())
 	e3b = group("Snow")
@@ -137,17 +149,12 @@ func _build() -> void:
 		{"count": 26, "v": Vector2(8, 28), "vjit": 0.3, "size": Vector2(2, 2), "color": Color("#c2c9d2"), "sway": 3.0}], 9202)
 	e4 = group("EastWing")
 	sprite("escape/e4_bg.png", Vector2.ZERO, e4)
-	_e4glow = sprite("escape/e4_glow.png", Vector2.ZERO, e4, 1, true)
-	for w in layout.get("e4_windows", []):
-		_windows.append(sprite("escape/e4_window.png", Vector2(float(w[0]), float(w[1])), e4, 3))
-	_flame_out = tex("escape/flame_out.png")
-	_halo = tex("escape/fire_halo.png")
 	_engine_tex = tex("escape/engine.png")
 	_beacon_tex = tex("escape/beacon.png")
 	_wash_tex = tex("escape/beacon_wash.png")
-	_e4fx = _fx(e4, "Flames", _draw_e4)
-	_e4heat = _fx(e4, "Heat", _draw_e4_heat)
+	_e4heat = _fx(e4, "FireLight", _draw_e4_heat)
 	_e4heat.material = additive()
+	_e4fx = _fx(e4, "Flames", _draw_e4)
 	for d in layout.get("e4_people", []):
 		var tx2 := tex(str(d["file"]))
 		if tx2:
@@ -158,7 +165,7 @@ func _build() -> void:
 				_people_tex[f] = tex(f)
 	_e4people = _fx(e4, "People", _draw_people)
 	_engine = _fx(e4, "Engine", _draw_engine)
-	_e4smoke = _fx(e4, "SmokeMass", _draw_e4_smoke)
+	_e4smoke = _fx(e4, "Smoke", _draw_e4_smoke)
 	_beacon = _fx(e4, "Beacon", _draw_beacon)
 	_beacon.material = additive()
 	_snow4 = snow(e4, Rect2(0, 0, 640, 360), [
@@ -217,9 +224,10 @@ func _apply(time: float) -> void:
 	_konrad.visible = kf >= 0
 	_konrad.frame = maxi(kf, 0)
 	_snow2.set_time(time * (0.6 if rm else 1.0))
-	_e2lamp.modulate = Color(1, 1, 1, clampf(fire_wobble(time, 25, 0.1), 0.0, 1.0))
 	_e2fx.queue_redraw()
-	# e3a: the hand rises out of the smoke, is taken, both pulled up
+	_e2heat.queue_redraw()
+	_e2win.queue_redraw()
+	# e3a: the hand rises out of the smoke, is taken, both pulled up; the glow below breathes in its frames
 	var hf := 0
 	for i in HANDS.size():
 		if time >= HANDS[i]:
@@ -227,7 +235,7 @@ func _apply(time: float) -> void:
 	_hands.frame = hf
 	var rise := (1.0 - ramp01(time, HANDS[0], HANDS[1])) * 46.0
 	_hands.position = _lv("e3_hands") + Vector2(0, roundf(rise))
-	_e3glow.modulate = Color(1, 1, 1, clampf(0.85 * fire_wobble(time, 21), 0.0, 1.0))
+	_e3glow.frame = posmod(int(floor(time * PF.LIGHT_HZ * fire_rate())), 4)
 	_e3afx.queue_redraw()
 	# e3b: the slam, the men breathing hard (coughing: quick heaves)
 	_hatch_b.frame = 0 if time < SLAM else 1
@@ -236,21 +244,6 @@ func _apply(time: float) -> void:
 	_snow3.set_time(time * (0.6 if rm else 1.0))
 	_e3bfx.queue_redraw()
 	# e4: the windows burst one after another
-	var burning := 0
-	for j in _windows.size():
-		var order: int = BURST_ORDER.find(j) if BURST_ORDER.has(j) else j
-		var tb := BURST0 + order * BURST_GAP
-		var s := _windows[j] as Sprite2D
-		if time < tb:
-			s.frame = 0
-		elif time < tb + 0.12 and not rm:
-			s.frame = 1
-		else:
-			s.frame = 2
-		if time >= tb:
-			burning += 1
-	var frac := float(burning) / maxf(1.0, float(_windows.size()))
-	_e4glow.modulate = Color(1, 1, 1, clampf(frac * fire_wobble(time, 23), 0.0, 1.0))
 	_snow4.set_time(time * (0.6 if rm else 1.0))
 	_e4fx.queue_redraw()
 	_e4heat.queue_redraw()
@@ -332,6 +325,20 @@ func _draw_beacon() -> void:
 
 
 # ------------------------------------------------------------------ draw
+## Fire filling a barred opening [x0, y0, x1, y1]: the kit's tiles standing on its sill, cut at its lintel, the
+## iron bars (2 px every `pitch`, on the world's grid) in front.
+func _window_fire(ci: CanvasItem, r: Array, tile: String, pitch: int, shift := 0, bar := IRON) -> void:
+	var x0 := int(r[0])
+	var y0 := int(r[1])
+	var x1 := int(r[2])
+	var y1 := int(r[3])
+	PF.wall(ci, [tile], x0, x1, y1, t, {"rate": fire_rate(), "clip_top": y0, "shift": shift})
+	var bx := x0 + posmod(-x0, pitch)
+	while bx < x1:
+		ci.draw_rect(Rect2(bx, y0, mini(2, x1 - bx), y1 - y0), bar)
+		bx += pitch
+
+
 func _draw_e1() -> void:
 	if not e1.visible:
 		return
@@ -357,73 +364,81 @@ func _draw_e1() -> void:
 		var p := Vector2(hx + cos(ang) * (s_ * 0.6 + r * 0.9), hy - s_ + 6.0 + sin(ang) * s_ * 0.3 + r * 0.8)
 		var sz := 1.0 if age < 0.6 else 2.0
 		_e1fx.draw_rect(Rect2(p.floor(), Vector2(sz, sz)), Color(0.86, 0.9, 0.95, 0.85 * (1.0 - age * 0.5)))
-	# smoke curling up the chute past the file, toward the light
-	if _smoke:
-		for j in 3:
-			var age := fposmod(t * 0.5 + j * 0.33, 1.0)
-			var x2 := hx + (j - 1) * 60.0 * (1.0 - age)
-			var y2 := 330.0 - age * 200.0 * k
-			draw_frame(_e1fx, _smoke, 8, int(age * 7.0), Vector2(x2, y2), false, Color(0.85, 0.82, 0.8, 0.7 * (1.0 - age)))
+	# smoke curling up the chute past the file, toward the light: every puff shrinks away into the distance
+	# (three sheets, each run backwards from a full puff to its first tight ball)
+	for j in 3:
+		var age := fposmod(t * 0.5 + j * 0.33, 1.0)
+		var c := Vector2(hx + (j - 1) * 60.0 * (1.0 - age), 312.0 - age * 180.0 * k)
+		if age < 0.4:
+			PF.puff(_e1fx, "puff_l", c, 0.44 * (1.0 - age / 0.4), j)
+		elif age < 0.75:
+			PF.puff(_e1fx, "puff_m", c, 0.44 * (1.0 - (age - 0.4) / 0.35), j)
+		else:
+			PF.puff(_e1fx, "puff_s", c, 0.44 * (1.0 - (age - 0.75) / 0.25), j)
+
+
+## e2: the yard window's fire lights the wall around it and the snow below (additive pools that breathe)
+func _draw_e2_heat() -> void:
+	if not e2.visible:
+		return
+	var w: Array = layout.get("e2_window", [92, 148, 166, 196])
+	var cx := (float(w[0]) + float(w[2])) * 0.5
+	PF.light(_e2heat, "glow_l", Vector2(cx, float(w[1]) + 18.0), t, 1, fire_rate())
+	PF.light(_e2heat, "pool_l", Vector2(cx, float(w[3]) + 30.0), t, 2, fire_rate())
+
+
+func _draw_e2_window() -> void:
+	if e2.visible:
+		_window_fire(_e2win, layout.get("e2_window", [92, 148, 166, 196]), "low_a", 12, 20)
 
 
 func _draw_e2() -> void:
-	if not e2.visible or _smoke == null or t < LID[0]:
+	if not e2.visible or t < LID[0]:
 		return
 	var k := motion_k()
 	var h: Dictionary = layout.get("hatch", {})
 	var back: Array = h.get("back", [250, 390, 218])
 	var cx := (float(back[0]) + float(back[1])) * 0.5
 	var cy := float(back[2]) + 14.0
-	for i in 10:
-		var born := LID[0] + i * 0.3
-		var age := t - born
-		if age < 0.0:
-			continue
-		age = fposmod(age, 2.6)
-		# out of the mouth in front of the lid, then away from it with the draught (to the right, toward us)
-		var x := cx - 30.0 + fposmod(i * 37.0, 70.0) + (age * 26.0 + age * age * 8.0) * k
-		var y := cy + 12.0 - age * 40.0 * k
-		draw_frame(_e2fx, _smoke, 8, clampi(int(age / 0.33), 0, 7), Vector2(x, y), false,
-			Color(1.0, 0.94, 0.9, clampf(age / 0.25, 0.0, 1.0) * 0.95 * (1.0 - age / 2.6)))
+	# out of the mouth in front of the lid, then away from it with the draught (to the right, toward us)
+	PF.plume(_e2fx, {"sheets": ["puff_m", "puff_l", "puff_l"], "from": Vector2(cx + 4.0, cy - 2.0), "spread": Vector2(34, 3),
+		"count": 13, "life": 3.0, "rise": 42.0, "slow": 0.3, "drift": Vector2(22, 0), "bend": 12.0, "t0": LID[0],
+		"seed": 43, "rate": k}, t)
+	PF.sparks(_e2fx, {"rect": Rect2(cx - 34.0, cy - 2.0, 68, 8), "count": 8, "life": 1.1, "rise": 62.0, "kick": 12.0,
+		"wind": 10.0, "t0": LID[1], "seed": 45, "rate": k}, t)
 
 
 func _draw_e3a() -> void:
-	if not e3a.visible or _smoke == null:
+	if not e3a.visible:
 		return
 	var k := motion_k()
-	for i in 12:
-		var age := fposmod(t * 0.55 + i * 0.083, 1.0)
-		var x := 160.0 + fposmod(i * 71.0, 330.0) + sin(t + i) * 10.0
-		var y := 360.0 - age * 300.0 * k
-		draw_frame(_e3afx, _smoke, 8, int(age * 7.0), Vector2(x, y), false, Color(1.0, 0.9, 0.85, 0.85 * (1.0 - age)))
-	for j in 18:
-		var age2 := fposmod(t * 0.7 + j * 0.0557, 1.0)
-		var sp := Vector2(240.0 + fposmod(j * 53.0, 170.0) + sin(t * 3.0 + j) * 6.0, 330.0 - age2 * 280.0 * k)
-		_e3afx.draw_rect(Rect2(sp.floor(), Vector2.ONE), Color(1.0, 0.72, 0.32, 0.9 * (1.0 - age2)))
+	# smoke and sparks rise out of the chute toward the camera, past the hands
+	PF.plume(_e3afx, {"sheets": ["puff_l", "puff_xl", "puff_xl"], "from": Vector2(325, 376), "spread": Vector2(150, 6),
+		"count": 13, "life": 1.8, "rise": 168.0, "slow": 0.2, "sway": 6.0, "t0": 6.0, "seed": 51, "rate": k}, t)
+	PF.sparks(_e3afx, {"rect": Rect2(240, 322, 170, 12), "count": 16, "life": 1.3, "rise": 200.0, "kick": 14.0,
+		"t0": 6.5, "seed": 53, "rate": k}, t)
 
 
 func _draw_e3b() -> void:
 	if not e3b.visible:
 		return
 	var k := motion_k()
+	# the souterrain window at the right: flames behind its bars
+	_window_fire(_e3bfx, E3B_WINDOW, "window", 11, 7)
 	# the slam throws up a little snow; smoke seeps from under the lid
-	if _breath and t >= SLAM and t < SLAM + 0.8:
-		var hp := _lv("e3b_hatch") + Vector2(72, 60)
-		draw_frame(_e3bfx, _breath, 6, clampi(int((t - SLAM) / 0.13), 0, 5), hp, false, Color(1, 1, 1, 0.9))
-	if _smoke and t >= SLAM:
-		for i in 3:
-			var age := fposmod(t * 0.4 + i * 0.33, 1.0)
-			var hp2 := _lv("e3b_hatch") + Vector2(30 + i * 40, 58)
-			draw_frame(_e3bfx, _smoke, 8, int(age * 4.0), hp2 - Vector2(0, age * 30.0 * k), false, Color(0.9, 0.9, 0.9, 0.6 * (1.0 - age)))
+	var hp := _lv("e3b_hatch")
+	if t >= SLAM and t < SLAM + 0.8:
+		PF.puff(_e3bfx, "c3p2_breath", hp + Vector2(72, 51), (t - SLAM) / 0.8, 5)
+	PF.plume(_e3bfx, {"sheets": ["puff_s_grey", "puff_m_grey", "puff_s_grey"], "from": hp + Vector2(70, 52),
+		"spread": Vector2(42, 2), "count": 3, "life": 2.4, "rise": 13.0, "slow": 0.0, "drift": Vector2(3, 0), "t0": SLAM,
+		"seed": 55, "rate": k}, t)
 	# their breath: quick puffs while they cough, slower toward the end
-	if _breath:
-		var pts: Array = layout.get("e3b_breath", [[286, 258], [366, 258]])
-		for j in pts.size():
-			var q: Array = pts[j]
-			var period := 0.7 + j * 0.15
-			var age := fposmod(t - E3B + j * 0.31, period) / period
-			var p := Vector2(float(q[0]), float(q[1]) - age * 16.0 * k)
-			draw_frame(_e3bfx, _breath, 6, int(age * 5.0), p, false, Color(1, 1, 1, 0.8 * (1.0 - age)))
+	var pts: Array = layout.get("e3b_breath", [[286, 258], [366, 258]])
+	for j in pts.size():
+		var q: Array = pts[j]
+		var period := 0.7 + j * 0.15
+		var age := fposmod(t - E3B + j * 0.31, period) / period
+		PF.puff(_e3bfx, "c3p2_breath", Vector2(float(q[0]), float(q[1]) - 9.0 - age * 16.0 * k), age, j)
 
 
 ## time window j bursts (BURST_ORDER), -1 if it never does
@@ -436,6 +451,7 @@ func _draw_e4() -> void:
 	if not e4.visible:
 		return
 	var k := motion_k()
+	var rate := fire_rate()
 	var ws: Array = layout.get("e4_windows", [])
 	for j in ws.size():
 		var tb := _burst_time(j)
@@ -445,16 +461,32 @@ func _draw_e4() -> void:
 		var wx := float(w[0])
 		var wy := float(w[1])
 		var age := t - tb
-		# flames inside the window, then out over the lintel and up the facade
-		if _flame_s and age >= 0.18:
-			draw_frame(_e4fx, _flame_s, 8, flame_frame(t, 8, j * 0.41), Vector2(wx + 16.0, wy + 28.0))
-		if _flame_out and age >= 0.35:
-			var gk := clampf((age - 0.35) / 0.6, 0.3, 1.0)
-			var fw := _flame_out.get_width() / 8
-			var fh := _flame_out.get_height()
-			var h := roundf(fh * gk)
-			_e4fx.draw_texture_rect_region(_flame_out, Rect2(Vector2(roundf(wx + 16.0 - fw * 0.5), roundf(wy + 8.0 - h)), Vector2(fw, h)),
-				Rect2(flame_frame(t, 8, j * 0.53 + 0.3) * fw, 0, fw, fh))
+		# the opening: one hot frame as it bursts, then the burning room with flames behind the bars
+		if age < 0.12 and not reduced_motion():
+			_e4fx.draw_rect(Rect2(wx, wy, WIN.x, WIN.y), Color("#F2A044"))
+			_e4fx.draw_rect(Rect2(wx + 5.0, wy + 9.0, WIN.x - 10.0, WIN.y - 13.0), Color("#FCE0A0"))
+		else:
+			_e4fx.draw_rect(Rect2(wx, wy, WIN.x, WIN.y), PF.SPARK[5])
+			PF.wall(_e4fx, ["window"], wx, wx + WIN.x, wy + WIN.y, t, {"rate": rate, "clip_top": wy, "shift": j * 13,
+				"phase": j * 3})
+		for bx in [0, 8, 16, 24]:
+			_e4fx.draw_rect(Rect2(wx + bx, wy, 2, WIN.y), BAR)
+		_e4fx.draw_rect(Rect2(wx, wy, WIN.x, 1), BAR)
+		# the light well's railing stands in front of the opening's foot
+		_e4fx.draw_rect(Rect2(wx, 248, WIN.x, 2), IRON)
+		var rx := int(wx) + posmod(-int(wx), 5)
+		while rx < int(wx + WIN.x):
+			_e4fx.draw_rect(Rect2(rx, 250, 1, 2), IRON)
+			rx += 5
+		# flames out over the lintel: small, larger, then licking up the facade with the draught
+		if age >= 0.9:
+			PF.flame(_e4fx, "lick", Vector2(wx + 20.0, wy + 3.0), t, j, rate, false)
+		elif age >= 0.55:
+			PF.flame(_e4fx, "flame_m", Vector2(wx + 16.0, wy + 3.0), t, j, rate)
+		elif age >= 0.3:
+			PF.flame(_e4fx, "flame_s", Vector2(wx + 16.0, wy + 3.0), t, j, rate)
+		PF.sparks(_e4fx, {"rect": Rect2(wx + 4.0, wy - 34.0, 28, 30), "count": 5, "life": 1.1, "rise": 58.0, "kick": 10.0,
+			"wind": 9.0, "t0": tb + 0.6, "seed": 90 + j * 3, "rate": k}, t)
 		# the glass: shards fly out glinting and land in the snow, where they keep catching the firelight
 		for g in 16:
 			var gx0 := wx + 2.0 + g * 1.9
@@ -468,80 +500,58 @@ func _draw_e4() -> void:
 			var landed := p.y >= land
 			if landed:
 				p.y = land
-				var tl := ag
-				p.x = gx0 + vx * tl * k * 0.9
+				p.x = gx0 + vx * ag * k * 0.9
 			var tw := 0.5 + 0.5 * sin(t * 7.0 + g * 1.7 + j)
-			var col := Color(0.95, 0.97, 1.0, 1.0) if tw > 0.5 else Color(1.0, 0.72, 0.42, 0.9)
-			if landed:
-				col.a *= 0.45 + 0.55 * tw
+			if landed and tw < 0.3:
+				continue                      # a shard in the snow shows only while it catches the light
+			var col := Color("#F2F3F5") if tw > 0.5 else Color("#EDB777")
 			var sz := 2.0 if (g % 2 == 0 and (not landed or tw > 0.8)) else 1.0
 			_e4fx.draw_rect(Rect2(p.floor(), Vector2(sz, sz)), col)
 			if landed and tw > 0.85:
 				# a glint: a tiny cross of light on the snow
-				_e4fx.draw_rect(Rect2(p.floor() + Vector2(-1, 0), Vector2(3, 1)), Color(1, 1, 1, 0.55))
-				_e4fx.draw_rect(Rect2(p.floor() + Vector2(0, -1), Vector2(1, 3)), Color(1, 1, 1, 0.55))
+				_e4fx.draw_rect(Rect2(p.floor() + Vector2(-1, 0), Vector2(3, 1)), Color("#DEE2E7"))
+				_e4fx.draw_rect(Rect2(p.floor() + Vector2(0, -1), Vector2(1, 3)), Color("#DEE2E7"))
 
 
-## warm blooms around the burning windows (additive)
+## the burning windows' light: on the wall around and above each (a larger pool for the burst's flash and once
+## the flames lick up the facade) and on the snow in front of its light well -- additive pools that breathe
 func _draw_e4_heat() -> void:
-	if not e4.visible or _halo == null:
+	if not e4.visible:
 		return
+	var rate := fire_rate()
 	var ws: Array = layout.get("e4_windows", [])
 	for j in ws.size():
 		var tb := _burst_time(j)
 		if t < tb:
 			continue
 		var w: Array = ws[j]
-		var gk := clampf((t - tb) / 0.5, 0.0, 1.0)
-		var flash := clampf(1.0 - (t - tb) / 0.25, 0.0, 1.0) * (0.0 if reduced_motion() else 1.0)
-		var a := (0.55 * gk + 0.4 * flash) * fire_wobble(t, 80 + j, 0.15)
-		_e4heat.draw_texture_rect(_halo, Rect2(Vector2(float(w[0]) - 30.0, float(w[1]) - 58.0), Vector2(96, 110)), false,
-			Color(1, 1, 1, clampf(a, 0.0, 1.0)))
+		var age := t - tb
+		var big := age >= 0.9 or (age < 0.25 and not reduced_motion())
+		var cx := float(w[0]) + WIN.x * 0.5
+		PF.light(_e4heat, "glow_l" if big else "glow_m", Vector2(cx + 4.0, float(w[1]) - 20.0), t, j, rate)
+		PF.light(_e4heat, "pool_l" if age >= 0.9 else "pool_m", Vector2(cx, SNOW_Y + 14.0), t, j + 20, rate)
 
 
-## smoke: a column from every burning window rolls up the facade, drifting with the wind, and gathers into one
-## mass under the cornice and over the roof; the snow falls in front of it
+## smoke: a column of puffs from every burning window climbs the facade, drifting with the wind; where the
+## columns reach the cornice the smoke spreads into big slow billows (grey: away from the fire's light) that
+## break up in the wind; the snow falls in front of it
 func _draw_e4_smoke() -> void:
-	if not e4.visible or _smoke == null:
+	if not e4.visible:
 		return
 	var k := motion_k()
 	var ws: Array = layout.get("e4_windows", [])
-	var n_burning := 0
-	for j in ws.size():
-		var tb := _burst_time(j)
-		if t < tb:
-			continue
-		n_burning += 1
-		var w: Array = ws[j]
-		for i in 7:
-			var life := 2.6
-			var age := fposmod(t - tb - i * 0.37, life)
-			if t - tb < i * 0.37:
+	for pass_ in 2:
+		for j in ws.size():
+			var tb := _burst_time(j)
+			if t < tb:
 				continue
-			var u := age / life
-			var x := float(w[0]) + 16.0 + age * 14.0 * k + sin(i * 1.3 + j) * 6.0
-			var y := float(w[1]) - 34.0 - (age * 64.0 - age * age * 6.0) * k
-			var sc := 0.4 + u * 1.1
-			var a := clampf(age / 0.45, 0.0, 1.0) * (0.9 - 0.4 * u)
-			_draw_scaled(_e4smoke, _smoke, 8, clampi(int(u * 8.0), 0, 7), Vector2(x, y), sc, Color(1, 1, 1, a))
-	# the mass under the cornice and over the roof, thickening as more windows burn
-	for i in 10:
-		var born := BURST0 + 0.3 + i * 0.3
-		var age2 := t - born
-		if age2 < 0.0 or n_burning < 1:
-			continue
-		var x2 := 30.0 + fposmod(i * 67.0 + age2 * 12.0 * k, 640.0)
-		var y2 := 92.0 - minf(age2, 2.0) * 10.0 * k + sin(i * 2.3) * 8.0
-		var a2 := clampf(age2 / 0.8, 0.0, 1.0) * clampf(float(n_burning) / 5.0, 0.25, 1.0) * 0.62
-		_draw_scaled(_e4smoke, _smoke, 8, 6 + (i % 2), Vector2(x2, y2), 1.7 + 0.2 * float(i % 3), Color(1, 1, 1, a2))
-
-
-## Frame `i` of an n-frame sheet scaled by `sc` around `center` (soft smoke grows as it rises).
-static func _draw_scaled(ci: CanvasItem, sheet: Texture2D, n: int, i: int, center: Vector2, sc: float,
-		mod := Color(1, 1, 1, 1)) -> void:
-	if sheet == null:
-		return
-	var fw := sheet.get_width() / maxi(1, n)
-	var fh := sheet.get_height()
-	var sz := (Vector2(fw, fh) * sc).round()
-	ci.draw_texture_rect_region(sheet, Rect2((center - sz * 0.5).round(), sz), Rect2(posmod(i, n) * fw, 0, fw, fh), mod)
+			var w: Array = ws[j]
+			var from := Vector2(float(w[0]) + 24.0, float(w[1]) - 46.0)
+			if pass_ == 0:
+				PF.plume(_e4smoke, {"sheets": ["puff_xl_grey", "puff_l_grey", "puff_xl_grey"], "from": Vector2(from.x + 30.0, 106.0),
+					"spread": Vector2(40, 12), "count": 3, "life": 3.4, "rise": 7.0, "slow": 0.0, "drift": Vector2(13, 0),
+					"t0": tb + 1.9, "seed": 120 + j * 5, "rate": k}, t)
+			else:
+				PF.plume(_e4smoke, {"sheets": ["puff_m", "puff_l", "puff_l"], "from": from, "spread": Vector2(8, 6),
+					"count": 8, "life": 2.6, "rise": 60.0, "slow": 0.5, "drift": Vector2(11, 0), "bend": 4.0,
+					"t0": tb + 0.5, "seed": 80 + j * 3, "rate": k}, t)

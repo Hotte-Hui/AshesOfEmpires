@@ -62,6 +62,7 @@ edit the part of the owning area and re-run the script.
 - [env_c3p2_archive](#part-env_c3p2_archive)
 - [env_c3p2_night](#part-env_c3p2_night)
 - [c3p2_cine](#part-c3p2_cine)
+- [pixel_fire](#part-pixel_fire)
 - [c3p2_puzzle](#part-c3p2_puzzle)
 - [c3p2_cast_audio](#part-c3p2_cast_audio)
 - [explore_c3p2](#part-explore_c3p2)
@@ -2919,6 +2920,34 @@ is never also part of its body sprite: its sheet holds it in every frame and is 
   pages (two cells each; the runtime shifts the sprite with the sliding stack), the hold, Konrad's list in his hand
   beside his hip (3 cells; the fold is drawn at layout `list_fold_at`); runtime `_apply_arms`.
 
+### Round 13 — the fire is pixel art (developer feedback: the fire looked bad and not pixel based)
+Same shots, lengths, ids, subtitle and cue timing. Every flame, puff of smoke, spark and pool of fire light of
+LS_C3_Fire and LS_C3_Escape now comes from the **pixel fire kit** (see the part "Pixel fire kit":
+`tools/pixelgen/pixel_fire.py` → `assets/fx/pixel_fire/`, played by `scripts/render/pixel_fire.gd`): designed
+tongues in five fire colours, chunky three-tone puffs that break up through an ordered dither, single-pixel
+sparks on arcs, light as flat additive bands dithered into each other — hard pixels only, never scaled, no alpha
+fades. The round-11 gradient fire is gone: `fire_sheet` flames (`fire_mid/big/wide/small`, `f2_fire_*`,
+`flame_s`, `flame_out`), the soft puffs (`smoke`, `smoke_hot`), `fire_halo`, `ember`, `fire_band`, `f4_glow`,
+`e4_glow` and `e4_window` were deleted with their generator calls.
+* **Fire:** f1 wisps in the lamp's greens (`wisp_s/m`); f2 every box catches as a small flame and steps up the
+  kit's sizes, `f2_glow` spreads from the boxes as a dithered pool that grows in 8-px steps, puffs climb to the
+  vault; f3 the warm pool on the door grows in six stages (`f3_warm`) and a bank of smoke creeps in under the
+  lintel behind a rolling head; f4 a wall of fire (tiles) rises out of the cabinets' foot line behind the running
+  front, towers of flame behind it, the largest flames on the side walls in front; `f4_lit` follows the front as
+  a dithered wipe and the table has its own lit layer (`f4_lit_table`), so the flames between hall and table
+  stay pure palette; smoke runs ahead of the fire under the vault (veil, bank, rolling head); sparks cool down
+  the spark ramp, the paper burns out as a glowing scrap.
+* **Escape:** e1 puffs shrink away up the chute; e2 flames behind the yard window's bars, its light on the wall
+  and the snow (pools), puffs and sparks out of the hatch (`e2_lamp` holds only the lamps now); e3 the glow deep
+  in the chute breathes in four frames (`e3a_glow`), breath and the smoke from under the lid are small puffs,
+  flames behind the bars of the window at the right; e4 a window bursts (one hot frame), flames fill it behind
+  the bars, step up over the lintel and lick up the facade with the draught, pools of light on the wall and on
+  the snow, a column of puffs per window that spreads into slow grey billows under the cornice.
+* Fire light never strobes: pools and the growing reveal step at most 2.5 times a second; reduced motion halves
+  the flames' and the light's rate and the travel of smoke and sparks.
+* Generator: `env_c3p2_cine_fire.build_fx_fire / build_fx_escape` (also `env_c3p2_cine.py --fx-only`); a full
+  `--only fire,escape` run reproduces every PNG of both folders byte for byte.
+
 ### Art — `assets/cinematics/c3p2/radio/` (LS_C3_Radio, 30.8 s)
 | File | Use |
 |---|---|
@@ -2934,10 +2963,9 @@ is never also part of its body sprite: its sheet holds it in every frame and is 
 |---|---|
 | `f1_bg`, `lamp_cone`, `f1_konrad` (4: head down / lifting / up / turned) | the card hall under the brick vault: oak card cabinets with brass label holders, the high barred window, the sorting table with the two halves laid side by side and the red thread of the check, drawer C-17 and Elena's wine-red scarf; the green-shaded lamp's cone (flickers at runtime); Konrad from behind |
 | `f2_bg`, `f2_door` (4), `f2_glow` | the Magazin aisle in one-point perspective, archive boxes and the red C-17 tags; the service door: the figure in the lit doorway, half through, the empty doorway, shut |
-| `f3_bg`, `f3_warm` | the iron-clad ramp door from inside (planks, straps, rivets, lock box), snow blown in under it; the runtime draws the cold gap light, the passing shadow and the bolt's shadow |
-| `f4_bg`, `f4_lit`, `f4_table`, `f4_glow`, `fire_band`, `f4_alexei` (2) | the same hall before the fire reaches it (smoke under the vault, scorched drawer fronts); the fire's light on it (additive, revealed behind the front); the table as a layer in front of the flames; Alexei from behind against the fire (ushanka, fur collar, quilted coat, satchel strap) |
-| `fire_mid`, `fire_big`, `fire_wide`, `fire_small`, `f2_fire_s`, `f2_fire_m`, `f2_fire_l` (8 frames each), `fire_halo` | round 11: fire clusters (licking tongues, white-hot cores, translucent red fringe) for the burning cabinets and the C-17 boxes; their additive bloom |
-| `smoke`, `smoke_hot` (8), `ember` (4), `paper` (6) | soft lamp-lit and fire-lit smoke puffs (soft alpha), embers, burning paper |
+| `f3_bg`, `f3_warm` (6 stages, kit pool) | the iron-clad ramp door from inside (planks, straps, rivets, lock box), snow blown in under it; the runtime draws the cold gap light, the passing shadow and the bolt's shadow |
+| `f4_bg`, `f4_lit`, `f4_lit_table`, `f4_table`, `f4_alexei` (2) | the same hall before the fire reaches it (smoke under the vault, scorched drawer fronts); the fire's light on it (additive, revealed behind the front); the table as a layer in front of the flames; Alexei from behind against the fire (ushanka, fur collar, quilted coat, satchel strap) |
+| `wisp_s` (8), `wisp_m` (10), `paper` (6) | round 13: the first smoke in the lamp's greens (kit puffs in this film's tones), burning paper; all other fire comes from `assets/fx/pixel_fire/` |
 
 ### Art — `assets/cinematics/c3p2/escape/` (LS_C3_Escape, 16 s)
 | File | Use |
@@ -2946,8 +2974,8 @@ is never also part of its body sprite: its sheet holds it in every frame and is 
 | `e2_bg`, `e2_lamp`, `e2_hatch` (3), `e2_konrad` (4) | the yard: rusticated base of the east wing, a souterrain window glowing, the bracket lamp, the iron hatch frame in the snow; the lid closed / lifting / open with „1909“; Konrad out to the shoulders, to the waist, a knee on the rim, on hands and knees beside the hatch, two crawl steps (6 frames) |
 | `e3a_bg`, `e3a_glow`, `e3a_hands` (7) | looking down into the hatch: Alexei's hand out of the smoke, Konrad's hand reaches in and takes it, the pull in three steps |
 | `e3b_bg`, `e3b_hatch` (2), `e3b_men` (2) | low at the snow: the lid slammed, both men on their backs, heads together, the file between them, Konrad's hat in the snow |
-| `e4_bg`, `e4_window` (3), `e4_glow`, `smoke`, `breath` (6) | the east wing from the lane (pilasters, pediments, mansard, the one lit window high up, the yard gate); a souterrain window dark / bursting / burning; soft smoke lit from below; breath clouds |
-| `flame_s`, `flame_out` (8), `fire_halo`, `engine` (2), `beacon`, `beacon_wash`, `onlooker_N` / `onlooker_N_r1`, `fireman_N` | round 11: fire inside and licking out of the burst windows and its bloom; the fire engine's nose with its blue beacon (glow and the wash it throws); the onlookers' two takes (watching, reacting) and the firemen running in |
+| `e4_bg`, `breath` (6, kit puff in cold tones) | the east wing from the lane (pilasters, pediments, mansard, the one lit window high up, the yard gate); the burning windows are drawn by the runtime (backdrop, the kit's flames, the bars); breath clouds |
+| `engine` (2), `beacon`, `beacon_wash`, `onlooker_N` / `onlooker_N_r1`, `fireman_N` | round 11: fire inside and licking out of the burst windows and its bloom; the fire engine's nose with its blue beacon (glow and the wash it throws); the onlookers' two takes (watching, reacting) and the firemen running in |
 
 ### Art — `assets/cinematics/c3p2/halves/` (LS_C3_Halves, 21 s)
 | File | Use |
@@ -2980,6 +3008,38 @@ audio generator (lamp dips, chute shoves, window bursts); frames a pure function
 cut on the dial; who takes which pages per c3g; reduced motion halves the travel; fire light never strobes (≤ 3 Hz,
 small frame-to-frame changes). In-game: real-time runs 30.8 / 12.0 / 16.0 / 21.0 s wall time, `finished` once,
 ~4.2 ms frames (harness `--c3-mode=run`).
+
+---
+<a id="part-pixel_fire"></a>
+
+## Pixel fire kit (round 13)
+
+Owner: cinematics stream. One fire for the whole game: flames, smoke, sparks and fire light authored on the pixel
+grid by `tools/pixelgen/pixel_fire.py` (deterministic, original, painted in code) and played pixel-snapped by
+`scripts/render/pixel_fire.gd` (+ `pixel_fire_reveal.gdshader`). First users: LS_C3_Fire and LS_C3_Escape.
+Rules: 1 texel = 1 world pixel, alpha 0 or 255 only, no blur, no runtime scaling or rotation, whole-pixel positions;
+things grow by switching to a bigger sheet and fade through the dither drawn into their frames; every instance
+has its own phase (golden-ratio sequence) and mirror, so neighbours never pulse in sync.
+
+### Art — `assets/fx/pixel_fire/` (sheet table: `kit.json`; all sheets are frames side by side)
+| File | Use |
+|---|---|
+| `flame_xs` (8, 10x16), `flame_s` (8, 20x30), `flame_m` (8, 36x54), `flame_l` (10, 56x92), `flame_xl` (12, 80x144), `flame_xxl` (12, 112x212) | looping flames, bottom-centre anchored: tongues that rise, lean into a travelling sway, pinch at the neck and let their tip go as a flamelet that climbs on and cools; one merged hot core; a fire grows by stepping up these sizes |
+| `lick` (10, 48x80) | flames out of an opening and up the wall above it, leaning with the draught |
+| `window` (8, 48x32), `ground` (8, 64x26), `low_a`, `low_b` (10, 96x60), `wall_a`, `wall_b` (12, 128x136) | tiles (wrap in x; a / b join in any order): fire filling an opening, a low ground fire, a low and a tall wall of fire |
+| `puff_s/m/l/xl` (+ `_grey`) (8-12 frames, 16x16 .. 104x84) | one puff's life: a tight ball swells into a cauliflower of pixel discs (dark / body / lit, 2x2 checker between the tones) and breaks up through the ordered dither; warm = lit by the fire below, grey = away from it |
+| `bank_a`, `bank_b`, `veil_a`, `veil_b` (+ `_grey`) (8, 160x48) | tiles: a rolling bank of smoke under a ceiling, its underside frayed by dither; the veil is the same billows with dither holes (the thin leading stretch of a bank) |
+| `sparks_s` (12, 24x40), `sparks_m` (12, 56x80) | looping fields of single-pixel sparks on arcs, cooling down the spark ramp |
+| `glow_s/m/l` (4, 48 / 96 / 176 px), `pool_s/m/l` (4, 64x24 / 120x40 / 200x64) | fire light for additive drawing: three flat bands dithered into each other and into nothing, four frames that breathe; glow = on a wall, pool = on a floor or on snow |
+
+Colours: `#A8381A` `#D8662A` `#F2A044` `#FCE0A0` `#FFF6DC` (rim .. white-hot core) + `#6E1E0C` (cooling), smoke
+`#1A1412` `#4C3020` `#844E2A` (warm) / `#14161A` `#2B2E33` `#4C4C4E` (grey) — all from the scenes' own ramps.
+Other palettes and sizes: import `pixel_fire` in a generator and call `flame_frames` / `puff_frames` / `bank_frames`
+/ `pool_frames` (see `env_c3p2_cine_fire.build_fx_fire`), then `PF.register()` the sheet at runtime.
+
+### Checks
+`tests/test_pixel_fire_kit.gd`: every sheet exists and fits kit.json, hard pixels only, the limited ramp, tiles
+join in any order, neighbours out of phase, light under 3 Hz, the two films draw no scaled or faded fire any more.
 
 ---
 <a id="part-c3p2_puzzle"></a>

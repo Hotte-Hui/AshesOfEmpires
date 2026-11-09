@@ -537,37 +537,6 @@ def e4_bg():
     return out
 
 
-def e4_window():
-    """3 frames for one souterrain window: dark, the burst (a hot flash), burning (flames behind the bars)."""
-    w, h = 32, 28
-    frames = []
-    for i in range(3):
-        cv = LF.Cv(w, h, 0, 0, amb=(1, 1, 1))
-        xx, yy = cv.xx, cv.yy
-        if i == 0:
-            cv.emit(cv.full(), '#05070B')
-        elif i == 1:
-            cv.emit(cv.full(), '#F2A044', 1.0 - yy / h * 0.25)
-            cv.emit(cv.ell(16, 18, 10, 8), '#FCE0A0')
-        else:
-            nzv = LF.nz(w, h, 5, 1011, 2)
-            cv.emit(cv.full(), '#A8381A', 0.6 + nzv * 0.4 + yy / h * 0.25)
-            fl = LF.vnoise(xx * 0.4, yy * 0.15, 1013) + (yy / h) * 0.6 > 0.95
-            cv.emit(fl, '#F2A044', 0.95)
-            cv.emit(fl & (yy > h * 0.6), '#FCE0A0', 0.9)
-        if i > 0:
-            cv.put(cv.full() & (np.mod(xx, 8) < 2), '#140D0A', 1.0, lit=False)
-            cv.put(cv.box(0, 0, w, 1), '#140D0A', 1.0, lit=False)
-        frames.append(cv.quant(PAL_Y, spread=10.0))
-    return Q.sheet(frames)
-
-
-def e4_glow():
-    blobs = [(x + 16, 240, 60, 40, (64, 28, 8), 1.4) for (x, _) in LE.get('e4_windows', [])]
-    blobs.append((560, 230, 50, 40, (40, 32, 18), 1.5))
-    return Q.glow_sprite(VW, VH, blobs, 6.0)
-
-
 # ================================================================================================ e4 the brigade (round 11)
 def e4_engine():
     """e4: the fire engine's nose nosing into the lane from the right (2 frames: the beacon's lamp facing us / away):

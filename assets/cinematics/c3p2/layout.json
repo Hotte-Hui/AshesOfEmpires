@@ -4,6 +4,7 @@
   "e2_konrad": [190, 70],
   "e2_window": [92, 148, 166, 196],
   "e3_hands": [120, 0],
+  "e3a_glow_at": [90, 190],
   "e3b_breath": [
    [285, 245],
    [395, 246]
@@ -243,8 +244,10 @@
      ],
      [
       "escape/e3a_glow.png",
-      [0, 0],
-      "add"
+      [90, 190],
+      "add",
+      4,
+      0
      ],
      [
       "escape/e3a_hands.png",
@@ -286,58 +289,32 @@
       [0, 0]
      ],
      [
-      "escape/e4_glow.png",
-      [0, 0],
-      "add"
-     ],
-     [
-      "escape/e4_window.png",
-      [30, 224],
+      "../../fx/pixel_fire/lick.png",
+      [26, 148],
       "over",
-      3,
-      2
-     ],
-     [
-      "escape/e4_window.png",
-      [122, 224],
-      "over",
-      3,
-      2
-     ],
-     [
-      "escape/e4_window.png",
-      [214, 224],
-      "over",
-      3,
-      2
-     ],
-     [
-      "escape/e4_window.png",
-      [306, 224],
-      "over",
-      3,
-      2
-     ],
-     [
-      "escape/e4_window.png",
-      [398, 224],
-      "over",
-      3,
+      10,
       0
      ],
      [
-      "escape/e4_window.png",
-      [490, 224],
+      "../../fx/pixel_fire/lick.png",
+      [118, 148],
       "over",
-      3,
-      0
+      10,
+      1
      ],
      [
-      "escape/e4_window.png",
-      [582, 224],
+      "../../fx/pixel_fire/lick.png",
+      [210, 148],
       "over",
-      3,
-      0
+      10,
+      2
+     ],
+     [
+      "../../fx/pixel_fire/lick.png",
+      [302, 148],
+      "over",
+      10,
+      3
      ]
     ]
    }
@@ -367,6 +344,7 @@
   },
   "f3_floor": [150, 292, 473, 295],
   "f3_gap": [470, 0, 473, 292],
+  "f3_warm_at": [0, 160],
   "f4_alexei": [54, 112],
   "f4_fire": [
    [630, 267, 1],
@@ -392,28 +370,6 @@
    [70, 246, 0],
    [44, 255, 0],
    [14, 266, 1]
-  ],
-  "f4_kinds": [
-   [
-    "fire/fire_mid.png",
-    64,
-    104
-   ],
-   [
-    "fire/fire_big.png",
-    96,
-    186
-   ],
-   [
-    "fire/fire_wide.png",
-    128,
-    84
-   ],
-   [
-    "fire/fire_small.png",
-    30,
-    44
-   ]
   ],
   "f4_table_at": [0, 236],
   "lamp": [300, 104],
@@ -459,29 +415,29 @@
       0
      ],
      [
-      "fire/f2_fire_m.png",
-      [400, 112],
+      "../../fx/pixel_fire/flame_m.png",
+      [406, 128],
       "over",
       8,
       0
      ],
      [
-      "fire/f2_fire_m.png",
-      [386, 108],
+      "../../fx/pixel_fire/flame_m.png",
+      [392, 124],
       "over",
       8,
       1
      ],
      [
-      "fire/f2_fire_m.png",
-      [410, 155],
+      "../../fx/pixel_fire/flame_m.png",
+      [416, 171],
       "over",
       8,
       2
      ],
      [
-      "fire/f2_fire_m.png",
-      [378, 76],
+      "../../fx/pixel_fire/flame_m.png",
+      [384, 92],
       "over",
       8,
       3
@@ -497,8 +453,10 @@
      ],
      [
       "fire/f3_warm.png",
-      [0, 0],
-      "add"
+      [0, 160],
+      "add",
+      6,
+      5
      ]
     ]
    },
@@ -515,169 +473,97 @@
       "add"
      ],
      [
-      "fire/fire_big.png",
-      [582, 81],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [574, 55],
       "over",
-      8,
+      12,
       0
      ],
      [
-      "fire/fire_big.png",
-      [556, 72],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [548, 46],
       "over",
-      8,
-      3
-     ],
-     [
-      "fire/fire_mid.png",
-      [546, 145],
-      "over",
-      8,
-      6
-     ],
-     [
-      "fire/fire_big.png",
-      [500, 62],
-      "over",
-      8,
-      1
-     ],
-     [
-      "fire/fire_small.png",
-      [523, 196],
-      "over",
-      8,
-      4
-     ],
-     [
-      "fire/fire_big.png",
-      [445, 58],
-      "over",
-      8,
-      7
-     ],
-     [
-      "fire/fire_small.png",
-      [462, 198],
-      "over",
-      8,
-      2
-     ],
-     [
-      "fire/fire_wide.png",
-      [380, 161],
-      "over",
-      8,
+      12,
       5
      ],
      [
-      "fire/fire_big.png",
-      [356, 57],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [492, 36],
       "over",
-      8,
-      0
-     ],
-     [
-      "fire/fire_small.png",
-      [371, 197],
-      "over",
-      8,
+      12,
       3
      ],
      [
-      "fire/fire_mid.png",
-      [326, 143],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [437, 32],
       "over",
-      8,
-      6
-     ],
-     [
-      "fire/fire_small.png",
-      [326, 195],
-      "over",
-      8,
+      12,
       1
      ],
      [
-      "fire/fire_wide.png",
-      [260, 161],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [348, 31],
       "over",
-      8,
+      12,
       4
      ],
      [
-      "fire/fire_wide.png",
-      [209, 161],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [175, 31],
       "over",
-      8,
-      7
+      12,
+      10
      ],
      [
-      "fire/fire_big.png",
-      [183, 57],
+      "../../fx/pixel_fire/flame_xxl.png",
+      [-42, 54],
       "over",
-      8,
+      12,
       2
      ],
      [
-      "fire/fire_mid.png",
-      [167, 142],
+      "../../fx/pixel_fire/wall_a.png",
+      [0, 111],
       "over",
-      8,
-      5
-     ],
-     [
-      "fire/fire_wide.png",
-      [86, 163],
-      "over",
-      8,
-      0
-     ],
-     [
-      "fire/fire_small.png",
-      [121, 196],
-      "over",
-      8,
+      12,
       3
      ],
      [
-      "fire/fire_mid.png",
-      [71, 142],
+      "../../fx/pixel_fire/wall_b.png",
+      [128, 111],
       "over",
-      8,
-      6
+      12,
+      3
      ],
      [
-      "fire/fire_small.png",
-      [77, 197],
+      "../../fx/pixel_fire/wall_a.png",
+      [256, 111],
       "over",
-      8,
-      1
+      12,
+      3
      ],
      [
-      "fire/fire_mid.png",
-      [38, 142],
+      "../../fx/pixel_fire/wall_b.png",
+      [384, 111],
       "over",
-      8,
-      4
+      12,
+      3
      ],
      [
-      "fire/fire_mid.png",
-      [12, 151],
+      "../../fx/pixel_fire/wall_a.png",
+      [512, 111],
       "over",
-      8,
-      7
-     ],
-     [
-      "fire/fire_big.png",
-      [-34, 80],
-      "over",
-      8,
-      2
+      12,
+      3
      ],
      [
       "fire/f4_table.png",
       [0, 236]
+     ],
+     [
+      "fire/f4_lit_table.png",
+      [0, 236],
+      "add"
      ],
      [
       "fire/f4_alexei.png",

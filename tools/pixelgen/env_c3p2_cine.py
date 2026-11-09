@@ -32,6 +32,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default=','.join(PARTS))
     ap.add_argument('--layout-only', action='store_true')
+    ap.add_argument('--fx-only', action='store_true',
+                    help='only the fire / escape sheets made with the pixel fire kit (env_c3p2_cine_fire.build_fx)')
     a = ap.parse_args(argv)
     parts = [s.strip() for s in a.only.split(',') if s.strip()]
     t0 = time.time()
@@ -51,7 +53,18 @@ def main(argv=None):
             prev = json.load(f)
     mods = {'radio': ('env_c3p2_cine_radio', 'build'), 'fire': ('env_c3p2_cine_fire', 'build_fire'),
             'escape': ('env_c3p2_cine_fire', 'build_escape'), 'halves': ('env_c3p2_cine_quay', 'build')}
+    if a.fx_only:
+        Q.LAYOUT.update(prev)
+        fire = importlib.import_module('env_c3p2_cine_fire')
+        fire.LF, fire.LE = Q.LAYOUT['fire'], Q.LAYOUT['escape']
+        fire.build_fx(w)
+        fire._preview_fire()
+        fire._preview_escape()
+        Q.LAYOUT['fire'].pop('f4_kinds', None)
+        parts = ['fx']
     for name in PARTS:
+        if a.fx_only:
+            break
         if name in parts and not a.layout_only:
             mod = importlib.import_module(mods[name][0])
             getattr(mod, mods[name][1])(w)

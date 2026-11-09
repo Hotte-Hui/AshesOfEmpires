@@ -1,0 +1,243 @@
+{
+ "cool": "#6E1E0C",
+ "fire": [
+  "#A8381A",
+  "#D8662A",
+  "#F2A044",
+  "#FCE0A0",
+  "#FFF6DC"
+ ],
+ "sheets": {
+  "bank_a": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "bank_a_grey": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "bank_b": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "bank_b_grey": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "flame_l": {
+   "h": 92,
+   "kind": "flame",
+   "n": 10,
+   "w": 56
+  },
+  "flame_m": {
+   "h": 54,
+   "kind": "flame",
+   "n": 8,
+   "w": 36
+  },
+  "flame_s": {
+   "h": 30,
+   "kind": "flame",
+   "n": 8,
+   "w": 20
+  },
+  "flame_xl": {
+   "h": 144,
+   "kind": "flame",
+   "n": 12,
+   "w": 80
+  },
+  "flame_xs": {
+   "h": 16,
+   "kind": "flame",
+   "n": 8,
+   "w": 10
+  },
+  "flame_xxl": {
+   "h": 212,
+   "kind": "flame",
+   "n": 12,
+   "w": 112
+  },
+  "glow_l": {
+   "h": 176,
+   "kind": "light",
+   "n": 4,
+   "w": 176
+  },
+  "glow_m": {
+   "h": 96,
+   "kind": "light",
+   "n": 4,
+   "w": 96
+  },
+  "glow_s": {
+   "h": 48,
+   "kind": "light",
+   "n": 4,
+   "w": 48
+  },
+  "ground": {
+   "h": 26,
+   "kind": "tile",
+   "n": 8,
+   "w": 64
+  },
+  "lick": {
+   "h": 80,
+   "kind": "flame",
+   "n": 10,
+   "w": 48
+  },
+  "low_a": {
+   "h": 60,
+   "kind": "tile",
+   "n": 10,
+   "w": 96
+  },
+  "low_b": {
+   "h": 60,
+   "kind": "tile",
+   "n": 10,
+   "w": 96
+  },
+  "pool_l": {
+   "h": 64,
+   "kind": "light",
+   "n": 4,
+   "w": 200
+  },
+  "pool_m": {
+   "h": 40,
+   "kind": "light",
+   "n": 4,
+   "w": 120
+  },
+  "pool_s": {
+   "h": 24,
+   "kind": "light",
+   "n": 4,
+   "w": 64
+  },
+  "puff_l": {
+   "h": 52,
+   "kind": "puff",
+   "n": 10,
+   "w": 60
+  },
+  "puff_l_grey": {
+   "h": 52,
+   "kind": "puff",
+   "n": 10,
+   "w": 60
+  },
+  "puff_m": {
+   "h": 30,
+   "kind": "puff",
+   "n": 10,
+   "w": 32
+  },
+  "puff_m_grey": {
+   "h": 30,
+   "kind": "puff",
+   "n": 10,
+   "w": 32
+  },
+  "puff_s": {
+   "h": 16,
+   "kind": "puff",
+   "n": 8,
+   "w": 16
+  },
+  "puff_s_grey": {
+   "h": 16,
+   "kind": "puff",
+   "n": 8,
+   "w": 16
+  },
+  "puff_xl": {
+   "h": 84,
+   "kind": "puff",
+   "n": 12,
+   "w": 104
+  },
+  "puff_xl_grey": {
+   "h": 84,
+   "kind": "puff",
+   "n": 12,
+   "w": 104
+  },
+  "sparks_m": {
+   "h": 80,
+   "kind": "flame",
+   "n": 12,
+   "w": 56
+  },
+  "sparks_s": {
+   "h": 40,
+   "kind": "flame",
+   "n": 12,
+   "w": 24
+  },
+  "veil_a": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "veil_a_grey": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "veil_b": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "veil_b_grey": {
+   "h": 48,
+   "kind": "tile",
+   "n": 8,
+   "w": 160
+  },
+  "wall_a": {
+   "h": 136,
+   "kind": "tile",
+   "n": 12,
+   "w": 128
+  },
+  "wall_b": {
+   "h": 136,
+   "kind": "tile",
+   "n": 12,
+   "w": 128
+  },
+  "window": {
+   "h": 32,
+   "kind": "tile",
+   "n": 8,
+   "w": 48
+  }
+ },
+ "spark": [
+  "#FFF6DC",
+  "#FCE0A0",
+  "#F2A044",
+  "#D8662A",
+  "#A8381A",
+  "#6E1E0C"
+ ],
+ "tick": 10
+}

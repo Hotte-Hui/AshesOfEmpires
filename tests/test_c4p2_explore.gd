@@ -188,6 +188,7 @@ func run() -> Array:
 	if settings != null:
 		kit.run_case("luggage_compact_contrast_and_hint_modes", _lg_compact.bind(settings))
 	kit.run_case("minigame_sounds_texts_and_placement", _mg_assets)
+	kit.run_case("luggage_sign_fits_in_every_language", _lg_sign)
 	if settings != null:
 		for k in saved:
 			if saved[k] == null:
@@ -1592,6 +1593,30 @@ func _lg_compact(settings: Node) -> bool:
 
 
 # ================================================================ sounds, texts, placement of the two mini-games
+## Round 13: the English sign line „Corridor traffic · Free luggage allowance“ ran past the enamel sign and was cut
+## off at its edge. Every language's sign lines must fit the sign at both art scales.
+func _lg_sign() -> bool:
+	var th := load("res://assets/ui/theme.tres") as Theme
+	var font: Font = th.default_font if th != null and th.default_font != null else ThemeDB.fallback_font
+	for lang in ["de", "en"]:
+		var tab = _json("res://data/locale/%s_explore_c4p2.json" % lang)
+		kit.ok(tab is Dictionary, "%s table loads" % lang)
+		if not (tab is Dictionary):
+			continue
+		var strings: Dictionary = tab.get("strings", tab)
+		for s in [2, 3]:
+			var fs := 13 if s == 2 else 17
+			for pair in [["mg.luggage.sign.1", fs - 1], ["mg.luggage.sign.2", fs - 3]]:
+				var text := str(strings.get(pair[0], ""))
+				kit.ok(text != "", "%s %s present" % [lang, pair[0]])
+				var w: float = LGGame.SIGN_W * s
+				var size := LGGame.sign_font_size(font, text, int(pair[1]), w)
+				kit.ok(size >= 9, "%s %s readable at S=%d (size %d)" % [lang, pair[0], s, size])
+				kit.ok(font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x <= w - 4.0,
+					"%s %s fits the sign at S=%d" % [lang, pair[0], s])
+	return true
+
+
 func _mg_assets() -> bool:
 	var tsrc := FileAccess.get_file_as_string(TT_GAME)
 	var lsrc := FileAccess.get_file_as_string(LG_GAME)

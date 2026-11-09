@@ -544,39 +544,12 @@ def f3_bg():
 
 
 # ================================================================================================ fire sheets
-def fire_band():
-    """f4: the heat along the burning cabinets' feet (additive, 640 x 120 at y 150, revealed behind the fire front):
-    a soft red-orange band low on the cabinets and the table's far edge, no bright line of its own."""
-    a = np.zeros((120, VW, 3), np.float32)
-    yy, xx = np.mgrid[0:120, 0:VW].astype(np.float32)
-    n1 = pg.value_noise(VW, 120, 14, 1801, octaves=3)
-    base = np.clip(1 - np.abs(yy - 78 - (n1 - 0.5) * 24) / 46.0, 0, 1) ** 1.6
-    a += base[..., None] * np.array([70, 26, 8], np.float32)
-    return K.soft_quant(a, 2.0)
-
-
-# f4 fire clusters: kind -> (sheet, frame w, frame h); the runtime draws them bottom-centre anchored
-F4_KINDS = (('fire/fire_mid.png', 64, 104), ('fire/fire_big.png', 96, 186), ('fire/fire_wide.png', 128, 84),
-            ('fire/fire_small.png', 30, 44))
-
-
-def f4_fire_sheets(w):
-    import env_c3p2_cine_life as LFE
-    w('fire/fire_mid.png', LFE.fire_sheet(8, 64, 104, 1861, tongues=4, width=(0.14, 0.24), length=(0.5, 1.0),
-                                          hot=0.9))
-    w('fire/fire_big.png', LFE.fire_sheet(8, 96, 186, 1862, tongues=5, width=(0.11, 0.2), length=(0.38, 1.0),
-                                          cells=3.6))
-    w('fire/fire_wide.png', LFE.fire_sheet(8, 128, 84, 1863, tongues=7, width=(0.08, 0.15), length=(0.35, 1.0),
-                                           spread=(0.08, 0.92), bed=0.95, hot=0.85))
-    w('fire/fire_small.png', LFE.fire_sheet(8, 30, 44, 1864, tongues=2, width=(0.2, 0.3), length=(0.6, 1.0)))
-    w('fire/fire_halo.png', LFE.fire_halo(96, 96, (120, 52, 14), 1.5))
-
-
 def f4_anchors():
     """Fire clusters on the burning cabinets in the order the fire runs (right -> left): [x, y bottom, kind
-    (F4_KINDS: 0 mid / 1 big / 2 wide / 3 small)].  The back wall's clusters stand behind the table's far edge (the
-    f4_table layer hides their burning beds), overlapping so they merge into one wall of fire of uneven height; the
-    side walls' clusters stand lower and larger (nearer the camera); no flames float alone over the cornices."""
+    (0 mid / 1 big / 2 wide / 3 small)].  Round 13: the flames are the pixel fire kit's -- the runtime runs its
+    wall of fire along the back wall behind the table's far edge (the f4_table layer hides its bed) and stands
+    the kit's single flames on these anchors: towers behind the wall at the big and mid ones, large flames on
+    the side walls' (lower, nearer the camera)."""
     rng = np.random.default_rng(1851)
     pts = []
     # right side wall (in perspective: the cabinets' feet run from (556, 233) at the back to (640, 263))
@@ -601,5 +574,4 @@ def f4_anchors():
         yb = 233 + (84 - x) * 30.0 / 84.0 + 8
         pts.append([x, round(yb), 1 if x < 30 else 0])
     LF_['f4_fire'] = pts
-    LF_['f4_kinds'] = [[a, b, c] for (a, b, c) in F4_KINDS]
     return pts

@@ -7,21 +7,25 @@ extends "res://scenes/cinematics/c3p2_common/c3p2_cinematic.gd"
 ##   f3  6-8.5   the ramp door from inside: the cold gap light, a shadow passes outside, the iron bolt slides home
 ##   f4  8.5-12  the card hall burning: the fire runs along the cabinets (right -> left), smoke rolls under the
 ##               vault toward the camera, embers; Alexei at the table, a silhouette against the fire
-## Line: cin.c3p2.fire.time.  Fire light: flame sheets cycle their shapes, the brightness only wobbles slowly
-## (< 3 Hz, fire_wobble), never a full-screen flash; reduced motion halves the flame rate and the wobble.
+## Line: cin.c3p2.fire.time.
 ## Round 10: the hall is a ray-cast vaulted cellar (cabinets on three walls, the barred window's snow light); the
-## first smoke curls thin into the lamp's light; the service door throws its light and the figure's long shadow
-## down the aisle, smoke rolls along the aisle's vault; smoke creeps in over the ramp door as the glow grows; the
-## burning hall has a revealed band of embers behind the fire front, tall flames, burning paper rising and a
-## rolling smoke layer under the vault.
-## Round 11: fire that reads as fire -- clusters of licking tongues with white-hot cores and a translucent red
-## fringe (no dark rim), merged into one wall of uneven height that rises behind the table's far edge (f4_table is a
-## layer in front of it) and grows where the front has just passed; the hall itself is darker and the fire's light
-## (f4_lit = burning hall minus unlit hall) is revealed behind the front with a soft edge, so the flames stay the
-## brightest thing in the frame; additive halos bloom around every cluster; soft volumetric smoke (no dithered
-## blotches) rolls along the aisle and under the vault toward the camera; the ramp door's gap light varies along
+## service door throws its light and the figure's long shadow down the aisle; smoke creeps in over the ramp door.
+## Round 11: the hall itself is darker and the fire's light (f4_lit = burning hall minus unlit hall) is revealed
+## behind the front, so the flames stay the brightest thing in the frame; the ramp door's gap light varies along
 ## its length and spills cold light onto the jamb and the floor, the snow blown in is snow.
-## Art: tools/pixelgen/env_c3p2_cine_fire.py (+ _registry, _life) -> assets/cinematics/c3p2/fire/.
+## Round 13: the fire is pixel art -- every flame, puff of smoke, spark and pool of fire light comes from the pixel
+## fire kit (tools/pixelgen/pixel_fire.py -> assets/fx/pixel_fire/, played by scripts/render/pixel_fire.gd: whole
+## pixels, never scaled, no alpha fades).  f1: wisps in the lamp's green.  f2: every box catches as a small flame
+## and steps up to a larger sheet; the fire's light (f2_glow) spreads from the boxes as a dithered pool that grows
+## in steps; puffs climb to the vault and roll toward the camera.  f3: the warm pool on the door grows in six
+## stages.  f4: a wall of fire (tiles) rises out of the cabinets' foot line behind the running front, towers of
+## flame stand behind it, the largest flames on the side walls in front; f4_lit follows the front as a dithered
+## wipe (the table gets its own lit layer, so the flames between hall and table stay pure palette); a bank of
+## smoke hangs under the vault, puffs climb into it; sparks rise on arcs and cool, paper burns out.
+## Fire light never strobes: pools step at most PF.LIGHT_HZ times a second, never a full-screen flash; reduced
+## motion halves the flames' and the light's rate and the travel of smoke and sparks.
+## Art: tools/pixelgen/env_c3p2_cine_fire.py (+ _registry, _life; build_fx for the kit-made sheets) ->
+## assets/cinematics/c3p2/fire/.
 
 const DUR := 12.0
 const SHOTS := [["f1", 0.0, 3.0], ["f2", 3.0, 6.0], ["f3", 6.0, 8.5], ["f4", 8.5, 12.0]]
@@ -36,6 +40,22 @@ const BOLT := [7.2, 7.55]             # the bolt slides home
 const RUN := [8.3, 220.0]             # f4 fire front: start time, speed (px/s, right -> left)
 ## f1 lamp flicker dips (== LAMP_DIPS in tools/audiogen/c3p2_cine_audio.py: the crackles of c3p2cine_lamp)
 const LAMP_DIPS := [0.55, 1.05, 1.4, 2.4]
+## f2: the heart of the burning boxes (the fire's light spreads from here)
+const F2_HEART := Vector2(424, 176)
+## f3: the smoke creeps in under the lintel from the left: start, speed (px/s), its foot line
+const CREEP := [6.6, 128.0, 94.0]
+## f4: the foot line of the wall of fire (behind the table's far edge); it starts to rise WALL_LAG px behind the
+## front (nearer the front only the single flames have caught) and stands at full height WALL_RAMP px further
+const WALL_Y := 247.0
+const WALL_LAG := 34.0
+const WALL_RAMP := 104.0
+## f4: the fire's light behind the front has a dithered edge this wide
+const LIT_SOFT := 72.0
+## f4: the smoke under the vault runs ahead of the fire by this much; the bank's foot line
+const SMOKE_LEAD := 110.0
+const BANK_Y := 100.0
+const KIT := ["flame_xs", "flame_s", "flame_m", "flame_l", "flame_xl", "flame_xxl", "wall_a", "wall_b", "puff_m",
+	"puff_l", "puff_xl", "bank_a", "bank_b", "veil_a", "veil_b", "glow_s", "glow_m", "glow_l"]
 
 var f1: Node2D
 var f2: Node2D
@@ -45,32 +65,27 @@ var _cone: Sprite2D
 var _konrad: Sprite2D
 var _f1fx: Node2D
 var _f2glow: Sprite2D
+var _f2reveal: ShaderMaterial
 var _door: Sprite2D
 var _f2fx: Node2D
 var _f3warm: Sprite2D
 var _f3fx: Node2D
+## f4: the fire's light on the hall (f4_lit, wiped in behind the front); the name is the tests' handle on it
 var _f4glow: Sprite2D
+var _f4reveal: ShaderMaterial
+var _f4lit_table: Sprite2D
 var _f4cone: Sprite2D
 var _f4fire: Node2D
 var _alexei: Sprite2D
 var _f4fx: Node2D
-var _smoke: Texture2D
-var _ember: Texture2D
+var _f4bank: Node2D
 var _f3root: Node2D
-var _smoke_hot: Texture2D
 var _paper: Texture2D
-var _band: Sprite2D
 var _f2light: Node2D
 var _f2smoke: Node2D
 var _f2heat: Node2D
-var _f2fire_s: Texture2D
-var _f2fire_m: Texture2D
-var _f2fire_l: Texture2D
-var _f4lit: Node2D
-var _f4lit_tex: Texture2D
+var _f2order: Array = []
 var _f4heat: Node2D
-var _halo: Texture2D
-var _kinds: Array = []
 var _f3glow: Node2D
 
 
@@ -101,16 +116,10 @@ func _make_cues() -> Array:
 # ------------------------------------------------------------------ build
 func _build() -> void:
 	layout = _layout_section("fire")
-	_smoke = tex("fire/smoke.png")
-	_ember = tex("fire/ember.png")
-	_smoke_hot = tex("fire/smoke_hot.png")
+	need_kit(KIT)
+	own_sheet("c3p2_wisp_s", "fire/wisp_s.png", 8)
+	own_sheet("c3p2_wisp_m", "fire/wisp_m.png", 10)
 	_paper = tex("fire/paper.png")
-	_halo = tex("fire/fire_halo.png")
-	_f2fire_s = tex("fire/f2_fire_s.png")
-	_f2fire_m = tex("fire/f2_fire_m.png")
-	_f2fire_l = tex("fire/f2_fire_l.png")
-	for kd in layout.get("f4_kinds", []):
-		_kinds.append({"tex": tex(str(kd[0])), "w": int(kd[1]), "h": int(kd[2])})
 	f1 = group("SortingTable")
 	sprite("fire/f1_bg.png", Vector2.ZERO, f1)
 	_cone = sprite("fire/lamp_cone.png", Vector2.ZERO, f1, 1, true)
@@ -121,34 +130,41 @@ func _build() -> void:
 	_f2light = _fx_node(f2, "DoorLight", _draw_f2_light)
 	_f2light.material = additive()
 	_door = sprite("fire/f2_door.png", _lv("f2_door_at"), f2, 4)
-	_f2glow = sprite("fire/f2_glow.png", Vector2.ZERO, f2, 1, true)
-	_f2fx = _fx_node(f2, "F2Fx", _draw_f2)
+	_f2glow = sprite("fire/f2_glow.png", Vector2.ZERO, f2)
+	_f2reveal = PF.reveal_material()
+	_f2glow.material = _f2reveal
 	_f2heat = _fx_node(f2, "F2Heat", _draw_f2_heat)
 	_f2heat.material = additive()
+	_f2fx = _fx_node(f2, "F2Fx", _draw_f2)
 	_f2smoke = _fx_node(f2, "F2Smoke", _draw_f2_smoke)
+	# the boxes higher up the shelves first, so the nearer flames stand in front
+	var anchors: Array = layout.get("f2_fire", [])
+	for i in anchors.size():
+		_f2order.append(i)
+	_f2order.sort_custom(func(a: int, b: int) -> bool: return float(anchors[a][1]) < float(anchors[b][1]))
 	f3 = group("RampDoor")
 	_f3root = Node2D.new()
 	_f3root.name = "Shake"
 	f3.add_child(_f3root)
 	sprite("fire/f3_bg.png", Vector2.ZERO, _f3root)
-	_f3warm = sprite("fire/f3_warm.png", Vector2.ZERO, _f3root, 1, true)
+	_f3warm = sprite("fire/f3_warm.png", _lv("f3_warm_at"), _f3root, 6, true)
 	_f3glow = _fx_node(_f3root, "GapGlow", _draw_f3_glow)
 	_f3glow.material = additive()
 	_f3fx = _fx_node(_f3root, "F3Fx", _draw_f3)
 	f4 = group("HallBurning")
 	sprite("fire/f4_bg.png", Vector2.ZERO, f4)
-	_f4fire = _fx_node(f4, "Fire", _draw_f4_fire)
-	sprite("fire/f4_table.png", _lv("f4_table_at"), f4)
-	_f4glow = sprite("fire/f4_glow.png", Vector2.ZERO, f4, 1, true)
-	_band = sprite("fire/fire_band.png", Vector2(0, 150), f4, 1, true)
-	_band.region_enabled = true
-	_f4lit_tex = tex("fire/f4_lit.png")
-	_f4lit = _fx_node(f4, "FireLight", _draw_f4_lit)
-	_f4lit.material = additive()
+	_f4reveal = PF.reveal_material()
+	_f4glow = sprite("fire/f4_lit.png", Vector2.ZERO, f4)
+	_f4glow.material = _f4reveal
 	_f4heat = _fx_node(f4, "Heat", _draw_f4_heat)
 	_f4heat.material = additive()
+	_f4fire = _fx_node(f4, "Fire", _draw_f4_fire)
+	sprite("fire/f4_table.png", _lv("f4_table_at"), f4)
+	_f4lit_table = sprite("fire/f4_lit_table.png", _lv("f4_table_at"), f4)
+	_f4lit_table.material = _f4reveal
 	_f4cone = sprite("fire/lamp_cone.png", Vector2.ZERO, f4, 1, true)
 	_alexei = sprite("fire/f4_alexei.png", _lv("f4_alexei"), f4, 2)
+	_f4bank = _fx_node(f4, "SmokeBank", _draw_f4_bank)
 	_f4fx = _fx_node(f4, "SmokeEmbers", _draw_f4_fx)
 
 
@@ -188,7 +204,8 @@ func _apply(time: float) -> void:
 			kf = i + 1
 	_konrad.frame = mini(kf, _konrad.hframes - 1)
 	_f1fx.queue_redraw()
-	# f2: the doorway, the glow growing as the boxes catch
+	# f2: the doorway; the fire's light spreads from the boxes as they catch -- a dithered pool that grows in
+	# steps of 8 px and breathes by one step
 	var df := 0
 	if time >= DOOR[3]:
 		df = 3
@@ -197,36 +214,32 @@ func _apply(time: float) -> void:
 	elif time >= DOOR[1]:
 		df = 1
 	_door.frame = df
-	var grow := ramp01(time, CATCH - 0.1, 6.0)
-	_f2glow.modulate = Color(1, 1, 1, clampf((0.08 + 0.92 * grow) * fire_wobble(time, 3), 0.0, 1.0) if time >= CATCH - 0.1 else 0.0)
+	_f2glow.visible = time >= CATCH - 0.1
+	var reach := snappedf(26.0 + 600.0 * ramp01(time, CATCH - 0.1, 6.0), 8.0) + 8.0 * light_step(time, 3)
+	PF.set_reveal(_f2reveal, F2_HEART, Vector2.ZERO, Vector2(reach, reach * 0.8), 0.7)
 	_f2fx.queue_redraw()
 	_f2light.queue_redraw()
 	_f2heat.queue_redraw()
 	_f2smoke.queue_redraw()
-	# f3: the fire behind the camera warms the door more and more; the bolt jolts the door once
-	_f3warm.modulate = Color(1, 1, 1, clampf((0.35 + 0.65 * ramp01(time, 6.0, 8.5)) * fire_wobble(time, 5), 0.0, 1.0))
+	# f3: the fire behind the camera warms the door more and more (the pool's stages); the bolt jolts the door once
+	_f3warm.frame = clampi(2 + int(ramp01(time, 6.0, 8.5) * 3.99) + mini(0, light_step(time, 5)), 0, 5)
 	var jolt := 0.0
 	if not rm and time >= BOLT[1] and time < BOLT[1] + 0.12:
 		jolt = 1.0
 	_f3root.position = Vector2(jolt, 0)
 	_f3fx.queue_redraw()
 	_f3glow.queue_redraw()
-	# f4
+	# f4: the fire's light follows the front as a dithered wipe (whole pixels)
 	var burnt := _burning_fraction(time)
-	_f4glow.modulate = Color(1, 1, 1, clampf((0.45 + 0.55 * burnt) * fire_wobble(time, 9), 0.0, 1.0))
+	var lit_from := 840.0
+	PF.set_reveal(_f4reveal, Vector2(lit_from, 180), Vector2(lit_from - (_front(time) + LIT_SOFT), 4000),
+		Vector2(LIT_SOFT, 1), 1.0)
 	_f4cone.modulate = Color(1, 1, 1, 0.35 - 0.2 * burnt)
 	_alexei.frame = 0 if time < 10.4 else 1
 	_f4fire.queue_redraw()
 	_f4fx.queue_redraw()
-	_f4lit.queue_redraw()
 	_f4heat.queue_redraw()
-	# the heat band behind the fire front (revealed from the right as the fire runs left)
-	if _band.texture:
-		var fr0 := clampf(_front(time), 0.0, 640.0)
-		_band.region_rect = Rect2(fr0, 0, 640.0 - fr0, _band.texture.get_height())
-		_band.position = Vector2(roundf(fr0), 150)
-		_band.visible = fr0 < 639.0
-		_band.modulate = Color(1, 1, 1, clampf(0.75 * fire_wobble(time, 13, 0.1), 0.0, 1.0))
+	_f4bank.queue_redraw()
 
 
 func _front(time: float) -> float:
@@ -238,44 +251,13 @@ func _burning_fraction(time: float) -> float:
 
 
 # ------------------------------------------------------------------ draw
-## Frame `i` of an n-frame sheet, bottom-centre at `pos`, grown to `k` of its height (a fire catching).
-static func _draw_grown(ci: CanvasItem, sheet: Texture2D, n: int, i: int, pos: Vector2, k: float,
-		mod := Color(1, 1, 1, 1)) -> void:
-	if sheet == null:
-		return
-	var fw := sheet.get_width() / maxi(1, n)
-	var fh := sheet.get_height()
-	var h := maxf(1.0, roundf(fh * clampf(k, 0.05, 1.0)))
-	var at := Vector2(roundf(pos.x - fw * 0.5), roundf(pos.y - h))
-	ci.draw_texture_rect_region(sheet, Rect2(at, Vector2(fw, h)), Rect2(posmod(i, n) * fw, 0, fw, fh), mod)
-
-
-## Frame `i` of an n-frame sheet scaled by `sc` around `center` (soft smoke grows as it nears the camera).
-static func _draw_scaled(ci: CanvasItem, sheet: Texture2D, n: int, i: int, center: Vector2, sc: float,
-		mod := Color(1, 1, 1, 1)) -> void:
-	if sheet == null:
-		return
-	var fw := sheet.get_width() / maxi(1, n)
-	var fh := sheet.get_height()
-	var sz := (Vector2(fw, fh) * sc).round()
-	ci.draw_texture_rect_region(sheet, Rect2((center - sz * 0.5).round(), sz), Rect2(posmod(i, n) * fw, 0, fw, fh), mod)
-
-
 func _draw_f1() -> void:
 	if not f1.visible:
 		return
 	# thin wisps of smoke curl into the lamp's light from the right, a little more of it each second
-	if _smoke and t > 0.5:
-		var n := 8
-		for i in 4:
-			var age := t - 0.5 - i * 0.5
-			if age < 0.0:
-				continue
-			var x := 540.0 - age * 42.0 * motion_k() - i * 16.0
-			var y := 110.0 + sin(age * 1.7 + i) * 8.0 - age * 5.0 * motion_k()
-			var fi := clampi(int(age / 0.4), 0, n - 1)
-			var a := clampf(age / 1.0, 0.0, 1.0) * (0.75 - i * 0.12)
-			_draw_scaled(_f1fx, _smoke, n, fi, Vector2(x, y), 1.0 + age * 0.25, Color(1, 1, 1, a))
+	PF.plume(_f1fx, {"sheets": ["c3p2_wisp_m", "c3p2_wisp_s", "c3p2_wisp_m"], "from": Vector2(556, 112),
+		"spread": Vector2(6, 10), "count": 6, "life": 2.6, "rise": 7.0, "slow": 0.0, "drift": Vector2(-48, 0),
+		"sway": 5.0, "t0": 0.5, "seed": 11, "rate": motion_k()}, t)
 	# dust motes in the cone
 	for i in 12:
 		var ph := float(i) * 2.3
@@ -284,16 +266,21 @@ func _draw_f1() -> void:
 		_f1fx.draw_rect(Rect2(Vector2(floorf(mx), floorf(my)), Vector2.ONE), Color(0.7, 0.9, 0.75, 0.5))
 
 
-## f2: the burning boxes on the right shelves -- each catches small, grows, every second one climbs tall
+## f2: the burning boxes on the right shelves -- each catches as a small flame and steps up to a larger sheet,
+## every second one climbs tall: [flame sheet, light sheet, the flame's height] ([] = not burning yet)
 func _f2_fire_state(i: int) -> Array:
 	var age := t - (CATCH + i * 0.32)
 	if age < 0.0:
 		return []
-	if age < 0.55:
-		return [_f2fire_s, clampf(0.45 + age / 0.35, 0.45, 1.0), age]
-	if age < 1.3 or i % 2 == 1:
-		return [_f2fire_m, clampf(0.55 + (age - 0.55) / 0.45, 0.55, 1.0), age]
-	return [_f2fire_l, clampf(0.6 + (age - 1.3) / 0.6, 0.6, 1.0), age]
+	if age < 0.2:
+		return ["flame_xs", "glow_s", 12.0]
+	if age < 0.5:
+		return ["flame_s", "glow_s", 20.0]
+	if age < 1.0:
+		return ["flame_m", "glow_m", 36.0]
+	if age < 1.8 or i % 2 == 1:
+		return ["flame_l", "glow_l", 62.0]
+	return ["flame_xl", "glow_l", 100.0]
 
 
 func _draw_f2() -> void:
@@ -306,17 +293,19 @@ func _draw_f2() -> void:
 		_f2fx.draw_colored_polygon(PackedVector2Array([Vector2(cx - 4, yb), Vector2(cx + 4, yb), Vector2(cx + 34, 360),
 			Vector2(cx - 26, 360)]), Color(0.03, 0.02, 0.02, 0.5))
 	var anchors: Array = layout.get("f2_fire", [])
-	for i in anchors.size():
+	for i in _f2order:
 		var st := _f2_fire_state(i)
 		if st.is_empty():
 			continue
 		var a: Array = anchors[i]
-		_draw_grown(_f2fx, st[0], 8, flame_frame(t, 8, i * 0.37), Vector2(float(a[0]), float(a[1]) + 2.0), float(st[1]))
+		PF.flame(_f2fx, str(st[0]), Vector2(float(a[0]), float(a[1]) + 2.0), t, i, fire_rate())
+	PF.sparks(_f2fx, {"rect": Rect2(398, 150, 46, 62), "count": 9, "life": 0.9, "rise": 50.0, "kick": 10.0,
+		"t0": CATCH + 0.5, "seed": 27, "rate": motion_k()}, t)
 
 
-## f2: a warm bloom around every burning box (additive)
+## f2: the fire's light on the shelves around every burning box (additive pools that breathe)
 func _draw_f2_heat() -> void:
-	if not f2.visible or _halo == null:
+	if not f2.visible:
 		return
 	var anchors: Array = layout.get("f2_fire", [])
 	for i in anchors.size():
@@ -324,12 +313,7 @@ func _draw_f2_heat() -> void:
 		if st.is_empty():
 			continue
 		var a: Array = anchors[i]
-		var tx: Texture2D = st[0]
-		var w := float(tx.get_width() / 8) * 2.2 if tx else 60.0
-		var h := float(tx.get_height()) * 1.5 * float(st[1]) if tx else 60.0
-		var g := clampf(float(st[2]) / 0.6, 0.0, 1.0)
-		_f2heat.draw_texture_rect(_halo, Rect2(Vector2(float(a[0]) - w * 0.5, float(a[1]) + 6.0 - h), Vector2(w, h)),
-			false, Color(1, 1, 1, 0.5 * g * fire_wobble(t, 60 + i, 0.15)))
+		PF.light(_f2heat, str(st[1]), Vector2(float(a[0]), float(a[1]) - float(st[2]) * 0.45), t, i, fire_rate())
 
 
 ## f2: the lit doorway throws a wedge of light down the aisle; while the figure stands in it, its long shadow
@@ -345,22 +329,16 @@ func _draw_f2_light() -> void:
 	_f2light.draw_colored_polygon(wedge, Color(0.95 * a, 0.68 * a, 0.36 * a, 1.0))
 
 
-## f2: soft smoke climbs from the burning boxes to the aisle's vault and rolls along it toward the camera
+## f2: puffs climb from the burning boxes to the aisle's vault and roll along it toward the camera
 func _draw_f2_smoke() -> void:
-	if not f2.visible or _smoke_hot == null or t < CATCH + 0.3:
+	if not f2.visible:
 		return
 	var k := motion_k()
-	for i in 12:
-		var born := CATCH + 0.3 + i * 0.21
-		var age := t - born
-		if age < 0.0:
-			continue
-		var src := Vector2(428.0 + float(i % 3) * 9.0, 168.0 - float(i % 4) * 14.0)
-		var p := src + Vector2(age * 24.0 + sin(age * 1.9 + i) * 6.0,
-			-minf(age, 0.8) * 72.0 - maxf(0.0, age - 0.8) * 22.0) * k
-		var sc := 0.42 + age * 0.5
-		var a := clampf(age / 0.3, 0.0, 1.0) * clampf(1.0 - (age - 2.2) / 1.0, 0.0, 1.0) * 0.92
-		_draw_scaled(_f2smoke, _smoke_hot, 8, clampi(int(age / 0.35), 0, 7), p, sc, Color(1, 1, 1, a))
+	PF.plume(_f2smoke, {"sheets": ["puff_l", "puff_xl"], "from": Vector2(440, 88), "spread": Vector2(18, 6),
+		"count": 4, "life": 2.6, "rise": 5.0, "drift": Vector2(28, 0), "t0": CATCH + 1.1, "seed": 23, "rate": k}, t)
+	PF.plume(_f2smoke, {"sheets": ["puff_m", "puff_l", "puff_m"], "from": Vector2(424, 148), "spread": Vector2(14, 14),
+		"count": 7, "life": 2.0, "rise": 60.0, "slow": 1.1, "drift": Vector2(6, 0), "bend": 10.0, "t0": CATCH + 0.3,
+		"seed": 21, "rate": k}, t)
 
 
 ## f3: the cold light of the yard through the gap, darkened while someone passes outside
@@ -448,15 +426,9 @@ func _draw_f3() -> void:
 		_f3fx.draw_rect(Rect2(gx, by - 2, 3, 12), Color("#05070c"))
 		_f3fx.draw_rect(Rect2(gx - blen + 3, by, blen, 8), Color(0.02, 0.03, 0.05, 0.8))
 		_f3fx.draw_rect(Rect2(gx - blen + 3, by + 8, blen, 1), Color(0.6, 0.66, 0.74, 0.35))
-	# smoke creeps in from the left under the lintel, thicker toward the end of the shot
-	if _smoke_hot and t > 6.6:
-		for i in 6:
-			var age := t - 6.6 - i * 0.28
-			if age < 0.0:
-				continue
-			var p := Vector2(-30.0 + age * 66.0 * motion_k() + i * 24.0, 44.0 + i * 5.0 + sin(age + i) * 4.0)
-			_draw_scaled(_f3fx, _smoke_hot, 8, clampi(int(age / 0.3), 0, 7), p, 1.1 + age * 0.3,
-				Color(1, 1, 1, clampf(age * 0.6, 0.0, 0.85)))
+	# smoke creeps in from the left under the lintel, further and further: a bank behind a rolling head
+	if t >= float(CREEP[0]):
+		smoke_front(_f3fx, -50.0 + (t - float(CREEP[0])) * float(CREEP[1]) * motion_k(), 1.0, float(CREEP[2]), t, true)
 	# snow blown through the bottom gap, drifting into the room (cold white, never warm)
 	for i in 18:
 		var ph := float(i) * 1.37
@@ -472,74 +444,66 @@ func _lit_time(x: float) -> float:
 	return float(RUN[0]) + (680.0 - x) / (float(RUN[1]) * (0.8 if reduced_motion() else 1.0))
 
 
-## f4: the fire runs right -> left; every cluster catches small, then rises to its full height behind the table
+## f4: a single flame on an anchor grows by stepping up the kit's sizes; kind (layout f4_fire: 0 mid / 1 big /
+## 2 wide / 3 small) says how far
+static func _f4_stage(age: float, kind: int) -> String:
+	if age < 0.0:
+		return ""
+	if age < 0.15:
+		return "flame_s"
+	if age < 0.35 or kind == 3:
+		return "flame_m"
+	if age < 0.6 or kind == 2:
+		return "flame_l"
+	if age < 0.9 or kind == 0:
+		return "flame_xl"
+	return "flame_xxl"
+
+
+## f4: the fire runs right -> left.  Behind the front every anchor catches as a small flame and steps up; the
+## wall of fire rises out of the cabinets' foot line (WALL_RAMP px behind the front it stands at full height),
+## towers stand behind it, the side walls' flames (lower, nearer the camera) in front
 func _draw_f4_fire() -> void:
-	if not f4.visible or _kinds.size() < 4:
+	if not f4.visible:
 		return
+	var rate := fire_rate()
 	var pts: Array = layout.get("f4_fire", [])
-	for i in pts.size():
-		var p: Array = pts[i]
-		var x := float(p[0])
-		var age := t - _lit_time(x)
-		if age < 0.0:
-			continue
-		var kd: Dictionary = _kinds[clampi(int(p[2]) if p.size() > 2 else 0, 0, _kinds.size() - 1)]
-		var k := clampf(0.4 + (age - 0.22) / 0.55 * 0.6, 0.4, 1.0)
-		if age < 0.22:
-			kd = _kinds[3]
-			k = 0.45 + 0.55 * age / 0.22
-		_draw_grown(_f4fire, kd["tex"], 8, flame_frame(t, 8, i * 0.29), Vector2(x, float(p[1])), k)
-
-
-## f4: the burning cabinets' light, revealed behind the fire front with a soft edge (additive)
-func _draw_f4_lit() -> void:
-	if not f4.visible or _f4lit_tex == null:
-		return
-	var fr := _front(t)
-	var soft := 72.0
-	var a_all := clampf(0.94 * fire_wobble(t, 9, 0.06), 0.0, 1.0)
-	var x0 := clampf(fr + soft, 0.0, 640.0)
-	if x0 < 640.0:
-		_f4lit.draw_texture_rect_region(_f4lit_tex, Rect2(x0, 0, 640.0 - x0, 360), Rect2(x0, 0, 640.0 - x0, 360),
-			Color(1, 1, 1, a_all))
-	for j in 9:
-		var xa := maxf(0.0, fr + j * soft / 9.0)
-		var xb := minf(640.0, fr + (j + 1) * soft / 9.0)
-		if xb <= xa:
-			continue
-		_f4lit.draw_texture_rect_region(_f4lit_tex, Rect2(xa, 0, xb - xa, 360), Rect2(xa, 0, xb - xa, 360),
-			Color(1, 1, 1, a_all * (float(j) + 0.5) / 9.0))
-
-
-## f4: a warm bloom around every burning cluster (additive), so the flames glow into the smoke and the cabinets
-func _draw_f4_heat() -> void:
-	if not f4.visible or _halo == null or _kinds.size() < 4:
-		return
-	var pts: Array = layout.get("f4_fire", [])
-	for i in pts.size():
-		var p: Array = pts[i]
-		var age := t - _lit_time(float(p[0]))
-		if age < 0.0:
-			continue
-		var kd: Dictionary = _kinds[clampi(int(p[2]), 0, _kinds.size() - 1)]
-		var gk := clampf(age / 0.8, 0.0, 1.0)
-		var w := float(kd["w"]) * 1.8
-		var h := float(kd["h"]) * 1.3 * (0.45 + 0.55 * gk)
-		_f4heat.draw_texture_rect(_halo, Rect2(Vector2(float(p[0]) - w * 0.5, float(p[1]) - h * 0.92), Vector2(w, h)),
-			false, Color(1, 1, 1, 0.42 * gk * fire_wobble(t, 50 + i, 0.15)))
-	# embers rising from the fire line (additive: they glow, they never darken the flames)
-	if _ember:
-		var k := motion_k()
-		var fr := _front(t)
-		for i in 30:
-			var ph := float(i) * 1.91
-			var x0 := 640.0 - fposmod(i * 47.0, 660.0)
-			if x0 < fr:
+	for pass_ in 2:
+		for i in pts.size():
+			var p: Array = pts[i]
+			var x := float(p[0])
+			var side := x > 556.0 or x < 92.0
+			if side != (pass_ == 1):
 				continue
-			var age := fposmod(t * 0.8 + i * 0.13, 1.8)
-			var x := x0 + sin(ph + t * 2.0) * 6.0
-			var y := 210.0 - age * 80.0 * k
-			draw_frame(_f4heat, _ember, 4, int(floor(t * 3.0 + i)) % 4, Vector2(x, y), false, Color(1, 1, 1, clampf(1.0 - age / 1.8, 0.0, 1.0)))
+			var s := _f4_stage(t - _lit_time(x), int(p[2]) if p.size() > 2 else 0)
+			if s != "":
+				PF.flame(_f4fire, s, Vector2(x, float(p[1]) if side else WALL_Y), t, i, rate)
+		if pass_ == 0:
+			PF.wall(_f4fire, ["wall_a", "wall_b"], 0.0, 640.0, WALL_Y, t, {"rate": rate, "shift": 37,
+				"front": roundf(_front(t) + WALL_LAG), "ramp": WALL_RAMP, "side": 1.0})
+
+
+## f4: the fire's light on the cabinets and the vault around the tallest flames (additive pools that breathe,
+## under the flames so these stay pure palette)
+func _draw_f4_heat() -> void:
+	if not f4.visible:
+		return
+	var pts: Array = layout.get("f4_fire", [])
+	for i in pts.size():
+		var p: Array = pts[i]
+		var kind := int(p[2]) if p.size() > 2 else 0
+		var age := t - _lit_time(float(p[0]))
+		if kind > 1 or age < 0.35:
+			continue
+		PF.light(_f4heat, "glow_l" if age >= 0.6 else "glow_m", Vector2(float(p[0]), 150.0 if kind == 1 else 176.0),
+			t, i, fire_rate())
+
+
+## f4: the smoke under the vault runs ahead of the fire -- a rolling head of big puffs, behind it a veil, then
+## the bank (the veil is the bank's own billows with dither holes, so the two join)
+func _draw_f4_bank() -> void:
+	if f4.visible and _front(t) - SMOKE_LEAD < 700.0:
+		smoke_front(_f4bank, _front(t) - SMOKE_LEAD, -1.0, BANK_Y, t)
 
 
 func _draw_f4_fx() -> void:
@@ -547,28 +511,28 @@ func _draw_f4_fx() -> void:
 		return
 	var k := motion_k()
 	var fr := _front(t)
-	# smoke: rises from the burning cabinets to the vault, then rolls along it toward the camera, growing
-	if _smoke_hot:
-		for i in 24:
-			var born := 8.2 + i * 0.15
-			var age := t - born
-			if age < 0.0:
-				continue
-			var x := 640.0 - fposmod(i * 83.0, 700.0) + sin(i * 1.7 + t * 0.5) * 10.0
-			if x < fr - 40.0:
-				continue
-			var y := 150.0 - 84.0 * minf(age / 0.9, 1.0) * k + maxf(0.0, age - 0.9) * 16.0 * k
-			var sc := 0.7 + minf(age, 3.0) * 0.55
-			var a := clampf(age / 0.4, 0.0, 1.0) * 0.9
-			_draw_scaled(_f4fx, _smoke_hot, 8, clampi(int(age / 0.4), 0, 7), Vector2(x, y), sc, Color(1, 1, 1, a))
-	# burning paper lifting off the drawers, tumbling up
+	# puffs climb from the burning cabinets into the bank; the big ones roll on toward the camera
+	for i in 7:
+		var x := 612.0 - i * 92.0
+		PF.plume(_f4fx, {"sheets": ["puff_m", "puff_l", "puff_m"], "from": Vector2(x, 142), "spread": Vector2(38, 12),
+			"count": 6, "life": 2.0, "rise": 40.0, "slow": 1.0, "drift": Vector2(-10, 0), "t0": _lit_time(x) + 0.4,
+			"seed": 61 + i * 7, "rate": k}, t)
+	PF.plume(_f4fx, {"sheets": ["puff_xl", "puff_l"], "from": Vector2(400, BANK_Y), "spread": Vector2(210, 6), "count": 4,
+		"life": 3.0, "rise": -6.0, "drift": Vector2(-18, 0), "t0": 9.6, "seed": 67, "rate": k}, t)
+	# sparks rise from the fire line on arcs and cool
+	for i in 4:
+		var x0 := 480.0 - i * 160.0
+		PF.sparks(_f4fx, {"rect": Rect2(x0, 150, 160, 70), "count": 9, "life": 1.7, "rise": 76.0, "kick": 14.0,
+			"wind": -8.0, "gravity": 22.0, "t0": _lit_time(x0 + 160.0) + 0.2, "seed": 71 + i * 5, "rate": k}, t)
+	# burning paper lifting off the drawers, tumbling up; it burns out as a last glowing scrap
 	if _paper:
 		for i in 12:
-			var x0 := 640.0 - fposmod(i * 61.0, 650.0)
-			if x0 < fr:
+			var px := 640.0 - fposmod(i * 61.0, 650.0)
+			if px < fr:
 				continue
 			var age := fposmod(t * 0.5 + i * 0.21, 2.2)
-			var p := Vector2(x0 + sin(age * 3.0 + i) * 10.0, 220.0 - age * 70.0 * k)
-			# lit by the fire behind it: the scrap glows warm, never a dark fleck on the flames
-			draw_frame(_f4fx, _paper, 6, int(floor(t * 8.0 + i)) % 6, p, false,
-				Color(1.7, 1.3, 0.95, clampf(1.0 - age / 2.2, 0.0, 1.0)))
+			var p := Vector2(px + sin(age * 3.0 + i) * 10.0, 220.0 - age * 70.0 * k)
+			if age < 1.7:
+				draw_frame(_f4fx, _paper, 6, int(floor(t * 8.0 + i)) % 6, p)
+			else:
+				_f4fx.draw_rect(Rect2(p.floor() - Vector2(1, 2), Vector2(2, 1)), PF.SPARK[4 if age < 1.95 else 5])
