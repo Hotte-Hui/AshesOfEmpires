@@ -9,6 +9,7 @@ extends Node
 ##        640x360 world as DIR/<id>_<t>_w.png
 ##   --c3-mode=seq --c3-id=... --c3-out=DIR --c3-from=8.0 --c3-to=10.0 [--c3-fps=15]
 ##        saves consecutive world frames (motion review: contact sheets / flip books)
+##   --c3-symbols=0 configures the film without historical insignia; --c3-id=LS_Prologue plays the prologue
 ##   --c3-mode=run --c3-id=... [--c3-skip-at=SECONDS] [--c3-report=FILE]
 ##        plays in real time and reports: finished emissions, wall time, frame-time statistics, cue log
 ## Run: "$GODOT" --path . res://tests/visual/c3cine_harness.tscn -- --cinematic=none --c3-mode=...
@@ -53,11 +54,13 @@ func _flags() -> Dictionary:
 func _make() -> Node:
 	var ext := ChapterExt.new()
 	var id := str(args.get("c3-id", "LS_C3_Trains"))
-	var cin: Node = load(str(ext.cinematics[id])).instantiate()
+	# trailer switch: LS_Prologue is staged by Game, not ChapterExt
+	var path: String = Game.PROLOGUE_SCENE if id == Game.PROLOGUE_ID else str(ext.cinematics[id])
+	var cin: Node = load(path).instantiate()
 	if args.has("c3-rm"):
 		cin.set("reduced_motion_override", int(args["c3-rm"]))
 	Game.main.level_root.add_child(cin)
-	cin.configure({"choices": {}, "flags": _flags(), "symbols": true})
+	cin.configure({"choices": {}, "flags": _flags(), "symbols": str(args.get("c3-symbols", "1")) != "0"})
 	Game._apply_grade(cin)
 	Game._call(Game._ui("hud"), "hide_hud")
 	Game._call(Game._ui("fade"), "letterbox", [true, 0.0])
